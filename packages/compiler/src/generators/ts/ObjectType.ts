@@ -21,7 +21,6 @@ import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import type { Type } from "./Type.js";
 import * as _ObjectType from "./_ObjectType/index.js";
-import {} from "./_ObjectType/index.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 export class ObjectType extends DeclaredType {
