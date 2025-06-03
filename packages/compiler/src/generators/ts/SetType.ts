@@ -134,6 +134,8 @@ export class SetType extends Type {
     let schema = `${this.itemType.jsonZodSchema(parameters)}.array()`;
     if (this.minCount > 0) {
       schema = `${schema}.nonempty().min(${this.minCount})`;
+    } else {
+      schema = `${schema}.default(() => [])`;
     }
     return schema;
   }
