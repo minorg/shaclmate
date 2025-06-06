@@ -1,7 +1,7 @@
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 
 export function sparqlConstructQueryStringFunctionDeclaration(this: {
-  readonly name: string;
+  readonly staticModuleName: string;
 }): FunctionDeclarationStructure {
   return {
     isExported: true,
@@ -16,7 +16,7 @@ export function sparqlConstructQueryStringFunctionDeclaration(this: {
     ],
     returnType: "string",
     statements: [
-      `return new sparqljs.Generator(parameters).stringify(${this.name}.sparqlConstructQuery(parameters));`,
+      `return new sparqljs.Generator(parameters).stringify(${this.staticModuleName}.sparqlConstructQuery(parameters));`,
     ],
   };
 }

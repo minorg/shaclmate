@@ -29,13 +29,13 @@ export function fromJsonFunctionDeclarations(
 
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
     propertiesFromJsonFunctionStatements.push(
-      `const _super${parentObjectTypeI}Either = ${parentObjectType.name}._propertiesFromJson(${variables.jsonObject});`,
+      `const _super${parentObjectTypeI}Either = ${parentObjectType.staticModuleName}._propertiesFromJson(${variables.jsonObject});`,
       `if (_super${parentObjectTypeI}Either.isLeft()) { return _super${parentObjectTypeI}Either; }`,
       `const _super${parentObjectTypeI} = _super${parentObjectTypeI}Either.unsafeCoerce()`,
     );
     initializers.push(`..._super${parentObjectTypeI}`);
     propertiesFromJsonFunctionReturnType.push(
-      `UnwrapR<ReturnType<typeof ${parentObjectType.name}._propertiesFromJson>>`,
+      `UnwrapR<ReturnType<typeof ${parentObjectType.staticModuleName}._propertiesFromJson>>`,
     );
   });
 
@@ -85,7 +85,7 @@ export function fromJsonFunctionDeclarations(
       fromJsonStatements = [
         `return ${this.childObjectTypes.reduce(
           (expression, childObjectType) => {
-            const childObjectTypeExpression = `(${childObjectType.name}.fromJson(json) as purify.Either<zod.ZodError, ${this.name}>)`;
+            const childObjectTypeExpression = `(${childObjectType.staticModuleName}.fromJson(json) as purify.Either<zod.ZodError, ${this.name}>)`;
             return expression.length > 0
               ? `${expression}.altLazy(() => ${childObjectTypeExpression})`
               : childObjectTypeExpression;
@@ -100,10 +100,10 @@ export function fromJsonFunctionDeclarations(
     let propertiesFromJsonExpression: string;
     switch (this.declarationType) {
       case "class":
-        propertiesFromJsonExpression = `${this.name}._propertiesFromJson(json).map(properties => new ${this.name}(properties))`;
+        propertiesFromJsonExpression = `${this.staticModuleName}._propertiesFromJson(json).map(properties => new ${this.name}(properties))`;
         break;
       case "interface":
-        propertiesFromJsonExpression = `${this.name}._propertiesFromJson(json)`;
+        propertiesFromJsonExpression = `${this.staticModuleName}._propertiesFromJson(json)`;
         break;
     }
 
@@ -111,7 +111,7 @@ export function fromJsonFunctionDeclarations(
       fromJsonStatements = [
         `return ${this.childObjectTypes.reduce(
           (expression, childObjectType) => {
-            const childObjectTypeExpression = `(${childObjectType.name}.fromJson(json) as purify.Either<zod.ZodError, ${this.name}>)`;
+            const childObjectTypeExpression = `(${childObjectType.staticModuleName}.fromJson(json) as purify.Either<zod.ZodError, ${this.name}>)`;
             return expression.length > 0
               ? `${expression}.altLazy(() => ${childObjectTypeExpression})`
               : childObjectTypeExpression;

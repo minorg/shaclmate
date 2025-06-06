@@ -71,7 +71,7 @@ export function hashFunctionOrMethodDeclarations(this: ObjectType): readonly {
       case "interface": {
         for (const parentObjectType of this.parentObjectTypes) {
           hashShaclPropertiesStatements.push(
-            `${parentObjectType.name}Static.hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
+            `${parentObjectType.staticModuleName}.hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
           );
         }
         break;
@@ -108,7 +108,7 @@ export function hashFunctionOrMethodDeclarations(this: ObjectType): readonly {
           ),
         this.declarationType === "class"
           ? `this.hashShaclProperties(${hasherVariable});`
-          : `${this.name}Static.hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
+          : `${this.staticModuleName}.hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
         `return ${hasherVariable};`,
       ],
       typeParameters,

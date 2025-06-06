@@ -27,13 +27,13 @@ export function fromRdfFunctionDeclarations(
 
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
     propertiesFromRdfFunctionStatements.push(
-      `const _super${parentObjectTypeI}Either = ${parentObjectType.name}._propertiesFromRdf({ ...${variables.context}, ignoreRdfType: true, languageIn: ${variables.languageIn}, resource: ${variables.resource} });`,
+      `const _super${parentObjectTypeI}Either = ${parentObjectType.staticModuleName}._propertiesFromRdf({ ...${variables.context}, ignoreRdfType: true, languageIn: ${variables.languageIn}, resource: ${variables.resource} });`,
       `if (_super${parentObjectTypeI}Either.isLeft()) { return _super${parentObjectTypeI}Either; }`,
       `const _super${parentObjectTypeI} = _super${parentObjectTypeI}Either.unsafeCoerce()`,
     );
     initializers.push(`..._super${parentObjectTypeI}`);
     propertiesFromRdfFunctionReturnType.push(
-      `UnwrapR<ReturnType<typeof ${parentObjectType.name}._propertiesFromRdf>>`,
+      `UnwrapR<ReturnType<typeof ${parentObjectType.staticModuleName}._propertiesFromRdf>>`,
     );
   });
 
@@ -96,7 +96,7 @@ export function fromRdfFunctionDeclarations(
       // Similar to an object union type, alt-chain the fromRdf of the different concrete subclasses together
       fromRdfReturnStatement = `return ${this.childObjectTypes.reduce(
         (expression, childObjectType) => {
-          const childObjectTypeExpression = `(${childObjectType.name}.fromRdf(otherParameters) as purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>)`;
+          const childObjectTypeExpression = `(${childObjectType.staticModuleName}.fromRdf(otherParameters) as purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>)`;
           return expression.length > 0
             ? `${expression}.altLazy(() => ${childObjectTypeExpression})`
             : childObjectTypeExpression;
@@ -108,10 +108,10 @@ export function fromRdfFunctionDeclarations(
     let propertiesFromRdfExpression: string;
     switch (this.declarationType) {
       case "class":
-        propertiesFromRdfExpression = `${this.name}._propertiesFromRdf(parameters).map(properties => new ${this.name}(properties))`;
+        propertiesFromRdfExpression = `${this.staticModuleName}._propertiesFromRdf(parameters).map(properties => new ${this.name}(properties))`;
         break;
       case "interface":
-        propertiesFromRdfExpression = `${this.name}._propertiesFromRdf(parameters)`;
+        propertiesFromRdfExpression = `${this.staticModuleName}._propertiesFromRdf(parameters)`;
         break;
     }
 
@@ -122,7 +122,7 @@ export function fromRdfFunctionDeclarations(
       );
       fromRdfReturnStatement = `${this.childObjectTypes.reduce(
         (expression, childObjectType) => {
-          const childObjectTypeExpression = `(${childObjectType.name}.fromRdf(otherParameters) as purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>)`;
+          const childObjectTypeExpression = `(${childObjectType.staticModuleName}.fromRdf(otherParameters) as purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>)`;
           return expression.length > 0
             ? `${expression}.altLazy(() => ${childObjectTypeExpression})`
             : childObjectTypeExpression;
@@ -147,7 +147,7 @@ export function fromRdfFunctionDeclarations(
       parameters: [
         {
           name: "parameters",
-          type: `Parameters<typeof ${this.name}._propertiesFromRdf>[0]`,
+          type: `Parameters<typeof ${this.staticModuleName}._propertiesFromRdf>[0]`,
         },
       ],
       returnType: `purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>`,

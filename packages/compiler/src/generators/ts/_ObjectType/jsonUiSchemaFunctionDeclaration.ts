@@ -17,7 +17,7 @@ export function jsonUiSchemaFunctionDeclaration(
   const elements: string[] = this.parentObjectTypes
     .map(
       (parentObjectType) =>
-        `${parentObjectType.name}Static.jsonUiSchema({ scopePrefix })`,
+        `${parentObjectType.staticModuleName}.jsonUiSchema({ scopePrefix })`,
     )
     .concat(
       this.ownProperties.flatMap((property) =>

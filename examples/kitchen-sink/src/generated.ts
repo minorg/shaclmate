@@ -918,7 +918,9 @@ export class UnionPropertiesNodeShape {
 }
 
 export namespace UnionPropertiesNodeShape {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -1120,7 +1122,6 @@ export namespace UnionPropertiesNodeShape {
               .chain((_resource) =>
                 NonClassNodeShape.fromRdf({
                   ..._context,
-                  ignoreRdfType: true,
                   languageIn: _languageIn,
                   resource: _resource,
                 }),
@@ -2550,7 +2551,9 @@ export class TermPropertiesNodeShape {
 }
 
 export namespace TermPropertiesNodeShape {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3678,7 +3681,9 @@ export class PropertyVisibilitiesNodeShape {
 }
 
 export namespace PropertyVisibilitiesNodeShape {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4210,7 +4215,9 @@ export class PropertyCardinalitiesNodeShape {
 }
 
 export namespace PropertyCardinalitiesNodeShape {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4439,6 +4446,7 @@ export namespace PropertyCardinalitiesNodeShape {
       emptyStringSetProperty: zod
         .string()
         .array()
+        .default(() => [])
         .describe("Set: minCount implicitly=0, no maxCount or maxCount > 1"),
       nonEmptyStringSetProperty: zod
         .string()
@@ -4801,7 +4809,9 @@ export class OrderedPropertiesNodeShape {
 }
 
 export namespace OrderedPropertiesNodeShape {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5703,7 +5713,9 @@ export class MutablePropertiesNodeShape {
 }
 
 export namespace MutablePropertiesNodeShape {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5911,6 +5923,7 @@ export namespace MutablePropertiesNodeShape {
       mutableSetProperty: zod
         .string()
         .array()
+        .default(() => [])
         .describe(
           "Set-valued property that can't be reassigned but whose value can be mutated",
         ),
@@ -6533,7 +6546,9 @@ export class ListPropertiesNodeShape {
 }
 
 export namespace ListPropertiesNodeShape {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -7401,7 +7416,9 @@ export class LanguageInPropertiesNodeShape {
 }
 
 export namespace LanguageInPropertiesNodeShape {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8026,7 +8043,9 @@ export namespace InterfaceUnionNodeShapeMember2b {
       );
   }
 
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8155,14 +8174,14 @@ export namespace InterfaceUnionNodeShapeMember2b {
   ): HasherT {
     _hasher.update(_interfaceUnionNodeShapeMember2b.identifier.value);
     _hasher.update(_interfaceUnionNodeShapeMember2b.type);
-    InterfaceUnionNodeShapeMember2b._hashShaclProperties(
+    InterfaceUnionNodeShapeMember2b.hashShaclProperties(
       _interfaceUnionNodeShapeMember2b,
       _hasher,
     );
     return _hasher;
   }
 
-  export function _hashShaclProperties<
+  export function hashShaclProperties<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
@@ -8369,7 +8388,9 @@ export namespace InterfaceUnionNodeShapeMember2a {
       );
   }
 
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8498,14 +8519,14 @@ export namespace InterfaceUnionNodeShapeMember2a {
   ): HasherT {
     _hasher.update(_interfaceUnionNodeShapeMember2a.identifier.value);
     _hasher.update(_interfaceUnionNodeShapeMember2a.type);
-    InterfaceUnionNodeShapeMember2a._hashShaclProperties(
+    InterfaceUnionNodeShapeMember2a.hashShaclProperties(
       _interfaceUnionNodeShapeMember2a,
       _hasher,
     );
     return _hasher;
   }
 
-  export function _hashShaclProperties<
+  export function hashShaclProperties<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
@@ -8712,7 +8733,9 @@ export namespace InterfaceUnionNodeShapeMember1 {
       );
   }
 
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8838,14 +8861,14 @@ export namespace InterfaceUnionNodeShapeMember1 {
   ): HasherT {
     _hasher.update(_interfaceUnionNodeShapeMember1.identifier.value);
     _hasher.update(_interfaceUnionNodeShapeMember1.type);
-    InterfaceUnionNodeShapeMember1._hashShaclProperties(
+    InterfaceUnionNodeShapeMember1.hashShaclProperties(
       _interfaceUnionNodeShapeMember1,
       _hasher,
     );
     return _hasher;
   }
 
-  export function _hashShaclProperties<
+  export function hashShaclProperties<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
@@ -9055,7 +9078,9 @@ export namespace InterfaceNodeShape {
       );
   }
 
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9173,11 +9198,11 @@ export namespace InterfaceNodeShape {
   >(_interfaceNodeShape: InterfaceNodeShape, _hasher: HasherT): HasherT {
     _hasher.update(_interfaceNodeShape.identifier.value);
     _hasher.update(_interfaceNodeShape.type);
-    InterfaceNodeShape._hashShaclProperties(_interfaceNodeShape, _hasher);
+    InterfaceNodeShape.hashShaclProperties(_interfaceNodeShape, _hasher);
     return _hasher;
   }
 
-  export function _hashShaclProperties<
+  export function hashShaclProperties<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
@@ -9630,7 +9655,9 @@ export class InPropertiesNodeShape {
 }
 
 export namespace InPropertiesNodeShape {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9727,20 +9754,22 @@ export namespace InPropertiesNodeShape {
         )
         .head()
         .chain((_value) =>
-          _value.toBoolean().chain((value) =>
-            value === true
-              ? purify.Either.of(value)
-              : purify.Left(
-                  new rdfjsResource.Resource.MistypedValueError({
-                    actualValue: rdfLiteral.toRdf(value),
-                    expectedValueType: "true",
-                    focusResource: _resource,
-                    predicate: dataFactory.namedNode(
-                      "http://example.com/inBooleansProperty",
-                    ),
-                  }),
-                ),
-          ),
+          _value
+            .toBoolean()
+            .chain((value) =>
+              value === true
+                ? purify.Either.of(value)
+                : purify.Left(
+                    new rdfjsResource.Resource.MistypedValueError({
+                      actualValue: rdfLiteral.toRdf(value),
+                      expectedValueType: "true",
+                      focusResource: _resource,
+                      predicate: dataFactory.namedNode(
+                        "http://example.com/inBooleansProperty",
+                      ),
+                    }),
+                  ),
+            ),
         )
         .toMaybe(),
     );
@@ -10336,7 +10365,9 @@ export class InIdentifierNodeShape {
 }
 
 export namespace InIdentifierNodeShape {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.NamedNode<
@@ -10763,7 +10794,9 @@ export class HasValuePropertiesNodeShape {
 }
 
 export namespace HasValuePropertiesNodeShape {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11913,7 +11946,9 @@ export class ExternPropertiesNodeShape {
 }
 
 export namespace ExternPropertiesNodeShape {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13013,7 +13048,9 @@ export class DefaultValuePropertiesNodeShape {
 }
 
 export namespace DefaultValuePropertiesNodeShape {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13566,7 +13603,7 @@ export interface BaseInterfaceWithPropertiesNodeShape {
   readonly baseStringProperty: string;
 }
 
-export namespace BaseInterfaceWithPropertiesNodeShape {
+export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
   export function create(parameters: {
     readonly identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly baseStringProperty: string;
@@ -13621,7 +13658,9 @@ export namespace BaseInterfaceWithPropertiesNodeShape {
       );
   }
 
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13633,8 +13672,7 @@ export namespace BaseInterfaceWithPropertiesNodeShape {
       baseStringProperty: string;
     }
   > {
-    const _jsonSafeParseResult =
-      baseInterfaceWithPropertiesNodeShapeJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
@@ -13652,12 +13690,11 @@ export namespace BaseInterfaceWithPropertiesNodeShape {
     json: unknown,
   ): purify.Either<zod.ZodError, BaseInterfaceWithPropertiesNodeShape> {
     return (
-      BaseInterfaceWithoutPropertiesNodeShape.fromJson(json) as purify.Either<
-        zod.ZodError,
-        BaseInterfaceWithPropertiesNodeShape
-      >
+      BaseInterfaceWithoutPropertiesNodeShapeStatic.fromJson(
+        json,
+      ) as purify.Either<zod.ZodError, BaseInterfaceWithPropertiesNodeShape>
     ).altLazy(() =>
-      BaseInterfaceWithPropertiesNodeShape._propertiesFromJson(json),
+      BaseInterfaceWithPropertiesNodeShapeStatic._propertiesFromJson(json),
     );
   }
 
@@ -13724,7 +13761,7 @@ export namespace BaseInterfaceWithPropertiesNodeShape {
 
   export function fromRdf(
     parameters: Parameters<
-      typeof BaseInterfaceWithPropertiesNodeShape._propertiesFromRdf
+      typeof BaseInterfaceWithPropertiesNodeShapeStatic._propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
@@ -13732,14 +13769,14 @@ export namespace BaseInterfaceWithPropertiesNodeShape {
   > {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      BaseInterfaceWithoutPropertiesNodeShape.fromRdf(
+      BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdf(
         otherParameters,
       ) as purify.Either<
         rdfjsResource.Resource.ValueError,
         BaseInterfaceWithPropertiesNodeShape
       >
     ).altLazy(() =>
-      BaseInterfaceWithPropertiesNodeShape._propertiesFromRdf(parameters),
+      BaseInterfaceWithPropertiesNodeShapeStatic._propertiesFromRdf(parameters),
     );
   }
 
@@ -13748,12 +13785,10 @@ export namespace BaseInterfaceWithPropertiesNodeShape {
   );
 
   export function jsonSchema() {
-    return zodToJsonSchema(baseInterfaceWithPropertiesNodeShapeJsonZodSchema());
+    return zodToJsonSchema(jsonZodSchema());
   }
 
-  export function baseInterfaceWithPropertiesNodeShapeJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -13783,7 +13818,7 @@ export namespace BaseInterfaceWithPropertiesNodeShape {
     };
   }
 
-  export function baseInterfaceWithPropertiesNodeShapeJsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.enum([
@@ -13796,7 +13831,7 @@ export namespace BaseInterfaceWithPropertiesNodeShape {
     });
   }
 
-  export function hashBaseInterfaceWithPropertiesNodeShape<
+  export function hash<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
@@ -13806,14 +13841,14 @@ export namespace BaseInterfaceWithPropertiesNodeShape {
   ): HasherT {
     _hasher.update(_baseInterfaceWithPropertiesNodeShape.identifier.value);
     _hasher.update(_baseInterfaceWithPropertiesNodeShape.type);
-    BaseInterfaceWithPropertiesNodeShape._hashBaseInterfaceWithPropertiesNodeShapeShaclProperties(
+    BaseInterfaceWithPropertiesNodeShapeStatic.hashShaclProperties(
       _baseInterfaceWithPropertiesNodeShape,
       _hasher,
     );
     return _hasher;
   }
 
-  export function _hashBaseInterfaceWithPropertiesNodeShapeShaclProperties<
+  export function hashShaclProperties<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
@@ -13839,14 +13874,13 @@ export namespace BaseInterfaceWithPropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        BaseInterfaceWithPropertiesNodeShape.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        BaseInterfaceWithPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
+          { ignoreRdfType, subject },
+        ),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        BaseInterfaceWithPropertiesNodeShape.sparqlWherePatterns({
+        BaseInterfaceWithPropertiesNodeShapeStatic.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -13863,7 +13897,9 @@ export namespace BaseInterfaceWithPropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      BaseInterfaceWithPropertiesNodeShape.sparqlConstructQuery(parameters),
+      BaseInterfaceWithPropertiesNodeShapeStatic.sparqlConstructQuery(
+        parameters,
+      ),
     );
   }
 
@@ -13985,7 +14021,7 @@ export namespace BaseInterfaceWithPropertiesNodeShape {
         baseStringProperty:
           _baseInterfaceWithPropertiesNodeShape.baseStringProperty,
       } satisfies ReturnType<
-        typeof BaseInterfaceWithPropertiesNodeShape.toJson
+        typeof BaseInterfaceWithPropertiesNodeShapeStatic.toJson
       >),
     );
   }
@@ -14036,11 +14072,11 @@ export interface BaseInterfaceWithoutPropertiesNodeShape
     | "ConcreteParentInterfaceNodeShape";
 }
 
-export namespace BaseInterfaceWithoutPropertiesNodeShape {
+export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
   export function create(
     parameters: {
       readonly identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    } & Parameters<typeof BaseInterfaceWithPropertiesNodeShape.create>[0],
+    } & Parameters<typeof BaseInterfaceWithPropertiesNodeShapeStatic.create>[0],
   ): BaseInterfaceWithoutPropertiesNodeShape {
     let identifier: rdfjs.BlankNode | rdfjs.NamedNode;
     if (typeof parameters.identifier === "object") {
@@ -14053,7 +14089,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShape {
 
     const type = "BaseInterfaceWithoutPropertiesNodeShape" as const;
     return {
-      ...BaseInterfaceWithPropertiesNodeShape.create(parameters),
+      ...BaseInterfaceWithPropertiesNodeShapeStatic.create(parameters),
       identifier,
       type,
     };
@@ -14063,10 +14099,12 @@ export namespace BaseInterfaceWithoutPropertiesNodeShape {
     left: BaseInterfaceWithoutPropertiesNodeShape,
     right: BaseInterfaceWithoutPropertiesNodeShape,
   ): EqualsResult {
-    return BaseInterfaceWithPropertiesNodeShape.equals(left, right);
+    return BaseInterfaceWithPropertiesNodeShapeStatic.equals(left, right);
   }
 
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14076,19 +14114,20 @@ export namespace BaseInterfaceWithoutPropertiesNodeShape {
         | "ConcreteParentInterfaceNodeShape";
     } & UnwrapR<
       ReturnType<
-        typeof BaseInterfaceWithPropertiesNodeShape._propertiesFromJson
+        typeof BaseInterfaceWithPropertiesNodeShapeStatic._propertiesFromJson
       >
     >
   > {
-    const _jsonSafeParseResult =
-      baseInterfaceWithoutPropertiesNodeShapeJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
     const _super0Either =
-      BaseInterfaceWithPropertiesNodeShape._propertiesFromJson(_jsonObject);
+      BaseInterfaceWithPropertiesNodeShapeStatic._propertiesFromJson(
+        _jsonObject,
+      );
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -14105,12 +14144,12 @@ export namespace BaseInterfaceWithoutPropertiesNodeShape {
     json: unknown,
   ): purify.Either<zod.ZodError, BaseInterfaceWithoutPropertiesNodeShape> {
     return (
-      ConcreteParentInterfaceNodeShape.fromJson(json) as purify.Either<
+      ConcreteParentInterfaceNodeShapeStatic.fromJson(json) as purify.Either<
         zod.ZodError,
         BaseInterfaceWithoutPropertiesNodeShape
       >
     ).altLazy(() =>
-      BaseInterfaceWithoutPropertiesNodeShape._propertiesFromJson(json),
+      BaseInterfaceWithoutPropertiesNodeShapeStatic._propertiesFromJson(json),
     );
   }
 
@@ -14134,11 +14173,13 @@ export namespace BaseInterfaceWithoutPropertiesNodeShape {
         | "ConcreteChildInterfaceNodeShape"
         | "ConcreteParentInterfaceNodeShape";
     } & UnwrapR<
-      ReturnType<typeof BaseInterfaceWithPropertiesNodeShape._propertiesFromRdf>
+      ReturnType<
+        typeof BaseInterfaceWithPropertiesNodeShapeStatic._propertiesFromRdf
+      >
     >
   > {
     const _super0Either =
-      BaseInterfaceWithPropertiesNodeShape._propertiesFromRdf({
+      BaseInterfaceWithPropertiesNodeShapeStatic._propertiesFromRdf({
         ..._context,
         ignoreRdfType: true,
         languageIn: _languageIn,
@@ -14175,7 +14216,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShape {
 
   export function fromRdf(
     parameters: Parameters<
-      typeof BaseInterfaceWithoutPropertiesNodeShape._propertiesFromRdf
+      typeof BaseInterfaceWithoutPropertiesNodeShapeStatic._propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
@@ -14183,14 +14224,16 @@ export namespace BaseInterfaceWithoutPropertiesNodeShape {
   > {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      ConcreteParentInterfaceNodeShape.fromRdf(
+      ConcreteParentInterfaceNodeShapeStatic.fromRdf(
         otherParameters,
       ) as purify.Either<
         rdfjsResource.Resource.ValueError,
         BaseInterfaceWithoutPropertiesNodeShape
       >
     ).altLazy(() =>
-      BaseInterfaceWithoutPropertiesNodeShape._propertiesFromRdf(parameters),
+      BaseInterfaceWithoutPropertiesNodeShapeStatic._propertiesFromRdf(
+        parameters,
+      ),
     );
   }
 
@@ -14199,28 +14242,24 @@ export namespace BaseInterfaceWithoutPropertiesNodeShape {
   );
 
   export function jsonSchema() {
-    return zodToJsonSchema(
-      baseInterfaceWithoutPropertiesNodeShapeJsonZodSchema(),
-    );
+    return zodToJsonSchema(jsonZodSchema());
   }
 
-  export function baseInterfaceWithoutPropertiesNodeShapeJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
-        BaseInterfaceWithPropertiesNodeShape.baseInterfaceWithPropertiesNodeShapeJsonUiSchema(
-          { scopePrefix },
-        ),
+        BaseInterfaceWithPropertiesNodeShapeStatic.jsonUiSchema({
+          scopePrefix,
+        }),
       ],
       label: "BaseInterfaceWithoutPropertiesNodeShape",
       type: "Group",
     };
   }
 
-  export function baseInterfaceWithoutPropertiesNodeShapeJsonZodSchema() {
-    return BaseInterfaceWithPropertiesNodeShape.baseInterfaceWithPropertiesNodeShapeJsonZodSchema().merge(
+  export function jsonZodSchema() {
+    return BaseInterfaceWithPropertiesNodeShapeStatic.jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
@@ -14232,7 +14271,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShape {
     );
   }
 
-  export function hashBaseInterfaceWithoutPropertiesNodeShape<
+  export function hash<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
@@ -14240,14 +14279,14 @@ export namespace BaseInterfaceWithoutPropertiesNodeShape {
     _baseInterfaceWithoutPropertiesNodeShape: BaseInterfaceWithoutPropertiesNodeShape,
     _hasher: HasherT,
   ): HasherT {
-    BaseInterfaceWithoutPropertiesNodeShape._hashBaseInterfaceWithoutPropertiesNodeShapeShaclProperties(
+    BaseInterfaceWithoutPropertiesNodeShapeStatic.hashShaclProperties(
       _baseInterfaceWithoutPropertiesNodeShape,
       _hasher,
     );
     return _hasher;
   }
 
-  export function _hashBaseInterfaceWithoutPropertiesNodeShapeShaclProperties<
+  export function hashShaclProperties<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
@@ -14255,7 +14294,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShape {
     _baseInterfaceWithoutPropertiesNodeShape: BaseInterfaceWithoutPropertiesNodeShape,
     _hasher: HasherT,
   ): HasherT {
-    BaseInterfaceWithPropertiesNodeShape._hashBaseInterfaceWithPropertiesNodeShapeShaclProperties(
+    BaseInterfaceWithPropertiesNodeShapeStatic.hashShaclProperties(
       _baseInterfaceWithoutPropertiesNodeShape,
       _hasher,
     );
@@ -14276,14 +14315,13 @@ export namespace BaseInterfaceWithoutPropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        BaseInterfaceWithoutPropertiesNodeShape.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
+          { ignoreRdfType, subject },
+        ),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        BaseInterfaceWithoutPropertiesNodeShape.sparqlWherePatterns({
+        BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -14300,7 +14338,9 @@ export namespace BaseInterfaceWithoutPropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      BaseInterfaceWithoutPropertiesNodeShape.sparqlConstructQuery(parameters),
+      BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlConstructQuery(
+        parameters,
+      ),
     );
   }
 
@@ -14318,11 +14358,9 @@ export namespace BaseInterfaceWithoutPropertiesNodeShape {
         ? subject.value
         : "baseInterfaceWithoutPropertiesNodeShape");
     return [
-      ...BaseInterfaceWithPropertiesNodeShape.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
+      ...BaseInterfaceWithPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
+        { ignoreRdfType: true, subject, variablePrefix },
+      ),
       ...(parameters?.ignoreRdfType
         ? []
         : [
@@ -14351,7 +14389,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShape {
         ? subject.value
         : "baseInterfaceWithoutPropertiesNodeShape");
     return [
-      ...BaseInterfaceWithPropertiesNodeShape.sparqlWherePatterns({
+      ...BaseInterfaceWithPropertiesNodeShapeStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -14391,14 +14429,14 @@ export namespace BaseInterfaceWithoutPropertiesNodeShape {
 
   export function toJson(
     _baseInterfaceWithoutPropertiesNodeShape: BaseInterfaceWithoutPropertiesNodeShape,
-  ): ReturnType<typeof BaseInterfaceWithPropertiesNodeShape.toJson> {
+  ): ReturnType<typeof BaseInterfaceWithPropertiesNodeShapeStatic.toJson> {
     return JSON.parse(
       JSON.stringify({
-        ...BaseInterfaceWithPropertiesNodeShape.toJson(
+        ...BaseInterfaceWithPropertiesNodeShapeStatic.toJson(
           _baseInterfaceWithoutPropertiesNodeShape,
         ),
       } satisfies ReturnType<
-        typeof BaseInterfaceWithoutPropertiesNodeShape.toJson
+        typeof BaseInterfaceWithoutPropertiesNodeShapeStatic.toJson
       >),
     );
   }
@@ -14415,7 +14453,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShape {
       resourceSet: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    const _resource = BaseInterfaceWithPropertiesNodeShape.toRdf(
+    const _resource = BaseInterfaceWithPropertiesNodeShapeStatic.toRdf(
       _baseInterfaceWithoutPropertiesNodeShape,
       { ignoreRdfType: true, mutateGraph, resourceSet },
     );
@@ -14445,12 +14483,14 @@ export interface ConcreteParentInterfaceNodeShape
   readonly parentStringProperty: string;
 }
 
-export namespace ConcreteParentInterfaceNodeShape {
+export namespace ConcreteParentInterfaceNodeShapeStatic {
   export function create(
     parameters: {
       readonly identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
       readonly parentStringProperty: string;
-    } & Parameters<typeof BaseInterfaceWithoutPropertiesNodeShape.create>[0],
+    } & Parameters<
+      typeof BaseInterfaceWithoutPropertiesNodeShapeStatic.create
+    >[0],
   ): ConcreteParentInterfaceNodeShape {
     let identifier: rdfjs.BlankNode | rdfjs.NamedNode;
     if (typeof parameters.identifier === "object") {
@@ -14464,7 +14504,7 @@ export namespace ConcreteParentInterfaceNodeShape {
     const type = "ConcreteParentInterfaceNodeShape" as const;
     const parentStringProperty = parameters.parentStringProperty;
     return {
-      ...BaseInterfaceWithoutPropertiesNodeShape.create(parameters),
+      ...BaseInterfaceWithoutPropertiesNodeShapeStatic.create(parameters),
       identifier,
       type,
       parentStringProperty,
@@ -14475,22 +14515,26 @@ export namespace ConcreteParentInterfaceNodeShape {
     left: ConcreteParentInterfaceNodeShape,
     right: ConcreteParentInterfaceNodeShape,
   ): EqualsResult {
-    return BaseInterfaceWithoutPropertiesNodeShape.equals(left, right).chain(
-      () =>
-        strictEquals(
-          left.parentStringProperty,
-          right.parentStringProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: left,
-          right: right,
-          propertyName: "parentStringProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
+    return BaseInterfaceWithoutPropertiesNodeShapeStatic.equals(
+      left,
+      right,
+    ).chain(() =>
+      strictEquals(
+        left.parentStringProperty,
+        right.parentStringProperty,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: left,
+        right: right,
+        propertyName: "parentStringProperty",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
     );
   }
 
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14500,19 +14544,20 @@ export namespace ConcreteParentInterfaceNodeShape {
       parentStringProperty: string;
     } & UnwrapR<
       ReturnType<
-        typeof BaseInterfaceWithoutPropertiesNodeShape._propertiesFromJson
+        typeof BaseInterfaceWithoutPropertiesNodeShapeStatic._propertiesFromJson
       >
     >
   > {
-    const _jsonSafeParseResult =
-      concreteParentInterfaceNodeShapeJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
     const _super0Either =
-      BaseInterfaceWithoutPropertiesNodeShape._propertiesFromJson(_jsonObject);
+      BaseInterfaceWithoutPropertiesNodeShapeStatic._propertiesFromJson(
+        _jsonObject,
+      );
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -14539,7 +14584,9 @@ export namespace ConcreteParentInterfaceNodeShape {
         zod.ZodError,
         ConcreteParentInterfaceNodeShape
       >
-    ).altLazy(() => ConcreteParentInterfaceNodeShape._propertiesFromJson(json));
+    ).altLazy(() =>
+      ConcreteParentInterfaceNodeShapeStatic._propertiesFromJson(json),
+    );
   }
 
   export function _propertiesFromRdf({
@@ -14563,12 +14610,12 @@ export namespace ConcreteParentInterfaceNodeShape {
       parentStringProperty: string;
     } & UnwrapR<
       ReturnType<
-        typeof BaseInterfaceWithoutPropertiesNodeShape._propertiesFromRdf
+        typeof BaseInterfaceWithoutPropertiesNodeShapeStatic._propertiesFromRdf
       >
     >
   > {
     const _super0Either =
-      BaseInterfaceWithoutPropertiesNodeShape._propertiesFromRdf({
+      BaseInterfaceWithoutPropertiesNodeShapeStatic._propertiesFromRdf({
         ..._context,
         ignoreRdfType: true,
         languageIn: _languageIn,
@@ -14625,7 +14672,7 @@ export namespace ConcreteParentInterfaceNodeShape {
 
   export function fromRdf(
     parameters: Parameters<
-      typeof ConcreteParentInterfaceNodeShape._propertiesFromRdf
+      typeof ConcreteParentInterfaceNodeShapeStatic._propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
@@ -14638,7 +14685,7 @@ export namespace ConcreteParentInterfaceNodeShape {
         ConcreteParentInterfaceNodeShape
       >
     ).altLazy(() =>
-      ConcreteParentInterfaceNodeShape._propertiesFromRdf(parameters),
+      ConcreteParentInterfaceNodeShapeStatic._propertiesFromRdf(parameters),
     );
   }
 
@@ -14647,18 +14694,16 @@ export namespace ConcreteParentInterfaceNodeShape {
   );
 
   export function jsonSchema() {
-    return zodToJsonSchema(concreteParentInterfaceNodeShapeJsonZodSchema());
+    return zodToJsonSchema(jsonZodSchema());
   }
 
-  export function concreteParentInterfaceNodeShapeJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
-        BaseInterfaceWithoutPropertiesNodeShape.baseInterfaceWithoutPropertiesNodeShapeJsonUiSchema(
-          { scopePrefix },
-        ),
+        BaseInterfaceWithoutPropertiesNodeShapeStatic.jsonUiSchema({
+          scopePrefix,
+        }),
         {
           scope: `${scopePrefix}/properties/parentStringProperty`,
           type: "Control",
@@ -14669,8 +14714,8 @@ export namespace ConcreteParentInterfaceNodeShape {
     };
   }
 
-  export function concreteParentInterfaceNodeShapeJsonZodSchema() {
-    return BaseInterfaceWithoutPropertiesNodeShape.baseInterfaceWithoutPropertiesNodeShapeJsonZodSchema().merge(
+  export function jsonZodSchema() {
+    return BaseInterfaceWithoutPropertiesNodeShapeStatic.jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
@@ -14682,7 +14727,7 @@ export namespace ConcreteParentInterfaceNodeShape {
     );
   }
 
-  export function hashConcreteParentInterfaceNodeShape<
+  export function hash<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
@@ -14690,14 +14735,14 @@ export namespace ConcreteParentInterfaceNodeShape {
     _concreteParentInterfaceNodeShape: ConcreteParentInterfaceNodeShape,
     _hasher: HasherT,
   ): HasherT {
-    ConcreteParentInterfaceNodeShape._hashConcreteParentInterfaceNodeShapeShaclProperties(
+    ConcreteParentInterfaceNodeShapeStatic.hashShaclProperties(
       _concreteParentInterfaceNodeShape,
       _hasher,
     );
     return _hasher;
   }
 
-  export function _hashConcreteParentInterfaceNodeShapeShaclProperties<
+  export function hashShaclProperties<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
@@ -14705,7 +14750,7 @@ export namespace ConcreteParentInterfaceNodeShape {
     _concreteParentInterfaceNodeShape: ConcreteParentInterfaceNodeShape,
     _hasher: HasherT,
   ): HasherT {
-    BaseInterfaceWithoutPropertiesNodeShape._hashBaseInterfaceWithoutPropertiesNodeShapeShaclProperties(
+    BaseInterfaceWithoutPropertiesNodeShapeStatic.hashShaclProperties(
       _concreteParentInterfaceNodeShape,
       _hasher,
     );
@@ -14727,14 +14772,14 @@ export namespace ConcreteParentInterfaceNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ConcreteParentInterfaceNodeShape.sparqlConstructTemplateTriples({
+        ConcreteParentInterfaceNodeShapeStatic.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ConcreteParentInterfaceNodeShape.sparqlWherePatterns({
+        ConcreteParentInterfaceNodeShapeStatic.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -14751,7 +14796,7 @@ export namespace ConcreteParentInterfaceNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ConcreteParentInterfaceNodeShape.sparqlConstructQuery(parameters),
+      ConcreteParentInterfaceNodeShapeStatic.sparqlConstructQuery(parameters),
     );
   }
 
@@ -14769,7 +14814,7 @@ export namespace ConcreteParentInterfaceNodeShape {
         ? subject.value
         : "concreteParentInterfaceNodeShape");
     return [
-      ...BaseInterfaceWithoutPropertiesNodeShape.sparqlConstructTemplateTriples(
+      ...BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
         { ignoreRdfType: true, subject, variablePrefix },
       ),
       ...(parameters?.ignoreRdfType
@@ -14807,7 +14852,7 @@ export namespace ConcreteParentInterfaceNodeShape {
         ? subject.value
         : "concreteParentInterfaceNodeShape");
     return [
-      ...BaseInterfaceWithoutPropertiesNodeShape.sparqlWherePatterns({
+      ...BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -14862,16 +14907,18 @@ export namespace ConcreteParentInterfaceNodeShape {
   export function toJson(
     _concreteParentInterfaceNodeShape: ConcreteParentInterfaceNodeShape,
   ): { readonly parentStringProperty: string } & ReturnType<
-    typeof BaseInterfaceWithoutPropertiesNodeShape.toJson
+    typeof BaseInterfaceWithoutPropertiesNodeShapeStatic.toJson
   > {
     return JSON.parse(
       JSON.stringify({
-        ...BaseInterfaceWithoutPropertiesNodeShape.toJson(
+        ...BaseInterfaceWithoutPropertiesNodeShapeStatic.toJson(
           _concreteParentInterfaceNodeShape,
         ),
         parentStringProperty:
           _concreteParentInterfaceNodeShape.parentStringProperty,
-      } satisfies ReturnType<typeof ConcreteParentInterfaceNodeShape.toJson>),
+      } satisfies ReturnType<
+        typeof ConcreteParentInterfaceNodeShapeStatic.toJson
+      >),
     );
   }
 
@@ -14887,7 +14934,7 @@ export namespace ConcreteParentInterfaceNodeShape {
       resourceSet: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    const _resource = BaseInterfaceWithoutPropertiesNodeShape.toRdf(
+    const _resource = BaseInterfaceWithoutPropertiesNodeShapeStatic.toRdf(
       _concreteParentInterfaceNodeShape,
       { ignoreRdfType: true, mutateGraph, resourceSet },
     );
@@ -14924,7 +14971,7 @@ export namespace ConcreteChildInterfaceNodeShape {
     parameters: {
       readonly identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
       readonly childStringProperty: string;
-    } & Parameters<typeof ConcreteParentInterfaceNodeShape.create>[0],
+    } & Parameters<typeof ConcreteParentInterfaceNodeShapeStatic.create>[0],
   ): ConcreteChildInterfaceNodeShape {
     let identifier: rdfjs.BlankNode | rdfjs.NamedNode;
     if (typeof parameters.identifier === "object") {
@@ -14938,7 +14985,7 @@ export namespace ConcreteChildInterfaceNodeShape {
     const type = "ConcreteChildInterfaceNodeShape" as const;
     const childStringProperty = parameters.childStringProperty;
     return {
-      ...ConcreteParentInterfaceNodeShape.create(parameters),
+      ...ConcreteParentInterfaceNodeShapeStatic.create(parameters),
       identifier,
       type,
       childStringProperty,
@@ -14949,38 +14996,43 @@ export namespace ConcreteChildInterfaceNodeShape {
     left: ConcreteChildInterfaceNodeShape,
     right: ConcreteChildInterfaceNodeShape,
   ): EqualsResult {
-    return ConcreteParentInterfaceNodeShape.equals(left, right).chain(() =>
-      strictEquals(left.childStringProperty, right.childStringProperty).mapLeft(
-        (propertyValuesUnequal) => ({
+    return ConcreteParentInterfaceNodeShapeStatic.equals(left, right).chain(
+      () =>
+        strictEquals(
+          left.childStringProperty,
+          right.childStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
           left: left,
           right: right,
           propertyName: "childStringProperty",
           propertyValuesUnequal,
           type: "Property" as const,
-        }),
-      ),
+        })),
     );
   }
 
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       type: "ConcreteChildInterfaceNodeShape";
       childStringProperty: string;
     } & UnwrapR<
-      ReturnType<typeof ConcreteParentInterfaceNodeShape._propertiesFromJson>
+      ReturnType<
+        typeof ConcreteParentInterfaceNodeShapeStatic._propertiesFromJson
+      >
     >
   > {
-    const _jsonSafeParseResult =
-      concreteChildInterfaceNodeShapeJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
     const _super0Either =
-      ConcreteParentInterfaceNodeShape._propertiesFromJson(_jsonObject);
+      ConcreteParentInterfaceNodeShapeStatic._propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -15023,15 +15075,18 @@ export namespace ConcreteChildInterfaceNodeShape {
       type: "ConcreteChildInterfaceNodeShape";
       childStringProperty: string;
     } & UnwrapR<
-      ReturnType<typeof ConcreteParentInterfaceNodeShape._propertiesFromRdf>
+      ReturnType<
+        typeof ConcreteParentInterfaceNodeShapeStatic._propertiesFromRdf
+      >
     >
   > {
-    const _super0Either = ConcreteParentInterfaceNodeShape._propertiesFromRdf({
-      ..._context,
-      ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
-    });
+    const _super0Either =
+      ConcreteParentInterfaceNodeShapeStatic._propertiesFromRdf({
+        ..._context,
+        ignoreRdfType: true,
+        languageIn: _languageIn,
+        resource: _resource,
+      });
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -15096,18 +15151,14 @@ export namespace ConcreteChildInterfaceNodeShape {
   );
 
   export function jsonSchema() {
-    return zodToJsonSchema(concreteChildInterfaceNodeShapeJsonZodSchema());
+    return zodToJsonSchema(jsonZodSchema());
   }
 
-  export function concreteChildInterfaceNodeShapeJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
-        ConcreteParentInterfaceNodeShape.concreteParentInterfaceNodeShapeJsonUiSchema(
-          { scopePrefix },
-        ),
+        ConcreteParentInterfaceNodeShapeStatic.jsonUiSchema({ scopePrefix }),
         {
           scope: `${scopePrefix}/properties/childStringProperty`,
           type: "Control",
@@ -15118,8 +15169,8 @@ export namespace ConcreteChildInterfaceNodeShape {
     };
   }
 
-  export function concreteChildInterfaceNodeShapeJsonZodSchema() {
-    return ConcreteParentInterfaceNodeShape.concreteParentInterfaceNodeShapeJsonZodSchema().merge(
+  export function jsonZodSchema() {
+    return ConcreteParentInterfaceNodeShapeStatic.jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
         type: zod.literal("ConcreteChildInterfaceNodeShape"),
@@ -15128,7 +15179,7 @@ export namespace ConcreteChildInterfaceNodeShape {
     );
   }
 
-  export function hashConcreteChildInterfaceNodeShape<
+  export function hash<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
@@ -15136,14 +15187,14 @@ export namespace ConcreteChildInterfaceNodeShape {
     _concreteChildInterfaceNodeShape: ConcreteChildInterfaceNodeShape,
     _hasher: HasherT,
   ): HasherT {
-    ConcreteChildInterfaceNodeShape._hashConcreteChildInterfaceNodeShapeShaclProperties(
+    ConcreteChildInterfaceNodeShape.hashShaclProperties(
       _concreteChildInterfaceNodeShape,
       _hasher,
     );
     return _hasher;
   }
 
-  export function _hashConcreteChildInterfaceNodeShapeShaclProperties<
+  export function hashShaclProperties<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
@@ -15151,7 +15202,7 @@ export namespace ConcreteChildInterfaceNodeShape {
     _concreteChildInterfaceNodeShape: ConcreteChildInterfaceNodeShape,
     _hasher: HasherT,
   ): HasherT {
-    ConcreteParentInterfaceNodeShape._hashConcreteParentInterfaceNodeShapeShaclProperties(
+    ConcreteParentInterfaceNodeShapeStatic.hashShaclProperties(
       _concreteChildInterfaceNodeShape,
       _hasher,
     );
@@ -15215,7 +15266,7 @@ export namespace ConcreteChildInterfaceNodeShape {
         ? subject.value
         : "concreteChildInterfaceNodeShape");
     return [
-      ...ConcreteParentInterfaceNodeShape.sparqlConstructTemplateTriples({
+      ...ConcreteParentInterfaceNodeShapeStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -15255,7 +15306,7 @@ export namespace ConcreteChildInterfaceNodeShape {
         ? subject.value
         : "concreteChildInterfaceNodeShape");
     return [
-      ...ConcreteParentInterfaceNodeShape.sparqlWherePatterns({
+      ...ConcreteParentInterfaceNodeShapeStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -15310,11 +15361,11 @@ export namespace ConcreteChildInterfaceNodeShape {
   export function toJson(
     _concreteChildInterfaceNodeShape: ConcreteChildInterfaceNodeShape,
   ): { readonly childStringProperty: string } & ReturnType<
-    typeof ConcreteParentInterfaceNodeShape.toJson
+    typeof ConcreteParentInterfaceNodeShapeStatic.toJson
   > {
     return JSON.parse(
       JSON.stringify({
-        ...ConcreteParentInterfaceNodeShape.toJson(
+        ...ConcreteParentInterfaceNodeShapeStatic.toJson(
           _concreteChildInterfaceNodeShape,
         ),
         childStringProperty:
@@ -15335,7 +15386,7 @@ export namespace ConcreteChildInterfaceNodeShape {
       resourceSet: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    const _resource = ConcreteParentInterfaceNodeShape.toRdf(
+    const _resource = ConcreteParentInterfaceNodeShapeStatic.toRdf(
       _concreteChildInterfaceNodeShape,
       { ignoreRdfType: true, mutateGraph, resourceSet },
     );
@@ -15494,15 +15545,14 @@ export abstract class AbstractBaseClassWithPropertiesNodeShape {
   }
 }
 
-export namespace AbstractBaseClassWithPropertiesNodeShape {
+export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
   export function _propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     { identifier: rdfjs.BlankNode | rdfjs.NamedNode; abcStringProperty: string }
   > {
-    const _jsonSafeParseResult =
-      abstractBaseClassWithPropertiesNodeShapeJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
@@ -15518,7 +15568,7 @@ export namespace AbstractBaseClassWithPropertiesNodeShape {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, AbstractBaseClassWithPropertiesNodeShape> {
-    return AbstractBaseClassWithoutPropertiesNodeShape.fromJson(
+    return AbstractBaseClassWithoutPropertiesNodeShapeStatic.fromJson(
       json,
     ) as purify.Either<zod.ZodError, AbstractBaseClassWithPropertiesNodeShape>;
   }
@@ -15558,14 +15608,14 @@ export namespace AbstractBaseClassWithPropertiesNodeShape {
 
   export function fromRdf(
     parameters: Parameters<
-      typeof AbstractBaseClassWithPropertiesNodeShape._propertiesFromRdf
+      typeof AbstractBaseClassWithPropertiesNodeShapeStatic._propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     AbstractBaseClassWithPropertiesNodeShape
   > {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
-    return AbstractBaseClassWithoutPropertiesNodeShape.fromRdf(
+    return AbstractBaseClassWithoutPropertiesNodeShapeStatic.fromRdf(
       otherParameters,
     ) as purify.Either<
       rdfjsResource.Resource.ValueError,
@@ -15574,14 +15624,10 @@ export namespace AbstractBaseClassWithPropertiesNodeShape {
   }
 
   export function jsonSchema() {
-    return zodToJsonSchema(
-      abstractBaseClassWithPropertiesNodeShapeJsonZodSchema(),
-    );
+    return zodToJsonSchema(jsonZodSchema());
   }
 
-  export function abstractBaseClassWithPropertiesNodeShapeJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -15611,7 +15657,7 @@ export namespace AbstractBaseClassWithPropertiesNodeShape {
     };
   }
 
-  export function abstractBaseClassWithPropertiesNodeShapeJsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.enum([
@@ -15636,13 +15682,13 @@ export namespace AbstractBaseClassWithPropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        AbstractBaseClassWithPropertiesNodeShape.sparqlConstructTemplateTriples(
+        AbstractBaseClassWithPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
           { ignoreRdfType, subject },
         ),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        AbstractBaseClassWithPropertiesNodeShape.sparqlWherePatterns({
+        AbstractBaseClassWithPropertiesNodeShapeStatic.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -15659,7 +15705,9 @@ export namespace AbstractBaseClassWithPropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      AbstractBaseClassWithPropertiesNodeShape.sparqlConstructQuery(parameters),
+      AbstractBaseClassWithPropertiesNodeShapeStatic.sparqlConstructQuery(
+        parameters,
+      ),
     );
   }
 
@@ -15761,28 +15809,27 @@ export abstract class AbstractBaseClassWithoutPropertiesNodeShape extends Abstra
   }
 }
 
-export namespace AbstractBaseClassWithoutPropertiesNodeShape {
+export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
   export function _propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
       ReturnType<
-        typeof AbstractBaseClassWithPropertiesNodeShape._propertiesFromJson
+        typeof AbstractBaseClassWithPropertiesNodeShapeStatic._propertiesFromJson
       >
     >
   > {
-    const _jsonSafeParseResult =
-      abstractBaseClassWithoutPropertiesNodeShapeJsonZodSchema().safeParse(
-        _json,
-      );
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
     const _super0Either =
-      AbstractBaseClassWithPropertiesNodeShape._propertiesFromJson(_jsonObject);
+      AbstractBaseClassWithPropertiesNodeShapeStatic._propertiesFromJson(
+        _jsonObject,
+      );
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -15797,7 +15844,7 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShape {
   export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, AbstractBaseClassWithoutPropertiesNodeShape> {
-    return ConcreteParentClassNodeShape.fromJson(json) as purify.Either<
+    return ConcreteParentClassNodeShapeStatic.fromJson(json) as purify.Either<
       zod.ZodError,
       AbstractBaseClassWithoutPropertiesNodeShape
     >;
@@ -15818,12 +15865,12 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShape {
     rdfjsResource.Resource.ValueError,
     { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
       ReturnType<
-        typeof AbstractBaseClassWithPropertiesNodeShape._propertiesFromRdf
+        typeof AbstractBaseClassWithPropertiesNodeShapeStatic._propertiesFromRdf
       >
     >
   > {
     const _super0Either =
-      AbstractBaseClassWithPropertiesNodeShape._propertiesFromRdf({
+      AbstractBaseClassWithPropertiesNodeShapeStatic._propertiesFromRdf({
         ..._context,
         ignoreRdfType: true,
         languageIn: _languageIn,
@@ -15840,14 +15887,14 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShape {
 
   export function fromRdf(
     parameters: Parameters<
-      typeof AbstractBaseClassWithoutPropertiesNodeShape._propertiesFromRdf
+      typeof AbstractBaseClassWithoutPropertiesNodeShapeStatic._propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     AbstractBaseClassWithoutPropertiesNodeShape
   > {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
-    return ConcreteParentClassNodeShape.fromRdf(
+    return ConcreteParentClassNodeShapeStatic.fromRdf(
       otherParameters,
     ) as purify.Either<
       rdfjsResource.Resource.ValueError,
@@ -15856,28 +15903,24 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShape {
   }
 
   export function jsonSchema() {
-    return zodToJsonSchema(
-      abstractBaseClassWithoutPropertiesNodeShapeJsonZodSchema(),
-    );
+    return zodToJsonSchema(jsonZodSchema());
   }
 
-  export function abstractBaseClassWithoutPropertiesNodeShapeJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
-        AbstractBaseClassWithPropertiesNodeShape.abstractBaseClassWithPropertiesNodeShapeJsonUiSchema(
-          { scopePrefix },
-        ),
+        AbstractBaseClassWithPropertiesNodeShapeStatic.jsonUiSchema({
+          scopePrefix,
+        }),
       ],
       label: "AbstractBaseClassWithoutPropertiesNodeShape",
       type: "Group",
     };
   }
 
-  export function abstractBaseClassWithoutPropertiesNodeShapeJsonZodSchema() {
-    return AbstractBaseClassWithPropertiesNodeShape.abstractBaseClassWithPropertiesNodeShapeJsonZodSchema().merge(
+  export function jsonZodSchema() {
+    return AbstractBaseClassWithPropertiesNodeShapeStatic.jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
@@ -15902,13 +15945,13 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        AbstractBaseClassWithoutPropertiesNodeShape.sparqlConstructTemplateTriples(
+        AbstractBaseClassWithoutPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
           { ignoreRdfType, subject },
         ),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        AbstractBaseClassWithoutPropertiesNodeShape.sparqlWherePatterns({
+        AbstractBaseClassWithoutPropertiesNodeShapeStatic.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -15925,7 +15968,7 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      AbstractBaseClassWithoutPropertiesNodeShape.sparqlConstructQuery(
+      AbstractBaseClassWithoutPropertiesNodeShapeStatic.sparqlConstructQuery(
         parameters,
       ),
     );
@@ -15945,7 +15988,7 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShape {
         ? subject.value
         : "abstractBaseClassWithoutPropertiesNodeShape");
     return [
-      ...AbstractBaseClassWithPropertiesNodeShape.sparqlConstructTemplateTriples(
+      ...AbstractBaseClassWithPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
         { ignoreRdfType: true, subject, variablePrefix },
       ),
     ];
@@ -15965,7 +16008,7 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShape {
         ? subject.value
         : "abstractBaseClassWithoutPropertiesNodeShape");
     return [
-      ...AbstractBaseClassWithPropertiesNodeShape.sparqlWherePatterns({
+      ...AbstractBaseClassWithPropertiesNodeShapeStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -16021,18 +16064,20 @@ export class ConcreteParentClassNodeShape extends AbstractBaseClassWithoutProper
   }
 
   override equals(other: ConcreteParentClassNodeShape): EqualsResult {
-    return super.equals(other).chain(() =>
-      strictEquals(
-        this.parentStringProperty,
-        other.parentStringProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "parentStringProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        strictEquals(
+          this.parentStringProperty,
+          other.parentStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "parentStringProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -16102,27 +16147,28 @@ export class ConcreteParentClassNodeShape extends AbstractBaseClassWithoutProper
   }
 }
 
-export namespace ConcreteParentClassNodeShape {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+export namespace ConcreteParentClassNodeShapeStatic {
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       parentStringProperty: string;
     } & UnwrapR<
       ReturnType<
-        typeof AbstractBaseClassWithoutPropertiesNodeShape._propertiesFromJson
+        typeof AbstractBaseClassWithoutPropertiesNodeShapeStatic._propertiesFromJson
       >
     >
   > {
-    const _jsonSafeParseResult =
-      concreteParentClassNodeShapeJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
     const _super0Either =
-      AbstractBaseClassWithoutPropertiesNodeShape._propertiesFromJson(
+      AbstractBaseClassWithoutPropertiesNodeShapeStatic._propertiesFromJson(
         _jsonObject,
       );
     if (_super0Either.isLeft()) {
@@ -16146,7 +16192,7 @@ export namespace ConcreteParentClassNodeShape {
         ConcreteParentClassNodeShape
       >
     ).altLazy(() =>
-      ConcreteParentClassNodeShape._propertiesFromJson(json).map(
+      ConcreteParentClassNodeShapeStatic._propertiesFromJson(json).map(
         (properties) => new ConcreteParentClassNodeShape(properties),
       ),
     );
@@ -16170,12 +16216,12 @@ export namespace ConcreteParentClassNodeShape {
       parentStringProperty: string;
     } & UnwrapR<
       ReturnType<
-        typeof AbstractBaseClassWithoutPropertiesNodeShape._propertiesFromRdf
+        typeof AbstractBaseClassWithoutPropertiesNodeShapeStatic._propertiesFromRdf
       >
     >
   > {
     const _super0Either =
-      AbstractBaseClassWithoutPropertiesNodeShape._propertiesFromRdf({
+      AbstractBaseClassWithoutPropertiesNodeShapeStatic._propertiesFromRdf({
         ..._context,
         ignoreRdfType: true,
         languageIn: _languageIn,
@@ -16226,7 +16272,7 @@ export namespace ConcreteParentClassNodeShape {
 
   export function fromRdf(
     parameters: Parameters<
-      typeof ConcreteParentClassNodeShape._propertiesFromRdf
+      typeof ConcreteParentClassNodeShapeStatic._propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
@@ -16239,7 +16285,7 @@ export namespace ConcreteParentClassNodeShape {
         ConcreteParentClassNodeShape
       >
     ).altLazy(() =>
-      ConcreteParentClassNodeShape._propertiesFromRdf(parameters).map(
+      ConcreteParentClassNodeShapeStatic._propertiesFromRdf(parameters).map(
         (properties) => new ConcreteParentClassNodeShape(properties),
       ),
     );
@@ -16250,18 +16296,16 @@ export namespace ConcreteParentClassNodeShape {
   );
 
   export function jsonSchema() {
-    return zodToJsonSchema(concreteParentClassNodeShapeJsonZodSchema());
+    return zodToJsonSchema(jsonZodSchema());
   }
 
-  export function concreteParentClassNodeShapeJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
-        AbstractBaseClassWithoutPropertiesNodeShape.abstractBaseClassWithoutPropertiesNodeShapeJsonUiSchema(
-          { scopePrefix },
-        ),
+        AbstractBaseClassWithoutPropertiesNodeShapeStatic.jsonUiSchema({
+          scopePrefix,
+        }),
         {
           scope: `${scopePrefix}/properties/parentStringProperty`,
           type: "Control",
@@ -16272,8 +16316,8 @@ export namespace ConcreteParentClassNodeShape {
     };
   }
 
-  export function concreteParentClassNodeShapeJsonZodSchema() {
-    return AbstractBaseClassWithoutPropertiesNodeShape.abstractBaseClassWithoutPropertiesNodeShapeJsonZodSchema().merge(
+  export function jsonZodSchema() {
+    return AbstractBaseClassWithoutPropertiesNodeShapeStatic.jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
@@ -16299,14 +16343,14 @@ export namespace ConcreteParentClassNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ConcreteParentClassNodeShape.sparqlConstructTemplateTriples({
+        ConcreteParentClassNodeShapeStatic.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ConcreteParentClassNodeShape.sparqlWherePatterns({
+        ConcreteParentClassNodeShapeStatic.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -16323,7 +16367,7 @@ export namespace ConcreteParentClassNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ConcreteParentClassNodeShape.sparqlConstructQuery(parameters),
+      ConcreteParentClassNodeShapeStatic.sparqlConstructQuery(parameters),
     );
   }
 
@@ -16341,7 +16385,7 @@ export namespace ConcreteParentClassNodeShape {
         ? subject.value
         : "concreteParentClassNodeShape");
     return [
-      ...AbstractBaseClassWithoutPropertiesNodeShape.sparqlConstructTemplateTriples(
+      ...AbstractBaseClassWithoutPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
         { ignoreRdfType: true, subject, variablePrefix },
       ),
       ...(parameters?.ignoreRdfType
@@ -16379,7 +16423,7 @@ export namespace ConcreteParentClassNodeShape {
         ? subject.value
         : "concreteParentClassNodeShape");
     return [
-      ...AbstractBaseClassWithoutPropertiesNodeShape.sparqlWherePatterns({
+      ...AbstractBaseClassWithoutPropertiesNodeShapeStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -16465,17 +16509,20 @@ export class ConcreteChildClassNodeShape extends ConcreteParentClassNodeShape {
   }
 
   override equals(other: ConcreteChildClassNodeShape): EqualsResult {
-    return super.equals(other).chain(() =>
-      strictEquals(this.childStringProperty, other.childStringProperty).mapLeft(
-        (propertyValuesUnequal) => ({
+    return super
+      .equals(other)
+      .chain(() =>
+        strictEquals(
+          this.childStringProperty,
+          other.childStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
           left: this,
           right: other,
           propertyName: "childStringProperty",
           propertyValuesUnequal,
           type: "Property" as const,
-        }),
-      ),
-    );
+        })),
+      );
   }
 
   override hash<
@@ -16546,24 +16593,25 @@ export class ConcreteChildClassNodeShape extends ConcreteParentClassNodeShape {
 }
 
 export namespace ConcreteChildClassNodeShape {
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export function _propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       childStringProperty: string;
     } & UnwrapR<
-      ReturnType<typeof ConcreteParentClassNodeShape._propertiesFromJson>
+      ReturnType<typeof ConcreteParentClassNodeShapeStatic._propertiesFromJson>
     >
   > {
-    const _jsonSafeParseResult =
-      concreteChildClassNodeShapeJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
 
     const _jsonObject = _jsonSafeParseResult.data;
     const _super0Either =
-      ConcreteParentClassNodeShape._propertiesFromJson(_jsonObject);
+      ConcreteParentClassNodeShapeStatic._propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -16601,15 +16649,17 @@ export namespace ConcreteChildClassNodeShape {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       childStringProperty: string;
     } & UnwrapR<
-      ReturnType<typeof ConcreteParentClassNodeShape._propertiesFromRdf>
+      ReturnType<typeof ConcreteParentClassNodeShapeStatic._propertiesFromRdf>
     >
   > {
-    const _super0Either = ConcreteParentClassNodeShape._propertiesFromRdf({
-      ..._context,
-      ignoreRdfType: true,
-      languageIn: _languageIn,
-      resource: _resource,
-    });
+    const _super0Either = ConcreteParentClassNodeShapeStatic._propertiesFromRdf(
+      {
+        ..._context,
+        ignoreRdfType: true,
+        languageIn: _languageIn,
+        resource: _resource,
+      },
+    );
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -16668,18 +16718,14 @@ export namespace ConcreteChildClassNodeShape {
   );
 
   export function jsonSchema() {
-    return zodToJsonSchema(concreteChildClassNodeShapeJsonZodSchema());
+    return zodToJsonSchema(jsonZodSchema());
   }
 
-  export function concreteChildClassNodeShapeJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
-        ConcreteParentClassNodeShape.concreteParentClassNodeShapeJsonUiSchema({
-          scopePrefix,
-        }),
+        ConcreteParentClassNodeShapeStatic.jsonUiSchema({ scopePrefix }),
         {
           scope: `${scopePrefix}/properties/childStringProperty`,
           type: "Control",
@@ -16690,8 +16736,8 @@ export namespace ConcreteChildClassNodeShape {
     };
   }
 
-  export function concreteChildClassNodeShapeJsonZodSchema() {
-    return ConcreteParentClassNodeShape.concreteParentClassNodeShapeJsonZodSchema().merge(
+  export function jsonZodSchema() {
+    return ConcreteParentClassNodeShapeStatic.jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
         type: zod.literal("ConcreteChildClassNodeShape"),
@@ -16756,7 +16802,7 @@ export namespace ConcreteChildClassNodeShape {
         ? subject.value
         : "concreteChildClassNodeShape");
     return [
-      ...ConcreteParentClassNodeShape.sparqlConstructTemplateTriples({
+      ...ConcreteParentClassNodeShapeStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -16796,7 +16842,7 @@ export namespace ConcreteChildClassNodeShape {
         ? subject.value
         : "concreteChildClassNodeShape");
     return [
-      ...ConcreteParentClassNodeShape.sparqlWherePatterns({
+      ...ConcreteParentClassNodeShapeStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -17198,15 +17244,14 @@ export abstract class AbstractBaseClassForExternObjectType {
   }
 }
 
-export namespace AbstractBaseClassForExternObjectType {
+export namespace AbstractBaseClassForExternObjectTypeStatic {
   export function _propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     { identifier: rdfjs.BlankNode | rdfjs.NamedNode; abcStringProperty: string }
   > {
-    const _jsonSafeParseResult =
-      abstractBaseClassForExternObjectTypeJsonZodSchema().safeParse(_json);
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
     if (!_jsonSafeParseResult.success) {
       return purify.Left(_jsonSafeParseResult.error);
     }
@@ -17263,7 +17308,7 @@ export namespace AbstractBaseClassForExternObjectType {
 
   export function fromRdf(
     parameters: Parameters<
-      typeof AbstractBaseClassForExternObjectType._propertiesFromRdf
+      typeof AbstractBaseClassForExternObjectTypeStatic._propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
@@ -17277,12 +17322,10 @@ export namespace AbstractBaseClassForExternObjectType {
   }
 
   export function jsonSchema() {
-    return zodToJsonSchema(abstractBaseClassForExternObjectTypeJsonZodSchema());
+    return zodToJsonSchema(jsonZodSchema());
   }
 
-  export function abstractBaseClassForExternObjectTypeJsonUiSchema(parameters?: {
-    scopePrefix?: string;
-  }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -17312,7 +17355,7 @@ export namespace AbstractBaseClassForExternObjectType {
     };
   }
 
-  export function abstractBaseClassForExternObjectTypeJsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("ExternObjectType"),
@@ -17334,14 +17377,13 @@ export namespace AbstractBaseClassForExternObjectType {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        AbstractBaseClassForExternObjectType.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        AbstractBaseClassForExternObjectTypeStatic.sparqlConstructTemplateTriples(
+          { ignoreRdfType, subject },
+        ),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        AbstractBaseClassForExternObjectType.sparqlWherePatterns({
+        AbstractBaseClassForExternObjectTypeStatic.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -17358,7 +17400,9 @@ export namespace AbstractBaseClassForExternObjectType {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      AbstractBaseClassForExternObjectType.sparqlConstructQuery(parameters),
+      AbstractBaseClassForExternObjectTypeStatic.sparqlConstructQuery(
+        parameters,
+      ),
     );
   }
 

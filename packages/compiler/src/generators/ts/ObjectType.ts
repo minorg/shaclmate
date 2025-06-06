@@ -158,7 +158,7 @@ export class ObjectType extends DeclaredType {
       ..._ObjectType.interfaceDeclaration.bind(this)().toList(),
     ];
 
-    const moduleStatements: StatementStructures[] = [
+    const staticModuleStatements: StatementStructures[] = [
       ..._ObjectType.createFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.equalsFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.fromJsonFunctionDeclarations.bind(this)(),
@@ -173,12 +173,12 @@ export class ObjectType extends DeclaredType {
       ..._ObjectType.toRdfFunctionDeclaration.bind(this)().toList(),
     ];
 
-    if (moduleStatements.length > 0) {
+    if (staticModuleStatements.length > 0) {
       declarations.push({
         isExported: this.export,
         kind: StructureKind.Module,
-        name: this.name,
-        statements: moduleStatements,
+        name: this.staticModuleName,
+        statements: staticModuleStatements,
       });
     }
 
@@ -206,30 +206,10 @@ export class ObjectType extends DeclaredType {
       case "class":
         return "((left, right) => left.equals(right))";
       case "interface":
-        return `${this.name}.equals`;
+        return `${this.staticModuleName}.equals`;
       default:
         throw new RangeError(this.declarationType);
     }
-  }
-
-  @Memoize()
-  get hashFunctionName(): string {
-    if (
-      this.ancestorObjectTypes.length > 0 ||
-      this.descendantObjectTypes.length > 0
-    )
-      return `hash${this.name}`;
-    return "hash";
-  }
-
-  @Memoize()
-  get hashShaclPropertiesFunctionName(): string {
-    if (
-      this.ancestorObjectTypes.length > 0 ||
-      this.descendantObjectTypes.length > 0
-    )
-      return `_hash${this.name}ShaclProperties`;
-    return "_hashShaclProperties";
   }
 
   @Memoize()
@@ -253,37 +233,17 @@ export class ObjectType extends DeclaredType {
         case "class":
           return `ReturnType<${this.name}["toJson"]>`;
         case "interface":
-          return `ReturnType<typeof ${this.name}.toJson>`;
+          return `ReturnType<typeof ${this.staticModuleName}.toJson>`;
         default:
           throw new RangeError(this.declarationType);
       }
     }
     if (this.features.has("fromJson")) {
-      return `Parameters<typeof ${this.name}.fromJson>[0]`;
+      return `Parameters<typeof ${this.staticModuleName}.fromJson>[0]`;
     }
     throw new RangeError(
       `${this.name}: jsonName called when neither fromJson nor toJson features are enabled`,
     );
-  }
-
-  @Memoize()
-  get jsonUiSchemaFunctionName(): string {
-    if (
-      this.ancestorObjectTypes.length > 0 ||
-      this.descendantObjectTypes.length > 0
-    )
-      return `${camelCase(this.name)}JsonUiSchema`;
-    return "jsonUiSchema";
-  }
-
-  @Memoize()
-  get jsonZodSchemaFunctionName(): string {
-    if (
-      this.ancestorObjectTypes.length > 0 ||
-      this.descendantObjectTypes.length > 0
-    )
-      return `${camelCase(this.name)}JsonZodSchema`;
-    return "jsonZodSchema";
   }
 
   @Memoize()
@@ -342,13 +302,13 @@ export class ObjectType extends DeclaredType {
     variables,
   }: Parameters<Type["fromJsonExpression"]>[0]): string {
     // Assumes the JSON object has been recursively validated already.
-    return `${this.name}.fromJson(${variables.value}).unsafeCoerce()`;
+    return `${this.staticModuleName}.fromJson(${variables.value}).unsafeCoerce()`;
   }
 
   override fromRdfExpression({
     variables,
   }: Parameters<Type["fromRdfExpression"]>[0]): string {
-    return `${variables.resourceValues}.head().chain(value => value.to${this.rdfjsResourceType().named ? "Named" : ""}Resource()).chain(_resource => ${this.name}.fromRdf({ ...${variables.context}, ${variables.ignoreRdfType ? "ignoreRdfType: true, " : ""}languageIn: ${variables.languageIn}, resource: _resource }))`;
+    return `${variables.resourceValues}.head().chain(value => value.to${this.rdfjsResourceType().named ? "Named" : ""}Resource()).chain(_resource => ${this.staticModuleName}.fromRdf({ ...${variables.context}, ${variables.ignoreRdfType ? "ignoreRdfType: true, " : ""}languageIn: ${variables.languageIn}, resource: _resource }))`;
   }
 
   override hashStatements({
@@ -359,7 +319,7 @@ export class ObjectType extends DeclaredType {
         return [`${variables.value}.hash(${variables.hasher});`];
       case "interface":
         return [
-          `${this.name}.${this.hashFunctionName}(${variables.value}, ${variables.hasher});`,
+          `${this.staticModuleName}.hash(${variables.value}, ${variables.hasher});`,
         ];
     }
   }
@@ -368,14 +328,14 @@ export class ObjectType extends DeclaredType {
     variables,
   }: { variables: { scopePrefix: string } }): Maybe<string> {
     return Maybe.of(
-      `${this.name}.${this.jsonUiSchemaFunctionName}({ scopePrefix: ${variables.scopePrefix} })`,
+      `${this.staticModuleName}.jsonUiSchema({ scopePrefix: ${variables.scopePrefix} })`,
     );
   }
 
   override jsonZodSchema(
     _parameters: Parameters<Type["jsonZodSchema"]>[0],
   ): ReturnType<Type["jsonZodSchema"]> {
-    return `${this.name}.${this.jsonZodSchemaFunctionName}()`;
+    return `${this.staticModuleName}.jsonZodSchema()`;
   }
 
   rdfjsResourceType(options?: { mutable?: boolean }): {
@@ -420,11 +380,13 @@ export class ObjectType extends DeclaredType {
         return super.sparqlConstructTemplateTriples({ context, variables });
       case "type":
         return [
-          `...${this.name}.sparqlConstructTemplateTriples(${objectInitializer({
-            ignoreRdfType: true, // Can ignore the rdf:type when the object is nested
-            subject: variables.subject,
-            variablePrefix: variables.variablePrefix,
-          })})`,
+          `...${this.staticModuleName}.sparqlConstructTemplateTriples(${objectInitializer(
+            {
+              ignoreRdfType: true, // Can ignore the rdf:type when the object is nested
+              subject: variables.subject,
+              variablePrefix: variables.variablePrefix,
+            },
+          )})`,
         ];
     }
   }
@@ -438,13 +400,17 @@ export class ObjectType extends DeclaredType {
         return super.sparqlWherePatterns({ context, variables });
       case "type":
         return [
-          `...${this.name}.sparqlWherePatterns(${objectInitializer({
+          `...${this.staticModuleName}.sparqlWherePatterns(${objectInitializer({
             ignoreRdfType: true, // Can ignore the rdf:type when the object is nested
             subject: variables.subject,
             variablePrefix: variables.variablePrefix,
           })})`,
         ];
     }
+  }
+
+  get staticModuleName(): string {
+    return this.childObjectTypes.length > 0 ? `${this.name}Static` : this.name;
   }
 
   override toJsonExpression({
@@ -454,7 +420,7 @@ export class ObjectType extends DeclaredType {
       case "class":
         return `${variables.value}.toJson()`;
       case "interface":
-        return `${this.name}.toJson(${variables.value})`;
+        return `${this.staticModuleName}.toJson(${variables.value})`;
     }
   }
 
@@ -465,7 +431,7 @@ export class ObjectType extends DeclaredType {
       case "class":
         return `${variables.value}.toRdf({ mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} })`;
       case "interface":
-        return `${this.name}.toRdf(${variables.value}, { mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} })`;
+        return `${this.staticModuleName}.toRdf(${variables.value}, { mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} })`;
     }
   }
 

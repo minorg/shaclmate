@@ -28,7 +28,7 @@ export function sparqlFunctionDeclarations(
   const sparqlConstructTemplateTriples = [
     ...this.parentObjectTypes.map(
       (parentObjectType) =>
-        `...${parentObjectType.name}.sparqlConstructTemplateTriples({ ignoreRdfType: true, subject, variablePrefix })`,
+        `...${parentObjectType.staticModuleName}.sparqlConstructTemplateTriples({ ignoreRdfType: true, subject, variablePrefix })`,
     ),
     ...(this.fromRdfType.isJust()
       ? [
@@ -43,7 +43,7 @@ export function sparqlFunctionDeclarations(
   const sparqlWherePatterns = [
     ...this.parentObjectTypes.map(
       (parentObjectType) =>
-        `...${parentObjectType.name}.sparqlWherePatterns({ ignoreRdfType: true, subject, variablePrefix })`,
+        `...${parentObjectType.staticModuleName}.sparqlWherePatterns({ ignoreRdfType: true, subject, variablePrefix })`,
     ),
     ...(this.fromRdfType.isJust()
       ? [

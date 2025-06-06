@@ -1,9 +1,11 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import type * as purify from "purify-ts";
 import { Either } from "purify-ts";
 import type * as rdfjsResource from "rdfjs-resource";
 import type { z } from "zod";
-import { AbstractBaseClassForExternObjectType } from "./generated.js";
+import {
+  AbstractBaseClassForExternObjectType,
+  AbstractBaseClassForExternObjectTypeStatic,
+} from "./generated.js";
 
 /**
  * Example of an imported object type that fulfills the same contract as a generated object type.
@@ -18,55 +20,6 @@ export class ExternObjectType extends AbstractBaseClassForExternObjectType {
 
   constructor(readonly identifier: BlankNode | NamedNode<string>) {
     super({ abcStringProperty: "test" });
-  }
-
-  // Called by interface functions
-  static equals(left: ExternObjectType, right: ExternObjectType) {
-    return left.equals(right);
-  }
-
-  static override fromJson(
-    json: unknown,
-  ): Either<z.ZodError, ExternObjectType> {
-    return AbstractBaseClassForExternObjectType._propertiesFromJson(json).map(
-      (properties) => new ExternObjectType(properties.identifier),
-    );
-  }
-
-  static override fromRdf({
-    extra,
-    resource,
-  }: {
-    extra?: number;
-    languageIn?: readonly string[];
-    ignoreRdfType?: boolean;
-    resource: rdfjsResource.Resource;
-  }): purify.Either<rdfjsResource.Resource.ValueError, ExternObjectType> {
-    if (extra !== 1) {
-      throw new Error("extra didn't come through");
-    }
-    return Either.of(new ExternObjectType(resource.identifier));
-  }
-
-  // Called by interface functions
-  static hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(instance: ExternObjectType, hasher: HasherT): HasherT {
-    instance.hash(hasher);
-    return hasher;
-  }
-
-  // Called by interface functions
-  static toRdf(
-    instance: ExternObjectType,
-    parameters: {
-      mutateGraph: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
-    },
-  ) {
-    return instance.toRdf(parameters);
   }
 
   // Called by class methods
@@ -103,9 +56,63 @@ export class ExternObjectType extends AbstractBaseClassForExternObjectType {
 }
 
 export namespace ExternObjectType {
+  // Called by interface functions
+  export function equals(left: ExternObjectType, right: ExternObjectType) {
+    return left.equals(right);
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): Either<z.ZodError, ExternObjectType> {
+    return AbstractBaseClassForExternObjectTypeStatic._propertiesFromJson(
+      json,
+    ).map((properties) => new ExternObjectType(properties.identifier));
+  }
+
+  export function fromRdf({
+    extra,
+    resource,
+  }: {
+    extra?: number;
+    languageIn?: readonly string[];
+    ignoreRdfType?: boolean;
+    resource: rdfjsResource.Resource;
+  }): Either<rdfjsResource.Resource.ValueError, ExternObjectType> {
+    if (extra !== 1) {
+      throw new Error("extra didn't come through");
+    }
+    return Either.of(new ExternObjectType(resource.identifier));
+  }
+
+  // Called by interface functions
+  export function hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(instance: ExternObjectType, hasher: HasherT): HasherT {
+    instance.hash(hasher);
+    return hasher;
+  }
+
+  // Called by interface functions
+  export function toRdf(
+    instance: ExternObjectType,
+    parameters: {
+      mutateGraph: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ) {
+    return instance.toRdf(parameters);
+  }
+
   export const jsonUiSchema =
-    AbstractBaseClassForExternObjectType.abstractBaseClassForExternObjectTypeJsonUiSchema;
+    AbstractBaseClassForExternObjectTypeStatic.jsonUiSchema;
 
   export const jsonZodSchema =
-    AbstractBaseClassForExternObjectType.abstractBaseClassForExternObjectTypeJsonZodSchema;
+    AbstractBaseClassForExternObjectTypeStatic.jsonZodSchema;
+
+  export const sparqlConstructTemplateTriples =
+    AbstractBaseClassForExternObjectTypeStatic.sparqlConstructTemplateTriples;
+  export const sparqlWherePatterns =
+    AbstractBaseClassForExternObjectTypeStatic.sparqlWherePatterns;
 }

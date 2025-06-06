@@ -33,7 +33,7 @@ export function toRdfFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
         superToRdfCall = `super.toRdf(${superToRdfOptions})`;
         break;
       case "interface":
-        superToRdfCall = `${this.parentObjectTypes[0].name}.toRdf(${this.thisVariable}, ${superToRdfOptions})`;
+        superToRdfCall = `${this.parentObjectTypes[0].staticModuleName}.toRdf(${this.thisVariable}, ${superToRdfOptions})`;
         break;
     }
     statements.push(`const ${variables.resource} = ${superToRdfCall};`);
