@@ -45,20 +45,20 @@ export const harnesses = {
     toRdf: kitchenSink.ConcreteChildInterfaceNodeShape.toRdf,
   }),
   concreteParentClassNodeShape: new ClassHarness({
-    fromJson: kitchenSink.ConcreteParentClassNodeShape.fromJson,
-    fromRdf: kitchenSink.ConcreteParentClassNodeShape.fromRdf,
+    fromJson: kitchenSink.ConcreteParentClassNodeShapeStatic.fromJson,
+    fromRdf: kitchenSink.ConcreteParentClassNodeShapeStatic.fromRdf,
     instance: new kitchenSink.ConcreteParentClassNodeShape({
       abcStringProperty: "abc",
       identifier,
       parentStringProperty: "parent",
     }),
     sparqlConstructQueryString:
-      kitchenSink.ConcreteParentClassNodeShape.sparqlConstructQueryString,
+      kitchenSink.ConcreteParentClassNodeShapeStatic.sparqlConstructQueryString,
   }),
   concreteParentInterfaceNodeShape: new InterfaceHarness({
-    equals: kitchenSink.ConcreteParentInterfaceNodeShape.equals,
-    fromJson: kitchenSink.ConcreteParentInterfaceNodeShape.fromJson,
-    fromRdf: kitchenSink.ConcreteParentInterfaceNodeShape.fromRdf,
+    equals: kitchenSink.ConcreteParentInterfaceNodeShapeStatic.equals,
+    fromJson: kitchenSink.ConcreteParentInterfaceNodeShapeStatic.fromJson,
+    fromRdf: kitchenSink.ConcreteParentInterfaceNodeShapeStatic.fromRdf,
     instance: {
       baseStringProperty: "abc",
       identifier,
@@ -66,9 +66,10 @@ export const harnesses = {
       type: "ConcreteParentInterfaceNodeShape",
     },
     sparqlConstructQueryString:
-      kitchenSink.ConcreteParentInterfaceNodeShape.sparqlConstructQueryString,
-    toJson: kitchenSink.ConcreteParentInterfaceNodeShape.toJson,
-    toRdf: kitchenSink.ConcreteParentInterfaceNodeShape.toRdf,
+      kitchenSink.ConcreteParentInterfaceNodeShapeStatic
+        .sparqlConstructQueryString,
+    toJson: kitchenSink.ConcreteParentInterfaceNodeShapeStatic.toJson,
+    toRdf: kitchenSink.ConcreteParentInterfaceNodeShapeStatic.toRdf,
   }),
   defaultValuePropertiesNodeShape: new ClassHarness({
     fromJson: kitchenSink.DefaultValuePropertiesNodeShape.fromJson,

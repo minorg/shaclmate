@@ -26,7 +26,7 @@ describe("fromRdf", () => {
 
   it("abstract base class fromRdf", ({ expect }) => {
     const fromRdfInstance =
-      kitchenSink.AbstractBaseClassWithPropertiesNodeShape.fromRdf({
+      kitchenSink.AbstractBaseClassWithPropertiesNodeShapeStatic.fromRdf({
         resource: harnesses.concreteChildClassNodeShape.toRdf({
           mutateGraph: dataFactory.defaultGraph(),
           resourceSet: new MutableResourceSet({
@@ -41,15 +41,16 @@ describe("fromRdf", () => {
   });
 
   it("concrete base class fromRdf", ({ expect }) => {
-    const fromRdfInstance = kitchenSink.ConcreteParentClassNodeShape.fromRdf({
-      resource: harnesses.concreteChildClassNodeShape.toRdf({
-        mutateGraph: dataFactory.defaultGraph(),
-        resourceSet: new MutableResourceSet({
-          dataFactory,
-          dataset: new N3.Store(),
-        }),
-      }) as any,
-    }).unsafeCoerce() as any;
+    const fromRdfInstance =
+      kitchenSink.ConcreteParentClassNodeShapeStatic.fromRdf({
+        resource: harnesses.concreteChildClassNodeShape.toRdf({
+          mutateGraph: dataFactory.defaultGraph(),
+          resourceSet: new MutableResourceSet({
+            dataFactory,
+            dataset: new N3.Store(),
+          }),
+        }) as any,
+      }).unsafeCoerce() as any;
     expect(
       harnesses.concreteChildClassNodeShape.equals(fromRdfInstance).extract(),
     ).toStrictEqual(true);
