@@ -1,7 +1,6 @@
 import { Maybe } from "purify-ts";
 import type { OptionalKind, ParameterDeclarationStructure } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
-import { toJsonReturnType } from "./toJsonReturnType.js";
 
 export function toJsonFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
   name: string;
@@ -69,10 +68,27 @@ export function toJsonFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
   //     break;
   // }
 
+  const returnTypeMembers: string[] = [];
+  if (this.ownProperties.length > 0) {
+    returnTypeMembers.push(
+      `{ ${this.ownProperties
+        .flatMap((property) => property.jsonPropertySignature.toList())
+        .map(
+          (propertySignature) =>
+            `readonly "${propertySignature.name}": ${propertySignature.type}`,
+        )
+        .join("; ")} }`,
+    );
+  }
+  for (const parentObjectType of this.parentObjectTypes) {
+    returnTypeMembers.push(parentObjectType.jsonName);
+  }
+
   return Maybe.of({
     name: "toJson",
     parameters,
-    returnType: toJsonReturnType.bind(this)(),
+    returnType:
+      returnTypeMembers.length > 0 ? returnTypeMembers.join(" & ") : "object",
     statements: [
       `return JSON.parse(JSON.stringify({ ${jsonObjectMembers.join(",")} } satisfies ${this.jsonName}));`,
     ],
