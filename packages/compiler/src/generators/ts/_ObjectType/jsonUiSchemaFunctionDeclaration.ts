@@ -17,7 +17,7 @@ export function jsonUiSchemaFunctionDeclaration(
   const elements: string[] = this.parentObjectTypes
     .map(
       (parentObjectType) =>
-        `${parentObjectType.name}.${parentObjectType.jsonUiSchemaFunctionName}({ scopePrefix })`,
+        `${parentObjectType.name}Static.jsonUiSchema({ scopePrefix })`,
     )
     .concat(
       this.ownProperties.flatMap((property) =>
@@ -28,7 +28,7 @@ export function jsonUiSchemaFunctionDeclaration(
   return Maybe.of({
     isExported: true,
     kind: StructureKind.Function,
-    name: this.jsonUiSchemaFunctionName,
+    name: "jsonUiSchema",
     parameters: [
       {
         hasQuestionToken: true,

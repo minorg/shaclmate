@@ -32,7 +32,7 @@ export function jsonZodSchemaFunctionDeclaration(
   return Maybe.of({
     isExported: true,
     kind: StructureKind.Function,
-    name: this.jsonZodSchemaFunctionName,
+    name: "jsonZodSchema",
     statements: [
       `return ${
         mergeZodObjectSchemas.length > 0

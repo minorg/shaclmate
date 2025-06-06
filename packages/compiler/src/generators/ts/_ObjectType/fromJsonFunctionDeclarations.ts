@@ -22,7 +22,7 @@ export function fromJsonFunctionDeclarations(
   const propertiesFromJsonFunctionStatements: string[] = [];
 
   propertiesFromJsonFunctionStatements.push(
-    `const _jsonSafeParseResult = ${this.jsonZodSchemaFunctionName}().safeParse(_json);`,
+    "const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);",
     "if (!_jsonSafeParseResult.success) { return purify.Left(_jsonSafeParseResult.error); }",
     `const ${variables.jsonObject} = _jsonSafeParseResult.data;`,
   );

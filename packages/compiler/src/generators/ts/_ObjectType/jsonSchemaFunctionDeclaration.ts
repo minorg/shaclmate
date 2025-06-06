@@ -17,8 +17,6 @@ export function jsonSchemaFunctionDeclaration(
     isExported: true,
     kind: StructureKind.Function,
     name: "jsonSchema",
-    statements: [
-      `return zodToJsonSchema(${this.jsonZodSchemaFunctionName}());`,
-    ],
+    statements: ["return zodToJsonSchema(jsonZodSchema());"],
   });
 }
