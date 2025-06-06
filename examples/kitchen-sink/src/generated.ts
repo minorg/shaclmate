@@ -387,6 +387,12 @@ export namespace UuidV4IriNodeShape {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "UuidV4IriNodeShape";
+    readonly stringProperty: string;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -451,14 +457,6 @@ export namespace UuidV4IriNodeShape {
     });
   }
 
-  /**
-   * A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "UuidV4IriNodeShape";
-    readonly stringProperty: string;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -1072,6 +1070,35 @@ export namespace UnionPropertiesNodeShape {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "UnionPropertiesNodeShape";
+    readonly orLiteralsProperty:
+      | {
+          readonly "@language": string | undefined;
+          readonly "@type": string | undefined;
+          readonly "@value": string;
+        }
+      | undefined;
+    readonly orTermsProperty:
+      | (
+          | { readonly "@id": string; readonly termType: "NamedNode" }
+          | {
+              readonly "@language": string | undefined;
+              readonly "@type": string | undefined;
+              readonly "@value": string;
+              readonly termType: "Literal";
+            }
+        )
+      | undefined;
+    readonly orUnrelatedProperty:
+      | (
+          | { type: "0-number"; value: number }
+          | { type: "1-NonClassNodeShape"; value: NonClassNodeShape.Json }
+        )
+      | undefined;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -1223,37 +1250,6 @@ export namespace UnionPropertiesNodeShape {
     });
   }
 
-  /**
-   * Shape with sh:xone properties.
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "UnionPropertiesNodeShape";
-    readonly orLiteralsProperty:
-      | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
-          readonly "@value": string;
-        }
-      | undefined;
-    readonly orTermsProperty:
-      | (
-          | { readonly "@id": string; readonly termType: "NamedNode" }
-          | {
-              readonly "@language": string | undefined;
-              readonly "@type": string | undefined;
-              readonly "@value": string;
-              readonly termType: "Literal";
-            }
-        )
-      | undefined;
-    readonly orUnrelatedProperty:
-      | (
-          | { type: "0-number"; value: number }
-          | { type: "1-NonClassNodeShape"; value: NonClassNodeShape.Json }
-        )
-      | undefined;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -1594,6 +1590,12 @@ export namespace UnionNodeShapeMember2 {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "UnionNodeShapeMember2";
+    readonly stringProperty2: string;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -1660,11 +1662,6 @@ export namespace UnionNodeShapeMember2 {
     });
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "UnionNodeShapeMember2";
-    readonly stringProperty2: string;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -1920,6 +1917,12 @@ export namespace UnionNodeShapeMember1 {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "UnionNodeShapeMember1";
+    readonly stringProperty1: string;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -1986,11 +1989,6 @@ export namespace UnionNodeShapeMember1 {
     });
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "UnionNodeShapeMember1";
-    readonly stringProperty1: string;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -2760,6 +2758,38 @@ export namespace TermPropertiesNodeShape {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "TermPropertiesNodeShape";
+    readonly booleanProperty: boolean | undefined;
+    readonly dateProperty: string | undefined;
+    readonly dateTimeProperty: string | undefined;
+    readonly iriProperty: { readonly "@id": string } | undefined;
+    readonly literalProperty:
+      | {
+          readonly "@language": string | undefined;
+          readonly "@type": string | undefined;
+          readonly "@value": string;
+        }
+      | undefined;
+    readonly numberProperty: number | undefined;
+    readonly stringProperty: string | undefined;
+    readonly termProperty:
+      | (
+          | {
+              readonly "@id": string;
+              readonly termType: "BlankNode" | "NamedNode";
+            }
+          | {
+              readonly "@language": string | undefined;
+              readonly "@type": string | undefined;
+              readonly "@value": string;
+              readonly termType: "Literal";
+            }
+        )
+      | undefined;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -2933,40 +2963,6 @@ export namespace TermPropertiesNodeShape {
     });
   }
 
-  /**
-   * Shape with properties that are not nested objects
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "TermPropertiesNodeShape";
-    readonly booleanProperty: boolean | undefined;
-    readonly dateProperty: string | undefined;
-    readonly dateTimeProperty: string | undefined;
-    readonly iriProperty: { readonly "@id": string } | undefined;
-    readonly literalProperty:
-      | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
-          readonly "@value": string;
-        }
-      | undefined;
-    readonly numberProperty: number | undefined;
-    readonly stringProperty: string | undefined;
-    readonly termProperty:
-      | (
-          | {
-              readonly "@id": string;
-              readonly termType: "BlankNode" | "NamedNode";
-            }
-          | {
-              readonly "@language": string | undefined;
-              readonly "@type": string | undefined;
-              readonly "@value": string;
-              readonly termType: "Literal";
-            }
-        )
-      | undefined;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -3413,6 +3409,12 @@ export namespace Sha256IriNodeShape {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "Sha256IriNodeShape";
+    readonly stringProperty: string;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -3477,14 +3479,6 @@ export namespace Sha256IriNodeShape {
     });
   }
 
-  /**
-   * A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied.
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "Sha256IriNodeShape";
-    readonly stringProperty: string;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -3822,6 +3816,14 @@ export namespace PropertyVisibilitiesNodeShape {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "PropertyVisibilitiesNodeShape";
+    readonly privateProperty: string;
+    readonly protectedProperty: string;
+    readonly publicProperty: string;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -3907,16 +3909,6 @@ export namespace PropertyVisibilitiesNodeShape {
     });
   }
 
-  /**
-   * Shape with properties that have visibility modifiers (private, protected, public)
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "PropertyVisibilitiesNodeShape";
-    readonly privateProperty: string;
-    readonly protectedProperty: string;
-    readonly publicProperty: string;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -4415,6 +4407,15 @@ export namespace PropertyCardinalitiesNodeShape {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "PropertyCardinalitiesNodeShape";
+    readonly emptyStringSetProperty: readonly string[];
+    readonly nonEmptyStringSetProperty: readonly string[];
+    readonly optionalStringProperty: string | undefined;
+    readonly requiredStringProperty: string;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -4532,17 +4533,6 @@ export namespace PropertyCardinalitiesNodeShape {
     });
   }
 
-  /**
-   * Shape that has properties with different cardinalities
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "PropertyCardinalitiesNodeShape";
-    readonly emptyStringSetProperty: readonly string[];
-    readonly nonEmptyStringSetProperty: readonly string[];
-    readonly optionalStringProperty: string | undefined;
-    readonly requiredStringProperty: string;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -4969,6 +4959,14 @@ export namespace OrderedPropertiesNodeShape {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "OrderedPropertiesNodeShape";
+    readonly propertyC: string;
+    readonly propertyB: string;
+    readonly propertyA: string;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -5046,16 +5044,6 @@ export namespace OrderedPropertiesNodeShape {
     });
   }
 
-  /**
-   * Shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "OrderedPropertiesNodeShape";
-    readonly propertyC: string;
-    readonly propertyB: string;
-    readonly propertyA: string;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -5347,6 +5335,12 @@ export namespace NonClassNodeShape {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "NonClassNodeShape";
+    readonly stringProperty: string;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -5413,14 +5407,6 @@ export namespace NonClassNodeShape {
     });
   }
 
-  /**
-   * Node shape that isn't an rdfs:Class.
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "NonClassNodeShape";
-    readonly stringProperty: string;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -5929,6 +5915,14 @@ export namespace MutablePropertiesNodeShape {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "MutablePropertiesNodeShape";
+    readonly mutableListProperty: readonly string[] | undefined;
+    readonly mutableSetProperty: readonly string[];
+    readonly mutableStringProperty: string | undefined;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -6039,16 +6033,6 @@ export namespace MutablePropertiesNodeShape {
     });
   }
 
-  /**
-   * Shape with shaclmate:mutable properties.
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "MutablePropertiesNodeShape";
-    readonly mutableListProperty: readonly string[] | undefined;
-    readonly mutableSetProperty: readonly string[];
-    readonly mutableStringProperty: string | undefined;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -6763,6 +6747,13 @@ export namespace ListPropertiesNodeShape {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "ListPropertiesNodeShape";
+    readonly objectListProperty: readonly NonClassNodeShape.Json[] | undefined;
+    readonly stringListProperty: readonly string[] | undefined;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -6851,15 +6842,6 @@ export namespace ListPropertiesNodeShape {
     });
   }
 
-  /**
-   * Shape that uses the list shapes in properties.
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "ListPropertiesNodeShape";
-    readonly objectListProperty: readonly NonClassNodeShape.Json[] | undefined;
-    readonly stringListProperty: readonly string[] | undefined;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -7633,6 +7615,25 @@ export namespace LanguageInPropertiesNodeShape {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "LanguageInPropertiesNodeShape";
+    readonly languageInProperty:
+      | {
+          readonly "@language": string | undefined;
+          readonly "@type": string | undefined;
+          readonly "@value": string;
+        }
+      | undefined;
+    readonly literalProperty:
+      | {
+          readonly "@language": string | undefined;
+          readonly "@type": string | undefined;
+          readonly "@value": string;
+        }
+      | undefined;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -7748,27 +7749,6 @@ export namespace LanguageInPropertiesNodeShape {
     });
   }
 
-  /**
-   * Shape that uses the StringListShape in a property.
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "LanguageInPropertiesNodeShape";
-    readonly languageInProperty:
-      | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
-          readonly "@value": string;
-        }
-      | undefined;
-    readonly literalProperty:
-      | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
-          readonly "@value": string;
-        }
-      | undefined;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -8017,6 +7997,8 @@ export namespace IriNodeShape {
     );
   }
 
+  export type Json = { readonly "@id": string; readonly type: "IriNodeShape" };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<zod.ZodError, { identifier: rdfjs.NamedNode }> {
@@ -8073,10 +8055,6 @@ export namespace IriNodeShape {
     });
   }
 
-  /**
-   * A node shape that only allows IRI identifiers.
-   */
-  export type Json = { readonly "@id": string; readonly type: "IriNodeShape" };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -8247,6 +8225,12 @@ export namespace InterfaceUnionNodeShapeMember2b {
     return InterfaceUnionNodeShapeMember2b._propertiesFromRdf(parameters);
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "InterfaceUnionNodeShapeMember2b";
+    readonly stringProperty2b: string;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -8334,11 +8318,6 @@ export namespace InterfaceUnionNodeShapeMember2b {
     });
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "InterfaceUnionNodeShapeMember2b";
-    readonly stringProperty2b: string;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -8602,6 +8581,12 @@ export namespace InterfaceUnionNodeShapeMember2a {
     return InterfaceUnionNodeShapeMember2a._propertiesFromRdf(parameters);
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "InterfaceUnionNodeShapeMember2a";
+    readonly stringProperty2a: string;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -8689,11 +8674,6 @@ export namespace InterfaceUnionNodeShapeMember2a {
     });
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "InterfaceUnionNodeShapeMember2a";
-    readonly stringProperty2a: string;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -8957,6 +8937,12 @@ export namespace InterfaceUnionNodeShapeMember1 {
     return InterfaceUnionNodeShapeMember1._propertiesFromRdf(parameters);
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "InterfaceUnionNodeShapeMember1";
+    readonly stringProperty1: string;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -9041,11 +9027,6 @@ export namespace InterfaceUnionNodeShapeMember1 {
     });
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "InterfaceUnionNodeShapeMember1";
-    readonly stringProperty1: string;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -9307,6 +9288,12 @@ export namespace InterfaceNodeShape {
     return InterfaceNodeShape._propertiesFromRdf(parameters);
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "InterfaceNodeShape";
+    readonly stringProperty: string;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -9391,14 +9378,6 @@ export namespace InterfaceNodeShape {
     });
   }
 
-  /**
-   * A node shape that's generated as a TypeScript interface instead of a class.
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "InterfaceNodeShape";
-    readonly stringProperty: string;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -10092,6 +10071,22 @@ export namespace InPropertiesNodeShape {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "InPropertiesNodeShape";
+    readonly inBooleansProperty: true | undefined;
+    readonly inDateTimesProperty: string | undefined;
+    readonly inIrisProperty:
+      | {
+          readonly "@id":
+            | "http://example.com/InPropertiesNodeShapeIri1"
+            | "http://example.com/InPropertiesNodeShapeIri2";
+        }
+      | undefined;
+    readonly inNumbersProperty: (1 | 2) | undefined;
+    readonly inStringsProperty: ("text" | "html") | undefined;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -10218,24 +10213,6 @@ export namespace InPropertiesNodeShape {
     });
   }
 
-  /**
-   * Shape with sh:in properties.
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "InPropertiesNodeShape";
-    readonly inBooleansProperty: true | undefined;
-    readonly inDateTimesProperty: string | undefined;
-    readonly inIrisProperty:
-      | {
-          readonly "@id":
-            | "http://example.com/InPropertiesNodeShapeIri1"
-            | "http://example.com/InPropertiesNodeShapeIri2";
-        }
-      | undefined;
-    readonly inNumbersProperty: (1 | 2) | undefined;
-    readonly inStringsProperty: ("text" | "html") | undefined;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -10651,6 +10628,12 @@ export namespace InIdentifierNodeShape {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "InIdentifierNodeShape";
+    readonly stringProperty: string | undefined;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -10726,14 +10709,6 @@ export namespace InIdentifierNodeShape {
     });
   }
 
-  /**
-   * Shape with sh:in constraining its identifier.
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "InIdentifierNodeShape";
-    readonly stringProperty: string | undefined;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -11094,6 +11069,13 @@ export namespace HasValuePropertiesNodeShape {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "HasValuePropertiesNodeShape";
+    readonly hasIriProperty: { readonly "@id": string } | undefined;
+    readonly hasLiteralProperty: string | undefined;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -11174,15 +11156,6 @@ export namespace HasValuePropertiesNodeShape {
     });
   }
 
-  /**
-   * Shape with sh:hasValue properties.
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "HasValuePropertiesNodeShape";
-    readonly hasIriProperty: { readonly "@id": string } | undefined;
-    readonly hasLiteralProperty: string | undefined;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -11476,6 +11449,12 @@ export namespace InlineNodeShape {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "InlineNodeShape";
+    readonly stringProperty: string;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -11542,11 +11521,6 @@ export namespace InlineNodeShape {
     });
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "InlineNodeShape";
-    readonly stringProperty: string;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -11798,6 +11772,12 @@ export namespace ExternNodeShape {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "ExternNodeShape";
+    readonly stringProperty: string;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -11864,11 +11844,6 @@ export namespace ExternNodeShape {
     });
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "ExternNodeShape";
-    readonly stringProperty: string;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -12303,6 +12278,14 @@ export namespace ExternPropertiesNodeShape {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "ExternPropertiesNodeShape";
+    readonly externObjectTypeProperty: ExternObjectType.Json | undefined;
+    readonly externProperty: { readonly "@id": string } | undefined;
+    readonly inlineProperty: InlineNodeShape.Json | undefined;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -12399,16 +12382,6 @@ export namespace ExternPropertiesNodeShape {
     });
   }
 
-  /**
-   * Node shape that inlines/nests another node shape and externs/references another.
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "ExternPropertiesNodeShape";
-    readonly externObjectTypeProperty: ExternObjectType.Json | undefined;
-    readonly externProperty: { readonly "@id": string } | undefined;
-    readonly inlineProperty: InlineNodeShape.Json | undefined;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -12795,6 +12768,11 @@ export namespace ExplicitRdfTypesNodeShape {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/FromRdfType",
   );
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "ExplicitRdfTypesNodeShape";
+    readonly stringProperty: string;
+  };
 
   function jsonParseProperties(
     _json: unknown,
@@ -12862,17 +12840,6 @@ export namespace ExplicitRdfTypesNodeShape {
     });
   }
 
-  /**
-   * Shape with custom rdf:type's.
-   *
-   * The shaclmate:fromRdfType is expected on deserialization.
-   * shaclmate:toRdfType's are added an serialization.
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "ExplicitRdfTypesNodeShape";
-    readonly stringProperty: string;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -13532,6 +13499,17 @@ export namespace DefaultValuePropertiesNodeShape {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "DefaultValuePropertiesNodeShape";
+    readonly dateProperty: string;
+    readonly dateTimeProperty: string;
+    readonly falseBooleanProperty: boolean;
+    readonly numberProperty: number;
+    readonly stringProperty: string;
+    readonly trueBooleanProperty: boolean;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -13638,19 +13616,6 @@ export namespace DefaultValuePropertiesNodeShape {
     });
   }
 
-  /**
-   * Shape with sh:defaultValue properties.
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "DefaultValuePropertiesNodeShape";
-    readonly dateProperty: string;
-    readonly dateTimeProperty: string;
-    readonly falseBooleanProperty: boolean;
-    readonly numberProperty: number;
-    readonly stringProperty: string;
-    readonly trueBooleanProperty: boolean;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -14034,6 +13999,15 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/BaseInterfaceWithPropertiesNodeShape",
   );
+  export type Json = {
+    readonly "@id": string;
+    readonly type:
+      | "BaseInterfaceWithPropertiesNodeShape"
+      | "BaseInterfaceWithoutPropertiesNodeShape"
+      | "ConcreteChildInterfaceNodeShape"
+      | "ConcreteParentInterfaceNodeShape";
+    readonly baseStringProperty: string;
+  };
 
   function jsonParseProperties(
     _json: unknown,
@@ -14137,18 +14111,6 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     });
   }
 
-  /**
-   * Base interface for other node shapes.
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type:
-      | "BaseInterfaceWithPropertiesNodeShape"
-      | "BaseInterfaceWithoutPropertiesNodeShape"
-      | "ConcreteChildInterfaceNodeShape"
-      | "ConcreteParentInterfaceNodeShape";
-    readonly baseStringProperty: string;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -14489,6 +14451,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/BaseInterfaceWithoutPropertiesNodeShape",
   );
+  export type Json = BaseInterfaceWithPropertiesNodeShapeStatic.Json;
 
   function jsonParseProperties(
     _json: unknown,
@@ -14581,10 +14544,6 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
     );
   }
 
-  /**
-   * Base interface for other node shapes. Put the base interface with properties above the base interface without.
-   */
-  export type Json = BaseInterfaceWithPropertiesNodeShapeStatic.Json;
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -14944,6 +14903,9 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/ConcreteParentInterfaceNodeShape",
   );
+  export type Json = {
+    readonly parentStringProperty: string;
+  } & BaseInterfaceWithoutPropertiesNodeShapeStatic.Json;
 
   function jsonParseProperties(
     _json: unknown,
@@ -15048,12 +15010,6 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     );
   }
 
-  /**
-   * Interface node shape that inherits the base interface and is the parent of the ConcreteChildInterfaceNodeShape.
-   */
-  export type Json = {
-    readonly parentStringProperty: string;
-  } & BaseInterfaceWithoutPropertiesNodeShapeStatic.Json;
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -15421,6 +15377,9 @@ export namespace ConcreteChildInterfaceNodeShape {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/ConcreteChildInterfaceNodeShape",
   );
+  export type Json = {
+    readonly childStringProperty: string;
+  } & ConcreteParentInterfaceNodeShapeStatic.Json;
 
   function jsonParseProperties(
     _json: unknown,
@@ -15511,12 +15470,6 @@ export namespace ConcreteChildInterfaceNodeShape {
     );
   }
 
-  /**
-   * Child interface of ConcreteParentInterfaceNodeShape. Should inherit properties and node kinds.
-   */
-  export type Json = {
-    readonly childStringProperty: string;
-  } & ConcreteParentInterfaceNodeShapeStatic.Json;
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -15919,6 +15872,14 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
     >;
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type:
+      | "ConcreteChildClassNodeShape"
+      | "ConcreteParentClassNodeShape";
+    readonly abcStringProperty: string;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -15991,20 +15952,6 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
     });
   }
 
-  /**
-   * Node shape that serves as an abstract base class for child node shapes.
-   *
-   * It's marked abstract in TypeScript and not exported from the module.
-   *
-   * Common pattern: put the minting strategy and nodeKind on an ABC.
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type:
-      | "ConcreteChildClassNodeShape"
-      | "ConcreteParentClassNodeShape";
-    readonly abcStringProperty: string;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -16207,6 +16154,8 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
     >;
   }
 
+  export type Json = AbstractBaseClassWithPropertiesNodeShapeStatic.Json;
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -16276,10 +16225,6 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
     );
   }
 
-  /**
-   * Abstract base for other node shapes. Put the ABC with properties above the ABC without.
-   */
-  export type Json = AbstractBaseClassWithPropertiesNodeShapeStatic.Json;
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -16599,6 +16544,9 @@ export namespace ConcreteParentClassNodeShapeStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/ConcreteParentClassNodeShape",
   );
+  export type Json = {
+    readonly parentStringProperty: string;
+  } & AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json;
 
   function jsonParseProperties(
     _json: unknown,
@@ -16684,12 +16632,6 @@ export namespace ConcreteParentClassNodeShapeStatic {
     );
   }
 
-  /**
-   * Class node shape that inherits the abstract base class and is the parent of the ConcreteChildClassNodeShape.
-   */
-  export type Json = {
-    readonly parentStringProperty: string;
-  } & AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json;
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -17044,6 +16986,9 @@ export namespace ConcreteChildClassNodeShape {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/ConcreteChildClassNodeShape",
   );
+  export type Json = {
+    readonly childStringProperty: string;
+  } & ConcreteParentClassNodeShapeStatic.Json;
 
   function jsonParseProperties(
     _json: unknown,
@@ -17113,12 +17058,6 @@ export namespace ConcreteChildClassNodeShape {
     );
   }
 
-  /**
-   * Child (class) of ConcreteParentClassNodeShape. Should inherit properties, node kinds, and minting strategy.
-   */
-  export type Json = {
-    readonly childStringProperty: string;
-  } & ConcreteParentClassNodeShapeStatic.Json;
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -17402,6 +17341,11 @@ export namespace BlankNodeShape {
     );
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "BlankNodeShape";
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -17465,13 +17409,6 @@ export namespace BlankNodeShape {
     });
   }
 
-  /**
-   * Shape that can have a blank node or IRI as an identifier
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "BlankNodeShape";
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -17685,6 +17622,12 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
     >;
   }
 
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "ExternObjectType";
+    readonly abcStringProperty: string;
+  };
+
   function jsonParseProperties(
     _json: unknown,
   ): purify.Either<
@@ -17755,14 +17698,6 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
     });
   }
 
-  /**
-   * An abstract base class that will be inherited by the extern object type, showing how to mix generated and hand-written code.
-   */
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "ExternObjectType";
-    readonly abcStringProperty: string;
-  };
   export const Json = {
     parse: jsonParse,
     parseProperties: jsonParseProperties,
@@ -17901,31 +17836,6 @@ export namespace InterfaceUnionNodeShape {
     });
   }
 
-  export function fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, InterfaceUnionNodeShape> {
-    return (
-      InterfaceUnionNodeShapeMember1.Json.parse(json) as purify.Either<
-        zod.ZodError,
-        InterfaceUnionNodeShape
-      >
-    )
-      .altLazy(
-        () =>
-          InterfaceUnionNodeShapeMember2a.Json.parse(json) as purify.Either<
-            zod.ZodError,
-            InterfaceUnionNodeShape
-          >,
-      )
-      .altLazy(
-        () =>
-          InterfaceUnionNodeShapeMember2b.Json.parse(json) as purify.Either<
-            zod.ZodError,
-            InterfaceUnionNodeShape
-          >,
-      );
-  }
-
   export function fromRdf({
     ignoreRdfType,
     resource,
@@ -17996,13 +17906,71 @@ export namespace InterfaceUnionNodeShape {
     }
   }
 
-  export function jsonZodSchema() {
+  export type Json =
+    | InterfaceUnionNodeShapeMember1.Json
+    | InterfaceUnionNodeShapeMember2a.Json
+    | InterfaceUnionNodeShapeMember2b.Json;
+
+  function jsonParse(
+    json: unknown,
+  ): purify.Either<zod.ZodError, InterfaceUnionNodeShape> {
+    return (
+      InterfaceUnionNodeShapeMember1.Json.parse(json) as purify.Either<
+        zod.ZodError,
+        InterfaceUnionNodeShape
+      >
+    )
+      .altLazy(
+        () =>
+          InterfaceUnionNodeShapeMember2a.Json.parse(json) as purify.Either<
+            zod.ZodError,
+            InterfaceUnionNodeShape
+          >,
+      )
+      .altLazy(
+        () =>
+          InterfaceUnionNodeShapeMember2b.Json.parse(json) as purify.Either<
+            zod.ZodError,
+            InterfaceUnionNodeShape
+          >,
+      );
+  }
+
+  function jsonUnparse(
+    _interfaceUnionNodeShape: InterfaceUnionNodeShape,
+  ):
+    | InterfaceUnionNodeShapeMember1.Json
+    | InterfaceUnionNodeShapeMember2a.Json
+    | InterfaceUnionNodeShapeMember2b.Json {
+    switch (_interfaceUnionNodeShape.type) {
+      case "InterfaceUnionNodeShapeMember1":
+        return InterfaceUnionNodeShapeMember1.Json.unparse(
+          _interfaceUnionNodeShape,
+        );
+      case "InterfaceUnionNodeShapeMember2a":
+        return InterfaceUnionNodeShapeMember2a.Json.unparse(
+          _interfaceUnionNodeShape,
+        );
+      case "InterfaceUnionNodeShapeMember2b":
+        return InterfaceUnionNodeShapeMember2b.Json.unparse(
+          _interfaceUnionNodeShape,
+        );
+    }
+  }
+
+  function jsonZodSchema() {
     return zod.discriminatedUnion("type", [
       InterfaceUnionNodeShapeMember1.Json.zodSchema(),
       InterfaceUnionNodeShapeMember2a.Json.zodSchema(),
       InterfaceUnionNodeShapeMember2b.Json.zodSchema(),
     ]);
   }
+
+  export const Json = {
+    parse: jsonParse,
+    unparse: jsonUnparse,
+    zodSchema: jsonZodSchema,
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -18135,28 +18103,6 @@ export namespace InterfaceUnionNodeShape {
     ];
   }
 
-  export function toJson(
-    _interfaceUnionNodeShape: InterfaceUnionNodeShape,
-  ):
-    | InterfaceUnionNodeShapeMember1.Json
-    | InterfaceUnionNodeShapeMember2a.Json
-    | InterfaceUnionNodeShapeMember2b.Json {
-    switch (_interfaceUnionNodeShape.type) {
-      case "InterfaceUnionNodeShapeMember1":
-        return InterfaceUnionNodeShapeMember1.Json.unparse(
-          _interfaceUnionNodeShape,
-        );
-      case "InterfaceUnionNodeShapeMember2a":
-        return InterfaceUnionNodeShapeMember2a.Json.unparse(
-          _interfaceUnionNodeShape,
-        );
-      case "InterfaceUnionNodeShapeMember2b":
-        return InterfaceUnionNodeShapeMember2b.Json.unparse(
-          _interfaceUnionNodeShape,
-        );
-    }
-  }
-
   export function toRdf(
     _interfaceUnionNodeShape: InterfaceUnionNodeShape,
     _parameters: {
@@ -18209,23 +18155,6 @@ export namespace InterfaceUnionNodeShapeMember2 {
           );
       }
     });
-  }
-
-  export function fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, InterfaceUnionNodeShapeMember2> {
-    return (
-      InterfaceUnionNodeShapeMember2a.Json.parse(json) as purify.Either<
-        zod.ZodError,
-        InterfaceUnionNodeShapeMember2
-      >
-    ).altLazy(
-      () =>
-        InterfaceUnionNodeShapeMember2b.Json.parse(json) as purify.Either<
-          zod.ZodError,
-          InterfaceUnionNodeShapeMember2
-        >,
-    );
   }
 
   export function fromRdf({
@@ -18282,12 +18211,56 @@ export namespace InterfaceUnionNodeShapeMember2 {
     }
   }
 
-  export function jsonZodSchema() {
+  export type Json =
+    | InterfaceUnionNodeShapeMember2a.Json
+    | InterfaceUnionNodeShapeMember2b.Json;
+
+  function jsonParse(
+    json: unknown,
+  ): purify.Either<zod.ZodError, InterfaceUnionNodeShapeMember2> {
+    return (
+      InterfaceUnionNodeShapeMember2a.Json.parse(json) as purify.Either<
+        zod.ZodError,
+        InterfaceUnionNodeShapeMember2
+      >
+    ).altLazy(
+      () =>
+        InterfaceUnionNodeShapeMember2b.Json.parse(json) as purify.Either<
+          zod.ZodError,
+          InterfaceUnionNodeShapeMember2
+        >,
+    );
+  }
+
+  function jsonUnparse(
+    _interfaceUnionNodeShapeMember2: InterfaceUnionNodeShapeMember2,
+  ):
+    | InterfaceUnionNodeShapeMember2a.Json
+    | InterfaceUnionNodeShapeMember2b.Json {
+    switch (_interfaceUnionNodeShapeMember2.type) {
+      case "InterfaceUnionNodeShapeMember2a":
+        return InterfaceUnionNodeShapeMember2a.Json.unparse(
+          _interfaceUnionNodeShapeMember2,
+        );
+      case "InterfaceUnionNodeShapeMember2b":
+        return InterfaceUnionNodeShapeMember2b.Json.unparse(
+          _interfaceUnionNodeShapeMember2,
+        );
+    }
+  }
+
+  function jsonZodSchema() {
     return zod.discriminatedUnion("type", [
       InterfaceUnionNodeShapeMember2a.Json.zodSchema(),
       InterfaceUnionNodeShapeMember2b.Json.zodSchema(),
     ]);
   }
+
+  export const Json = {
+    parse: jsonParse,
+    unparse: jsonUnparse,
+    zodSchema: jsonZodSchema,
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -18400,23 +18373,6 @@ export namespace InterfaceUnionNodeShapeMember2 {
     ];
   }
 
-  export function toJson(
-    _interfaceUnionNodeShapeMember2: InterfaceUnionNodeShapeMember2,
-  ):
-    | InterfaceUnionNodeShapeMember2a.Json
-    | InterfaceUnionNodeShapeMember2b.Json {
-    switch (_interfaceUnionNodeShapeMember2.type) {
-      case "InterfaceUnionNodeShapeMember2a":
-        return InterfaceUnionNodeShapeMember2a.Json.unparse(
-          _interfaceUnionNodeShapeMember2,
-        );
-      case "InterfaceUnionNodeShapeMember2b":
-        return InterfaceUnionNodeShapeMember2b.Json.unparse(
-          _interfaceUnionNodeShapeMember2,
-        );
-    }
-  }
-
   export function toRdf(
     _interfaceUnionNodeShapeMember2: InterfaceUnionNodeShapeMember2,
     _parameters: {
@@ -18461,31 +18417,6 @@ export namespace UnionNodeShape {
           return left.equals(right as unknown as ExternObjectType);
       }
     });
-  }
-
-  export function fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, UnionNodeShape> {
-    return (
-      UnionNodeShapeMember1.Json.parse(json) as purify.Either<
-        zod.ZodError,
-        UnionNodeShape
-      >
-    )
-      .altLazy(
-        () =>
-          UnionNodeShapeMember2.Json.parse(json) as purify.Either<
-            zod.ZodError,
-            UnionNodeShape
-          >,
-      )
-      .altLazy(
-        () =>
-          ExternObjectType.Json.parse(json) as purify.Either<
-            zod.ZodError,
-            UnionNodeShape
-          >,
-      );
   }
 
   export function fromRdf({
@@ -18537,13 +18468,65 @@ export namespace UnionNodeShape {
     }
   }
 
-  export function jsonZodSchema() {
+  export type Json =
+    | UnionNodeShapeMember1.Json
+    | UnionNodeShapeMember2.Json
+    | ExternObjectType.Json;
+
+  function jsonParse(
+    json: unknown,
+  ): purify.Either<zod.ZodError, UnionNodeShape> {
+    return (
+      UnionNodeShapeMember1.Json.parse(json) as purify.Either<
+        zod.ZodError,
+        UnionNodeShape
+      >
+    )
+      .altLazy(
+        () =>
+          UnionNodeShapeMember2.Json.parse(json) as purify.Either<
+            zod.ZodError,
+            UnionNodeShape
+          >,
+      )
+      .altLazy(
+        () =>
+          ExternObjectType.Json.parse(json) as purify.Either<
+            zod.ZodError,
+            UnionNodeShape
+          >,
+      );
+  }
+
+  function jsonUnparse(
+    _unionNodeShape: UnionNodeShape,
+  ):
+    | UnionNodeShapeMember1.Json
+    | UnionNodeShapeMember2.Json
+    | ExternObjectType.Json {
+    switch (_unionNodeShape.type) {
+      case "UnionNodeShapeMember1":
+        return _unionNodeShape.toJson();
+      case "UnionNodeShapeMember2":
+        return _unionNodeShape.toJson();
+      case "ExternObjectType":
+        return _unionNodeShape.toJson();
+    }
+  }
+
+  function jsonZodSchema() {
     return zod.discriminatedUnion("type", [
       UnionNodeShapeMember1.Json.zodSchema(),
       UnionNodeShapeMember2.Json.zodSchema(),
       ExternObjectType.Json.zodSchema(),
     ]);
   }
+
+  export const Json = {
+    parse: jsonParse,
+    unparse: jsonUnparse,
+    zodSchema: jsonZodSchema,
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -18662,22 +18645,6 @@ export namespace UnionNodeShape {
         type: "union",
       },
     ];
-  }
-
-  export function toJson(
-    _unionNodeShape: UnionNodeShape,
-  ):
-    | UnionNodeShapeMember1.Json
-    | UnionNodeShapeMember2.Json
-    | ExternObjectType.Json {
-    switch (_unionNodeShape.type) {
-      case "UnionNodeShapeMember1":
-        return _unionNodeShape.toJson();
-      case "UnionNodeShapeMember2":
-        return _unionNodeShape.toJson();
-      case "ExternObjectType":
-        return _unionNodeShape.toJson();
-    }
   }
 
   export function toRdf(

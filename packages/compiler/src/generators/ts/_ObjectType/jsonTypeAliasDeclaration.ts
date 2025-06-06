@@ -1,7 +1,6 @@
 import { Maybe } from "purify-ts";
 import { StructureKind, type TypeAliasDeclarationStructure } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
-import { tsComment } from "../tsComment.js";
 
 export function jsonTypeAliasDeclaration(
   this: ObjectType,
@@ -32,9 +31,8 @@ export function jsonTypeAliasDeclaration(
 
   return Maybe.of({
     isExported: true,
-    leadingTrivia: this.comment.alt(this.label).map(tsComment).extract(),
     kind: StructureKind.TypeAlias,
     name: "Json",
     type: members.length > 0 ? members.join(" & ") : "object",
-  } satisfies TypeAliasDeclarationStructure);
+  });
 }

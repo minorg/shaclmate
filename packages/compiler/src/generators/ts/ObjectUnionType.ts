@@ -7,6 +7,7 @@ import {
   type StatementStructures,
   StructureKind,
   type TypeAliasDeclarationStructure,
+  type VariableStatementStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 import { DeclaredType } from "./DeclaredType.js";
@@ -95,12 +96,14 @@ export class ObjectUnionType extends DeclaredType {
 
     const staticModuleStatements: StatementStructures[] = [
       ...this.equalsFunctionDeclaration.toList(),
-      ...this.fromJsonFunctionDeclaration.toList(),
       ...this.fromRdfFunctionDeclaration.toList(),
       ...this.hashFunctionDeclaration.toList(),
+      ...this.jsonTypeAliasDeclaration.toList(),
+      ...this.jsonParseFunctionDeclaration.toList(),
+      ...this.jsonUnparseFunctionDeclaration.toList(),
       ...this.jsonZodSchemaFunctionDeclaration.toList(),
+      ...this.jsonVariableStatement.toList(),
       ...this.sparqlFunctionDeclarations,
-      ...this.toJsonFunctionDeclaration.toList(),
       ...this.toRdfFunctionDeclaration.toList(),
     ];
 
@@ -185,33 +188,6 @@ return strictEquals(left.type, right.type).chain(() => {
     });
   }
 
-  private get fromJsonFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
-    if (!this.features.has("json")) {
-      return Maybe.empty();
-    }
-
-    return Maybe.of({
-      isExported: true,
-      kind: StructureKind.Function,
-      name: "fromJson",
-      parameters: [
-        {
-          name: "json",
-          type: "unknown",
-        },
-      ],
-      returnType: `purify.Either<zod.ZodError, ${this.name}>`,
-      statements: [
-        `return ${this.memberTypes.reduce((expression, memberType) => {
-          const memberTypeExpression = `(${memberType.staticModuleName}.Json.parse(json) as purify.Either<zod.ZodError, ${this.name}>)`;
-          return expression.length > 0
-            ? `${expression}.altLazy(() => ${memberTypeExpression})`
-            : memberTypeExpression;
-        }, "")};`,
-      ],
-    });
-  }
-
   private get fromRdfFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
     if (!this.features.has("rdf")) {
       return Maybe.empty();
@@ -284,6 +260,85 @@ return strictEquals(left.type, right.type).chain(() => {
     });
   }
 
+  private get jsonParseFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
+    if (!this.features.has("json")) {
+      return Maybe.empty();
+    }
+
+    return Maybe.of({
+      kind: StructureKind.Function,
+      name: "jsonParse",
+      parameters: [
+        {
+          name: "json",
+          type: "unknown",
+        },
+      ],
+      returnType: `purify.Either<zod.ZodError, ${this.name}>`,
+      statements: [
+        `return ${this.memberTypes.reduce((expression, memberType) => {
+          const memberTypeExpression = `(${memberType.staticModuleName}.Json.parse(json) as purify.Either<zod.ZodError, ${this.name}>)`;
+          return expression.length > 0
+            ? `${expression}.altLazy(() => ${memberTypeExpression})`
+            : memberTypeExpression;
+        }, "")};`,
+      ],
+    });
+  }
+
+  private get jsonUnparseFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
+    if (!this.features.has("json")) {
+      return Maybe.empty();
+    }
+
+    const caseBlocks = this.memberTypes.map((memberType) => {
+      let returnExpression: string;
+      switch (memberType.declarationType) {
+        case "class":
+          returnExpression = `${this.thisVariable}.toJson()`;
+          break;
+        case "interface":
+          returnExpression = `${memberType.staticModuleName}.Json.unparse(${this.thisVariable})`;
+          break;
+      }
+      return `case "${memberType.name}": return ${returnExpression};`;
+    });
+
+    return Maybe.of({
+      kind: StructureKind.Function,
+      name: "jsonUnparse",
+      parameters: [
+        {
+          name: this.thisVariable,
+          type: this.name,
+        },
+      ],
+      returnType: this.jsonName,
+      statements: `switch (${this.thisVariable}.${this._discriminatorProperty.name}) { ${caseBlocks.join(" ")} }`,
+    });
+  }
+
+  private get jsonVariableStatement(): Maybe<VariableStatementStructure> {
+    if (!this.features.has("json")) {
+      return Maybe.empty();
+    }
+
+    return Maybe.of({
+      kind: StructureKind.VariableStatement,
+      declarations: [
+        {
+          name: "Json",
+          initializer: objectInitializer({
+            parse: "jsonParse",
+            unparse: "jsonUnparse",
+            zodSchema: "jsonZodSchema",
+          }),
+        },
+      ],
+      isExported: true,
+    });
+  }
+
   private get jsonZodSchemaFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
     if (!this.features.has("json")) {
       return Maybe.empty();
@@ -291,10 +346,24 @@ return strictEquals(left.type, right.type).chain(() => {
 
     const variables = { zod: "zod" };
     return Maybe.of({
-      isExported: true,
       kind: StructureKind.Function,
       name: "jsonZodSchema",
       statements: `return ${variables.zod}.discriminatedUnion("${this._discriminatorProperty.name}", [${this.memberTypes.map((memberType) => memberType.jsonZodSchema({ variables })).join(", ")}]);`,
+    });
+  }
+
+  private get jsonTypeAliasDeclaration(): Maybe<TypeAliasDeclarationStructure> {
+    if (!this.features.has("json")) {
+      return Maybe.empty();
+    }
+
+    return Maybe.of({
+      isExported: true,
+      kind: StructureKind.TypeAlias,
+      name: "Json",
+      type: this.memberTypes
+        .map((memberType) => memberType.jsonName)
+        .join(" | "),
     });
   }
 
@@ -351,39 +420,6 @@ return strictEquals(left.type, right.type).chain(() => {
         ],
       },
     ];
-  }
-
-  private get toJsonFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
-    if (!this.features.has("json")) {
-      return Maybe.empty();
-    }
-
-    const caseBlocks = this.memberTypes.map((memberType) => {
-      let returnExpression: string;
-      switch (memberType.declarationType) {
-        case "class":
-          returnExpression = `${this.thisVariable}.toJson()`;
-          break;
-        case "interface":
-          returnExpression = `${memberType.staticModuleName}.Json.unparse(${this.thisVariable})`;
-          break;
-      }
-      return `case "${memberType.name}": return ${returnExpression};`;
-    });
-
-    return Maybe.of({
-      isExported: true,
-      kind: StructureKind.Function,
-      name: "toJson",
-      parameters: [
-        {
-          name: this.thisVariable,
-          type: this.name,
-        },
-      ],
-      returnType: this.jsonName,
-      statements: `switch (${this.thisVariable}.${this._discriminatorProperty.name}) { ${caseBlocks.join(" ")} }`,
-    });
   }
 
   private get toRdfFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {

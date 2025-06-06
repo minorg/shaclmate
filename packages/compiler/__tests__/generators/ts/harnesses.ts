@@ -10,14 +10,14 @@ const identifier = dataFactory.namedNode("http://example.com/instance");
 
 export const harnesses = {
   blankNodeShape: new ClassHarness({
-    fromJson: kitchenSink.BlankNodeShape.fromJson,
+    fromJson: kitchenSink.BlankNodeShape.Json.parse,
     fromRdf: kitchenSink.BlankNodeShape.fromRdf,
     instance: new kitchenSink.BlankNodeShape({}),
     sparqlConstructQueryString:
       kitchenSink.BlankNodeShape.sparqlConstructQueryString,
   }),
   concreteChildClassNodeShape: new ClassHarness({
-    fromJson: kitchenSink.ConcreteChildClassNodeShape.fromJson,
+    fromJson: kitchenSink.ConcreteChildClassNodeShape.Json.parse,
     fromRdf: kitchenSink.ConcreteChildClassNodeShape.fromRdf,
     instance: new kitchenSink.ConcreteChildClassNodeShape({
       abcStringProperty: "abc",
@@ -30,7 +30,7 @@ export const harnesses = {
   }),
   concreteChildInterfaceNodeShape: new InterfaceHarness({
     equals: kitchenSink.ConcreteChildInterfaceNodeShape.equals,
-    fromJson: kitchenSink.ConcreteChildInterfaceNodeShape.fromJson,
+    fromJson: kitchenSink.ConcreteChildInterfaceNodeShape.Json.parse,
     fromRdf: kitchenSink.ConcreteChildInterfaceNodeShape.fromRdf,
     instance: {
       baseStringProperty: "abc",
@@ -41,11 +41,11 @@ export const harnesses = {
     },
     sparqlConstructQueryString:
       kitchenSink.ConcreteChildInterfaceNodeShape.sparqlConstructQueryString,
-    toJson: kitchenSink.ConcreteChildInterfaceNodeShape.toJson,
+    toJson: kitchenSink.ConcreteChildInterfaceNodeShape.Json.unparse,
     toRdf: kitchenSink.ConcreteChildInterfaceNodeShape.toRdf,
   }),
   concreteParentClassNodeShape: new ClassHarness({
-    fromJson: kitchenSink.ConcreteParentClassNodeShapeStatic.fromJson,
+    fromJson: kitchenSink.ConcreteParentClassNodeShapeStatic.Json.parse,
     fromRdf: kitchenSink.ConcreteParentClassNodeShapeStatic.fromRdf,
     instance: new kitchenSink.ConcreteParentClassNodeShape({
       abcStringProperty: "abc",
@@ -57,7 +57,7 @@ export const harnesses = {
   }),
   concreteParentInterfaceNodeShape: new InterfaceHarness({
     equals: kitchenSink.ConcreteParentInterfaceNodeShapeStatic.equals,
-    fromJson: kitchenSink.ConcreteParentInterfaceNodeShapeStatic.fromJson,
+    fromJson: kitchenSink.ConcreteParentInterfaceNodeShapeStatic.Json.parse,
     fromRdf: kitchenSink.ConcreteParentInterfaceNodeShapeStatic.fromRdf,
     instance: {
       baseStringProperty: "abc",
@@ -68,11 +68,11 @@ export const harnesses = {
     sparqlConstructQueryString:
       kitchenSink.ConcreteParentInterfaceNodeShapeStatic
         .sparqlConstructQueryString,
-    toJson: kitchenSink.ConcreteParentInterfaceNodeShapeStatic.toJson,
+    toJson: kitchenSink.ConcreteParentInterfaceNodeShapeStatic.Json.unparse,
     toRdf: kitchenSink.ConcreteParentInterfaceNodeShapeStatic.toRdf,
   }),
   defaultValuePropertiesNodeShape: new ClassHarness({
-    fromJson: kitchenSink.DefaultValuePropertiesNodeShape.fromJson,
+    fromJson: kitchenSink.DefaultValuePropertiesNodeShape.Json.parse,
     fromRdf: kitchenSink.DefaultValuePropertiesNodeShape.fromRdf,
     instance: new kitchenSink.DefaultValuePropertiesNodeShape({
       identifier,
@@ -81,7 +81,7 @@ export const harnesses = {
       kitchenSink.DefaultValuePropertiesNodeShape.sparqlConstructQueryString,
   }),
   defaultValuePropertiesOverriddenDifferent: new ClassHarness({
-    fromJson: kitchenSink.DefaultValuePropertiesNodeShape.fromJson,
+    fromJson: kitchenSink.DefaultValuePropertiesNodeShape.Json.parse,
     fromRdf: kitchenSink.DefaultValuePropertiesNodeShape.fromRdf,
     instance: new kitchenSink.DefaultValuePropertiesNodeShape({
       falseBooleanProperty: true,
@@ -94,7 +94,7 @@ export const harnesses = {
       kitchenSink.DefaultValuePropertiesNodeShape.sparqlConstructQueryString,
   }),
   defaultValuePropertiesOverriddenSame: new ClassHarness({
-    fromJson: kitchenSink.DefaultValuePropertiesNodeShape.fromJson,
+    fromJson: kitchenSink.DefaultValuePropertiesNodeShape.Json.parse,
     fromRdf: kitchenSink.DefaultValuePropertiesNodeShape.fromRdf,
     instance: new kitchenSink.DefaultValuePropertiesNodeShape({
       falseBooleanProperty: false,
@@ -109,7 +109,7 @@ export const harnesses = {
       kitchenSink.DefaultValuePropertiesNodeShape.sparqlConstructQueryString,
   }),
   emptyListProperty: new ClassHarness({
-    fromJson: kitchenSink.ListPropertiesNodeShape.fromJson,
+    fromJson: kitchenSink.ListPropertiesNodeShape.Json.parse,
     fromRdf: kitchenSink.ListPropertiesNodeShape.fromRdf,
     instance: new kitchenSink.ListPropertiesNodeShape({
       identifier,
@@ -119,7 +119,7 @@ export const harnesses = {
       kitchenSink.ListPropertiesNodeShape.sparqlConstructQueryString,
   }),
   explicitRdfTypes: new ClassHarness({
-    fromJson: kitchenSink.ExplicitRdfTypesNodeShape.fromJson,
+    fromJson: kitchenSink.ExplicitRdfTypesNodeShape.Json.parse,
     fromRdf: kitchenSink.ExplicitRdfTypesNodeShape.fromRdf,
     instance: new kitchenSink.ExplicitRdfTypesNodeShape({
       identifier,
@@ -129,7 +129,7 @@ export const harnesses = {
       kitchenSink.ExplicitRdfTypesNodeShape.sparqlConstructQueryString,
   }),
   externProperties: new ClassHarness({
-    fromJson: kitchenSink.ExternPropertiesNodeShape.fromJson,
+    fromJson: kitchenSink.ExternPropertiesNodeShape.Json.parse,
     fromRdf: kitchenSink.ExternPropertiesNodeShape.fromRdf,
     instance: new kitchenSink.ExternPropertiesNodeShape({
       externObjectTypeProperty: new kitchenSink.ExternObjectType(
@@ -147,7 +147,7 @@ export const harnesses = {
       kitchenSink.ExternPropertiesNodeShape.sparqlConstructQueryString,
   }),
   hasValueProperties: new ClassHarness({
-    fromJson: kitchenSink.HasValuePropertiesNodeShape.fromJson,
+    fromJson: kitchenSink.HasValuePropertiesNodeShape.Json.parse,
     fromRdf: kitchenSink.HasValuePropertiesNodeShape.fromRdf,
     instance: new kitchenSink.HasValuePropertiesNodeShape({
       hasIriProperty: dataFactory.namedNode(
@@ -159,7 +159,7 @@ export const harnesses = {
       kitchenSink.HasValuePropertiesNodeShape.sparqlConstructQueryString,
   }),
   inIdentifierNodeShape: new ClassHarness({
-    fromJson: kitchenSink.InIdentifierNodeShape.fromJson,
+    fromJson: kitchenSink.InIdentifierNodeShape.Json.parse,
     fromRdf: kitchenSink.InIdentifierNodeShape.fromRdf,
     instance: new kitchenSink.InIdentifierNodeShape({
       identifier: dataFactory.namedNode(
@@ -171,7 +171,7 @@ export const harnesses = {
       kitchenSink.InIdentifierNodeShape.sparqlConstructQueryString,
   }),
   inIrisProperty: new ClassHarness({
-    fromJson: kitchenSink.InPropertiesNodeShape.fromJson,
+    fromJson: kitchenSink.InPropertiesNodeShape.Json.parse,
     fromRdf: kitchenSink.InPropertiesNodeShape.fromRdf,
     instance: new kitchenSink.InPropertiesNodeShape({
       identifier,
@@ -183,7 +183,7 @@ export const harnesses = {
       kitchenSink.InPropertiesNodeShape.sparqlConstructQueryString,
   }),
   inLiteralsProperty: new ClassHarness({
-    fromJson: kitchenSink.InPropertiesNodeShape.fromJson,
+    fromJson: kitchenSink.InPropertiesNodeShape.Json.parse,
     fromRdf: kitchenSink.InPropertiesNodeShape.fromRdf,
     instance: new kitchenSink.InPropertiesNodeShape({
       identifier,
@@ -196,7 +196,7 @@ export const harnesses = {
     kitchenSink.InterfaceNodeShape,
     BlankNode | NamedNode
   >({
-    fromJson: kitchenSink.InterfaceNodeShape.fromJson,
+    fromJson: kitchenSink.InterfaceNodeShape.Json.parse,
     equals: kitchenSink.InterfaceNodeShape.equals,
     fromRdf: kitchenSink.InterfaceNodeShape.fromRdf,
     instance: {
@@ -206,14 +206,14 @@ export const harnesses = {
     },
     sparqlConstructQueryString:
       kitchenSink.InterfaceNodeShape.sparqlConstructQueryString,
-    toJson: kitchenSink.InterfaceNodeShape.toJson,
+    toJson: kitchenSink.InterfaceNodeShape.Json.unparse,
     toRdf: kitchenSink.InterfaceNodeShape.toRdf,
   }),
   interfaceUnionNodeShapeMember1: new InterfaceHarness<
     kitchenSink.InterfaceUnionNodeShape,
     BlankNode | NamedNode
   >({
-    fromJson: kitchenSink.InterfaceUnionNodeShape.fromJson,
+    fromJson: kitchenSink.InterfaceUnionNodeShape.Json.parse,
     equals: kitchenSink.InterfaceUnionNodeShape.equals,
     fromRdf: kitchenSink.InterfaceUnionNodeShape.fromRdf,
     instance: {
@@ -223,14 +223,14 @@ export const harnesses = {
     },
     sparqlConstructQueryString:
       kitchenSink.InterfaceUnionNodeShape.sparqlConstructQueryString,
-    toJson: kitchenSink.InterfaceUnionNodeShape.toJson,
+    toJson: kitchenSink.InterfaceUnionNodeShape.Json.unparse,
     toRdf: kitchenSink.InterfaceUnionNodeShape.toRdf,
   }),
   interfaceUnionNodeShapeMember2: new InterfaceHarness<
     kitchenSink.InterfaceUnionNodeShape,
     BlankNode | NamedNode
   >({
-    fromJson: kitchenSink.InterfaceUnionNodeShape.fromJson,
+    fromJson: kitchenSink.InterfaceUnionNodeShape.Json.parse,
     equals: kitchenSink.InterfaceUnionNodeShape.equals,
     fromRdf: kitchenSink.InterfaceUnionNodeShape.fromRdf,
     instance: {
@@ -240,11 +240,11 @@ export const harnesses = {
     },
     sparqlConstructQueryString:
       kitchenSink.InterfaceUnionNodeShape.sparqlConstructQueryString,
-    toJson: kitchenSink.InterfaceUnionNodeShape.toJson,
+    toJson: kitchenSink.InterfaceUnionNodeShape.Json.unparse,
     toRdf: kitchenSink.InterfaceUnionNodeShape.toRdf,
   }),
   iriNodeShape: new ClassHarness({
-    fromJson: kitchenSink.IriNodeShape.fromJson,
+    fromJson: kitchenSink.IriNodeShape.Json.parse,
     fromRdf: kitchenSink.IriNodeShape.fromRdf,
     instance: new kitchenSink.IriNodeShape({
       identifier,
@@ -253,7 +253,7 @@ export const harnesses = {
       kitchenSink.IriNodeShape.sparqlConstructQueryString,
   }),
   languageInProperties: new ClassHarness({
-    fromJson: kitchenSink.LanguageInPropertiesNodeShape.fromJson,
+    fromJson: kitchenSink.LanguageInPropertiesNodeShape.Json.parse,
     fromRdf: kitchenSink.LanguageInPropertiesNodeShape.fromRdf,
     instance: new kitchenSink.LanguageInPropertiesNodeShape({
       identifier,
@@ -264,7 +264,7 @@ export const harnesses = {
       kitchenSink.LanguageInPropertiesNodeShape.sparqlConstructQueryString,
   }),
   mutableProperties: new ClassHarness({
-    fromJson: kitchenSink.MutablePropertiesNodeShape.fromJson,
+    fromJson: kitchenSink.MutablePropertiesNodeShape.Json.parse,
     fromRdf: kitchenSink.MutablePropertiesNodeShape.fromRdf,
     instance: new kitchenSink.MutablePropertiesNodeShape({
       identifier,
@@ -276,7 +276,7 @@ export const harnesses = {
       kitchenSink.MutablePropertiesNodeShape.sparqlConstructQueryString,
   }),
   objectListProperty: new ClassHarness({
-    fromJson: kitchenSink.ListPropertiesNodeShape.fromJson,
+    fromJson: kitchenSink.ListPropertiesNodeShape.Json.parse,
     fromRdf: kitchenSink.ListPropertiesNodeShape.fromRdf,
     instance: new kitchenSink.ListPropertiesNodeShape({
       identifier,
@@ -289,7 +289,7 @@ export const harnesses = {
       kitchenSink.ListPropertiesNodeShape.sparqlConstructQueryString,
   }),
   orderedProperties: new ClassHarness({
-    fromJson: kitchenSink.OrderedPropertiesNodeShape.fromJson,
+    fromJson: kitchenSink.OrderedPropertiesNodeShape.Json.parse,
     fromRdf: kitchenSink.OrderedPropertiesNodeShape.fromRdf,
     instance: new kitchenSink.OrderedPropertiesNodeShape({
       identifier,
@@ -301,7 +301,7 @@ export const harnesses = {
       kitchenSink.OrderedPropertiesNodeShape.sparqlConstructQueryString,
   }),
   propertyCardinalities: new ClassHarness({
-    fromJson: kitchenSink.PropertyCardinalitiesNodeShape.fromJson,
+    fromJson: kitchenSink.PropertyCardinalitiesNodeShape.Json.parse,
     fromRdf: kitchenSink.PropertyCardinalitiesNodeShape.fromRdf,
     instance: new kitchenSink.PropertyCardinalitiesNodeShape({
       identifier,
@@ -314,7 +314,7 @@ export const harnesses = {
       kitchenSink.PropertyCardinalitiesNodeShape.sparqlConstructQueryString,
   }),
   propertyVisibilities: new ClassHarness({
-    fromJson: kitchenSink.PropertyVisibilitiesNodeShape.fromJson,
+    fromJson: kitchenSink.PropertyVisibilitiesNodeShape.Json.parse,
     fromRdf: kitchenSink.PropertyVisibilitiesNodeShape.fromRdf,
     instance: new kitchenSink.PropertyVisibilitiesNodeShape({
       identifier,
@@ -326,7 +326,7 @@ export const harnesses = {
       kitchenSink.PropertyVisibilitiesNodeShape.sparqlConstructQueryString,
   }),
   nonClassNodeShape: new ClassHarness({
-    fromJson: kitchenSink.NonClassNodeShape.fromJson,
+    fromJson: kitchenSink.NonClassNodeShape.Json.parse,
     fromRdf: kitchenSink.NonClassNodeShape.fromRdf,
     instance: new kitchenSink.NonClassNodeShape({
       identifier,
@@ -336,7 +336,7 @@ export const harnesses = {
       kitchenSink.NonClassNodeShape.sparqlConstructQueryString,
   }),
   sha256IriNodeShapeWithExplicitIdentifier: new ClassHarness({
-    fromJson: kitchenSink.Sha256IriNodeShape.fromJson,
+    fromJson: kitchenSink.Sha256IriNodeShape.Json.parse,
     fromRdf: kitchenSink.Sha256IriNodeShape.fromRdf,
     instance: new kitchenSink.Sha256IriNodeShape({
       identifier,
@@ -346,7 +346,7 @@ export const harnesses = {
       kitchenSink.Sha256IriNodeShape.sparqlConstructQueryString,
   }),
   sha256IriNodeShapeWithoutExplicitIdentifier: new ClassHarness({
-    fromJson: kitchenSink.Sha256IriNodeShape.fromJson,
+    fromJson: kitchenSink.Sha256IriNodeShape.Json.parse,
     fromRdf: kitchenSink.Sha256IriNodeShape.fromRdf,
     instance: new kitchenSink.Sha256IriNodeShape({
       stringProperty: "test",
@@ -355,7 +355,7 @@ export const harnesses = {
       kitchenSink.Sha256IriNodeShape.sparqlConstructQueryString,
   }),
   stringListProperty: new ClassHarness({
-    fromJson: kitchenSink.ListPropertiesNodeShape.fromJson,
+    fromJson: kitchenSink.ListPropertiesNodeShape.Json.parse,
     fromRdf: kitchenSink.ListPropertiesNodeShape.fromRdf,
     instance: new kitchenSink.ListPropertiesNodeShape({
       identifier,
@@ -365,7 +365,7 @@ export const harnesses = {
       kitchenSink.ListPropertiesNodeShape.sparqlConstructQueryString,
   }),
   termProperties: new ClassHarness({
-    fromJson: kitchenSink.TermPropertiesNodeShape.fromJson,
+    fromJson: kitchenSink.TermPropertiesNodeShape.Json.parse,
     fromRdf: kitchenSink.TermPropertiesNodeShape.fromRdf,
     instance: new kitchenSink.TermPropertiesNodeShape({
       booleanProperty: true,
@@ -383,7 +383,7 @@ export const harnesses = {
   }),
   unionNodeShapeMember1: new ClassUnionHarness({
     equals: kitchenSink.UnionNodeShape.equals,
-    fromJson: kitchenSink.UnionNodeShape.fromJson,
+    fromJson: kitchenSink.UnionNodeShape.Json.parse,
     fromRdf: kitchenSink.UnionNodeShape.fromRdf,
     instance: new kitchenSink.UnionNodeShapeMember1({
       identifier,
@@ -394,7 +394,7 @@ export const harnesses = {
   }),
   unionNodeShapeMember2: new ClassUnionHarness({
     equals: kitchenSink.UnionNodeShape.equals,
-    fromJson: kitchenSink.UnionNodeShape.fromJson,
+    fromJson: kitchenSink.UnionNodeShape.Json.parse,
     fromRdf: kitchenSink.UnionNodeShape.fromRdf,
     instance: new kitchenSink.UnionNodeShapeMember2({
       identifier,
@@ -404,7 +404,7 @@ export const harnesses = {
       kitchenSink.UnionNodeShape.sparqlConstructQueryString,
   }),
   unionProperties: new ClassHarness({
-    fromJson: kitchenSink.UnionPropertiesNodeShape.fromJson,
+    fromJson: kitchenSink.UnionPropertiesNodeShape.Json.parse,
     fromRdf: kitchenSink.UnionPropertiesNodeShape.fromRdf,
     instance: new kitchenSink.UnionPropertiesNodeShape({
       identifier,
@@ -416,7 +416,7 @@ export const harnesses = {
       kitchenSink.UnionPropertiesNodeShape.sparqlConstructQueryString,
   }),
   uuidv4IriNodeShapeWithExplicitIdentifier: new ClassHarness({
-    fromJson: kitchenSink.UuidV4IriNodeShape.fromJson,
+    fromJson: kitchenSink.UuidV4IriNodeShape.Json.parse,
     fromRdf: kitchenSink.UuidV4IriNodeShape.fromRdf,
     instance: new kitchenSink.UuidV4IriNodeShape({
       identifier,
@@ -426,7 +426,7 @@ export const harnesses = {
       kitchenSink.UuidV4IriNodeShape.sparqlConstructQueryString,
   }),
   uuidv4IriNodeShapeWithoutExplicitIdentifier: new ClassHarness({
-    fromJson: kitchenSink.UuidV4IriNodeShape.fromJson,
+    fromJson: kitchenSink.UuidV4IriNodeShape.Json.parse,
     fromRdf: kitchenSink.UuidV4IriNodeShape.fromRdf,
     instance: new kitchenSink.UuidV4IriNodeShape({
       stringProperty: "test",
