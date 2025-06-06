@@ -13,6 +13,7 @@
     "@types/toposort": "2.0.7",
     "change-case": "^5.4.4",
     "pino": "^9.1.0",
+    "purify-ts": "^2.1.0",
     "reserved-identifiers": "^1.0.0",
     "toposort": "2.0.2",
     "ts-invariant": "^0.10.3",

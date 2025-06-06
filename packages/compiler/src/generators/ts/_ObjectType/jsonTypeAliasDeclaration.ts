@@ -1,12 +1,16 @@
-import type { ObjectType } from "generators/ts/ObjectType.js";
-import { tsComment } from "generators/ts/tsComment.js";
 import { Maybe } from "purify-ts";
 import { StructureKind, type TypeAliasDeclarationStructure } from "ts-morph";
+import type { ObjectType } from "../ObjectType.js";
+import { tsComment } from "../tsComment.js";
 
 export function jsonTypeAliasDeclaration(
   this: ObjectType,
 ): Maybe<TypeAliasDeclarationStructure> {
   if (!this.features.has("json")) {
+    return Maybe.empty();
+  }
+
+  if (this.extern) {
     return Maybe.empty();
   }
 
@@ -30,7 +34,7 @@ export function jsonTypeAliasDeclaration(
     isExported: true,
     leadingTrivia: this.comment.alt(this.label).map(tsComment).extract(),
     kind: StructureKind.TypeAlias,
-    name: this.name,
+    name: "Json",
     type: members.length > 0 ? members.join(" & ") : "object",
   } satisfies TypeAliasDeclarationStructure);
 }

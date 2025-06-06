@@ -203,7 +203,7 @@ return strictEquals(left.type, right.type).chain(() => {
       returnType: `purify.Either<zod.ZodError, ${this.name}>`,
       statements: [
         `return ${this.memberTypes.reduce((expression, memberType) => {
-          const memberTypeExpression = `(${memberType.staticModuleName}.fromJson(json) as purify.Either<zod.ZodError, ${this.name}>)`;
+          const memberTypeExpression = `(${memberType.staticModuleName}.Json.parse(json) as purify.Either<zod.ZodError, ${this.name}>)`;
           return expression.length > 0
             ? `${expression}.altLazy(() => ${memberTypeExpression})`
             : memberTypeExpression;
@@ -365,7 +365,7 @@ return strictEquals(left.type, right.type).chain(() => {
           returnExpression = `${this.thisVariable}.toJson()`;
           break;
         case "interface":
-          returnExpression = `${memberType.staticModuleName}.toJson(${this.thisVariable})`;
+          returnExpression = `${memberType.staticModuleName}.Json.unparse(${this.thisVariable})`;
           break;
       }
       return `case "${memberType.name}": return ${returnExpression};`;

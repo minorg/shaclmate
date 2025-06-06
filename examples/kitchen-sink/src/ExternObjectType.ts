@@ -1,7 +1,6 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { Either } from "purify-ts";
 import type * as rdfjsResource from "rdfjs-resource";
-import type { z } from "zod";
 import {
   AbstractBaseClassForExternObjectType,
   AbstractBaseClassForExternObjectTypeStatic,
@@ -61,14 +60,6 @@ export namespace ExternObjectType {
     return left.equals(right);
   }
 
-  export function fromJson(
-    json: unknown,
-  ): Either<z.ZodError, ExternObjectType> {
-    return AbstractBaseClassForExternObjectTypeStatic._propertiesFromJson(
-      json,
-    ).map((properties) => new ExternObjectType(properties.identifier));
-  }
-
   export function fromRdf({
     extra,
     resource,
@@ -105,11 +96,14 @@ export namespace ExternObjectType {
     return instance.toRdf(parameters);
   }
 
-  export const jsonUiSchema =
-    AbstractBaseClassForExternObjectTypeStatic.jsonUiSchema;
-
-  export const jsonZodSchema =
-    AbstractBaseClassForExternObjectTypeStatic.jsonZodSchema;
+  export type Json = AbstractBaseClassForExternObjectTypeStatic.Json;
+  export const Json = {
+    ...AbstractBaseClassForExternObjectTypeStatic.Json,
+    parse: (json: unknown) =>
+      AbstractBaseClassForExternObjectTypeStatic.Json.parseProperties(json).map(
+        (properties) => new ExternObjectType(properties.identifier),
+      ),
+  };
 
   export const sparqlConstructTemplateTriples =
     AbstractBaseClassForExternObjectTypeStatic.sparqlConstructTemplateTriples;

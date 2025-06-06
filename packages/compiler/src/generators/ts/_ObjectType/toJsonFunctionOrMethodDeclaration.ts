@@ -32,7 +32,7 @@ export function toJsonFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
     case "interface":
       for (const parentObjectType of this.parentObjectTypes) {
         jsonObjectMembers.push(
-          `...${parentObjectType.staticModuleName}.toJson(${this.thisVariable})`,
+          `...${parentObjectType.staticModuleName}.Json.unparse(${this.thisVariable})`,
         );
       }
       parameters.push({

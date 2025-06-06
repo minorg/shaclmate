@@ -137,6 +137,18 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:defaultValue properties." ;
     sh:property [
+        sh:defaultValue "" ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:name "stringProperty" ;
+        sh:path :stringProperty
+    ], [
+        sh:defaultValue true ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:name "trueBooleanProperty" ;
+        sh:path :trueBooleanProperty
+    ], [
         sh:defaultValue false ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
@@ -160,18 +172,6 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:minCount 1 ;
         sh:name "numberProperty" ;
         sh:path :numberProperty
-    ], [
-        sh:defaultValue "" ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:name "stringProperty" ;
-        sh:path :stringProperty
-    ], [
-        sh:defaultValue true ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:name "trueBooleanProperty" ;
-        sh:path :trueBooleanProperty
     ] .
 
 :ExplicitRdfTypesNodeShape
@@ -733,6 +733,17 @@ shaclmate:toRdfType's are added an serialization.""" ;
     rdfs:comment "Shape with sh:xone properties." ;
     sh:property [
         sh:maxCount 1 ;
+        sh:name "orTermsProperty" ;
+        sh:path :orTermsProperty ;
+        sh:xone ([
+                sh:nodeKind sh:Literal
+            ]
+            [
+                sh:nodeKind sh:IRI
+            ]
+        )
+    ], [
+        sh:maxCount 1 ;
         sh:name "orUnrelatedProperty" ;
         sh:path :orUnrelatedProperty ;
         sh:xone ([
@@ -751,17 +762,6 @@ shaclmate:toRdfType's are added an serialization.""" ;
             ]
             [
                 sh:datatype xsd:string
-            ]
-        )
-    ], [
-        sh:maxCount 1 ;
-        sh:name "orTermsProperty" ;
-        sh:path :orTermsProperty ;
-        sh:xone ([
-                sh:nodeKind sh:Literal
-            ]
-            [
-                sh:nodeKind sh:IRI
             ]
         )
     ] .

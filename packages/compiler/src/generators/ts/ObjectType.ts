@@ -161,13 +161,9 @@ export class ObjectType extends DeclaredType {
       ..._ObjectType.equalsFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.fromRdfFunctionDeclarations.bind(this)(),
       ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
-      ..._ObjectType.jsonParseFunctionDeclarations.bind(this)(),
-      ..._ObjectType.jsonSchemaFunctionDeclaration.bind(this)().toList(),
+      ..._ObjectType.jsonFunctionDeclarations.bind(this)(),
       ..._ObjectType.jsonTypeAliasDeclaration.bind(this)().toList(),
-      ..._ObjectType.jsonUiSchemaFunctionDeclaration.bind(this)().toList(),
-      ..._ObjectType.jsonUnparseFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.jsonVariableStatement.bind(this)().toList(),
-      ..._ObjectType.jsonZodSchemaFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.hashFunctionDeclarations.bind(this)(),
       ..._ObjectType.sparqlFunctionDeclarations.bind(this)(),
       ..._ObjectType.toRdfFunctionDeclaration.bind(this)().toList(),
@@ -287,7 +283,7 @@ export class ObjectType extends DeclaredType {
     variables,
   }: Parameters<Type["fromJsonExpression"]>[0]): string {
     // Assumes the JSON object has been recursively validated already.
-    return `${this.staticModuleName}.fromJson(${variables.value}).unsafeCoerce()`;
+    return `${this.staticModuleName}.Json.parse(${variables.value}).unsafeCoerce()`;
   }
 
   override fromRdfExpression({
@@ -313,14 +309,14 @@ export class ObjectType extends DeclaredType {
     variables,
   }: { variables: { scopePrefix: string } }): Maybe<string> {
     return Maybe.of(
-      `${this.staticModuleName}.jsonUiSchema({ scopePrefix: ${variables.scopePrefix} })`,
+      `${this.staticModuleName}.Json.uiSchema({ scopePrefix: ${variables.scopePrefix} })`,
     );
   }
 
   override jsonZodSchema(
     _parameters: Parameters<Type["jsonZodSchema"]>[0],
   ): ReturnType<Type["jsonZodSchema"]> {
-    return `${this.staticModuleName}.jsonZodSchema()`;
+    return `${this.staticModuleName}.Json.zodSchema()`;
   }
 
   rdfjsResourceType(options?: { mutable?: boolean }): {
@@ -405,7 +401,7 @@ export class ObjectType extends DeclaredType {
       case "class":
         return `${variables.value}.toJson()`;
       case "interface":
-        return `${this.staticModuleName}.toJson(${variables.value})`;
+        return `${this.staticModuleName}.Json.unparse(${variables.value})`;
     }
   }
 
