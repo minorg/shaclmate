@@ -102,7 +102,7 @@ const packages: readonly Package[] = [
         "reserved-identifiers": "^1.0.0",
         toposort: "2.0.2",
         "ts-invariant": "^0.10.3",
-        "ts-morph": "^24.0.0",
+        "ts-morph": "^26.0.0",
         "typescript-memoize": "^1.1.1",
       },
       internal: ["shacl-ast"],
