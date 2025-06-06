@@ -155,7 +155,7 @@ function toRdfMethodDeclaration(
 function toStringMethodDeclaration(
   this: ObjectType,
 ): Maybe<OptionalKind<MethodDeclarationStructure>> {
-  if (!this.features.has("toJson")) {
+  if (!this.features.has("json")) {
     return Maybe.empty();
   }
 

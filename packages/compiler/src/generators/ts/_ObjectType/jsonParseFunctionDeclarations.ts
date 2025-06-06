@@ -5,10 +5,10 @@ const variables = {
   jsonObject: "_jsonObject",
 };
 
-export function fromJsonFunctionDeclarations(
+export function jsonParseFunctionDeclarations(
   this: ObjectType,
 ): readonly FunctionDeclarationStructure[] {
-  if (!this.features.has("fromJson")) {
+  if (!this.features.has("json")) {
     return [];
   }
 
@@ -18,23 +18,23 @@ export function fromJsonFunctionDeclarations(
 
   const initializers: string[] = [];
   const propertyReturnTypeSignatures: string[] = [];
-  const propertiesFromJsonFunctionReturnType: string[] = [];
-  const propertiesFromJsonFunctionStatements: string[] = [];
+  const propertiesFromJsonReturnType: string[] = [];
+  const propertiesFromJsonStatements: string[] = [];
 
-  propertiesFromJsonFunctionStatements.push(
+  propertiesFromJsonStatements.push(
     "const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);",
     "if (!_jsonSafeParseResult.success) { return purify.Left(_jsonSafeParseResult.error); }",
     `const ${variables.jsonObject} = _jsonSafeParseResult.data;`,
   );
 
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
-    propertiesFromJsonFunctionStatements.push(
+    propertiesFromJsonStatements.push(
       `const _super${parentObjectTypeI}Either = ${parentObjectType.staticModuleName}._propertiesFromJson(${variables.jsonObject});`,
       `if (_super${parentObjectTypeI}Either.isLeft()) { return _super${parentObjectTypeI}Either; }`,
       `const _super${parentObjectTypeI} = _super${parentObjectTypeI}Either.unsafeCoerce()`,
     );
     initializers.push(`..._super${parentObjectTypeI}`);
-    propertiesFromJsonFunctionReturnType.push(
+    propertiesFromJsonReturnType.push(
       `UnwrapR<ReturnType<typeof ${parentObjectType.staticModuleName}._propertiesFromJson>>`,
     );
   });
@@ -44,38 +44,37 @@ export function fromJsonFunctionDeclarations(
       variables,
     });
     if (propertyFromJsonStatements.length > 0) {
-      propertiesFromJsonFunctionStatements.push(...propertyFromJsonStatements);
+      propertiesFromJsonStatements.push(...propertyFromJsonStatements);
       initializers.push(property.name);
       propertyReturnTypeSignatures.push(
         `${property.name}: ${property.type.name};`,
       );
     }
   }
-  propertiesFromJsonFunctionStatements.push(
+  propertiesFromJsonStatements.push(
     `return purify.Either.of({ ${initializers.join(", ")} })`,
   );
   if (propertyReturnTypeSignatures.length > 0) {
-    propertiesFromJsonFunctionReturnType.splice(
+    propertiesFromJsonReturnType.splice(
       0,
       0,
       `{ ${propertyReturnTypeSignatures.join(" ")} }`,
     );
   }
 
-  const fromJsonFunctionDeclarations: FunctionDeclarationStructure[] = [];
+  const functionDeclarations: FunctionDeclarationStructure[] = [];
 
-  fromJsonFunctionDeclarations.push({
-    isExported: true,
+  functionDeclarations.push({
     kind: StructureKind.Function,
-    name: "_propertiesFromJson",
+    name: "jsonParseProperties",
     parameters: [
       {
         name: "_json",
         type: "unknown",
       },
     ],
-    returnType: `purify.Either<zod.ZodError, ${propertiesFromJsonFunctionReturnType.join(" & ")}>`,
-    statements: propertiesFromJsonFunctionStatements,
+    returnType: `purify.Either<zod.ZodError, ${propertiesFromJsonReturnType.join(" & ")}>`,
+    statements: propertiesFromJsonStatements,
   });
 
   let fromJsonStatements: string[];
@@ -97,14 +96,9 @@ export function fromJsonFunctionDeclarations(
       fromJsonStatements = [];
     }
   } else {
-    let propertiesFromJsonExpression: string;
-    switch (this.declarationType) {
-      case "class":
-        propertiesFromJsonExpression = `${this.staticModuleName}._propertiesFromJson(json).map(properties => new ${this.name}(properties))`;
-        break;
-      case "interface":
-        propertiesFromJsonExpression = `${this.staticModuleName}._propertiesFromJson(json)`;
-        break;
+    let propertiesFromJsonExpression = "jsonParseProperties(json)";
+    if (this.declarationType === "class") {
+      propertiesFromJsonExpression = `${propertiesFromJsonExpression}.map(properties => new ${this.name}(properties))`;
     }
 
     if (this.childObjectTypes.length > 0) {
@@ -125,10 +119,9 @@ export function fromJsonFunctionDeclarations(
   }
 
   if (fromJsonStatements.length > 0) {
-    fromJsonFunctionDeclarations.push({
-      isExported: true,
+    functionDeclarations.push({
       kind: StructureKind.Function,
-      name: "fromJson",
+      name: "jsonParse",
       parameters: [
         {
           name: "json",
@@ -140,5 +133,5 @@ export function fromJsonFunctionDeclarations(
     });
   }
 
-  return fromJsonFunctionDeclarations;
+  return functionDeclarations;
 }

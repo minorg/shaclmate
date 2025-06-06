@@ -28,27 +28,21 @@ function iriToTsFeatures(iri: TsFeatureIri): readonly TsFeature[] {
     case "http://purl.org/shaclmate/ontology#_TsFeature_Equals":
       return ["equals"];
     case "http://purl.org/shaclmate/ontology#_TsFeature_FromJson":
-      return ["fromJson"];
+    case "http://purl.org/shaclmate/ontology#_TsFeature_Json":
+    case "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema":
+    case "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema":
+    case "http://purl.org/shaclmate/ontology#_TsFeature_ToJson":
+      return ["json"];
     case "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf":
-      return ["fromRdf"];
+    case "http://purl.org/shaclmate/ontology#_TsFeature_Rdf":
+    case "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf":
+      return ["rdf"];
     case "http://purl.org/shaclmate/ontology#_TsFeature_Hash":
       return ["hash"];
-    case "http://purl.org/shaclmate/ontology#_TsFeature_Json":
-      return ["fromJson", "jsonSchema", "jsonUiSchema", "toJson"];
-    case "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema":
-      return ["jsonSchema"];
-    case "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema":
-      return ["jsonUiSchema"];
     case "http://purl.org/shaclmate/ontology#_TsFeature_None":
       return [];
     case "http://purl.org/shaclmate/ontology#_TsFeature_Sparql":
       return ["sparql"];
-    case "http://purl.org/shaclmate/ontology#_TsFeature_Rdf":
-      return ["fromRdf", "toRdf"];
-    case "http://purl.org/shaclmate/ontology#_TsFeature_ToJson":
-      return ["toJson"];
-    case "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf":
-      return ["toRdf"];
   }
 }
 

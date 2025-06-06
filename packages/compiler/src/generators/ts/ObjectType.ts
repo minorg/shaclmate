@@ -132,13 +132,11 @@ export class ObjectType extends DeclaredType {
     const imports: Import[] = this.properties.flatMap(
       (property) => property.declarationImports,
     );
-    if (this.features.has("fromJson") || this.features.has("jsonSchema")) {
+    if (this.features.has("json")) {
       imports.push(Import.ZOD);
-    }
-    if (this.features.has("jsonSchema")) {
       imports.push(Import.ZOD_TO_JSON_SCHEMA);
     }
-    if (this.features.has("fromRdf") || this.features.has("toRdf")) {
+    if (this.features.has("rdf")) {
       imports.push(Import.PURIFY);
       imports.push(Import.RDFJS_RESOURCE);
     }
@@ -161,15 +159,17 @@ export class ObjectType extends DeclaredType {
     const staticModuleStatements: StatementStructures[] = [
       ..._ObjectType.createFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.equalsFunctionDeclaration.bind(this)().toList(),
-      ..._ObjectType.fromJsonFunctionDeclarations.bind(this)(),
       ..._ObjectType.fromRdfFunctionDeclarations.bind(this)(),
-      ..._ObjectType.fromRdfTypeVariableDeclaration.bind(this)().toList(),
+      ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
+      ..._ObjectType.jsonParseFunctionDeclarations.bind(this)(),
       ..._ObjectType.jsonSchemaFunctionDeclaration.bind(this)().toList(),
+      ..._ObjectType.jsonTypeAliasDeclaration.bind(this)().toList(),
       ..._ObjectType.jsonUiSchemaFunctionDeclaration.bind(this)().toList(),
+      ..._ObjectType.jsonUnparseFunctionDeclaration.bind(this)().toList(),
+      ..._ObjectType.jsonVariableStatement.bind(this)().toList(),
       ..._ObjectType.jsonZodSchemaFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.hashFunctionDeclarations.bind(this)(),
       ..._ObjectType.sparqlFunctionDeclarations.bind(this)(),
-      ..._ObjectType.toJsonFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.toRdfFunctionDeclaration.bind(this)().toList(),
     ];
 
@@ -228,22 +228,7 @@ export class ObjectType extends DeclaredType {
 
   @Memoize()
   get jsonName(): string {
-    if (this.features.has("toJson")) {
-      switch (this.declarationType) {
-        case "class":
-          return `ReturnType<${this.name}["toJson"]>`;
-        case "interface":
-          return `ReturnType<typeof ${this.staticModuleName}.toJson>`;
-        default:
-          throw new RangeError(this.declarationType);
-      }
-    }
-    if (this.features.has("fromJson")) {
-      return `Parameters<typeof ${this.staticModuleName}.fromJson>[0]`;
-    }
-    throw new RangeError(
-      `${this.name}: jsonName called when neither fromJson nor toJson features are enabled`,
-    );
+    return `${this.staticModuleName}.Json`;
   }
 
   @Memoize()
@@ -360,7 +345,7 @@ export class ObjectType extends DeclaredType {
       snippetDeclarations.push(SnippetDeclarations.EqualsResult);
     }
     if (
-      (this.features.has("fromJson") || this.features.has("fromRdf")) &&
+      (this.features.has("json") || this.features.has("rdf")) &&
       this.parentObjectTypes.length > 0
     ) {
       snippetDeclarations.push(SnippetDeclarations.UnwrapR);

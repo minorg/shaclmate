@@ -5,7 +5,7 @@ import type { ObjectType } from "../ObjectType.js";
 export function jsonSchemaFunctionDeclaration(
   this: ObjectType,
 ): Maybe<FunctionDeclarationStructure> {
-  if (!this.features.has("jsonSchema")) {
+  if (!this.features.has("json")) {
     return Maybe.empty();
   }
 
@@ -14,7 +14,6 @@ export function jsonSchemaFunctionDeclaration(
   }
 
   return Maybe.of({
-    isExported: true,
     kind: StructureKind.Function,
     name: "jsonSchema",
     statements: ["return zodToJsonSchema(jsonZodSchema());"],

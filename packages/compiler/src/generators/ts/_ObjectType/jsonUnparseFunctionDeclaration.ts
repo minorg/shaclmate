@@ -3,7 +3,7 @@ import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
 import { toJsonFunctionOrMethodDeclaration } from "./toJsonFunctionOrMethodDeclaration.js";
 
-export function toJsonFunctionDeclaration(
+export function jsonUnparseFunctionDeclaration(
   this: ObjectType,
 ): Maybe<FunctionDeclarationStructure> {
   if (this.declarationType !== "interface") {
@@ -18,7 +18,6 @@ export function toJsonFunctionDeclaration(
     .bind(this)()
     .map((toJsonFunctionOrMethodDeclaration) => ({
       ...toJsonFunctionOrMethodDeclaration,
-      isExported: true,
       kind: StructureKind.Function,
     }));
 }

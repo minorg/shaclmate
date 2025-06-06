@@ -12,7 +12,7 @@ const variables = {
 export function fromRdfFunctionDeclarations(
   this: ObjectType,
 ): readonly FunctionDeclarationStructure[] {
-  if (!this.features.has("fromRdf")) {
+  if (!this.features.has("rdf")) {
     return [];
   }
 

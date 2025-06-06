@@ -5,7 +5,7 @@ import type { ObjectType } from "../ObjectType.js";
 export function jsonUiSchemaFunctionDeclaration(
   this: ObjectType,
 ): Maybe<FunctionDeclarationStructure> {
-  if (!this.features.has("jsonUiSchema")) {
+  if (!this.features.has("json")) {
     return Maybe.empty();
   }
 
@@ -26,7 +26,6 @@ export function jsonUiSchemaFunctionDeclaration(
     );
 
   return Maybe.of({
-    isExported: true,
     kind: StructureKind.Function,
     name: "jsonUiSchema",
     parameters: [

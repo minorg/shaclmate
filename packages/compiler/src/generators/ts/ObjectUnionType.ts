@@ -186,7 +186,7 @@ return strictEquals(left.type, right.type).chain(() => {
   }
 
   private get fromJsonFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
-    if (!this.features.has("fromJson")) {
+    if (!this.features.has("json")) {
       return Maybe.empty();
     }
 
@@ -213,7 +213,7 @@ return strictEquals(left.type, right.type).chain(() => {
   }
 
   private get fromRdfFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
-    if (!this.features.has("fromRdf")) {
+    if (!this.features.has("rdf")) {
       return Maybe.empty();
     }
 
@@ -285,7 +285,7 @@ return strictEquals(left.type, right.type).chain(() => {
   }
 
   private get jsonZodSchemaFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
-    if (!this.features.has("fromJson")) {
+    if (!this.features.has("json")) {
       return Maybe.empty();
     }
 
@@ -354,7 +354,7 @@ return strictEquals(left.type, right.type).chain(() => {
   }
 
   private get toJsonFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
-    if (!this.features.has("toJson")) {
+    if (!this.features.has("json")) {
       return Maybe.empty();
     }
 
@@ -387,7 +387,7 @@ return strictEquals(left.type, right.type).chain(() => {
   }
 
   private get toRdfFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
-    if (!this.features.has("toRdf")) {
+    if (!this.features.has("rdf")) {
       return Maybe.empty();
     }
 

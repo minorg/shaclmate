@@ -8,7 +8,7 @@ export function toJsonFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
   returnType: string;
   statements: string[];
 }> {
-  if (!this.features.has("toJson")) {
+  if (!this.features.has("json")) {
     return Maybe.empty();
   }
 
@@ -68,27 +68,10 @@ export function toJsonFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
   //     break;
   // }
 
-  const returnTypeMembers: string[] = [];
-  if (this.ownProperties.length > 0) {
-    returnTypeMembers.push(
-      `{ ${this.ownProperties
-        .flatMap((property) => property.jsonPropertySignature.toList())
-        .map(
-          (propertySignature) =>
-            `readonly "${propertySignature.name}": ${propertySignature.type}`,
-        )
-        .join("; ")} }`,
-    );
-  }
-  for (const parentObjectType of this.parentObjectTypes) {
-    returnTypeMembers.push(parentObjectType.jsonName);
-  }
-
   return Maybe.of({
     name: "toJson",
     parameters,
-    returnType:
-      returnTypeMembers.length > 0 ? returnTypeMembers.join(" & ") : "object",
+    returnType: this.jsonName,
     statements: [
       `return JSON.parse(JSON.stringify({ ${jsonObjectMembers.join(",")} } satisfies ${this.jsonName}));`,
     ],
