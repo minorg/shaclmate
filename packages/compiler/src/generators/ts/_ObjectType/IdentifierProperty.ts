@@ -18,7 +18,7 @@ import { Property } from "./Property.js";
 
 export class IdentifierProperty extends Property<IdentifierType> {
   readonly abstract: boolean;
-  readonly equalsFunction = "booleanEquals";
+  readonly equalsFunction = "$booleanEquals";
   readonly mutable = false;
   private readonly classDeclarationVisibility: Maybe<PropertyVisibility>;
   private readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;

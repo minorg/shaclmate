@@ -12,7 +12,7 @@ import { SnippetDeclarations } from "../SnippetDeclarations.js";
 import { Property } from "./Property.js";
 
 export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorProperty.Type> {
-  override readonly equalsFunction = "strictEquals";
+  override readonly equalsFunction = "$strictEquals";
   override readonly mutable = false;
   readonly value: string;
   private readonly abstract: boolean;

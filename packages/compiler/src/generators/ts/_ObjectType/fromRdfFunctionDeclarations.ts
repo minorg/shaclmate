@@ -33,7 +33,7 @@ export function fromRdfFunctionDeclarations(
     );
     initializers.push(`..._super${parentObjectTypeI}`);
     propertiesFromRdfFunctionReturnType.push(
-      `UnwrapR<ReturnType<typeof ${parentObjectType.staticModuleName}._propertiesFromRdf>>`,
+      `$UnwrapR<ReturnType<typeof ${parentObjectType.staticModuleName}._propertiesFromRdf>>`,
     );
   });
 

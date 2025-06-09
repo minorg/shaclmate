@@ -9,16 +9,16 @@ import * as uuid from "uuid";
 import { z as zod } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { ExternObjectType } from "./ExternObjectType.js";
-export type EqualsResult = purify.Either<EqualsResult.Unequal, true>;
+export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
 
-export namespace EqualsResult {
-  export const Equal: EqualsResult = purify.Either.of<Unequal, true>(true);
+export namespace $EqualsResult {
+  export const Equal: $EqualsResult = purify.Either.of<Unequal, true>(true);
 
   export function fromBooleanEqualsResult(
     left: any,
     right: any,
-    equalsResult: boolean | EqualsResult,
-  ): EqualsResult {
+    equalsResult: boolean | $EqualsResult,
+  ): $EqualsResult {
     if (typeof equalsResult !== "boolean") {
       return equalsResult;
     }
@@ -26,11 +26,8 @@ export namespace EqualsResult {
     if (equalsResult) {
       return Equal;
     }
-    return purify.Left({
-      left,
-      right,
-      type: "BooleanEquals",
-    });
+
+    return purify.Left({ left, right, type: "BooleanEquals" });
   }
 
   export type Unequal =
@@ -88,31 +85,31 @@ export namespace EqualsResult {
       };
 }
 /**
- * Compare two objects with equals(other: T): boolean methods and return an EqualsResult.
+ * Compare two objects with equals(other: T): boolean methods and return an $EqualsResult.
  */
-export function booleanEquals<T extends { equals: (other: T) => boolean }>(
+export function $booleanEquals<T extends { equals: (other: T) => boolean }>(
   left: T,
   right: T,
-): EqualsResult {
-  return EqualsResult.fromBooleanEqualsResult(left, right, left.equals(right));
+): $EqualsResult {
+  return $EqualsResult.fromBooleanEqualsResult(left, right, left.equals(right));
 }
 /**
- * Compare two values for strict equality (===), returning an EqualsResult rather than a boolean.
+ * Compare two values for strict equality (===), returning an $EqualsResult rather than a boolean.
  */
-export function strictEquals<T extends bigint | boolean | number | string>(
+export function $strictEquals<T extends bigint | boolean | number | string>(
   left: T,
   right: T,
-): EqualsResult {
-  return EqualsResult.fromBooleanEqualsResult(left, right, left === right);
+): $EqualsResult {
+  return $EqualsResult.fromBooleanEqualsResult(left, right, left === right);
 }
-export function maybeEquals<T>(
+export function $maybeEquals<T>(
   leftMaybe: purify.Maybe<T>,
   rightMaybe: purify.Maybe<T>,
-  valueEquals: (left: T, right: T) => boolean | EqualsResult,
-): EqualsResult {
+  valueEquals: (left: T, right: T) => boolean | $EqualsResult,
+): $EqualsResult {
   if (leftMaybe.isJust()) {
     if (rightMaybe.isJust()) {
-      return EqualsResult.fromBooleanEqualsResult(
+      return $EqualsResult.fromBooleanEqualsResult(
         leftMaybe,
         rightMaybe,
         valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
@@ -131,23 +128,23 @@ export function maybeEquals<T>(
     });
   }
 
-  return EqualsResult.Equal;
+  return $EqualsResult.Equal;
 }
 /**
- * Compare two Dates and return an EqualsResult.
+ * Compare two Dates and return an $EqualsResult.
  */
-export function dateEquals(left: Date, right: Date): EqualsResult {
-  return EqualsResult.fromBooleanEqualsResult(
+export function $dateEquals(left: Date, right: Date): $EqualsResult {
+  return $EqualsResult.fromBooleanEqualsResult(
     left,
     right,
     left.getTime() === right.getTime(),
   );
 }
-export function arrayEquals<T>(
+export function $arrayEquals<T>(
   leftArray: readonly T[],
   rightArray: readonly T[],
-  elementEquals: (left: T, right: T) => boolean | EqualsResult,
-): EqualsResult {
+  elementEquals: (left: T, right: T) => boolean | $EqualsResult,
+): $EqualsResult {
   if (leftArray.length !== rightArray.length) {
     return purify.Left({
       left: leftArray,
@@ -163,7 +160,7 @@ export function arrayEquals<T>(
   ) {
     const leftElement = leftArray[leftElementIndex];
 
-    const rightUnequals: EqualsResult.Unequal[] = [];
+    const rightUnequals: $EqualsResult.Unequal[] = [];
     for (
       let rightElementIndex = 0;
       rightElementIndex < rightArray.length;
@@ -172,7 +169,7 @@ export function arrayEquals<T>(
       const rightElement = rightArray[rightElementIndex];
 
       const leftElementEqualsRightElement =
-        EqualsResult.fromBooleanEqualsResult(
+        $EqualsResult.fromBooleanEqualsResult(
           leftElement,
           rightElement,
           elementEquals(leftElement, rightElement),
@@ -181,7 +178,7 @@ export function arrayEquals<T>(
         break; // left element === right element, break out of the right iteration
       }
       rightUnequals.push(
-        leftElementEqualsRightElement.extract() as EqualsResult.Unequal,
+        leftElementEqualsRightElement.extract() as $EqualsResult.Unequal,
       );
     }
 
@@ -203,9 +200,9 @@ export function arrayEquals<T>(
     // Else there was a right element equal to the left element, continue to the next left element
   }
 
-  return EqualsResult.Equal;
+  return $EqualsResult.Equal;
 }
-type UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
+type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 /**
  * A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.
  */
@@ -248,8 +245,8 @@ export class UuidV4IriNodeShape {
       : `urn:shaclmate:${this.type}:`;
   }
 
-  equals(other: UuidV4IriNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: UuidV4IriNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -258,7 +255,7 @@ export class UuidV4IriNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.identifierPrefix, other.identifierPrefix).mapLeft(
+        $strictEquals(this.identifierPrefix, other.identifierPrefix).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -269,7 +266,7 @@ export class UuidV4IriNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -280,7 +277,7 @@ export class UuidV4IriNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(this.stringProperty, other.stringProperty).mapLeft(
+        $strictEquals(this.stringProperty, other.stringProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -682,8 +679,8 @@ export class UnionPropertiesNodeShape {
     return this._identifier;
   }
 
-  equals(other: UnionPropertiesNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: UnionPropertiesNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -692,7 +689,7 @@ export class UnionPropertiesNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -703,7 +700,7 @@ export class UnionPropertiesNodeShape {
         ),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, booleanEquals))(
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.orLiteralsProperty,
           other.orLiteralsProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -715,7 +712,7 @@ export class UnionPropertiesNodeShape {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, booleanEquals))(
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.orTermsProperty,
           other.orTermsProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -728,7 +725,7 @@ export class UnionPropertiesNodeShape {
       )
       .chain(() =>
         ((left, right) =>
-          maybeEquals(
+          $maybeEquals(
             left,
             right,
             (
@@ -740,7 +737,7 @@ export class UnionPropertiesNodeShape {
                 | { type: "1-NonClassNodeShape"; value: NonClassNodeShape },
             ) => {
               if (left.type === "0-number" && right.type === "0-number") {
-                return strictEquals(left.value, right.value);
+                return $strictEquals(left.value, right.value);
               }
               if (
                 left.type === "1-NonClassNodeShape" &&
@@ -1473,8 +1470,8 @@ export class UnionNodeShapeMember2 {
     return this._identifier;
   }
 
-  equals(other: UnionNodeShapeMember2): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: UnionNodeShapeMember2): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -1483,7 +1480,7 @@ export class UnionNodeShapeMember2 {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -1494,7 +1491,7 @@ export class UnionNodeShapeMember2 {
         ),
       )
       .chain(() =>
-        strictEquals(this.stringProperty2, other.stringProperty2).mapLeft(
+        $strictEquals(this.stringProperty2, other.stringProperty2).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -1807,8 +1804,8 @@ export class UnionNodeShapeMember1 {
     return this._identifier;
   }
 
-  equals(other: UnionNodeShapeMember1): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: UnionNodeShapeMember1): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -1817,7 +1814,7 @@ export class UnionNodeShapeMember1 {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -1828,7 +1825,7 @@ export class UnionNodeShapeMember1 {
         ),
       )
       .chain(() =>
-        strictEquals(this.stringProperty1, other.stringProperty1).mapLeft(
+        $strictEquals(this.stringProperty1, other.stringProperty1).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -2301,8 +2298,8 @@ export class TermPropertiesNodeShape {
     return this._identifier;
   }
 
-  equals(other: TermPropertiesNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: TermPropertiesNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -2311,7 +2308,7 @@ export class TermPropertiesNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -2322,7 +2319,7 @@ export class TermPropertiesNodeShape {
         ),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.booleanProperty,
           other.booleanProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -2334,7 +2331,7 @@ export class TermPropertiesNodeShape {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, dateEquals))(
+        ((left, right) => $maybeEquals(left, right, $dateEquals))(
           this.dateProperty,
           other.dateProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -2346,7 +2343,7 @@ export class TermPropertiesNodeShape {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, dateEquals))(
+        ((left, right) => $maybeEquals(left, right, $dateEquals))(
           this.dateTimeProperty,
           other.dateTimeProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -2358,7 +2355,7 @@ export class TermPropertiesNodeShape {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, booleanEquals))(
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.iriProperty,
           other.iriProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -2370,7 +2367,7 @@ export class TermPropertiesNodeShape {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, booleanEquals))(
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.literalProperty,
           other.literalProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -2382,7 +2379,7 @@ export class TermPropertiesNodeShape {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.numberProperty,
           other.numberProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -2394,7 +2391,7 @@ export class TermPropertiesNodeShape {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.stringProperty,
           other.stringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -2406,7 +2403,7 @@ export class TermPropertiesNodeShape {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, booleanEquals))(
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.termProperty,
           other.termProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -3308,8 +3305,8 @@ export class Sha256IriNodeShape {
       : `urn:shaclmate:${this.type}:`;
   }
 
-  equals(other: Sha256IriNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: Sha256IriNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -3318,7 +3315,7 @@ export class Sha256IriNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.identifierPrefix, other.identifierPrefix).mapLeft(
+        $strictEquals(this.identifierPrefix, other.identifierPrefix).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -3329,7 +3326,7 @@ export class Sha256IriNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -3340,7 +3337,7 @@ export class Sha256IriNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(this.stringProperty, other.stringProperty).mapLeft(
+        $strictEquals(this.stringProperty, other.stringProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -3653,8 +3650,8 @@ export class PropertyVisibilitiesNodeShape {
     return this._identifier;
   }
 
-  equals(other: PropertyVisibilitiesNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: PropertyVisibilitiesNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -3663,7 +3660,7 @@ export class PropertyVisibilitiesNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -3674,7 +3671,7 @@ export class PropertyVisibilitiesNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(this.privateProperty, other.privateProperty).mapLeft(
+        $strictEquals(this.privateProperty, other.privateProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -3685,7 +3682,7 @@ export class PropertyVisibilitiesNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(this.protectedProperty, other.protectedProperty).mapLeft(
+        $strictEquals(this.protectedProperty, other.protectedProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -3696,7 +3693,7 @@ export class PropertyVisibilitiesNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(this.publicProperty, other.publicProperty).mapLeft(
+        $strictEquals(this.publicProperty, other.publicProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -4168,8 +4165,8 @@ export class PropertyCardinalitiesNodeShape {
     return this._identifier;
   }
 
-  equals(other: PropertyCardinalitiesNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: PropertyCardinalitiesNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -4178,7 +4175,7 @@ export class PropertyCardinalitiesNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -4189,7 +4186,7 @@ export class PropertyCardinalitiesNodeShape {
         ),
       )
       .chain(() =>
-        ((left, right) => arrayEquals(left, right, strictEquals))(
+        ((left, right) => $arrayEquals(left, right, $strictEquals))(
           this.emptyStringSetProperty,
           other.emptyStringSetProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -4201,7 +4198,7 @@ export class PropertyCardinalitiesNodeShape {
         })),
       )
       .chain(() =>
-        ((left, right) => arrayEquals(left, right, strictEquals))(
+        ((left, right) => $arrayEquals(left, right, $strictEquals))(
           this.nonEmptyStringSetProperty,
           other.nonEmptyStringSetProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -4213,7 +4210,7 @@ export class PropertyCardinalitiesNodeShape {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.optionalStringProperty,
           other.optionalStringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -4225,7 +4222,7 @@ export class PropertyCardinalitiesNodeShape {
         })),
       )
       .chain(() =>
-        strictEquals(
+        $strictEquals(
           this.requiredStringProperty,
           other.requiredStringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -4815,8 +4812,8 @@ export class OrderedPropertiesNodeShape {
     return this._identifier;
   }
 
-  equals(other: OrderedPropertiesNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: OrderedPropertiesNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -4825,7 +4822,7 @@ export class OrderedPropertiesNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -4836,7 +4833,7 @@ export class OrderedPropertiesNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(this.propertyC, other.propertyC).mapLeft(
+        $strictEquals(this.propertyC, other.propertyC).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -4847,7 +4844,7 @@ export class OrderedPropertiesNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(this.propertyB, other.propertyB).mapLeft(
+        $strictEquals(this.propertyB, other.propertyB).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -4858,7 +4855,7 @@ export class OrderedPropertiesNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(this.propertyA, other.propertyA).mapLeft(
+        $strictEquals(this.propertyA, other.propertyA).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -5270,8 +5267,8 @@ export class NonClassNodeShape {
     return this._identifier;
   }
 
-  equals(other: NonClassNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: NonClassNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -5280,7 +5277,7 @@ export class NonClassNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -5291,7 +5288,7 @@ export class NonClassNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(this.stringProperty, other.stringProperty).mapLeft(
+        $strictEquals(this.stringProperty, other.stringProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -5656,8 +5653,8 @@ export class MutablePropertiesNodeShape {
       : `urn:shaclmate:${this.type}:`;
   }
 
-  equals(other: MutablePropertiesNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: MutablePropertiesNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -5666,7 +5663,7 @@ export class MutablePropertiesNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.identifierPrefix, other.identifierPrefix).mapLeft(
+        $strictEquals(this.identifierPrefix, other.identifierPrefix).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -5677,7 +5674,7 @@ export class MutablePropertiesNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -5689,8 +5686,8 @@ export class MutablePropertiesNodeShape {
       )
       .chain(() =>
         ((left, right) =>
-          maybeEquals(left, right, (left, right) =>
-            arrayEquals(left, right, strictEquals),
+          $maybeEquals(left, right, (left, right) =>
+            $arrayEquals(left, right, $strictEquals),
           ))(this.mutableListProperty, other.mutableListProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
@@ -5702,7 +5699,7 @@ export class MutablePropertiesNodeShape {
         ),
       )
       .chain(() =>
-        ((left, right) => arrayEquals(left, right, strictEquals))(
+        ((left, right) => $arrayEquals(left, right, $strictEquals))(
           this.mutableSetProperty,
           other.mutableSetProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -5714,7 +5711,7 @@ export class MutablePropertiesNodeShape {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.mutableStringProperty,
           other.mutableStringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -6466,8 +6463,8 @@ export class ListPropertiesNodeShape {
     return this._identifier;
   }
 
-  equals(other: ListPropertiesNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: ListPropertiesNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -6476,7 +6473,7 @@ export class ListPropertiesNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -6488,8 +6485,8 @@ export class ListPropertiesNodeShape {
       )
       .chain(() =>
         ((left, right) =>
-          maybeEquals(left, right, (left, right) =>
-            arrayEquals(left, right, (left, right) => left.equals(right)),
+          $maybeEquals(left, right, (left, right) =>
+            $arrayEquals(left, right, (left, right) => left.equals(right)),
           ))(this.objectListProperty, other.objectListProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
@@ -6502,8 +6499,8 @@ export class ListPropertiesNodeShape {
       )
       .chain(() =>
         ((left, right) =>
-          maybeEquals(left, right, (left, right) =>
-            arrayEquals(left, right, strictEquals),
+          $maybeEquals(left, right, (left, right) =>
+            $arrayEquals(left, right, $strictEquals),
           ))(this.stringListProperty, other.stringListProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
@@ -7467,8 +7464,8 @@ export class LanguageInPropertiesNodeShape {
     return this._identifier;
   }
 
-  equals(other: LanguageInPropertiesNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: LanguageInPropertiesNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -7477,7 +7474,7 @@ export class LanguageInPropertiesNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -7488,7 +7485,7 @@ export class LanguageInPropertiesNodeShape {
         ),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, booleanEquals))(
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.languageInProperty,
           other.languageInProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -7500,7 +7497,7 @@ export class LanguageInPropertiesNodeShape {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, booleanEquals))(
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.literalProperty,
           other.literalProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -7997,8 +7994,8 @@ export class IriNodeShape {
     }
   }
 
-  equals(other: IriNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: IriNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -8007,7 +8004,7 @@ export class IriNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -8250,8 +8247,8 @@ export namespace InterfaceUnionNodeShapeMember2b {
   export function equals(
     left: InterfaceUnionNodeShapeMember2b,
     right: InterfaceUnionNodeShapeMember2b,
-  ): EqualsResult {
-    return booleanEquals(left.identifier, right.identifier)
+  ): $EqualsResult {
+    return $booleanEquals(left.identifier, right.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -8260,7 +8257,7 @@ export namespace InterfaceUnionNodeShapeMember2b {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(left.type, right.type).mapLeft(
+        $strictEquals(left.type, right.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: left,
             right: right,
@@ -8271,7 +8268,7 @@ export namespace InterfaceUnionNodeShapeMember2b {
         ),
       )
       .chain(() =>
-        strictEquals(left.stringProperty2b, right.stringProperty2b).mapLeft(
+        $strictEquals(left.stringProperty2b, right.stringProperty2b).mapLeft(
           (propertyValuesUnequal) => ({
             left: left,
             right: right,
@@ -8613,8 +8610,8 @@ export namespace InterfaceUnionNodeShapeMember2a {
   export function equals(
     left: InterfaceUnionNodeShapeMember2a,
     right: InterfaceUnionNodeShapeMember2a,
-  ): EqualsResult {
-    return booleanEquals(left.identifier, right.identifier)
+  ): $EqualsResult {
+    return $booleanEquals(left.identifier, right.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -8623,7 +8620,7 @@ export namespace InterfaceUnionNodeShapeMember2a {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(left.type, right.type).mapLeft(
+        $strictEquals(left.type, right.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: left,
             right: right,
@@ -8634,7 +8631,7 @@ export namespace InterfaceUnionNodeShapeMember2a {
         ),
       )
       .chain(() =>
-        strictEquals(left.stringProperty2a, right.stringProperty2a).mapLeft(
+        $strictEquals(left.stringProperty2a, right.stringProperty2a).mapLeft(
           (propertyValuesUnequal) => ({
             left: left,
             right: right,
@@ -8976,8 +8973,8 @@ export namespace InterfaceUnionNodeShapeMember1 {
   export function equals(
     left: InterfaceUnionNodeShapeMember1,
     right: InterfaceUnionNodeShapeMember1,
-  ): EqualsResult {
-    return booleanEquals(left.identifier, right.identifier)
+  ): $EqualsResult {
+    return $booleanEquals(left.identifier, right.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -8986,7 +8983,7 @@ export namespace InterfaceUnionNodeShapeMember1 {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(left.type, right.type).mapLeft(
+        $strictEquals(left.type, right.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: left,
             right: right,
@@ -8997,7 +8994,7 @@ export namespace InterfaceUnionNodeShapeMember1 {
         ),
       )
       .chain(() =>
-        strictEquals(left.stringProperty1, right.stringProperty1).mapLeft(
+        $strictEquals(left.stringProperty1, right.stringProperty1).mapLeft(
           (propertyValuesUnequal) => ({
             left: left,
             right: right,
@@ -9339,8 +9336,8 @@ export namespace InterfaceNodeShape {
   export function equals(
     left: InterfaceNodeShape,
     right: InterfaceNodeShape,
-  ): EqualsResult {
-    return booleanEquals(left.identifier, right.identifier)
+  ): $EqualsResult {
+    return $booleanEquals(left.identifier, right.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -9349,7 +9346,7 @@ export namespace InterfaceNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(left.type, right.type).mapLeft(
+        $strictEquals(left.type, right.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: left,
             right: right,
@@ -9360,7 +9357,7 @@ export namespace InterfaceNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(left.stringProperty, right.stringProperty).mapLeft(
+        $strictEquals(left.stringProperty, right.stringProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: left,
             right: right,
@@ -9764,8 +9761,8 @@ export class InPropertiesNodeShape {
     return this._identifier;
   }
 
-  equals(other: InPropertiesNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: InPropertiesNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -9774,7 +9771,7 @@ export class InPropertiesNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -9785,7 +9782,7 @@ export class InPropertiesNodeShape {
         ),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.inBooleansProperty,
           other.inBooleansProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -9797,7 +9794,7 @@ export class InPropertiesNodeShape {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, dateEquals))(
+        ((left, right) => $maybeEquals(left, right, $dateEquals))(
           this.inDateTimesProperty,
           other.inDateTimesProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -9809,7 +9806,7 @@ export class InPropertiesNodeShape {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, booleanEquals))(
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.inIrisProperty,
           other.inIrisProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -9821,7 +9818,7 @@ export class InPropertiesNodeShape {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.inNumbersProperty,
           other.inNumbersProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -9833,7 +9830,7 @@ export class InPropertiesNodeShape {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.inStringsProperty,
           other.inStringsProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -10602,8 +10599,8 @@ export class InIdentifierNodeShape {
     }
   }
 
-  equals(other: InIdentifierNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: InIdentifierNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -10612,7 +10609,7 @@ export class InIdentifierNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -10623,7 +10620,7 @@ export class InIdentifierNodeShape {
         ),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.stringProperty,
           other.stringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -11019,8 +11016,8 @@ export class HasValuePropertiesNodeShape {
     return this._identifier;
   }
 
-  equals(other: HasValuePropertiesNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: HasValuePropertiesNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -11029,7 +11026,7 @@ export class HasValuePropertiesNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -11040,7 +11037,7 @@ export class HasValuePropertiesNodeShape {
         ),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, booleanEquals))(
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.hasIriProperty,
           other.hasIriProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -11052,7 +11049,7 @@ export class HasValuePropertiesNodeShape {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.hasLiteralProperty,
           other.hasLiteralProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -11474,8 +11471,8 @@ export class InlineNodeShape {
     return this._identifier;
   }
 
-  equals(other: InlineNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: InlineNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -11484,7 +11481,7 @@ export class InlineNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -11495,7 +11492,7 @@ export class InlineNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(this.stringProperty, other.stringProperty).mapLeft(
+        $strictEquals(this.stringProperty, other.stringProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -11804,8 +11801,8 @@ export class ExternNodeShape {
     return this._identifier;
   }
 
-  equals(other: ExternNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: ExternNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -11814,7 +11811,7 @@ export class ExternNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -11825,7 +11822,7 @@ export class ExternNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(this.stringProperty, other.stringProperty).mapLeft(
+        $strictEquals(this.stringProperty, other.stringProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -12187,8 +12184,8 @@ export class ExternPropertiesNodeShape {
     return this._identifier;
   }
 
-  equals(other: ExternPropertiesNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: ExternPropertiesNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -12197,7 +12194,7 @@ export class ExternPropertiesNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -12209,7 +12206,7 @@ export class ExternPropertiesNodeShape {
       )
       .chain(() =>
         ((left, right) =>
-          maybeEquals(left, right, (left, right) => left.equals(right)))(
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
           this.externObjectTypeProperty,
           other.externObjectTypeProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -12221,7 +12218,7 @@ export class ExternPropertiesNodeShape {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, booleanEquals))(
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.externProperty,
           other.externProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -12234,7 +12231,7 @@ export class ExternPropertiesNodeShape {
       )
       .chain(() =>
         ((left, right) =>
-          maybeEquals(left, right, (left, right) => left.equals(right)))(
+          $maybeEquals(left, right, (left, right) => left.equals(right)))(
           this.inlineProperty,
           other.inlineProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -12775,8 +12772,8 @@ export class ExplicitRdfTypesNodeShape {
     return this._identifier;
   }
 
-  equals(other: ExplicitRdfTypesNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: ExplicitRdfTypesNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -12785,7 +12782,7 @@ export class ExplicitRdfTypesNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -12796,7 +12793,7 @@ export class ExplicitRdfTypesNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(this.stringProperty, other.stringProperty).mapLeft(
+        $strictEquals(this.stringProperty, other.stringProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -13267,8 +13264,8 @@ export class DefaultValuePropertiesNodeShape {
       : `urn:shaclmate:${this.type}:`;
   }
 
-  equals(other: DefaultValuePropertiesNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: DefaultValuePropertiesNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -13277,7 +13274,7 @@ export class DefaultValuePropertiesNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.identifierPrefix, other.identifierPrefix).mapLeft(
+        $strictEquals(this.identifierPrefix, other.identifierPrefix).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -13288,7 +13285,7 @@ export class DefaultValuePropertiesNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -13299,7 +13296,7 @@ export class DefaultValuePropertiesNodeShape {
         ),
       )
       .chain(() =>
-        dateEquals(this.dateProperty, other.dateProperty).mapLeft(
+        $dateEquals(this.dateProperty, other.dateProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -13310,7 +13307,7 @@ export class DefaultValuePropertiesNodeShape {
         ),
       )
       .chain(() =>
-        dateEquals(this.dateTimeProperty, other.dateTimeProperty).mapLeft(
+        $dateEquals(this.dateTimeProperty, other.dateTimeProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -13321,7 +13318,7 @@ export class DefaultValuePropertiesNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(
+        $strictEquals(
           this.falseBooleanProperty,
           other.falseBooleanProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -13333,7 +13330,7 @@ export class DefaultValuePropertiesNodeShape {
         })),
       )
       .chain(() =>
-        strictEquals(this.numberProperty, other.numberProperty).mapLeft(
+        $strictEquals(this.numberProperty, other.numberProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -13344,7 +13341,7 @@ export class DefaultValuePropertiesNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(this.stringProperty, other.stringProperty).mapLeft(
+        $strictEquals(this.stringProperty, other.stringProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -13355,7 +13352,7 @@ export class DefaultValuePropertiesNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(
+        $strictEquals(
           this.trueBooleanProperty,
           other.trueBooleanProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -14072,8 +14069,8 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
   export function equals(
     left: BaseInterfaceWithPropertiesNodeShape,
     right: BaseInterfaceWithPropertiesNodeShape,
-  ): EqualsResult {
-    return booleanEquals(left.identifier, right.identifier)
+  ): $EqualsResult {
+    return $booleanEquals(left.identifier, right.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -14082,7 +14079,7 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(left.type, right.type).mapLeft(
+        $strictEquals(left.type, right.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: left,
             right: right,
@@ -14093,15 +14090,16 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
         ),
       )
       .chain(() =>
-        strictEquals(left.baseStringProperty, right.baseStringProperty).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "baseStringProperty",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
+        $strictEquals(
+          left.baseStringProperty,
+          right.baseStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: left,
+          right: right,
+          propertyName: "baseStringProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
       );
   }
 
@@ -14558,7 +14556,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
   export function equals(
     left: BaseInterfaceWithoutPropertiesNodeShape,
     right: BaseInterfaceWithoutPropertiesNodeShape,
-  ): EqualsResult {
+  ): $EqualsResult {
     return BaseInterfaceWithPropertiesNodeShapeStatic.equals(left, right);
   }
 
@@ -14581,7 +14579,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
         | "BaseInterfaceWithoutPropertiesNodeShape"
         | "ConcreteChildInterfaceNodeShape"
         | "ConcreteParentInterfaceNodeShape";
-    } & UnwrapR<
+    } & $UnwrapR<
       ReturnType<
         typeof BaseInterfaceWithPropertiesNodeShapeStatic._propertiesFromRdf
       >
@@ -14661,7 +14659,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
         | "BaseInterfaceWithoutPropertiesNodeShape"
         | "ConcreteChildInterfaceNodeShape"
         | "ConcreteParentInterfaceNodeShape";
-    } & UnwrapR<
+    } & $UnwrapR<
       ReturnType<
         typeof BaseInterfaceWithPropertiesNodeShapeStatic.Json.parseProperties
       >
@@ -14987,12 +14985,12 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
   export function equals(
     left: ConcreteParentInterfaceNodeShape,
     right: ConcreteParentInterfaceNodeShape,
-  ): EqualsResult {
+  ): $EqualsResult {
     return BaseInterfaceWithoutPropertiesNodeShapeStatic.equals(
       left,
       right,
     ).chain(() =>
-      strictEquals(
+      $strictEquals(
         left.parentStringProperty,
         right.parentStringProperty,
       ).mapLeft((propertyValuesUnequal) => ({
@@ -15024,7 +15022,7 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
         | "ConcreteChildInterfaceNodeShape"
         | "ConcreteParentInterfaceNodeShape";
       parentStringProperty: string;
-    } & UnwrapR<
+    } & $UnwrapR<
       ReturnType<
         typeof BaseInterfaceWithoutPropertiesNodeShapeStatic._propertiesFromRdf
       >
@@ -15122,7 +15120,7 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
         | "ConcreteChildInterfaceNodeShape"
         | "ConcreteParentInterfaceNodeShape";
       parentStringProperty: string;
-    } & UnwrapR<
+    } & $UnwrapR<
       ReturnType<
         typeof BaseInterfaceWithoutPropertiesNodeShapeStatic.Json.parseProperties
       >
@@ -15481,10 +15479,10 @@ export namespace ConcreteChildInterfaceNodeShape {
   export function equals(
     left: ConcreteChildInterfaceNodeShape,
     right: ConcreteChildInterfaceNodeShape,
-  ): EqualsResult {
+  ): $EqualsResult {
     return ConcreteParentInterfaceNodeShapeStatic.equals(left, right).chain(
       () =>
-        strictEquals(
+        $strictEquals(
           left.childStringProperty,
           right.childStringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -15514,7 +15512,7 @@ export namespace ConcreteChildInterfaceNodeShape {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       type: "ConcreteChildInterfaceNodeShape";
       childStringProperty: string;
-    } & UnwrapR<
+    } & $UnwrapR<
       ReturnType<
         typeof ConcreteParentInterfaceNodeShapeStatic._propertiesFromRdf
       >
@@ -15601,7 +15599,7 @@ export namespace ConcreteChildInterfaceNodeShape {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       type: "ConcreteChildInterfaceNodeShape";
       childStringProperty: string;
-    } & UnwrapR<
+    } & $UnwrapR<
       ReturnType<
         typeof ConcreteParentInterfaceNodeShapeStatic.Json.parseProperties
       >
@@ -15938,8 +15936,8 @@ export abstract class AbstractBaseClassWithPropertiesNodeShape {
       : `urn:shaclmate:${this.type}:`;
   }
 
-  equals(other: AbstractBaseClassWithPropertiesNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: AbstractBaseClassWithPropertiesNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -15948,7 +15946,7 @@ export abstract class AbstractBaseClassWithPropertiesNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.identifierPrefix, other.identifierPrefix).mapLeft(
+        $strictEquals(this.identifierPrefix, other.identifierPrefix).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -15959,7 +15957,7 @@ export abstract class AbstractBaseClassWithPropertiesNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -15970,7 +15968,7 @@ export abstract class AbstractBaseClassWithPropertiesNodeShape {
         ),
       )
       .chain(() =>
-        strictEquals(this.abcStringProperty, other.abcStringProperty).mapLeft(
+        $strictEquals(this.abcStringProperty, other.abcStringProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -16339,7 +16337,7 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<
         typeof AbstractBaseClassWithPropertiesNodeShapeStatic._propertiesFromRdf
       >
@@ -16384,7 +16382,7 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & UnwrapR<
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<
         typeof AbstractBaseClassWithPropertiesNodeShapeStatic.Json.parseProperties
       >
@@ -16596,11 +16594,11 @@ export class ConcreteParentClassNodeShape extends AbstractBaseClassWithoutProper
       : `urn:shaclmate:${this.type}:`;
   }
 
-  override equals(other: ConcreteParentClassNodeShape): EqualsResult {
+  override equals(other: ConcreteParentClassNodeShape): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
-        strictEquals(
+        $strictEquals(
           this.parentStringProperty,
           other.parentStringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -16695,7 +16693,7 @@ export namespace ConcreteParentClassNodeShapeStatic {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       parentStringProperty: string;
-    } & UnwrapR<
+    } & $UnwrapR<
       ReturnType<
         typeof AbstractBaseClassWithoutPropertiesNodeShapeStatic._propertiesFromRdf
       >
@@ -16786,7 +16784,7 @@ export namespace ConcreteParentClassNodeShapeStatic {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       parentStringProperty: string;
-    } & UnwrapR<
+    } & $UnwrapR<
       ReturnType<
         typeof AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json.parseProperties
       >
@@ -17055,11 +17053,11 @@ export class ConcreteChildClassNodeShape extends ConcreteParentClassNodeShape {
       : `urn:shaclmate:${this.type}:`;
   }
 
-  override equals(other: ConcreteChildClassNodeShape): EqualsResult {
+  override equals(other: ConcreteChildClassNodeShape): $EqualsResult {
     return super
       .equals(other)
       .chain(() =>
-        strictEquals(
+        $strictEquals(
           this.childStringProperty,
           other.childStringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -17154,7 +17152,7 @@ export namespace ConcreteChildClassNodeShape {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       childStringProperty: string;
-    } & UnwrapR<
+    } & $UnwrapR<
       ReturnType<typeof ConcreteParentClassNodeShapeStatic._propertiesFromRdf>
     >
   > {
@@ -17233,7 +17231,7 @@ export namespace ConcreteChildClassNodeShape {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       childStringProperty: string;
-    } & UnwrapR<
+    } & $UnwrapR<
       ReturnType<typeof ConcreteParentClassNodeShapeStatic.Json.parseProperties>
     >
   > {
@@ -17484,8 +17482,8 @@ export class BlankNodeShape {
     return this._identifier;
   }
 
-  equals(other: BlankNodeShape): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: BlankNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -17494,7 +17492,7 @@ export class BlankNodeShape {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -17734,8 +17732,8 @@ export abstract class AbstractBaseClassForExternObjectType {
     this.abcStringProperty = parameters.abcStringProperty;
   }
 
-  equals(other: AbstractBaseClassForExternObjectType): EqualsResult {
-    return booleanEquals(this.identifier, other.identifier)
+  equals(other: AbstractBaseClassForExternObjectType): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -17744,7 +17742,7 @@ export abstract class AbstractBaseClassForExternObjectType {
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.type, other.type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -17755,7 +17753,7 @@ export abstract class AbstractBaseClassForExternObjectType {
         ),
       )
       .chain(() =>
-        strictEquals(this.abcStringProperty, other.abcStringProperty).mapLeft(
+        $strictEquals(this.abcStringProperty, other.abcStringProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
@@ -18071,8 +18069,8 @@ export namespace InterfaceUnionNodeShape {
   export function equals(
     left: InterfaceUnionNodeShape,
     right: InterfaceUnionNodeShape,
-  ): EqualsResult {
-    return strictEquals(left.type, right.type).chain(() => {
+  ): $EqualsResult {
+    return $strictEquals(left.type, right.type).chain(() => {
       switch (left.type) {
         case "InterfaceUnionNodeShapeMember1":
           return InterfaceUnionNodeShapeMember1.equals(
@@ -18407,8 +18405,8 @@ export namespace InterfaceUnionNodeShapeMember2 {
   export function equals(
     left: InterfaceUnionNodeShapeMember2,
     right: InterfaceUnionNodeShapeMember2,
-  ): EqualsResult {
-    return strictEquals(left.type, right.type).chain(() => {
+  ): $EqualsResult {
+    return $strictEquals(left.type, right.type).chain(() => {
       switch (left.type) {
         case "InterfaceUnionNodeShapeMember2a":
           return InterfaceUnionNodeShapeMember2a.equals(
@@ -18680,8 +18678,8 @@ export namespace UnionNodeShape {
   export function equals(
     left: UnionNodeShape,
     right: UnionNodeShape,
-  ): EqualsResult {
-    return strictEquals(left.type, right.type).chain(() => {
+  ): $EqualsResult {
+    return $strictEquals(left.type, right.type).chain(() => {
       switch (left.type) {
         case "UnionNodeShapeMember1":
           return left.equals(right as unknown as UnionNodeShapeMember1);

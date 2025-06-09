@@ -79,7 +79,7 @@ export function equalsFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
               type: this.name,
             },
           ],
-    returnType: "EqualsResult",
+    returnType: "$EqualsResult",
     statements: [
       `return ${chain
         .map((chainPart, chainPartI) =>

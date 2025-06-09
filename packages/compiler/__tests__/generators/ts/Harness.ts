@@ -1,5 +1,5 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import type { EqualsResult } from "@shaclmate/kitchen-sink-example";
+import type { $EqualsResult } from "@shaclmate/kitchen-sink-example";
 import type { Either } from "purify-ts";
 import type {
   MutableResource,
@@ -40,7 +40,7 @@ export abstract class Harness<
     this.sparqlConstructQueryString = sparqlConstructQueryString;
   }
 
-  abstract equals(other: T): EqualsResult;
+  abstract equals(other: T): $EqualsResult;
 
   abstract toJson(): any;
 

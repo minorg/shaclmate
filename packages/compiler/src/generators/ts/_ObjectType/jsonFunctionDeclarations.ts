@@ -29,7 +29,7 @@ function jsonParseFunctionDeclarations(
     );
     initializers.push(`..._super${parentObjectTypeI}`);
     parsePropertiesReturnType.push(
-      `UnwrapR<ReturnType<typeof ${parentObjectType.staticModuleName}.Json.parseProperties>>`,
+      `$UnwrapR<ReturnType<typeof ${parentObjectType.staticModuleName}.Json.parseProperties>>`,
     );
   });
 

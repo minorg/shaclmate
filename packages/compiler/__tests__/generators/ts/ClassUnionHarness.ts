@@ -1,5 +1,5 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import type { EqualsResult } from "@shaclmate/kitchen-sink-example";
+import type { $EqualsResult } from "@shaclmate/kitchen-sink-example";
 import type {
   MutableResource,
   MutableResourceSet,
@@ -18,13 +18,13 @@ export class ClassUnionHarness<
   },
   IdentifierT extends BlankNode | NamedNode,
 > extends Harness<T, IdentifierT> {
-  readonly equals: (other: T) => EqualsResult;
+  readonly equals: (other: T) => $EqualsResult;
 
   constructor({
     equals,
     ...superParameters
   }: {
-    equals: (left: T, right: T) => EqualsResult;
+    equals: (left: T, right: T) => $EqualsResult;
   } & ConstructorParameters<typeof Harness<T, IdentifierT>>[0]) {
     super(superParameters);
     this.equals = (other) => equals(this.instance, other);

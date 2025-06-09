@@ -1,10 +1,10 @@
 export namespace SnippetDeclarations {
   export const arrayEquals = `\
-export function arrayEquals<T>(
+export function $arrayEquals<T>(
   leftArray: readonly T[],
   rightArray: readonly T[],
-  elementEquals: (left: T, right: T) => boolean | EqualsResult,
-): EqualsResult {
+  elementEquals: (left: T, right: T) => boolean | $EqualsResult,
+): $EqualsResult {
   if (leftArray.length !== rightArray.length) {
     return purify.Left({
       left: leftArray,
@@ -20,7 +20,7 @@ export function arrayEquals<T>(
   ) {
     const leftElement = leftArray[leftElementIndex];
 
-    const rightUnequals: EqualsResult.Unequal[] = [];
+    const rightUnequals: $EqualsResult.Unequal[] = [];
     for (
       let rightElementIndex = 0;
       rightElementIndex < rightArray.length;
@@ -29,7 +29,7 @@ export function arrayEquals<T>(
       const rightElement = rightArray[rightElementIndex];
 
       const leftElementEqualsRightElement =
-        EqualsResult.fromBooleanEqualsResult(
+        $EqualsResult.fromBooleanEqualsResult(
           leftElement,
           rightElement,
           elementEquals(leftElement, rightElement),
@@ -38,7 +38,7 @@ export function arrayEquals<T>(
         break; // left element === right element, break out of the right iteration
       }
       rightUnequals.push(
-        leftElementEqualsRightElement.extract() as EqualsResult.Unequal,
+        leftElementEqualsRightElement.extract() as $EqualsResult.Unequal,
       );
     }
 
@@ -60,19 +60,19 @@ export function arrayEquals<T>(
     // Else there was a right element equal to the left element, continue to the next left element
   }
 
-  return EqualsResult.Equal;
+  return $EqualsResult.Equal;
 }
 `;
 
   export const booleanEquals = `\
 /**
- * Compare two objects with equals(other: T): boolean methods and return an EqualsResult.
+ * Compare two objects with equals(other: T): boolean methods and return an $EqualsResult.
  */
-export function booleanEquals<T extends { equals: (other: T) => boolean }>(
+export function $booleanEquals<T extends { equals: (other: T) => boolean }>(
   left: T,
   right: T,
-): EqualsResult {
-  return EqualsResult.fromBooleanEqualsResult(
+): $EqualsResult {
+  return $EqualsResult.fromBooleanEqualsResult(
     left,
     right,
     left.equals(right),
@@ -81,10 +81,10 @@ export function booleanEquals<T extends { equals: (other: T) => boolean }>(
 
   export const dateEquals = `\
 /**
- * Compare two Dates and return an EqualsResult.
+ * Compare two Dates and return an $EqualsResult.
  */
-export function dateEquals(left: Date, right: Date): EqualsResult {
-  return EqualsResult.fromBooleanEqualsResult(
+export function $dateEquals(left: Date, right: Date): $EqualsResult {
+  return $EqualsResult.fromBooleanEqualsResult(
     left,
     right,
     left.getTime() === right.getTime(),
@@ -92,95 +92,92 @@ export function dateEquals(left: Date, right: Date): EqualsResult {
 }`;
 
   export const EqualsResult = `\
-export type EqualsResult = purify.Either<EqualsResult.Unequal, true>;
+export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
 
-export namespace EqualsResult {
-    export const Equal: EqualsResult = purify.Either.of<Unequal, true>(true);
+export namespace $EqualsResult {
+  export const Equal: $EqualsResult = purify.Either.of<Unequal, true>(true);
 
-    export function fromBooleanEqualsResult(
-      left: any,
-      right: any,
-      equalsResult: boolean | EqualsResult,
-    ): EqualsResult {
-      if (typeof equalsResult !== "boolean") {
-        return equalsResult;
-      }
-
-      if (equalsResult) {
-        return Equal;
-      }
-      return purify.Left({
-        left,
-        right,
-        type: "BooleanEquals",
-      });
+  export function fromBooleanEqualsResult(
+    left: any,
+    right: any,
+    equalsResult: boolean | $EqualsResult,
+  ): $EqualsResult {
+    if (typeof equalsResult !== "boolean") {
+      return equalsResult;
     }
 
-    export type Unequal =
-      | {
-          readonly left: {
-            readonly array: readonly any[];
-            readonly element: any;
-            readonly elementIndex: number;
-          };
-          readonly right: {
-            readonly array: readonly any[];
-            readonly unequals: readonly Unequal[];
-          };
-          readonly type: "ArrayElement";
-        }
-      | {
-          readonly left: readonly any[];
-          readonly right: readonly any[];
-          readonly type: "ArrayLength";
-        }
-      | {
-          readonly left: any;
-          readonly right: any;
-          readonly type: "BooleanEquals";
-        }
-      | {
-          readonly left: any;
-          readonly right: any;
-          readonly type: "LeftError";
-        }
-      | {
-          readonly right: any;
-          readonly type: "LeftNull";
-        }
-      | {
-          readonly left: bigint | boolean | number | string;
-          readonly right: bigint | boolean | number | string;
-          readonly type: "Primitive";
-        }
-      | {
-          readonly left: object;
-          readonly right: object;
-          readonly propertyName: string;
-          readonly propertyValuesUnequal: Unequal;
-          readonly type: "Property";
-        }
-      | {
-          readonly left: any;
-          readonly right: any;
-          readonly type: "RightError";
-        }
-      | {
-          readonly left: any;
-          readonly type: "RightNull";
-        };
+    if (equalsResult) {
+      return Equal;
+    }
+
+    return purify.Left({ left, right, type: "BooleanEquals" });
+  }
+
+  export type Unequal =
+  | {
+    readonly left: {
+      readonly array: readonly any[];
+      readonly element: any;
+      readonly elementIndex: number;
+    };
+    readonly right: {
+      readonly array: readonly any[];
+      readonly unequals: readonly Unequal[];
+    };
+    readonly type: "ArrayElement";
+  }
+  | {
+    readonly left: readonly any[];
+    readonly right: readonly any[];
+    readonly type: "ArrayLength";
+  }
+  | {
+    readonly left: any;
+    readonly right: any;
+    readonly type: "BooleanEquals";
+  }
+  | {
+    readonly left: any;
+    readonly right: any;
+    readonly type: "LeftError";
+  }
+  | {
+    readonly right: any;
+    readonly type: "LeftNull";
+  }
+  | {
+    readonly left: bigint | boolean | number | string;
+    readonly right: bigint | boolean | number | string;
+    readonly type: "Primitive";
+  }
+  | {
+    readonly left: object;
+    readonly right: object;
+    readonly propertyName: string;
+    readonly propertyValuesUnequal: Unequal;
+    readonly type: "Property";
+  }
+  | {
+    readonly left: any;
+    readonly right: any;
+    readonly type: "RightError";
+  }
+  | {
+    readonly left: any;
+    readonly type: "RightNull";
+  };
 }    
 `;
 
   export const maybeEquals = `\
-export function maybeEquals<T>(
+export function $maybeEquals<T>(
   leftMaybe: purify.Maybe<T>,
   rightMaybe: purify.Maybe<T>,
-  valueEquals: (left: T, right: T) => boolean | EqualsResult,
-): EqualsResult {
+  valueEquals: (left: T, right: T) => boolean | $EqualsResult,
+): $EqualsResult {
   if (leftMaybe.isJust()) {
     if (rightMaybe.isJust()) {
-      return EqualsResult.fromBooleanEqualsResult(
+      return $EqualsResult.fromBooleanEqualsResult(
         leftMaybe,
         rightMaybe,
         valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
@@ -199,23 +196,23 @@ export function maybeEquals<T>(
     });
   }
 
-  return EqualsResult.Equal;
+  return $EqualsResult.Equal;
 }
 `;
 
   export const strictEquals = `\
 /**
- * Compare two values for strict equality (===), returning an EqualsResult rather than a boolean.
+ * Compare two values for strict equality (===), returning an $EqualsResult rather than a boolean.
  */
-export function strictEquals<T extends bigint | boolean | number | string>(
+export function $strictEquals<T extends bigint | boolean | number | string>(
   left: T,
   right: T,
-): EqualsResult {
-  return EqualsResult.fromBooleanEqualsResult(left, right, left === right);
+): $EqualsResult {
+  return $EqualsResult.fromBooleanEqualsResult(left, right, left === right);
 }`;
 
   export const UnwrapL =
-    "type UnwrapL<T> = T extends purify.Either<infer L, any> ? L : never";
+    "type $UnwrapL<T> = T extends purify.Either<infer L, any> ? L : never";
   export const UnwrapR =
-    "type UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never";
+    "type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never";
 }

@@ -182,9 +182,9 @@ export class ObjectUnionType extends DeclaredType {
           type: this.name,
         },
       ],
-      returnType: "EqualsResult",
+      returnType: "$EqualsResult",
       statements: `\
-return strictEquals(left.type, right.type).chain(() => {
+return $strictEquals(left.type, right.type).chain(() => {
   switch (left.${this._discriminatorProperty.name}) {
    ${caseBlocks.join(" ")}
   }

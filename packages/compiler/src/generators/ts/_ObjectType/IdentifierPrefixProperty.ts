@@ -14,7 +14,7 @@ import type { StringType } from "../StringType.js";
 import { Property } from "./Property.js";
 
 export class IdentifierPrefixProperty extends Property<StringType> {
-  readonly equalsFunction = "strictEquals";
+  readonly equalsFunction = "$strictEquals";
   readonly mutable = false;
   private readonly own: boolean;
 

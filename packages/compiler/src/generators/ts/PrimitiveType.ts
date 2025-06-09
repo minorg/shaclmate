@@ -7,7 +7,7 @@ import type { Type } from "./Type.js";
 export abstract class PrimitiveType<
   ValueT extends boolean | Date | string | number,
 > extends LiteralType {
-  override readonly equalsFunction: string = "strictEquals";
+  override readonly equalsFunction: string = "$strictEquals";
   readonly primitiveDefaultValue: Maybe<ValueT>;
   readonly primitiveIn: readonly ValueT[];
 

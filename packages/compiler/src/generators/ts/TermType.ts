@@ -16,7 +16,7 @@ export class TermType<
   TermT extends BlankNode | Literal | NamedNode,
 > extends Type {
   readonly defaultValue: Maybe<TermT>;
-  readonly equalsFunction: string = "booleanEquals";
+  readonly equalsFunction: string = "$booleanEquals";
   readonly hasValues: readonly TermT[];
   readonly in_: readonly TermT[];
   readonly mutable: boolean = false;

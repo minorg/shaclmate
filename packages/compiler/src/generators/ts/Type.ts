@@ -19,7 +19,7 @@ export abstract class Type {
 
   /**
    * A function (reference or declaration) that compares two property values of this type, returning a
-   * EqualsResult.
+   * $EqualsResult.
    */
   abstract readonly equalsFunction: string;
 
