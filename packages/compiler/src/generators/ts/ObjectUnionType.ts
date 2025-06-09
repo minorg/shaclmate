@@ -17,6 +17,7 @@ import type { Type } from "./Type.js";
 import { hasherTypeConstraint } from "./_ObjectType/hashFunctionOrMethodDeclarations.js";
 import { sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/sparqlConstructQueryStringFunctionDeclaration.js";
+import { sparqlVariableStatement } from "./_ObjectType/sparqlVariableStatement.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { tsComment } from "./tsComment.js";
 
@@ -104,6 +105,9 @@ export class ObjectUnionType extends DeclaredType {
       ...this.jsonZodSchemaFunctionDeclaration.toList(),
       ...this.jsonVariableStatement.toList(),
       ...this.sparqlFunctionDeclarations,
+      ...sparqlVariableStatement
+        .bind({ extern: false, features: this.features })()
+        .toList(),
       ...this.toRdfFunctionDeclaration.toList(),
     ];
 
@@ -391,7 +395,7 @@ return strictEquals(left.type, right.type).chain(() => {
           `return [${this.memberTypes
             .map(
               (memberType) =>
-                `...${memberType.staticModuleName}.sparqlConstructTemplateTriples({ subject: parameters.subject ?? ${this.dataFactoryVariable}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
+                `...${memberType.staticModuleName}.Sparql.constructTemplateTriples({ subject: parameters.subject ?? ${this.dataFactoryVariable}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
             )
             .join(", ")}];`,
         ],
@@ -412,7 +416,7 @@ return strictEquals(left.type, right.type).chain(() => {
           `return [{ patterns: [${this.memberTypes
             .map((memberType) =>
               objectInitializer({
-                patterns: `${memberType.staticModuleName}.sparqlWherePatterns({ subject: parameters.subject ?? ${this.dataFactoryVariable}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
+                patterns: `${memberType.staticModuleName}.Sparql.wherePatterns({ subject: parameters.subject ?? ${this.dataFactoryVariable}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
                 type: '"group"',
               }),
             )
@@ -511,7 +515,7 @@ return strictEquals(left.type, right.type).chain(() => {
         return super.sparqlConstructTemplateTriples({ context, variables });
       case "type":
         return [
-          `...${this.staticModuleName}.sparqlConstructTemplateTriples(${objectInitializer(
+          `...${this.staticModuleName}.Sparql.constructTemplateTriples(${objectInitializer(
             {
               subject: variables.subject,
               variablePrefix: variables.variablePrefix,
@@ -530,10 +534,12 @@ return strictEquals(left.type, right.type).chain(() => {
         return super.sparqlWherePatterns({ context, variables });
       case "type":
         return [
-          `...${this.staticModuleName}.sparqlWherePatterns(${objectInitializer({
-            subject: variables.subject,
-            variablePrefix: variables.variablePrefix,
-          })})`,
+          `...${this.staticModuleName}.Sparql.wherePatterns(${objectInitializer(
+            {
+              subject: variables.subject,
+              variablePrefix: variables.variablePrefix,
+            },
+          )})`,
         ];
     }
   }

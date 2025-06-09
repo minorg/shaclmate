@@ -465,7 +465,7 @@ export namespace UuidV4IriNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -479,19 +479,19 @@ export namespace UuidV4IriNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        UuidV4IriNodeShape.sparqlConstructTemplateTriples({
+        UuidV4IriNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        UuidV4IriNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
+        UuidV4IriNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -500,11 +500,11 @@ export namespace UuidV4IriNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      UuidV4IriNodeShape.sparqlConstructQuery(parameters),
+      UuidV4IriNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -523,7 +523,7 @@ export namespace UuidV4IriNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -548,6 +548,13 @@ export namespace UuidV4IriNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * Shape with sh:xone properties.
@@ -1258,7 +1265,7 @@ export namespace UnionPropertiesNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -1272,14 +1279,14 @@ export namespace UnionPropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        UnionPropertiesNodeShape.sparqlConstructTemplateTriples({
+        UnionPropertiesNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        UnionPropertiesNodeShape.sparqlWherePatterns({
+        UnionPropertiesNodeShape.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -1287,7 +1294,7 @@ export namespace UnionPropertiesNodeShape {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -1296,11 +1303,11 @@ export namespace UnionPropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      UnionPropertiesNodeShape.sparqlConstructQuery(parameters),
+      UnionPropertiesNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -1332,7 +1339,7 @@ export namespace UnionPropertiesNodeShape {
         ),
         subject,
       },
-      ...NonClassNodeShape.sparqlConstructTemplateTriples({
+      ...NonClassNodeShape.Sparql.constructTemplateTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}OrUnrelatedProperty`),
         variablePrefix: `${variablePrefix}OrUnrelatedProperty`,
@@ -1340,7 +1347,7 @@ export namespace UnionPropertiesNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -1412,7 +1419,7 @@ export namespace UnionPropertiesNodeShape {
               { patterns: [], type: "group" },
               {
                 patterns: [
-                  ...NonClassNodeShape.sparqlWherePatterns({
+                  ...NonClassNodeShape.Sparql.wherePatterns({
                     ignoreRdfType: true,
                     subject: dataFactory.variable!(
                       `${variablePrefix}OrUnrelatedProperty`,
@@ -1430,6 +1437,13 @@ export namespace UnionPropertiesNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 export class UnionNodeShapeMember2 {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
@@ -1670,7 +1684,7 @@ export namespace UnionNodeShapeMember2 {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -1684,19 +1698,19 @@ export namespace UnionNodeShapeMember2 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        UnionNodeShapeMember2.sparqlConstructTemplateTriples({
+        UnionNodeShapeMember2.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        UnionNodeShapeMember2.sparqlWherePatterns({ ignoreRdfType, subject }),
+        UnionNodeShapeMember2.Sparql.wherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -1705,11 +1719,11 @@ export namespace UnionNodeShapeMember2 {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      UnionNodeShapeMember2.sparqlConstructQuery(parameters),
+      UnionNodeShapeMember2.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -1730,7 +1744,7 @@ export namespace UnionNodeShapeMember2 {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -1757,6 +1771,13 @@ export namespace UnionNodeShapeMember2 {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 export class UnionNodeShapeMember1 {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
@@ -1997,7 +2018,7 @@ export namespace UnionNodeShapeMember1 {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -2011,19 +2032,19 @@ export namespace UnionNodeShapeMember1 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        UnionNodeShapeMember1.sparqlConstructTemplateTriples({
+        UnionNodeShapeMember1.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        UnionNodeShapeMember1.sparqlWherePatterns({ ignoreRdfType, subject }),
+        UnionNodeShapeMember1.Sparql.wherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -2032,11 +2053,11 @@ export namespace UnionNodeShapeMember1 {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      UnionNodeShapeMember1.sparqlConstructQuery(parameters),
+      UnionNodeShapeMember1.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -2057,7 +2078,7 @@ export namespace UnionNodeShapeMember1 {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -2084,6 +2105,13 @@ export namespace UnionNodeShapeMember1 {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * Shape with properties that are not nested objects
@@ -2971,7 +2999,7 @@ export namespace TermPropertiesNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -2985,19 +3013,22 @@ export namespace TermPropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        TermPropertiesNodeShape.sparqlConstructTemplateTriples({
+        TermPropertiesNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        TermPropertiesNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
+        TermPropertiesNodeShape.Sparql.wherePatterns({
+          ignoreRdfType,
+          subject,
+        }),
       ),
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -3006,11 +3037,11 @@ export namespace TermPropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      TermPropertiesNodeShape.sparqlConstructQuery(parameters),
+      TermPropertiesNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -3066,7 +3097,7 @@ export namespace TermPropertiesNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -3227,6 +3258,13 @@ export namespace TermPropertiesNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied.
@@ -3487,7 +3525,7 @@ export namespace Sha256IriNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -3501,19 +3539,19 @@ export namespace Sha256IriNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        Sha256IriNodeShape.sparqlConstructTemplateTriples({
+        Sha256IriNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        Sha256IriNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
+        Sha256IriNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -3522,11 +3560,11 @@ export namespace Sha256IriNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      Sha256IriNodeShape.sparqlConstructQuery(parameters),
+      Sha256IriNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -3545,7 +3583,7 @@ export namespace Sha256IriNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -3570,6 +3608,13 @@ export namespace Sha256IriNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * Shape with properties that have visibility modifiers (private, protected, public)
@@ -3917,7 +3962,7 @@ export namespace PropertyVisibilitiesNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -3931,14 +3976,14 @@ export namespace PropertyVisibilitiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        PropertyVisibilitiesNodeShape.sparqlConstructTemplateTriples({
+        PropertyVisibilitiesNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        PropertyVisibilitiesNodeShape.sparqlWherePatterns({
+        PropertyVisibilitiesNodeShape.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -3946,7 +3991,7 @@ export namespace PropertyVisibilitiesNodeShape {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -3955,11 +4000,11 @@ export namespace PropertyVisibilitiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      PropertyVisibilitiesNodeShape.sparqlConstructQuery(parameters),
+      PropertyVisibilitiesNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -3993,7 +4038,7 @@ export namespace PropertyVisibilitiesNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -4045,6 +4090,13 @@ export namespace PropertyVisibilitiesNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * Shape that has properties with different cardinalities
@@ -4541,7 +4593,7 @@ export namespace PropertyCardinalitiesNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -4555,14 +4607,14 @@ export namespace PropertyCardinalitiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        PropertyCardinalitiesNodeShape.sparqlConstructTemplateTriples({
+        PropertyCardinalitiesNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        PropertyCardinalitiesNodeShape.sparqlWherePatterns({
+        PropertyCardinalitiesNodeShape.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -4570,7 +4622,7 @@ export namespace PropertyCardinalitiesNodeShape {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -4579,11 +4631,11 @@ export namespace PropertyCardinalitiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      PropertyCardinalitiesNodeShape.sparqlConstructQuery(parameters),
+      PropertyCardinalitiesNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -4636,7 +4688,7 @@ export namespace PropertyCardinalitiesNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -4718,6 +4770,13 @@ export namespace PropertyCardinalitiesNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * Shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.
@@ -5052,7 +5111,7 @@ export namespace OrderedPropertiesNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -5066,14 +5125,14 @@ export namespace OrderedPropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        OrderedPropertiesNodeShape.sparqlConstructTemplateTriples({
+        OrderedPropertiesNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        OrderedPropertiesNodeShape.sparqlWherePatterns({
+        OrderedPropertiesNodeShape.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -5081,7 +5140,7 @@ export namespace OrderedPropertiesNodeShape {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -5090,11 +5149,11 @@ export namespace OrderedPropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      OrderedPropertiesNodeShape.sparqlConstructQuery(parameters),
+      OrderedPropertiesNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -5126,7 +5185,7 @@ export namespace OrderedPropertiesNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -5172,6 +5231,13 @@ export namespace OrderedPropertiesNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * Node shape that isn't an rdfs:Class.
@@ -5415,7 +5481,7 @@ export namespace NonClassNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -5429,19 +5495,19 @@ export namespace NonClassNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        NonClassNodeShape.sparqlConstructTemplateTriples({
+        NonClassNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        NonClassNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
+        NonClassNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -5450,11 +5516,11 @@ export namespace NonClassNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      NonClassNodeShape.sparqlConstructQuery(parameters),
+      NonClassNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -5473,7 +5539,7 @@ export namespace NonClassNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -5498,6 +5564,13 @@ export namespace NonClassNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * Shape with shaclmate:mutable properties.
@@ -6041,7 +6114,7 @@ export namespace MutablePropertiesNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -6055,14 +6128,14 @@ export namespace MutablePropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        MutablePropertiesNodeShape.sparqlConstructTemplateTriples({
+        MutablePropertiesNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        MutablePropertiesNodeShape.sparqlWherePatterns({
+        MutablePropertiesNodeShape.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -6070,7 +6143,7 @@ export namespace MutablePropertiesNodeShape {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -6079,11 +6152,11 @@ export namespace MutablePropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      MutablePropertiesNodeShape.sparqlConstructQuery(parameters),
+      MutablePropertiesNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -6161,7 +6234,7 @@ export namespace MutablePropertiesNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -6330,6 +6403,13 @@ export namespace MutablePropertiesNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * Shape that uses the list shapes in properties.
@@ -6850,7 +6930,7 @@ export namespace ListPropertiesNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -6864,19 +6944,22 @@ export namespace ListPropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ListPropertiesNodeShape.sparqlConstructTemplateTriples({
+        ListPropertiesNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ListPropertiesNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
+        ListPropertiesNodeShape.Sparql.wherePatterns({
+          ignoreRdfType,
+          subject,
+        }),
       ),
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -6885,11 +6968,11 @@ export namespace ListPropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ListPropertiesNodeShape.sparqlConstructQuery(parameters),
+      ListPropertiesNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -6918,7 +7001,7 @@ export namespace ListPropertiesNodeShape {
           `${`${variablePrefix}ObjectListProperty`}Item0`,
         ),
       },
-      ...NonClassNodeShape.sparqlConstructTemplateTriples({
+      ...NonClassNodeShape.Sparql.constructTemplateTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${`${variablePrefix}ObjectListProperty`}Item0`,
@@ -6945,7 +7028,7 @@ export namespace ListPropertiesNodeShape {
           `${`${variablePrefix}ObjectListProperty`}ItemN`,
         ),
       },
-      ...NonClassNodeShape.sparqlConstructTemplateTriples({
+      ...NonClassNodeShape.Sparql.constructTemplateTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${`${variablePrefix}ObjectListProperty`}ItemN`,
@@ -7013,7 +7096,7 @@ export namespace ListPropertiesNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -7061,7 +7144,7 @@ export namespace ListPropertiesNodeShape {
                   },
                 ],
               },
-              ...NonClassNodeShape.sparqlWherePatterns({
+              ...NonClassNodeShape.Sparql.wherePatterns({
                 ignoreRdfType: true,
                 subject: dataFactory.variable!(
                   `${`${variablePrefix}ObjectListProperty`}Item0`,
@@ -7125,7 +7208,7 @@ export namespace ListPropertiesNodeShape {
                       },
                     ],
                   },
-                  ...NonClassNodeShape.sparqlWherePatterns({
+                  ...NonClassNodeShape.Sparql.wherePatterns({
                     ignoreRdfType: true,
                     subject: dataFactory.variable!(
                       `${`${variablePrefix}ObjectListProperty`}ItemN`,
@@ -7272,6 +7355,13 @@ export namespace ListPropertiesNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * Shape that uses the StringListShape in a property.
@@ -7757,7 +7847,7 @@ export namespace LanguageInPropertiesNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -7771,14 +7861,14 @@ export namespace LanguageInPropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        LanguageInPropertiesNodeShape.sparqlConstructTemplateTriples({
+        LanguageInPropertiesNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LanguageInPropertiesNodeShape.sparqlWherePatterns({
+        LanguageInPropertiesNodeShape.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -7786,7 +7876,7 @@ export namespace LanguageInPropertiesNodeShape {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -7795,11 +7885,11 @@ export namespace LanguageInPropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      LanguageInPropertiesNodeShape.sparqlConstructQuery(parameters),
+      LanguageInPropertiesNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -7828,7 +7918,7 @@ export namespace LanguageInPropertiesNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -7882,6 +7972,13 @@ export namespace LanguageInPropertiesNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * A node shape that only allows IRI identifiers.
@@ -8063,7 +8160,7 @@ export namespace IriNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -8077,16 +8174,19 @@ export namespace IriNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        IriNodeShape.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+        IriNodeShape.Sparql.constructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        IriNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
+        IriNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -8095,11 +8195,11 @@ export namespace IriNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      IriNodeShape.sparqlConstructQuery(parameters),
+      IriNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(_parameters?: {
+  function sparqlConstructTemplateTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -8107,13 +8207,20 @@ export namespace IriNodeShape {
     return [];
   }
 
-  export function sparqlWherePatterns(_parameters: {
+  function sparqlWherePatterns(_parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
     return [];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 export interface InterfaceUnionNodeShapeMember2b {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8356,7 +8463,7 @@ export namespace InterfaceUnionNodeShapeMember2b {
     return _hasher;
   }
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -8370,14 +8477,14 @@ export namespace InterfaceUnionNodeShapeMember2b {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InterfaceUnionNodeShapeMember2b.sparqlConstructTemplateTriples({
+        InterfaceUnionNodeShapeMember2b.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceUnionNodeShapeMember2b.sparqlWherePatterns({
+        InterfaceUnionNodeShapeMember2b.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -8385,7 +8492,7 @@ export namespace InterfaceUnionNodeShapeMember2b {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -8394,11 +8501,11 @@ export namespace InterfaceUnionNodeShapeMember2b {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      InterfaceUnionNodeShapeMember2b.sparqlConstructQuery(parameters),
+      InterfaceUnionNodeShapeMember2b.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -8420,7 +8527,7 @@ export namespace InterfaceUnionNodeShapeMember2b {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -8448,6 +8555,13 @@ export namespace InterfaceUnionNodeShapeMember2b {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 
   export function toRdf(
     _interfaceUnionNodeShapeMember2b: InterfaceUnionNodeShapeMember2b,
@@ -8712,7 +8826,7 @@ export namespace InterfaceUnionNodeShapeMember2a {
     return _hasher;
   }
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -8726,14 +8840,14 @@ export namespace InterfaceUnionNodeShapeMember2a {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InterfaceUnionNodeShapeMember2a.sparqlConstructTemplateTriples({
+        InterfaceUnionNodeShapeMember2a.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceUnionNodeShapeMember2a.sparqlWherePatterns({
+        InterfaceUnionNodeShapeMember2a.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -8741,7 +8855,7 @@ export namespace InterfaceUnionNodeShapeMember2a {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -8750,11 +8864,11 @@ export namespace InterfaceUnionNodeShapeMember2a {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      InterfaceUnionNodeShapeMember2a.sparqlConstructQuery(parameters),
+      InterfaceUnionNodeShapeMember2a.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -8776,7 +8890,7 @@ export namespace InterfaceUnionNodeShapeMember2a {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -8804,6 +8918,13 @@ export namespace InterfaceUnionNodeShapeMember2a {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 
   export function toRdf(
     _interfaceUnionNodeShapeMember2a: InterfaceUnionNodeShapeMember2a,
@@ -9065,7 +9186,7 @@ export namespace InterfaceUnionNodeShapeMember1 {
     return _hasher;
   }
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -9079,14 +9200,14 @@ export namespace InterfaceUnionNodeShapeMember1 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InterfaceUnionNodeShapeMember1.sparqlConstructTemplateTriples({
+        InterfaceUnionNodeShapeMember1.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceUnionNodeShapeMember1.sparqlWherePatterns({
+        InterfaceUnionNodeShapeMember1.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -9094,7 +9215,7 @@ export namespace InterfaceUnionNodeShapeMember1 {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -9103,11 +9224,11 @@ export namespace InterfaceUnionNodeShapeMember1 {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      InterfaceUnionNodeShapeMember1.sparqlConstructQuery(parameters),
+      InterfaceUnionNodeShapeMember1.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -9129,7 +9250,7 @@ export namespace InterfaceUnionNodeShapeMember1 {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -9157,6 +9278,13 @@ export namespace InterfaceUnionNodeShapeMember1 {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 
   export function toRdf(
     _interfaceUnionNodeShapeMember1: InterfaceUnionNodeShapeMember1,
@@ -9407,7 +9535,7 @@ export namespace InterfaceNodeShape {
     return _hasher;
   }
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -9421,19 +9549,19 @@ export namespace InterfaceNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InterfaceNodeShape.sparqlConstructTemplateTriples({
+        InterfaceNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
+        InterfaceNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -9442,11 +9570,11 @@ export namespace InterfaceNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      InterfaceNodeShape.sparqlConstructQuery(parameters),
+      InterfaceNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -9465,7 +9593,7 @@ export namespace InterfaceNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -9490,6 +9618,13 @@ export namespace InterfaceNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 
   export function toRdf(
     _interfaceNodeShape: InterfaceNodeShape,
@@ -10221,7 +10356,7 @@ export namespace InPropertiesNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -10235,19 +10370,19 @@ export namespace InPropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InPropertiesNodeShape.sparqlConstructTemplateTriples({
+        InPropertiesNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InPropertiesNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
+        InPropertiesNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -10256,11 +10391,11 @@ export namespace InPropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      InPropertiesNodeShape.sparqlConstructQuery(parameters),
+      InPropertiesNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -10309,7 +10444,7 @@ export namespace InPropertiesNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -10419,6 +10554,13 @@ export namespace InPropertiesNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * Shape with sh:in constraining its identifier.
@@ -10717,7 +10859,7 @@ export namespace InIdentifierNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -10731,19 +10873,19 @@ export namespace InIdentifierNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InIdentifierNodeShape.sparqlConstructTemplateTriples({
+        InIdentifierNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InIdentifierNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
+        InIdentifierNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -10752,11 +10894,11 @@ export namespace InIdentifierNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      InIdentifierNodeShape.sparqlConstructQuery(parameters),
+      InIdentifierNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -10777,7 +10919,7 @@ export namespace InIdentifierNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -10811,6 +10953,13 @@ export namespace InIdentifierNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * Shape with sh:hasValue properties.
@@ -11164,7 +11313,7 @@ export namespace HasValuePropertiesNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -11178,14 +11327,14 @@ export namespace HasValuePropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        HasValuePropertiesNodeShape.sparqlConstructTemplateTriples({
+        HasValuePropertiesNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        HasValuePropertiesNodeShape.sparqlWherePatterns({
+        HasValuePropertiesNodeShape.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -11193,7 +11342,7 @@ export namespace HasValuePropertiesNodeShape {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -11202,11 +11351,11 @@ export namespace HasValuePropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      HasValuePropertiesNodeShape.sparqlConstructQuery(parameters),
+      HasValuePropertiesNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -11235,7 +11384,7 @@ export namespace HasValuePropertiesNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -11289,6 +11438,13 @@ export namespace HasValuePropertiesNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 export class InlineNodeShape {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
@@ -11529,7 +11685,7 @@ export namespace InlineNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -11543,19 +11699,19 @@ export namespace InlineNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InlineNodeShape.sparqlConstructTemplateTriples({
+        InlineNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InlineNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
+        InlineNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -11564,11 +11720,11 @@ export namespace InlineNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      InlineNodeShape.sparqlConstructQuery(parameters),
+      InlineNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -11587,7 +11743,7 @@ export namespace InlineNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -11612,6 +11768,13 @@ export namespace InlineNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 export class ExternNodeShape {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
@@ -11852,7 +12015,7 @@ export namespace ExternNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -11866,19 +12029,19 @@ export namespace ExternNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ExternNodeShape.sparqlConstructTemplateTriples({
+        ExternNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ExternNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
+        ExternNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -11887,11 +12050,11 @@ export namespace ExternNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ExternNodeShape.sparqlConstructQuery(parameters),
+      ExternNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -11910,7 +12073,7 @@ export namespace ExternNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -11935,6 +12098,13 @@ export namespace ExternNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * Node shape that inlines/nests another node shape and externs/references another.
@@ -12390,7 +12560,7 @@ export namespace ExternPropertiesNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -12404,14 +12574,14 @@ export namespace ExternPropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ExternPropertiesNodeShape.sparqlConstructTemplateTriples({
+        ExternPropertiesNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ExternPropertiesNodeShape.sparqlWherePatterns({
+        ExternPropertiesNodeShape.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -12419,7 +12589,7 @@ export namespace ExternPropertiesNodeShape {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -12428,11 +12598,11 @@ export namespace ExternPropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ExternPropertiesNodeShape.sparqlConstructQuery(parameters),
+      ExternPropertiesNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -12454,7 +12624,7 @@ export namespace ExternPropertiesNodeShape {
         ),
         subject,
       },
-      ...ExternObjectType.sparqlConstructTemplateTriples({
+      ...ExternObjectType.Sparql.constructTemplateTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}ExternObjectTypeProperty`,
@@ -12471,7 +12641,7 @@ export namespace ExternPropertiesNodeShape {
         predicate: dataFactory.namedNode("http://example.com/inlineProperty"),
         subject,
       },
-      ...InlineNodeShape.sparqlConstructTemplateTriples({
+      ...InlineNodeShape.Sparql.constructTemplateTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}InlineProperty`),
         variablePrefix: `${variablePrefix}InlineProperty`,
@@ -12479,7 +12649,7 @@ export namespace ExternPropertiesNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -12508,7 +12678,7 @@ export namespace ExternPropertiesNodeShape {
             ],
             type: "bgp",
           },
-          ...ExternObjectType.sparqlWherePatterns({
+          ...ExternObjectType.Sparql.wherePatterns({
             ignoreRdfType: true,
             subject: dataFactory.variable!(
               `${variablePrefix}ExternObjectTypeProperty`,
@@ -12553,7 +12723,7 @@ export namespace ExternPropertiesNodeShape {
             ],
             type: "bgp",
           },
-          ...InlineNodeShape.sparqlWherePatterns({
+          ...InlineNodeShape.Sparql.wherePatterns({
             ignoreRdfType: true,
             subject: dataFactory.variable!(`${variablePrefix}InlineProperty`),
             variablePrefix: `${variablePrefix}InlineProperty`,
@@ -12563,6 +12733,13 @@ export namespace ExternPropertiesNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * Shape with custom rdf:type's.
@@ -12848,7 +13025,7 @@ export namespace ExplicitRdfTypesNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -12862,14 +13039,14 @@ export namespace ExplicitRdfTypesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ExplicitRdfTypesNodeShape.sparqlConstructTemplateTriples({
+        ExplicitRdfTypesNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ExplicitRdfTypesNodeShape.sparqlWherePatterns({
+        ExplicitRdfTypesNodeShape.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -12877,7 +13054,7 @@ export namespace ExplicitRdfTypesNodeShape {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -12886,11 +13063,11 @@ export namespace ExplicitRdfTypesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ExplicitRdfTypesNodeShape.sparqlConstructQuery(parameters),
+      ExplicitRdfTypesNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -12922,7 +13099,7 @@ export namespace ExplicitRdfTypesNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -12979,6 +13156,13 @@ export namespace ExplicitRdfTypesNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * Shape with sh:defaultValue properties.
@@ -13624,7 +13808,7 @@ export namespace DefaultValuePropertiesNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -13638,14 +13822,14 @@ export namespace DefaultValuePropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        DefaultValuePropertiesNodeShape.sparqlConstructTemplateTriples({
+        DefaultValuePropertiesNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        DefaultValuePropertiesNodeShape.sparqlWherePatterns({
+        DefaultValuePropertiesNodeShape.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -13653,7 +13837,7 @@ export namespace DefaultValuePropertiesNodeShape {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -13662,11 +13846,11 @@ export namespace DefaultValuePropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      DefaultValuePropertiesNodeShape.sparqlConstructQuery(parameters),
+      DefaultValuePropertiesNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -13717,7 +13901,7 @@ export namespace DefaultValuePropertiesNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -13845,6 +14029,13 @@ export namespace DefaultValuePropertiesNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * Base interface for other node shapes.
@@ -14149,7 +14340,7 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     return _hasher;
   }
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -14163,13 +14354,13 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        BaseInterfaceWithPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
+        BaseInterfaceWithPropertiesNodeShapeStatic.Sparql.constructTemplateTriples(
           { ignoreRdfType, subject },
         ),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        BaseInterfaceWithPropertiesNodeShapeStatic.sparqlWherePatterns({
+        BaseInterfaceWithPropertiesNodeShapeStatic.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -14177,7 +14368,7 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -14186,13 +14377,13 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      BaseInterfaceWithPropertiesNodeShapeStatic.sparqlConstructQuery(
+      BaseInterfaceWithPropertiesNodeShapeStatic.Sparql.constructQuery(
         parameters,
       ),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -14227,7 +14418,7 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -14287,6 +14478,13 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 
   export function toRdf(
     _baseInterfaceWithPropertiesNodeShape: BaseInterfaceWithPropertiesNodeShape,
@@ -14583,7 +14781,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
     return _hasher;
   }
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -14597,13 +14795,13 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
+        BaseInterfaceWithoutPropertiesNodeShapeStatic.Sparql.constructTemplateTriples(
           { ignoreRdfType, subject },
         ),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlWherePatterns({
+        BaseInterfaceWithoutPropertiesNodeShapeStatic.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -14611,7 +14809,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -14620,13 +14818,13 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlConstructQuery(
+      BaseInterfaceWithoutPropertiesNodeShapeStatic.Sparql.constructQuery(
         parameters,
       ),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -14640,7 +14838,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
         ? subject.value
         : "baseInterfaceWithoutPropertiesNodeShape");
     return [
-      ...BaseInterfaceWithPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
+      ...BaseInterfaceWithPropertiesNodeShapeStatic.Sparql.constructTemplateTriples(
         { ignoreRdfType: true, subject, variablePrefix },
       ),
       ...(parameters?.ignoreRdfType
@@ -14657,7 +14855,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -14671,7 +14869,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
         ? subject.value
         : "baseInterfaceWithoutPropertiesNodeShape");
     return [
-      ...BaseInterfaceWithPropertiesNodeShapeStatic.sparqlWherePatterns({
+      ...BaseInterfaceWithPropertiesNodeShapeStatic.Sparql.wherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -14708,6 +14906,13 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
           ]),
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 
   export function toRdf(
     _baseInterfaceWithoutPropertiesNodeShape: BaseInterfaceWithoutPropertiesNodeShape,
@@ -15050,7 +15255,7 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     return _hasher;
   }
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -15064,14 +15269,14 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ConcreteParentInterfaceNodeShapeStatic.sparqlConstructTemplateTriples({
+        ConcreteParentInterfaceNodeShapeStatic.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ConcreteParentInterfaceNodeShapeStatic.sparqlWherePatterns({
+        ConcreteParentInterfaceNodeShapeStatic.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -15079,7 +15284,7 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -15088,11 +15293,11 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ConcreteParentInterfaceNodeShapeStatic.sparqlConstructQuery(parameters),
+      ConcreteParentInterfaceNodeShapeStatic.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -15106,7 +15311,7 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
         ? subject.value
         : "concreteParentInterfaceNodeShape");
     return [
-      ...BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
+      ...BaseInterfaceWithoutPropertiesNodeShapeStatic.Sparql.constructTemplateTriples(
         { ignoreRdfType: true, subject, variablePrefix },
       ),
       ...(parameters?.ignoreRdfType
@@ -15130,7 +15335,7 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -15144,7 +15349,7 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
         ? subject.value
         : "concreteParentInterfaceNodeShape");
     return [
-      ...BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlWherePatterns({
+      ...BaseInterfaceWithoutPropertiesNodeShapeStatic.Sparql.wherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -15195,6 +15400,13 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 
   export function toRdf(
     _concreteParentInterfaceNodeShape: ConcreteParentInterfaceNodeShape,
@@ -15510,7 +15722,7 @@ export namespace ConcreteChildInterfaceNodeShape {
     return _hasher;
   }
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -15524,14 +15736,14 @@ export namespace ConcreteChildInterfaceNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ConcreteChildInterfaceNodeShape.sparqlConstructTemplateTriples({
+        ConcreteChildInterfaceNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ConcreteChildInterfaceNodeShape.sparqlWherePatterns({
+        ConcreteChildInterfaceNodeShape.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -15539,7 +15751,7 @@ export namespace ConcreteChildInterfaceNodeShape {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -15548,11 +15760,11 @@ export namespace ConcreteChildInterfaceNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ConcreteChildInterfaceNodeShape.sparqlConstructQuery(parameters),
+      ConcreteChildInterfaceNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -15566,11 +15778,9 @@ export namespace ConcreteChildInterfaceNodeShape {
         ? subject.value
         : "concreteChildInterfaceNodeShape");
     return [
-      ...ConcreteParentInterfaceNodeShapeStatic.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
+      ...ConcreteParentInterfaceNodeShapeStatic.Sparql.constructTemplateTriples(
+        { ignoreRdfType: true, subject, variablePrefix },
+      ),
       ...(parameters?.ignoreRdfType
         ? []
         : [
@@ -15592,7 +15802,7 @@ export namespace ConcreteChildInterfaceNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -15606,7 +15816,7 @@ export namespace ConcreteChildInterfaceNodeShape {
         ? subject.value
         : "concreteChildInterfaceNodeShape");
     return [
-      ...ConcreteParentInterfaceNodeShapeStatic.sparqlWherePatterns({
+      ...ConcreteParentInterfaceNodeShapeStatic.Sparql.wherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -15657,6 +15867,13 @@ export namespace ConcreteChildInterfaceNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 
   export function toRdf(
     _concreteChildInterfaceNodeShape: ConcreteChildInterfaceNodeShape,
@@ -15960,7 +16177,7 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -15974,13 +16191,13 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        AbstractBaseClassWithPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
+        AbstractBaseClassWithPropertiesNodeShapeStatic.Sparql.constructTemplateTriples(
           { ignoreRdfType, subject },
         ),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        AbstractBaseClassWithPropertiesNodeShapeStatic.sparqlWherePatterns({
+        AbstractBaseClassWithPropertiesNodeShapeStatic.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -15988,7 +16205,7 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -15997,13 +16214,13 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      AbstractBaseClassWithPropertiesNodeShapeStatic.sparqlConstructQuery(
+      AbstractBaseClassWithPropertiesNodeShapeStatic.Sparql.constructQuery(
         parameters,
       ),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -16027,7 +16244,7 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -16055,6 +16272,13 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * Abstract base for other node shapes. Put the ABC with properties above the ABC without.
@@ -16233,7 +16457,7 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -16247,13 +16471,13 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        AbstractBaseClassWithoutPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
+        AbstractBaseClassWithoutPropertiesNodeShapeStatic.Sparql.constructTemplateTriples(
           { ignoreRdfType, subject },
         ),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        AbstractBaseClassWithoutPropertiesNodeShapeStatic.sparqlWherePatterns({
+        AbstractBaseClassWithoutPropertiesNodeShapeStatic.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -16261,7 +16485,7 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -16270,13 +16494,13 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      AbstractBaseClassWithoutPropertiesNodeShapeStatic.sparqlConstructQuery(
+      AbstractBaseClassWithoutPropertiesNodeShapeStatic.Sparql.constructQuery(
         parameters,
       ),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -16290,13 +16514,13 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
         ? subject.value
         : "abstractBaseClassWithoutPropertiesNodeShape");
     return [
-      ...AbstractBaseClassWithPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
+      ...AbstractBaseClassWithPropertiesNodeShapeStatic.Sparql.constructTemplateTriples(
         { ignoreRdfType: true, subject, variablePrefix },
       ),
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -16310,13 +16534,20 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
         ? subject.value
         : "abstractBaseClassWithoutPropertiesNodeShape");
     return [
-      ...AbstractBaseClassWithPropertiesNodeShapeStatic.sparqlWherePatterns({
+      ...AbstractBaseClassWithPropertiesNodeShapeStatic.Sparql.wherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
       }),
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * Class node shape that inherits the abstract base class and is the parent of the ConcreteChildClassNodeShape.
@@ -16640,7 +16871,7 @@ export namespace ConcreteParentClassNodeShapeStatic {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -16654,14 +16885,14 @@ export namespace ConcreteParentClassNodeShapeStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ConcreteParentClassNodeShapeStatic.sparqlConstructTemplateTriples({
+        ConcreteParentClassNodeShapeStatic.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ConcreteParentClassNodeShapeStatic.sparqlWherePatterns({
+        ConcreteParentClassNodeShapeStatic.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -16669,7 +16900,7 @@ export namespace ConcreteParentClassNodeShapeStatic {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -16678,11 +16909,11 @@ export namespace ConcreteParentClassNodeShapeStatic {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ConcreteParentClassNodeShapeStatic.sparqlConstructQuery(parameters),
+      ConcreteParentClassNodeShapeStatic.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -16696,7 +16927,7 @@ export namespace ConcreteParentClassNodeShapeStatic {
         ? subject.value
         : "concreteParentClassNodeShape");
     return [
-      ...AbstractBaseClassWithoutPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
+      ...AbstractBaseClassWithoutPropertiesNodeShapeStatic.Sparql.constructTemplateTriples(
         { ignoreRdfType: true, subject, variablePrefix },
       ),
       ...(parameters?.ignoreRdfType
@@ -16720,7 +16951,7 @@ export namespace ConcreteParentClassNodeShapeStatic {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -16734,11 +16965,9 @@ export namespace ConcreteParentClassNodeShapeStatic {
         ? subject.value
         : "concreteParentClassNodeShape");
     return [
-      ...AbstractBaseClassWithoutPropertiesNodeShapeStatic.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject,
-        variablePrefix,
-      }),
+      ...AbstractBaseClassWithoutPropertiesNodeShapeStatic.Sparql.wherePatterns(
+        { ignoreRdfType: true, subject, variablePrefix },
+      ),
       ...(parameters?.ignoreRdfType
         ? []
         : [
@@ -16785,6 +17014,13 @@ export namespace ConcreteParentClassNodeShapeStatic {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * Child (class) of ConcreteParentClassNodeShape. Should inherit properties, node kinds, and minting strategy.
@@ -17066,7 +17302,7 @@ export namespace ConcreteChildClassNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -17080,14 +17316,14 @@ export namespace ConcreteChildClassNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ConcreteChildClassNodeShape.sparqlConstructTemplateTriples({
+        ConcreteChildClassNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ConcreteChildClassNodeShape.sparqlWherePatterns({
+        ConcreteChildClassNodeShape.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -17095,7 +17331,7 @@ export namespace ConcreteChildClassNodeShape {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -17104,11 +17340,11 @@ export namespace ConcreteChildClassNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ConcreteChildClassNodeShape.sparqlConstructQuery(parameters),
+      ConcreteChildClassNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -17122,7 +17358,7 @@ export namespace ConcreteChildClassNodeShape {
         ? subject.value
         : "concreteChildClassNodeShape");
     return [
-      ...ConcreteParentClassNodeShapeStatic.sparqlConstructTemplateTriples({
+      ...ConcreteParentClassNodeShapeStatic.Sparql.constructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -17148,7 +17384,7 @@ export namespace ConcreteChildClassNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -17162,7 +17398,7 @@ export namespace ConcreteChildClassNodeShape {
         ? subject.value
         : "concreteChildClassNodeShape");
     return [
-      ...ConcreteParentClassNodeShapeStatic.sparqlWherePatterns({
+      ...ConcreteParentClassNodeShapeStatic.Sparql.wherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -17213,6 +17449,13 @@ export namespace ConcreteChildClassNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * Shape that can have a blank node or IRI as an identifier
@@ -17417,7 +17660,7 @@ export namespace BlankNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -17431,19 +17674,19 @@ export namespace BlankNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        BlankNodeShape.sparqlConstructTemplateTriples({
+        BlankNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        BlankNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
+        BlankNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -17452,11 +17695,11 @@ export namespace BlankNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      BlankNodeShape.sparqlConstructQuery(parameters),
+      BlankNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
-  export function sparqlConstructTemplateTriples(_parameters?: {
+  function sparqlConstructTemplateTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -17464,13 +17707,20 @@ export namespace BlankNodeShape {
     return [];
   }
 
-  export function sparqlWherePatterns(_parameters: {
+  function sparqlWherePatterns(_parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
     return [];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * An abstract base class that will be inherited by the extern object type, showing how to mix generated and hand-written code.
@@ -17706,7 +17956,7 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -17720,13 +17970,13 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        AbstractBaseClassForExternObjectTypeStatic.sparqlConstructTemplateTriples(
+        AbstractBaseClassForExternObjectTypeStatic.Sparql.constructTemplateTriples(
           { ignoreRdfType, subject },
         ),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        AbstractBaseClassForExternObjectTypeStatic.sparqlWherePatterns({
+        AbstractBaseClassForExternObjectTypeStatic.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -17734,7 +17984,7 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -17743,13 +17993,13 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      AbstractBaseClassForExternObjectTypeStatic.sparqlConstructQuery(
+      AbstractBaseClassForExternObjectTypeStatic.Sparql.constructQuery(
         parameters,
       ),
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters?: {
+  function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -17773,7 +18023,7 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -17801,6 +18051,13 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 }
 /**
  * Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.
@@ -17972,7 +18229,7 @@ export namespace InterfaceUnionNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -17986,19 +18243,22 @@ export namespace InterfaceUnionNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InterfaceUnionNodeShape.sparqlConstructTemplateTriples({
+        InterfaceUnionNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceUnionNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
+        InterfaceUnionNodeShape.Sparql.wherePatterns({
+          ignoreRdfType,
+          subject,
+        }),
       ),
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -18007,7 +18267,7 @@ export namespace InterfaceUnionNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      InterfaceUnionNodeShape.sparqlConstructQuery(parameters),
+      InterfaceUnionNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
@@ -18017,7 +18277,7 @@ export namespace InterfaceUnionNodeShape {
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
-      ...InterfaceUnionNodeShapeMember1.sparqlConstructTemplateTriples({
+      ...InterfaceUnionNodeShapeMember1.Sparql.constructTemplateTriples({
         subject:
           parameters.subject ??
           dataFactory.variable!(
@@ -18027,7 +18287,7 @@ export namespace InterfaceUnionNodeShape {
           ? `${parameters.variablePrefix}InterfaceUnionNodeShapeMember1`
           : "interfaceUnionNodeShapeInterfaceUnionNodeShapeMember1",
       }).concat(),
-      ...InterfaceUnionNodeShapeMember2a.sparqlConstructTemplateTriples({
+      ...InterfaceUnionNodeShapeMember2a.Sparql.constructTemplateTriples({
         subject:
           parameters.subject ??
           dataFactory.variable!(
@@ -18037,7 +18297,7 @@ export namespace InterfaceUnionNodeShape {
           ? `${parameters.variablePrefix}InterfaceUnionNodeShapeMember2a`
           : "interfaceUnionNodeShapeInterfaceUnionNodeShapeMember2a",
       }).concat(),
-      ...InterfaceUnionNodeShapeMember2b.sparqlConstructTemplateTriples({
+      ...InterfaceUnionNodeShapeMember2b.Sparql.constructTemplateTriples({
         subject:
           parameters.subject ??
           dataFactory.variable!(
@@ -18059,7 +18319,7 @@ export namespace InterfaceUnionNodeShape {
       {
         patterns: [
           {
-            patterns: InterfaceUnionNodeShapeMember1.sparqlWherePatterns({
+            patterns: InterfaceUnionNodeShapeMember1.Sparql.wherePatterns({
               subject:
                 parameters.subject ??
                 dataFactory.variable!(
@@ -18072,7 +18332,7 @@ export namespace InterfaceUnionNodeShape {
             type: "group",
           },
           {
-            patterns: InterfaceUnionNodeShapeMember2a.sparqlWherePatterns({
+            patterns: InterfaceUnionNodeShapeMember2a.Sparql.wherePatterns({
               subject:
                 parameters.subject ??
                 dataFactory.variable!(
@@ -18085,7 +18345,7 @@ export namespace InterfaceUnionNodeShape {
             type: "group",
           },
           {
-            patterns: InterfaceUnionNodeShapeMember2b.sparqlWherePatterns({
+            patterns: InterfaceUnionNodeShapeMember2b.Sparql.wherePatterns({
               subject:
                 parameters.subject ??
                 dataFactory.variable!(
@@ -18102,6 +18362,13 @@ export namespace InterfaceUnionNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 
   export function toRdf(
     _interfaceUnionNodeShape: InterfaceUnionNodeShape,
@@ -18262,7 +18529,7 @@ export namespace InterfaceUnionNodeShapeMember2 {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -18276,14 +18543,14 @@ export namespace InterfaceUnionNodeShapeMember2 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InterfaceUnionNodeShapeMember2.sparqlConstructTemplateTriples({
+        InterfaceUnionNodeShapeMember2.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceUnionNodeShapeMember2.sparqlWherePatterns({
+        InterfaceUnionNodeShapeMember2.Sparql.wherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -18291,7 +18558,7 @@ export namespace InterfaceUnionNodeShapeMember2 {
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -18300,7 +18567,7 @@ export namespace InterfaceUnionNodeShapeMember2 {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      InterfaceUnionNodeShapeMember2.sparqlConstructQuery(parameters),
+      InterfaceUnionNodeShapeMember2.Sparql.constructQuery(parameters),
     );
   }
 
@@ -18310,7 +18577,7 @@ export namespace InterfaceUnionNodeShapeMember2 {
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
-      ...InterfaceUnionNodeShapeMember2a.sparqlConstructTemplateTriples({
+      ...InterfaceUnionNodeShapeMember2a.Sparql.constructTemplateTriples({
         subject:
           parameters.subject ??
           dataFactory.variable!(
@@ -18320,7 +18587,7 @@ export namespace InterfaceUnionNodeShapeMember2 {
           ? `${parameters.variablePrefix}InterfaceUnionNodeShapeMember2a`
           : "interfaceUnionNodeShapeMember2InterfaceUnionNodeShapeMember2a",
       }).concat(),
-      ...InterfaceUnionNodeShapeMember2b.sparqlConstructTemplateTriples({
+      ...InterfaceUnionNodeShapeMember2b.Sparql.constructTemplateTriples({
         subject:
           parameters.subject ??
           dataFactory.variable!(
@@ -18342,7 +18609,7 @@ export namespace InterfaceUnionNodeShapeMember2 {
       {
         patterns: [
           {
-            patterns: InterfaceUnionNodeShapeMember2a.sparqlWherePatterns({
+            patterns: InterfaceUnionNodeShapeMember2a.Sparql.wherePatterns({
               subject:
                 parameters.subject ??
                 dataFactory.variable!(
@@ -18355,7 +18622,7 @@ export namespace InterfaceUnionNodeShapeMember2 {
             type: "group",
           },
           {
-            patterns: InterfaceUnionNodeShapeMember2b.sparqlWherePatterns({
+            patterns: InterfaceUnionNodeShapeMember2b.Sparql.wherePatterns({
               subject:
                 parameters.subject ??
                 dataFactory.variable!(
@@ -18372,6 +18639,13 @@ export namespace InterfaceUnionNodeShapeMember2 {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 
   export function toRdf(
     _interfaceUnionNodeShapeMember2: InterfaceUnionNodeShapeMember2,
@@ -18528,7 +18802,7 @@ export namespace UnionNodeShape {
     zodSchema: jsonZodSchema,
   };
 
-  export function sparqlConstructQuery(
+  function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -18542,19 +18816,19 @@ export namespace UnionNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        UnionNodeShape.sparqlConstructTemplateTriples({
+        UnionNodeShape.Sparql.constructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        UnionNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
+        UnionNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  export function sparqlConstructQueryString(
+  function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -18563,7 +18837,7 @@ export namespace UnionNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      UnionNodeShape.sparqlConstructQuery(parameters),
+      UnionNodeShape.Sparql.constructQuery(parameters),
     );
   }
 
@@ -18573,7 +18847,7 @@ export namespace UnionNodeShape {
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
-      ...UnionNodeShapeMember1.sparqlConstructTemplateTriples({
+      ...UnionNodeShapeMember1.Sparql.constructTemplateTriples({
         subject:
           parameters.subject ??
           dataFactory.variable!("unionNodeShapeUnionNodeShapeMember1"),
@@ -18581,7 +18855,7 @@ export namespace UnionNodeShape {
           ? `${parameters.variablePrefix}UnionNodeShapeMember1`
           : "unionNodeShapeUnionNodeShapeMember1",
       }).concat(),
-      ...UnionNodeShapeMember2.sparqlConstructTemplateTriples({
+      ...UnionNodeShapeMember2.Sparql.constructTemplateTriples({
         subject:
           parameters.subject ??
           dataFactory.variable!("unionNodeShapeUnionNodeShapeMember2"),
@@ -18589,7 +18863,7 @@ export namespace UnionNodeShape {
           ? `${parameters.variablePrefix}UnionNodeShapeMember2`
           : "unionNodeShapeUnionNodeShapeMember2",
       }).concat(),
-      ...ExternObjectType.sparqlConstructTemplateTriples({
+      ...ExternObjectType.Sparql.constructTemplateTriples({
         subject:
           parameters.subject ??
           dataFactory.variable!("unionNodeShapeExternObjectType"),
@@ -18609,7 +18883,7 @@ export namespace UnionNodeShape {
       {
         patterns: [
           {
-            patterns: UnionNodeShapeMember1.sparqlWherePatterns({
+            patterns: UnionNodeShapeMember1.Sparql.wherePatterns({
               subject:
                 parameters.subject ??
                 dataFactory.variable!("unionNodeShapeUnionNodeShapeMember1"),
@@ -18620,7 +18894,7 @@ export namespace UnionNodeShape {
             type: "group",
           },
           {
-            patterns: UnionNodeShapeMember2.sparqlWherePatterns({
+            patterns: UnionNodeShapeMember2.Sparql.wherePatterns({
               subject:
                 parameters.subject ??
                 dataFactory.variable!("unionNodeShapeUnionNodeShapeMember2"),
@@ -18631,7 +18905,7 @@ export namespace UnionNodeShape {
             type: "group",
           },
           {
-            patterns: ExternObjectType.sparqlWherePatterns({
+            patterns: ExternObjectType.Sparql.wherePatterns({
               subject:
                 parameters.subject ??
                 dataFactory.variable!("unionNodeShapeExternObjectType"),
@@ -18646,6 +18920,13 @@ export namespace UnionNodeShape {
       },
     ];
   }
+
+  export const Sparql = {
+    constructQuery: sparqlConstructQuery,
+    constructQueryString: sparqlConstructQueryString,
+    constructTemplateTriples: sparqlConstructTemplateTriples,
+    wherePatterns: sparqlWherePatterns,
+  };
 
   export function toRdf(
     _unionNodeShape: UnionNodeShape,

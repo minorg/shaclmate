@@ -4,7 +4,6 @@ export function sparqlConstructQueryStringFunctionDeclaration(this: {
   readonly staticModuleName: string;
 }): FunctionDeclarationStructure {
   return {
-    isExported: true,
     kind: StructureKind.Function,
     name: "sparqlConstructQueryString",
     parameters: [
@@ -16,7 +15,7 @@ export function sparqlConstructQueryStringFunctionDeclaration(this: {
     ],
     returnType: "string",
     statements: [
-      `return new sparqljs.Generator(parameters).stringify(${this.staticModuleName}.sparqlConstructQuery(parameters));`,
+      `return new sparqljs.Generator(parameters).stringify(${this.staticModuleName}.Sparql.constructQuery(parameters));`,
     ],
   };
 }

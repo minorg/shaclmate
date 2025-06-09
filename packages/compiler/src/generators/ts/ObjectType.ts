@@ -26,9 +26,9 @@ import { objectInitializer } from "./objectInitializer.js";
 export class ObjectType extends DeclaredType {
   readonly abstract: boolean;
   readonly declarationType: TsObjectDeclarationType;
+  readonly extern: boolean;
   readonly kind = "ObjectType";
   protected readonly comment: Maybe<string>;
-  protected readonly extern: boolean;
   protected readonly fromRdfType: Maybe<NamedNode>;
   protected readonly label: Maybe<string>;
   protected readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
@@ -166,6 +166,7 @@ export class ObjectType extends DeclaredType {
       ..._ObjectType.jsonVariableStatement.bind(this)().toList(),
       ..._ObjectType.hashFunctionDeclarations.bind(this)(),
       ..._ObjectType.sparqlFunctionDeclarations.bind(this)(),
+      ..._ObjectType.sparqlVariableStatement.bind(this)().toList(),
       ..._ObjectType.toRdfFunctionDeclaration.bind(this)().toList(),
     ];
 
@@ -361,7 +362,7 @@ export class ObjectType extends DeclaredType {
         return super.sparqlConstructTemplateTriples({ context, variables });
       case "type":
         return [
-          `...${this.staticModuleName}.sparqlConstructTemplateTriples(${objectInitializer(
+          `...${this.staticModuleName}.Sparql.constructTemplateTriples(${objectInitializer(
             {
               ignoreRdfType: true, // Can ignore the rdf:type when the object is nested
               subject: variables.subject,
@@ -381,11 +382,13 @@ export class ObjectType extends DeclaredType {
         return super.sparqlWherePatterns({ context, variables });
       case "type":
         return [
-          `...${this.staticModuleName}.sparqlWherePatterns(${objectInitializer({
-            ignoreRdfType: true, // Can ignore the rdf:type when the object is nested
-            subject: variables.subject,
-            variablePrefix: variables.variablePrefix,
-          })})`,
+          `...${this.staticModuleName}.Sparql.wherePatterns(${objectInitializer(
+            {
+              ignoreRdfType: true, // Can ignore the rdf:type when the object is nested
+              subject: variables.subject,
+              variablePrefix: variables.variablePrefix,
+            },
+          )})`,
         ];
     }
   }

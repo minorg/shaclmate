@@ -105,8 +105,5 @@ export namespace ExternObjectType {
       ),
   };
 
-  export const sparqlConstructTemplateTriples =
-    AbstractBaseClassForExternObjectTypeStatic.sparqlConstructTemplateTriples;
-  export const sparqlWherePatterns =
-    AbstractBaseClassForExternObjectTypeStatic.sparqlWherePatterns;
+  export const Sparql = AbstractBaseClassForExternObjectTypeStatic.Sparql;
 }

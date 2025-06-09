@@ -4,7 +4,6 @@ export function sparqlConstructQueryFunctionDeclaration(this: {
   readonly staticModuleName: string;
 }): FunctionDeclarationStructure {
   return {
-    isExported: true,
     kind: StructureKind.Function,
     name: "sparqlConstructQuery",
     parameters: [
@@ -17,7 +16,7 @@ export function sparqlConstructQueryFunctionDeclaration(this: {
     returnType: "sparqljs.ConstructQuery",
     statements: [
       "const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {}",
-      `return { ...queryParameters, prefixes: parameters?.prefixes ?? {}, queryType: "CONSTRUCT", template: (queryParameters.template ?? []).concat(${this.staticModuleName}.sparqlConstructTemplateTriples({ ignoreRdfType, subject })), type: "query", where: (queryParameters.where ?? []).concat(${this.staticModuleName}.sparqlWherePatterns({ ignoreRdfType, subject })) };`,
+      `return { ...queryParameters, prefixes: parameters?.prefixes ?? {}, queryType: "CONSTRUCT", template: (queryParameters.template ?? []).concat(${this.staticModuleName}.Sparql.constructTemplateTriples({ ignoreRdfType, subject })), type: "query", where: (queryParameters.where ?? []).concat(${this.staticModuleName}.Sparql.wherePatterns({ ignoreRdfType, subject })) };`,
     ],
   };
 }
