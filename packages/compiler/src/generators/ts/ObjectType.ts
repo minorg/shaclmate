@@ -1,4 +1,5 @@
 import type { NamedNode } from "@rdfjs/types";
+
 import { camelCase } from "change-case";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
@@ -10,6 +11,9 @@ import {
   StructureKind,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
+
+import * as _ObjectType from "./_ObjectType/index.js";
+
 import type {
   IdentifierMintingStrategy,
   TsFeature,
@@ -20,25 +24,21 @@ import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import type { Type } from "./Type.js";
-import * as _ObjectType from "./_ObjectType/index.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 export class ObjectType extends DeclaredType {
+  private readonly imports: readonly string[];
+
+  protected readonly comment: Maybe<string>;
+  protected readonly fromRdfType: Maybe<NamedNode>;
+  protected readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
+  protected readonly label: Maybe<string>;
+  protected readonly toRdfTypes: readonly NamedNode[];
+
   readonly abstract: boolean;
   readonly declarationType: TsObjectDeclarationType;
   readonly extern: boolean;
   readonly kind = "ObjectType";
-  protected readonly comment: Maybe<string>;
-  protected readonly fromRdfType: Maybe<NamedNode>;
-  protected readonly label: Maybe<string>;
-  protected readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
-  protected readonly toRdfTypes: readonly NamedNode[];
-  private readonly imports: readonly string[];
-  private readonly lazyAncestorObjectTypes: () => readonly ObjectType[];
-  private readonly lazyChildObjectTypes: () => readonly ObjectType[];
-  private readonly lazyDescendantObjectTypes: () => readonly ObjectType[];
-  private readonly lazyParentObjectTypes: () => readonly ObjectType[];
-  private readonly lazyProperties: () => readonly ObjectType.Property[];
 
   constructor({
     abstract,
@@ -268,6 +268,10 @@ export class ObjectType extends DeclaredType {
     return properties;
   }
 
+  get staticModuleName(): string {
+    return this.childObjectTypes.length > 0 ? `${this.name}Static` : this.name;
+  }
+
   @Memoize()
   protected get thisVariable(): string {
     switch (this.declarationType) {
@@ -393,10 +397,6 @@ export class ObjectType extends DeclaredType {
     }
   }
 
-  get staticModuleName(): string {
-    return this.childObjectTypes.length > 0 ? `${this.name}Static` : this.name;
-  }
-
   override toJsonExpression({
     variables,
   }: Parameters<Type["toJsonExpression"]>[0]): string {
@@ -415,7 +415,7 @@ export class ObjectType extends DeclaredType {
       case "class":
         return `${variables.value}.toRdf({ mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} })`;
       case "interface":
-        return `${this.staticModuleName}.toRdf(${variables.value}, { mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} })`;
+        return `${this.staticModuleName}.Rdf.serialize(${variables.value}, { mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} })`;
     }
   }
 
@@ -430,6 +430,16 @@ export class ObjectType extends DeclaredType {
       );
     }
   }
+
+  private readonly lazyAncestorObjectTypes: () => readonly ObjectType[];
+
+  private readonly lazyChildObjectTypes: () => readonly ObjectType[];
+
+  private readonly lazyDescendantObjectTypes: () => readonly ObjectType[];
+
+  private readonly lazyParentObjectTypes: () => readonly ObjectType[];
+
+  private readonly lazyProperties: () => readonly ObjectType.Property[];
 }
 
 export namespace ObjectType {

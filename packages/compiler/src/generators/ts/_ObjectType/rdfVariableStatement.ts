@@ -1,5 +1,6 @@
 import { Maybe } from "purify-ts";
 import { StructureKind, type VariableStatementStructure } from "ts-morph";
+
 import type { ObjectType } from "../ObjectType.js";
 import { objectInitializer } from "../objectInitializer.js";
 

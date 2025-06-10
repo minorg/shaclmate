@@ -10,6 +10,7 @@ import {
   type VariableStatementStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
+
 import { DeclaredType } from "./DeclaredType.js";
 import type { Import } from "./Import.js";
 import type { ObjectType } from "./ObjectType.js";
@@ -32,11 +33,12 @@ import { tsComment } from "./tsComment.js";
  * It also generates SPARQL graph patterns that UNION the member object types.
  */
 export class ObjectUnionType extends DeclaredType {
-  readonly kind = "ObjectUnionType";
   private readonly _discriminatorProperty: Type.DiscriminatorProperty;
   private readonly comment: Maybe<string>;
   private readonly label: Maybe<string>;
   private readonly memberTypes: readonly ObjectType[];
+
+  readonly kind = "ObjectUnionType";
 
   constructor({
     comment,
@@ -238,6 +240,32 @@ return $strictEquals(left.type, right.type).chain(() => {
     });
   }
 
+  private get jsonDeserializeFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
+    if (!this.features.has("json")) {
+      return Maybe.empty();
+    }
+
+    return Maybe.of({
+      kind: StructureKind.Function,
+      name: "jsonDeserialize",
+      parameters: [
+        {
+          name: "json",
+          type: "unknown",
+        },
+      ],
+      returnType: `purify.Either<zod.ZodError, ${this.name}>`,
+      statements: [
+        `return ${this.memberTypes.reduce((expression, memberType) => {
+          const memberTypeExpression = `(${memberType.staticModuleName}.Json.deserialize(json) as purify.Either<zod.ZodError, ${this.name}>)`;
+          return expression.length > 0
+            ? `${expression}.altLazy(() => ${memberTypeExpression})`
+            : memberTypeExpression;
+        }, "")};`,
+      ],
+    });
+  }
+
   private get jsonSerializeFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
     if (!this.features.has("json")) {
       return Maybe.empty();
@@ -270,29 +298,18 @@ return $strictEquals(left.type, right.type).chain(() => {
     });
   }
 
-  private get jsonDeserializeFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
+  private get jsonTypeAliasDeclaration(): Maybe<TypeAliasDeclarationStructure> {
     if (!this.features.has("json")) {
       return Maybe.empty();
     }
 
     return Maybe.of({
-      kind: StructureKind.Function,
-      name: "jsonDeserialize",
-      parameters: [
-        {
-          name: "json",
-          type: "unknown",
-        },
-      ],
-      returnType: `purify.Either<zod.ZodError, ${this.name}>`,
-      statements: [
-        `return ${this.memberTypes.reduce((expression, memberType) => {
-          const memberTypeExpression = `(${memberType.staticModuleName}.Json.deserialize(json) as purify.Either<zod.ZodError, ${this.name}>)`;
-          return expression.length > 0
-            ? `${expression}.altLazy(() => ${memberTypeExpression})`
-            : memberTypeExpression;
-        }, "")};`,
-      ],
+      isExported: true,
+      kind: StructureKind.TypeAlias,
+      name: "Json",
+      type: this.memberTypes
+        .map((memberType) => memberType.jsonName)
+        .join(" | "),
     });
   }
 
@@ -330,18 +347,87 @@ return $strictEquals(left.type, right.type).chain(() => {
     });
   }
 
-  private get jsonTypeAliasDeclaration(): Maybe<TypeAliasDeclarationStructure> {
-    if (!this.features.has("json")) {
+  private get rdfDeserializeFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
+    if (!this.features.has("rdf")) {
       return Maybe.empty();
     }
 
     return Maybe.of({
+      kind: StructureKind.Function,
+      name: "rdfDeserialize",
+      parameters: [
+        {
+          name: "{ ignoreRdfType, resource, ...context }",
+          type: `{ [_index: string]: any; ignoreRdfType?: boolean; resource: ${this.rdfjsResourceType().name}; }`,
+        },
+      ],
+      returnType: `purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>`,
+      statements: [
+        `return ${this.memberTypes.reduce((expression, memberType) => {
+          const memberTypeExpression = `(${memberType.staticModuleName}.Rdf.deserialize({ ...context, resource }) as purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>)`;
+          return expression.length > 0
+            ? `${expression}.altLazy(() => ${memberTypeExpression})`
+            : memberTypeExpression;
+        }, "")};`,
+      ],
+    });
+  }
+
+  private get rdfSerializeFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
+    if (!this.features.has("rdf")) {
+      return Maybe.empty();
+    }
+
+    const parametersVariable = "_parameters";
+
+    const caseBlocks = this.memberTypes.map((memberType) => {
+      let returnExpression: string;
+      switch (memberType.declarationType) {
+        case "class":
+          returnExpression = `${this.thisVariable}.toRdf(${parametersVariable})`;
+          break;
+        case "interface":
+          returnExpression = `${memberType.staticModuleName}.Rdf.serialize(${this.thisVariable}, ${parametersVariable})`;
+          break;
+      }
+      return `case "${memberType.name}": return ${returnExpression};`;
+    });
+
+    return Maybe.of({
+      kind: StructureKind.Function,
+      name: "rdfSerialize",
+      parameters: [
+        {
+          name: this.thisVariable,
+          type: this.name,
+        },
+        {
+          name: parametersVariable,
+          type: "{ mutateGraph: rdfjsResource.MutableResource.MutateGraph, resourceSet: rdfjsResource.MutableResourceSet }",
+        },
+      ],
+      returnType: this.rdfjsResourceType({ mutable: true }).name,
+      statements: `switch (${this.thisVariable}.${this._discriminatorProperty.name}) { ${caseBlocks.join(" ")} }`,
+    });
+  }
+
+  private get rdfVariableStatement(): Maybe<VariableStatementStructure> {
+    if (!this.features.has("rdf")) {
+      return Maybe.empty();
+    }
+
+    return Maybe.of({
+      kind: StructureKind.VariableStatement,
+      declarations: [
+        {
+          name: "Rdf",
+          initializer: objectInitializer({
+            deserialize: "rdfDeserialize",
+            serialize: "rdfSerialize",
+          }),
+        },
+      ],
       isExported: true,
-      kind: StructureKind.TypeAlias,
-      name: "Json",
-      type: this.memberTypes
-        .map((memberType) => memberType.jsonName)
-        .join(" | "),
     });
   }
 
@@ -354,7 +440,6 @@ return $strictEquals(left.type, right.type).chain(() => {
       sparqlConstructQueryFunctionDeclaration.bind(this)(),
       sparqlConstructQueryStringFunctionDeclaration.bind(this)(),
       {
-        isExported: true,
         kind: StructureKind.Function,
         name: "sparqlConstructTemplateTriples",
         // Accept ignoreRdfType in order to reuse code but don't pass it through, since deserialization may depend on it
@@ -375,7 +460,6 @@ return $strictEquals(left.type, right.type).chain(() => {
         ],
       },
       {
-        isExported: true,
         kind: StructureKind.Function,
         name: "sparqlWherePatterns",
         // Accept ignoreRdfType in order to reuse code but don't pass it through, since deserialization may depend on it
@@ -400,72 +484,6 @@ return $strictEquals(left.type, right.type).chain(() => {
     ];
   }
 
-  private get rdfSerializeFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
-    if (!this.features.has("rdf")) {
-      return Maybe.empty();
-    }
-
-    const parametersVariable = "_parameters";
-
-    const caseBlocks = this.memberTypes.map((memberType) => {
-      let returnExpression: string;
-      switch (memberType.declarationType) {
-        case "class":
-          returnExpression = `${this.thisVariable}.toRdf(${parametersVariable})`;
-          break;
-        case "interface":
-          returnExpression = `${memberType.staticModuleName}.toRdf(${this.thisVariable}, ${parametersVariable})`;
-          break;
-      }
-      return `case "${memberType.name}": return ${returnExpression};`;
-    });
-
-    return Maybe.of({
-      isExported: true,
-      kind: StructureKind.Function,
-      name: "toRdf",
-      parameters: [
-        {
-          name: this.thisVariable,
-          type: this.name,
-        },
-        {
-          name: parametersVariable,
-          type: "{ mutateGraph: rdfjsResource.MutableResource.MutateGraph, resourceSet: rdfjsResource.MutableResourceSet }",
-        },
-      ],
-      returnType: this.rdfjsResourceType({ mutable: true }).name,
-      statements: `switch (${this.thisVariable}.${this._discriminatorProperty.name}) { ${caseBlocks.join(" ")} }`,
-    });
-  }
-
-  private get rdfDeserializeFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
-    if (!this.features.has("rdf")) {
-      return Maybe.empty();
-    }
-
-    return Maybe.of({
-      isExported: true,
-      kind: StructureKind.Function,
-      name: "fromRdf",
-      parameters: [
-        {
-          name: "{ ignoreRdfType, resource, ...context }",
-          type: `{ [_index: string]: any; ignoreRdfType?: boolean; resource: ${this.rdfjsResourceType().name}; }`,
-        },
-      ],
-      returnType: `purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>`,
-      statements: [
-        `return ${this.memberTypes.reduce((expression, memberType) => {
-          const memberTypeExpression = `(${memberType.staticModuleName}.Rdf.deserialize({ ...context, resource }) as purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>)`;
-          return expression.length > 0
-            ? `${expression}.altLazy(() => ${memberTypeExpression})`
-            : memberTypeExpression;
-        }, "")};`,
-      ],
-    });
-  }
-
   private get typeAliasDeclaration(): TypeAliasDeclarationStructure {
     return {
       isExported: true,
@@ -480,7 +498,7 @@ return $strictEquals(left.type, right.type).chain(() => {
     variables,
   }: Parameters<Type["fromJsonExpression"]>[0]): string {
     // Assumes the JSON object has been recursively validated already.
-    return `${this.staticModuleName}.fromJson(${variables.value}).unsafeCoerce()`;
+    return `${this.staticModuleName}.Json.deserialize(${variables.value}).unsafeCoerce()`;
   }
 
   override fromRdfExpression({
@@ -565,9 +583,9 @@ return $strictEquals(left.type, right.type).chain(() => {
     const options = `{ mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} }`;
     switch (this.memberTypes[0].declarationType) {
       case "class":
-        return `${variables.value}.toRdf(${options})`;
+        return `${variables.value}.Rdf.serialize(${options})`;
       case "interface":
-        return `${this.staticModuleName}.toRdf(${variables.value}, ${options})`;
+        return `${this.staticModuleName}.Rdf.serialize(${variables.value}, ${options})`;
     }
   }
 

@@ -1,6 +1,9 @@
-import type { BlankNode, NamedNode } from "@rdfjs/types";
-import { Either } from "purify-ts";
 import type * as rdfjsResource from "rdfjs-resource";
+
+import type { BlankNode, NamedNode } from "@rdfjs/types";
+
+import { Either } from "purify-ts";
+
 import {
   AbstractBaseClassForExternObjectType,
   AbstractBaseClassForExternObjectTypeStatic,
@@ -85,24 +88,25 @@ export namespace ExternObjectType {
     return hasher;
   }
 
-  // Called by interface functions
-  export function toRdf(
-    instance: ExternObjectType,
-    parameters: {
-      mutateGraph: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
-    },
-  ) {
-    return instance.toRdf(parameters);
-  }
-
   export type Json = AbstractBaseClassForExternObjectTypeStatic.Json;
   export const Json = {
     ...AbstractBaseClassForExternObjectTypeStatic.Json,
-    parse: (json: unknown) =>
-      AbstractBaseClassForExternObjectTypeStatic.Json.parseProperties(json).map(
-        (properties) => new ExternObjectType(properties.identifier),
-      ),
+    deserialize: (json: unknown) =>
+      AbstractBaseClassForExternObjectTypeStatic.Json.deserializeProperties(
+        json,
+      ).map((properties) => new ExternObjectType(properties.identifier)),
+  };
+
+  export const Rdf = {
+    ...AbstractBaseClassForExternObjectTypeStatic.Rdf,
+    deserialize: (
+      parameters: Parameters<
+        typeof AbstractBaseClassForExternObjectTypeStatic.Rdf.deserializeProperties
+      >[0],
+    ) =>
+      AbstractBaseClassForExternObjectTypeStatic.Rdf.deserializeProperties(
+        parameters,
+      ).map((properties) => new ExternObjectType(properties.identifier)),
   };
 
   export const Sparql = AbstractBaseClassForExternObjectTypeStatic.Sparql;

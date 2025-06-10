@@ -1,11 +1,8 @@
 import { Maybe } from "purify-ts";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
+
 import type { ObjectType } from "../ObjectType.js";
 import { toJsonFunctionOrMethodDeclaration } from "./toJsonFunctionOrMethodDeclaration.js";
-
-const variables = {
-  jsonObject: "_jsonObject",
-};
 
 function jsonDeserializeFunctionDeclarations(
   this: ObjectType,
@@ -23,13 +20,13 @@ function jsonDeserializeFunctionDeclarations(
 
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
     propertiesFromJsonStatements.push(
-      `const _super${parentObjectTypeI}Either = ${parentObjectType.staticModuleName}.Json.parseProperties(${variables.jsonObject});`,
+      `const _super${parentObjectTypeI}Either = ${parentObjectType.staticModuleName}.Json.deserializeProperties(${variables.jsonObject});`,
       `if (_super${parentObjectTypeI}Either.isLeft()) { return _super${parentObjectTypeI}Either; }`,
       `const _super${parentObjectTypeI} = _super${parentObjectTypeI}Either.unsafeCoerce()`,
     );
     initializers.push(`..._super${parentObjectTypeI}`);
     deserializePropertiesReturnType.push(
-      `$UnwrapR<ReturnType<typeof ${parentObjectType.staticModuleName}.Json.parseProperties>>`,
+      `$UnwrapR<ReturnType<typeof ${parentObjectType.staticModuleName}.Json.deserializeProperties>>`,
     );
   });
 
@@ -90,7 +87,7 @@ function jsonDeserializeFunctionDeclarations(
       jsonDeserializeStatements = [];
     }
   } else {
-    let propertiesFromJsonExpression = "jsonParseProperties(json)";
+    let propertiesFromJsonExpression = "jsonDeserializeProperties(json)";
     if (this.declarationType === "class") {
       propertiesFromJsonExpression = `${propertiesFromJsonExpression}.map(properties => new ${this.name}(properties))`;
     }
@@ -244,3 +241,7 @@ export function jsonFunctionDeclarations(
     jsonZodSchemaFunctionDeclaration.bind(this)(),
   ];
 }
+
+const variables = {
+  jsonObject: "_jsonObject",
+};

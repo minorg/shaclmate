@@ -1,14 +1,9 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
+
 import { Maybe } from "purify-ts";
 import type { OptionalKind, ParameterDeclarationStructure } from "ts-morph";
-import type { ObjectType } from "../ObjectType.js";
 
-const variables = {
-  ignoreRdfType: "ignoreRdfType",
-  mutateGraph: "mutateGraph",
-  resource: "_resource",
-  resourceSet: "resourceSet",
-};
+import type { ObjectType } from "../ObjectType.js";
 
 export function toRdfFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
   name: string;
@@ -33,7 +28,7 @@ export function toRdfFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
         superToRdfCall = `super.toRdf(${superToRdfOptions})`;
         break;
       case "interface":
-        superToRdfCall = `${this.parentObjectTypes[0].staticModuleName}.toRdf(${this.thisVariable}, ${superToRdfOptions})`;
+        superToRdfCall = `${this.parentObjectTypes[0].staticModuleName}.Rdf.serialize(${this.thisVariable}, ${superToRdfOptions})`;
         break;
     }
     statements.push(`const ${variables.resource} = ${superToRdfCall};`);
@@ -87,3 +82,10 @@ export function toRdfFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
     statements,
   });
 }
+
+const variables = {
+  ignoreRdfType: "ignoreRdfType",
+  mutateGraph: "mutateGraph",
+  resource: "_resource",
+  resourceSet: "resourceSet",
+};
