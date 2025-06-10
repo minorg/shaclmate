@@ -4,7 +4,7 @@ import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
 import { toJsonFunctionOrMethodDeclaration } from "./toJsonFunctionOrMethodDeclaration.js";
 
-function jsonDeserializeFunctionDeclarations(
+function fromJsonFunctionDeclarations(
   this: ObjectType,
 ): readonly FunctionDeclarationStructure[] {
   const deserializePropertiesReturnType: string[] = [];
@@ -20,13 +20,13 @@ function jsonDeserializeFunctionDeclarations(
 
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
     propertiesFromJsonStatements.push(
-      `const _super${parentObjectTypeI}Either = ${parentObjectType.staticModuleName}.Json.deserializeProperties(${variables.jsonObject});`,
+      `const _super${parentObjectTypeI}Either = ${parentObjectType.staticModuleName}.propertiesFromJson(${variables.jsonObject});`,
       `if (_super${parentObjectTypeI}Either.isLeft()) { return _super${parentObjectTypeI}Either; }`,
       `const _super${parentObjectTypeI} = _super${parentObjectTypeI}Either.unsafeCoerce()`,
     );
     initializers.push(`..._super${parentObjectTypeI}`);
     deserializePropertiesReturnType.push(
-      `$UnwrapR<ReturnType<typeof ${parentObjectType.staticModuleName}.Json.deserializeProperties>>`,
+      `$UnwrapR<ReturnType<typeof ${parentObjectType.staticModuleName}.propertiesFromJson>>`,
     );
   });
 
@@ -56,8 +56,9 @@ function jsonDeserializeFunctionDeclarations(
   const functionDeclarations: FunctionDeclarationStructure[] = [];
 
   functionDeclarations.push({
+    isExported: true,
     kind: StructureKind.Function,
-    name: "jsonDeserializeProperties",
+    name: "propertiesFromJson",
     parameters: [
       {
         name: "_json",
@@ -68,14 +69,14 @@ function jsonDeserializeFunctionDeclarations(
     statements: propertiesFromJsonStatements,
   });
 
-  let jsonDeserializeStatements: string[];
+  let fromJsonStatements: string[];
   if (this.abstract) {
     if (this.childObjectTypes.length > 0) {
       // Similar to an object union type, alt-chain the fromJson of the different concrete subclasses together
-      jsonDeserializeStatements = [
+      fromJsonStatements = [
         `return ${this.childObjectTypes.reduce(
           (expression, childObjectType) => {
-            const childObjectTypeExpression = `(${childObjectType.staticModuleName}.Json.deserialize(json) as purify.Either<zod.ZodError, ${this.name}>)`;
+            const childObjectTypeExpression = `(${childObjectType.staticModuleName}.fromJson(json) as purify.Either<zod.ZodError, ${this.name}>)`;
             return expression.length > 0
               ? `${expression}.altLazy(() => ${childObjectTypeExpression})`
               : childObjectTypeExpression;
@@ -84,19 +85,19 @@ function jsonDeserializeFunctionDeclarations(
         )};`,
       ];
     } else {
-      jsonDeserializeStatements = [];
+      fromJsonStatements = [];
     }
   } else {
-    let propertiesFromJsonExpression = "jsonDeserializeProperties(json)";
+    let propertiesFromJsonExpression = "propertiesFromJson(json)";
     if (this.declarationType === "class") {
       propertiesFromJsonExpression = `${propertiesFromJsonExpression}.map(properties => new ${this.name}(properties))`;
     }
 
     if (this.childObjectTypes.length > 0) {
-      jsonDeserializeStatements = [
+      fromJsonStatements = [
         `return ${this.childObjectTypes.reduce(
           (expression, childObjectType) => {
-            const childObjectTypeExpression = `(${childObjectType.staticModuleName}.Json.deserialize(json) as purify.Either<zod.ZodError, ${this.name}>)`;
+            const childObjectTypeExpression = `(${childObjectType.staticModuleName}.fromJson(json) as purify.Either<zod.ZodError, ${this.name}>)`;
             return expression.length > 0
               ? `${expression}.altLazy(() => ${childObjectTypeExpression})`
               : childObjectTypeExpression;
@@ -105,14 +106,15 @@ function jsonDeserializeFunctionDeclarations(
         )}.altLazy(() => ${propertiesFromJsonExpression});`,
       ];
     } else {
-      jsonDeserializeStatements = [`return ${propertiesFromJsonExpression};`];
+      fromJsonStatements = [`return ${propertiesFromJsonExpression};`];
     }
   }
 
-  if (jsonDeserializeStatements.length > 0) {
+  if (fromJsonStatements.length > 0) {
     functionDeclarations.push({
+      isExported: true,
       kind: StructureKind.Function,
-      name: "jsonDeserialize",
+      name: "fromJson",
       parameters: [
         {
           name: "json",
@@ -120,7 +122,7 @@ function jsonDeserializeFunctionDeclarations(
         },
       ],
       returnType: `purify.Either<zod.ZodError, ${this.name}>`,
-      statements: jsonDeserializeStatements,
+      statements: fromJsonStatements,
     });
   }
 
@@ -131,26 +133,11 @@ function jsonSchemaFunctionDeclaration(
   this: ObjectType,
 ): FunctionDeclarationStructure {
   return {
+    isExported: true,
     kind: StructureKind.Function,
     name: "jsonSchema",
     statements: ["return zodToJsonSchema(jsonZodSchema());"],
   };
-}
-
-function jsonSerializeFunctionDeclaration(
-  this: ObjectType,
-): Maybe<FunctionDeclarationStructure> {
-  if (this.declarationType !== "interface") {
-    return Maybe.empty();
-  }
-
-  return toJsonFunctionOrMethodDeclaration
-    .bind(this)()
-    .map((toJsonFunctionOrMethodDeclaration) => ({
-      ...toJsonFunctionOrMethodDeclaration,
-      kind: StructureKind.Function,
-      name: "jsonSerialize",
-    }));
 }
 
 function jsonUiSchemaFunctionDeclaration(
@@ -160,7 +147,7 @@ function jsonUiSchemaFunctionDeclaration(
   const elements: string[] = this.parentObjectTypes
     .map(
       (parentObjectType) =>
-        `${parentObjectType.staticModuleName}.Json.uiSchema({ scopePrefix })`,
+        `${parentObjectType.staticModuleName}.jsonUiSchema({ scopePrefix })`,
     )
     .concat(
       this.ownProperties.flatMap((property) =>
@@ -169,6 +156,7 @@ function jsonUiSchemaFunctionDeclaration(
     );
 
   return {
+    isExported: true,
     kind: StructureKind.Function,
     name: "jsonUiSchema",
     parameters: [
@@ -205,6 +193,7 @@ function jsonZodSchemaFunctionDeclaration(
   }
 
   return {
+    isExported: true,
     kind: StructureKind.Function,
     name: "jsonZodSchema",
     statements: [
@@ -222,6 +211,23 @@ function jsonZodSchemaFunctionDeclaration(
   };
 }
 
+function toJsonFunctionDeclaration(
+  this: ObjectType,
+): Maybe<FunctionDeclarationStructure> {
+  if (this.declarationType !== "interface") {
+    return Maybe.empty();
+  }
+
+  return toJsonFunctionOrMethodDeclaration
+    .bind(this)()
+    .map((toJsonFunctionOrMethodDeclaration) => ({
+      ...toJsonFunctionOrMethodDeclaration,
+      isExported: true,
+      kind: StructureKind.Function,
+      name: "toJson",
+    }));
+}
+
 export function jsonFunctionDeclarations(
   this: ObjectType,
 ): readonly FunctionDeclarationStructure[] {
@@ -234,10 +240,10 @@ export function jsonFunctionDeclarations(
   }
 
   return [
-    ...jsonDeserializeFunctionDeclarations.bind(this)(),
+    ...fromJsonFunctionDeclarations.bind(this)(),
     jsonSchemaFunctionDeclaration.bind(this)(),
     jsonUiSchemaFunctionDeclaration.bind(this)(),
-    ...jsonSerializeFunctionDeclaration.bind(this)().toList(),
+    ...toJsonFunctionDeclaration.bind(this)().toList(),
     jsonZodSchemaFunctionDeclaration.bind(this)(),
   ];
 }

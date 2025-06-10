@@ -1,5 +1,6 @@
 import { Maybe } from "purify-ts";
 import type { OptionalKind, ParameterDeclarationStructure } from "ts-morph";
+
 import type { ObjectType } from "../ObjectType.js";
 
 export function toJsonFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
@@ -32,7 +33,7 @@ export function toJsonFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
     case "interface":
       for (const parentObjectType of this.parentObjectTypes) {
         jsonObjectMembers.push(
-          `...${parentObjectType.staticModuleName}.Json.serialize(${this.thisVariable})`,
+          `...${parentObjectType.staticModuleName}.toJson(${this.thisVariable})`,
         );
       }
       parameters.push({

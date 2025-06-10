@@ -63,6 +63,12 @@ export namespace ExternObjectType {
     return left.equals(right);
   }
 
+  export function fromJson(json: unknown) {
+    return AbstractBaseClassForExternObjectTypeStatic.propertiesFromJson(
+      json,
+    ).map((properties) => new ExternObjectType(properties.identifier));
+  }
+
   export function fromRdf({
     extra,
     resource,
@@ -89,25 +95,13 @@ export namespace ExternObjectType {
   }
 
   export type Json = AbstractBaseClassForExternObjectTypeStatic.Json;
-  export const Json = {
-    ...AbstractBaseClassForExternObjectTypeStatic.Json,
-    deserialize: (json: unknown) =>
-      AbstractBaseClassForExternObjectTypeStatic.Json.deserializeProperties(
-        json,
-      ).map((properties) => new ExternObjectType(properties.identifier)),
-  };
+  export const jsonZodSchema =
+    AbstractBaseClassForExternObjectTypeStatic.jsonZodSchema;
+  export const jsonUiSchema =
+    AbstractBaseClassForExternObjectTypeStatic.jsonUiSchema;
 
-  export const Rdf = {
-    ...AbstractBaseClassForExternObjectTypeStatic.Rdf,
-    deserialize: (
-      parameters: Parameters<
-        typeof AbstractBaseClassForExternObjectTypeStatic.Rdf.deserializeProperties
-      >[0],
-    ) =>
-      AbstractBaseClassForExternObjectTypeStatic.Rdf.deserializeProperties(
-        parameters,
-      ).map((properties) => new ExternObjectType(properties.identifier)),
-  };
-
-  export const Sparql = AbstractBaseClassForExternObjectTypeStatic.Sparql;
+  export const sparqlConstructTemplateTriples =
+    AbstractBaseClassForExternObjectTypeStatic.sparqlConstructTemplateTriples;
+  export const sparqlWherePatterns =
+    AbstractBaseClassForExternObjectTypeStatic.sparqlWherePatterns;
 }

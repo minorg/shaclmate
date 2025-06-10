@@ -349,7 +349,7 @@ export namespace UuidV4IriNodeShape {
     readonly stringProperty: string;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -366,19 +366,19 @@ export namespace UuidV4IriNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, UuidV4IriNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new UuidV4IriNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -405,7 +405,7 @@ export namespace UuidV4IriNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("UuidV4IriNodeShape"),
@@ -413,15 +413,7 @@ export namespace UuidV4IriNodeShape {
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -454,22 +446,15 @@ export namespace UuidV4IriNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  function rdfDeserialize(
-    parameters: Parameters<
-      typeof UuidV4IriNodeShape.Rdf.deserializeProperties
-    >[0],
+  export function fromRdf(
+    parameters: Parameters<typeof UuidV4IriNodeShape.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, UuidV4IriNodeShape> {
-    return UuidV4IriNodeShape.Rdf.deserializeProperties(parameters).map(
+    return UuidV4IriNodeShape.propertiesFromRdf(parameters).map(
       (properties) => new UuidV4IriNodeShape(properties),
     );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -483,19 +468,19 @@ export namespace UuidV4IriNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        UuidV4IriNodeShape.Sparql.constructTemplateTriples({
+        UuidV4IriNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        UuidV4IriNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
+        UuidV4IriNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -504,11 +489,11 @@ export namespace UuidV4IriNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      UuidV4IriNodeShape.Sparql.constructQuery(parameters),
+      UuidV4IriNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -527,7 +512,7 @@ export namespace UuidV4IriNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -552,13 +537,6 @@ export namespace UuidV4IriNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Shape with sh:xone properties.
@@ -938,7 +916,7 @@ export namespace UnionPropertiesNodeShape {
       | undefined;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -993,9 +971,7 @@ export namespace UnionPropertiesNodeShape {
       _item.type === "1-NonClassNodeShape"
         ? {
             type: "1-NonClassNodeShape" as const,
-            value: NonClassNodeShape.Json.deserialize(
-              _item.value,
-            ).unsafeCoerce(),
+            value: NonClassNodeShape.fromJson(_item.value).unsafeCoerce(),
           }
         : { type: "0-number" as const, value: _item.value },
     );
@@ -1007,19 +983,19 @@ export namespace UnionPropertiesNodeShape {
     });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, UnionPropertiesNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new UnionPropertiesNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -1054,7 +1030,7 @@ export namespace UnionPropertiesNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("UnionPropertiesNodeShape"),
@@ -1084,22 +1060,14 @@ export namespace UnionPropertiesNodeShape {
           zod.object({ type: zod.literal("0-number"), value: zod.number() }),
           zod.object({
             type: zod.literal("1-NonClassNodeShape"),
-            value: NonClassNodeShape.Json.zodSchema(),
+            value: NonClassNodeShape.jsonZodSchema(),
           }),
         ])
         .optional(),
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -1226,7 +1194,7 @@ export namespace UnionPropertiesNodeShape {
               .head()
               .chain((value) => value.toResource())
               .chain((_resource) =>
-                NonClassNodeShape.Rdf.deserialize({
+                NonClassNodeShape.fromRdf({
                   ..._context,
                   languageIn: _languageIn,
                   resource: _resource,
@@ -1258,25 +1226,20 @@ export namespace UnionPropertiesNodeShape {
     });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof UnionPropertiesNodeShape.Rdf.deserializeProperties
+      typeof UnionPropertiesNodeShape.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     UnionPropertiesNodeShape
   > {
-    return UnionPropertiesNodeShape.Rdf.deserializeProperties(parameters).map(
+    return UnionPropertiesNodeShape.propertiesFromRdf(parameters).map(
       (properties) => new UnionPropertiesNodeShape(properties),
     );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -1290,14 +1253,14 @@ export namespace UnionPropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        UnionPropertiesNodeShape.Sparql.constructTemplateTriples({
+        UnionPropertiesNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        UnionPropertiesNodeShape.Sparql.wherePatterns({
+        UnionPropertiesNodeShape.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -1305,7 +1268,7 @@ export namespace UnionPropertiesNodeShape {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -1314,11 +1277,11 @@ export namespace UnionPropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      UnionPropertiesNodeShape.Sparql.constructQuery(parameters),
+      UnionPropertiesNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -1350,7 +1313,7 @@ export namespace UnionPropertiesNodeShape {
         ),
         subject,
       },
-      ...NonClassNodeShape.Sparql.constructTemplateTriples({
+      ...NonClassNodeShape.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}OrUnrelatedProperty`),
         variablePrefix: `${variablePrefix}OrUnrelatedProperty`,
@@ -1358,7 +1321,7 @@ export namespace UnionPropertiesNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -1430,7 +1393,7 @@ export namespace UnionPropertiesNodeShape {
               { patterns: [], type: "group" },
               {
                 patterns: [
-                  ...NonClassNodeShape.Sparql.wherePatterns({
+                  ...NonClassNodeShape.sparqlWherePatterns({
                     ignoreRdfType: true,
                     subject: dataFactory.variable!(
                       `${variablePrefix}OrUnrelatedProperty`,
@@ -1448,13 +1411,6 @@ export namespace UnionPropertiesNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 export class UnionNodeShapeMember2 {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
@@ -1580,7 +1536,7 @@ export namespace UnionNodeShapeMember2 {
     readonly stringProperty2: string;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -1599,19 +1555,19 @@ export namespace UnionNodeShapeMember2 {
     return purify.Either.of({ identifier, stringProperty2 });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, UnionNodeShapeMember2> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new UnionNodeShapeMember2(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -1638,7 +1594,7 @@ export namespace UnionNodeShapeMember2 {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("UnionNodeShapeMember2"),
@@ -1646,15 +1602,7 @@ export namespace UnionNodeShapeMember2 {
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -1687,22 +1635,15 @@ export namespace UnionNodeShapeMember2 {
     return purify.Either.of({ identifier, stringProperty2 });
   }
 
-  function rdfDeserialize(
-    parameters: Parameters<
-      typeof UnionNodeShapeMember2.Rdf.deserializeProperties
-    >[0],
+  export function fromRdf(
+    parameters: Parameters<typeof UnionNodeShapeMember2.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, UnionNodeShapeMember2> {
-    return UnionNodeShapeMember2.Rdf.deserializeProperties(parameters).map(
+    return UnionNodeShapeMember2.propertiesFromRdf(parameters).map(
       (properties) => new UnionNodeShapeMember2(properties),
     );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -1716,19 +1657,19 @@ export namespace UnionNodeShapeMember2 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        UnionNodeShapeMember2.Sparql.constructTemplateTriples({
+        UnionNodeShapeMember2.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        UnionNodeShapeMember2.Sparql.wherePatterns({ ignoreRdfType, subject }),
+        UnionNodeShapeMember2.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -1737,11 +1678,11 @@ export namespace UnionNodeShapeMember2 {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      UnionNodeShapeMember2.Sparql.constructQuery(parameters),
+      UnionNodeShapeMember2.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -1762,7 +1703,7 @@ export namespace UnionNodeShapeMember2 {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -1789,13 +1730,6 @@ export namespace UnionNodeShapeMember2 {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 export class UnionNodeShapeMember1 {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
@@ -1921,7 +1855,7 @@ export namespace UnionNodeShapeMember1 {
     readonly stringProperty1: string;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -1940,19 +1874,19 @@ export namespace UnionNodeShapeMember1 {
     return purify.Either.of({ identifier, stringProperty1 });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, UnionNodeShapeMember1> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new UnionNodeShapeMember1(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -1979,7 +1913,7 @@ export namespace UnionNodeShapeMember1 {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("UnionNodeShapeMember1"),
@@ -1987,15 +1921,7 @@ export namespace UnionNodeShapeMember1 {
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -2028,22 +1954,15 @@ export namespace UnionNodeShapeMember1 {
     return purify.Either.of({ identifier, stringProperty1 });
   }
 
-  function rdfDeserialize(
-    parameters: Parameters<
-      typeof UnionNodeShapeMember1.Rdf.deserializeProperties
-    >[0],
+  export function fromRdf(
+    parameters: Parameters<typeof UnionNodeShapeMember1.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, UnionNodeShapeMember1> {
-    return UnionNodeShapeMember1.Rdf.deserializeProperties(parameters).map(
+    return UnionNodeShapeMember1.propertiesFromRdf(parameters).map(
       (properties) => new UnionNodeShapeMember1(properties),
     );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -2057,19 +1976,19 @@ export namespace UnionNodeShapeMember1 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        UnionNodeShapeMember1.Sparql.constructTemplateTriples({
+        UnionNodeShapeMember1.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        UnionNodeShapeMember1.Sparql.wherePatterns({ ignoreRdfType, subject }),
+        UnionNodeShapeMember1.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -2078,11 +1997,11 @@ export namespace UnionNodeShapeMember1 {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      UnionNodeShapeMember1.Sparql.constructQuery(parameters),
+      UnionNodeShapeMember1.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -2103,7 +2022,7 @@ export namespace UnionNodeShapeMember1 {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -2130,13 +2049,6 @@ export namespace UnionNodeShapeMember1 {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Shape with properties that are not nested objects
@@ -2643,7 +2555,7 @@ export namespace TermPropertiesNodeShape {
       | undefined;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -2729,19 +2641,19 @@ export namespace TermPropertiesNodeShape {
     });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, TermPropertiesNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new TermPropertiesNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -2778,7 +2690,7 @@ export namespace TermPropertiesNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("TermPropertiesNodeShape"),
@@ -2816,15 +2728,7 @@ export namespace TermPropertiesNodeShape {
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -3014,22 +2918,15 @@ export namespace TermPropertiesNodeShape {
     });
   }
 
-  function rdfDeserialize(
-    parameters: Parameters<
-      typeof TermPropertiesNodeShape.Rdf.deserializeProperties
-    >[0],
+  export function fromRdf(
+    parameters: Parameters<typeof TermPropertiesNodeShape.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, TermPropertiesNodeShape> {
-    return TermPropertiesNodeShape.Rdf.deserializeProperties(parameters).map(
+    return TermPropertiesNodeShape.propertiesFromRdf(parameters).map(
       (properties) => new TermPropertiesNodeShape(properties),
     );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -3043,22 +2940,19 @@ export namespace TermPropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        TermPropertiesNodeShape.Sparql.constructTemplateTriples({
+        TermPropertiesNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        TermPropertiesNodeShape.Sparql.wherePatterns({
-          ignoreRdfType,
-          subject,
-        }),
+        TermPropertiesNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -3067,11 +2961,11 @@ export namespace TermPropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      TermPropertiesNodeShape.Sparql.constructQuery(parameters),
+      TermPropertiesNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -3127,7 +3021,7 @@ export namespace TermPropertiesNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -3288,13 +3182,6 @@ export namespace TermPropertiesNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied.
@@ -3442,7 +3329,7 @@ export namespace Sha256IriNodeShape {
     readonly stringProperty: string;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -3459,19 +3346,19 @@ export namespace Sha256IriNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, Sha256IriNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new Sha256IriNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -3498,7 +3385,7 @@ export namespace Sha256IriNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("Sha256IriNodeShape"),
@@ -3506,15 +3393,7 @@ export namespace Sha256IriNodeShape {
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -3547,22 +3426,15 @@ export namespace Sha256IriNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  function rdfDeserialize(
-    parameters: Parameters<
-      typeof Sha256IriNodeShape.Rdf.deserializeProperties
-    >[0],
+  export function fromRdf(
+    parameters: Parameters<typeof Sha256IriNodeShape.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Sha256IriNodeShape> {
-    return Sha256IriNodeShape.Rdf.deserializeProperties(parameters).map(
+    return Sha256IriNodeShape.propertiesFromRdf(parameters).map(
       (properties) => new Sha256IriNodeShape(properties),
     );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -3576,19 +3448,19 @@ export namespace Sha256IriNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        Sha256IriNodeShape.Sparql.constructTemplateTriples({
+        Sha256IriNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        Sha256IriNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
+        Sha256IriNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -3597,11 +3469,11 @@ export namespace Sha256IriNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      Sha256IriNodeShape.Sparql.constructQuery(parameters),
+      Sha256IriNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -3620,7 +3492,7 @@ export namespace Sha256IriNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -3645,13 +3517,6 @@ export namespace Sha256IriNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Shape with properties that have visibility modifiers (private, protected, public)
@@ -3822,7 +3687,7 @@ export namespace PropertyVisibilitiesNodeShape {
     readonly publicProperty: string;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -3853,19 +3718,19 @@ export namespace PropertyVisibilitiesNodeShape {
     });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, PropertyVisibilitiesNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new PropertyVisibilitiesNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -3897,7 +3762,7 @@ export namespace PropertyVisibilitiesNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("PropertyVisibilitiesNodeShape"),
@@ -3907,15 +3772,7 @@ export namespace PropertyVisibilitiesNodeShape {
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -3986,25 +3843,20 @@ export namespace PropertyVisibilitiesNodeShape {
     });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof PropertyVisibilitiesNodeShape.Rdf.deserializeProperties
+      typeof PropertyVisibilitiesNodeShape.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     PropertyVisibilitiesNodeShape
   > {
-    return PropertyVisibilitiesNodeShape.Rdf.deserializeProperties(
-      parameters,
-    ).map((properties) => new PropertyVisibilitiesNodeShape(properties));
+    return PropertyVisibilitiesNodeShape.propertiesFromRdf(parameters).map(
+      (properties) => new PropertyVisibilitiesNodeShape(properties),
+    );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -4018,14 +3870,14 @@ export namespace PropertyVisibilitiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        PropertyVisibilitiesNodeShape.Sparql.constructTemplateTriples({
+        PropertyVisibilitiesNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        PropertyVisibilitiesNodeShape.Sparql.wherePatterns({
+        PropertyVisibilitiesNodeShape.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -4033,7 +3885,7 @@ export namespace PropertyVisibilitiesNodeShape {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -4042,11 +3894,11 @@ export namespace PropertyVisibilitiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      PropertyVisibilitiesNodeShape.Sparql.constructQuery(parameters),
+      PropertyVisibilitiesNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -4080,7 +3932,7 @@ export namespace PropertyVisibilitiesNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -4132,13 +3984,6 @@ export namespace PropertyVisibilitiesNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Shape that has properties with different cardinalities
@@ -4378,7 +4223,7 @@ export namespace PropertyCardinalitiesNodeShape {
     readonly requiredStringProperty: string;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -4416,19 +4261,19 @@ export namespace PropertyCardinalitiesNodeShape {
     });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, PropertyCardinalitiesNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new PropertyCardinalitiesNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -4470,7 +4315,7 @@ export namespace PropertyCardinalitiesNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("PropertyCardinalitiesNodeShape"),
@@ -4495,15 +4340,7 @@ export namespace PropertyCardinalitiesNodeShape {
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -4622,25 +4459,20 @@ export namespace PropertyCardinalitiesNodeShape {
     });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof PropertyCardinalitiesNodeShape.Rdf.deserializeProperties
+      typeof PropertyCardinalitiesNodeShape.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     PropertyCardinalitiesNodeShape
   > {
-    return PropertyCardinalitiesNodeShape.Rdf.deserializeProperties(
-      parameters,
-    ).map((properties) => new PropertyCardinalitiesNodeShape(properties));
+    return PropertyCardinalitiesNodeShape.propertiesFromRdf(parameters).map(
+      (properties) => new PropertyCardinalitiesNodeShape(properties),
+    );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -4654,14 +4486,14 @@ export namespace PropertyCardinalitiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        PropertyCardinalitiesNodeShape.Sparql.constructTemplateTriples({
+        PropertyCardinalitiesNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        PropertyCardinalitiesNodeShape.Sparql.wherePatterns({
+        PropertyCardinalitiesNodeShape.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -4669,7 +4501,7 @@ export namespace PropertyCardinalitiesNodeShape {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -4678,11 +4510,11 @@ export namespace PropertyCardinalitiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      PropertyCardinalitiesNodeShape.Sparql.constructQuery(parameters),
+      PropertyCardinalitiesNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -4735,7 +4567,7 @@ export namespace PropertyCardinalitiesNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -4817,13 +4649,6 @@ export namespace PropertyCardinalitiesNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.
@@ -4994,7 +4819,7 @@ export namespace OrderedPropertiesNodeShape {
     readonly propertyA: string;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -5020,19 +4845,19 @@ export namespace OrderedPropertiesNodeShape {
     return purify.Either.of({ identifier, propertyC, propertyB, propertyA });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, OrderedPropertiesNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new OrderedPropertiesNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -5061,7 +4886,7 @@ export namespace OrderedPropertiesNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("OrderedPropertiesNodeShape"),
@@ -5071,15 +4896,7 @@ export namespace OrderedPropertiesNodeShape {
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -5145,25 +4962,20 @@ export namespace OrderedPropertiesNodeShape {
     return purify.Either.of({ identifier, propertyC, propertyB, propertyA });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof OrderedPropertiesNodeShape.Rdf.deserializeProperties
+      typeof OrderedPropertiesNodeShape.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     OrderedPropertiesNodeShape
   > {
-    return OrderedPropertiesNodeShape.Rdf.deserializeProperties(parameters).map(
+    return OrderedPropertiesNodeShape.propertiesFromRdf(parameters).map(
       (properties) => new OrderedPropertiesNodeShape(properties),
     );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -5177,14 +4989,14 @@ export namespace OrderedPropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        OrderedPropertiesNodeShape.Sparql.constructTemplateTriples({
+        OrderedPropertiesNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        OrderedPropertiesNodeShape.Sparql.wherePatterns({
+        OrderedPropertiesNodeShape.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -5192,7 +5004,7 @@ export namespace OrderedPropertiesNodeShape {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -5201,11 +5013,11 @@ export namespace OrderedPropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      OrderedPropertiesNodeShape.Sparql.constructQuery(parameters),
+      OrderedPropertiesNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -5237,7 +5049,7 @@ export namespace OrderedPropertiesNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -5283,13 +5095,6 @@ export namespace OrderedPropertiesNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Node shape that isn't an rdfs:Class.
@@ -5418,7 +5223,7 @@ export namespace NonClassNodeShape {
     readonly stringProperty: string;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -5437,19 +5242,19 @@ export namespace NonClassNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, NonClassNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new NonClassNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -5476,7 +5281,7 @@ export namespace NonClassNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("NonClassNodeShape"),
@@ -5484,15 +5289,7 @@ export namespace NonClassNodeShape {
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -5525,22 +5322,15 @@ export namespace NonClassNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  function rdfDeserialize(
-    parameters: Parameters<
-      typeof NonClassNodeShape.Rdf.deserializeProperties
-    >[0],
+  export function fromRdf(
+    parameters: Parameters<typeof NonClassNodeShape.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, NonClassNodeShape> {
-    return NonClassNodeShape.Rdf.deserializeProperties(parameters).map(
+    return NonClassNodeShape.propertiesFromRdf(parameters).map(
       (properties) => new NonClassNodeShape(properties),
     );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -5554,19 +5344,19 @@ export namespace NonClassNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        NonClassNodeShape.Sparql.constructTemplateTriples({
+        NonClassNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        NonClassNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
+        NonClassNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -5575,11 +5365,11 @@ export namespace NonClassNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      NonClassNodeShape.Sparql.constructQuery(parameters),
+      NonClassNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -5598,7 +5388,7 @@ export namespace NonClassNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -5623,13 +5413,6 @@ export namespace NonClassNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Shape with shaclmate:mutable properties.
@@ -5944,7 +5727,7 @@ export namespace MutablePropertiesNodeShape {
     readonly mutableStringProperty: string | undefined;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -5979,19 +5762,19 @@ export namespace MutablePropertiesNodeShape {
     });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, MutablePropertiesNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new MutablePropertiesNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -6029,7 +5812,7 @@ export namespace MutablePropertiesNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("MutablePropertiesNodeShape"),
@@ -6054,15 +5837,7 @@ export namespace MutablePropertiesNodeShape {
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -6160,25 +5935,20 @@ export namespace MutablePropertiesNodeShape {
     });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof MutablePropertiesNodeShape.Rdf.deserializeProperties
+      typeof MutablePropertiesNodeShape.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     MutablePropertiesNodeShape
   > {
-    return MutablePropertiesNodeShape.Rdf.deserializeProperties(parameters).map(
+    return MutablePropertiesNodeShape.propertiesFromRdf(parameters).map(
       (properties) => new MutablePropertiesNodeShape(properties),
     );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -6192,14 +5962,14 @@ export namespace MutablePropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        MutablePropertiesNodeShape.Sparql.constructTemplateTriples({
+        MutablePropertiesNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        MutablePropertiesNodeShape.Sparql.wherePatterns({
+        MutablePropertiesNodeShape.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -6207,7 +5977,7 @@ export namespace MutablePropertiesNodeShape {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -6216,11 +5986,11 @@ export namespace MutablePropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      MutablePropertiesNodeShape.Sparql.constructQuery(parameters),
+      MutablePropertiesNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -6298,7 +6068,7 @@ export namespace MutablePropertiesNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -6467,13 +6237,6 @@ export namespace MutablePropertiesNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Shape that uses the list shapes in properties.
@@ -6797,7 +6560,7 @@ export namespace ListPropertiesNodeShape {
     readonly stringListProperty: readonly string[] | undefined;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -6819,9 +6582,7 @@ export namespace ListPropertiesNodeShape {
     const objectListProperty = purify.Maybe.fromNullable(
       _jsonObject["objectListProperty"],
     ).map((_item) =>
-      _item.map((_item) =>
-        NonClassNodeShape.Json.deserialize(_item).unsafeCoerce(),
-      ),
+      _item.map((_item) => NonClassNodeShape.fromJson(_item).unsafeCoerce()),
     );
     const stringListProperty = purify.Maybe.fromNullable(
       _jsonObject["stringListProperty"],
@@ -6833,19 +6594,19 @@ export namespace ListPropertiesNodeShape {
     });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ListPropertiesNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new ListPropertiesNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -6865,7 +6626,7 @@ export namespace ListPropertiesNodeShape {
           scope: `${scopePrefix}/properties/type`,
           type: "Control",
         },
-        NonClassNodeShape.Json.uiSchema({
+        NonClassNodeShape.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/objectListProperty`,
         }),
         {
@@ -6878,24 +6639,16 @@ export namespace ListPropertiesNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("ListPropertiesNodeShape"),
-      objectListProperty: NonClassNodeShape.Json.zodSchema().array().optional(),
+      objectListProperty: NonClassNodeShape.jsonZodSchema().array().optional(),
       stringListProperty: zod.string().array().optional(),
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -6933,7 +6686,7 @@ export namespace ListPropertiesNodeShape {
               .head()
               .chain((value) => value.toResource())
               .chain((_resource) =>
-                NonClassNodeShape.Rdf.deserialize({
+                NonClassNodeShape.fromRdf({
                   ..._context,
                   ignoreRdfType: true,
                   languageIn: _languageIn,
@@ -6986,22 +6739,15 @@ export namespace ListPropertiesNodeShape {
     });
   }
 
-  function rdfDeserialize(
-    parameters: Parameters<
-      typeof ListPropertiesNodeShape.Rdf.deserializeProperties
-    >[0],
+  export function fromRdf(
+    parameters: Parameters<typeof ListPropertiesNodeShape.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, ListPropertiesNodeShape> {
-    return ListPropertiesNodeShape.Rdf.deserializeProperties(parameters).map(
+    return ListPropertiesNodeShape.propertiesFromRdf(parameters).map(
       (properties) => new ListPropertiesNodeShape(properties),
     );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -7015,22 +6761,19 @@ export namespace ListPropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ListPropertiesNodeShape.Sparql.constructTemplateTriples({
+        ListPropertiesNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ListPropertiesNodeShape.Sparql.wherePatterns({
-          ignoreRdfType,
-          subject,
-        }),
+        ListPropertiesNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -7039,11 +6782,11 @@ export namespace ListPropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ListPropertiesNodeShape.Sparql.constructQuery(parameters),
+      ListPropertiesNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -7072,7 +6815,7 @@ export namespace ListPropertiesNodeShape {
           `${`${variablePrefix}ObjectListProperty`}Item0`,
         ),
       },
-      ...NonClassNodeShape.Sparql.constructTemplateTriples({
+      ...NonClassNodeShape.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${`${variablePrefix}ObjectListProperty`}Item0`,
@@ -7099,7 +6842,7 @@ export namespace ListPropertiesNodeShape {
           `${`${variablePrefix}ObjectListProperty`}ItemN`,
         ),
       },
-      ...NonClassNodeShape.Sparql.constructTemplateTriples({
+      ...NonClassNodeShape.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${`${variablePrefix}ObjectListProperty`}ItemN`,
@@ -7167,7 +6910,7 @@ export namespace ListPropertiesNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -7215,7 +6958,7 @@ export namespace ListPropertiesNodeShape {
                   },
                 ],
               },
-              ...NonClassNodeShape.Sparql.wherePatterns({
+              ...NonClassNodeShape.sparqlWherePatterns({
                 ignoreRdfType: true,
                 subject: dataFactory.variable!(
                   `${`${variablePrefix}ObjectListProperty`}Item0`,
@@ -7279,7 +7022,7 @@ export namespace ListPropertiesNodeShape {
                       },
                     ],
                   },
-                  ...NonClassNodeShape.Sparql.wherePatterns({
+                  ...NonClassNodeShape.sparqlWherePatterns({
                     ignoreRdfType: true,
                     subject: dataFactory.variable!(
                       `${`${variablePrefix}ObjectListProperty`}ItemN`,
@@ -7426,13 +7169,6 @@ export namespace ListPropertiesNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Shape that uses the StringListShape in a property.
@@ -7694,7 +7430,7 @@ export namespace LanguageInPropertiesNodeShape {
       | undefined;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -7744,19 +7480,19 @@ export namespace LanguageInPropertiesNodeShape {
     });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, LanguageInPropertiesNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new LanguageInPropertiesNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -7787,7 +7523,7 @@ export namespace LanguageInPropertiesNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("LanguageInPropertiesNodeShape"),
@@ -7809,15 +7545,7 @@ export namespace LanguageInPropertiesNodeShape {
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -7905,25 +7633,20 @@ export namespace LanguageInPropertiesNodeShape {
     });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof LanguageInPropertiesNodeShape.Rdf.deserializeProperties
+      typeof LanguageInPropertiesNodeShape.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     LanguageInPropertiesNodeShape
   > {
-    return LanguageInPropertiesNodeShape.Rdf.deserializeProperties(
-      parameters,
-    ).map((properties) => new LanguageInPropertiesNodeShape(properties));
+    return LanguageInPropertiesNodeShape.propertiesFromRdf(parameters).map(
+      (properties) => new LanguageInPropertiesNodeShape(properties),
+    );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -7937,14 +7660,14 @@ export namespace LanguageInPropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        LanguageInPropertiesNodeShape.Sparql.constructTemplateTriples({
+        LanguageInPropertiesNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LanguageInPropertiesNodeShape.Sparql.wherePatterns({
+        LanguageInPropertiesNodeShape.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -7952,7 +7675,7 @@ export namespace LanguageInPropertiesNodeShape {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -7961,11 +7684,11 @@ export namespace LanguageInPropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      LanguageInPropertiesNodeShape.Sparql.constructQuery(parameters),
+      LanguageInPropertiesNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -7994,7 +7717,7 @@ export namespace LanguageInPropertiesNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -8048,13 +7771,6 @@ export namespace LanguageInPropertiesNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * A node shape that only allows IRI identifiers.
@@ -8145,7 +7861,7 @@ export class IriNodeShape {
 export namespace IriNodeShape {
   export type Json = { readonly "@id": string; readonly type: "IriNodeShape" };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<zod.ZodError, { identifier: rdfjs.NamedNode }> {
     const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
@@ -8158,19 +7874,19 @@ export namespace IriNodeShape {
     return purify.Either.of({ identifier });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, IriNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new IriNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -8196,22 +7912,14 @@ export namespace IriNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("IriNodeShape"),
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -8230,20 +7938,15 @@ export namespace IriNodeShape {
     return purify.Either.of({ identifier });
   }
 
-  function rdfDeserialize(
-    parameters: Parameters<typeof IriNodeShape.Rdf.deserializeProperties>[0],
+  export function fromRdf(
+    parameters: Parameters<typeof IriNodeShape.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, IriNodeShape> {
-    return IriNodeShape.Rdf.deserializeProperties(parameters).map(
+    return IriNodeShape.propertiesFromRdf(parameters).map(
       (properties) => new IriNodeShape(properties),
     );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -8257,19 +7960,16 @@ export namespace IriNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        IriNodeShape.Sparql.constructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        IriNodeShape.sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        IriNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
+        IriNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -8278,11 +7978,11 @@ export namespace IriNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      IriNodeShape.Sparql.constructQuery(parameters),
+      IriNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(_parameters?: {
+  export function sparqlConstructTemplateTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -8290,20 +7990,13 @@ export namespace IriNodeShape {
     return [];
   }
 
-  function sparqlWherePatterns(_parameters: {
+  export function sparqlWherePatterns(_parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
     return [];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 export interface InterfaceUnionNodeShapeMember2b {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8372,7 +8065,7 @@ export namespace InterfaceUnionNodeShapeMember2b {
     readonly stringProperty2b: string;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -8396,17 +8089,17 @@ export namespace InterfaceUnionNodeShapeMember2b {
     return purify.Either.of({ identifier, type, stringProperty2b });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, InterfaceUnionNodeShapeMember2b> {
-    return jsonDeserializeProperties(json);
+    return propertiesFromJson(json);
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -8436,7 +8129,7 @@ export namespace InterfaceUnionNodeShapeMember2b {
     };
   }
 
-  function jsonSerialize(
+  export function toJson(
     _interfaceUnionNodeShapeMember2b: InterfaceUnionNodeShapeMember2b,
   ): InterfaceUnionNodeShapeMember2b.Json {
     return JSON.parse(
@@ -8451,22 +8144,13 @@ export namespace InterfaceUnionNodeShapeMember2b {
     );
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("InterfaceUnionNodeShapeMember2b"),
       stringProperty2b: zod.string(),
     });
   }
-
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-    serialize: jsonSerialize,
-  };
 
   export function hash<
     HasherT extends {
@@ -8497,7 +8181,7 @@ export namespace InterfaceUnionNodeShapeMember2b {
     return _hasher;
   }
 
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -8535,20 +8219,18 @@ export namespace InterfaceUnionNodeShapeMember2b {
     return purify.Either.of({ identifier, type, stringProperty2b });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof InterfaceUnionNodeShapeMember2b.Rdf.deserializeProperties
+      typeof InterfaceUnionNodeShapeMember2b.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     InterfaceUnionNodeShapeMember2b
   > {
-    return InterfaceUnionNodeShapeMember2b.Rdf.deserializeProperties(
-      parameters,
-    );
+    return InterfaceUnionNodeShapeMember2b.propertiesFromRdf(parameters);
   }
 
-  function rdfSerialize(
+  export function toRdf(
     _interfaceUnionNodeShapeMember2b: InterfaceUnionNodeShapeMember2b,
     {
       mutateGraph,
@@ -8570,13 +8252,7 @@ export namespace InterfaceUnionNodeShapeMember2b {
     return _resource;
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-    serialize: rdfSerialize,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -8590,14 +8266,14 @@ export namespace InterfaceUnionNodeShapeMember2b {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InterfaceUnionNodeShapeMember2b.Sparql.constructTemplateTriples({
+        InterfaceUnionNodeShapeMember2b.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceUnionNodeShapeMember2b.Sparql.wherePatterns({
+        InterfaceUnionNodeShapeMember2b.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -8605,7 +8281,7 @@ export namespace InterfaceUnionNodeShapeMember2b {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -8614,11 +8290,11 @@ export namespace InterfaceUnionNodeShapeMember2b {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      InterfaceUnionNodeShapeMember2b.Sparql.constructQuery(parameters),
+      InterfaceUnionNodeShapeMember2b.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -8640,7 +8316,7 @@ export namespace InterfaceUnionNodeShapeMember2b {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -8668,13 +8344,6 @@ export namespace InterfaceUnionNodeShapeMember2b {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 export interface InterfaceUnionNodeShapeMember2a {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8743,7 +8412,7 @@ export namespace InterfaceUnionNodeShapeMember2a {
     readonly stringProperty2a: string;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -8767,17 +8436,17 @@ export namespace InterfaceUnionNodeShapeMember2a {
     return purify.Either.of({ identifier, type, stringProperty2a });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, InterfaceUnionNodeShapeMember2a> {
-    return jsonDeserializeProperties(json);
+    return propertiesFromJson(json);
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -8807,7 +8476,7 @@ export namespace InterfaceUnionNodeShapeMember2a {
     };
   }
 
-  function jsonSerialize(
+  export function toJson(
     _interfaceUnionNodeShapeMember2a: InterfaceUnionNodeShapeMember2a,
   ): InterfaceUnionNodeShapeMember2a.Json {
     return JSON.parse(
@@ -8822,22 +8491,13 @@ export namespace InterfaceUnionNodeShapeMember2a {
     );
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("InterfaceUnionNodeShapeMember2a"),
       stringProperty2a: zod.string(),
     });
   }
-
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-    serialize: jsonSerialize,
-  };
 
   export function hash<
     HasherT extends {
@@ -8868,7 +8528,7 @@ export namespace InterfaceUnionNodeShapeMember2a {
     return _hasher;
   }
 
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -8906,20 +8566,18 @@ export namespace InterfaceUnionNodeShapeMember2a {
     return purify.Either.of({ identifier, type, stringProperty2a });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof InterfaceUnionNodeShapeMember2a.Rdf.deserializeProperties
+      typeof InterfaceUnionNodeShapeMember2a.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     InterfaceUnionNodeShapeMember2a
   > {
-    return InterfaceUnionNodeShapeMember2a.Rdf.deserializeProperties(
-      parameters,
-    );
+    return InterfaceUnionNodeShapeMember2a.propertiesFromRdf(parameters);
   }
 
-  function rdfSerialize(
+  export function toRdf(
     _interfaceUnionNodeShapeMember2a: InterfaceUnionNodeShapeMember2a,
     {
       mutateGraph,
@@ -8941,13 +8599,7 @@ export namespace InterfaceUnionNodeShapeMember2a {
     return _resource;
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-    serialize: rdfSerialize,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -8961,14 +8613,14 @@ export namespace InterfaceUnionNodeShapeMember2a {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InterfaceUnionNodeShapeMember2a.Sparql.constructTemplateTriples({
+        InterfaceUnionNodeShapeMember2a.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceUnionNodeShapeMember2a.Sparql.wherePatterns({
+        InterfaceUnionNodeShapeMember2a.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -8976,7 +8628,7 @@ export namespace InterfaceUnionNodeShapeMember2a {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -8985,11 +8637,11 @@ export namespace InterfaceUnionNodeShapeMember2a {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      InterfaceUnionNodeShapeMember2a.Sparql.constructQuery(parameters),
+      InterfaceUnionNodeShapeMember2a.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -9011,7 +8663,7 @@ export namespace InterfaceUnionNodeShapeMember2a {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -9039,13 +8691,6 @@ export namespace InterfaceUnionNodeShapeMember2a {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 export interface InterfaceUnionNodeShapeMember1 {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9114,7 +8759,7 @@ export namespace InterfaceUnionNodeShapeMember1 {
     readonly stringProperty1: string;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -9138,17 +8783,17 @@ export namespace InterfaceUnionNodeShapeMember1 {
     return purify.Either.of({ identifier, type, stringProperty1 });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, InterfaceUnionNodeShapeMember1> {
-    return jsonDeserializeProperties(json);
+    return propertiesFromJson(json);
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -9175,7 +8820,7 @@ export namespace InterfaceUnionNodeShapeMember1 {
     };
   }
 
-  function jsonSerialize(
+  export function toJson(
     _interfaceUnionNodeShapeMember1: InterfaceUnionNodeShapeMember1,
   ): InterfaceUnionNodeShapeMember1.Json {
     return JSON.parse(
@@ -9190,22 +8835,13 @@ export namespace InterfaceUnionNodeShapeMember1 {
     );
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("InterfaceUnionNodeShapeMember1"),
       stringProperty1: zod.string(),
     });
   }
-
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-    serialize: jsonSerialize,
-  };
 
   export function hash<
     HasherT extends {
@@ -9236,7 +8872,7 @@ export namespace InterfaceUnionNodeShapeMember1 {
     return _hasher;
   }
 
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -9274,18 +8910,18 @@ export namespace InterfaceUnionNodeShapeMember1 {
     return purify.Either.of({ identifier, type, stringProperty1 });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof InterfaceUnionNodeShapeMember1.Rdf.deserializeProperties
+      typeof InterfaceUnionNodeShapeMember1.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     InterfaceUnionNodeShapeMember1
   > {
-    return InterfaceUnionNodeShapeMember1.Rdf.deserializeProperties(parameters);
+    return InterfaceUnionNodeShapeMember1.propertiesFromRdf(parameters);
   }
 
-  function rdfSerialize(
+  export function toRdf(
     _interfaceUnionNodeShapeMember1: InterfaceUnionNodeShapeMember1,
     {
       mutateGraph,
@@ -9307,13 +8943,7 @@ export namespace InterfaceUnionNodeShapeMember1 {
     return _resource;
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-    serialize: rdfSerialize,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -9327,14 +8957,14 @@ export namespace InterfaceUnionNodeShapeMember1 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InterfaceUnionNodeShapeMember1.Sparql.constructTemplateTriples({
+        InterfaceUnionNodeShapeMember1.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceUnionNodeShapeMember1.Sparql.wherePatterns({
+        InterfaceUnionNodeShapeMember1.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -9342,7 +8972,7 @@ export namespace InterfaceUnionNodeShapeMember1 {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -9351,11 +8981,11 @@ export namespace InterfaceUnionNodeShapeMember1 {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      InterfaceUnionNodeShapeMember1.Sparql.constructQuery(parameters),
+      InterfaceUnionNodeShapeMember1.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -9377,7 +9007,7 @@ export namespace InterfaceUnionNodeShapeMember1 {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -9405,13 +9035,6 @@ export namespace InterfaceUnionNodeShapeMember1 {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * A node shape that's generated as a TypeScript interface instead of a class.
@@ -9483,7 +9106,7 @@ export namespace InterfaceNodeShape {
     readonly stringProperty: string;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -9507,17 +9130,17 @@ export namespace InterfaceNodeShape {
     return purify.Either.of({ identifier, type, stringProperty });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, InterfaceNodeShape> {
-    return jsonDeserializeProperties(json);
+    return propertiesFromJson(json);
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -9544,7 +9167,7 @@ export namespace InterfaceNodeShape {
     };
   }
 
-  function jsonSerialize(
+  export function toJson(
     _interfaceNodeShape: InterfaceNodeShape,
   ): InterfaceNodeShape.Json {
     return JSON.parse(
@@ -9559,22 +9182,13 @@ export namespace InterfaceNodeShape {
     );
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("InterfaceNodeShape"),
       stringProperty: zod.string(),
     });
   }
-
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-    serialize: jsonSerialize,
-  };
 
   export function hash<
     HasherT extends {
@@ -9596,7 +9210,7 @@ export namespace InterfaceNodeShape {
     return _hasher;
   }
 
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -9634,15 +9248,13 @@ export namespace InterfaceNodeShape {
     return purify.Either.of({ identifier, type, stringProperty });
   }
 
-  function rdfDeserialize(
-    parameters: Parameters<
-      typeof InterfaceNodeShape.Rdf.deserializeProperties
-    >[0],
+  export function fromRdf(
+    parameters: Parameters<typeof InterfaceNodeShape.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, InterfaceNodeShape> {
-    return InterfaceNodeShape.Rdf.deserializeProperties(parameters);
+    return InterfaceNodeShape.propertiesFromRdf(parameters);
   }
 
-  function rdfSerialize(
+  export function toRdf(
     _interfaceNodeShape: InterfaceNodeShape,
     {
       mutateGraph,
@@ -9664,13 +9276,7 @@ export namespace InterfaceNodeShape {
     return _resource;
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-    serialize: rdfSerialize,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -9684,19 +9290,19 @@ export namespace InterfaceNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InterfaceNodeShape.Sparql.constructTemplateTriples({
+        InterfaceNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
+        InterfaceNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -9705,11 +9311,11 @@ export namespace InterfaceNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      InterfaceNodeShape.Sparql.constructQuery(parameters),
+      InterfaceNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -9728,7 +9334,7 @@ export namespace InterfaceNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -9753,13 +9359,6 @@ export namespace InterfaceNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Shape with sh:in properties.
@@ -10084,7 +9683,7 @@ export namespace InPropertiesNodeShape {
     readonly inStringsProperty: ("text" | "html") | undefined;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -10136,19 +9735,19 @@ export namespace InPropertiesNodeShape {
     });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, InPropertiesNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new InPropertiesNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -10191,7 +9790,7 @@ export namespace InPropertiesNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("InPropertiesNodeShape"),
@@ -10210,15 +9809,7 @@ export namespace InPropertiesNodeShape {
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -10461,22 +10052,15 @@ export namespace InPropertiesNodeShape {
     });
   }
 
-  function rdfDeserialize(
-    parameters: Parameters<
-      typeof InPropertiesNodeShape.Rdf.deserializeProperties
-    >[0],
+  export function fromRdf(
+    parameters: Parameters<typeof InPropertiesNodeShape.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, InPropertiesNodeShape> {
-    return InPropertiesNodeShape.Rdf.deserializeProperties(parameters).map(
+    return InPropertiesNodeShape.propertiesFromRdf(parameters).map(
       (properties) => new InPropertiesNodeShape(properties),
     );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -10490,19 +10074,19 @@ export namespace InPropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InPropertiesNodeShape.Sparql.constructTemplateTriples({
+        InPropertiesNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InPropertiesNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
+        InPropertiesNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -10511,11 +10095,11 @@ export namespace InPropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      InPropertiesNodeShape.Sparql.constructQuery(parameters),
+      InPropertiesNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -10564,7 +10148,7 @@ export namespace InPropertiesNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -10674,13 +10258,6 @@ export namespace InPropertiesNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Shape with sh:in constraining its identifier.
@@ -10818,7 +10395,7 @@ export namespace InIdentifierNodeShape {
     readonly stringProperty: string | undefined;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -10843,19 +10420,19 @@ export namespace InIdentifierNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, InIdentifierNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new InIdentifierNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -10882,7 +10459,7 @@ export namespace InIdentifierNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.enum([
         "http://example.com/InIdentifierNodeShapeInstance1",
@@ -10893,15 +10470,7 @@ export namespace InIdentifierNodeShape {
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -10971,22 +10540,15 @@ export namespace InIdentifierNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  function rdfDeserialize(
-    parameters: Parameters<
-      typeof InIdentifierNodeShape.Rdf.deserializeProperties
-    >[0],
+  export function fromRdf(
+    parameters: Parameters<typeof InIdentifierNodeShape.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, InIdentifierNodeShape> {
-    return InIdentifierNodeShape.Rdf.deserializeProperties(parameters).map(
+    return InIdentifierNodeShape.propertiesFromRdf(parameters).map(
       (properties) => new InIdentifierNodeShape(properties),
     );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -11000,19 +10562,19 @@ export namespace InIdentifierNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InIdentifierNodeShape.Sparql.constructTemplateTriples({
+        InIdentifierNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InIdentifierNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
+        InIdentifierNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -11021,11 +10583,11 @@ export namespace InIdentifierNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      InIdentifierNodeShape.Sparql.constructQuery(parameters),
+      InIdentifierNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -11046,7 +10608,7 @@ export namespace InIdentifierNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -11080,13 +10642,6 @@ export namespace InIdentifierNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Shape with sh:hasValue properties.
@@ -11271,7 +10826,7 @@ export namespace HasValuePropertiesNodeShape {
     readonly hasLiteralProperty: string | undefined;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -11299,19 +10854,19 @@ export namespace HasValuePropertiesNodeShape {
     return purify.Either.of({ identifier, hasIriProperty, hasLiteralProperty });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, HasValuePropertiesNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new HasValuePropertiesNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -11342,7 +10897,7 @@ export namespace HasValuePropertiesNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("HasValuePropertiesNodeShape"),
@@ -11351,15 +10906,7 @@ export namespace HasValuePropertiesNodeShape {
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -11427,25 +10974,20 @@ export namespace HasValuePropertiesNodeShape {
     return purify.Either.of({ identifier, hasIriProperty, hasLiteralProperty });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof HasValuePropertiesNodeShape.Rdf.deserializeProperties
+      typeof HasValuePropertiesNodeShape.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     HasValuePropertiesNodeShape
   > {
-    return HasValuePropertiesNodeShape.Rdf.deserializeProperties(
-      parameters,
-    ).map((properties) => new HasValuePropertiesNodeShape(properties));
+    return HasValuePropertiesNodeShape.propertiesFromRdf(parameters).map(
+      (properties) => new HasValuePropertiesNodeShape(properties),
+    );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -11459,14 +11001,14 @@ export namespace HasValuePropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        HasValuePropertiesNodeShape.Sparql.constructTemplateTriples({
+        HasValuePropertiesNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        HasValuePropertiesNodeShape.Sparql.wherePatterns({
+        HasValuePropertiesNodeShape.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -11474,7 +11016,7 @@ export namespace HasValuePropertiesNodeShape {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -11483,11 +11025,11 @@ export namespace HasValuePropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      HasValuePropertiesNodeShape.Sparql.constructQuery(parameters),
+      HasValuePropertiesNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -11516,7 +11058,7 @@ export namespace HasValuePropertiesNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -11570,13 +11112,6 @@ export namespace HasValuePropertiesNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 export class InlineNodeShape {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
@@ -11702,7 +11237,7 @@ export namespace InlineNodeShape {
     readonly stringProperty: string;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -11721,19 +11256,19 @@ export namespace InlineNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, InlineNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new InlineNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -11760,7 +11295,7 @@ export namespace InlineNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("InlineNodeShape"),
@@ -11768,15 +11303,7 @@ export namespace InlineNodeShape {
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -11809,20 +11336,15 @@ export namespace InlineNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  function rdfDeserialize(
-    parameters: Parameters<typeof InlineNodeShape.Rdf.deserializeProperties>[0],
+  export function fromRdf(
+    parameters: Parameters<typeof InlineNodeShape.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, InlineNodeShape> {
-    return InlineNodeShape.Rdf.deserializeProperties(parameters).map(
+    return InlineNodeShape.propertiesFromRdf(parameters).map(
       (properties) => new InlineNodeShape(properties),
     );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -11836,19 +11358,19 @@ export namespace InlineNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InlineNodeShape.Sparql.constructTemplateTriples({
+        InlineNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InlineNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
+        InlineNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -11857,11 +11379,11 @@ export namespace InlineNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      InlineNodeShape.Sparql.constructQuery(parameters),
+      InlineNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -11880,7 +11402,7 @@ export namespace InlineNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -11905,13 +11427,6 @@ export namespace InlineNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 export class ExternNodeShape {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
@@ -12037,7 +11552,7 @@ export namespace ExternNodeShape {
     readonly stringProperty: string;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -12056,19 +11571,19 @@ export namespace ExternNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ExternNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new ExternNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -12095,7 +11610,7 @@ export namespace ExternNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("ExternNodeShape"),
@@ -12103,15 +11618,7 @@ export namespace ExternNodeShape {
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -12144,20 +11651,15 @@ export namespace ExternNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  function rdfDeserialize(
-    parameters: Parameters<typeof ExternNodeShape.Rdf.deserializeProperties>[0],
+  export function fromRdf(
+    parameters: Parameters<typeof ExternNodeShape.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, ExternNodeShape> {
-    return ExternNodeShape.Rdf.deserializeProperties(parameters).map(
+    return ExternNodeShape.propertiesFromRdf(parameters).map(
       (properties) => new ExternNodeShape(properties),
     );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -12171,19 +11673,19 @@ export namespace ExternNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ExternNodeShape.Sparql.constructTemplateTriples({
+        ExternNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ExternNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
+        ExternNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -12192,11 +11694,11 @@ export namespace ExternNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ExternNodeShape.Sparql.constructQuery(parameters),
+      ExternNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -12215,7 +11717,7 @@ export namespace ExternNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -12240,13 +11742,6 @@ export namespace ExternNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Node shape that inlines/nests another node shape and externs/references another.
@@ -12487,7 +11982,7 @@ export namespace ExternPropertiesNodeShape {
     readonly inlineProperty: InlineNodeShape.Json | undefined;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -12509,7 +12004,7 @@ export namespace ExternPropertiesNodeShape {
       : dataFactory.namedNode(_jsonObject["@id"]);
     const externObjectTypeProperty = purify.Maybe.fromNullable(
       _jsonObject["externObjectTypeProperty"],
-    ).map((_item) => ExternObjectType.Json.deserialize(_item).unsafeCoerce());
+    ).map((_item) => ExternObjectType.fromJson(_item).unsafeCoerce());
     const externProperty = purify.Maybe.fromNullable(
       _jsonObject["externProperty"],
     ).map((_item) =>
@@ -12519,7 +12014,7 @@ export namespace ExternPropertiesNodeShape {
     );
     const inlineProperty = purify.Maybe.fromNullable(
       _jsonObject["inlineProperty"],
-    ).map((_item) => InlineNodeShape.Json.deserialize(_item).unsafeCoerce());
+    ).map((_item) => InlineNodeShape.fromJson(_item).unsafeCoerce());
     return purify.Either.of({
       identifier,
       externObjectTypeProperty,
@@ -12528,19 +12023,19 @@ export namespace ExternPropertiesNodeShape {
     });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ExternPropertiesNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new ExternPropertiesNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -12560,11 +12055,11 @@ export namespace ExternPropertiesNodeShape {
           scope: `${scopePrefix}/properties/type`,
           type: "Control",
         },
-        ExternObjectType.Json.uiSchema({
+        ExternObjectType.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/externObjectTypeProperty`,
         }),
         { scope: `${scopePrefix}/properties/externProperty`, type: "Control" },
-        InlineNodeShape.Json.uiSchema({
+        InlineNodeShape.jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/inlineProperty`,
         }),
       ],
@@ -12573,25 +12068,17 @@ export namespace ExternPropertiesNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("ExternPropertiesNodeShape"),
-      externObjectTypeProperty: ExternObjectType.Json.zodSchema().optional(),
+      externObjectTypeProperty: ExternObjectType.jsonZodSchema().optional(),
       externProperty: zod.object({ "@id": zod.string().min(1) }).optional(),
-      inlineProperty: InlineNodeShape.Json.zodSchema().optional(),
+      inlineProperty: InlineNodeShape.jsonZodSchema().optional(),
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -12624,7 +12111,7 @@ export namespace ExternPropertiesNodeShape {
         .head()
         .chain((value) => value.toResource())
         .chain((_resource) =>
-          ExternObjectType.Rdf.deserialize({
+          ExternObjectType.fromRdf({
             ..._context,
             ignoreRdfType: true,
             languageIn: _languageIn,
@@ -12667,7 +12154,7 @@ export namespace ExternPropertiesNodeShape {
         .head()
         .chain((value) => value.toResource())
         .chain((_resource) =>
-          InlineNodeShape.Rdf.deserialize({
+          InlineNodeShape.fromRdf({
             ..._context,
             ignoreRdfType: true,
             languageIn: _languageIn,
@@ -12689,25 +12176,20 @@ export namespace ExternPropertiesNodeShape {
     });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof ExternPropertiesNodeShape.Rdf.deserializeProperties
+      typeof ExternPropertiesNodeShape.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     ExternPropertiesNodeShape
   > {
-    return ExternPropertiesNodeShape.Rdf.deserializeProperties(parameters).map(
+    return ExternPropertiesNodeShape.propertiesFromRdf(parameters).map(
       (properties) => new ExternPropertiesNodeShape(properties),
     );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -12721,14 +12203,14 @@ export namespace ExternPropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ExternPropertiesNodeShape.Sparql.constructTemplateTriples({
+        ExternPropertiesNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ExternPropertiesNodeShape.Sparql.wherePatterns({
+        ExternPropertiesNodeShape.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -12736,7 +12218,7 @@ export namespace ExternPropertiesNodeShape {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -12745,11 +12227,11 @@ export namespace ExternPropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ExternPropertiesNodeShape.Sparql.constructQuery(parameters),
+      ExternPropertiesNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -12771,7 +12253,7 @@ export namespace ExternPropertiesNodeShape {
         ),
         subject,
       },
-      ...ExternObjectType.Sparql.constructTemplateTriples({
+      ...ExternObjectType.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}ExternObjectTypeProperty`,
@@ -12788,7 +12270,7 @@ export namespace ExternPropertiesNodeShape {
         predicate: dataFactory.namedNode("http://example.com/inlineProperty"),
         subject,
       },
-      ...InlineNodeShape.Sparql.constructTemplateTriples({
+      ...InlineNodeShape.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}InlineProperty`),
         variablePrefix: `${variablePrefix}InlineProperty`,
@@ -12796,7 +12278,7 @@ export namespace ExternPropertiesNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -12825,7 +12307,7 @@ export namespace ExternPropertiesNodeShape {
             ],
             type: "bgp",
           },
-          ...ExternObjectType.Sparql.wherePatterns({
+          ...ExternObjectType.sparqlWherePatterns({
             ignoreRdfType: true,
             subject: dataFactory.variable!(
               `${variablePrefix}ExternObjectTypeProperty`,
@@ -12870,7 +12352,7 @@ export namespace ExternPropertiesNodeShape {
             ],
             type: "bgp",
           },
-          ...InlineNodeShape.Sparql.wherePatterns({
+          ...InlineNodeShape.sparqlWherePatterns({
             ignoreRdfType: true,
             subject: dataFactory.variable!(`${variablePrefix}InlineProperty`),
             variablePrefix: `${variablePrefix}InlineProperty`,
@@ -12880,13 +12362,6 @@ export namespace ExternPropertiesNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Shape with custom rdf:type's.
@@ -13037,7 +12512,7 @@ export namespace ExplicitRdfTypesNodeShape {
     readonly stringProperty: string;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -13056,19 +12531,19 @@ export namespace ExplicitRdfTypesNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ExplicitRdfTypesNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new ExplicitRdfTypesNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -13095,7 +12570,7 @@ export namespace ExplicitRdfTypesNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("ExplicitRdfTypesNodeShape"),
@@ -13103,15 +12578,7 @@ export namespace ExplicitRdfTypesNodeShape {
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -13159,25 +12626,20 @@ export namespace ExplicitRdfTypesNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof ExplicitRdfTypesNodeShape.Rdf.deserializeProperties
+      typeof ExplicitRdfTypesNodeShape.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     ExplicitRdfTypesNodeShape
   > {
-    return ExplicitRdfTypesNodeShape.Rdf.deserializeProperties(parameters).map(
+    return ExplicitRdfTypesNodeShape.propertiesFromRdf(parameters).map(
       (properties) => new ExplicitRdfTypesNodeShape(properties),
     );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -13191,14 +12653,14 @@ export namespace ExplicitRdfTypesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ExplicitRdfTypesNodeShape.Sparql.constructTemplateTriples({
+        ExplicitRdfTypesNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ExplicitRdfTypesNodeShape.Sparql.wherePatterns({
+        ExplicitRdfTypesNodeShape.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -13206,7 +12668,7 @@ export namespace ExplicitRdfTypesNodeShape {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -13215,11 +12677,11 @@ export namespace ExplicitRdfTypesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ExplicitRdfTypesNodeShape.Sparql.constructQuery(parameters),
+      ExplicitRdfTypesNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -13251,7 +12713,7 @@ export namespace ExplicitRdfTypesNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -13308,13 +12770,6 @@ export namespace ExplicitRdfTypesNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Shape with sh:defaultValue properties.
@@ -13632,7 +13087,7 @@ export namespace DefaultValuePropertiesNodeShape {
     readonly trueBooleanProperty: boolean;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -13672,19 +13127,19 @@ export namespace DefaultValuePropertiesNodeShape {
     });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, DefaultValuePropertiesNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new DefaultValuePropertiesNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -13725,7 +13180,7 @@ export namespace DefaultValuePropertiesNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("DefaultValuePropertiesNodeShape"),
@@ -13738,15 +13193,7 @@ export namespace DefaultValuePropertiesNodeShape {
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -13947,25 +13394,20 @@ export namespace DefaultValuePropertiesNodeShape {
     });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof DefaultValuePropertiesNodeShape.Rdf.deserializeProperties
+      typeof DefaultValuePropertiesNodeShape.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     DefaultValuePropertiesNodeShape
   > {
-    return DefaultValuePropertiesNodeShape.Rdf.deserializeProperties(
-      parameters,
-    ).map((properties) => new DefaultValuePropertiesNodeShape(properties));
+    return DefaultValuePropertiesNodeShape.propertiesFromRdf(parameters).map(
+      (properties) => new DefaultValuePropertiesNodeShape(properties),
+    );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -13979,14 +13421,14 @@ export namespace DefaultValuePropertiesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        DefaultValuePropertiesNodeShape.Sparql.constructTemplateTriples({
+        DefaultValuePropertiesNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        DefaultValuePropertiesNodeShape.Sparql.wherePatterns({
+        DefaultValuePropertiesNodeShape.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -13994,7 +13436,7 @@ export namespace DefaultValuePropertiesNodeShape {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -14003,11 +13445,11 @@ export namespace DefaultValuePropertiesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      DefaultValuePropertiesNodeShape.Sparql.constructQuery(parameters),
+      DefaultValuePropertiesNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -14058,7 +13500,7 @@ export namespace DefaultValuePropertiesNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -14186,13 +13628,6 @@ export namespace DefaultValuePropertiesNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Base interface for other node shapes.
@@ -14276,7 +13711,7 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     readonly baseStringProperty: string;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -14304,21 +13739,21 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     return purify.Either.of({ identifier, type, baseStringProperty });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, BaseInterfaceWithPropertiesNodeShape> {
     return (
-      BaseInterfaceWithoutPropertiesNodeShapeStatic.Json.deserialize(
+      BaseInterfaceWithoutPropertiesNodeShapeStatic.fromJson(
         json,
       ) as purify.Either<zod.ZodError, BaseInterfaceWithPropertiesNodeShape>
-    ).altLazy(() => jsonDeserializeProperties(json));
+    ).altLazy(() => propertiesFromJson(json));
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -14348,7 +13783,7 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     };
   }
 
-  function jsonSerialize(
+  export function toJson(
     _baseInterfaceWithPropertiesNodeShape: BaseInterfaceWithPropertiesNodeShape,
   ): BaseInterfaceWithPropertiesNodeShapeStatic.Json {
     return JSON.parse(
@@ -14365,7 +13800,7 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     );
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.enum([
@@ -14377,15 +13812,6 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
       baseStringProperty: zod.string(),
     });
   }
-
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-    serialize: jsonSerialize,
-  };
 
   export function hash<
     HasherT extends {
@@ -14416,7 +13842,7 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     return _hasher;
   }
 
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -14477,9 +13903,9 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     return purify.Either.of({ identifier, type, baseStringProperty });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof BaseInterfaceWithPropertiesNodeShapeStatic.Rdf.deserializeProperties
+      typeof BaseInterfaceWithPropertiesNodeShapeStatic.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
@@ -14487,20 +13913,18 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
   > {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      BaseInterfaceWithoutPropertiesNodeShapeStatic.Rdf.deserialize(
+      BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdf(
         otherParameters,
       ) as purify.Either<
         rdfjsResource.Resource.ValueError,
         BaseInterfaceWithPropertiesNodeShape
       >
     ).altLazy(() =>
-      BaseInterfaceWithPropertiesNodeShapeStatic.Rdf.deserializeProperties(
-        parameters,
-      ),
+      BaseInterfaceWithPropertiesNodeShapeStatic.propertiesFromRdf(parameters),
     );
   }
 
-  function rdfSerialize(
+  export function toRdf(
     _baseInterfaceWithPropertiesNodeShape: BaseInterfaceWithPropertiesNodeShape,
     {
       ignoreRdfType,
@@ -14534,13 +13958,7 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     return _resource;
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-    serialize: rdfSerialize,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -14554,13 +13972,13 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        BaseInterfaceWithPropertiesNodeShapeStatic.Sparql.constructTemplateTriples(
+        BaseInterfaceWithPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
           { ignoreRdfType, subject },
         ),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        BaseInterfaceWithPropertiesNodeShapeStatic.Sparql.wherePatterns({
+        BaseInterfaceWithPropertiesNodeShapeStatic.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -14568,7 +13986,7 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -14577,13 +13995,13 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      BaseInterfaceWithPropertiesNodeShapeStatic.Sparql.constructQuery(
+      BaseInterfaceWithPropertiesNodeShapeStatic.sparqlConstructQuery(
         parameters,
       ),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -14618,7 +14036,7 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -14678,13 +14096,6 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Base interface for other node shapes. Put the base interface with properties above the base interface without.
@@ -14733,7 +14144,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
   );
   export type Json = BaseInterfaceWithPropertiesNodeShapeStatic.Json;
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -14745,7 +14156,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
         | "ConcreteParentInterfaceNodeShape";
     } & $UnwrapR<
       ReturnType<
-        typeof BaseInterfaceWithPropertiesNodeShapeStatic.Json.deserializeProperties
+        typeof BaseInterfaceWithPropertiesNodeShapeStatic.propertiesFromJson
       >
     >
   > {
@@ -14756,7 +14167,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
 
     const _jsonObject = _jsonSafeParseResult.data;
     const _super0Either =
-      BaseInterfaceWithPropertiesNodeShapeStatic.Json.deserializeProperties(
+      BaseInterfaceWithPropertiesNodeShapeStatic.propertiesFromJson(
         _jsonObject,
       );
     if (_super0Either.isLeft()) {
@@ -14771,25 +14182,26 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
     return purify.Either.of({ ..._super0, identifier, type });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, BaseInterfaceWithoutPropertiesNodeShape> {
     return (
-      ConcreteParentInterfaceNodeShapeStatic.Json.deserialize(
-        json,
-      ) as purify.Either<zod.ZodError, BaseInterfaceWithoutPropertiesNodeShape>
-    ).altLazy(() => jsonDeserializeProperties(json));
+      ConcreteParentInterfaceNodeShapeStatic.fromJson(json) as purify.Either<
+        zod.ZodError,
+        BaseInterfaceWithoutPropertiesNodeShape
+      >
+    ).altLazy(() => propertiesFromJson(json));
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
-        BaseInterfaceWithPropertiesNodeShapeStatic.Json.uiSchema({
+        BaseInterfaceWithPropertiesNodeShapeStatic.jsonUiSchema({
           scopePrefix,
         }),
       ],
@@ -14798,20 +14210,20 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
     };
   }
 
-  function jsonSerialize(
+  export function toJson(
     _baseInterfaceWithoutPropertiesNodeShape: BaseInterfaceWithoutPropertiesNodeShape,
   ): BaseInterfaceWithoutPropertiesNodeShapeStatic.Json {
     return JSON.parse(
       JSON.stringify({
-        ...BaseInterfaceWithPropertiesNodeShapeStatic.Json.serialize(
+        ...BaseInterfaceWithPropertiesNodeShapeStatic.toJson(
           _baseInterfaceWithoutPropertiesNodeShape,
         ),
       } satisfies BaseInterfaceWithoutPropertiesNodeShapeStatic.Json),
     );
   }
 
-  function jsonZodSchema() {
-    return BaseInterfaceWithPropertiesNodeShapeStatic.Json.zodSchema().merge(
+  export function jsonZodSchema() {
+    return BaseInterfaceWithPropertiesNodeShapeStatic.jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
@@ -14822,15 +14234,6 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
       }),
     );
   }
-
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-    serialize: jsonSerialize,
-  };
 
   export function hash<
     HasherT extends {
@@ -14862,7 +14265,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
     return _hasher;
   }
 
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -14883,12 +14286,12 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
         | "ConcreteParentInterfaceNodeShape";
     } & $UnwrapR<
       ReturnType<
-        typeof BaseInterfaceWithPropertiesNodeShapeStatic.Rdf.deserializeProperties
+        typeof BaseInterfaceWithPropertiesNodeShapeStatic.propertiesFromRdf
       >
     >
   > {
     const _super0Either =
-      BaseInterfaceWithPropertiesNodeShapeStatic.Rdf.deserializeProperties({
+      BaseInterfaceWithPropertiesNodeShapeStatic.propertiesFromRdf({
         ..._context,
         ignoreRdfType: true,
         languageIn: _languageIn,
@@ -14923,9 +14326,9 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
     return purify.Either.of({ ..._super0, identifier, type });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof BaseInterfaceWithoutPropertiesNodeShapeStatic.Rdf.deserializeProperties
+      typeof BaseInterfaceWithoutPropertiesNodeShapeStatic.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
@@ -14933,20 +14336,20 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
   > {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      ConcreteParentInterfaceNodeShapeStatic.Rdf.deserialize(
+      ConcreteParentInterfaceNodeShapeStatic.fromRdf(
         otherParameters,
       ) as purify.Either<
         rdfjsResource.Resource.ValueError,
         BaseInterfaceWithoutPropertiesNodeShape
       >
     ).altLazy(() =>
-      BaseInterfaceWithoutPropertiesNodeShapeStatic.Rdf.deserializeProperties(
+      BaseInterfaceWithoutPropertiesNodeShapeStatic.propertiesFromRdf(
         parameters,
       ),
     );
   }
 
-  function rdfSerialize(
+  export function toRdf(
     _baseInterfaceWithoutPropertiesNodeShape: BaseInterfaceWithoutPropertiesNodeShape,
     {
       ignoreRdfType,
@@ -14958,7 +14361,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
       resourceSet: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    const _resource = BaseInterfaceWithPropertiesNodeShapeStatic.Rdf.serialize(
+    const _resource = BaseInterfaceWithPropertiesNodeShapeStatic.toRdf(
       _baseInterfaceWithoutPropertiesNodeShape,
       { ignoreRdfType: true, mutateGraph, resourceSet },
     );
@@ -14976,13 +14379,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
     return _resource;
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-    serialize: rdfSerialize,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -14996,13 +14393,13 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        BaseInterfaceWithoutPropertiesNodeShapeStatic.Sparql.constructTemplateTriples(
+        BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
           { ignoreRdfType, subject },
         ),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        BaseInterfaceWithoutPropertiesNodeShapeStatic.Sparql.wherePatterns({
+        BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -15010,7 +14407,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -15019,13 +14416,13 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      BaseInterfaceWithoutPropertiesNodeShapeStatic.Sparql.constructQuery(
+      BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlConstructQuery(
         parameters,
       ),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -15039,7 +14436,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
         ? subject.value
         : "baseInterfaceWithoutPropertiesNodeShape");
     return [
-      ...BaseInterfaceWithPropertiesNodeShapeStatic.Sparql.constructTemplateTriples(
+      ...BaseInterfaceWithPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
         { ignoreRdfType: true, subject, variablePrefix },
       ),
       ...(parameters?.ignoreRdfType
@@ -15056,7 +14453,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -15070,7 +14467,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
         ? subject.value
         : "baseInterfaceWithoutPropertiesNodeShape");
     return [
-      ...BaseInterfaceWithPropertiesNodeShapeStatic.Sparql.wherePatterns({
+      ...BaseInterfaceWithPropertiesNodeShapeStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -15107,13 +14504,6 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
           ]),
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Interface node shape that inherits the base interface and is the parent of the ConcreteChildInterfaceNodeShape.
@@ -15183,7 +14573,7 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     readonly parentStringProperty: string;
   } & BaseInterfaceWithoutPropertiesNodeShapeStatic.Json;
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -15195,7 +14585,7 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
       parentStringProperty: string;
     } & $UnwrapR<
       ReturnType<
-        typeof BaseInterfaceWithoutPropertiesNodeShapeStatic.Json.deserializeProperties
+        typeof BaseInterfaceWithoutPropertiesNodeShapeStatic.propertiesFromJson
       >
     >
   > {
@@ -15206,7 +14596,7 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
 
     const _jsonObject = _jsonSafeParseResult.data;
     const _super0Either =
-      BaseInterfaceWithoutPropertiesNodeShapeStatic.Json.deserializeProperties(
+      BaseInterfaceWithoutPropertiesNodeShapeStatic.propertiesFromJson(
         _jsonObject,
       );
     if (_super0Either.isLeft()) {
@@ -15227,26 +14617,26 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ConcreteParentInterfaceNodeShape> {
     return (
-      ConcreteChildInterfaceNodeShape.Json.deserialize(json) as purify.Either<
+      ConcreteChildInterfaceNodeShape.fromJson(json) as purify.Either<
         zod.ZodError,
         ConcreteParentInterfaceNodeShape
       >
-    ).altLazy(() => jsonDeserializeProperties(json));
+    ).altLazy(() => propertiesFromJson(json));
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
-        BaseInterfaceWithoutPropertiesNodeShapeStatic.Json.uiSchema({
+        BaseInterfaceWithoutPropertiesNodeShapeStatic.jsonUiSchema({
           scopePrefix,
         }),
         {
@@ -15259,12 +14649,12 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     };
   }
 
-  function jsonSerialize(
+  export function toJson(
     _concreteParentInterfaceNodeShape: ConcreteParentInterfaceNodeShape,
   ): ConcreteParentInterfaceNodeShapeStatic.Json {
     return JSON.parse(
       JSON.stringify({
-        ...BaseInterfaceWithoutPropertiesNodeShapeStatic.Json.serialize(
+        ...BaseInterfaceWithoutPropertiesNodeShapeStatic.toJson(
           _concreteParentInterfaceNodeShape,
         ),
         parentStringProperty:
@@ -15273,8 +14663,8 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     );
   }
 
-  function jsonZodSchema() {
-    return BaseInterfaceWithoutPropertiesNodeShapeStatic.Json.zodSchema().merge(
+  export function jsonZodSchema() {
+    return BaseInterfaceWithoutPropertiesNodeShapeStatic.jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
@@ -15285,15 +14675,6 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
       }),
     );
   }
-
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-    serialize: jsonSerialize,
-  };
 
   export function hash<
     HasherT extends {
@@ -15326,7 +14707,7 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     return _hasher;
   }
 
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -15347,12 +14728,12 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
       parentStringProperty: string;
     } & $UnwrapR<
       ReturnType<
-        typeof BaseInterfaceWithoutPropertiesNodeShapeStatic.Rdf.deserializeProperties
+        typeof BaseInterfaceWithoutPropertiesNodeShapeStatic.propertiesFromRdf
       >
     >
   > {
     const _super0Either =
-      BaseInterfaceWithoutPropertiesNodeShapeStatic.Rdf.deserializeProperties({
+      BaseInterfaceWithoutPropertiesNodeShapeStatic.propertiesFromRdf({
         ..._context,
         ignoreRdfType: true,
         languageIn: _languageIn,
@@ -15407,9 +14788,9 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof ConcreteParentInterfaceNodeShapeStatic.Rdf.deserializeProperties
+      typeof ConcreteParentInterfaceNodeShapeStatic.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
@@ -15417,20 +14798,16 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
   > {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      ConcreteChildInterfaceNodeShape.Rdf.deserialize(
-        otherParameters,
-      ) as purify.Either<
+      ConcreteChildInterfaceNodeShape.fromRdf(otherParameters) as purify.Either<
         rdfjsResource.Resource.ValueError,
         ConcreteParentInterfaceNodeShape
       >
     ).altLazy(() =>
-      ConcreteParentInterfaceNodeShapeStatic.Rdf.deserializeProperties(
-        parameters,
-      ),
+      ConcreteParentInterfaceNodeShapeStatic.propertiesFromRdf(parameters),
     );
   }
 
-  function rdfSerialize(
+  export function toRdf(
     _concreteParentInterfaceNodeShape: ConcreteParentInterfaceNodeShape,
     {
       ignoreRdfType,
@@ -15442,11 +14819,10 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
       resourceSet: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    const _resource =
-      BaseInterfaceWithoutPropertiesNodeShapeStatic.Rdf.serialize(
-        _concreteParentInterfaceNodeShape,
-        { ignoreRdfType: true, mutateGraph, resourceSet },
-      );
+    const _resource = BaseInterfaceWithoutPropertiesNodeShapeStatic.toRdf(
+      _concreteParentInterfaceNodeShape,
+      { ignoreRdfType: true, mutateGraph, resourceSet },
+    );
     if (!ignoreRdfType) {
       _resource.add(
         _resource.dataFactory.namedNode(
@@ -15465,13 +14841,7 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     return _resource;
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-    serialize: rdfSerialize,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -15485,14 +14855,14 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ConcreteParentInterfaceNodeShapeStatic.Sparql.constructTemplateTriples({
+        ConcreteParentInterfaceNodeShapeStatic.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ConcreteParentInterfaceNodeShapeStatic.Sparql.wherePatterns({
+        ConcreteParentInterfaceNodeShapeStatic.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -15500,7 +14870,7 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -15509,11 +14879,11 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ConcreteParentInterfaceNodeShapeStatic.Sparql.constructQuery(parameters),
+      ConcreteParentInterfaceNodeShapeStatic.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -15527,7 +14897,7 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
         ? subject.value
         : "concreteParentInterfaceNodeShape");
     return [
-      ...BaseInterfaceWithoutPropertiesNodeShapeStatic.Sparql.constructTemplateTriples(
+      ...BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
         { ignoreRdfType: true, subject, variablePrefix },
       ),
       ...(parameters?.ignoreRdfType
@@ -15551,7 +14921,7 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -15565,7 +14935,7 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
         ? subject.value
         : "concreteParentInterfaceNodeShape");
     return [
-      ...BaseInterfaceWithoutPropertiesNodeShapeStatic.Sparql.wherePatterns({
+      ...BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -15616,13 +14986,6 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Child interface of ConcreteParentInterfaceNodeShape. Should inherit properties and node kinds.
@@ -15686,7 +15049,7 @@ export namespace ConcreteChildInterfaceNodeShape {
     readonly childStringProperty: string;
   } & ConcreteParentInterfaceNodeShapeStatic.Json;
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -15696,7 +15059,7 @@ export namespace ConcreteChildInterfaceNodeShape {
       childStringProperty: string;
     } & $UnwrapR<
       ReturnType<
-        typeof ConcreteParentInterfaceNodeShapeStatic.Json.deserializeProperties
+        typeof ConcreteParentInterfaceNodeShapeStatic.propertiesFromJson
       >
     >
   > {
@@ -15707,9 +15070,7 @@ export namespace ConcreteChildInterfaceNodeShape {
 
     const _jsonObject = _jsonSafeParseResult.data;
     const _super0Either =
-      ConcreteParentInterfaceNodeShapeStatic.Json.deserializeProperties(
-        _jsonObject,
-      );
+      ConcreteParentInterfaceNodeShapeStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -15728,21 +15089,21 @@ export namespace ConcreteChildInterfaceNodeShape {
     });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ConcreteChildInterfaceNodeShape> {
-    return jsonDeserializeProperties(json);
+    return propertiesFromJson(json);
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
-        ConcreteParentInterfaceNodeShapeStatic.Json.uiSchema({ scopePrefix }),
+        ConcreteParentInterfaceNodeShapeStatic.jsonUiSchema({ scopePrefix }),
         {
           scope: `${scopePrefix}/properties/childStringProperty`,
           type: "Control",
@@ -15753,12 +15114,12 @@ export namespace ConcreteChildInterfaceNodeShape {
     };
   }
 
-  function jsonSerialize(
+  export function toJson(
     _concreteChildInterfaceNodeShape: ConcreteChildInterfaceNodeShape,
   ): ConcreteChildInterfaceNodeShape.Json {
     return JSON.parse(
       JSON.stringify({
-        ...ConcreteParentInterfaceNodeShapeStatic.Json.serialize(
+        ...ConcreteParentInterfaceNodeShapeStatic.toJson(
           _concreteChildInterfaceNodeShape,
         ),
         childStringProperty:
@@ -15767,8 +15128,8 @@ export namespace ConcreteChildInterfaceNodeShape {
     );
   }
 
-  function jsonZodSchema() {
-    return ConcreteParentInterfaceNodeShapeStatic.Json.zodSchema().merge(
+  export function jsonZodSchema() {
+    return ConcreteParentInterfaceNodeShapeStatic.jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
         type: zod.literal("ConcreteChildInterfaceNodeShape"),
@@ -15776,15 +15137,6 @@ export namespace ConcreteChildInterfaceNodeShape {
       }),
     );
   }
-
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-    serialize: jsonSerialize,
-  };
 
   export function hash<
     HasherT extends {
@@ -15817,7 +15169,7 @@ export namespace ConcreteChildInterfaceNodeShape {
     return _hasher;
   }
 
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -15836,12 +15188,12 @@ export namespace ConcreteChildInterfaceNodeShape {
       childStringProperty: string;
     } & $UnwrapR<
       ReturnType<
-        typeof ConcreteParentInterfaceNodeShapeStatic.Rdf.deserializeProperties
+        typeof ConcreteParentInterfaceNodeShapeStatic.propertiesFromRdf
       >
     >
   > {
     const _super0Either =
-      ConcreteParentInterfaceNodeShapeStatic.Rdf.deserializeProperties({
+      ConcreteParentInterfaceNodeShapeStatic.propertiesFromRdf({
         ..._context,
         ignoreRdfType: true,
         languageIn: _languageIn,
@@ -15895,20 +15247,18 @@ export namespace ConcreteChildInterfaceNodeShape {
     });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof ConcreteChildInterfaceNodeShape.Rdf.deserializeProperties
+      typeof ConcreteChildInterfaceNodeShape.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     ConcreteChildInterfaceNodeShape
   > {
-    return ConcreteChildInterfaceNodeShape.Rdf.deserializeProperties(
-      parameters,
-    );
+    return ConcreteChildInterfaceNodeShape.propertiesFromRdf(parameters);
   }
 
-  function rdfSerialize(
+  export function toRdf(
     _concreteChildInterfaceNodeShape: ConcreteChildInterfaceNodeShape,
     {
       ignoreRdfType,
@@ -15920,7 +15270,7 @@ export namespace ConcreteChildInterfaceNodeShape {
       resourceSet: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    const _resource = ConcreteParentInterfaceNodeShapeStatic.Rdf.serialize(
+    const _resource = ConcreteParentInterfaceNodeShapeStatic.toRdf(
       _concreteChildInterfaceNodeShape,
       { ignoreRdfType: true, mutateGraph, resourceSet },
     );
@@ -15942,13 +15292,7 @@ export namespace ConcreteChildInterfaceNodeShape {
     return _resource;
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-    serialize: rdfSerialize,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -15962,14 +15306,14 @@ export namespace ConcreteChildInterfaceNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ConcreteChildInterfaceNodeShape.Sparql.constructTemplateTriples({
+        ConcreteChildInterfaceNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ConcreteChildInterfaceNodeShape.Sparql.wherePatterns({
+        ConcreteChildInterfaceNodeShape.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -15977,7 +15321,7 @@ export namespace ConcreteChildInterfaceNodeShape {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -15986,11 +15330,11 @@ export namespace ConcreteChildInterfaceNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ConcreteChildInterfaceNodeShape.Sparql.constructQuery(parameters),
+      ConcreteChildInterfaceNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -16004,9 +15348,11 @@ export namespace ConcreteChildInterfaceNodeShape {
         ? subject.value
         : "concreteChildInterfaceNodeShape");
     return [
-      ...ConcreteParentInterfaceNodeShapeStatic.Sparql.constructTemplateTriples(
-        { ignoreRdfType: true, subject, variablePrefix },
-      ),
+      ...ConcreteParentInterfaceNodeShapeStatic.sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
       ...(parameters?.ignoreRdfType
         ? []
         : [
@@ -16028,7 +15374,7 @@ export namespace ConcreteChildInterfaceNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -16042,7 +15388,7 @@ export namespace ConcreteChildInterfaceNodeShape {
         ? subject.value
         : "concreteChildInterfaceNodeShape");
     return [
-      ...ConcreteParentInterfaceNodeShapeStatic.Sparql.wherePatterns({
+      ...ConcreteParentInterfaceNodeShapeStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -16093,13 +15439,6 @@ export namespace ConcreteChildInterfaceNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Node shape that serves as an abstract base class for child node shapes.
@@ -16239,7 +15578,7 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
     readonly abcStringProperty: string;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -16258,19 +15597,19 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
     return purify.Either.of({ identifier, abcStringProperty });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, AbstractBaseClassWithPropertiesNodeShape> {
-    return AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json.deserialize(
+    return AbstractBaseClassWithoutPropertiesNodeShapeStatic.fromJson(
       json,
     ) as purify.Either<zod.ZodError, AbstractBaseClassWithPropertiesNodeShape>;
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -16300,7 +15639,7 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.enum([
@@ -16311,15 +15650,7 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -16352,16 +15683,16 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
     return purify.Either.of({ identifier, abcStringProperty });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof AbstractBaseClassWithPropertiesNodeShapeStatic.Rdf.deserializeProperties
+      typeof AbstractBaseClassWithPropertiesNodeShapeStatic.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     AbstractBaseClassWithPropertiesNodeShape
   > {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
-    return AbstractBaseClassWithoutPropertiesNodeShapeStatic.Rdf.deserialize(
+    return AbstractBaseClassWithoutPropertiesNodeShapeStatic.fromRdf(
       otherParameters,
     ) as purify.Either<
       rdfjsResource.Resource.ValueError,
@@ -16369,12 +15700,7 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
     >;
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -16388,13 +15714,13 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        AbstractBaseClassWithPropertiesNodeShapeStatic.Sparql.constructTemplateTriples(
+        AbstractBaseClassWithPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
           { ignoreRdfType, subject },
         ),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        AbstractBaseClassWithPropertiesNodeShapeStatic.Sparql.wherePatterns({
+        AbstractBaseClassWithPropertiesNodeShapeStatic.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -16402,7 +15728,7 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -16411,13 +15737,13 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      AbstractBaseClassWithPropertiesNodeShapeStatic.Sparql.constructQuery(
+      AbstractBaseClassWithPropertiesNodeShapeStatic.sparqlConstructQuery(
         parameters,
       ),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -16441,7 +15767,7 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -16469,13 +15795,6 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Abstract base for other node shapes. Put the ABC with properties above the ABC without.
@@ -16525,13 +15844,13 @@ export abstract class AbstractBaseClassWithoutPropertiesNodeShape extends Abstra
 export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
   export type Json = AbstractBaseClassWithPropertiesNodeShapeStatic.Json;
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
     { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<
-        typeof AbstractBaseClassWithPropertiesNodeShapeStatic.Json.deserializeProperties
+        typeof AbstractBaseClassWithPropertiesNodeShapeStatic.propertiesFromJson
       >
     >
   > {
@@ -16542,7 +15861,7 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
 
     const _jsonObject = _jsonSafeParseResult.data;
     const _super0Either =
-      AbstractBaseClassWithPropertiesNodeShapeStatic.Json.deserializeProperties(
+      AbstractBaseClassWithPropertiesNodeShapeStatic.propertiesFromJson(
         _jsonObject,
       );
     if (_super0Either.isLeft()) {
@@ -16556,26 +15875,24 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
     return purify.Either.of({ ..._super0, identifier });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, AbstractBaseClassWithoutPropertiesNodeShape> {
-    return ConcreteParentClassNodeShapeStatic.Json.deserialize(
-      json,
-    ) as purify.Either<
+    return ConcreteParentClassNodeShapeStatic.fromJson(json) as purify.Either<
       zod.ZodError,
       AbstractBaseClassWithoutPropertiesNodeShape
     >;
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
-        AbstractBaseClassWithPropertiesNodeShapeStatic.Json.uiSchema({
+        AbstractBaseClassWithPropertiesNodeShapeStatic.jsonUiSchema({
           scopePrefix,
         }),
       ],
@@ -16584,8 +15901,8 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
     };
   }
 
-  function jsonZodSchema() {
-    return AbstractBaseClassWithPropertiesNodeShapeStatic.Json.zodSchema().merge(
+  export function jsonZodSchema() {
+    return AbstractBaseClassWithPropertiesNodeShapeStatic.jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
@@ -16596,15 +15913,7 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
     );
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -16619,12 +15928,12 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
     rdfjsResource.Resource.ValueError,
     { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
       ReturnType<
-        typeof AbstractBaseClassWithPropertiesNodeShapeStatic.Rdf.deserializeProperties
+        typeof AbstractBaseClassWithPropertiesNodeShapeStatic.propertiesFromRdf
       >
     >
   > {
     const _super0Either =
-      AbstractBaseClassWithPropertiesNodeShapeStatic.Rdf.deserializeProperties({
+      AbstractBaseClassWithPropertiesNodeShapeStatic.propertiesFromRdf({
         ..._context,
         ignoreRdfType: true,
         languageIn: _languageIn,
@@ -16639,16 +15948,16 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
     return purify.Either.of({ ..._super0, identifier });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof AbstractBaseClassWithoutPropertiesNodeShapeStatic.Rdf.deserializeProperties
+      typeof AbstractBaseClassWithoutPropertiesNodeShapeStatic.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     AbstractBaseClassWithoutPropertiesNodeShape
   > {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
-    return ConcreteParentClassNodeShapeStatic.Rdf.deserialize(
+    return ConcreteParentClassNodeShapeStatic.fromRdf(
       otherParameters,
     ) as purify.Either<
       rdfjsResource.Resource.ValueError,
@@ -16656,12 +15965,7 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
     >;
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -16675,13 +15979,13 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        AbstractBaseClassWithoutPropertiesNodeShapeStatic.Sparql.constructTemplateTriples(
+        AbstractBaseClassWithoutPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
           { ignoreRdfType, subject },
         ),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        AbstractBaseClassWithoutPropertiesNodeShapeStatic.Sparql.wherePatterns({
+        AbstractBaseClassWithoutPropertiesNodeShapeStatic.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -16689,7 +15993,7 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -16698,13 +16002,13 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      AbstractBaseClassWithoutPropertiesNodeShapeStatic.Sparql.constructQuery(
+      AbstractBaseClassWithoutPropertiesNodeShapeStatic.sparqlConstructQuery(
         parameters,
       ),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -16718,13 +16022,13 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
         ? subject.value
         : "abstractBaseClassWithoutPropertiesNodeShape");
     return [
-      ...AbstractBaseClassWithPropertiesNodeShapeStatic.Sparql.constructTemplateTriples(
+      ...AbstractBaseClassWithPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
         { ignoreRdfType: true, subject, variablePrefix },
       ),
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -16738,20 +16042,13 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
         ? subject.value
         : "abstractBaseClassWithoutPropertiesNodeShape");
     return [
-      ...AbstractBaseClassWithPropertiesNodeShapeStatic.Sparql.wherePatterns({
+      ...AbstractBaseClassWithPropertiesNodeShapeStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
       }),
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Class node shape that inherits the abstract base class and is the parent of the ConcreteChildClassNodeShape.
@@ -16890,7 +16187,7 @@ export namespace ConcreteParentClassNodeShapeStatic {
     readonly parentStringProperty: string;
   } & AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json;
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -16899,7 +16196,7 @@ export namespace ConcreteParentClassNodeShapeStatic {
       parentStringProperty: string;
     } & $UnwrapR<
       ReturnType<
-        typeof AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json.deserializeProperties
+        typeof AbstractBaseClassWithoutPropertiesNodeShapeStatic.propertiesFromJson
       >
     >
   > {
@@ -16910,7 +16207,7 @@ export namespace ConcreteParentClassNodeShapeStatic {
 
     const _jsonObject = _jsonSafeParseResult.data;
     const _super0Either =
-      AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json.deserializeProperties(
+      AbstractBaseClassWithoutPropertiesNodeShapeStatic.propertiesFromJson(
         _jsonObject,
       );
     if (_super0Either.isLeft()) {
@@ -16925,30 +16222,30 @@ export namespace ConcreteParentClassNodeShapeStatic {
     return purify.Either.of({ ..._super0, identifier, parentStringProperty });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ConcreteParentClassNodeShape> {
     return (
-      ConcreteChildClassNodeShape.Json.deserialize(json) as purify.Either<
+      ConcreteChildClassNodeShape.fromJson(json) as purify.Either<
         zod.ZodError,
         ConcreteParentClassNodeShape
       >
     ).altLazy(() =>
-      jsonDeserializeProperties(json).map(
+      propertiesFromJson(json).map(
         (properties) => new ConcreteParentClassNodeShape(properties),
       ),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
-        AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json.uiSchema({
+        AbstractBaseClassWithoutPropertiesNodeShapeStatic.jsonUiSchema({
           scopePrefix,
         }),
         {
@@ -16961,8 +16258,8 @@ export namespace ConcreteParentClassNodeShapeStatic {
     };
   }
 
-  function jsonZodSchema() {
-    return AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json.zodSchema().merge(
+  export function jsonZodSchema() {
+    return AbstractBaseClassWithoutPropertiesNodeShapeStatic.jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
@@ -16974,15 +16271,7 @@ export namespace ConcreteParentClassNodeShapeStatic {
     );
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -17000,19 +16289,17 @@ export namespace ConcreteParentClassNodeShapeStatic {
       parentStringProperty: string;
     } & $UnwrapR<
       ReturnType<
-        typeof AbstractBaseClassWithoutPropertiesNodeShapeStatic.Rdf.deserializeProperties
+        typeof AbstractBaseClassWithoutPropertiesNodeShapeStatic.propertiesFromRdf
       >
     >
   > {
     const _super0Either =
-      AbstractBaseClassWithoutPropertiesNodeShapeStatic.Rdf.deserializeProperties(
-        {
-          ..._context,
-          ignoreRdfType: true,
-          languageIn: _languageIn,
-          resource: _resource,
-        },
-      );
+      AbstractBaseClassWithoutPropertiesNodeShapeStatic.propertiesFromRdf({
+        ..._context,
+        ignoreRdfType: true,
+        languageIn: _languageIn,
+        resource: _resource,
+      });
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -17056,9 +16343,9 @@ export namespace ConcreteParentClassNodeShapeStatic {
     return purify.Either.of({ ..._super0, identifier, parentStringProperty });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof ConcreteParentClassNodeShapeStatic.Rdf.deserializeProperties
+      typeof ConcreteParentClassNodeShapeStatic.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
@@ -17066,25 +16353,18 @@ export namespace ConcreteParentClassNodeShapeStatic {
   > {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      ConcreteChildClassNodeShape.Rdf.deserialize(
-        otherParameters,
-      ) as purify.Either<
+      ConcreteChildClassNodeShape.fromRdf(otherParameters) as purify.Either<
         rdfjsResource.Resource.ValueError,
         ConcreteParentClassNodeShape
       >
     ).altLazy(() =>
-      ConcreteParentClassNodeShapeStatic.Rdf.deserializeProperties(
-        parameters,
-      ).map((properties) => new ConcreteParentClassNodeShape(properties)),
+      ConcreteParentClassNodeShapeStatic.propertiesFromRdf(parameters).map(
+        (properties) => new ConcreteParentClassNodeShape(properties),
+      ),
     );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -17098,14 +16378,14 @@ export namespace ConcreteParentClassNodeShapeStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ConcreteParentClassNodeShapeStatic.Sparql.constructTemplateTriples({
+        ConcreteParentClassNodeShapeStatic.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ConcreteParentClassNodeShapeStatic.Sparql.wherePatterns({
+        ConcreteParentClassNodeShapeStatic.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -17113,7 +16393,7 @@ export namespace ConcreteParentClassNodeShapeStatic {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -17122,11 +16402,11 @@ export namespace ConcreteParentClassNodeShapeStatic {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ConcreteParentClassNodeShapeStatic.Sparql.constructQuery(parameters),
+      ConcreteParentClassNodeShapeStatic.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -17140,7 +16420,7 @@ export namespace ConcreteParentClassNodeShapeStatic {
         ? subject.value
         : "concreteParentClassNodeShape");
     return [
-      ...AbstractBaseClassWithoutPropertiesNodeShapeStatic.Sparql.constructTemplateTriples(
+      ...AbstractBaseClassWithoutPropertiesNodeShapeStatic.sparqlConstructTemplateTriples(
         { ignoreRdfType: true, subject, variablePrefix },
       ),
       ...(parameters?.ignoreRdfType
@@ -17164,7 +16444,7 @@ export namespace ConcreteParentClassNodeShapeStatic {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -17178,9 +16458,11 @@ export namespace ConcreteParentClassNodeShapeStatic {
         ? subject.value
         : "concreteParentClassNodeShape");
     return [
-      ...AbstractBaseClassWithoutPropertiesNodeShapeStatic.Sparql.wherePatterns(
-        { ignoreRdfType: true, subject, variablePrefix },
-      ),
+      ...AbstractBaseClassWithoutPropertiesNodeShapeStatic.sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
       ...(parameters?.ignoreRdfType
         ? []
         : [
@@ -17227,13 +16509,6 @@ export namespace ConcreteParentClassNodeShapeStatic {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Child (class) of ConcreteParentClassNodeShape. Should inherit properties, node kinds, and minting strategy.
@@ -17358,7 +16633,7 @@ export namespace ConcreteChildClassNodeShape {
     readonly childStringProperty: string;
   } & ConcreteParentClassNodeShapeStatic.Json;
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -17366,9 +16641,7 @@ export namespace ConcreteChildClassNodeShape {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       childStringProperty: string;
     } & $UnwrapR<
-      ReturnType<
-        typeof ConcreteParentClassNodeShapeStatic.Json.deserializeProperties
-      >
+      ReturnType<typeof ConcreteParentClassNodeShapeStatic.propertiesFromJson>
     >
   > {
     const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
@@ -17378,9 +16651,7 @@ export namespace ConcreteChildClassNodeShape {
 
     const _jsonObject = _jsonSafeParseResult.data;
     const _super0Either =
-      ConcreteParentClassNodeShapeStatic.Json.deserializeProperties(
-        _jsonObject,
-      );
+      ConcreteParentClassNodeShapeStatic.propertiesFromJson(_jsonObject);
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -17393,23 +16664,23 @@ export namespace ConcreteChildClassNodeShape {
     return purify.Either.of({ ..._super0, identifier, childStringProperty });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ConcreteChildClassNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new ConcreteChildClassNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
-        ConcreteParentClassNodeShapeStatic.Json.uiSchema({ scopePrefix }),
+        ConcreteParentClassNodeShapeStatic.jsonUiSchema({ scopePrefix }),
         {
           scope: `${scopePrefix}/properties/childStringProperty`,
           type: "Control",
@@ -17420,8 +16691,8 @@ export namespace ConcreteChildClassNodeShape {
     };
   }
 
-  function jsonZodSchema() {
-    return ConcreteParentClassNodeShapeStatic.Json.zodSchema().merge(
+  export function jsonZodSchema() {
+    return ConcreteParentClassNodeShapeStatic.jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
         type: zod.literal("ConcreteChildClassNodeShape"),
@@ -17430,15 +16701,7 @@ export namespace ConcreteChildClassNodeShape {
     );
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -17455,18 +16718,15 @@ export namespace ConcreteChildClassNodeShape {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       childStringProperty: string;
     } & $UnwrapR<
-      ReturnType<
-        typeof ConcreteParentClassNodeShapeStatic.Rdf.deserializeProperties
-      >
+      ReturnType<typeof ConcreteParentClassNodeShapeStatic.propertiesFromRdf>
     >
   > {
-    const _super0Either =
-      ConcreteParentClassNodeShapeStatic.Rdf.deserializeProperties({
-        ..._context,
-        ignoreRdfType: true,
-        languageIn: _languageIn,
-        resource: _resource,
-      });
+    const _super0Either = ConcreteParentClassNodeShapeStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
     if (_super0Either.isLeft()) {
       return _super0Either;
     }
@@ -17507,25 +16767,20 @@ export namespace ConcreteChildClassNodeShape {
     return purify.Either.of({ ..._super0, identifier, childStringProperty });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof ConcreteChildClassNodeShape.Rdf.deserializeProperties
+      typeof ConcreteChildClassNodeShape.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     ConcreteChildClassNodeShape
   > {
-    return ConcreteChildClassNodeShape.Rdf.deserializeProperties(
-      parameters,
-    ).map((properties) => new ConcreteChildClassNodeShape(properties));
+    return ConcreteChildClassNodeShape.propertiesFromRdf(parameters).map(
+      (properties) => new ConcreteChildClassNodeShape(properties),
+    );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -17539,14 +16794,14 @@ export namespace ConcreteChildClassNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ConcreteChildClassNodeShape.Sparql.constructTemplateTriples({
+        ConcreteChildClassNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ConcreteChildClassNodeShape.Sparql.wherePatterns({
+        ConcreteChildClassNodeShape.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -17554,7 +16809,7 @@ export namespace ConcreteChildClassNodeShape {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -17563,11 +16818,11 @@ export namespace ConcreteChildClassNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ConcreteChildClassNodeShape.Sparql.constructQuery(parameters),
+      ConcreteChildClassNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -17581,7 +16836,7 @@ export namespace ConcreteChildClassNodeShape {
         ? subject.value
         : "concreteChildClassNodeShape");
     return [
-      ...ConcreteParentClassNodeShapeStatic.Sparql.constructTemplateTriples({
+      ...ConcreteParentClassNodeShapeStatic.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -17607,7 +16862,7 @@ export namespace ConcreteChildClassNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -17621,7 +16876,7 @@ export namespace ConcreteChildClassNodeShape {
         ? subject.value
         : "concreteChildClassNodeShape");
     return [
-      ...ConcreteParentClassNodeShapeStatic.Sparql.wherePatterns({
+      ...ConcreteParentClassNodeShapeStatic.sparqlWherePatterns({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -17672,13 +16927,6 @@ export namespace ConcreteChildClassNodeShape {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Shape that can have a blank node or IRI as an identifier
@@ -17785,7 +17033,7 @@ export namespace BlankNodeShape {
     readonly type: "BlankNodeShape";
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -17803,19 +17051,19 @@ export namespace BlankNodeShape {
     return purify.Either.of({ identifier });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, BlankNodeShape> {
-    return jsonDeserializeProperties(json).map(
+    return propertiesFromJson(json).map(
       (properties) => new BlankNodeShape(properties),
     );
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -17841,22 +17089,14 @@ export namespace BlankNodeShape {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("BlankNodeShape"),
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -17875,20 +17115,15 @@ export namespace BlankNodeShape {
     return purify.Either.of({ identifier });
   }
 
-  function rdfDeserialize(
-    parameters: Parameters<typeof BlankNodeShape.Rdf.deserializeProperties>[0],
+  export function fromRdf(
+    parameters: Parameters<typeof BlankNodeShape.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, BlankNodeShape> {
-    return BlankNodeShape.Rdf.deserializeProperties(parameters).map(
+    return BlankNodeShape.propertiesFromRdf(parameters).map(
       (properties) => new BlankNodeShape(properties),
     );
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -17902,19 +17137,19 @@ export namespace BlankNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        BlankNodeShape.Sparql.constructTemplateTriples({
+        BlankNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        BlankNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
+        BlankNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -17923,11 +17158,11 @@ export namespace BlankNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      BlankNodeShape.Sparql.constructQuery(parameters),
+      BlankNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(_parameters?: {
+  export function sparqlConstructTemplateTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -17935,20 +17170,13 @@ export namespace BlankNodeShape {
     return [];
   }
 
-  function sparqlWherePatterns(_parameters: {
+  export function sparqlWherePatterns(_parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
     return [];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * An abstract base class that will be inherited by the extern object type, showing how to mix generated and hand-written code.
@@ -18058,7 +17286,7 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
     readonly abcStringProperty: string;
   };
 
-  function jsonDeserializeProperties(
+  export function propertiesFromJson(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -18077,20 +17305,20 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
     return purify.Either.of({ identifier, abcStringProperty });
   }
 
-  function jsonDeserialize(
+  export function fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, AbstractBaseClassForExternObjectType> {
-    return ExternObjectType.Json.deserialize(json) as purify.Either<
+    return ExternObjectType.fromJson(json) as purify.Either<
       zod.ZodError,
       AbstractBaseClassForExternObjectType
     >;
   }
 
-  function jsonSchema() {
+  export function jsonSchema() {
     return zodToJsonSchema(jsonZodSchema());
   }
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -18120,7 +17348,7 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
     };
   }
 
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("ExternObjectType"),
@@ -18128,15 +17356,7 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
     });
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    deserializeProperties: jsonDeserializeProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserializeProperties({
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -18169,27 +17389,22 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
     return purify.Either.of({ identifier, abcStringProperty });
   }
 
-  function rdfDeserialize(
+  export function fromRdf(
     parameters: Parameters<
-      typeof AbstractBaseClassForExternObjectTypeStatic.Rdf.deserializeProperties
+      typeof AbstractBaseClassForExternObjectTypeStatic.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
     AbstractBaseClassForExternObjectType
   > {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
-    return ExternObjectType.Rdf.deserialize(otherParameters) as purify.Either<
+    return ExternObjectType.fromRdf(otherParameters) as purify.Either<
       rdfjsResource.Resource.ValueError,
       AbstractBaseClassForExternObjectType
     >;
   }
 
-  export const Rdf = {
-    deserialize: rdfDeserialize,
-    deserializeProperties: rdfDeserializeProperties,
-  };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -18203,13 +17418,13 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        AbstractBaseClassForExternObjectTypeStatic.Sparql.constructTemplateTriples(
+        AbstractBaseClassForExternObjectTypeStatic.sparqlConstructTemplateTriples(
           { ignoreRdfType, subject },
         ),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        AbstractBaseClassForExternObjectTypeStatic.Sparql.wherePatterns({
+        AbstractBaseClassForExternObjectTypeStatic.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -18217,7 +17432,7 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -18226,13 +17441,13 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      AbstractBaseClassForExternObjectTypeStatic.Sparql.constructQuery(
+      AbstractBaseClassForExternObjectTypeStatic.sparqlConstructQuery(
         parameters,
       ),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters?: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -18256,7 +17471,7 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -18284,13 +17499,6 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
       },
     ];
   }
-
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
 }
 /**
  * Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.
@@ -18326,6 +17534,74 @@ export namespace InterfaceUnionNodeShape {
     });
   }
 
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, InterfaceUnionNodeShape> {
+    return (
+      InterfaceUnionNodeShapeMember1.fromJson(json) as purify.Either<
+        zod.ZodError,
+        InterfaceUnionNodeShape
+      >
+    )
+      .altLazy(
+        () =>
+          InterfaceUnionNodeShapeMember2a.fromJson(json) as purify.Either<
+            zod.ZodError,
+            InterfaceUnionNodeShape
+          >,
+      )
+      .altLazy(
+        () =>
+          InterfaceUnionNodeShapeMember2b.fromJson(json) as purify.Either<
+            zod.ZodError,
+            InterfaceUnionNodeShape
+          >,
+      );
+  }
+
+  export function fromRdf({
+    ignoreRdfType,
+    resource,
+    ...context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    InterfaceUnionNodeShape
+  > {
+    return (
+      InterfaceUnionNodeShapeMember1.fromRdf({
+        ...context,
+        resource,
+      }) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        InterfaceUnionNodeShape
+      >
+    )
+      .altLazy(
+        () =>
+          InterfaceUnionNodeShapeMember2a.fromRdf({
+            ...context,
+            resource,
+          }) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            InterfaceUnionNodeShape
+          >,
+      )
+      .altLazy(
+        () =>
+          InterfaceUnionNodeShapeMember2b.fromRdf({
+            ...context,
+            resource,
+          }) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            InterfaceUnionNodeShape
+          >,
+      );
+  }
+
   export function hash<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
@@ -18358,137 +17634,15 @@ export namespace InterfaceUnionNodeShape {
     | InterfaceUnionNodeShapeMember2a.Json
     | InterfaceUnionNodeShapeMember2b.Json;
 
-  function jsonDeserialize(
-    json: unknown,
-  ): purify.Either<zod.ZodError, InterfaceUnionNodeShape> {
-    return (
-      InterfaceUnionNodeShapeMember1.Json.deserialize(json) as purify.Either<
-        zod.ZodError,
-        InterfaceUnionNodeShape
-      >
-    )
-      .altLazy(
-        () =>
-          InterfaceUnionNodeShapeMember2a.Json.deserialize(
-            json,
-          ) as purify.Either<zod.ZodError, InterfaceUnionNodeShape>,
-      )
-      .altLazy(
-        () =>
-          InterfaceUnionNodeShapeMember2b.Json.deserialize(
-            json,
-          ) as purify.Either<zod.ZodError, InterfaceUnionNodeShape>,
-      );
-  }
-
-  function jsonSerialize(
-    _interfaceUnionNodeShape: InterfaceUnionNodeShape,
-  ):
-    | InterfaceUnionNodeShapeMember1.Json
-    | InterfaceUnionNodeShapeMember2a.Json
-    | InterfaceUnionNodeShapeMember2b.Json {
-    switch (_interfaceUnionNodeShape.type) {
-      case "InterfaceUnionNodeShapeMember1":
-        return InterfaceUnionNodeShapeMember1.Json.serialize(
-          _interfaceUnionNodeShape,
-        );
-      case "InterfaceUnionNodeShapeMember2a":
-        return InterfaceUnionNodeShapeMember2a.Json.serialize(
-          _interfaceUnionNodeShape,
-        );
-      case "InterfaceUnionNodeShapeMember2b":
-        return InterfaceUnionNodeShapeMember2b.Json.serialize(
-          _interfaceUnionNodeShape,
-        );
-    }
-  }
-
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.discriminatedUnion("type", [
-      InterfaceUnionNodeShapeMember1.Json.zodSchema(),
-      InterfaceUnionNodeShapeMember2a.Json.zodSchema(),
-      InterfaceUnionNodeShapeMember2b.Json.zodSchema(),
+      InterfaceUnionNodeShapeMember1.jsonZodSchema(),
+      InterfaceUnionNodeShapeMember2a.jsonZodSchema(),
+      InterfaceUnionNodeShapeMember2b.jsonZodSchema(),
     ]);
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    serialize: jsonSerialize,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserialize({
-    ignoreRdfType,
-    resource,
-    ...context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    InterfaceUnionNodeShape
-  > {
-    return (
-      InterfaceUnionNodeShapeMember1.Rdf.deserialize({
-        ...context,
-        resource,
-      }) as purify.Either<
-        rdfjsResource.Resource.ValueError,
-        InterfaceUnionNodeShape
-      >
-    )
-      .altLazy(
-        () =>
-          InterfaceUnionNodeShapeMember2a.Rdf.deserialize({
-            ...context,
-            resource,
-          }) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            InterfaceUnionNodeShape
-          >,
-      )
-      .altLazy(
-        () =>
-          InterfaceUnionNodeShapeMember2b.Rdf.deserialize({
-            ...context,
-            resource,
-          }) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            InterfaceUnionNodeShape
-          >,
-      );
-  }
-
-  function rdfSerialize(
-    _interfaceUnionNodeShape: InterfaceUnionNodeShape,
-    _parameters: {
-      mutateGraph: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    switch (_interfaceUnionNodeShape.type) {
-      case "InterfaceUnionNodeShapeMember1":
-        return InterfaceUnionNodeShapeMember1.Rdf.serialize(
-          _interfaceUnionNodeShape,
-          _parameters,
-        );
-      case "InterfaceUnionNodeShapeMember2a":
-        return InterfaceUnionNodeShapeMember2a.Rdf.serialize(
-          _interfaceUnionNodeShape,
-          _parameters,
-        );
-      case "InterfaceUnionNodeShapeMember2b":
-        return InterfaceUnionNodeShapeMember2b.Rdf.serialize(
-          _interfaceUnionNodeShape,
-          _parameters,
-        );
-    }
-  }
-
-  export const Rdf = { deserialize: rdfDeserialize, serialize: rdfSerialize };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -18502,22 +17656,19 @@ export namespace InterfaceUnionNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InterfaceUnionNodeShape.Sparql.constructTemplateTriples({
+        InterfaceUnionNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceUnionNodeShape.Sparql.wherePatterns({
-          ignoreRdfType,
-          subject,
-        }),
+        InterfaceUnionNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -18526,17 +17677,17 @@ export namespace InterfaceUnionNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      InterfaceUnionNodeShape.Sparql.constructQuery(parameters),
+      InterfaceUnionNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters: {
+  export function sparqlConstructTemplateTriples(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
-      ...InterfaceUnionNodeShapeMember1.Sparql.constructTemplateTriples({
+      ...InterfaceUnionNodeShapeMember1.sparqlConstructTemplateTriples({
         subject:
           parameters.subject ??
           dataFactory.variable!(
@@ -18546,7 +17697,7 @@ export namespace InterfaceUnionNodeShape {
           ? `${parameters.variablePrefix}InterfaceUnionNodeShapeMember1`
           : "interfaceUnionNodeShapeInterfaceUnionNodeShapeMember1",
       }).concat(),
-      ...InterfaceUnionNodeShapeMember2a.Sparql.constructTemplateTriples({
+      ...InterfaceUnionNodeShapeMember2a.sparqlConstructTemplateTriples({
         subject:
           parameters.subject ??
           dataFactory.variable!(
@@ -18556,7 +17707,7 @@ export namespace InterfaceUnionNodeShape {
           ? `${parameters.variablePrefix}InterfaceUnionNodeShapeMember2a`
           : "interfaceUnionNodeShapeInterfaceUnionNodeShapeMember2a",
       }).concat(),
-      ...InterfaceUnionNodeShapeMember2b.Sparql.constructTemplateTriples({
+      ...InterfaceUnionNodeShapeMember2b.sparqlConstructTemplateTriples({
         subject:
           parameters.subject ??
           dataFactory.variable!(
@@ -18569,7 +17720,7 @@ export namespace InterfaceUnionNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -18578,7 +17729,7 @@ export namespace InterfaceUnionNodeShape {
       {
         patterns: [
           {
-            patterns: InterfaceUnionNodeShapeMember1.Sparql.wherePatterns({
+            patterns: InterfaceUnionNodeShapeMember1.sparqlWherePatterns({
               subject:
                 parameters.subject ??
                 dataFactory.variable!(
@@ -18591,7 +17742,7 @@ export namespace InterfaceUnionNodeShape {
             type: "group",
           },
           {
-            patterns: InterfaceUnionNodeShapeMember2a.Sparql.wherePatterns({
+            patterns: InterfaceUnionNodeShapeMember2a.sparqlWherePatterns({
               subject:
                 parameters.subject ??
                 dataFactory.variable!(
@@ -18604,7 +17755,7 @@ export namespace InterfaceUnionNodeShape {
             type: "group",
           },
           {
-            patterns: InterfaceUnionNodeShapeMember2b.Sparql.wherePatterns({
+            patterns: InterfaceUnionNodeShapeMember2b.sparqlWherePatterns({
               subject:
                 parameters.subject ??
                 dataFactory.variable!(
@@ -18622,12 +17773,47 @@ export namespace InterfaceUnionNodeShape {
     ];
   }
 
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
+  export function toJson(
+    _interfaceUnionNodeShape: InterfaceUnionNodeShape,
+  ):
+    | InterfaceUnionNodeShapeMember1.Json
+    | InterfaceUnionNodeShapeMember2a.Json
+    | InterfaceUnionNodeShapeMember2b.Json {
+    switch (_interfaceUnionNodeShape.type) {
+      case "InterfaceUnionNodeShapeMember1":
+        return InterfaceUnionNodeShapeMember1.toJson(_interfaceUnionNodeShape);
+      case "InterfaceUnionNodeShapeMember2a":
+        return InterfaceUnionNodeShapeMember2a.toJson(_interfaceUnionNodeShape);
+      case "InterfaceUnionNodeShapeMember2b":
+        return InterfaceUnionNodeShapeMember2b.toJson(_interfaceUnionNodeShape);
+    }
+  }
+
+  export function toRdf(
+    _interfaceUnionNodeShape: InterfaceUnionNodeShape,
+    _parameters: {
+      mutateGraph: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    switch (_interfaceUnionNodeShape.type) {
+      case "InterfaceUnionNodeShapeMember1":
+        return InterfaceUnionNodeShapeMember1.toRdf(
+          _interfaceUnionNodeShape,
+          _parameters,
+        );
+      case "InterfaceUnionNodeShapeMember2a":
+        return InterfaceUnionNodeShapeMember2a.toRdf(
+          _interfaceUnionNodeShape,
+          _parameters,
+        );
+      case "InterfaceUnionNodeShapeMember2b":
+        return InterfaceUnionNodeShapeMember2b.toRdf(
+          _interfaceUnionNodeShape,
+          _parameters,
+        );
+    }
+  }
 }
 /**
  * A union node shape that is part of another union shape, to test composition of unions.
@@ -18657,6 +17843,55 @@ export namespace InterfaceUnionNodeShapeMember2 {
     });
   }
 
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, InterfaceUnionNodeShapeMember2> {
+    return (
+      InterfaceUnionNodeShapeMember2a.fromJson(json) as purify.Either<
+        zod.ZodError,
+        InterfaceUnionNodeShapeMember2
+      >
+    ).altLazy(
+      () =>
+        InterfaceUnionNodeShapeMember2b.fromJson(json) as purify.Either<
+          zod.ZodError,
+          InterfaceUnionNodeShapeMember2
+        >,
+    );
+  }
+
+  export function fromRdf({
+    ignoreRdfType,
+    resource,
+    ...context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    InterfaceUnionNodeShapeMember2
+  > {
+    return (
+      InterfaceUnionNodeShapeMember2a.fromRdf({
+        ...context,
+        resource,
+      }) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        InterfaceUnionNodeShapeMember2
+      >
+    ).altLazy(
+      () =>
+        InterfaceUnionNodeShapeMember2b.fromRdf({
+          ...context,
+          resource,
+        }) as purify.Either<
+          rdfjsResource.Resource.ValueError,
+          InterfaceUnionNodeShapeMember2
+        >,
+    );
+  }
+
   export function hash<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
@@ -18683,109 +17918,14 @@ export namespace InterfaceUnionNodeShapeMember2 {
     | InterfaceUnionNodeShapeMember2a.Json
     | InterfaceUnionNodeShapeMember2b.Json;
 
-  function jsonDeserialize(
-    json: unknown,
-  ): purify.Either<zod.ZodError, InterfaceUnionNodeShapeMember2> {
-    return (
-      InterfaceUnionNodeShapeMember2a.Json.deserialize(json) as purify.Either<
-        zod.ZodError,
-        InterfaceUnionNodeShapeMember2
-      >
-    ).altLazy(
-      () =>
-        InterfaceUnionNodeShapeMember2b.Json.deserialize(json) as purify.Either<
-          zod.ZodError,
-          InterfaceUnionNodeShapeMember2
-        >,
-    );
-  }
-
-  function jsonSerialize(
-    _interfaceUnionNodeShapeMember2: InterfaceUnionNodeShapeMember2,
-  ):
-    | InterfaceUnionNodeShapeMember2a.Json
-    | InterfaceUnionNodeShapeMember2b.Json {
-    switch (_interfaceUnionNodeShapeMember2.type) {
-      case "InterfaceUnionNodeShapeMember2a":
-        return InterfaceUnionNodeShapeMember2a.Json.serialize(
-          _interfaceUnionNodeShapeMember2,
-        );
-      case "InterfaceUnionNodeShapeMember2b":
-        return InterfaceUnionNodeShapeMember2b.Json.serialize(
-          _interfaceUnionNodeShapeMember2,
-        );
-    }
-  }
-
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.discriminatedUnion("type", [
-      InterfaceUnionNodeShapeMember2a.Json.zodSchema(),
-      InterfaceUnionNodeShapeMember2b.Json.zodSchema(),
+      InterfaceUnionNodeShapeMember2a.jsonZodSchema(),
+      InterfaceUnionNodeShapeMember2b.jsonZodSchema(),
     ]);
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    serialize: jsonSerialize,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserialize({
-    ignoreRdfType,
-    resource,
-    ...context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    InterfaceUnionNodeShapeMember2
-  > {
-    return (
-      InterfaceUnionNodeShapeMember2a.Rdf.deserialize({
-        ...context,
-        resource,
-      }) as purify.Either<
-        rdfjsResource.Resource.ValueError,
-        InterfaceUnionNodeShapeMember2
-      >
-    ).altLazy(
-      () =>
-        InterfaceUnionNodeShapeMember2b.Rdf.deserialize({
-          ...context,
-          resource,
-        }) as purify.Either<
-          rdfjsResource.Resource.ValueError,
-          InterfaceUnionNodeShapeMember2
-        >,
-    );
-  }
-
-  function rdfSerialize(
-    _interfaceUnionNodeShapeMember2: InterfaceUnionNodeShapeMember2,
-    _parameters: {
-      mutateGraph: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    switch (_interfaceUnionNodeShapeMember2.type) {
-      case "InterfaceUnionNodeShapeMember2a":
-        return InterfaceUnionNodeShapeMember2a.Rdf.serialize(
-          _interfaceUnionNodeShapeMember2,
-          _parameters,
-        );
-      case "InterfaceUnionNodeShapeMember2b":
-        return InterfaceUnionNodeShapeMember2b.Rdf.serialize(
-          _interfaceUnionNodeShapeMember2,
-          _parameters,
-        );
-    }
-  }
-
-  export const Rdf = { deserialize: rdfDeserialize, serialize: rdfSerialize };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -18799,14 +17939,14 @@ export namespace InterfaceUnionNodeShapeMember2 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InterfaceUnionNodeShapeMember2.Sparql.constructTemplateTriples({
+        InterfaceUnionNodeShapeMember2.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceUnionNodeShapeMember2.Sparql.wherePatterns({
+        InterfaceUnionNodeShapeMember2.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -18814,7 +17954,7 @@ export namespace InterfaceUnionNodeShapeMember2 {
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -18823,17 +17963,17 @@ export namespace InterfaceUnionNodeShapeMember2 {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      InterfaceUnionNodeShapeMember2.Sparql.constructQuery(parameters),
+      InterfaceUnionNodeShapeMember2.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters: {
+  export function sparqlConstructTemplateTriples(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
-      ...InterfaceUnionNodeShapeMember2a.Sparql.constructTemplateTriples({
+      ...InterfaceUnionNodeShapeMember2a.sparqlConstructTemplateTriples({
         subject:
           parameters.subject ??
           dataFactory.variable!(
@@ -18843,7 +17983,7 @@ export namespace InterfaceUnionNodeShapeMember2 {
           ? `${parameters.variablePrefix}InterfaceUnionNodeShapeMember2a`
           : "interfaceUnionNodeShapeMember2InterfaceUnionNodeShapeMember2a",
       }).concat(),
-      ...InterfaceUnionNodeShapeMember2b.Sparql.constructTemplateTriples({
+      ...InterfaceUnionNodeShapeMember2b.sparqlConstructTemplateTriples({
         subject:
           parameters.subject ??
           dataFactory.variable!(
@@ -18856,7 +17996,7 @@ export namespace InterfaceUnionNodeShapeMember2 {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -18865,7 +18005,7 @@ export namespace InterfaceUnionNodeShapeMember2 {
       {
         patterns: [
           {
-            patterns: InterfaceUnionNodeShapeMember2a.Sparql.wherePatterns({
+            patterns: InterfaceUnionNodeShapeMember2a.sparqlWherePatterns({
               subject:
                 parameters.subject ??
                 dataFactory.variable!(
@@ -18878,7 +18018,7 @@ export namespace InterfaceUnionNodeShapeMember2 {
             type: "group",
           },
           {
-            patterns: InterfaceUnionNodeShapeMember2b.Sparql.wherePatterns({
+            patterns: InterfaceUnionNodeShapeMember2b.sparqlWherePatterns({
               subject:
                 parameters.subject ??
                 dataFactory.variable!(
@@ -18896,12 +18036,43 @@ export namespace InterfaceUnionNodeShapeMember2 {
     ];
   }
 
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
+  export function toJson(
+    _interfaceUnionNodeShapeMember2: InterfaceUnionNodeShapeMember2,
+  ):
+    | InterfaceUnionNodeShapeMember2a.Json
+    | InterfaceUnionNodeShapeMember2b.Json {
+    switch (_interfaceUnionNodeShapeMember2.type) {
+      case "InterfaceUnionNodeShapeMember2a":
+        return InterfaceUnionNodeShapeMember2a.toJson(
+          _interfaceUnionNodeShapeMember2,
+        );
+      case "InterfaceUnionNodeShapeMember2b":
+        return InterfaceUnionNodeShapeMember2b.toJson(
+          _interfaceUnionNodeShapeMember2,
+        );
+    }
+  }
+
+  export function toRdf(
+    _interfaceUnionNodeShapeMember2: InterfaceUnionNodeShapeMember2,
+    _parameters: {
+      mutateGraph: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    switch (_interfaceUnionNodeShapeMember2.type) {
+      case "InterfaceUnionNodeShapeMember2a":
+        return InterfaceUnionNodeShapeMember2a.toRdf(
+          _interfaceUnionNodeShapeMember2,
+          _parameters,
+        );
+      case "InterfaceUnionNodeShapeMember2b":
+        return InterfaceUnionNodeShapeMember2b.toRdf(
+          _interfaceUnionNodeShapeMember2,
+          _parameters,
+        );
+    }
+  }
 }
 /**
  * Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.
@@ -18928,6 +18099,65 @@ export namespace UnionNodeShape {
     });
   }
 
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, UnionNodeShape> {
+    return (
+      UnionNodeShapeMember1.fromJson(json) as purify.Either<
+        zod.ZodError,
+        UnionNodeShape
+      >
+    )
+      .altLazy(
+        () =>
+          UnionNodeShapeMember2.fromJson(json) as purify.Either<
+            zod.ZodError,
+            UnionNodeShape
+          >,
+      )
+      .altLazy(
+        () =>
+          ExternObjectType.fromJson(json) as purify.Either<
+            zod.ZodError,
+            UnionNodeShape
+          >,
+      );
+  }
+
+  export function fromRdf({
+    ignoreRdfType,
+    resource,
+    ...context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    resource: rdfjsResource.Resource;
+  }): purify.Either<rdfjsResource.Resource.ValueError, UnionNodeShape> {
+    return (
+      UnionNodeShapeMember1.fromRdf({ ...context, resource }) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        UnionNodeShape
+      >
+    )
+      .altLazy(
+        () =>
+          UnionNodeShapeMember2.fromRdf({
+            ...context,
+            resource,
+          }) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            UnionNodeShape
+          >,
+      )
+      .altLazy(
+        () =>
+          ExternObjectType.fromRdf({ ...context, resource }) as purify.Either<
+            rdfjsResource.Resource.ValueError,
+            UnionNodeShape
+          >,
+      );
+  }
+
   export function hash<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
@@ -18948,118 +18178,15 @@ export namespace UnionNodeShape {
     | UnionNodeShapeMember2.Json
     | ExternObjectType.Json;
 
-  function jsonDeserialize(
-    json: unknown,
-  ): purify.Either<zod.ZodError, UnionNodeShape> {
-    return (
-      UnionNodeShapeMember1.Json.deserialize(json) as purify.Either<
-        zod.ZodError,
-        UnionNodeShape
-      >
-    )
-      .altLazy(
-        () =>
-          UnionNodeShapeMember2.Json.deserialize(json) as purify.Either<
-            zod.ZodError,
-            UnionNodeShape
-          >,
-      )
-      .altLazy(
-        () =>
-          ExternObjectType.Json.deserialize(json) as purify.Either<
-            zod.ZodError,
-            UnionNodeShape
-          >,
-      );
-  }
-
-  function jsonSerialize(
-    _unionNodeShape: UnionNodeShape,
-  ):
-    | UnionNodeShapeMember1.Json
-    | UnionNodeShapeMember2.Json
-    | ExternObjectType.Json {
-    switch (_unionNodeShape.type) {
-      case "UnionNodeShapeMember1":
-        return _unionNodeShape.toJson();
-      case "UnionNodeShapeMember2":
-        return _unionNodeShape.toJson();
-      case "ExternObjectType":
-        return _unionNodeShape.toJson();
-    }
-  }
-
-  function jsonZodSchema() {
+  export function jsonZodSchema() {
     return zod.discriminatedUnion("type", [
-      UnionNodeShapeMember1.Json.zodSchema(),
-      UnionNodeShapeMember2.Json.zodSchema(),
-      ExternObjectType.Json.zodSchema(),
+      UnionNodeShapeMember1.jsonZodSchema(),
+      UnionNodeShapeMember2.jsonZodSchema(),
+      ExternObjectType.jsonZodSchema(),
     ]);
   }
 
-  export const Json = {
-    deserialize: jsonDeserialize,
-    serialize: jsonSerialize,
-    zodSchema: jsonZodSchema,
-  };
-
-  function rdfDeserialize({
-    ignoreRdfType,
-    resource,
-    ...context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    resource: rdfjsResource.Resource;
-  }): purify.Either<rdfjsResource.Resource.ValueError, UnionNodeShape> {
-    return (
-      UnionNodeShapeMember1.Rdf.deserialize({
-        ...context,
-        resource,
-      }) as purify.Either<rdfjsResource.Resource.ValueError, UnionNodeShape>
-    )
-      .altLazy(
-        () =>
-          UnionNodeShapeMember2.Rdf.deserialize({
-            ...context,
-            resource,
-          }) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            UnionNodeShape
-          >,
-      )
-      .altLazy(
-        () =>
-          ExternObjectType.Rdf.deserialize({
-            ...context,
-            resource,
-          }) as purify.Either<
-            rdfjsResource.Resource.ValueError,
-            UnionNodeShape
-          >,
-      );
-  }
-
-  function rdfSerialize(
-    _unionNodeShape: UnionNodeShape,
-    _parameters: {
-      mutateGraph: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    switch (_unionNodeShape.type) {
-      case "UnionNodeShapeMember1":
-        return _unionNodeShape.toRdf(_parameters);
-      case "UnionNodeShapeMember2":
-        return _unionNodeShape.toRdf(_parameters);
-      case "ExternObjectType":
-        return _unionNodeShape.toRdf(_parameters);
-    }
-  }
-
-  export const Rdf = { deserialize: rdfDeserialize, serialize: rdfSerialize };
-
-  function sparqlConstructQuery(
+  export function sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
       prefixes?: { [prefix: string]: string };
@@ -19073,19 +18200,19 @@ export namespace UnionNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        UnionNodeShape.Sparql.constructTemplateTriples({
+        UnionNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        UnionNodeShape.Sparql.wherePatterns({ ignoreRdfType, subject }),
+        UnionNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
       ),
     };
   }
 
-  function sparqlConstructQueryString(
+  export function sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
       subject?: sparqljs.Triple["subject"];
@@ -19094,17 +18221,17 @@ export namespace UnionNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      UnionNodeShape.Sparql.constructQuery(parameters),
+      UnionNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
-  function sparqlConstructTemplateTriples(parameters: {
+  export function sparqlConstructTemplateTriples(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
-      ...UnionNodeShapeMember1.Sparql.constructTemplateTriples({
+      ...UnionNodeShapeMember1.sparqlConstructTemplateTriples({
         subject:
           parameters.subject ??
           dataFactory.variable!("unionNodeShapeUnionNodeShapeMember1"),
@@ -19112,7 +18239,7 @@ export namespace UnionNodeShape {
           ? `${parameters.variablePrefix}UnionNodeShapeMember1`
           : "unionNodeShapeUnionNodeShapeMember1",
       }).concat(),
-      ...UnionNodeShapeMember2.Sparql.constructTemplateTriples({
+      ...UnionNodeShapeMember2.sparqlConstructTemplateTriples({
         subject:
           parameters.subject ??
           dataFactory.variable!("unionNodeShapeUnionNodeShapeMember2"),
@@ -19120,7 +18247,7 @@ export namespace UnionNodeShape {
           ? `${parameters.variablePrefix}UnionNodeShapeMember2`
           : "unionNodeShapeUnionNodeShapeMember2",
       }).concat(),
-      ...ExternObjectType.Sparql.constructTemplateTriples({
+      ...ExternObjectType.sparqlConstructTemplateTriples({
         subject:
           parameters.subject ??
           dataFactory.variable!("unionNodeShapeExternObjectType"),
@@ -19131,7 +18258,7 @@ export namespace UnionNodeShape {
     ];
   }
 
-  function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -19140,7 +18267,7 @@ export namespace UnionNodeShape {
       {
         patterns: [
           {
-            patterns: UnionNodeShapeMember1.Sparql.wherePatterns({
+            patterns: UnionNodeShapeMember1.sparqlWherePatterns({
               subject:
                 parameters.subject ??
                 dataFactory.variable!("unionNodeShapeUnionNodeShapeMember1"),
@@ -19151,7 +18278,7 @@ export namespace UnionNodeShape {
             type: "group",
           },
           {
-            patterns: UnionNodeShapeMember2.Sparql.wherePatterns({
+            patterns: UnionNodeShapeMember2.sparqlWherePatterns({
               subject:
                 parameters.subject ??
                 dataFactory.variable!("unionNodeShapeUnionNodeShapeMember2"),
@@ -19162,7 +18289,7 @@ export namespace UnionNodeShape {
             type: "group",
           },
           {
-            patterns: ExternObjectType.Sparql.wherePatterns({
+            patterns: ExternObjectType.sparqlWherePatterns({
               subject:
                 parameters.subject ??
                 dataFactory.variable!("unionNodeShapeExternObjectType"),
@@ -19178,10 +18305,36 @@ export namespace UnionNodeShape {
     ];
   }
 
-  export const Sparql = {
-    constructQuery: sparqlConstructQuery,
-    constructQueryString: sparqlConstructQueryString,
-    constructTemplateTriples: sparqlConstructTemplateTriples,
-    wherePatterns: sparqlWherePatterns,
-  };
+  export function toJson(
+    _unionNodeShape: UnionNodeShape,
+  ):
+    | UnionNodeShapeMember1.Json
+    | UnionNodeShapeMember2.Json
+    | ExternObjectType.Json {
+    switch (_unionNodeShape.type) {
+      case "UnionNodeShapeMember1":
+        return _unionNodeShape.toJson();
+      case "UnionNodeShapeMember2":
+        return _unionNodeShape.toJson();
+      case "ExternObjectType":
+        return _unionNodeShape.toJson();
+    }
+  }
+
+  export function toRdf(
+    _unionNodeShape: UnionNodeShape,
+    _parameters: {
+      mutateGraph: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    switch (_unionNodeShape.type) {
+      case "UnionNodeShapeMember1":
+        return _unionNodeShape.toRdf(_parameters);
+      case "UnionNodeShapeMember2":
+        return _unionNodeShape.toRdf(_parameters);
+      case "ExternObjectType":
+        return _unionNodeShape.toRdf(_parameters);
+    }
+  }
 }

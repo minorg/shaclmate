@@ -1,6 +1,8 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
+
 import { camelCase } from "change-case";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
+
 import type { ObjectType } from "../ObjectType.js";
 import { sparqlConstructQueryFunctionDeclaration } from "./sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "./sparqlConstructQueryStringFunctionDeclaration.js";
@@ -28,7 +30,7 @@ export function sparqlFunctionDeclarations(
   const sparqlConstructTemplateTriples = [
     ...this.parentObjectTypes.map(
       (parentObjectType) =>
-        `...${parentObjectType.staticModuleName}.Sparql.constructTemplateTriples({ ignoreRdfType: true, subject, variablePrefix })`,
+        `...${parentObjectType.staticModuleName}.sparqlConstructTemplateTriples({ ignoreRdfType: true, subject, variablePrefix })`,
     ),
     ...(this.fromRdfType.isJust()
       ? [
@@ -43,7 +45,7 @@ export function sparqlFunctionDeclarations(
   const sparqlWherePatterns = [
     ...this.parentObjectTypes.map(
       (parentObjectType) =>
-        `...${parentObjectType.staticModuleName}.Sparql.wherePatterns({ ignoreRdfType: true, subject, variablePrefix })`,
+        `...${parentObjectType.staticModuleName}.sparqlWherePatterns({ ignoreRdfType: true, subject, variablePrefix })`,
     ),
     ...(this.fromRdfType.isJust()
       ? [
@@ -59,6 +61,7 @@ export function sparqlFunctionDeclarations(
     sparqlConstructQueryFunctionDeclaration.bind(this)(),
     sparqlConstructQueryStringFunctionDeclaration.bind(this)(),
     {
+      isExported: true,
       kind: StructureKind.Function,
       name: "sparqlConstructTemplateTriples",
       parameters: [
@@ -77,6 +80,7 @@ export function sparqlFunctionDeclarations(
       ],
     },
     {
+      isExported: true,
       kind: StructureKind.Function,
       name: "sparqlWherePatterns",
       parameters: [

@@ -162,12 +162,9 @@ export class ObjectType extends DeclaredType {
       ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
       ..._ObjectType.jsonTypeAliasDeclaration.bind(this)().toList(),
       ..._ObjectType.jsonFunctionDeclarations.bind(this)(),
-      ..._ObjectType.jsonVariableStatement.bind(this)().toList(),
       ..._ObjectType.hashFunctionDeclarations.bind(this)(),
       ..._ObjectType.rdfFunctionDeclarations.bind(this)(),
-      ..._ObjectType.rdfVariableStatement.bind(this)().toList(),
       ..._ObjectType.sparqlFunctionDeclarations.bind(this)(),
-      ..._ObjectType.sparqlVariableStatement.bind(this)().toList(),
     ];
 
     if (staticModuleStatements.length > 0) {
@@ -288,13 +285,13 @@ export class ObjectType extends DeclaredType {
     variables,
   }: Parameters<Type["fromJsonExpression"]>[0]): string {
     // Assumes the JSON object has been recursively validated already.
-    return `${this.staticModuleName}.Json.deserialize(${variables.value}).unsafeCoerce()`;
+    return `${this.staticModuleName}.fromJson(${variables.value}).unsafeCoerce()`;
   }
 
   override fromRdfExpression({
     variables,
   }: Parameters<Type["fromRdfExpression"]>[0]): string {
-    return `${variables.resourceValues}.head().chain(value => value.to${this.rdfjsResourceType().named ? "Named" : ""}Resource()).chain(_resource => ${this.staticModuleName}.Rdf.deserialize({ ...${variables.context}, ${variables.ignoreRdfType ? "ignoreRdfType: true, " : ""}languageIn: ${variables.languageIn}, resource: _resource }))`;
+    return `${variables.resourceValues}.head().chain(value => value.to${this.rdfjsResourceType().named ? "Named" : ""}Resource()).chain(_resource => ${this.staticModuleName}.fromRdf({ ...${variables.context}, ${variables.ignoreRdfType ? "ignoreRdfType: true, " : ""}languageIn: ${variables.languageIn}, resource: _resource }))`;
   }
 
   override hashStatements({
@@ -314,14 +311,14 @@ export class ObjectType extends DeclaredType {
     variables,
   }: { variables: { scopePrefix: string } }): Maybe<string> {
     return Maybe.of(
-      `${this.staticModuleName}.Json.uiSchema({ scopePrefix: ${variables.scopePrefix} })`,
+      `${this.staticModuleName}.jsonUiSchema({ scopePrefix: ${variables.scopePrefix} })`,
     );
   }
 
   override jsonZodSchema(
     _parameters: Parameters<Type["jsonZodSchema"]>[0],
   ): ReturnType<Type["jsonZodSchema"]> {
-    return `${this.staticModuleName}.Json.zodSchema()`;
+    return `${this.staticModuleName}.jsonZodSchema()`;
   }
 
   rdfjsResourceType(options?: { mutable?: boolean }): {
@@ -366,7 +363,7 @@ export class ObjectType extends DeclaredType {
         return super.sparqlConstructTemplateTriples({ context, variables });
       case "type":
         return [
-          `...${this.staticModuleName}.Sparql.constructTemplateTriples(${objectInitializer(
+          `...${this.staticModuleName}.sparqlConstructTemplateTriples(${objectInitializer(
             {
               ignoreRdfType: true, // Can ignore the rdf:type when the object is nested
               subject: variables.subject,
@@ -386,13 +383,11 @@ export class ObjectType extends DeclaredType {
         return super.sparqlWherePatterns({ context, variables });
       case "type":
         return [
-          `...${this.staticModuleName}.Sparql.wherePatterns(${objectInitializer(
-            {
-              ignoreRdfType: true, // Can ignore the rdf:type when the object is nested
-              subject: variables.subject,
-              variablePrefix: variables.variablePrefix,
-            },
-          )})`,
+          `...${this.staticModuleName}.sparqlWherePatterns(${objectInitializer({
+            ignoreRdfType: true, // Can ignore the rdf:type when the object is nested
+            subject: variables.subject,
+            variablePrefix: variables.variablePrefix,
+          })})`,
         ];
     }
   }
@@ -404,7 +399,7 @@ export class ObjectType extends DeclaredType {
       case "class":
         return `${variables.value}.toJson()`;
       case "interface":
-        return `${this.staticModuleName}.Json.serialize(${variables.value})`;
+        return `${this.staticModuleName}.toJson(${variables.value})`;
     }
   }
 
@@ -415,7 +410,7 @@ export class ObjectType extends DeclaredType {
       case "class":
         return `${variables.value}.toRdf({ mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} })`;
       case "interface":
-        return `${this.staticModuleName}.Rdf.serialize(${variables.value}, { mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} })`;
+        return `${this.staticModuleName}.toRdf(${variables.value}, { mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} })`;
     }
   }
 
