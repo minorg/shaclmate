@@ -159,15 +159,15 @@ export class ObjectType extends DeclaredType {
     const staticModuleStatements: StatementStructures[] = [
       ..._ObjectType.createFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.equalsFunctionDeclaration.bind(this)().toList(),
-      ..._ObjectType.fromRdfFunctionDeclarations.bind(this)(),
       ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
       ..._ObjectType.jsonTypeAliasDeclaration.bind(this)().toList(),
       ..._ObjectType.jsonFunctionDeclarations.bind(this)(),
       ..._ObjectType.jsonVariableStatement.bind(this)().toList(),
       ..._ObjectType.hashFunctionDeclarations.bind(this)(),
+      ..._ObjectType.rdfFunctionDeclarations.bind(this)(),
+      ..._ObjectType.rdfVariableStatement.bind(this)().toList(),
       ..._ObjectType.sparqlFunctionDeclarations.bind(this)(),
       ..._ObjectType.sparqlVariableStatement.bind(this)().toList(),
-      ..._ObjectType.toRdfFunctionDeclaration.bind(this)().toList(),
     ];
 
     if (staticModuleStatements.length > 0) {
@@ -284,13 +284,13 @@ export class ObjectType extends DeclaredType {
     variables,
   }: Parameters<Type["fromJsonExpression"]>[0]): string {
     // Assumes the JSON object has been recursively validated already.
-    return `${this.staticModuleName}.Json.parse(${variables.value}).unsafeCoerce()`;
+    return `${this.staticModuleName}.Json.deserialize(${variables.value}).unsafeCoerce()`;
   }
 
   override fromRdfExpression({
     variables,
   }: Parameters<Type["fromRdfExpression"]>[0]): string {
-    return `${variables.resourceValues}.head().chain(value => value.to${this.rdfjsResourceType().named ? "Named" : ""}Resource()).chain(_resource => ${this.staticModuleName}.fromRdf({ ...${variables.context}, ${variables.ignoreRdfType ? "ignoreRdfType: true, " : ""}languageIn: ${variables.languageIn}, resource: _resource }))`;
+    return `${variables.resourceValues}.head().chain(value => value.to${this.rdfjsResourceType().named ? "Named" : ""}Resource()).chain(_resource => ${this.staticModuleName}.Rdf.deserialize({ ...${variables.context}, ${variables.ignoreRdfType ? "ignoreRdfType: true, " : ""}languageIn: ${variables.languageIn}, resource: _resource }))`;
   }
 
   override hashStatements({
@@ -404,7 +404,7 @@ export class ObjectType extends DeclaredType {
       case "class":
         return `${variables.value}.toJson()`;
       case "interface":
-        return `${this.staticModuleName}.Json.unparse(${variables.value})`;
+        return `${this.staticModuleName}.Json.serialize(${variables.value})`;
     }
   }
 

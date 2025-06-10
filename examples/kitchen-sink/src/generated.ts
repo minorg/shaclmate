@@ -343,54 +343,13 @@ export class UuidV4IriNodeShape {
 }
 
 export namespace UuidV4IriNodeShape {
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource<rdfjs.NamedNode>;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.NamedNode; stringProperty: string }
-  > {
-    const identifier = _resource.identifier;
-    const _stringPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      string
-    > = _resource
-      .values(dataFactory.namedNode("http://example.com/stringProperty"), {
-        unique: true,
-      })
-      .head()
-      .chain((_value) => _value.toString());
-    if (_stringPropertyEither.isLeft()) {
-      return _stringPropertyEither;
-    }
-
-    const stringProperty = _stringPropertyEither.unsafeCoerce();
-    return purify.Either.of({ identifier, stringProperty });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<typeof UuidV4IriNodeShape._propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, UuidV4IriNodeShape> {
-    return UuidV4IriNodeShape._propertiesFromRdf(parameters).map(
-      (properties) => new UuidV4IriNodeShape(properties),
-    );
-  }
-
   export type Json = {
     readonly "@id": string;
     readonly type: "UuidV4IriNodeShape";
     readonly stringProperty: string;
   };
 
-  function jsonParseProperties(
+  function jsonDeserializeProperties(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -407,7 +366,7 @@ export namespace UuidV4IriNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  function jsonParse(
+  function jsonDeserialize(
     json: unknown,
   ): purify.Either<zod.ZodError, UuidV4IriNodeShape> {
     return jsonParseProperties(json).map(
@@ -455,12 +414,71 @@ export namespace UuidV4IriNodeShape {
   }
 
   export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
     schema: jsonSchema,
     uiSchema: jsonUiSchema,
     zodSchema: jsonZodSchema,
   };
+
+  export function parseProperties({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource<rdfjs.NamedNode>;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.NamedNode; stringProperty: string }
+  > {
+    const identifier = _resource.identifier;
+    const _stringPropertyEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      string
+    > = _resource
+      .values(dataFactory.namedNode("http://example.com/stringProperty"), {
+        unique: true,
+      })
+      .head()
+      .chain((_value) => _value.toString());
+    if (_stringPropertyEither.isLeft()) {
+      return _stringPropertyEither;
+    }
+
+    const stringProperty = _stringPropertyEither.unsafeCoerce();
+    return purify.Either.of({ identifier, stringProperty });
+  }
+
+  export function rdfDeserialize(
+    parameters: Parameters<typeof UuidV4IriNodeShape._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, UuidV4IriNodeShape> {
+    return UuidV4IriNodeShape._propertiesFromRdf(parameters).map(
+      (properties) => new UuidV4IriNodeShape(properties),
+    );
+  }
+
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
+    const _resource = resourceSet.mutableNamedResource(this.identifier, {
+      mutateGraph,
+    });
+    _resource.add(
+      dataFactory.namedNode("http://example.com/stringProperty"),
+      this.stringProperty,
+    );
+    return _resource;
+  }
 
   function sparqlConstructQuery(
     parameters?: {
@@ -902,7 +920,197 @@ export class UnionPropertiesNodeShape {
 }
 
 export namespace UnionPropertiesNodeShape {
-  export function _propertiesFromRdf({
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "UnionPropertiesNodeShape";
+    readonly orLiteralsProperty:
+      | {
+          readonly "@language": string | undefined;
+          readonly "@type": string | undefined;
+          readonly "@value": string;
+        }
+      | undefined;
+    readonly orTermsProperty:
+      | (
+          | { readonly "@id": string; readonly termType: "NamedNode" }
+          | {
+              readonly "@language": string | undefined;
+              readonly "@type": string | undefined;
+              readonly "@value": string;
+              readonly termType: "Literal";
+            }
+        )
+      | undefined;
+    readonly orUnrelatedProperty:
+      | (
+          | { type: "0-number"; value: number }
+          | { type: "1-NonClassNodeShape"; value: NonClassNodeShape.Json }
+        )
+      | undefined;
+  };
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      orLiteralsProperty: purify.Maybe<rdfjs.Literal>;
+      orTermsProperty: purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>;
+      orUnrelatedProperty: purify.Maybe<
+        | { type: "0-number"; value: number }
+        | { type: "1-NonClassNodeShape"; value: NonClassNodeShape }
+      >;
+    }
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const orLiteralsProperty = purify.Maybe.fromNullable(
+      _jsonObject["orLiteralsProperty"],
+    ).map((_item) =>
+      dataFactory.literal(
+        _item["@value"],
+        typeof _item["@language"] !== "undefined"
+          ? _item["@language"]
+          : typeof _item["@type"] !== "undefined"
+            ? dataFactory.namedNode(_item["@type"])
+            : undefined,
+      ),
+    );
+    const orTermsProperty = purify.Maybe.fromNullable(
+      _jsonObject["orTermsProperty"],
+    ).map((_item) =>
+      _item.termType === "NamedNode"
+        ? dataFactory.namedNode(_item["@id"])
+        : dataFactory.literal(
+            _item["@value"],
+            typeof _item["@language"] !== "undefined"
+              ? _item["@language"]
+              : typeof _item["@type"] !== "undefined"
+                ? dataFactory.namedNode(_item["@type"])
+                : undefined,
+          ),
+    );
+    const orUnrelatedProperty = purify.Maybe.fromNullable(
+      _jsonObject["orUnrelatedProperty"],
+    ).map((_item) =>
+      _item.type === "1-NonClassNodeShape"
+        ? {
+            type: "1-NonClassNodeShape" as const,
+            value: NonClassNodeShape.Json.deserialize(
+              _item.value,
+            ).unsafeCoerce(),
+          }
+        : { type: "0-number" as const, value: _item.value },
+    );
+    return purify.Either.of({
+      identifier,
+      orLiteralsProperty,
+      orTermsProperty,
+      orUnrelatedProperty,
+    });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, UnionPropertiesNodeShape> {
+    return jsonParseProperties(json).map(
+      (properties) => new UnionPropertiesNodeShape(properties),
+    );
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "UnionPropertiesNodeShape" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/orLiteralsProperty`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/orTermsProperty`, type: "Control" },
+        {
+          scope: `${scopePrefix}/properties/orUnrelatedProperty`,
+          type: "Control",
+        },
+      ],
+      label: "UnionPropertiesNodeShape",
+      type: "Group",
+    };
+  }
+
+  function jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      type: zod.literal("UnionPropertiesNodeShape"),
+      orLiteralsProperty: zod
+        .object({
+          "@language": zod.string().optional(),
+          "@type": zod.string().optional(),
+          "@value": zod.string(),
+        })
+        .optional(),
+      orTermsProperty: zod
+        .discriminatedUnion("termType", [
+          zod.object({
+            "@language": zod.string().optional(),
+            "@type": zod.string().optional(),
+            "@value": zod.string(),
+            termType: zod.literal("Literal"),
+          }),
+          zod.object({
+            "@id": zod.string().min(1),
+            termType: zod.literal("NamedNode"),
+          }),
+        ])
+        .optional(),
+      orUnrelatedProperty: zod
+        .discriminatedUnion("type", [
+          zod.object({ type: zod.literal("0-number"), value: zod.number() }),
+          zod.object({
+            type: zod.literal("1-NonClassNodeShape"),
+            value: NonClassNodeShape.Json.zodSchema(),
+          }),
+        ])
+        .optional(),
+    });
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+  };
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -1061,7 +1269,7 @@ export namespace UnionPropertiesNodeShape {
     });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<
       typeof UnionPropertiesNodeShape._propertiesFromRdf
     >[0],
@@ -1074,193 +1282,38 @@ export namespace UnionPropertiesNodeShape {
     );
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "UnionPropertiesNodeShape";
-    readonly orLiteralsProperty:
-      | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
-          readonly "@value": string;
-        }
-      | undefined;
-    readonly orTermsProperty:
-      | (
-          | { readonly "@id": string; readonly termType: "NamedNode" }
-          | {
-              readonly "@language": string | undefined;
-              readonly "@type": string | undefined;
-              readonly "@value": string;
-              readonly termType: "Literal";
-            }
-        )
-      | undefined;
-    readonly orUnrelatedProperty:
-      | (
-          | { type: "0-number"; value: number }
-          | { type: "1-NonClassNodeShape"; value: NonClassNodeShape.Json }
-        )
-      | undefined;
-  };
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      orLiteralsProperty: purify.Maybe<rdfjs.Literal>;
-      orTermsProperty: purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>;
-      orUnrelatedProperty: purify.Maybe<
-        | { type: "0-number"; value: number }
-        | { type: "1-NonClassNodeShape"; value: NonClassNodeShape }
-      >;
-    }
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const orLiteralsProperty = purify.Maybe.fromNullable(
-      _jsonObject["orLiteralsProperty"],
-    ).map((_item) =>
-      dataFactory.literal(
-        _item["@value"],
-        typeof _item["@language"] !== "undefined"
-          ? _item["@language"]
-          : typeof _item["@type"] !== "undefined"
-            ? dataFactory.namedNode(_item["@type"])
-            : undefined,
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
+    });
+    _resource.add(
+      dataFactory.namedNode("http://example.com/orLiteralsProperty"),
+      this.orLiteralsProperty,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/orTermsProperty"),
+      this.orTermsProperty,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/orUnrelatedProperty"),
+      this.orUnrelatedProperty.map((_value) =>
+        _value.type === "1-NonClassNodeShape"
+          ? _value.value.toRdf({
+              mutateGraph: mutateGraph,
+              resourceSet: resourceSet,
+            })
+          : _value.value,
       ),
     );
-    const orTermsProperty = purify.Maybe.fromNullable(
-      _jsonObject["orTermsProperty"],
-    ).map((_item) =>
-      _item.termType === "NamedNode"
-        ? dataFactory.namedNode(_item["@id"])
-        : dataFactory.literal(
-            _item["@value"],
-            typeof _item["@language"] !== "undefined"
-              ? _item["@language"]
-              : typeof _item["@type"] !== "undefined"
-                ? dataFactory.namedNode(_item["@type"])
-                : undefined,
-          ),
-    );
-    const orUnrelatedProperty = purify.Maybe.fromNullable(
-      _jsonObject["orUnrelatedProperty"],
-    ).map((_item) =>
-      _item.type === "1-NonClassNodeShape"
-        ? {
-            type: "1-NonClassNodeShape" as const,
-            value: NonClassNodeShape.Json.parse(_item.value).unsafeCoerce(),
-          }
-        : { type: "0-number" as const, value: _item.value },
-    );
-    return purify.Either.of({
-      identifier,
-      orLiteralsProperty,
-      orTermsProperty,
-      orUnrelatedProperty,
-    });
+    return _resource;
   }
-
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, UnionPropertiesNodeShape> {
-    return jsonParseProperties(json).map(
-      (properties) => new UnionPropertiesNodeShape(properties),
-    );
-  }
-
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "UnionPropertiesNodeShape" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/orLiteralsProperty`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/orTermsProperty`, type: "Control" },
-        {
-          scope: `${scopePrefix}/properties/orUnrelatedProperty`,
-          type: "Control",
-        },
-      ],
-      label: "UnionPropertiesNodeShape",
-      type: "Group",
-    };
-  }
-
-  function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.literal("UnionPropertiesNodeShape"),
-      orLiteralsProperty: zod
-        .object({
-          "@language": zod.string().optional(),
-          "@type": zod.string().optional(),
-          "@value": zod.string(),
-        })
-        .optional(),
-      orTermsProperty: zod
-        .discriminatedUnion("termType", [
-          zod.object({
-            "@language": zod.string().optional(),
-            "@type": zod.string().optional(),
-            "@value": zod.string(),
-            termType: zod.literal("Literal"),
-          }),
-          zod.object({
-            "@id": zod.string().min(1),
-            termType: zod.literal("NamedNode"),
-          }),
-        ])
-        .optional(),
-      orUnrelatedProperty: zod
-        .discriminatedUnion("type", [
-          zod.object({ type: zod.literal("0-number"), value: zod.number() }),
-          zod.object({
-            type: zod.literal("1-NonClassNodeShape"),
-            value: NonClassNodeShape.Json.zodSchema(),
-          }),
-        ])
-        .optional(),
-    });
-  }
-
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
 
   function sparqlConstructQuery(
     parameters?: {
@@ -1560,54 +1613,13 @@ export class UnionNodeShapeMember2 {
 }
 
 export namespace UnionNodeShapeMember2 {
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode; stringProperty2: string }
-  > {
-    const identifier = _resource.identifier;
-    const _stringProperty2Either: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      string
-    > = _resource
-      .values(dataFactory.namedNode("http://example.com/stringProperty2"), {
-        unique: true,
-      })
-      .head()
-      .chain((_value) => _value.toString());
-    if (_stringProperty2Either.isLeft()) {
-      return _stringProperty2Either;
-    }
-
-    const stringProperty2 = _stringProperty2Either.unsafeCoerce();
-    return purify.Either.of({ identifier, stringProperty2 });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<typeof UnionNodeShapeMember2._propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, UnionNodeShapeMember2> {
-    return UnionNodeShapeMember2._propertiesFromRdf(parameters).map(
-      (properties) => new UnionNodeShapeMember2(properties),
-    );
-  }
-
   export type Json = {
     readonly "@id": string;
     readonly type: "UnionNodeShapeMember2";
     readonly stringProperty2: string;
   };
 
-  function jsonParseProperties(
+  function jsonDeserializeProperties(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -1626,7 +1638,7 @@ export namespace UnionNodeShapeMember2 {
     return purify.Either.of({ identifier, stringProperty2 });
   }
 
-  function jsonParse(
+  function jsonDeserialize(
     json: unknown,
   ): purify.Either<zod.ZodError, UnionNodeShapeMember2> {
     return jsonParseProperties(json).map(
@@ -1674,12 +1686,71 @@ export namespace UnionNodeShapeMember2 {
   }
 
   export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
     schema: jsonSchema,
     uiSchema: jsonUiSchema,
     zodSchema: jsonZodSchema,
   };
+
+  export function parseProperties({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode; stringProperty2: string }
+  > {
+    const identifier = _resource.identifier;
+    const _stringProperty2Either: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      string
+    > = _resource
+      .values(dataFactory.namedNode("http://example.com/stringProperty2"), {
+        unique: true,
+      })
+      .head()
+      .chain((_value) => _value.toString());
+    if (_stringProperty2Either.isLeft()) {
+      return _stringProperty2Either;
+    }
+
+    const stringProperty2 = _stringProperty2Either.unsafeCoerce();
+    return purify.Either.of({ identifier, stringProperty2 });
+  }
+
+  export function rdfDeserialize(
+    parameters: Parameters<typeof UnionNodeShapeMember2._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, UnionNodeShapeMember2> {
+    return UnionNodeShapeMember2._propertiesFromRdf(parameters).map(
+      (properties) => new UnionNodeShapeMember2(properties),
+    );
+  }
+
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
+    });
+    _resource.add(
+      dataFactory.namedNode("http://example.com/stringProperty2"),
+      this.stringProperty2,
+    );
+    return _resource;
+  }
 
   function sparqlConstructQuery(
     parameters?: {
@@ -1894,54 +1965,13 @@ export class UnionNodeShapeMember1 {
 }
 
 export namespace UnionNodeShapeMember1 {
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode; stringProperty1: string }
-  > {
-    const identifier = _resource.identifier;
-    const _stringProperty1Either: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      string
-    > = _resource
-      .values(dataFactory.namedNode("http://example.com/stringProperty1"), {
-        unique: true,
-      })
-      .head()
-      .chain((_value) => _value.toString());
-    if (_stringProperty1Either.isLeft()) {
-      return _stringProperty1Either;
-    }
-
-    const stringProperty1 = _stringProperty1Either.unsafeCoerce();
-    return purify.Either.of({ identifier, stringProperty1 });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<typeof UnionNodeShapeMember1._propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, UnionNodeShapeMember1> {
-    return UnionNodeShapeMember1._propertiesFromRdf(parameters).map(
-      (properties) => new UnionNodeShapeMember1(properties),
-    );
-  }
-
   export type Json = {
     readonly "@id": string;
     readonly type: "UnionNodeShapeMember1";
     readonly stringProperty1: string;
   };
 
-  function jsonParseProperties(
+  function jsonDeserializeProperties(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -1960,7 +1990,7 @@ export namespace UnionNodeShapeMember1 {
     return purify.Either.of({ identifier, stringProperty1 });
   }
 
-  function jsonParse(
+  function jsonDeserialize(
     json: unknown,
   ): purify.Either<zod.ZodError, UnionNodeShapeMember1> {
     return jsonParseProperties(json).map(
@@ -2008,12 +2038,71 @@ export namespace UnionNodeShapeMember1 {
   }
 
   export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
     schema: jsonSchema,
     uiSchema: jsonUiSchema,
     zodSchema: jsonZodSchema,
   };
+
+  export function parseProperties({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode; stringProperty1: string }
+  > {
+    const identifier = _resource.identifier;
+    const _stringProperty1Either: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      string
+    > = _resource
+      .values(dataFactory.namedNode("http://example.com/stringProperty1"), {
+        unique: true,
+      })
+      .head()
+      .chain((_value) => _value.toString());
+    if (_stringProperty1Either.isLeft()) {
+      return _stringProperty1Either;
+    }
+
+    const stringProperty1 = _stringProperty1Either.unsafeCoerce();
+    return purify.Either.of({ identifier, stringProperty1 });
+  }
+
+  export function rdfDeserialize(
+    parameters: Parameters<typeof UnionNodeShapeMember1._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, UnionNodeShapeMember1> {
+    return UnionNodeShapeMember1._propertiesFromRdf(parameters).map(
+      (properties) => new UnionNodeShapeMember1(properties),
+    );
+  }
+
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
+    });
+    _resource.add(
+      dataFactory.namedNode("http://example.com/stringProperty1"),
+      this.stringProperty1,
+    );
+    return _resource;
+  }
 
   function sparqlConstructQuery(
     parameters?: {
@@ -2583,7 +2672,220 @@ export class TermPropertiesNodeShape {
 }
 
 export namespace TermPropertiesNodeShape {
-  export function _propertiesFromRdf({
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "TermPropertiesNodeShape";
+    readonly booleanProperty: boolean | undefined;
+    readonly dateProperty: string | undefined;
+    readonly dateTimeProperty: string | undefined;
+    readonly iriProperty: { readonly "@id": string } | undefined;
+    readonly literalProperty:
+      | {
+          readonly "@language": string | undefined;
+          readonly "@type": string | undefined;
+          readonly "@value": string;
+        }
+      | undefined;
+    readonly numberProperty: number | undefined;
+    readonly stringProperty: string | undefined;
+    readonly termProperty:
+      | (
+          | {
+              readonly "@id": string;
+              readonly termType: "BlankNode" | "NamedNode";
+            }
+          | {
+              readonly "@language": string | undefined;
+              readonly "@type": string | undefined;
+              readonly "@value": string;
+              readonly termType: "Literal";
+            }
+        )
+      | undefined;
+  };
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      booleanProperty: purify.Maybe<boolean>;
+      dateProperty: purify.Maybe<Date>;
+      dateTimeProperty: purify.Maybe<Date>;
+      iriProperty: purify.Maybe<rdfjs.NamedNode>;
+      literalProperty: purify.Maybe<rdfjs.Literal>;
+      numberProperty: purify.Maybe<number>;
+      stringProperty: purify.Maybe<string>;
+      termProperty: purify.Maybe<
+        rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+      >;
+    }
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const booleanProperty = purify.Maybe.fromNullable(
+      _jsonObject["booleanProperty"],
+    );
+    const dateProperty = purify.Maybe.fromNullable(
+      _jsonObject["dateProperty"],
+    ).map((_item) => new Date(_item));
+    const dateTimeProperty = purify.Maybe.fromNullable(
+      _jsonObject["dateTimeProperty"],
+    ).map((_item) => new Date(_item));
+    const iriProperty = purify.Maybe.fromNullable(
+      _jsonObject["iriProperty"],
+    ).map((_item) => dataFactory.namedNode(_item["@id"]));
+    const literalProperty = purify.Maybe.fromNullable(
+      _jsonObject["literalProperty"],
+    ).map((_item) =>
+      dataFactory.literal(
+        _item["@value"],
+        typeof _item["@language"] !== "undefined"
+          ? _item["@language"]
+          : typeof _item["@type"] !== "undefined"
+            ? dataFactory.namedNode(_item["@type"])
+            : undefined,
+      ),
+    );
+    const numberProperty = purify.Maybe.fromNullable(
+      _jsonObject["numberProperty"],
+    );
+    const stringProperty = purify.Maybe.fromNullable(
+      _jsonObject["stringProperty"],
+    );
+    const termProperty = purify.Maybe.fromNullable(
+      _jsonObject["termProperty"],
+    ).map((_item) =>
+      _item.termType === "Literal"
+        ? dataFactory.literal(
+            _item["@value"],
+            typeof _item["@language"] !== "undefined"
+              ? _item["@language"]
+              : typeof _item["@type"] !== "undefined"
+                ? dataFactory.namedNode(_item["@type"])
+                : undefined,
+          )
+        : _item.termType === "NamedNode"
+          ? dataFactory.namedNode(_item["@id"])
+          : dataFactory.blankNode(_item["@id"].substring(2)),
+    );
+    return purify.Either.of({
+      identifier,
+      booleanProperty,
+      dateProperty,
+      dateTimeProperty,
+      iriProperty,
+      literalProperty,
+      numberProperty,
+      stringProperty,
+      termProperty,
+    });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, TermPropertiesNodeShape> {
+    return jsonParseProperties(json).map(
+      (properties) => new TermPropertiesNodeShape(properties),
+    );
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "TermPropertiesNodeShape" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/booleanProperty`, type: "Control" },
+        { scope: `${scopePrefix}/properties/dateProperty`, type: "Control" },
+        {
+          scope: `${scopePrefix}/properties/dateTimeProperty`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/iriProperty`, type: "Control" },
+        { scope: `${scopePrefix}/properties/literalProperty`, type: "Control" },
+        { scope: `${scopePrefix}/properties/numberProperty`, type: "Control" },
+        { scope: `${scopePrefix}/properties/stringProperty`, type: "Control" },
+        { scope: `${scopePrefix}/properties/termProperty`, type: "Control" },
+      ],
+      label: "TermPropertiesNodeShape",
+      type: "Group",
+    };
+  }
+
+  function jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      type: zod.literal("TermPropertiesNodeShape"),
+      booleanProperty: zod.boolean().optional(),
+      dateProperty: zod.string().date().optional(),
+      dateTimeProperty: zod.string().datetime().optional(),
+      iriProperty: zod.object({ "@id": zod.string().min(1) }).optional(),
+      literalProperty: zod
+        .object({
+          "@language": zod.string().optional(),
+          "@type": zod.string().optional(),
+          "@value": zod.string(),
+        })
+        .optional(),
+      numberProperty: zod.number().optional(),
+      stringProperty: zod.string().optional(),
+      termProperty: zod
+        .discriminatedUnion("termType", [
+          zod.object({
+            "@id": zod.string().min(1),
+            termType: zod.literal("BlankNode"),
+          }),
+          zod.object({
+            "@id": zod.string().min(1),
+            termType: zod.literal("NamedNode"),
+          }),
+          zod.object({
+            "@language": zod.string().optional(),
+            "@type": zod.string().optional(),
+            "@value": zod.string(),
+            termType: zod.literal("Literal"),
+          }),
+        ])
+        .optional(),
+    });
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+  };
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -2773,7 +3075,7 @@ export namespace TermPropertiesNodeShape {
     });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<
       typeof TermPropertiesNodeShape._propertiesFromRdf
     >[0],
@@ -2783,218 +3085,65 @@ export namespace TermPropertiesNodeShape {
     );
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "TermPropertiesNodeShape";
-    readonly booleanProperty: boolean | undefined;
-    readonly dateProperty: string | undefined;
-    readonly dateTimeProperty: string | undefined;
-    readonly iriProperty: { readonly "@id": string } | undefined;
-    readonly literalProperty:
-      | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
-          readonly "@value": string;
-        }
-      | undefined;
-    readonly numberProperty: number | undefined;
-    readonly stringProperty: string | undefined;
-    readonly termProperty:
-      | (
-          | {
-              readonly "@id": string;
-              readonly termType: "BlankNode" | "NamedNode";
-            }
-          | {
-              readonly "@language": string | undefined;
-              readonly "@type": string | undefined;
-              readonly "@value": string;
-              readonly termType: "Literal";
-            }
-        )
-      | undefined;
-  };
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      booleanProperty: purify.Maybe<boolean>;
-      dateProperty: purify.Maybe<Date>;
-      dateTimeProperty: purify.Maybe<Date>;
-      iriProperty: purify.Maybe<rdfjs.NamedNode>;
-      literalProperty: purify.Maybe<rdfjs.Literal>;
-      numberProperty: purify.Maybe<number>;
-      stringProperty: purify.Maybe<string>;
-      termProperty: purify.Maybe<
-        rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
-      >;
-    }
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const booleanProperty = purify.Maybe.fromNullable(
-      _jsonObject["booleanProperty"],
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
+    });
+    _resource.add(
+      dataFactory.namedNode("http://example.com/booleanProperty"),
+      this.booleanProperty,
     );
-    const dateProperty = purify.Maybe.fromNullable(
-      _jsonObject["dateProperty"],
-    ).map((_item) => new Date(_item));
-    const dateTimeProperty = purify.Maybe.fromNullable(
-      _jsonObject["dateTimeProperty"],
-    ).map((_item) => new Date(_item));
-    const iriProperty = purify.Maybe.fromNullable(
-      _jsonObject["iriProperty"],
-    ).map((_item) => dataFactory.namedNode(_item["@id"]));
-    const literalProperty = purify.Maybe.fromNullable(
-      _jsonObject["literalProperty"],
-    ).map((_item) =>
-      dataFactory.literal(
-        _item["@value"],
-        typeof _item["@language"] !== "undefined"
-          ? _item["@language"]
-          : typeof _item["@type"] !== "undefined"
-            ? dataFactory.namedNode(_item["@type"])
-            : undefined,
+    _resource.add(
+      dataFactory.namedNode("http://example.com/dateProperty"),
+      this.dateProperty.map((_value) =>
+        rdfLiteral.toRdf(_value, {
+          dataFactory,
+          datatype: dataFactory.namedNode(
+            "http://www.w3.org/2001/XMLSchema#date",
+          ),
+        }),
       ),
     );
-    const numberProperty = purify.Maybe.fromNullable(
-      _jsonObject["numberProperty"],
+    _resource.add(
+      dataFactory.namedNode("http://example.com/dateTimeProperty"),
+      this.dateTimeProperty.map((_value) =>
+        rdfLiteral.toRdf(_value, {
+          dataFactory,
+          datatype: dataFactory.namedNode(
+            "http://www.w3.org/2001/XMLSchema#dateTime",
+          ),
+        }),
+      ),
     );
-    const stringProperty = purify.Maybe.fromNullable(
-      _jsonObject["stringProperty"],
+    _resource.add(
+      dataFactory.namedNode("http://example.com/iriProperty"),
+      this.iriProperty,
     );
-    const termProperty = purify.Maybe.fromNullable(
-      _jsonObject["termProperty"],
-    ).map((_item) =>
-      _item.termType === "Literal"
-        ? dataFactory.literal(
-            _item["@value"],
-            typeof _item["@language"] !== "undefined"
-              ? _item["@language"]
-              : typeof _item["@type"] !== "undefined"
-                ? dataFactory.namedNode(_item["@type"])
-                : undefined,
-          )
-        : _item.termType === "NamedNode"
-          ? dataFactory.namedNode(_item["@id"])
-          : dataFactory.blankNode(_item["@id"].substring(2)),
+    _resource.add(
+      dataFactory.namedNode("http://example.com/literalProperty"),
+      this.literalProperty,
     );
-    return purify.Either.of({
-      identifier,
-      booleanProperty,
-      dateProperty,
-      dateTimeProperty,
-      iriProperty,
-      literalProperty,
-      numberProperty,
-      stringProperty,
-      termProperty,
-    });
-  }
-
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, TermPropertiesNodeShape> {
-    return jsonParseProperties(json).map(
-      (properties) => new TermPropertiesNodeShape(properties),
+    _resource.add(
+      dataFactory.namedNode("http://example.com/numberProperty"),
+      this.numberProperty,
     );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/stringProperty"),
+      this.stringProperty,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/termProperty"),
+      this.termProperty,
+    );
+    return _resource;
   }
-
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "TermPropertiesNodeShape" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/booleanProperty`, type: "Control" },
-        { scope: `${scopePrefix}/properties/dateProperty`, type: "Control" },
-        {
-          scope: `${scopePrefix}/properties/dateTimeProperty`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/iriProperty`, type: "Control" },
-        { scope: `${scopePrefix}/properties/literalProperty`, type: "Control" },
-        { scope: `${scopePrefix}/properties/numberProperty`, type: "Control" },
-        { scope: `${scopePrefix}/properties/stringProperty`, type: "Control" },
-        { scope: `${scopePrefix}/properties/termProperty`, type: "Control" },
-      ],
-      label: "TermPropertiesNodeShape",
-      type: "Group",
-    };
-  }
-
-  function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.literal("TermPropertiesNodeShape"),
-      booleanProperty: zod.boolean().optional(),
-      dateProperty: zod.string().date().optional(),
-      dateTimeProperty: zod.string().datetime().optional(),
-      iriProperty: zod.object({ "@id": zod.string().min(1) }).optional(),
-      literalProperty: zod
-        .object({
-          "@language": zod.string().optional(),
-          "@type": zod.string().optional(),
-          "@value": zod.string(),
-        })
-        .optional(),
-      numberProperty: zod.number().optional(),
-      stringProperty: zod.string().optional(),
-      termProperty: zod
-        .discriminatedUnion("termType", [
-          zod.object({
-            "@id": zod.string().min(1),
-            termType: zod.literal("BlankNode"),
-          }),
-          zod.object({
-            "@id": zod.string().min(1),
-            termType: zod.literal("NamedNode"),
-          }),
-          zod.object({
-            "@language": zod.string().optional(),
-            "@type": zod.string().optional(),
-            "@value": zod.string(),
-            termType: zod.literal("Literal"),
-          }),
-        ])
-        .optional(),
-    });
-  }
-
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
 
   function sparqlConstructQuery(
     parameters?: {
@@ -3403,54 +3552,13 @@ export class Sha256IriNodeShape {
 }
 
 export namespace Sha256IriNodeShape {
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource<rdfjs.NamedNode>;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.NamedNode; stringProperty: string }
-  > {
-    const identifier = _resource.identifier;
-    const _stringPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      string
-    > = _resource
-      .values(dataFactory.namedNode("http://example.com/stringProperty"), {
-        unique: true,
-      })
-      .head()
-      .chain((_value) => _value.toString());
-    if (_stringPropertyEither.isLeft()) {
-      return _stringPropertyEither;
-    }
-
-    const stringProperty = _stringPropertyEither.unsafeCoerce();
-    return purify.Either.of({ identifier, stringProperty });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<typeof Sha256IriNodeShape._propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Sha256IriNodeShape> {
-    return Sha256IriNodeShape._propertiesFromRdf(parameters).map(
-      (properties) => new Sha256IriNodeShape(properties),
-    );
-  }
-
   export type Json = {
     readonly "@id": string;
     readonly type: "Sha256IriNodeShape";
     readonly stringProperty: string;
   };
 
-  function jsonParseProperties(
+  function jsonDeserializeProperties(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -3467,7 +3575,7 @@ export namespace Sha256IriNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  function jsonParse(
+  function jsonDeserialize(
     json: unknown,
   ): purify.Either<zod.ZodError, Sha256IriNodeShape> {
     return jsonParseProperties(json).map(
@@ -3515,12 +3623,71 @@ export namespace Sha256IriNodeShape {
   }
 
   export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
     schema: jsonSchema,
     uiSchema: jsonUiSchema,
     zodSchema: jsonZodSchema,
   };
+
+  export function parseProperties({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource<rdfjs.NamedNode>;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.NamedNode; stringProperty: string }
+  > {
+    const identifier = _resource.identifier;
+    const _stringPropertyEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      string
+    > = _resource
+      .values(dataFactory.namedNode("http://example.com/stringProperty"), {
+        unique: true,
+      })
+      .head()
+      .chain((_value) => _value.toString());
+    if (_stringPropertyEither.isLeft()) {
+      return _stringPropertyEither;
+    }
+
+    const stringProperty = _stringPropertyEither.unsafeCoerce();
+    return purify.Either.of({ identifier, stringProperty });
+  }
+
+  export function rdfDeserialize(
+    parameters: Parameters<typeof Sha256IriNodeShape._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, Sha256IriNodeShape> {
+    return Sha256IriNodeShape._propertiesFromRdf(parameters).map(
+      (properties) => new Sha256IriNodeShape(properties),
+    );
+  }
+
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
+    const _resource = resourceSet.mutableNamedResource(this.identifier, {
+      mutateGraph,
+    });
+    _resource.add(
+      dataFactory.namedNode("http://example.com/stringProperty"),
+      this.stringProperty,
+    );
+    return _resource;
+  }
 
   function sparqlConstructQuery(
     parameters?: {
@@ -3774,7 +3941,108 @@ export class PropertyVisibilitiesNodeShape {
 }
 
 export namespace PropertyVisibilitiesNodeShape {
-  export function _propertiesFromRdf({
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "PropertyVisibilitiesNodeShape";
+    readonly privateProperty: string;
+    readonly protectedProperty: string;
+    readonly publicProperty: string;
+  };
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      privateProperty: string;
+      protectedProperty: string;
+      publicProperty: string;
+    }
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const privateProperty = _jsonObject["privateProperty"];
+    const protectedProperty = _jsonObject["protectedProperty"];
+    const publicProperty = _jsonObject["publicProperty"];
+    return purify.Either.of({
+      identifier,
+      privateProperty,
+      protectedProperty,
+      publicProperty,
+    });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, PropertyVisibilitiesNodeShape> {
+    return jsonParseProperties(json).map(
+      (properties) => new PropertyVisibilitiesNodeShape(properties),
+    );
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "PropertyVisibilitiesNodeShape" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/privateProperty`, type: "Control" },
+        {
+          scope: `${scopePrefix}/properties/protectedProperty`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/publicProperty`, type: "Control" },
+      ],
+      label: "PropertyVisibilitiesNodeShape",
+      type: "Group",
+    };
+  }
+
+  function jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      type: zod.literal("PropertyVisibilitiesNodeShape"),
+      privateProperty: zod.string(),
+      protectedProperty: zod.string(),
+      publicProperty: zod.string(),
+    });
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+  };
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -3845,7 +4113,7 @@ export namespace PropertyVisibilitiesNodeShape {
     });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<
       typeof PropertyVisibilitiesNodeShape._propertiesFromRdf
     >[0],
@@ -3858,106 +4126,31 @@ export namespace PropertyVisibilitiesNodeShape {
     );
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "PropertyVisibilitiesNodeShape";
-    readonly privateProperty: string;
-    readonly protectedProperty: string;
-    readonly publicProperty: string;
-  };
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      privateProperty: string;
-      protectedProperty: string;
-      publicProperty: string;
-    }
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const privateProperty = _jsonObject["privateProperty"];
-    const protectedProperty = _jsonObject["protectedProperty"];
-    const publicProperty = _jsonObject["publicProperty"];
-    return purify.Either.of({
-      identifier,
-      privateProperty,
-      protectedProperty,
-      publicProperty,
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
     });
-  }
-
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, PropertyVisibilitiesNodeShape> {
-    return jsonParseProperties(json).map(
-      (properties) => new PropertyVisibilitiesNodeShape(properties),
+    _resource.add(
+      dataFactory.namedNode("http://example.com/privateProperty"),
+      this.privateProperty,
     );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/protectedProperty"),
+      this.protectedProperty,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/publicProperty"),
+      this.publicProperty,
+    );
+    return _resource;
   }
-
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "PropertyVisibilitiesNodeShape" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/privateProperty`, type: "Control" },
-        {
-          scope: `${scopePrefix}/properties/protectedProperty`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/publicProperty`, type: "Control" },
-      ],
-      label: "PropertyVisibilitiesNodeShape",
-      type: "Group",
-    };
-  }
-
-  function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.literal("PropertyVisibilitiesNodeShape"),
-      privateProperty: zod.string(),
-      protectedProperty: zod.string(),
-      publicProperty: zod.string(),
-    });
-  }
-
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
 
   function sparqlConstructQuery(
     parameters?: {
@@ -4324,7 +4517,141 @@ export class PropertyCardinalitiesNodeShape {
 }
 
 export namespace PropertyCardinalitiesNodeShape {
-  export function _propertiesFromRdf({
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "PropertyCardinalitiesNodeShape";
+    readonly emptyStringSetProperty: readonly string[];
+    readonly nonEmptyStringSetProperty: readonly string[];
+    readonly optionalStringProperty: string | undefined;
+    readonly requiredStringProperty: string;
+  };
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      emptyStringSetProperty: readonly string[];
+      nonEmptyStringSetProperty: purify.NonEmptyList<string>;
+      optionalStringProperty: purify.Maybe<string>;
+      requiredStringProperty: string;
+    }
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const emptyStringSetProperty = _jsonObject["emptyStringSetProperty"];
+    const nonEmptyStringSetProperty = purify.NonEmptyList.fromArray(
+      _jsonObject["nonEmptyStringSetProperty"],
+    ).unsafeCoerce();
+    const optionalStringProperty = purify.Maybe.fromNullable(
+      _jsonObject["optionalStringProperty"],
+    );
+    const requiredStringProperty = _jsonObject["requiredStringProperty"];
+    return purify.Either.of({
+      identifier,
+      emptyStringSetProperty,
+      nonEmptyStringSetProperty,
+      optionalStringProperty,
+      requiredStringProperty,
+    });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, PropertyCardinalitiesNodeShape> {
+    return jsonParseProperties(json).map(
+      (properties) => new PropertyCardinalitiesNodeShape(properties),
+    );
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "PropertyCardinalitiesNodeShape" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/emptyStringSetProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/nonEmptyStringSetProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/optionalStringProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/requiredStringProperty`,
+          type: "Control",
+        },
+      ],
+      label: "PropertyCardinalitiesNodeShape",
+      type: "Group",
+    };
+  }
+
+  function jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      type: zod.literal("PropertyCardinalitiesNodeShape"),
+      emptyStringSetProperty: zod
+        .string()
+        .array()
+        .default(() => [])
+        .describe("Set: minCount implicitly=0, no maxCount or maxCount > 1"),
+      nonEmptyStringSetProperty: zod
+        .string()
+        .array()
+        .nonempty()
+        .min(1)
+        .describe("Set: minCount implicitly=1, no maxCount or maxCount > 1"),
+      optionalStringProperty: zod
+        .string()
+        .optional()
+        .describe("Option: maxCount=1 minCount=0"),
+      requiredStringProperty: zod
+        .string()
+        .describe("Required: maxCount=minCount=1"),
+    });
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+  };
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -4443,7 +4770,7 @@ export namespace PropertyCardinalitiesNodeShape {
     });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<
       typeof PropertyCardinalitiesNodeShape._propertiesFromRdf
     >[0],
@@ -4456,139 +4783,35 @@ export namespace PropertyCardinalitiesNodeShape {
     );
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "PropertyCardinalitiesNodeShape";
-    readonly emptyStringSetProperty: readonly string[];
-    readonly nonEmptyStringSetProperty: readonly string[];
-    readonly optionalStringProperty: string | undefined;
-    readonly requiredStringProperty: string;
-  };
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      emptyStringSetProperty: readonly string[];
-      nonEmptyStringSetProperty: purify.NonEmptyList<string>;
-      optionalStringProperty: purify.Maybe<string>;
-      requiredStringProperty: string;
-    }
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const emptyStringSetProperty = _jsonObject["emptyStringSetProperty"];
-    const nonEmptyStringSetProperty = purify.NonEmptyList.fromArray(
-      _jsonObject["nonEmptyStringSetProperty"],
-    ).unsafeCoerce();
-    const optionalStringProperty = purify.Maybe.fromNullable(
-      _jsonObject["optionalStringProperty"],
-    );
-    const requiredStringProperty = _jsonObject["requiredStringProperty"];
-    return purify.Either.of({
-      identifier,
-      emptyStringSetProperty,
-      nonEmptyStringSetProperty,
-      optionalStringProperty,
-      requiredStringProperty,
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
     });
-  }
-
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, PropertyCardinalitiesNodeShape> {
-    return jsonParseProperties(json).map(
-      (properties) => new PropertyCardinalitiesNodeShape(properties),
+    _resource.add(
+      dataFactory.namedNode("http://example.com/emptyStringSetProperty"),
+      this.emptyStringSetProperty.map((_item) => _item),
     );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/nonEmptyStringSetProperty"),
+      this.nonEmptyStringSetProperty.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/optionalStringProperty"),
+      this.optionalStringProperty,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/requiredStringProperty"),
+      this.requiredStringProperty,
+    );
+    return _resource;
   }
-
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "PropertyCardinalitiesNodeShape" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/emptyStringSetProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/nonEmptyStringSetProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/optionalStringProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/requiredStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "PropertyCardinalitiesNodeShape",
-      type: "Group",
-    };
-  }
-
-  function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.literal("PropertyCardinalitiesNodeShape"),
-      emptyStringSetProperty: zod
-        .string()
-        .array()
-        .default(() => [])
-        .describe("Set: minCount implicitly=0, no maxCount or maxCount > 1"),
-      nonEmptyStringSetProperty: zod
-        .string()
-        .array()
-        .nonempty()
-        .min(1)
-        .describe("Set: minCount implicitly=1, no maxCount or maxCount > 1"),
-      optionalStringProperty: zod
-        .string()
-        .optional()
-        .describe("Option: maxCount=1 minCount=0"),
-      requiredStringProperty: zod
-        .string()
-        .describe("Required: maxCount=minCount=1"),
-    });
-  }
-
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
 
   function sparqlConstructQuery(
     parameters?: {
@@ -4936,7 +5159,100 @@ export class OrderedPropertiesNodeShape {
 }
 
 export namespace OrderedPropertiesNodeShape {
-  export function _propertiesFromRdf({
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "OrderedPropertiesNodeShape";
+    readonly propertyC: string;
+    readonly propertyB: string;
+    readonly propertyA: string;
+  };
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      propertyC: string;
+      propertyB: string;
+      propertyA: string;
+    }
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const propertyC = _jsonObject["propertyC"];
+    const propertyB = _jsonObject["propertyB"];
+    const propertyA = _jsonObject["propertyA"];
+    return purify.Either.of({ identifier, propertyC, propertyB, propertyA });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, OrderedPropertiesNodeShape> {
+    return jsonParseProperties(json).map(
+      (properties) => new OrderedPropertiesNodeShape(properties),
+    );
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "OrderedPropertiesNodeShape" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/propertyC`, type: "Control" },
+        { scope: `${scopePrefix}/properties/propertyB`, type: "Control" },
+        { scope: `${scopePrefix}/properties/propertyA`, type: "Control" },
+      ],
+      label: "OrderedPropertiesNodeShape",
+      type: "Group",
+    };
+  }
+
+  function jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      type: zod.literal("OrderedPropertiesNodeShape"),
+      propertyC: zod.string(),
+      propertyB: zod.string(),
+      propertyA: zod.string(),
+    });
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+  };
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -5002,7 +5318,7 @@ export namespace OrderedPropertiesNodeShape {
     return purify.Either.of({ identifier, propertyC, propertyB, propertyA });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<
       typeof OrderedPropertiesNodeShape._propertiesFromRdf
     >[0],
@@ -5015,98 +5331,31 @@ export namespace OrderedPropertiesNodeShape {
     );
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "OrderedPropertiesNodeShape";
-    readonly propertyC: string;
-    readonly propertyB: string;
-    readonly propertyA: string;
-  };
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      propertyC: string;
-      propertyB: string;
-      propertyA: string;
-    }
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const propertyC = _jsonObject["propertyC"];
-    const propertyB = _jsonObject["propertyB"];
-    const propertyA = _jsonObject["propertyA"];
-    return purify.Either.of({ identifier, propertyC, propertyB, propertyA });
-  }
-
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, OrderedPropertiesNodeShape> {
-    return jsonParseProperties(json).map(
-      (properties) => new OrderedPropertiesNodeShape(properties),
-    );
-  }
-
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "OrderedPropertiesNodeShape" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/propertyC`, type: "Control" },
-        { scope: `${scopePrefix}/properties/propertyB`, type: "Control" },
-        { scope: `${scopePrefix}/properties/propertyA`, type: "Control" },
-      ],
-      label: "OrderedPropertiesNodeShape",
-      type: "Group",
-    };
-  }
-
-  function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.literal("OrderedPropertiesNodeShape"),
-      propertyC: zod.string(),
-      propertyB: zod.string(),
-      propertyA: zod.string(),
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
     });
+    _resource.add(
+      dataFactory.namedNode("http://example.com/propertyC"),
+      this.propertyC,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/propertyB"),
+      this.propertyB,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/propertyA"),
+      this.propertyA,
+    );
+    return _resource;
   }
-
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
 
   function sparqlConstructQuery(
     parameters?: {
@@ -5357,54 +5606,13 @@ export class NonClassNodeShape {
 }
 
 export namespace NonClassNodeShape {
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode; stringProperty: string }
-  > {
-    const identifier = _resource.identifier;
-    const _stringPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      string
-    > = _resource
-      .values(dataFactory.namedNode("http://example.com/stringProperty"), {
-        unique: true,
-      })
-      .head()
-      .chain((_value) => _value.toString());
-    if (_stringPropertyEither.isLeft()) {
-      return _stringPropertyEither;
-    }
-
-    const stringProperty = _stringPropertyEither.unsafeCoerce();
-    return purify.Either.of({ identifier, stringProperty });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<typeof NonClassNodeShape._propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, NonClassNodeShape> {
-    return NonClassNodeShape._propertiesFromRdf(parameters).map(
-      (properties) => new NonClassNodeShape(properties),
-    );
-  }
-
   export type Json = {
     readonly "@id": string;
     readonly type: "NonClassNodeShape";
     readonly stringProperty: string;
   };
 
-  function jsonParseProperties(
+  function jsonDeserializeProperties(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -5423,7 +5631,7 @@ export namespace NonClassNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  function jsonParse(
+  function jsonDeserialize(
     json: unknown,
   ): purify.Either<zod.ZodError, NonClassNodeShape> {
     return jsonParseProperties(json).map(
@@ -5471,12 +5679,71 @@ export namespace NonClassNodeShape {
   }
 
   export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
     schema: jsonSchema,
     uiSchema: jsonUiSchema,
     zodSchema: jsonZodSchema,
   };
+
+  export function parseProperties({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode; stringProperty: string }
+  > {
+    const identifier = _resource.identifier;
+    const _stringPropertyEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      string
+    > = _resource
+      .values(dataFactory.namedNode("http://example.com/stringProperty"), {
+        unique: true,
+      })
+      .head()
+      .chain((_value) => _value.toString());
+    if (_stringPropertyEither.isLeft()) {
+      return _stringPropertyEither;
+    }
+
+    const stringProperty = _stringPropertyEither.unsafeCoerce();
+    return purify.Either.of({ identifier, stringProperty });
+  }
+
+  export function rdfDeserialize(
+    parameters: Parameters<typeof NonClassNodeShape._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, NonClassNodeShape> {
+    return NonClassNodeShape._propertiesFromRdf(parameters).map(
+      (properties) => new NonClassNodeShape(properties),
+    );
+  }
+
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
+    });
+    _resource.add(
+      dataFactory.namedNode("http://example.com/stringProperty"),
+      this.stringProperty,
+    );
+    return _resource;
+  }
 
   function sparqlConstructQuery(
     parameters?: {
@@ -5874,7 +6141,133 @@ export class MutablePropertiesNodeShape {
 }
 
 export namespace MutablePropertiesNodeShape {
-  export function _propertiesFromRdf({
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "MutablePropertiesNodeShape";
+    readonly mutableListProperty: readonly string[] | undefined;
+    readonly mutableSetProperty: readonly string[];
+    readonly mutableStringProperty: string | undefined;
+  };
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      mutableListProperty: purify.Maybe<string[]>;
+      mutableSetProperty: string[];
+      mutableStringProperty: purify.Maybe<string>;
+    }
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const mutableListProperty = purify.Maybe.fromNullable(
+      _jsonObject["mutableListProperty"],
+    ).map((_item) => _item.map((_item) => _item));
+    const mutableSetProperty = _jsonObject["mutableSetProperty"];
+    const mutableStringProperty = purify.Maybe.fromNullable(
+      _jsonObject["mutableStringProperty"],
+    );
+    return purify.Either.of({
+      identifier,
+      mutableListProperty,
+      mutableSetProperty,
+      mutableStringProperty,
+    });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, MutablePropertiesNodeShape> {
+    return jsonParseProperties(json).map(
+      (properties) => new MutablePropertiesNodeShape(properties),
+    );
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "MutablePropertiesNodeShape" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/mutableListProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/mutableSetProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/mutableStringProperty`,
+          type: "Control",
+        },
+      ],
+      label: "MutablePropertiesNodeShape",
+      type: "Group",
+    };
+  }
+
+  function jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      type: zod.literal("MutablePropertiesNodeShape"),
+      mutableListProperty: zod
+        .string()
+        .array()
+        .optional()
+        .describe(
+          "List-valued property that can't be reassigned but whose value can be mutated",
+        ),
+      mutableSetProperty: zod
+        .string()
+        .array()
+        .default(() => [])
+        .describe(
+          "Set-valued property that can't be reassigned but whose value can be mutated",
+        ),
+      mutableStringProperty: zod
+        .string()
+        .optional()
+        .describe("String-valued property that can be re-assigned"),
+    });
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+  };
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -5972,7 +6365,7 @@ export namespace MutablePropertiesNodeShape {
     });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<
       typeof MutablePropertiesNodeShape._propertiesFromRdf
     >[0],
@@ -5985,131 +6378,99 @@ export namespace MutablePropertiesNodeShape {
     );
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "MutablePropertiesNodeShape";
-    readonly mutableListProperty: readonly string[] | undefined;
-    readonly mutableSetProperty: readonly string[];
-    readonly mutableStringProperty: string | undefined;
-  };
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      mutableListProperty: purify.Maybe<string[]>;
-      mutableSetProperty: string[];
-      mutableStringProperty: purify.Maybe<string>;
-    }
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const mutableListProperty = purify.Maybe.fromNullable(
-      _jsonObject["mutableListProperty"],
-    ).map((_item) => _item.map((_item) => _item));
-    const mutableSetProperty = _jsonObject["mutableSetProperty"];
-    const mutableStringProperty = purify.Maybe.fromNullable(
-      _jsonObject["mutableStringProperty"],
-    );
-    return purify.Either.of({
-      identifier,
-      mutableListProperty,
-      mutableSetProperty,
-      mutableStringProperty,
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
     });
-  }
+    _resource.add(
+      dataFactory.namedNode("http://example.com/mutableListProperty"),
+      this.mutableListProperty.map((_value) =>
+        _value.length > 0
+          ? _value.reduce(
+              (
+                { currentSubListResource, listResource },
+                item,
+                itemIndex,
+                list,
+              ) => {
+                if (itemIndex === 0) {
+                  currentSubListResource = listResource;
+                } else {
+                  const newSubListResource = resourceSet.mutableResource(
+                    dataFactory.blankNode(),
+                    { mutateGraph },
+                  );
+                  currentSubListResource!.add(
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+                    ),
+                    newSubListResource.identifier,
+                  );
+                  currentSubListResource = newSubListResource;
+                }
 
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, MutablePropertiesNodeShape> {
-    return jsonParseProperties(json).map(
-      (properties) => new MutablePropertiesNodeShape(properties),
+                currentSubListResource.add(
+                  dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  dataFactory.namedNode(
+                    "http://example.com/MutableStringListShape",
+                  ),
+                );
+
+                currentSubListResource.add(
+                  dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
+                  ),
+                  item,
+                );
+
+                if (itemIndex + 1 === list.length) {
+                  currentSubListResource.add(
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+                    ),
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+                    ),
+                  );
+                }
+
+                return { currentSubListResource, listResource };
+              },
+              {
+                currentSubListResource: null,
+                listResource: resourceSet.mutableResource(
+                  dataFactory.blankNode(),
+                  { mutateGraph },
+                ),
+              } as {
+                currentSubListResource: rdfjsResource.MutableResource | null;
+                listResource: rdfjsResource.MutableResource;
+              },
+            ).listResource.identifier
+          : dataFactory.namedNode(
+              "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+            ),
+      ),
     );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/mutableSetProperty"),
+      this.mutableSetProperty.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/mutableStringProperty"),
+      this.mutableStringProperty,
+    );
+    return _resource;
   }
-
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "MutablePropertiesNodeShape" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/mutableListProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/mutableSetProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/mutableStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "MutablePropertiesNodeShape",
-      type: "Group",
-    };
-  }
-
-  function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.literal("MutablePropertiesNodeShape"),
-      mutableListProperty: zod
-        .string()
-        .array()
-        .optional()
-        .describe(
-          "List-valued property that can't be reassigned but whose value can be mutated",
-        ),
-      mutableSetProperty: zod
-        .string()
-        .array()
-        .default(() => [])
-        .describe(
-          "Set-valued property that can't be reassigned but whose value can be mutated",
-        ),
-      mutableStringProperty: zod
-        .string()
-        .optional()
-        .describe("String-valued property that can be re-assigned"),
-    });
-  }
-
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
 
   function sparqlConstructQuery(
     parameters?: {
@@ -6723,7 +7084,112 @@ export class ListPropertiesNodeShape {
 }
 
 export namespace ListPropertiesNodeShape {
-  export function _propertiesFromRdf({
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "ListPropertiesNodeShape";
+    readonly objectListProperty: readonly NonClassNodeShape.Json[] | undefined;
+    readonly stringListProperty: readonly string[] | undefined;
+  };
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      objectListProperty: purify.Maybe<readonly NonClassNodeShape[]>;
+      stringListProperty: purify.Maybe<readonly string[]>;
+    }
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const objectListProperty = purify.Maybe.fromNullable(
+      _jsonObject["objectListProperty"],
+    ).map((_item) =>
+      _item.map((_item) =>
+        NonClassNodeShape.Json.deserialize(_item).unsafeCoerce(),
+      ),
+    );
+    const stringListProperty = purify.Maybe.fromNullable(
+      _jsonObject["stringListProperty"],
+    ).map((_item) => _item.map((_item) => _item));
+    return purify.Either.of({
+      identifier,
+      objectListProperty,
+      stringListProperty,
+    });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, ListPropertiesNodeShape> {
+    return jsonParseProperties(json).map(
+      (properties) => new ListPropertiesNodeShape(properties),
+    );
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "ListPropertiesNodeShape" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+        NonClassNodeShape.Json.uiSchema({
+          scopePrefix: `${scopePrefix}/properties/objectListProperty`,
+        }),
+        {
+          scope: `${scopePrefix}/properties/stringListProperty`,
+          type: "Control",
+        },
+      ],
+      label: "ListPropertiesNodeShape",
+      type: "Group",
+    };
+  }
+
+  function jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      type: zod.literal("ListPropertiesNodeShape"),
+      objectListProperty: NonClassNodeShape.Json.zodSchema().array().optional(),
+      stringListProperty: zod.string().array().optional(),
+    });
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+  };
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -6814,7 +7280,7 @@ export namespace ListPropertiesNodeShape {
     });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<
       typeof ListPropertiesNodeShape._propertiesFromRdf
     >[0],
@@ -6824,108 +7290,162 @@ export namespace ListPropertiesNodeShape {
     );
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "ListPropertiesNodeShape";
-    readonly objectListProperty: readonly NonClassNodeShape.Json[] | undefined;
-    readonly stringListProperty: readonly string[] | undefined;
-  };
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      objectListProperty: purify.Maybe<readonly NonClassNodeShape[]>;
-      stringListProperty: purify.Maybe<readonly string[]>;
-    }
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const objectListProperty = purify.Maybe.fromNullable(
-      _jsonObject["objectListProperty"],
-    ).map((_item) =>
-      _item.map((_item) => NonClassNodeShape.Json.parse(_item).unsafeCoerce()),
-    );
-    const stringListProperty = purify.Maybe.fromNullable(
-      _jsonObject["stringListProperty"],
-    ).map((_item) => _item.map((_item) => _item));
-    return purify.Either.of({
-      identifier,
-      objectListProperty,
-      stringListProperty,
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
     });
-  }
+    _resource.add(
+      dataFactory.namedNode("http://example.com/objectListProperty"),
+      this.objectListProperty.map((_value) =>
+        _value.length > 0
+          ? _value.reduce(
+              (
+                { currentSubListResource, listResource },
+                item,
+                itemIndex,
+                list,
+              ) => {
+                if (itemIndex === 0) {
+                  currentSubListResource = listResource;
+                } else {
+                  const newSubListResource = resourceSet.mutableResource(
+                    dataFactory.blankNode(),
+                    { mutateGraph },
+                  );
+                  currentSubListResource!.add(
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+                    ),
+                    newSubListResource.identifier,
+                  );
+                  currentSubListResource = newSubListResource;
+                }
 
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, ListPropertiesNodeShape> {
-    return jsonParseProperties(json).map(
-      (properties) => new ListPropertiesNodeShape(properties),
+                currentSubListResource.add(
+                  dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  dataFactory.namedNode("http://example.com/ObjectListShape"),
+                );
+
+                currentSubListResource.add(
+                  dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
+                  ),
+                  item.toRdf({
+                    mutateGraph: mutateGraph,
+                    resourceSet: resourceSet,
+                  }),
+                );
+
+                if (itemIndex + 1 === list.length) {
+                  currentSubListResource.add(
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+                    ),
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+                    ),
+                  );
+                }
+
+                return { currentSubListResource, listResource };
+              },
+              {
+                currentSubListResource: null,
+                listResource: resourceSet.mutableResource(
+                  dataFactory.blankNode(),
+                  { mutateGraph },
+                ),
+              } as {
+                currentSubListResource: rdfjsResource.MutableResource | null;
+                listResource: rdfjsResource.MutableResource;
+              },
+            ).listResource.identifier
+          : dataFactory.namedNode(
+              "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+            ),
+      ),
     );
-  }
+    _resource.add(
+      dataFactory.namedNode("http://example.com/stringListProperty"),
+      this.stringListProperty.map((_value) =>
+        _value.length > 0
+          ? _value.reduce(
+              (
+                { currentSubListResource, listResource },
+                item,
+                itemIndex,
+                list,
+              ) => {
+                if (itemIndex === 0) {
+                  currentSubListResource = listResource;
+                } else {
+                  const newSubListResource = resourceSet.mutableResource(
+                    dataFactory.blankNode(),
+                    { mutateGraph },
+                  );
+                  currentSubListResource!.add(
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+                    ),
+                    newSubListResource.identifier,
+                  );
+                  currentSubListResource = newSubListResource;
+                }
 
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
+                currentSubListResource.add(
+                  dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  dataFactory.namedNode("http://example.com/StringListShape"),
+                );
 
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "ListPropertiesNodeShape" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-        NonClassNodeShape.Json.uiSchema({
-          scopePrefix: `${scopePrefix}/properties/objectListProperty`,
-        }),
-        {
-          scope: `${scopePrefix}/properties/stringListProperty`,
-          type: "Control",
-        },
-      ],
-      label: "ListPropertiesNodeShape",
-      type: "Group",
-    };
-  }
+                currentSubListResource.add(
+                  dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
+                  ),
+                  item,
+                );
 
-  function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.literal("ListPropertiesNodeShape"),
-      objectListProperty: NonClassNodeShape.Json.zodSchema().array().optional(),
-      stringListProperty: zod.string().array().optional(),
-    });
-  }
+                if (itemIndex + 1 === list.length) {
+                  currentSubListResource.add(
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+                    ),
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+                    ),
+                  );
+                }
 
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
+                return { currentSubListResource, listResource };
+              },
+              {
+                currentSubListResource: null,
+                listResource: resourceSet.mutableResource(
+                  dataFactory.blankNode(),
+                  { mutateGraph },
+                ),
+              } as {
+                currentSubListResource: rdfjsResource.MutableResource | null;
+                listResource: rdfjsResource.MutableResource;
+              },
+            ).listResource.identifier
+          : dataFactory.namedNode(
+              "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+            ),
+      ),
+    );
+    return _resource;
+  }
 
   function sparqlConstructQuery(
     parameters?: {
@@ -7601,7 +8121,149 @@ export class LanguageInPropertiesNodeShape {
 }
 
 export namespace LanguageInPropertiesNodeShape {
-  export function _propertiesFromRdf({
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "LanguageInPropertiesNodeShape";
+    readonly languageInProperty:
+      | {
+          readonly "@language": string | undefined;
+          readonly "@type": string | undefined;
+          readonly "@value": string;
+        }
+      | undefined;
+    readonly literalProperty:
+      | {
+          readonly "@language": string | undefined;
+          readonly "@type": string | undefined;
+          readonly "@value": string;
+        }
+      | undefined;
+  };
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      languageInProperty: purify.Maybe<rdfjs.Literal>;
+      literalProperty: purify.Maybe<rdfjs.Literal>;
+    }
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const languageInProperty = purify.Maybe.fromNullable(
+      _jsonObject["languageInProperty"],
+    ).map((_item) =>
+      dataFactory.literal(
+        _item["@value"],
+        typeof _item["@language"] !== "undefined"
+          ? _item["@language"]
+          : typeof _item["@type"] !== "undefined"
+            ? dataFactory.namedNode(_item["@type"])
+            : undefined,
+      ),
+    );
+    const literalProperty = purify.Maybe.fromNullable(
+      _jsonObject["literalProperty"],
+    ).map((_item) =>
+      dataFactory.literal(
+        _item["@value"],
+        typeof _item["@language"] !== "undefined"
+          ? _item["@language"]
+          : typeof _item["@type"] !== "undefined"
+            ? dataFactory.namedNode(_item["@type"])
+            : undefined,
+      ),
+    );
+    return purify.Either.of({
+      identifier,
+      languageInProperty,
+      literalProperty,
+    });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, LanguageInPropertiesNodeShape> {
+    return jsonParseProperties(json).map(
+      (properties) => new LanguageInPropertiesNodeShape(properties),
+    );
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "LanguageInPropertiesNodeShape" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/languageInProperty`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/literalProperty`, type: "Control" },
+      ],
+      label: "LanguageInPropertiesNodeShape",
+      type: "Group",
+    };
+  }
+
+  function jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      type: zod.literal("LanguageInPropertiesNodeShape"),
+      languageInProperty: zod
+        .object({
+          "@language": zod.string().optional(),
+          "@type": zod.string().optional(),
+          "@value": zod.string(),
+        })
+        .optional(),
+      literalProperty: zod
+        .object({
+          "@language": zod.string().optional(),
+          "@type": zod.string().optional(),
+          "@value": zod.string(),
+        })
+        .optional()
+        .describe("literal property for testing runtime languageIn"),
+    });
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+  };
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -7689,7 +8351,7 @@ export namespace LanguageInPropertiesNodeShape {
     });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<
       typeof LanguageInPropertiesNodeShape._propertiesFromRdf
     >[0],
@@ -7702,147 +8364,27 @@ export namespace LanguageInPropertiesNodeShape {
     );
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "LanguageInPropertiesNodeShape";
-    readonly languageInProperty:
-      | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
-          readonly "@value": string;
-        }
-      | undefined;
-    readonly literalProperty:
-      | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
-          readonly "@value": string;
-        }
-      | undefined;
-  };
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      languageInProperty: purify.Maybe<rdfjs.Literal>;
-      literalProperty: purify.Maybe<rdfjs.Literal>;
-    }
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const languageInProperty = purify.Maybe.fromNullable(
-      _jsonObject["languageInProperty"],
-    ).map((_item) =>
-      dataFactory.literal(
-        _item["@value"],
-        typeof _item["@language"] !== "undefined"
-          ? _item["@language"]
-          : typeof _item["@type"] !== "undefined"
-            ? dataFactory.namedNode(_item["@type"])
-            : undefined,
-      ),
-    );
-    const literalProperty = purify.Maybe.fromNullable(
-      _jsonObject["literalProperty"],
-    ).map((_item) =>
-      dataFactory.literal(
-        _item["@value"],
-        typeof _item["@language"] !== "undefined"
-          ? _item["@language"]
-          : typeof _item["@type"] !== "undefined"
-            ? dataFactory.namedNode(_item["@type"])
-            : undefined,
-      ),
-    );
-    return purify.Either.of({
-      identifier,
-      languageInProperty,
-      literalProperty,
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
     });
-  }
-
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, LanguageInPropertiesNodeShape> {
-    return jsonParseProperties(json).map(
-      (properties) => new LanguageInPropertiesNodeShape(properties),
+    _resource.add(
+      dataFactory.namedNode("http://example.com/languageInProperty"),
+      this.languageInProperty,
     );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/literalProperty"),
+      this.literalProperty,
+    );
+    return _resource;
   }
-
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "LanguageInPropertiesNodeShape" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/languageInProperty`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/literalProperty`, type: "Control" },
-      ],
-      label: "LanguageInPropertiesNodeShape",
-      type: "Group",
-    };
-  }
-
-  function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.literal("LanguageInPropertiesNodeShape"),
-      languageInProperty: zod
-        .object({
-          "@language": zod.string().optional(),
-          "@type": zod.string().optional(),
-          "@value": zod.string(),
-        })
-        .optional(),
-      literalProperty: zod
-        .object({
-          "@language": zod.string().optional(),
-          "@type": zod.string().optional(),
-          "@value": zod.string(),
-        })
-        .optional()
-        .describe("literal property for testing runtime languageIn"),
-    });
-  }
-
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
 
   function sparqlConstructQuery(
     parameters?: {
@@ -8064,36 +8606,9 @@ export class IriNodeShape {
 }
 
 export namespace IriNodeShape {
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource<rdfjs.NamedNode>;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.NamedNode }
-  > {
-    const identifier = _resource.identifier;
-    return purify.Either.of({ identifier });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<typeof IriNodeShape._propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, IriNodeShape> {
-    return IriNodeShape._propertiesFromRdf(parameters).map(
-      (properties) => new IriNodeShape(properties),
-    );
-  }
-
   export type Json = { readonly "@id": string; readonly type: "IriNodeShape" };
 
-  function jsonParseProperties(
+  function jsonDeserializeProperties(
     _json: unknown,
   ): purify.Either<zod.ZodError, { identifier: rdfjs.NamedNode }> {
     const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
@@ -8106,7 +8621,9 @@ export namespace IriNodeShape {
     return purify.Either.of({ identifier });
   }
 
-  function jsonParse(json: unknown): purify.Either<zod.ZodError, IriNodeShape> {
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, IriNodeShape> {
     return jsonParseProperties(json).map(
       (properties) => new IriNodeShape(properties),
     );
@@ -8150,12 +8667,53 @@ export namespace IriNodeShape {
   }
 
   export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
     schema: jsonSchema,
     uiSchema: jsonUiSchema,
     zodSchema: jsonZodSchema,
   };
+
+  export function parseProperties({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource<rdfjs.NamedNode>;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.NamedNode }
+  > {
+    const identifier = _resource.identifier;
+    return purify.Either.of({ identifier });
+  }
+
+  export function rdfDeserialize(
+    parameters: Parameters<typeof IriNodeShape._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, IriNodeShape> {
+    return IriNodeShape._propertiesFromRdf(parameters).map(
+      (properties) => new IriNodeShape(properties),
+    );
+  }
+
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
+    const _resource = resourceSet.mutableNamedResource(this.identifier, {
+      mutateGraph,
+    });
+    return _resource;
+  }
 
   function sparqlConstructQuery(
     parameters?: {
@@ -8280,62 +8838,13 @@ export namespace InterfaceUnionNodeShapeMember2b {
       );
   }
 
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "InterfaceUnionNodeShapeMember2b";
-      stringProperty2b: string;
-    }
-  > {
-    const identifier = _resource.identifier;
-    const type = "InterfaceUnionNodeShapeMember2b" as const;
-    const _stringProperty2bEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      string
-    > = _resource
-      .values(dataFactory.namedNode("http://example.com/stringProperty2b"), {
-        unique: true,
-      })
-      .head()
-      .chain((_value) => _value.toString());
-    if (_stringProperty2bEither.isLeft()) {
-      return _stringProperty2bEither;
-    }
-
-    const stringProperty2b = _stringProperty2bEither.unsafeCoerce();
-    return purify.Either.of({ identifier, type, stringProperty2b });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<
-      typeof InterfaceUnionNodeShapeMember2b._propertiesFromRdf
-    >[0],
-  ): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    InterfaceUnionNodeShapeMember2b
-  > {
-    return InterfaceUnionNodeShapeMember2b._propertiesFromRdf(parameters);
-  }
-
   export type Json = {
     readonly "@id": string;
     readonly type: "InterfaceUnionNodeShapeMember2b";
     readonly stringProperty2b: string;
   };
 
-  function jsonParseProperties(
+  function jsonDeserializeProperties(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -8359,7 +8868,7 @@ export namespace InterfaceUnionNodeShapeMember2b {
     return purify.Either.of({ identifier, type, stringProperty2b });
   }
 
-  function jsonParse(
+  function jsonDeserialize(
     json: unknown,
   ): purify.Either<zod.ZodError, InterfaceUnionNodeShapeMember2b> {
     return jsonParseProperties(json);
@@ -8399,7 +8908,7 @@ export namespace InterfaceUnionNodeShapeMember2b {
     };
   }
 
-  function jsonUnparse(
+  function jsonSerialize(
     _interfaceUnionNodeShapeMember2b: InterfaceUnionNodeShapeMember2b,
   ): InterfaceUnionNodeShapeMember2b.Json {
     return JSON.parse(
@@ -8423,12 +8932,12 @@ export namespace InterfaceUnionNodeShapeMember2b {
   }
 
   export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
     schema: jsonSchema,
     uiSchema: jsonUiSchema,
     zodSchema: jsonZodSchema,
-    unparse: jsonUnparse,
+    serialize: jsonSerialize,
   };
 
   export function hash<
@@ -8458,6 +8967,77 @@ export namespace InterfaceUnionNodeShapeMember2b {
   ): HasherT {
     _hasher.update(_interfaceUnionNodeShapeMember2b.stringProperty2b);
     return _hasher;
+  }
+
+  export function parseProperties({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      type: "InterfaceUnionNodeShapeMember2b";
+      stringProperty2b: string;
+    }
+  > {
+    const identifier = _resource.identifier;
+    const type = "InterfaceUnionNodeShapeMember2b" as const;
+    const _stringProperty2bEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      string
+    > = _resource
+      .values(dataFactory.namedNode("http://example.com/stringProperty2b"), {
+        unique: true,
+      })
+      .head()
+      .chain((_value) => _value.toString());
+    if (_stringProperty2bEither.isLeft()) {
+      return _stringProperty2bEither;
+    }
+
+    const stringProperty2b = _stringProperty2bEither.unsafeCoerce();
+    return purify.Either.of({ identifier, type, stringProperty2b });
+  }
+
+  export function rdfDeserialize(
+    parameters: Parameters<
+      typeof InterfaceUnionNodeShapeMember2b._propertiesFromRdf
+    >[0],
+  ): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    InterfaceUnionNodeShapeMember2b
+  > {
+    return InterfaceUnionNodeShapeMember2b._propertiesFromRdf(parameters);
+  }
+
+  export function toRdf(
+    _interfaceUnionNodeShapeMember2b: InterfaceUnionNodeShapeMember2b,
+    {
+      mutateGraph,
+      resourceSet,
+    }: {
+      ignoreRdfType?: boolean;
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(
+      _interfaceUnionNodeShapeMember2b.identifier,
+      { mutateGraph },
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/stringProperty2b"),
+      _interfaceUnionNodeShapeMember2b.stringProperty2b,
+    );
+    return _resource;
   }
 
   function sparqlConstructQuery(
@@ -8559,28 +9139,6 @@ export namespace InterfaceUnionNodeShapeMember2b {
     constructTemplateTriples: sparqlConstructTemplateTriples,
     wherePatterns: sparqlWherePatterns,
   };
-
-  export function toRdf(
-    _interfaceUnionNodeShapeMember2b: InterfaceUnionNodeShapeMember2b,
-    {
-      mutateGraph,
-      resourceSet,
-    }: {
-      ignoreRdfType?: boolean;
-      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(
-      _interfaceUnionNodeShapeMember2b.identifier,
-      { mutateGraph },
-    );
-    _resource.add(
-      dataFactory.namedNode("http://example.com/stringProperty2b"),
-      _interfaceUnionNodeShapeMember2b.stringProperty2b,
-    );
-    return _resource;
-  }
 }
 export interface InterfaceUnionNodeShapeMember2a {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8643,62 +9201,13 @@ export namespace InterfaceUnionNodeShapeMember2a {
       );
   }
 
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "InterfaceUnionNodeShapeMember2a";
-      stringProperty2a: string;
-    }
-  > {
-    const identifier = _resource.identifier;
-    const type = "InterfaceUnionNodeShapeMember2a" as const;
-    const _stringProperty2aEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      string
-    > = _resource
-      .values(dataFactory.namedNode("http://example.com/stringProperty2a"), {
-        unique: true,
-      })
-      .head()
-      .chain((_value) => _value.toString());
-    if (_stringProperty2aEither.isLeft()) {
-      return _stringProperty2aEither;
-    }
-
-    const stringProperty2a = _stringProperty2aEither.unsafeCoerce();
-    return purify.Either.of({ identifier, type, stringProperty2a });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<
-      typeof InterfaceUnionNodeShapeMember2a._propertiesFromRdf
-    >[0],
-  ): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    InterfaceUnionNodeShapeMember2a
-  > {
-    return InterfaceUnionNodeShapeMember2a._propertiesFromRdf(parameters);
-  }
-
   export type Json = {
     readonly "@id": string;
     readonly type: "InterfaceUnionNodeShapeMember2a";
     readonly stringProperty2a: string;
   };
 
-  function jsonParseProperties(
+  function jsonDeserializeProperties(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -8722,7 +9231,7 @@ export namespace InterfaceUnionNodeShapeMember2a {
     return purify.Either.of({ identifier, type, stringProperty2a });
   }
 
-  function jsonParse(
+  function jsonDeserialize(
     json: unknown,
   ): purify.Either<zod.ZodError, InterfaceUnionNodeShapeMember2a> {
     return jsonParseProperties(json);
@@ -8762,7 +9271,7 @@ export namespace InterfaceUnionNodeShapeMember2a {
     };
   }
 
-  function jsonUnparse(
+  function jsonSerialize(
     _interfaceUnionNodeShapeMember2a: InterfaceUnionNodeShapeMember2a,
   ): InterfaceUnionNodeShapeMember2a.Json {
     return JSON.parse(
@@ -8786,12 +9295,12 @@ export namespace InterfaceUnionNodeShapeMember2a {
   }
 
   export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
     schema: jsonSchema,
     uiSchema: jsonUiSchema,
     zodSchema: jsonZodSchema,
-    unparse: jsonUnparse,
+    serialize: jsonSerialize,
   };
 
   export function hash<
@@ -8821,6 +9330,77 @@ export namespace InterfaceUnionNodeShapeMember2a {
   ): HasherT {
     _hasher.update(_interfaceUnionNodeShapeMember2a.stringProperty2a);
     return _hasher;
+  }
+
+  export function parseProperties({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      type: "InterfaceUnionNodeShapeMember2a";
+      stringProperty2a: string;
+    }
+  > {
+    const identifier = _resource.identifier;
+    const type = "InterfaceUnionNodeShapeMember2a" as const;
+    const _stringProperty2aEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      string
+    > = _resource
+      .values(dataFactory.namedNode("http://example.com/stringProperty2a"), {
+        unique: true,
+      })
+      .head()
+      .chain((_value) => _value.toString());
+    if (_stringProperty2aEither.isLeft()) {
+      return _stringProperty2aEither;
+    }
+
+    const stringProperty2a = _stringProperty2aEither.unsafeCoerce();
+    return purify.Either.of({ identifier, type, stringProperty2a });
+  }
+
+  export function rdfDeserialize(
+    parameters: Parameters<
+      typeof InterfaceUnionNodeShapeMember2a._propertiesFromRdf
+    >[0],
+  ): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    InterfaceUnionNodeShapeMember2a
+  > {
+    return InterfaceUnionNodeShapeMember2a._propertiesFromRdf(parameters);
+  }
+
+  export function toRdf(
+    _interfaceUnionNodeShapeMember2a: InterfaceUnionNodeShapeMember2a,
+    {
+      mutateGraph,
+      resourceSet,
+    }: {
+      ignoreRdfType?: boolean;
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(
+      _interfaceUnionNodeShapeMember2a.identifier,
+      { mutateGraph },
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/stringProperty2a"),
+      _interfaceUnionNodeShapeMember2a.stringProperty2a,
+    );
+    return _resource;
   }
 
   function sparqlConstructQuery(
@@ -8922,28 +9502,6 @@ export namespace InterfaceUnionNodeShapeMember2a {
     constructTemplateTriples: sparqlConstructTemplateTriples,
     wherePatterns: sparqlWherePatterns,
   };
-
-  export function toRdf(
-    _interfaceUnionNodeShapeMember2a: InterfaceUnionNodeShapeMember2a,
-    {
-      mutateGraph,
-      resourceSet,
-    }: {
-      ignoreRdfType?: boolean;
-      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(
-      _interfaceUnionNodeShapeMember2a.identifier,
-      { mutateGraph },
-    );
-    _resource.add(
-      dataFactory.namedNode("http://example.com/stringProperty2a"),
-      _interfaceUnionNodeShapeMember2a.stringProperty2a,
-    );
-    return _resource;
-  }
 }
 export interface InterfaceUnionNodeShapeMember1 {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9006,7 +9564,135 @@ export namespace InterfaceUnionNodeShapeMember1 {
       );
   }
 
-  export function _propertiesFromRdf({
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "InterfaceUnionNodeShapeMember1";
+    readonly stringProperty1: string;
+  };
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      type: "InterfaceUnionNodeShapeMember1";
+      stringProperty1: string;
+    }
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const type = "InterfaceUnionNodeShapeMember1" as const;
+    const stringProperty1 = _jsonObject["stringProperty1"];
+    return purify.Either.of({ identifier, type, stringProperty1 });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, InterfaceUnionNodeShapeMember1> {
+    return jsonParseProperties(json);
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "InterfaceUnionNodeShapeMember1" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/stringProperty1`, type: "Control" },
+      ],
+      label: "InterfaceUnionNodeShapeMember1",
+      type: "Group",
+    };
+  }
+
+  function jsonSerialize(
+    _interfaceUnionNodeShapeMember1: InterfaceUnionNodeShapeMember1,
+  ): InterfaceUnionNodeShapeMember1.Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _interfaceUnionNodeShapeMember1.identifier.termType === "BlankNode"
+            ? `_:${_interfaceUnionNodeShapeMember1.identifier.value}`
+            : _interfaceUnionNodeShapeMember1.identifier.value,
+        type: _interfaceUnionNodeShapeMember1.type,
+        stringProperty1: _interfaceUnionNodeShapeMember1.stringProperty1,
+      } satisfies InterfaceUnionNodeShapeMember1.Json),
+    );
+  }
+
+  function jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      type: zod.literal("InterfaceUnionNodeShapeMember1"),
+      stringProperty1: zod.string(),
+    });
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+    serialize: jsonSerialize,
+  };
+
+  export function hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(
+    _interfaceUnionNodeShapeMember1: InterfaceUnionNodeShapeMember1,
+    _hasher: HasherT,
+  ): HasherT {
+    _hasher.update(_interfaceUnionNodeShapeMember1.identifier.value);
+    _hasher.update(_interfaceUnionNodeShapeMember1.type);
+    InterfaceUnionNodeShapeMember1.hashShaclProperties(
+      _interfaceUnionNodeShapeMember1,
+      _hasher,
+    );
+    return _hasher;
+  }
+
+  export function hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(
+    _interfaceUnionNodeShapeMember1: InterfaceUnionNodeShapeMember1,
+    _hasher: HasherT,
+  ): HasherT {
+    _hasher.update(_interfaceUnionNodeShapeMember1.stringProperty1);
+    return _hasher;
+  }
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -9044,7 +9730,7 @@ export namespace InterfaceUnionNodeShapeMember1 {
     return purify.Either.of({ identifier, type, stringProperty1 });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<
       typeof InterfaceUnionNodeShapeMember1._propertiesFromRdf
     >[0],
@@ -9055,132 +9741,26 @@ export namespace InterfaceUnionNodeShapeMember1 {
     return InterfaceUnionNodeShapeMember1._propertiesFromRdf(parameters);
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "InterfaceUnionNodeShapeMember1";
-    readonly stringProperty1: string;
-  };
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
+  export function toRdf(
+    _interfaceUnionNodeShapeMember1: InterfaceUnionNodeShapeMember1,
     {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "InterfaceUnionNodeShapeMember1";
-      stringProperty1: string;
-    }
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const type = "InterfaceUnionNodeShapeMember1" as const;
-    const stringProperty1 = _jsonObject["stringProperty1"];
-    return purify.Either.of({ identifier, type, stringProperty1 });
-  }
-
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, InterfaceUnionNodeShapeMember1> {
-    return jsonParseProperties(json);
-  }
-
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "InterfaceUnionNodeShapeMember1" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/stringProperty1`, type: "Control" },
-      ],
-      label: "InterfaceUnionNodeShapeMember1",
-      type: "Group",
-    };
-  }
-
-  function jsonUnparse(
-    _interfaceUnionNodeShapeMember1: InterfaceUnionNodeShapeMember1,
-  ): InterfaceUnionNodeShapeMember1.Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _interfaceUnionNodeShapeMember1.identifier.termType === "BlankNode"
-            ? `_:${_interfaceUnionNodeShapeMember1.identifier.value}`
-            : _interfaceUnionNodeShapeMember1.identifier.value,
-        type: _interfaceUnionNodeShapeMember1.type,
-        stringProperty1: _interfaceUnionNodeShapeMember1.stringProperty1,
-      } satisfies InterfaceUnionNodeShapeMember1.Json),
-    );
-  }
-
-  function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.literal("InterfaceUnionNodeShapeMember1"),
-      stringProperty1: zod.string(),
-    });
-  }
-
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-    unparse: jsonUnparse,
-  };
-
-  export function hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+      mutateGraph,
+      resourceSet,
+    }: {
+      ignoreRdfType?: boolean;
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
     },
-  >(
-    _interfaceUnionNodeShapeMember1: InterfaceUnionNodeShapeMember1,
-    _hasher: HasherT,
-  ): HasherT {
-    _hasher.update(_interfaceUnionNodeShapeMember1.identifier.value);
-    _hasher.update(_interfaceUnionNodeShapeMember1.type);
-    InterfaceUnionNodeShapeMember1.hashShaclProperties(
-      _interfaceUnionNodeShapeMember1,
-      _hasher,
+  ): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(
+      _interfaceUnionNodeShapeMember1.identifier,
+      { mutateGraph },
     );
-    return _hasher;
-  }
-
-  export function hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(
-    _interfaceUnionNodeShapeMember1: InterfaceUnionNodeShapeMember1,
-    _hasher: HasherT,
-  ): HasherT {
-    _hasher.update(_interfaceUnionNodeShapeMember1.stringProperty1);
-    return _hasher;
+    _resource.add(
+      dataFactory.namedNode("http://example.com/stringProperty1"),
+      _interfaceUnionNodeShapeMember1.stringProperty1,
+    );
+    return _resource;
   }
 
   function sparqlConstructQuery(
@@ -9282,28 +9862,6 @@ export namespace InterfaceUnionNodeShapeMember1 {
     constructTemplateTriples: sparqlConstructTemplateTriples,
     wherePatterns: sparqlWherePatterns,
   };
-
-  export function toRdf(
-    _interfaceUnionNodeShapeMember1: InterfaceUnionNodeShapeMember1,
-    {
-      mutateGraph,
-      resourceSet,
-    }: {
-      ignoreRdfType?: boolean;
-      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(
-      _interfaceUnionNodeShapeMember1.identifier,
-      { mutateGraph },
-    );
-    _resource.add(
-      dataFactory.namedNode("http://example.com/stringProperty1"),
-      _interfaceUnionNodeShapeMember1.stringProperty1,
-    );
-    return _resource;
-  }
 }
 /**
  * A node shape that's generated as a TypeScript interface instead of a class.
@@ -9369,7 +9927,126 @@ export namespace InterfaceNodeShape {
       );
   }
 
-  export function _propertiesFromRdf({
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "InterfaceNodeShape";
+    readonly stringProperty: string;
+  };
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      type: "InterfaceNodeShape";
+      stringProperty: string;
+    }
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const type = "InterfaceNodeShape" as const;
+    const stringProperty = _jsonObject["stringProperty"];
+    return purify.Either.of({ identifier, type, stringProperty });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, InterfaceNodeShape> {
+    return jsonParseProperties(json);
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "InterfaceNodeShape" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/stringProperty`, type: "Control" },
+      ],
+      label: "InterfaceNodeShape",
+      type: "Group",
+    };
+  }
+
+  function jsonSerialize(
+    _interfaceNodeShape: InterfaceNodeShape,
+  ): InterfaceNodeShape.Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _interfaceNodeShape.identifier.termType === "BlankNode"
+            ? `_:${_interfaceNodeShape.identifier.value}`
+            : _interfaceNodeShape.identifier.value,
+        type: _interfaceNodeShape.type,
+        stringProperty: _interfaceNodeShape.stringProperty,
+      } satisfies InterfaceNodeShape.Json),
+    );
+  }
+
+  function jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      type: zod.literal("InterfaceNodeShape"),
+      stringProperty: zod.string(),
+    });
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+    serialize: jsonSerialize,
+  };
+
+  export function hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_interfaceNodeShape: InterfaceNodeShape, _hasher: HasherT): HasherT {
+    _hasher.update(_interfaceNodeShape.identifier.value);
+    _hasher.update(_interfaceNodeShape.type);
+    InterfaceNodeShape.hashShaclProperties(_interfaceNodeShape, _hasher);
+    return _hasher;
+  }
+
+  export function hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_interfaceNodeShape: InterfaceNodeShape, _hasher: HasherT): HasherT {
+    _hasher.update(_interfaceNodeShape.stringProperty);
+    return _hasher;
+  }
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -9407,129 +10084,32 @@ export namespace InterfaceNodeShape {
     return purify.Either.of({ identifier, type, stringProperty });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<typeof InterfaceNodeShape._propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, InterfaceNodeShape> {
     return InterfaceNodeShape._propertiesFromRdf(parameters);
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "InterfaceNodeShape";
-    readonly stringProperty: string;
-  };
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "InterfaceNodeShape";
-      stringProperty: string;
-    }
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const type = "InterfaceNodeShape" as const;
-    const stringProperty = _jsonObject["stringProperty"];
-    return purify.Either.of({ identifier, type, stringProperty });
-  }
-
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, InterfaceNodeShape> {
-    return jsonParseProperties(json);
-  }
-
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "InterfaceNodeShape" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/stringProperty`, type: "Control" },
-      ],
-      label: "InterfaceNodeShape",
-      type: "Group",
-    };
-  }
-
-  function jsonUnparse(
+  export function toRdf(
     _interfaceNodeShape: InterfaceNodeShape,
-  ): InterfaceNodeShape.Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _interfaceNodeShape.identifier.termType === "BlankNode"
-            ? `_:${_interfaceNodeShape.identifier.value}`
-            : _interfaceNodeShape.identifier.value,
-        type: _interfaceNodeShape.type,
-        stringProperty: _interfaceNodeShape.stringProperty,
-      } satisfies InterfaceNodeShape.Json),
+    {
+      mutateGraph,
+      resourceSet,
+    }: {
+      ignoreRdfType?: boolean;
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(
+      _interfaceNodeShape.identifier,
+      { mutateGraph },
     );
-  }
-
-  function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.literal("InterfaceNodeShape"),
-      stringProperty: zod.string(),
-    });
-  }
-
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-    unparse: jsonUnparse,
-  };
-
-  export function hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_interfaceNodeShape: InterfaceNodeShape, _hasher: HasherT): HasherT {
-    _hasher.update(_interfaceNodeShape.identifier.value);
-    _hasher.update(_interfaceNodeShape.type);
-    InterfaceNodeShape.hashShaclProperties(_interfaceNodeShape, _hasher);
-    return _hasher;
-  }
-
-  export function hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_interfaceNodeShape: InterfaceNodeShape, _hasher: HasherT): HasherT {
-    _hasher.update(_interfaceNodeShape.stringProperty);
-    return _hasher;
+    _resource.add(
+      dataFactory.namedNode("http://example.com/stringProperty"),
+      _interfaceNodeShape.stringProperty,
+    );
+    return _resource;
   }
 
   function sparqlConstructQuery(
@@ -9622,28 +10202,6 @@ export namespace InterfaceNodeShape {
     constructTemplateTriples: sparqlConstructTemplateTriples,
     wherePatterns: sparqlWherePatterns,
   };
-
-  export function toRdf(
-    _interfaceNodeShape: InterfaceNodeShape,
-    {
-      mutateGraph,
-      resourceSet,
-    }: {
-      ignoreRdfType?: boolean;
-      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(
-      _interfaceNodeShape.identifier,
-      { mutateGraph },
-    );
-    _resource.add(
-      dataFactory.namedNode("http://example.com/stringProperty"),
-      _interfaceNodeShape.stringProperty,
-    );
-    return _resource;
-  }
 }
 /**
  * Shape with sh:in properties.
@@ -9952,7 +10510,157 @@ export class InPropertiesNodeShape {
 }
 
 export namespace InPropertiesNodeShape {
-  export function _propertiesFromRdf({
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "InPropertiesNodeShape";
+    readonly inBooleansProperty: true | undefined;
+    readonly inDateTimesProperty: string | undefined;
+    readonly inIrisProperty:
+      | {
+          readonly "@id":
+            | "http://example.com/InPropertiesNodeShapeIri1"
+            | "http://example.com/InPropertiesNodeShapeIri2";
+        }
+      | undefined;
+    readonly inNumbersProperty: (1 | 2) | undefined;
+    readonly inStringsProperty: ("text" | "html") | undefined;
+  };
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      inBooleansProperty: purify.Maybe<true>;
+      inDateTimesProperty: purify.Maybe<Date>;
+      inIrisProperty: purify.Maybe<
+        rdfjs.NamedNode<
+          | "http://example.com/InPropertiesNodeShapeIri1"
+          | "http://example.com/InPropertiesNodeShapeIri2"
+        >
+      >;
+      inNumbersProperty: purify.Maybe<1 | 2>;
+      inStringsProperty: purify.Maybe<"text" | "html">;
+    }
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const inBooleansProperty = purify.Maybe.fromNullable(
+      _jsonObject["inBooleansProperty"],
+    );
+    const inDateTimesProperty = purify.Maybe.fromNullable(
+      _jsonObject["inDateTimesProperty"],
+    ).map((_item) => new Date(_item));
+    const inIrisProperty = purify.Maybe.fromNullable(
+      _jsonObject["inIrisProperty"],
+    ).map((_item) => dataFactory.namedNode(_item["@id"]));
+    const inNumbersProperty = purify.Maybe.fromNullable(
+      _jsonObject["inNumbersProperty"],
+    );
+    const inStringsProperty = purify.Maybe.fromNullable(
+      _jsonObject["inStringsProperty"],
+    );
+    return purify.Either.of({
+      identifier,
+      inBooleansProperty,
+      inDateTimesProperty,
+      inIrisProperty,
+      inNumbersProperty,
+      inStringsProperty,
+    });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, InPropertiesNodeShape> {
+    return jsonParseProperties(json).map(
+      (properties) => new InPropertiesNodeShape(properties),
+    );
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "InPropertiesNodeShape" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/inBooleansProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/inDateTimesProperty`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/inIrisProperty`, type: "Control" },
+        {
+          scope: `${scopePrefix}/properties/inNumbersProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/inStringsProperty`,
+          type: "Control",
+        },
+      ],
+      label: "InPropertiesNodeShape",
+      type: "Group",
+    };
+  }
+
+  function jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      type: zod.literal("InPropertiesNodeShape"),
+      inBooleansProperty: zod.literal(true).optional(),
+      inDateTimesProperty: zod.string().datetime().optional(),
+      inIrisProperty: zod
+        .object({
+          "@id": zod.enum([
+            "http://example.com/InPropertiesNodeShapeIri1",
+            "http://example.com/InPropertiesNodeShapeIri2",
+          ]),
+        })
+        .optional(),
+      inNumbersProperty: zod.union([zod.literal(1), zod.literal(2)]).optional(),
+      inStringsProperty: zod.enum(["text", "html"]).optional(),
+    });
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+  };
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -10195,7 +10903,7 @@ export namespace InPropertiesNodeShape {
     });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<typeof InPropertiesNodeShape._propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, InPropertiesNodeShape> {
     return InPropertiesNodeShape._propertiesFromRdf(parameters).map(
@@ -10203,155 +10911,46 @@ export namespace InPropertiesNodeShape {
     );
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "InPropertiesNodeShape";
-    readonly inBooleansProperty: true | undefined;
-    readonly inDateTimesProperty: string | undefined;
-    readonly inIrisProperty:
-      | {
-          readonly "@id":
-            | "http://example.com/InPropertiesNodeShapeIri1"
-            | "http://example.com/InPropertiesNodeShapeIri2";
-        }
-      | undefined;
-    readonly inNumbersProperty: (1 | 2) | undefined;
-    readonly inStringsProperty: ("text" | "html") | undefined;
-  };
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      inBooleansProperty: purify.Maybe<true>;
-      inDateTimesProperty: purify.Maybe<Date>;
-      inIrisProperty: purify.Maybe<
-        rdfjs.NamedNode<
-          | "http://example.com/InPropertiesNodeShapeIri1"
-          | "http://example.com/InPropertiesNodeShapeIri2"
-        >
-      >;
-      inNumbersProperty: purify.Maybe<1 | 2>;
-      inStringsProperty: purify.Maybe<"text" | "html">;
-    }
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const inBooleansProperty = purify.Maybe.fromNullable(
-      _jsonObject["inBooleansProperty"],
-    );
-    const inDateTimesProperty = purify.Maybe.fromNullable(
-      _jsonObject["inDateTimesProperty"],
-    ).map((_item) => new Date(_item));
-    const inIrisProperty = purify.Maybe.fromNullable(
-      _jsonObject["inIrisProperty"],
-    ).map((_item) => dataFactory.namedNode(_item["@id"]));
-    const inNumbersProperty = purify.Maybe.fromNullable(
-      _jsonObject["inNumbersProperty"],
-    );
-    const inStringsProperty = purify.Maybe.fromNullable(
-      _jsonObject["inStringsProperty"],
-    );
-    return purify.Either.of({
-      identifier,
-      inBooleansProperty,
-      inDateTimesProperty,
-      inIrisProperty,
-      inNumbersProperty,
-      inStringsProperty,
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
     });
-  }
-
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, InPropertiesNodeShape> {
-    return jsonParseProperties(json).map(
-      (properties) => new InPropertiesNodeShape(properties),
+    _resource.add(
+      dataFactory.namedNode("http://example.com/inBooleansProperty"),
+      this.inBooleansProperty,
     );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/inDateTimesProperty"),
+      this.inDateTimesProperty.map((_value) =>
+        rdfLiteral.toRdf(_value, {
+          dataFactory,
+          datatype: dataFactory.namedNode(
+            "http://www.w3.org/2001/XMLSchema#dateTime",
+          ),
+        }),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/inIrisProperty"),
+      this.inIrisProperty,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/inNumbersProperty"),
+      this.inNumbersProperty,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/inStringsProperty"),
+      this.inStringsProperty,
+    );
+    return _resource;
   }
-
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "InPropertiesNodeShape" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/inBooleansProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/inDateTimesProperty`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/inIrisProperty`, type: "Control" },
-        {
-          scope: `${scopePrefix}/properties/inNumbersProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/inStringsProperty`,
-          type: "Control",
-        },
-      ],
-      label: "InPropertiesNodeShape",
-      type: "Group",
-    };
-  }
-
-  function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.literal("InPropertiesNodeShape"),
-      inBooleansProperty: zod.literal(true).optional(),
-      inDateTimesProperty: zod.string().datetime().optional(),
-      inIrisProperty: zod
-        .object({
-          "@id": zod.enum([
-            "http://example.com/InPropertiesNodeShapeIri1",
-            "http://example.com/InPropertiesNodeShapeIri2",
-          ]),
-        })
-        .optional(),
-      inNumbersProperty: zod.union([zod.literal(1), zod.literal(2)]).optional(),
-      inStringsProperty: zod.enum(["text", "html"]).optional(),
-    });
-  }
-
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
 
   function sparqlConstructQuery(
     parameters?: {
@@ -10689,7 +11288,96 @@ export class InIdentifierNodeShape {
 }
 
 export namespace InIdentifierNodeShape {
-  export function _propertiesFromRdf({
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "InIdentifierNodeShape";
+    readonly stringProperty: string | undefined;
+  };
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.NamedNode<
+        | "http://example.com/InIdentifierNodeShapeInstance1"
+        | "http://example.com/InIdentifierNodeShapeInstance2"
+      >;
+      stringProperty: purify.Maybe<string>;
+    }
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const identifier = dataFactory.namedNode(_jsonObject["@id"]);
+    const stringProperty = purify.Maybe.fromNullable(
+      _jsonObject["stringProperty"],
+    );
+    return purify.Either.of({ identifier, stringProperty });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, InIdentifierNodeShape> {
+    return jsonParseProperties(json).map(
+      (properties) => new InIdentifierNodeShape(properties),
+    );
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "InIdentifierNodeShape" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/stringProperty`, type: "Control" },
+      ],
+      label: "InIdentifierNodeShape",
+      type: "Group",
+    };
+  }
+
+  function jsonZodSchema() {
+    return zod.object({
+      "@id": zod.enum([
+        "http://example.com/InIdentifierNodeShapeInstance1",
+        "http://example.com/InIdentifierNodeShapeInstance2",
+      ]),
+      type: zod.literal("InIdentifierNodeShape"),
+      stringProperty: zod.string().optional(),
+    });
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+  };
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -10759,7 +11447,7 @@ export namespace InIdentifierNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<typeof InIdentifierNodeShape._propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, InIdentifierNodeShape> {
     return InIdentifierNodeShape._propertiesFromRdf(parameters).map(
@@ -10767,94 +11455,23 @@ export namespace InIdentifierNodeShape {
     );
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "InIdentifierNodeShape";
-    readonly stringProperty: string | undefined;
-  };
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.NamedNode<
-        | "http://example.com/InIdentifierNodeShapeInstance1"
-        | "http://example.com/InIdentifierNodeShapeInstance2"
-      >;
-      stringProperty: purify.Maybe<string>;
-    }
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = dataFactory.namedNode(_jsonObject["@id"]);
-    const stringProperty = purify.Maybe.fromNullable(
-      _jsonObject["stringProperty"],
-    );
-    return purify.Either.of({ identifier, stringProperty });
-  }
-
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, InIdentifierNodeShape> {
-    return jsonParseProperties(json).map(
-      (properties) => new InIdentifierNodeShape(properties),
-    );
-  }
-
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "InIdentifierNodeShape" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/stringProperty`, type: "Control" },
-      ],
-      label: "InIdentifierNodeShape",
-      type: "Group",
-    };
-  }
-
-  function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.enum([
-        "http://example.com/InIdentifierNodeShapeInstance1",
-        "http://example.com/InIdentifierNodeShapeInstance2",
-      ]),
-      type: zod.literal("InIdentifierNodeShape"),
-      stringProperty: zod.string().optional(),
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
+    const _resource = resourceSet.mutableNamedResource(this.identifier, {
+      mutateGraph,
     });
+    _resource.add(
+      dataFactory.namedNode("http://example.com/stringProperty"),
+      this.stringProperty,
+    );
+    return _resource;
   }
-
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
 
   function sparqlConstructQuery(
     parameters?: {
@@ -11134,7 +11751,102 @@ export class HasValuePropertiesNodeShape {
 }
 
 export namespace HasValuePropertiesNodeShape {
-  export function _propertiesFromRdf({
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "HasValuePropertiesNodeShape";
+    readonly hasIriProperty: { readonly "@id": string } | undefined;
+    readonly hasLiteralProperty: string | undefined;
+  };
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      hasIriProperty: purify.Maybe<rdfjs.NamedNode>;
+      hasLiteralProperty: purify.Maybe<string>;
+    }
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const hasIriProperty = purify.Maybe.fromNullable(
+      _jsonObject["hasIriProperty"],
+    ).map((_item) => dataFactory.namedNode(_item["@id"]));
+    const hasLiteralProperty = purify.Maybe.fromNullable(
+      _jsonObject["hasLiteralProperty"],
+    );
+    return purify.Either.of({ identifier, hasIriProperty, hasLiteralProperty });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, HasValuePropertiesNodeShape> {
+    return jsonParseProperties(json).map(
+      (properties) => new HasValuePropertiesNodeShape(properties),
+    );
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "HasValuePropertiesNodeShape" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/hasIriProperty`, type: "Control" },
+        {
+          scope: `${scopePrefix}/properties/hasLiteralProperty`,
+          type: "Control",
+        },
+      ],
+      label: "HasValuePropertiesNodeShape",
+      type: "Group",
+    };
+  }
+
+  function jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      type: zod.literal("HasValuePropertiesNodeShape"),
+      hasIriProperty: zod.object({ "@id": zod.string().min(1) }).optional(),
+      hasLiteralProperty: zod.string().optional(),
+    });
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+  };
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -11202,7 +11914,7 @@ export namespace HasValuePropertiesNodeShape {
     return purify.Either.of({ identifier, hasIriProperty, hasLiteralProperty });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<
       typeof HasValuePropertiesNodeShape._propertiesFromRdf
     >[0],
@@ -11215,100 +11927,27 @@ export namespace HasValuePropertiesNodeShape {
     );
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "HasValuePropertiesNodeShape";
-    readonly hasIriProperty: { readonly "@id": string } | undefined;
-    readonly hasLiteralProperty: string | undefined;
-  };
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      hasIriProperty: purify.Maybe<rdfjs.NamedNode>;
-      hasLiteralProperty: purify.Maybe<string>;
-    }
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const hasIriProperty = purify.Maybe.fromNullable(
-      _jsonObject["hasIriProperty"],
-    ).map((_item) => dataFactory.namedNode(_item["@id"]));
-    const hasLiteralProperty = purify.Maybe.fromNullable(
-      _jsonObject["hasLiteralProperty"],
-    );
-    return purify.Either.of({ identifier, hasIriProperty, hasLiteralProperty });
-  }
-
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, HasValuePropertiesNodeShape> {
-    return jsonParseProperties(json).map(
-      (properties) => new HasValuePropertiesNodeShape(properties),
-    );
-  }
-
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "HasValuePropertiesNodeShape" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/hasIriProperty`, type: "Control" },
-        {
-          scope: `${scopePrefix}/properties/hasLiteralProperty`,
-          type: "Control",
-        },
-      ],
-      label: "HasValuePropertiesNodeShape",
-      type: "Group",
-    };
-  }
-
-  function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.literal("HasValuePropertiesNodeShape"),
-      hasIriProperty: zod.object({ "@id": zod.string().min(1) }).optional(),
-      hasLiteralProperty: zod.string().optional(),
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
     });
+    _resource.add(
+      dataFactory.namedNode("http://example.com/hasIriProperty"),
+      this.hasIriProperty,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/hasLiteralProperty"),
+      this.hasLiteralProperty,
+    );
+    return _resource;
   }
-
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
 
   function sparqlConstructQuery(
     parameters?: {
@@ -11561,54 +12200,13 @@ export class InlineNodeShape {
 }
 
 export namespace InlineNodeShape {
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode; stringProperty: string }
-  > {
-    const identifier = _resource.identifier;
-    const _stringPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      string
-    > = _resource
-      .values(dataFactory.namedNode("http://example.com/stringProperty"), {
-        unique: true,
-      })
-      .head()
-      .chain((_value) => _value.toString());
-    if (_stringPropertyEither.isLeft()) {
-      return _stringPropertyEither;
-    }
-
-    const stringProperty = _stringPropertyEither.unsafeCoerce();
-    return purify.Either.of({ identifier, stringProperty });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<typeof InlineNodeShape._propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, InlineNodeShape> {
-    return InlineNodeShape._propertiesFromRdf(parameters).map(
-      (properties) => new InlineNodeShape(properties),
-    );
-  }
-
   export type Json = {
     readonly "@id": string;
     readonly type: "InlineNodeShape";
     readonly stringProperty: string;
   };
 
-  function jsonParseProperties(
+  function jsonDeserializeProperties(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -11627,7 +12225,7 @@ export namespace InlineNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  function jsonParse(
+  function jsonDeserialize(
     json: unknown,
   ): purify.Either<zod.ZodError, InlineNodeShape> {
     return jsonParseProperties(json).map(
@@ -11675,12 +12273,71 @@ export namespace InlineNodeShape {
   }
 
   export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
     schema: jsonSchema,
     uiSchema: jsonUiSchema,
     zodSchema: jsonZodSchema,
   };
+
+  export function parseProperties({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode; stringProperty: string }
+  > {
+    const identifier = _resource.identifier;
+    const _stringPropertyEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      string
+    > = _resource
+      .values(dataFactory.namedNode("http://example.com/stringProperty"), {
+        unique: true,
+      })
+      .head()
+      .chain((_value) => _value.toString());
+    if (_stringPropertyEither.isLeft()) {
+      return _stringPropertyEither;
+    }
+
+    const stringProperty = _stringPropertyEither.unsafeCoerce();
+    return purify.Either.of({ identifier, stringProperty });
+  }
+
+  export function rdfDeserialize(
+    parameters: Parameters<typeof InlineNodeShape._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, InlineNodeShape> {
+    return InlineNodeShape._propertiesFromRdf(parameters).map(
+      (properties) => new InlineNodeShape(properties),
+    );
+  }
+
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
+    });
+    _resource.add(
+      dataFactory.namedNode("http://example.com/stringProperty"),
+      this.stringProperty,
+    );
+    return _resource;
+  }
 
   function sparqlConstructQuery(
     parameters?: {
@@ -11891,54 +12548,13 @@ export class ExternNodeShape {
 }
 
 export namespace ExternNodeShape {
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode; stringProperty: string }
-  > {
-    const identifier = _resource.identifier;
-    const _stringPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      string
-    > = _resource
-      .values(dataFactory.namedNode("http://example.com/stringProperty"), {
-        unique: true,
-      })
-      .head()
-      .chain((_value) => _value.toString());
-    if (_stringPropertyEither.isLeft()) {
-      return _stringPropertyEither;
-    }
-
-    const stringProperty = _stringPropertyEither.unsafeCoerce();
-    return purify.Either.of({ identifier, stringProperty });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<typeof ExternNodeShape._propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, ExternNodeShape> {
-    return ExternNodeShape._propertiesFromRdf(parameters).map(
-      (properties) => new ExternNodeShape(properties),
-    );
-  }
-
   export type Json = {
     readonly "@id": string;
     readonly type: "ExternNodeShape";
     readonly stringProperty: string;
   };
 
-  function jsonParseProperties(
+  function jsonDeserializeProperties(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -11957,7 +12573,7 @@ export namespace ExternNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  function jsonParse(
+  function jsonDeserialize(
     json: unknown,
   ): purify.Either<zod.ZodError, ExternNodeShape> {
     return jsonParseProperties(json).map(
@@ -12005,12 +12621,71 @@ export namespace ExternNodeShape {
   }
 
   export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
     schema: jsonSchema,
     uiSchema: jsonUiSchema,
     zodSchema: jsonZodSchema,
   };
+
+  export function parseProperties({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode; stringProperty: string }
+  > {
+    const identifier = _resource.identifier;
+    const _stringPropertyEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      string
+    > = _resource
+      .values(dataFactory.namedNode("http://example.com/stringProperty"), {
+        unique: true,
+      })
+      .head()
+      .chain((_value) => _value.toString());
+    if (_stringPropertyEither.isLeft()) {
+      return _stringPropertyEither;
+    }
+
+    const stringProperty = _stringPropertyEither.unsafeCoerce();
+    return purify.Either.of({ identifier, stringProperty });
+  }
+
+  export function rdfDeserialize(
+    parameters: Parameters<typeof ExternNodeShape._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, ExternNodeShape> {
+    return ExternNodeShape._propertiesFromRdf(parameters).map(
+      (properties) => new ExternNodeShape(properties),
+    );
+  }
+
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
+    });
+    _resource.add(
+      dataFactory.namedNode("http://example.com/stringProperty"),
+      this.stringProperty,
+    );
+    return _resource;
+  }
 
   function sparqlConstructQuery(
     parameters?: {
@@ -12334,7 +13009,119 @@ export class ExternPropertiesNodeShape {
 }
 
 export namespace ExternPropertiesNodeShape {
-  export function _propertiesFromRdf({
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "ExternPropertiesNodeShape";
+    readonly externObjectTypeProperty: ExternObjectType.Json | undefined;
+    readonly externProperty: { readonly "@id": string } | undefined;
+    readonly inlineProperty: InlineNodeShape.Json | undefined;
+  };
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      externObjectTypeProperty: purify.Maybe<ExternObjectType>;
+      externProperty: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>;
+      inlineProperty: purify.Maybe<InlineNodeShape>;
+    }
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const externObjectTypeProperty = purify.Maybe.fromNullable(
+      _jsonObject["externObjectTypeProperty"],
+    ).map((_item) => ExternObjectType.Json.deserialize(_item).unsafeCoerce());
+    const externProperty = purify.Maybe.fromNullable(
+      _jsonObject["externProperty"],
+    ).map((_item) =>
+      _item["@id"].startsWith("_:")
+        ? dataFactory.blankNode(_item["@id"].substring(2))
+        : dataFactory.namedNode(_item["@id"]),
+    );
+    const inlineProperty = purify.Maybe.fromNullable(
+      _jsonObject["inlineProperty"],
+    ).map((_item) => InlineNodeShape.Json.deserialize(_item).unsafeCoerce());
+    return purify.Either.of({
+      identifier,
+      externObjectTypeProperty,
+      externProperty,
+      inlineProperty,
+    });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, ExternPropertiesNodeShape> {
+    return jsonParseProperties(json).map(
+      (properties) => new ExternPropertiesNodeShape(properties),
+    );
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "ExternPropertiesNodeShape" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+        ExternObjectType.Json.uiSchema({
+          scopePrefix: `${scopePrefix}/properties/externObjectTypeProperty`,
+        }),
+        { scope: `${scopePrefix}/properties/externProperty`, type: "Control" },
+        InlineNodeShape.Json.uiSchema({
+          scopePrefix: `${scopePrefix}/properties/inlineProperty`,
+        }),
+      ],
+      label: "ExternPropertiesNodeShape",
+      type: "Group",
+    };
+  }
+
+  function jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      type: zod.literal("ExternPropertiesNodeShape"),
+      externObjectTypeProperty: ExternObjectType.Json.zodSchema().optional(),
+      externProperty: zod.object({ "@id": zod.string().min(1) }).optional(),
+      inlineProperty: InlineNodeShape.Json.zodSchema().optional(),
+    });
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+  };
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -12432,7 +13219,7 @@ export namespace ExternPropertiesNodeShape {
     });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<
       typeof ExternPropertiesNodeShape._propertiesFromRdf
     >[0],
@@ -12445,117 +13232,35 @@ export namespace ExternPropertiesNodeShape {
     );
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "ExternPropertiesNodeShape";
-    readonly externObjectTypeProperty: ExternObjectType.Json | undefined;
-    readonly externProperty: { readonly "@id": string } | undefined;
-    readonly inlineProperty: InlineNodeShape.Json | undefined;
-  };
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      externObjectTypeProperty: purify.Maybe<ExternObjectType>;
-      externProperty: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>;
-      inlineProperty: purify.Maybe<InlineNodeShape>;
-    }
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const externObjectTypeProperty = purify.Maybe.fromNullable(
-      _jsonObject["externObjectTypeProperty"],
-    ).map((_item) => ExternObjectType.Json.parse(_item).unsafeCoerce());
-    const externProperty = purify.Maybe.fromNullable(
-      _jsonObject["externProperty"],
-    ).map((_item) =>
-      _item["@id"].startsWith("_:")
-        ? dataFactory.blankNode(_item["@id"].substring(2))
-        : dataFactory.namedNode(_item["@id"]),
-    );
-    const inlineProperty = purify.Maybe.fromNullable(
-      _jsonObject["inlineProperty"],
-    ).map((_item) => InlineNodeShape.Json.parse(_item).unsafeCoerce());
-    return purify.Either.of({
-      identifier,
-      externObjectTypeProperty,
-      externProperty,
-      inlineProperty,
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
     });
-  }
-
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, ExternPropertiesNodeShape> {
-    return jsonParseProperties(json).map(
-      (properties) => new ExternPropertiesNodeShape(properties),
+    _resource.add(
+      dataFactory.namedNode("http://example.com/externObjectTypeProperty"),
+      this.externObjectTypeProperty.map((_value) =>
+        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
     );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/externProperty"),
+      this.externProperty,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/inlineProperty"),
+      this.inlineProperty.map((_value) =>
+        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    return _resource;
   }
-
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "ExternPropertiesNodeShape" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-        ExternObjectType.Json.uiSchema({
-          scopePrefix: `${scopePrefix}/properties/externObjectTypeProperty`,
-        }),
-        { scope: `${scopePrefix}/properties/externProperty`, type: "Control" },
-        InlineNodeShape.Json.uiSchema({
-          scopePrefix: `${scopePrefix}/properties/inlineProperty`,
-        }),
-      ],
-      label: "ExternPropertiesNodeShape",
-      type: "Group",
-    };
-  }
-
-  function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.literal("ExternPropertiesNodeShape"),
-      externObjectTypeProperty: ExternObjectType.Json.zodSchema().optional(),
-      externProperty: zod.object({ "@id": zod.string().min(1) }).optional(),
-      inlineProperty: InlineNodeShape.Json.zodSchema().optional(),
-    });
-  }
-
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
 
   function sparqlConstructQuery(
     parameters?: {
@@ -12878,67 +13583,6 @@ export class ExplicitRdfTypesNodeShape {
 }
 
 export namespace ExplicitRdfTypesNodeShape {
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode; stringProperty: string }
-  > {
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://example.com/FromRdfType"),
-      )
-    ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://example.com/FromRdfType)`,
-          predicate: dataFactory.namedNode("http://example.com/FromRdfType"),
-        }),
-      );
-    }
-
-    const identifier = _resource.identifier;
-    const _stringPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      string
-    > = _resource
-      .values(dataFactory.namedNode("http://example.com/stringProperty"), {
-        unique: true,
-      })
-      .head()
-      .chain((_value) => _value.toString());
-    if (_stringPropertyEither.isLeft()) {
-      return _stringPropertyEither;
-    }
-
-    const stringProperty = _stringPropertyEither.unsafeCoerce();
-    return purify.Either.of({ identifier, stringProperty });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<
-      typeof ExplicitRdfTypesNodeShape._propertiesFromRdf
-    >[0],
-  ): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    ExplicitRdfTypesNodeShape
-  > {
-    return ExplicitRdfTypesNodeShape._propertiesFromRdf(parameters).map(
-      (properties) => new ExplicitRdfTypesNodeShape(properties),
-    );
-  }
-
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/FromRdfType",
   );
@@ -12948,7 +13592,7 @@ export namespace ExplicitRdfTypesNodeShape {
     readonly stringProperty: string;
   };
 
-  function jsonParseProperties(
+  function jsonDeserializeProperties(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -12967,7 +13611,7 @@ export namespace ExplicitRdfTypesNodeShape {
     return purify.Either.of({ identifier, stringProperty });
   }
 
-  function jsonParse(
+  function jsonDeserialize(
     json: unknown,
   ): purify.Either<zod.ZodError, ExplicitRdfTypesNodeShape> {
     return jsonParseProperties(json).map(
@@ -13015,12 +13659,107 @@ export namespace ExplicitRdfTypesNodeShape {
   }
 
   export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
     schema: jsonSchema,
     uiSchema: jsonUiSchema,
     zodSchema: jsonZodSchema,
   };
+
+  export function parseProperties({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode; stringProperty: string }
+  > {
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://example.com/FromRdfType"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://example.com/FromRdfType)`,
+          predicate: dataFactory.namedNode("http://example.com/FromRdfType"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    const _stringPropertyEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      string
+    > = _resource
+      .values(dataFactory.namedNode("http://example.com/stringProperty"), {
+        unique: true,
+      })
+      .head()
+      .chain((_value) => _value.toString());
+    if (_stringPropertyEither.isLeft()) {
+      return _stringPropertyEither;
+    }
+
+    const stringProperty = _stringPropertyEither.unsafeCoerce();
+    return purify.Either.of({ identifier, stringProperty });
+  }
+
+  export function rdfDeserialize(
+    parameters: Parameters<
+      typeof ExplicitRdfTypesNodeShape._propertiesFromRdf
+    >[0],
+  ): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    ExplicitRdfTypesNodeShape
+  > {
+    return ExplicitRdfTypesNodeShape._propertiesFromRdf(parameters).map(
+      (properties) => new ExplicitRdfTypesNodeShape(properties),
+    );
+  }
+
+  export function toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://example.com/ToRdfType"),
+      );
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://example.com/FromRdfType"),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://example.com/stringProperty"),
+      this.stringProperty,
+    );
+    return _resource;
+  }
 
   function sparqlConstructQuery(
     parameters?: {
@@ -13466,7 +14205,132 @@ export class DefaultValuePropertiesNodeShape {
 }
 
 export namespace DefaultValuePropertiesNodeShape {
-  export function _propertiesFromRdf({
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "DefaultValuePropertiesNodeShape";
+    readonly dateProperty: string;
+    readonly dateTimeProperty: string;
+    readonly falseBooleanProperty: boolean;
+    readonly numberProperty: number;
+    readonly stringProperty: string;
+    readonly trueBooleanProperty: boolean;
+  };
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      dateProperty: Date;
+      dateTimeProperty: Date;
+      falseBooleanProperty: boolean;
+      numberProperty: number;
+      stringProperty: string;
+      trueBooleanProperty: boolean;
+    }
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const dateProperty = new Date(_jsonObject["dateProperty"]);
+    const dateTimeProperty = new Date(_jsonObject["dateTimeProperty"]);
+    const falseBooleanProperty = _jsonObject["falseBooleanProperty"];
+    const numberProperty = _jsonObject["numberProperty"];
+    const stringProperty = _jsonObject["stringProperty"];
+    const trueBooleanProperty = _jsonObject["trueBooleanProperty"];
+    return purify.Either.of({
+      identifier,
+      dateProperty,
+      dateTimeProperty,
+      falseBooleanProperty,
+      numberProperty,
+      stringProperty,
+      trueBooleanProperty,
+    });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, DefaultValuePropertiesNodeShape> {
+    return jsonParseProperties(json).map(
+      (properties) => new DefaultValuePropertiesNodeShape(properties),
+    );
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "DefaultValuePropertiesNodeShape" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/dateProperty`, type: "Control" },
+        {
+          scope: `${scopePrefix}/properties/dateTimeProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/falseBooleanProperty`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/numberProperty`, type: "Control" },
+        { scope: `${scopePrefix}/properties/stringProperty`, type: "Control" },
+        {
+          scope: `${scopePrefix}/properties/trueBooleanProperty`,
+          type: "Control",
+        },
+      ],
+      label: "DefaultValuePropertiesNodeShape",
+      type: "Group",
+    };
+  }
+
+  function jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      type: zod.literal("DefaultValuePropertiesNodeShape"),
+      dateProperty: zod.string().date(),
+      dateTimeProperty: zod.string().datetime(),
+      falseBooleanProperty: zod.boolean(),
+      numberProperty: zod.number(),
+      stringProperty: zod.string(),
+      trueBooleanProperty: zod.boolean(),
+    });
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+  };
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -13667,7 +14531,7 @@ export namespace DefaultValuePropertiesNodeShape {
     });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<
       typeof DefaultValuePropertiesNodeShape._propertiesFromRdf
     >[0],
@@ -13680,130 +14544,57 @@ export namespace DefaultValuePropertiesNodeShape {
     );
   }
 
-  export type Json = {
-    readonly "@id": string;
-    readonly type: "DefaultValuePropertiesNodeShape";
-    readonly dateProperty: string;
-    readonly dateTimeProperty: string;
-    readonly falseBooleanProperty: boolean;
-    readonly numberProperty: number;
-    readonly stringProperty: string;
-    readonly trueBooleanProperty: boolean;
-  };
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      dateProperty: Date;
-      dateTimeProperty: Date;
-      falseBooleanProperty: boolean;
-      numberProperty: number;
-      stringProperty: string;
-      trueBooleanProperty: boolean;
-    }
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const dateProperty = new Date(_jsonObject["dateProperty"]);
-    const dateTimeProperty = new Date(_jsonObject["dateTimeProperty"]);
-    const falseBooleanProperty = _jsonObject["falseBooleanProperty"];
-    const numberProperty = _jsonObject["numberProperty"];
-    const stringProperty = _jsonObject["stringProperty"];
-    const trueBooleanProperty = _jsonObject["trueBooleanProperty"];
-    return purify.Either.of({
-      identifier,
-      dateProperty,
-      dateTimeProperty,
-      falseBooleanProperty,
-      numberProperty,
-      stringProperty,
-      trueBooleanProperty,
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
     });
-  }
-
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, DefaultValuePropertiesNodeShape> {
-    return jsonParseProperties(json).map(
-      (properties) => new DefaultValuePropertiesNodeShape(properties),
+    _resource.add(
+      dataFactory.namedNode("http://example.com/dateProperty"),
+      this.dateProperty.getTime() !== 1523232000000
+        ? rdfLiteral.toRdf(this.dateProperty, {
+            dataFactory,
+            datatype: dataFactory.namedNode(
+              "http://www.w3.org/2001/XMLSchema#date",
+            ),
+          })
+        : undefined,
     );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/dateTimeProperty"),
+      this.dateTimeProperty.getTime() !== 1523268000000
+        ? rdfLiteral.toRdf(this.dateTimeProperty, {
+            dataFactory,
+            datatype: dataFactory.namedNode(
+              "http://www.w3.org/2001/XMLSchema#dateTime",
+            ),
+          })
+        : undefined,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/falseBooleanProperty"),
+      this.falseBooleanProperty ? true : undefined,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/numberProperty"),
+      this.numberProperty !== 0 ? this.numberProperty : undefined,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/stringProperty"),
+      this.stringProperty !== "" ? this.stringProperty : undefined,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/trueBooleanProperty"),
+      !this.trueBooleanProperty ? false : undefined,
+    );
+    return _resource;
   }
-
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "DefaultValuePropertiesNodeShape" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/dateProperty`, type: "Control" },
-        {
-          scope: `${scopePrefix}/properties/dateTimeProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/falseBooleanProperty`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/numberProperty`, type: "Control" },
-        { scope: `${scopePrefix}/properties/stringProperty`, type: "Control" },
-        {
-          scope: `${scopePrefix}/properties/trueBooleanProperty`,
-          type: "Control",
-        },
-      ],
-      label: "DefaultValuePropertiesNodeShape",
-      type: "Group",
-    };
-  }
-
-  function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.literal("DefaultValuePropertiesNodeShape"),
-      dateProperty: zod.string().date(),
-      dateTimeProperty: zod.string().datetime(),
-      falseBooleanProperty: zod.boolean(),
-      numberProperty: zod.number(),
-      stringProperty: zod.string(),
-      trueBooleanProperty: zod.boolean(),
-    });
-  }
-
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
 
   function sparqlConstructQuery(
     parameters?: {
@@ -14103,7 +14894,160 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
       );
   }
 
-  export function _propertiesFromRdf({
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BaseInterfaceWithPropertiesNodeShape",
+  );
+  export type Json = {
+    readonly "@id": string;
+    readonly type:
+      | "BaseInterfaceWithPropertiesNodeShape"
+      | "BaseInterfaceWithoutPropertiesNodeShape"
+      | "ConcreteChildInterfaceNodeShape"
+      | "ConcreteParentInterfaceNodeShape";
+    readonly baseStringProperty: string;
+  };
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      type:
+        | "BaseInterfaceWithPropertiesNodeShape"
+        | "BaseInterfaceWithoutPropertiesNodeShape"
+        | "ConcreteChildInterfaceNodeShape"
+        | "ConcreteParentInterfaceNodeShape";
+      baseStringProperty: string;
+    }
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const type = "BaseInterfaceWithPropertiesNodeShape" as const;
+    const baseStringProperty = _jsonObject["baseStringProperty"];
+    return purify.Either.of({ identifier, type, baseStringProperty });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, BaseInterfaceWithPropertiesNodeShape> {
+    return (
+      BaseInterfaceWithoutPropertiesNodeShapeStatic.Json.deserialize(
+        json,
+      ) as purify.Either<zod.ZodError, BaseInterfaceWithPropertiesNodeShape>
+    ).altLazy(() => jsonParseProperties(json));
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "BaseInterfaceWithPropertiesNodeShape" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/baseStringProperty`,
+          type: "Control",
+        },
+      ],
+      label: "BaseInterfaceWithPropertiesNodeShape",
+      type: "Group",
+    };
+  }
+
+  function jsonSerialize(
+    _baseInterfaceWithPropertiesNodeShape: BaseInterfaceWithPropertiesNodeShape,
+  ): BaseInterfaceWithPropertiesNodeShapeStatic.Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _baseInterfaceWithPropertiesNodeShape.identifier.termType ===
+          "BlankNode"
+            ? `_:${_baseInterfaceWithPropertiesNodeShape.identifier.value}`
+            : _baseInterfaceWithPropertiesNodeShape.identifier.value,
+        type: _baseInterfaceWithPropertiesNodeShape.type,
+        baseStringProperty:
+          _baseInterfaceWithPropertiesNodeShape.baseStringProperty,
+      } satisfies BaseInterfaceWithPropertiesNodeShapeStatic.Json),
+    );
+  }
+
+  function jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      type: zod.enum([
+        "BaseInterfaceWithPropertiesNodeShape",
+        "BaseInterfaceWithoutPropertiesNodeShape",
+        "ConcreteChildInterfaceNodeShape",
+        "ConcreteParentInterfaceNodeShape",
+      ]),
+      baseStringProperty: zod.string(),
+    });
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+    serialize: jsonSerialize,
+  };
+
+  export function hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(
+    _baseInterfaceWithPropertiesNodeShape: BaseInterfaceWithPropertiesNodeShape,
+    _hasher: HasherT,
+  ): HasherT {
+    _hasher.update(_baseInterfaceWithPropertiesNodeShape.identifier.value);
+    _hasher.update(_baseInterfaceWithPropertiesNodeShape.type);
+    BaseInterfaceWithPropertiesNodeShapeStatic.hashShaclProperties(
+      _baseInterfaceWithPropertiesNodeShape,
+      _hasher,
+    );
+    return _hasher;
+  }
+
+  export function hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(
+    _baseInterfaceWithPropertiesNodeShape: BaseInterfaceWithPropertiesNodeShape,
+    _hasher: HasherT,
+  ): HasherT {
+    _hasher.update(_baseInterfaceWithPropertiesNodeShape.baseStringProperty);
+    return _hasher;
+  }
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -14164,7 +15108,7 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     return purify.Either.of({ identifier, type, baseStringProperty });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<
       typeof BaseInterfaceWithPropertiesNodeShapeStatic._propertiesFromRdf
     >[0],
@@ -14185,157 +15129,38 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     );
   }
 
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/BaseInterfaceWithPropertiesNodeShape",
-  );
-  export type Json = {
-    readonly "@id": string;
-    readonly type:
-      | "BaseInterfaceWithPropertiesNodeShape"
-      | "BaseInterfaceWithoutPropertiesNodeShape"
-      | "ConcreteChildInterfaceNodeShape"
-      | "ConcreteParentInterfaceNodeShape";
-    readonly baseStringProperty: string;
-  };
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
+  export function toRdf(
+    _baseInterfaceWithPropertiesNodeShape: BaseInterfaceWithPropertiesNodeShape,
     {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type:
-        | "BaseInterfaceWithPropertiesNodeShape"
-        | "BaseInterfaceWithoutPropertiesNodeShape"
-        | "ConcreteChildInterfaceNodeShape"
-        | "ConcreteParentInterfaceNodeShape";
-      baseStringProperty: string;
-    }
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const type = "BaseInterfaceWithPropertiesNodeShape" as const;
-    const baseStringProperty = _jsonObject["baseStringProperty"];
-    return purify.Either.of({ identifier, type, baseStringProperty });
-  }
-
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, BaseInterfaceWithPropertiesNodeShape> {
-    return (
-      BaseInterfaceWithoutPropertiesNodeShapeStatic.Json.parse(
-        json,
-      ) as purify.Either<zod.ZodError, BaseInterfaceWithPropertiesNodeShape>
-    ).altLazy(() => jsonParseProperties(json));
-  }
-
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "BaseInterfaceWithPropertiesNodeShape" },
-              scope: `${scopePrefix}/properties/type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/baseStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "BaseInterfaceWithPropertiesNodeShape",
-      type: "Group",
-    };
-  }
-
-  function jsonUnparse(
-    _baseInterfaceWithPropertiesNodeShape: BaseInterfaceWithPropertiesNodeShape,
-  ): BaseInterfaceWithPropertiesNodeShapeStatic.Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _baseInterfaceWithPropertiesNodeShape.identifier.termType ===
-          "BlankNode"
-            ? `_:${_baseInterfaceWithPropertiesNodeShape.identifier.value}`
-            : _baseInterfaceWithPropertiesNodeShape.identifier.value,
-        type: _baseInterfaceWithPropertiesNodeShape.type,
-        baseStringProperty:
-          _baseInterfaceWithPropertiesNodeShape.baseStringProperty,
-      } satisfies BaseInterfaceWithPropertiesNodeShapeStatic.Json),
-    );
-  }
-
-  function jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      type: zod.enum([
-        "BaseInterfaceWithPropertiesNodeShape",
-        "BaseInterfaceWithoutPropertiesNodeShape",
-        "ConcreteChildInterfaceNodeShape",
-        "ConcreteParentInterfaceNodeShape",
-      ]),
-      baseStringProperty: zod.string(),
-    });
-  }
-
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-    unparse: jsonUnparse,
-  };
-
-  export function hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+      ignoreRdfType,
+      mutateGraph,
+      resourceSet,
+    }: {
+      ignoreRdfType?: boolean;
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
     },
-  >(
-    _baseInterfaceWithPropertiesNodeShape: BaseInterfaceWithPropertiesNodeShape,
-    _hasher: HasherT,
-  ): HasherT {
-    _hasher.update(_baseInterfaceWithPropertiesNodeShape.identifier.value);
-    _hasher.update(_baseInterfaceWithPropertiesNodeShape.type);
-    BaseInterfaceWithPropertiesNodeShapeStatic.hashShaclProperties(
-      _baseInterfaceWithPropertiesNodeShape,
-      _hasher,
+  ): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(
+      _baseInterfaceWithPropertiesNodeShape.identifier,
+      { mutateGraph },
     );
-    return _hasher;
-  }
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode(
+          "http://example.com/BaseInterfaceWithPropertiesNodeShape",
+        ),
+      );
+    }
 
-  export function hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(
-    _baseInterfaceWithPropertiesNodeShape: BaseInterfaceWithPropertiesNodeShape,
-    _hasher: HasherT,
-  ): HasherT {
-    _hasher.update(_baseInterfaceWithPropertiesNodeShape.baseStringProperty);
-    return _hasher;
+    _resource.add(
+      dataFactory.namedNode("http://example.com/baseStringProperty"),
+      _baseInterfaceWithPropertiesNodeShape.baseStringProperty,
+    );
+    return _resource;
   }
 
   function sparqlConstructQuery(
@@ -14483,40 +15308,6 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     constructTemplateTriples: sparqlConstructTemplateTriples,
     wherePatterns: sparqlWherePatterns,
   };
-
-  export function toRdf(
-    _baseInterfaceWithPropertiesNodeShape: BaseInterfaceWithPropertiesNodeShape,
-    {
-      ignoreRdfType,
-      mutateGraph,
-      resourceSet,
-    }: {
-      ignoreRdfType?: boolean;
-      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(
-      _baseInterfaceWithPropertiesNodeShape.identifier,
-      { mutateGraph },
-    );
-    if (!ignoreRdfType) {
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode(
-          "http://example.com/BaseInterfaceWithPropertiesNodeShape",
-        ),
-      );
-    }
-
-    _resource.add(
-      dataFactory.namedNode("http://example.com/baseStringProperty"),
-      _baseInterfaceWithPropertiesNodeShape.baseStringProperty,
-    );
-    return _resource;
-  }
 }
 /**
  * Base interface for other node shapes. Put the base interface with properties above the base interface without.
@@ -14560,7 +15351,141 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
     return BaseInterfaceWithPropertiesNodeShapeStatic.equals(left, right);
   }
 
-  export function _propertiesFromRdf({
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BaseInterfaceWithoutPropertiesNodeShape",
+  );
+  export type Json = BaseInterfaceWithPropertiesNodeShapeStatic.Json;
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      type:
+        | "BaseInterfaceWithoutPropertiesNodeShape"
+        | "ConcreteChildInterfaceNodeShape"
+        | "ConcreteParentInterfaceNodeShape";
+    } & $UnwrapR<
+      ReturnType<
+        typeof BaseInterfaceWithPropertiesNodeShapeStatic.Json.parseProperties
+      >
+    >
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either =
+      BaseInterfaceWithPropertiesNodeShapeStatic.Json.parseProperties(
+        _jsonObject,
+      );
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const type = "BaseInterfaceWithoutPropertiesNodeShape" as const;
+    return purify.Either.of({ ..._super0, identifier, type });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, BaseInterfaceWithoutPropertiesNodeShape> {
+    return (
+      ConcreteParentInterfaceNodeShapeStatic.Json.deserialize(
+        json,
+      ) as purify.Either<zod.ZodError, BaseInterfaceWithoutPropertiesNodeShape>
+    ).altLazy(() => jsonParseProperties(json));
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        BaseInterfaceWithPropertiesNodeShapeStatic.Json.uiSchema({
+          scopePrefix,
+        }),
+      ],
+      label: "BaseInterfaceWithoutPropertiesNodeShape",
+      type: "Group",
+    };
+  }
+
+  function jsonSerialize(
+    _baseInterfaceWithoutPropertiesNodeShape: BaseInterfaceWithoutPropertiesNodeShape,
+  ): BaseInterfaceWithoutPropertiesNodeShapeStatic.Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...BaseInterfaceWithPropertiesNodeShapeStatic.Json.serialize(
+          _baseInterfaceWithoutPropertiesNodeShape,
+        ),
+      } satisfies BaseInterfaceWithoutPropertiesNodeShapeStatic.Json),
+    );
+  }
+
+  function jsonZodSchema() {
+    return BaseInterfaceWithPropertiesNodeShapeStatic.Json.zodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum([
+          "BaseInterfaceWithoutPropertiesNodeShape",
+          "ConcreteChildInterfaceNodeShape",
+          "ConcreteParentInterfaceNodeShape",
+        ]),
+      }),
+    );
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+    serialize: jsonSerialize,
+  };
+
+  export function hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(
+    _baseInterfaceWithoutPropertiesNodeShape: BaseInterfaceWithoutPropertiesNodeShape,
+    _hasher: HasherT,
+  ): HasherT {
+    BaseInterfaceWithoutPropertiesNodeShapeStatic.hashShaclProperties(
+      _baseInterfaceWithoutPropertiesNodeShape,
+      _hasher,
+    );
+    return _hasher;
+  }
+
+  export function hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(
+    _baseInterfaceWithoutPropertiesNodeShape: BaseInterfaceWithoutPropertiesNodeShape,
+    _hasher: HasherT,
+  ): HasherT {
+    BaseInterfaceWithPropertiesNodeShapeStatic.hashShaclProperties(
+      _baseInterfaceWithoutPropertiesNodeShape,
+      _hasher,
+    );
+    return _hasher;
+  }
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -14621,7 +15546,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
     return purify.Either.of({ ..._super0, identifier, type });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<
       typeof BaseInterfaceWithoutPropertiesNodeShapeStatic._propertiesFromRdf
     >[0],
@@ -14644,139 +15569,34 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
     );
   }
 
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/BaseInterfaceWithoutPropertiesNodeShape",
-  );
-  export type Json = BaseInterfaceWithPropertiesNodeShapeStatic.Json;
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
+  export function toRdf(
+    _baseInterfaceWithoutPropertiesNodeShape: BaseInterfaceWithoutPropertiesNodeShape,
     {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type:
-        | "BaseInterfaceWithoutPropertiesNodeShape"
-        | "ConcreteChildInterfaceNodeShape"
-        | "ConcreteParentInterfaceNodeShape";
-    } & $UnwrapR<
-      ReturnType<
-        typeof BaseInterfaceWithPropertiesNodeShapeStatic.Json.parseProperties
-      >
-    >
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either =
-      BaseInterfaceWithPropertiesNodeShapeStatic.Json.parseProperties(
-        _jsonObject,
-      );
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const type = "BaseInterfaceWithoutPropertiesNodeShape" as const;
-    return purify.Either.of({ ..._super0, identifier, type });
-  }
-
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, BaseInterfaceWithoutPropertiesNodeShape> {
-    return (
-      ConcreteParentInterfaceNodeShapeStatic.Json.parse(json) as purify.Either<
-        zod.ZodError,
-        BaseInterfaceWithoutPropertiesNodeShape
-      >
-    ).altLazy(() => jsonParseProperties(json));
-  }
-
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        BaseInterfaceWithPropertiesNodeShapeStatic.Json.uiSchema({
-          scopePrefix,
-        }),
-      ],
-      label: "BaseInterfaceWithoutPropertiesNodeShape",
-      type: "Group",
-    };
-  }
-
-  function jsonUnparse(
-    _baseInterfaceWithoutPropertiesNodeShape: BaseInterfaceWithoutPropertiesNodeShape,
-  ): BaseInterfaceWithoutPropertiesNodeShapeStatic.Json {
-    return JSON.parse(
-      JSON.stringify({
-        ...BaseInterfaceWithPropertiesNodeShapeStatic.Json.unparse(
-          _baseInterfaceWithoutPropertiesNodeShape,
+      ignoreRdfType,
+      mutateGraph,
+      resourceSet,
+    }: {
+      ignoreRdfType?: boolean;
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    const _resource = BaseInterfaceWithPropertiesNodeShapeStatic.toRdf(
+      _baseInterfaceWithoutPropertiesNodeShape,
+      { ignoreRdfType: true, mutateGraph, resourceSet },
+    );
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         ),
-      } satisfies BaseInterfaceWithoutPropertiesNodeShapeStatic.Json),
-    );
-  }
+        _resource.dataFactory.namedNode(
+          "http://example.com/BaseInterfaceWithoutPropertiesNodeShape",
+        ),
+      );
+    }
 
-  function jsonZodSchema() {
-    return BaseInterfaceWithPropertiesNodeShapeStatic.Json.zodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum([
-          "BaseInterfaceWithoutPropertiesNodeShape",
-          "ConcreteChildInterfaceNodeShape",
-          "ConcreteParentInterfaceNodeShape",
-        ]),
-      }),
-    );
-  }
-
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-    unparse: jsonUnparse,
-  };
-
-  export function hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(
-    _baseInterfaceWithoutPropertiesNodeShape: BaseInterfaceWithoutPropertiesNodeShape,
-    _hasher: HasherT,
-  ): HasherT {
-    BaseInterfaceWithoutPropertiesNodeShapeStatic.hashShaclProperties(
-      _baseInterfaceWithoutPropertiesNodeShape,
-      _hasher,
-    );
-    return _hasher;
-  }
-
-  export function hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(
-    _baseInterfaceWithoutPropertiesNodeShape: BaseInterfaceWithoutPropertiesNodeShape,
-    _hasher: HasherT,
-  ): HasherT {
-    BaseInterfaceWithPropertiesNodeShapeStatic.hashShaclProperties(
-      _baseInterfaceWithoutPropertiesNodeShape,
-      _hasher,
-    );
-    return _hasher;
+    return _resource;
   }
 
   function sparqlConstructQuery(
@@ -14911,36 +15731,6 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
     constructTemplateTriples: sparqlConstructTemplateTriples,
     wherePatterns: sparqlWherePatterns,
   };
-
-  export function toRdf(
-    _baseInterfaceWithoutPropertiesNodeShape: BaseInterfaceWithoutPropertiesNodeShape,
-    {
-      ignoreRdfType,
-      mutateGraph,
-      resourceSet,
-    }: {
-      ignoreRdfType?: boolean;
-      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    const _resource = BaseInterfaceWithPropertiesNodeShapeStatic.toRdf(
-      _baseInterfaceWithoutPropertiesNodeShape,
-      { ignoreRdfType: true, mutateGraph, resourceSet },
-    );
-    if (!ignoreRdfType) {
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode(
-          "http://example.com/BaseInterfaceWithoutPropertiesNodeShape",
-        ),
-      );
-    }
-
-    return _resource;
-  }
 }
 /**
  * Interface node shape that inherits the base interface and is the parent of the ConcreteChildInterfaceNodeShape.
@@ -15003,7 +15793,157 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     );
   }
 
-  export function _propertiesFromRdf({
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ConcreteParentInterfaceNodeShape",
+  );
+  export type Json = {
+    readonly parentStringProperty: string;
+  } & BaseInterfaceWithoutPropertiesNodeShapeStatic.Json;
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      type:
+        | "ConcreteChildInterfaceNodeShape"
+        | "ConcreteParentInterfaceNodeShape";
+      parentStringProperty: string;
+    } & $UnwrapR<
+      ReturnType<
+        typeof BaseInterfaceWithoutPropertiesNodeShapeStatic.Json.parseProperties
+      >
+    >
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either =
+      BaseInterfaceWithoutPropertiesNodeShapeStatic.Json.parseProperties(
+        _jsonObject,
+      );
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const type = "ConcreteParentInterfaceNodeShape" as const;
+    const parentStringProperty = _jsonObject["parentStringProperty"];
+    return purify.Either.of({
+      ..._super0,
+      identifier,
+      type,
+      parentStringProperty,
+    });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, ConcreteParentInterfaceNodeShape> {
+    return (
+      ConcreteChildInterfaceNodeShape.Json.deserialize(json) as purify.Either<
+        zod.ZodError,
+        ConcreteParentInterfaceNodeShape
+      >
+    ).altLazy(() => jsonParseProperties(json));
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        BaseInterfaceWithoutPropertiesNodeShapeStatic.Json.uiSchema({
+          scopePrefix,
+        }),
+        {
+          scope: `${scopePrefix}/properties/parentStringProperty`,
+          type: "Control",
+        },
+      ],
+      label: "ConcreteParentInterfaceNodeShape",
+      type: "Group",
+    };
+  }
+
+  function jsonSerialize(
+    _concreteParentInterfaceNodeShape: ConcreteParentInterfaceNodeShape,
+  ): ConcreteParentInterfaceNodeShapeStatic.Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...BaseInterfaceWithoutPropertiesNodeShapeStatic.Json.serialize(
+          _concreteParentInterfaceNodeShape,
+        ),
+        parentStringProperty:
+          _concreteParentInterfaceNodeShape.parentStringProperty,
+      } satisfies ConcreteParentInterfaceNodeShapeStatic.Json),
+    );
+  }
+
+  function jsonZodSchema() {
+    return BaseInterfaceWithoutPropertiesNodeShapeStatic.Json.zodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum([
+          "ConcreteChildInterfaceNodeShape",
+          "ConcreteParentInterfaceNodeShape",
+        ]),
+        parentStringProperty: zod.string(),
+      }),
+    );
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+    serialize: jsonSerialize,
+  };
+
+  export function hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(
+    _concreteParentInterfaceNodeShape: ConcreteParentInterfaceNodeShape,
+    _hasher: HasherT,
+  ): HasherT {
+    ConcreteParentInterfaceNodeShapeStatic.hashShaclProperties(
+      _concreteParentInterfaceNodeShape,
+      _hasher,
+    );
+    return _hasher;
+  }
+
+  export function hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(
+    _concreteParentInterfaceNodeShape: ConcreteParentInterfaceNodeShape,
+    _hasher: HasherT,
+  ): HasherT {
+    BaseInterfaceWithoutPropertiesNodeShapeStatic.hashShaclProperties(
+      _concreteParentInterfaceNodeShape,
+      _hasher,
+    );
+    _hasher.update(_concreteParentInterfaceNodeShape.parentStringProperty);
+    return _hasher;
+  }
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -15084,7 +16024,7 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<
       typeof ConcreteParentInterfaceNodeShapeStatic._propertiesFromRdf
     >[0],
@@ -15103,154 +16043,38 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     );
   }
 
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ConcreteParentInterfaceNodeShape",
-  );
-  export type Json = {
-    readonly parentStringProperty: string;
-  } & BaseInterfaceWithoutPropertiesNodeShapeStatic.Json;
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
+  export function toRdf(
+    _concreteParentInterfaceNodeShape: ConcreteParentInterfaceNodeShape,
     {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type:
-        | "ConcreteChildInterfaceNodeShape"
-        | "ConcreteParentInterfaceNodeShape";
-      parentStringProperty: string;
-    } & $UnwrapR<
-      ReturnType<
-        typeof BaseInterfaceWithoutPropertiesNodeShapeStatic.Json.parseProperties
-      >
-    >
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either =
-      BaseInterfaceWithoutPropertiesNodeShapeStatic.Json.parseProperties(
-        _jsonObject,
-      );
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const type = "ConcreteParentInterfaceNodeShape" as const;
-    const parentStringProperty = _jsonObject["parentStringProperty"];
-    return purify.Either.of({
-      ..._super0,
-      identifier,
-      type,
-      parentStringProperty,
-    });
-  }
-
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, ConcreteParentInterfaceNodeShape> {
-    return (
-      ConcreteChildInterfaceNodeShape.Json.parse(json) as purify.Either<
-        zod.ZodError,
-        ConcreteParentInterfaceNodeShape
-      >
-    ).altLazy(() => jsonParseProperties(json));
-  }
-
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        BaseInterfaceWithoutPropertiesNodeShapeStatic.Json.uiSchema({
-          scopePrefix,
-        }),
-        {
-          scope: `${scopePrefix}/properties/parentStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "ConcreteParentInterfaceNodeShape",
-      type: "Group",
-    };
-  }
-
-  function jsonUnparse(
-    _concreteParentInterfaceNodeShape: ConcreteParentInterfaceNodeShape,
-  ): ConcreteParentInterfaceNodeShapeStatic.Json {
-    return JSON.parse(
-      JSON.stringify({
-        ...BaseInterfaceWithoutPropertiesNodeShapeStatic.Json.unparse(
-          _concreteParentInterfaceNodeShape,
+      ignoreRdfType,
+      mutateGraph,
+      resourceSet,
+    }: {
+      ignoreRdfType?: boolean;
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    const _resource = BaseInterfaceWithoutPropertiesNodeShapeStatic.toRdf(
+      _concreteParentInterfaceNodeShape,
+      { ignoreRdfType: true, mutateGraph, resourceSet },
+    );
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         ),
-        parentStringProperty:
-          _concreteParentInterfaceNodeShape.parentStringProperty,
-      } satisfies ConcreteParentInterfaceNodeShapeStatic.Json),
-    );
-  }
+        _resource.dataFactory.namedNode(
+          "http://example.com/ConcreteParentInterfaceNodeShape",
+        ),
+      );
+    }
 
-  function jsonZodSchema() {
-    return BaseInterfaceWithoutPropertiesNodeShapeStatic.Json.zodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum([
-          "ConcreteChildInterfaceNodeShape",
-          "ConcreteParentInterfaceNodeShape",
-        ]),
-        parentStringProperty: zod.string(),
-      }),
+    _resource.add(
+      dataFactory.namedNode("http://example.com/parentStringProperty"),
+      _concreteParentInterfaceNodeShape.parentStringProperty,
     );
-  }
-
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-    unparse: jsonUnparse,
-  };
-
-  export function hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(
-    _concreteParentInterfaceNodeShape: ConcreteParentInterfaceNodeShape,
-    _hasher: HasherT,
-  ): HasherT {
-    ConcreteParentInterfaceNodeShapeStatic.hashShaclProperties(
-      _concreteParentInterfaceNodeShape,
-      _hasher,
-    );
-    return _hasher;
-  }
-
-  export function hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(
-    _concreteParentInterfaceNodeShape: ConcreteParentInterfaceNodeShape,
-    _hasher: HasherT,
-  ): HasherT {
-    BaseInterfaceWithoutPropertiesNodeShapeStatic.hashShaclProperties(
-      _concreteParentInterfaceNodeShape,
-      _hasher,
-    );
-    _hasher.update(_concreteParentInterfaceNodeShape.parentStringProperty);
-    return _hasher;
+    return _resource;
   }
 
   function sparqlConstructQuery(
@@ -15405,40 +16229,6 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     constructTemplateTriples: sparqlConstructTemplateTriples,
     wherePatterns: sparqlWherePatterns,
   };
-
-  export function toRdf(
-    _concreteParentInterfaceNodeShape: ConcreteParentInterfaceNodeShape,
-    {
-      ignoreRdfType,
-      mutateGraph,
-      resourceSet,
-    }: {
-      ignoreRdfType?: boolean;
-      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    const _resource = BaseInterfaceWithoutPropertiesNodeShapeStatic.toRdf(
-      _concreteParentInterfaceNodeShape,
-      { ignoreRdfType: true, mutateGraph, resourceSet },
-    );
-    if (!ignoreRdfType) {
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode(
-          "http://example.com/ConcreteParentInterfaceNodeShape",
-        ),
-      );
-    }
-
-    _resource.add(
-      dataFactory.namedNode("http://example.com/parentStringProperty"),
-      _concreteParentInterfaceNodeShape.parentStringProperty,
-    );
-    return _resource;
-  }
 }
 /**
  * Child interface of ConcreteParentInterfaceNodeShape. Should inherit properties and node kinds.
@@ -15495,7 +16285,143 @@ export namespace ConcreteChildInterfaceNodeShape {
     );
   }
 
-  export function _propertiesFromRdf({
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ConcreteChildInterfaceNodeShape",
+  );
+  export type Json = {
+    readonly childStringProperty: string;
+  } & ConcreteParentInterfaceNodeShapeStatic.Json;
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      type: "ConcreteChildInterfaceNodeShape";
+      childStringProperty: string;
+    } & $UnwrapR<
+      ReturnType<
+        typeof ConcreteParentInterfaceNodeShapeStatic.Json.parseProperties
+      >
+    >
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either =
+      ConcreteParentInterfaceNodeShapeStatic.Json.parseProperties(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const type = "ConcreteChildInterfaceNodeShape" as const;
+    const childStringProperty = _jsonObject["childStringProperty"];
+    return purify.Either.of({
+      ..._super0,
+      identifier,
+      type,
+      childStringProperty,
+    });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, ConcreteChildInterfaceNodeShape> {
+    return jsonParseProperties(json);
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        ConcreteParentInterfaceNodeShapeStatic.Json.uiSchema({ scopePrefix }),
+        {
+          scope: `${scopePrefix}/properties/childStringProperty`,
+          type: "Control",
+        },
+      ],
+      label: "ConcreteChildInterfaceNodeShape",
+      type: "Group",
+    };
+  }
+
+  function jsonSerialize(
+    _concreteChildInterfaceNodeShape: ConcreteChildInterfaceNodeShape,
+  ): ConcreteChildInterfaceNodeShape.Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...ConcreteParentInterfaceNodeShapeStatic.Json.serialize(
+          _concreteChildInterfaceNodeShape,
+        ),
+        childStringProperty:
+          _concreteChildInterfaceNodeShape.childStringProperty,
+      } satisfies ConcreteChildInterfaceNodeShape.Json),
+    );
+  }
+
+  function jsonZodSchema() {
+    return ConcreteParentInterfaceNodeShapeStatic.Json.zodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("ConcreteChildInterfaceNodeShape"),
+        childStringProperty: zod.string(),
+      }),
+    );
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+    serialize: jsonSerialize,
+  };
+
+  export function hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(
+    _concreteChildInterfaceNodeShape: ConcreteChildInterfaceNodeShape,
+    _hasher: HasherT,
+  ): HasherT {
+    ConcreteChildInterfaceNodeShape.hashShaclProperties(
+      _concreteChildInterfaceNodeShape,
+      _hasher,
+    );
+    return _hasher;
+  }
+
+  export function hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(
+    _concreteChildInterfaceNodeShape: ConcreteChildInterfaceNodeShape,
+    _hasher: HasherT,
+  ): HasherT {
+    ConcreteParentInterfaceNodeShapeStatic.hashShaclProperties(
+      _concreteChildInterfaceNodeShape,
+      _hasher,
+    );
+    _hasher.update(_concreteChildInterfaceNodeShape.childStringProperty);
+    return _hasher;
+  }
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -15573,7 +16499,7 @@ export namespace ConcreteChildInterfaceNodeShape {
     });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<
       typeof ConcreteChildInterfaceNodeShape._propertiesFromRdf
     >[0],
@@ -15584,140 +16510,38 @@ export namespace ConcreteChildInterfaceNodeShape {
     return ConcreteChildInterfaceNodeShape._propertiesFromRdf(parameters);
   }
 
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ConcreteChildInterfaceNodeShape",
-  );
-  export type Json = {
-    readonly childStringProperty: string;
-  } & ConcreteParentInterfaceNodeShapeStatic.Json;
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
+  export function toRdf(
+    _concreteChildInterfaceNodeShape: ConcreteChildInterfaceNodeShape,
     {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "ConcreteChildInterfaceNodeShape";
-      childStringProperty: string;
-    } & $UnwrapR<
-      ReturnType<
-        typeof ConcreteParentInterfaceNodeShapeStatic.Json.parseProperties
-      >
-    >
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either =
-      ConcreteParentInterfaceNodeShapeStatic.Json.parseProperties(_jsonObject);
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const type = "ConcreteChildInterfaceNodeShape" as const;
-    const childStringProperty = _jsonObject["childStringProperty"];
-    return purify.Either.of({
-      ..._super0,
-      identifier,
-      type,
-      childStringProperty,
-    });
-  }
-
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, ConcreteChildInterfaceNodeShape> {
-    return jsonParseProperties(json);
-  }
-
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        ConcreteParentInterfaceNodeShapeStatic.Json.uiSchema({ scopePrefix }),
-        {
-          scope: `${scopePrefix}/properties/childStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "ConcreteChildInterfaceNodeShape",
-      type: "Group",
-    };
-  }
-
-  function jsonUnparse(
-    _concreteChildInterfaceNodeShape: ConcreteChildInterfaceNodeShape,
-  ): ConcreteChildInterfaceNodeShape.Json {
-    return JSON.parse(
-      JSON.stringify({
-        ...ConcreteParentInterfaceNodeShapeStatic.Json.unparse(
-          _concreteChildInterfaceNodeShape,
+      ignoreRdfType,
+      mutateGraph,
+      resourceSet,
+    }: {
+      ignoreRdfType?: boolean;
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    const _resource = ConcreteParentInterfaceNodeShapeStatic.toRdf(
+      _concreteChildInterfaceNodeShape,
+      { ignoreRdfType: true, mutateGraph, resourceSet },
+    );
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         ),
-        childStringProperty:
-          _concreteChildInterfaceNodeShape.childStringProperty,
-      } satisfies ConcreteChildInterfaceNodeShape.Json),
-    );
-  }
+        _resource.dataFactory.namedNode(
+          "http://example.com/ConcreteChildInterfaceNodeShape",
+        ),
+      );
+    }
 
-  function jsonZodSchema() {
-    return ConcreteParentInterfaceNodeShapeStatic.Json.zodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("ConcreteChildInterfaceNodeShape"),
-        childStringProperty: zod.string(),
-      }),
+    _resource.add(
+      dataFactory.namedNode("http://example.com/childStringProperty"),
+      _concreteChildInterfaceNodeShape.childStringProperty,
     );
-  }
-
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-    unparse: jsonUnparse,
-  };
-
-  export function hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(
-    _concreteChildInterfaceNodeShape: ConcreteChildInterfaceNodeShape,
-    _hasher: HasherT,
-  ): HasherT {
-    ConcreteChildInterfaceNodeShape.hashShaclProperties(
-      _concreteChildInterfaceNodeShape,
-      _hasher,
-    );
-    return _hasher;
-  }
-
-  export function hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(
-    _concreteChildInterfaceNodeShape: ConcreteChildInterfaceNodeShape,
-    _hasher: HasherT,
-  ): HasherT {
-    ConcreteParentInterfaceNodeShapeStatic.hashShaclProperties(
-      _concreteChildInterfaceNodeShape,
-      _hasher,
-    );
-    _hasher.update(_concreteChildInterfaceNodeShape.childStringProperty);
-    return _hasher;
+    return _resource;
   }
 
   function sparqlConstructQuery(
@@ -15872,40 +16696,6 @@ export namespace ConcreteChildInterfaceNodeShape {
     constructTemplateTriples: sparqlConstructTemplateTriples,
     wherePatterns: sparqlWherePatterns,
   };
-
-  export function toRdf(
-    _concreteChildInterfaceNodeShape: ConcreteChildInterfaceNodeShape,
-    {
-      ignoreRdfType,
-      mutateGraph,
-      resourceSet,
-    }: {
-      ignoreRdfType?: boolean;
-      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    const _resource = ConcreteParentInterfaceNodeShapeStatic.toRdf(
-      _concreteChildInterfaceNodeShape,
-      { ignoreRdfType: true, mutateGraph, resourceSet },
-    );
-    if (!ignoreRdfType) {
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode(
-          "http://example.com/ConcreteChildInterfaceNodeShape",
-        ),
-      );
-    }
-
-    _resource.add(
-      dataFactory.namedNode("http://example.com/childStringProperty"),
-      _concreteChildInterfaceNodeShape.childStringProperty,
-    );
-    return _resource;
-  }
 }
 /**
  * Node shape that serves as an abstract base class for child node shapes.
@@ -16037,56 +16827,6 @@ export abstract class AbstractBaseClassWithPropertiesNodeShape {
 }
 
 export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode; abcStringProperty: string }
-  > {
-    const identifier = _resource.identifier;
-    const _abcStringPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      string
-    > = _resource
-      .values(dataFactory.namedNode("http://example.com/abcStringProperty"), {
-        unique: true,
-      })
-      .head()
-      .chain((_value) => _value.toString());
-    if (_abcStringPropertyEither.isLeft()) {
-      return _abcStringPropertyEither;
-    }
-
-    const abcStringProperty = _abcStringPropertyEither.unsafeCoerce();
-    return purify.Either.of({ identifier, abcStringProperty });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<
-      typeof AbstractBaseClassWithPropertiesNodeShapeStatic._propertiesFromRdf
-    >[0],
-  ): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    AbstractBaseClassWithPropertiesNodeShape
-  > {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
-    return AbstractBaseClassWithoutPropertiesNodeShapeStatic.fromRdf(
-      otherParameters,
-    ) as purify.Either<
-      rdfjsResource.Resource.ValueError,
-      AbstractBaseClassWithPropertiesNodeShape
-    >;
-  }
-
   export type Json = {
     readonly "@id": string;
     readonly type:
@@ -16095,7 +16835,7 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
     readonly abcStringProperty: string;
   };
 
-  function jsonParseProperties(
+  function jsonDeserializeProperties(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -16114,10 +16854,10 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
     return purify.Either.of({ identifier, abcStringProperty });
   }
 
-  function jsonParse(
+  function jsonDeserialize(
     json: unknown,
   ): purify.Either<zod.ZodError, AbstractBaseClassWithPropertiesNodeShape> {
-    return AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json.parse(
+    return AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json.deserialize(
       json,
     ) as purify.Either<zod.ZodError, AbstractBaseClassWithPropertiesNodeShape>;
   }
@@ -16168,12 +16908,80 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
   }
 
   export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
     schema: jsonSchema,
     uiSchema: jsonUiSchema,
     zodSchema: jsonZodSchema,
   };
+
+  export function parseProperties({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode; abcStringProperty: string }
+  > {
+    const identifier = _resource.identifier;
+    const _abcStringPropertyEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      string
+    > = _resource
+      .values(dataFactory.namedNode("http://example.com/abcStringProperty"), {
+        unique: true,
+      })
+      .head()
+      .chain((_value) => _value.toString());
+    if (_abcStringPropertyEither.isLeft()) {
+      return _abcStringPropertyEither;
+    }
+
+    const abcStringProperty = _abcStringPropertyEither.unsafeCoerce();
+    return purify.Either.of({ identifier, abcStringProperty });
+  }
+
+  export function rdfDeserialize(
+    parameters: Parameters<
+      typeof AbstractBaseClassWithPropertiesNodeShapeStatic._propertiesFromRdf
+    >[0],
+  ): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    AbstractBaseClassWithPropertiesNodeShape
+  > {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return AbstractBaseClassWithoutPropertiesNodeShapeStatic.fromRdf(
+      otherParameters,
+    ) as purify.Either<
+      rdfjsResource.Resource.ValueError,
+      AbstractBaseClassWithPropertiesNodeShape
+    >;
+  }
+
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
+    });
+    _resource.add(
+      dataFactory.namedNode("http://example.com/abcStringProperty"),
+      this.abcStringProperty,
+    );
+    return _resource;
+  }
 
   function sparqlConstructQuery(
     parameters?: {
@@ -16324,61 +17132,9 @@ export abstract class AbstractBaseClassWithoutPropertiesNodeShape extends Abstra
 }
 
 export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
-      ReturnType<
-        typeof AbstractBaseClassWithPropertiesNodeShapeStatic._propertiesFromRdf
-      >
-    >
-  > {
-    const _super0Either =
-      AbstractBaseClassWithPropertiesNodeShapeStatic._propertiesFromRdf({
-        ..._context,
-        ignoreRdfType: true,
-        languageIn: _languageIn,
-        resource: _resource,
-      });
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    const identifier = _resource.identifier;
-    return purify.Either.of({ ..._super0, identifier });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<
-      typeof AbstractBaseClassWithoutPropertiesNodeShapeStatic._propertiesFromRdf
-    >[0],
-  ): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    AbstractBaseClassWithoutPropertiesNodeShape
-  > {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
-    return ConcreteParentClassNodeShapeStatic.fromRdf(
-      otherParameters,
-    ) as purify.Either<
-      rdfjsResource.Resource.ValueError,
-      AbstractBaseClassWithoutPropertiesNodeShape
-    >;
-  }
-
   export type Json = AbstractBaseClassWithPropertiesNodeShapeStatic.Json;
 
-  function jsonParseProperties(
+  function jsonDeserializeProperties(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -16409,10 +17165,12 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
     return purify.Either.of({ ..._super0, identifier });
   }
 
-  function jsonParse(
+  function jsonDeserialize(
     json: unknown,
   ): purify.Either<zod.ZodError, AbstractBaseClassWithoutPropertiesNodeShape> {
-    return ConcreteParentClassNodeShapeStatic.Json.parse(json) as purify.Either<
+    return ConcreteParentClassNodeShapeStatic.Json.deserialize(
+      json,
+    ) as purify.Either<
       zod.ZodError,
       AbstractBaseClassWithoutPropertiesNodeShape
     >;
@@ -16448,12 +17206,80 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
   }
 
   export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
     schema: jsonSchema,
     uiSchema: jsonUiSchema,
     zodSchema: jsonZodSchema,
   };
+
+  export function parseProperties({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<
+        typeof AbstractBaseClassWithPropertiesNodeShapeStatic._propertiesFromRdf
+      >
+    >
+  > {
+    const _super0Either =
+      AbstractBaseClassWithPropertiesNodeShapeStatic._propertiesFromRdf({
+        ..._context,
+        ignoreRdfType: true,
+        languageIn: _languageIn,
+        resource: _resource,
+      });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _resource.identifier;
+    return purify.Either.of({ ..._super0, identifier });
+  }
+
+  export function rdfDeserialize(
+    parameters: Parameters<
+      typeof AbstractBaseClassWithoutPropertiesNodeShapeStatic._propertiesFromRdf
+    >[0],
+  ): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    AbstractBaseClassWithoutPropertiesNodeShape
+  > {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return ConcreteParentClassNodeShapeStatic.fromRdf(
+      otherParameters,
+    ) as purify.Either<
+      rdfjsResource.Resource.ValueError,
+      AbstractBaseClassWithoutPropertiesNodeShape
+    >;
+  }
+
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    return _resource;
+  }
 
   function sparqlConstructQuery(
     parameters?: {
@@ -16677,7 +17503,106 @@ export class ConcreteParentClassNodeShape extends AbstractBaseClassWithoutProper
 }
 
 export namespace ConcreteParentClassNodeShapeStatic {
-  export function _propertiesFromRdf({
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ConcreteParentClassNodeShape",
+  );
+  export type Json = {
+    readonly parentStringProperty: string;
+  } & AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json;
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      parentStringProperty: string;
+    } & $UnwrapR<
+      ReturnType<
+        typeof AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json.parseProperties
+      >
+    >
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either =
+      AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json.parseProperties(
+        _jsonObject,
+      );
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const parentStringProperty = _jsonObject["parentStringProperty"];
+    return purify.Either.of({ ..._super0, identifier, parentStringProperty });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, ConcreteParentClassNodeShape> {
+    return (
+      ConcreteChildClassNodeShape.Json.deserialize(json) as purify.Either<
+        zod.ZodError,
+        ConcreteParentClassNodeShape
+      >
+    ).altLazy(() =>
+      jsonParseProperties(json).map(
+        (properties) => new ConcreteParentClassNodeShape(properties),
+      ),
+    );
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json.uiSchema({
+          scopePrefix,
+        }),
+        {
+          scope: `${scopePrefix}/properties/parentStringProperty`,
+          type: "Control",
+        },
+      ],
+      label: "ConcreteParentClassNodeShape",
+      type: "Group",
+    };
+  }
+
+  function jsonZodSchema() {
+    return AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json.zodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.enum([
+          "ConcreteChildClassNodeShape",
+          "ConcreteParentClassNodeShape",
+        ]),
+        parentStringProperty: zod.string(),
+      }),
+    );
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+  };
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -16749,7 +17674,7 @@ export namespace ConcreteParentClassNodeShapeStatic {
     return purify.Either.of({ ..._super0, identifier, parentStringProperty });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<
       typeof ConcreteParentClassNodeShapeStatic._propertiesFromRdf
     >[0],
@@ -16770,104 +17695,37 @@ export namespace ConcreteParentClassNodeShapeStatic {
     );
   }
 
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ConcreteParentClassNodeShape",
-  );
-  export type Json = {
-    readonly parentStringProperty: string;
-  } & AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json;
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      parentStringProperty: string;
-    } & $UnwrapR<
-      ReturnType<
-        typeof AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json.parseProperties
-      >
-    >
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either =
-      AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json.parseProperties(
-        _jsonObject,
+  export function toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode(
+          "http://example.com/ConcreteParentClassNodeShape",
+        ),
       );
-    if (_super0Either.isLeft()) {
-      return _super0Either;
     }
 
-    const _super0 = _super0Either.unsafeCoerce();
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const parentStringProperty = _jsonObject["parentStringProperty"];
-    return purify.Either.of({ ..._super0, identifier, parentStringProperty });
-  }
-
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, ConcreteParentClassNodeShape> {
-    return (
-      ConcreteChildClassNodeShape.Json.parse(json) as purify.Either<
-        zod.ZodError,
-        ConcreteParentClassNodeShape
-      >
-    ).altLazy(() =>
-      jsonParseProperties(json).map(
-        (properties) => new ConcreteParentClassNodeShape(properties),
-      ),
+    _resource.add(
+      dataFactory.namedNode("http://example.com/parentStringProperty"),
+      this.parentStringProperty,
     );
+    return _resource;
   }
-
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json.uiSchema({
-          scopePrefix,
-        }),
-        {
-          scope: `${scopePrefix}/properties/parentStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "ConcreteParentClassNodeShape",
-      type: "Group",
-    };
-  }
-
-  function jsonZodSchema() {
-    return AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json.zodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.enum([
-          "ConcreteChildClassNodeShape",
-          "ConcreteParentClassNodeShape",
-        ]),
-        parentStringProperty: zod.string(),
-      }),
-    );
-  }
-
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
 
   function sparqlConstructQuery(
     parameters?: {
@@ -17136,7 +17994,90 @@ export class ConcreteChildClassNodeShape extends ConcreteParentClassNodeShape {
 }
 
 export namespace ConcreteChildClassNodeShape {
-  export function _propertiesFromRdf({
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ConcreteChildClassNodeShape",
+  );
+  export type Json = {
+    readonly childStringProperty: string;
+  } & ConcreteParentClassNodeShapeStatic.Json;
+
+  function jsonDeserializeProperties(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      childStringProperty: string;
+    } & $UnwrapR<
+      ReturnType<typeof ConcreteParentClassNodeShapeStatic.Json.parseProperties>
+    >
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const _super0Either =
+      ConcreteParentClassNodeShapeStatic.Json.parseProperties(_jsonObject);
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const childStringProperty = _jsonObject["childStringProperty"];
+    return purify.Either.of({ ..._super0, identifier, childStringProperty });
+  }
+
+  function jsonDeserialize(
+    json: unknown,
+  ): purify.Either<zod.ZodError, ConcreteChildClassNodeShape> {
+    return jsonParseProperties(json).map(
+      (properties) => new ConcreteChildClassNodeShape(properties),
+    );
+  }
+
+  function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        ConcreteParentClassNodeShapeStatic.Json.uiSchema({ scopePrefix }),
+        {
+          scope: `${scopePrefix}/properties/childStringProperty`,
+          type: "Control",
+        },
+      ],
+      label: "ConcreteChildClassNodeShape",
+      type: "Group",
+    };
+  }
+
+  function jsonZodSchema() {
+    return ConcreteParentClassNodeShapeStatic.Json.zodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        type: zod.literal("ConcreteChildClassNodeShape"),
+        childStringProperty: zod.string(),
+      }),
+    );
+  }
+
+  export const Json = {
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
+    schema: jsonSchema,
+    uiSchema: jsonUiSchema,
+    zodSchema: jsonZodSchema,
+  };
+
+  export function parseProperties({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -17204,7 +18145,7 @@ export namespace ConcreteChildClassNodeShape {
     return purify.Either.of({ ..._super0, identifier, childStringProperty });
   }
 
-  export function fromRdf(
+  export function rdfDeserialize(
     parameters: Parameters<
       typeof ConcreteChildClassNodeShape._propertiesFromRdf
     >[0],
@@ -17217,88 +18158,37 @@ export namespace ConcreteChildClassNodeShape {
     );
   }
 
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ConcreteChildClassNodeShape",
-  );
-  export type Json = {
-    readonly childStringProperty: string;
-  } & ConcreteParentClassNodeShapeStatic.Json;
-
-  function jsonParseProperties(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      childStringProperty: string;
-    } & $UnwrapR<
-      ReturnType<typeof ConcreteParentClassNodeShapeStatic.Json.parseProperties>
-    >
-  > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
+  export function toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode(
+          "http://example.com/ConcreteChildClassNodeShape",
+        ),
+      );
     }
 
-    const _jsonObject = _jsonSafeParseResult.data;
-    const _super0Either =
-      ConcreteParentClassNodeShapeStatic.Json.parseProperties(_jsonObject);
-    if (_super0Either.isLeft()) {
-      return _super0Either;
-    }
-
-    const _super0 = _super0Either.unsafeCoerce();
-    const identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const childStringProperty = _jsonObject["childStringProperty"];
-    return purify.Either.of({ ..._super0, identifier, childStringProperty });
-  }
-
-  function jsonParse(
-    json: unknown,
-  ): purify.Either<zod.ZodError, ConcreteChildClassNodeShape> {
-    return jsonParseProperties(json).map(
-      (properties) => new ConcreteChildClassNodeShape(properties),
+    _resource.add(
+      dataFactory.namedNode("http://example.com/childStringProperty"),
+      this.childStringProperty,
     );
+    return _resource;
   }
-
-  function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  function jsonUiSchema(parameters?: { scopePrefix?: string }) {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        ConcreteParentClassNodeShapeStatic.Json.uiSchema({ scopePrefix }),
-        {
-          scope: `${scopePrefix}/properties/childStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "ConcreteChildClassNodeShape",
-      type: "Group",
-    };
-  }
-
-  function jsonZodSchema() {
-    return ConcreteParentClassNodeShapeStatic.Json.zodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        type: zod.literal("ConcreteChildClassNodeShape"),
-        childStringProperty: zod.string(),
-      }),
-    );
-  }
-
-  export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
-    schema: jsonSchema,
-    uiSchema: jsonUiSchema,
-    zodSchema: jsonZodSchema,
-  };
 
   function sparqlConstructQuery(
     parameters?: {
@@ -17555,39 +18445,12 @@ export class BlankNodeShape {
 }
 
 export namespace BlankNodeShape {
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode }
-  > {
-    const identifier = _resource.identifier;
-    return purify.Either.of({ identifier });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<typeof BlankNodeShape._propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, BlankNodeShape> {
-    return BlankNodeShape._propertiesFromRdf(parameters).map(
-      (properties) => new BlankNodeShape(properties),
-    );
-  }
-
   export type Json = {
     readonly "@id": string;
     readonly type: "BlankNodeShape";
   };
 
-  function jsonParseProperties(
+  function jsonDeserializeProperties(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -17605,7 +18468,7 @@ export namespace BlankNodeShape {
     return purify.Either.of({ identifier });
   }
 
-  function jsonParse(
+  function jsonDeserialize(
     json: unknown,
   ): purify.Either<zod.ZodError, BlankNodeShape> {
     return jsonParseProperties(json).map(
@@ -17651,12 +18514,53 @@ export namespace BlankNodeShape {
   }
 
   export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
     schema: jsonSchema,
     uiSchema: jsonUiSchema,
     zodSchema: jsonZodSchema,
   };
+
+  export function parseProperties({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode }
+  > {
+    const identifier = _resource.identifier;
+    return purify.Either.of({ identifier });
+  }
+
+  export function rdfDeserialize(
+    parameters: Parameters<typeof BlankNodeShape._propertiesFromRdf>[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, BlankNodeShape> {
+    return BlankNodeShape._propertiesFromRdf(parameters).map(
+      (properties) => new BlankNodeShape(properties),
+    );
+  }
+
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
+    });
+    return _resource;
+  }
 
   function sparqlConstructQuery(
     parameters?: {
@@ -17822,61 +18726,13 @@ export abstract class AbstractBaseClassForExternObjectType {
 }
 
 export namespace AbstractBaseClassForExternObjectTypeStatic {
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.BlankNode | rdfjs.NamedNode; abcStringProperty: string }
-  > {
-    const identifier = _resource.identifier;
-    const _abcStringPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      string
-    > = _resource
-      .values(dataFactory.namedNode("http://example.com/abcStringProperty"), {
-        unique: true,
-      })
-      .head()
-      .chain((_value) => _value.toString());
-    if (_abcStringPropertyEither.isLeft()) {
-      return _abcStringPropertyEither;
-    }
-
-    const abcStringProperty = _abcStringPropertyEither.unsafeCoerce();
-    return purify.Either.of({ identifier, abcStringProperty });
-  }
-
-  export function fromRdf(
-    parameters: Parameters<
-      typeof AbstractBaseClassForExternObjectTypeStatic._propertiesFromRdf
-    >[0],
-  ): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    AbstractBaseClassForExternObjectType
-  > {
-    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
-    return ExternObjectType.fromRdf(otherParameters) as purify.Either<
-      rdfjsResource.Resource.ValueError,
-      AbstractBaseClassForExternObjectType
-    >;
-  }
-
   export type Json = {
     readonly "@id": string;
     readonly type: "ExternObjectType";
     readonly abcStringProperty: string;
   };
 
-  function jsonParseProperties(
+  function jsonDeserializeProperties(
     _json: unknown,
   ): purify.Either<
     zod.ZodError,
@@ -17895,10 +18751,10 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
     return purify.Either.of({ identifier, abcStringProperty });
   }
 
-  function jsonParse(
+  function jsonDeserialize(
     json: unknown,
   ): purify.Either<zod.ZodError, AbstractBaseClassForExternObjectType> {
-    return ExternObjectType.Json.parse(json) as purify.Either<
+    return ExternObjectType.Json.deserialize(json) as purify.Either<
       zod.ZodError,
       AbstractBaseClassForExternObjectType
     >;
@@ -17947,12 +18803,78 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
   }
 
   export const Json = {
-    parse: jsonParse,
-    parseProperties: jsonParseProperties,
+    deserialize: jsonDeserialize,
+    deserializeProperties: jsonDeserializeProperties,
     schema: jsonSchema,
     uiSchema: jsonUiSchema,
     zodSchema: jsonZodSchema,
   };
+
+  export function parseProperties({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode; abcStringProperty: string }
+  > {
+    const identifier = _resource.identifier;
+    const _abcStringPropertyEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      string
+    > = _resource
+      .values(dataFactory.namedNode("http://example.com/abcStringProperty"), {
+        unique: true,
+      })
+      .head()
+      .chain((_value) => _value.toString());
+    if (_abcStringPropertyEither.isLeft()) {
+      return _abcStringPropertyEither;
+    }
+
+    const abcStringProperty = _abcStringPropertyEither.unsafeCoerce();
+    return purify.Either.of({ identifier, abcStringProperty });
+  }
+
+  export function rdfDeserialize(
+    parameters: Parameters<
+      typeof AbstractBaseClassForExternObjectTypeStatic._propertiesFromRdf
+    >[0],
+  ): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    AbstractBaseClassForExternObjectType
+  > {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return ExternObjectType.fromRdf(otherParameters) as purify.Either<
+      rdfjsResource.Resource.ValueError,
+      AbstractBaseClassForExternObjectType
+    >;
+  }
+
+  export function toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
+    });
+    _resource.add(
+      dataFactory.namedNode("http://example.com/abcStringProperty"),
+      this.abcStringProperty,
+    );
+    return _resource;
+  }
 
   function sparqlConstructQuery(
     parameters?: {
@@ -18166,32 +19088,30 @@ export namespace InterfaceUnionNodeShape {
     | InterfaceUnionNodeShapeMember2a.Json
     | InterfaceUnionNodeShapeMember2b.Json;
 
-  function jsonParse(
+  function jsonDeserialize(
     json: unknown,
   ): purify.Either<zod.ZodError, InterfaceUnionNodeShape> {
     return (
-      InterfaceUnionNodeShapeMember1.Json.parse(json) as purify.Either<
+      InterfaceUnionNodeShapeMember1.Json.deserialize(json) as purify.Either<
         zod.ZodError,
         InterfaceUnionNodeShape
       >
     )
       .altLazy(
         () =>
-          InterfaceUnionNodeShapeMember2a.Json.parse(json) as purify.Either<
-            zod.ZodError,
-            InterfaceUnionNodeShape
-          >,
+          InterfaceUnionNodeShapeMember2a.Json.deserialize(
+            json,
+          ) as purify.Either<zod.ZodError, InterfaceUnionNodeShape>,
       )
       .altLazy(
         () =>
-          InterfaceUnionNodeShapeMember2b.Json.parse(json) as purify.Either<
-            zod.ZodError,
-            InterfaceUnionNodeShape
-          >,
+          InterfaceUnionNodeShapeMember2b.Json.deserialize(
+            json,
+          ) as purify.Either<zod.ZodError, InterfaceUnionNodeShape>,
       );
   }
 
-  function jsonUnparse(
+  function jsonSerialize(
     _interfaceUnionNodeShape: InterfaceUnionNodeShape,
   ):
     | InterfaceUnionNodeShapeMember1.Json
@@ -18199,15 +19119,15 @@ export namespace InterfaceUnionNodeShape {
     | InterfaceUnionNodeShapeMember2b.Json {
     switch (_interfaceUnionNodeShape.type) {
       case "InterfaceUnionNodeShapeMember1":
-        return InterfaceUnionNodeShapeMember1.Json.unparse(
+        return InterfaceUnionNodeShapeMember1.Json.serialize(
           _interfaceUnionNodeShape,
         );
       case "InterfaceUnionNodeShapeMember2a":
-        return InterfaceUnionNodeShapeMember2a.Json.unparse(
+        return InterfaceUnionNodeShapeMember2a.Json.serialize(
           _interfaceUnionNodeShape,
         );
       case "InterfaceUnionNodeShapeMember2b":
-        return InterfaceUnionNodeShapeMember2b.Json.unparse(
+        return InterfaceUnionNodeShapeMember2b.Json.serialize(
           _interfaceUnionNodeShape,
         );
     }
@@ -18222,8 +19142,8 @@ export namespace InterfaceUnionNodeShape {
   }
 
   export const Json = {
-    parse: jsonParse,
-    unparse: jsonUnparse,
+    parse: jsonDeserialize,
+    unparse: jsonSerialize,
     zodSchema: jsonZodSchema,
   };
 
@@ -18480,35 +19400,35 @@ export namespace InterfaceUnionNodeShapeMember2 {
     | InterfaceUnionNodeShapeMember2a.Json
     | InterfaceUnionNodeShapeMember2b.Json;
 
-  function jsonParse(
+  function jsonDeserialize(
     json: unknown,
   ): purify.Either<zod.ZodError, InterfaceUnionNodeShapeMember2> {
     return (
-      InterfaceUnionNodeShapeMember2a.Json.parse(json) as purify.Either<
+      InterfaceUnionNodeShapeMember2a.Json.deserialize(json) as purify.Either<
         zod.ZodError,
         InterfaceUnionNodeShapeMember2
       >
     ).altLazy(
       () =>
-        InterfaceUnionNodeShapeMember2b.Json.parse(json) as purify.Either<
+        InterfaceUnionNodeShapeMember2b.Json.deserialize(json) as purify.Either<
           zod.ZodError,
           InterfaceUnionNodeShapeMember2
         >,
     );
   }
 
-  function jsonUnparse(
+  function jsonSerialize(
     _interfaceUnionNodeShapeMember2: InterfaceUnionNodeShapeMember2,
   ):
     | InterfaceUnionNodeShapeMember2a.Json
     | InterfaceUnionNodeShapeMember2b.Json {
     switch (_interfaceUnionNodeShapeMember2.type) {
       case "InterfaceUnionNodeShapeMember2a":
-        return InterfaceUnionNodeShapeMember2a.Json.unparse(
+        return InterfaceUnionNodeShapeMember2a.Json.serialize(
           _interfaceUnionNodeShapeMember2,
         );
       case "InterfaceUnionNodeShapeMember2b":
-        return InterfaceUnionNodeShapeMember2b.Json.unparse(
+        return InterfaceUnionNodeShapeMember2b.Json.serialize(
           _interfaceUnionNodeShapeMember2,
         );
     }
@@ -18522,8 +19442,8 @@ export namespace InterfaceUnionNodeShapeMember2 {
   }
 
   export const Json = {
-    parse: jsonParse,
-    unparse: jsonUnparse,
+    parse: jsonDeserialize,
+    unparse: jsonSerialize,
     zodSchema: jsonZodSchema,
   };
 
@@ -18745,32 +19665,32 @@ export namespace UnionNodeShape {
     | UnionNodeShapeMember2.Json
     | ExternObjectType.Json;
 
-  function jsonParse(
+  function jsonDeserialize(
     json: unknown,
   ): purify.Either<zod.ZodError, UnionNodeShape> {
     return (
-      UnionNodeShapeMember1.Json.parse(json) as purify.Either<
+      UnionNodeShapeMember1.Json.deserialize(json) as purify.Either<
         zod.ZodError,
         UnionNodeShape
       >
     )
       .altLazy(
         () =>
-          UnionNodeShapeMember2.Json.parse(json) as purify.Either<
+          UnionNodeShapeMember2.Json.deserialize(json) as purify.Either<
             zod.ZodError,
             UnionNodeShape
           >,
       )
       .altLazy(
         () =>
-          ExternObjectType.Json.parse(json) as purify.Either<
+          ExternObjectType.Json.deserialize(json) as purify.Either<
             zod.ZodError,
             UnionNodeShape
           >,
       );
   }
 
-  function jsonUnparse(
+  function jsonSerialize(
     _unionNodeShape: UnionNodeShape,
   ):
     | UnionNodeShapeMember1.Json
@@ -18795,8 +19715,8 @@ export namespace UnionNodeShape {
   }
 
   export const Json = {
-    parse: jsonParse,
-    unparse: jsonUnparse,
+    parse: jsonDeserialize,
+    unparse: jsonSerialize,
     zodSchema: jsonZodSchema,
   };
 

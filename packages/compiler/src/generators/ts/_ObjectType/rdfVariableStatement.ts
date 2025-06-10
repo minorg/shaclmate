@@ -3,10 +3,10 @@ import { StructureKind, type VariableStatementStructure } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
 import { objectInitializer } from "../objectInitializer.js";
 
-export function jsonVariableStatement(
+export function rdfVariableStatement(
   this: ObjectType,
 ): Maybe<VariableStatementStructure> {
-  if (!this.features.has("json")) {
+  if (!this.features.has("rdf")) {
     return Maybe.empty();
   }
 
@@ -15,21 +15,18 @@ export function jsonVariableStatement(
   }
 
   const initializer: Record<string, string> = {
-    deserialize: "jsonDeserialize",
-    deserializeProperties: "jsonDeserializeProperties",
-    schema: "jsonSchema",
-    uiSchema: "jsonUiSchema",
-    zodSchema: "jsonZodSchema",
+    deserialize: "rdfDeserialize",
+    deserializeProperties: "rdfDeserializeProperties",
   };
   if (this.declarationType === "interface") {
-    initializer["serialize"] = "jsonSerialize";
+    initializer["serialize"] = "rdfSerialize";
   }
 
   return Maybe.of({
     kind: StructureKind.VariableStatement,
     declarations: [
       {
-        name: "Json",
+        name: "Rdf",
         initializer: objectInitializer(initializer),
       },
     ],

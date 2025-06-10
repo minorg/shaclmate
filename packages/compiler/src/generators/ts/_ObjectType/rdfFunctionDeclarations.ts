@@ -1,6 +1,8 @@
+import type { Maybe } from "purify-ts";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
 import { objectInitializer } from "../objectInitializer.js";
+import { toRdfFunctionOrMethodDeclaration } from "./toRdfFunctionOrMethodDeclaration.js";
 
 const variables = {
   context: "_context",
@@ -9,7 +11,7 @@ const variables = {
   resource: "_resource",
 };
 
-export function fromRdfFunctionDeclarations(
+export function rdfFunctionDeclarations(
   this: ObjectType,
 ): readonly FunctionDeclarationStructure[] {
   if (!this.features.has("rdf")) {
@@ -20,25 +22,34 @@ export function fromRdfFunctionDeclarations(
     return [];
   }
 
+  return [
+    ...rdfParseFunctionDeclarations.bind(this)(),
+    ...rdfUnparseFunctionDeclaration.bind(this)().toList(),
+  ];
+}
+
+function rdfParseFunctionDeclarations(
+  this: ObjectType,
+): readonly FunctionDeclarationStructure[] {
   const initializers: string[] = [];
   const propertySignatures: string[] = [];
-  const propertiesFromRdfFunctionReturnType: string[] = [];
-  const propertiesFromRdfFunctionStatements: string[] = [];
+  const parsePropertiesReturnType: string[] = [];
+  const propertiesFromRdfStatements: string[] = [];
 
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
-    propertiesFromRdfFunctionStatements.push(
+    propertiesFromRdfStatements.push(
       `const _super${parentObjectTypeI}Either = ${parentObjectType.staticModuleName}._propertiesFromRdf({ ...${variables.context}, ignoreRdfType: true, languageIn: ${variables.languageIn}, resource: ${variables.resource} });`,
       `if (_super${parentObjectTypeI}Either.isLeft()) { return _super${parentObjectTypeI}Either; }`,
       `const _super${parentObjectTypeI} = _super${parentObjectTypeI}Either.unsafeCoerce()`,
     );
     initializers.push(`..._super${parentObjectTypeI}`);
-    propertiesFromRdfFunctionReturnType.push(
+    parsePropertiesReturnType.push(
       `$UnwrapR<ReturnType<typeof ${parentObjectType.staticModuleName}._propertiesFromRdf>>`,
     );
   });
 
   this.fromRdfType.ifJust((rdfType) => {
-    propertiesFromRdfFunctionStatements.push(
+    propertiesFromRdfStatements.push(
       `if (!${variables.ignoreRdfType} && !${variables.resource}.isInstanceOf(${this.rdfjsTermExpression(rdfType)})) { return purify.Left(new rdfjsResource.Resource.ValueError(${objectInitializer({ focusResource: variables.resource, message: `\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} has unexpected RDF type (expected ${rdfType.value})\``, predicate: this.rdfjsTermExpression(rdfType) })})); }`,
     );
   });
@@ -53,36 +64,36 @@ export function fromRdfFunctionDeclarations(
       variables: propertyFromRdfVariables,
     });
     if (propertyFromRdfStatements.length > 0) {
-      propertiesFromRdfFunctionStatements.push(...propertyFromRdfStatements);
+      propertiesFromRdfStatements.push(...propertyFromRdfStatements);
       initializers.push(property.name);
       propertySignatures.push(`${property.name}: ${property.type.name};`);
     }
   }
-  propertiesFromRdfFunctionStatements.push(
+  propertiesFromRdfStatements.push(
     `return purify.Either.of({ ${initializers.join(", ")} })`,
   );
   if (propertySignatures.length > 0) {
-    propertiesFromRdfFunctionReturnType.splice(
+    parsePropertiesReturnType.splice(
       0,
       0,
       `{ ${propertySignatures.join(" ")} }`,
     );
   }
 
-  const fromRdfFunctionDeclarations: FunctionDeclarationStructure[] = [];
+  const functionDeclarations: FunctionDeclarationStructure[] = [];
 
-  fromRdfFunctionDeclarations.push({
+  functionDeclarations.push({
     isExported: true,
     kind: StructureKind.Function,
-    name: "_propertiesFromRdf",
+    name: "parseProperties",
     parameters: [
       {
         name: `{ ignoreRdfType: ${variables.ignoreRdfType}, languageIn: ${variables.languageIn}, resource: ${variables.resource},\n// @ts-ignore\n...${variables.context} }`,
         type: `{ [_index: string]: any; ignoreRdfType?: boolean; languageIn?: readonly string[]; resource: ${this.rdfjsResourceType().name}; }`,
       },
     ],
-    returnType: `purify.Either<rdfjsResource.Resource.ValueError, ${propertiesFromRdfFunctionReturnType.join(" & ")}>`,
-    statements: propertiesFromRdfFunctionStatements,
+    returnType: `purify.Either<rdfjsResource.Resource.ValueError, ${parsePropertiesReturnType.join(" & ")}>`,
+    statements: propertiesFromRdfStatements,
   });
 
   const fromRdfStatements: string[] = [];
@@ -96,7 +107,7 @@ export function fromRdfFunctionDeclarations(
       // Similar to an object union type, alt-chain the fromRdf of the different concrete subclasses together
       fromRdfReturnStatement = `return ${this.childObjectTypes.reduce(
         (expression, childObjectType) => {
-          const childObjectTypeExpression = `(${childObjectType.staticModuleName}.fromRdf(otherParameters) as purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>)`;
+          const childObjectTypeExpression = `(${childObjectType.staticModuleName}.Rdf.deserialize(otherParameters) as purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>)`;
           return expression.length > 0
             ? `${expression}.altLazy(() => ${childObjectTypeExpression})`
             : childObjectTypeExpression;
@@ -122,7 +133,7 @@ export function fromRdfFunctionDeclarations(
       );
       fromRdfReturnStatement = `${this.childObjectTypes.reduce(
         (expression, childObjectType) => {
-          const childObjectTypeExpression = `(${childObjectType.staticModuleName}.fromRdf(otherParameters) as purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>)`;
+          const childObjectTypeExpression = `(${childObjectType.staticModuleName}.Rdf.deserialize(otherParameters) as purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>)`;
           return expression.length > 0
             ? `${expression}.altLazy(() => ${childObjectTypeExpression})`
             : childObjectTypeExpression;
@@ -140,10 +151,10 @@ export function fromRdfFunctionDeclarations(
   }
 
   if (fromRdfStatements.length > 0) {
-    fromRdfFunctionDeclarations.push({
+    functionDeclarations.push({
       isExported: true,
       kind: StructureKind.Function,
-      name: "fromRdf",
+      name: "rdfDeserialize",
       parameters: [
         {
           name: "parameters",
@@ -155,5 +166,17 @@ export function fromRdfFunctionDeclarations(
     });
   }
 
-  return fromRdfFunctionDeclarations;
+  return functionDeclarations;
+}
+
+function rdfUnparseFunctionDeclaration(
+  this: ObjectType,
+): Maybe<FunctionDeclarationStructure> {
+  return toRdfFunctionOrMethodDeclaration
+    .bind(this)()
+    .map((toRdfFunctionOrMethodDeclaration) => ({
+      ...toRdfFunctionOrMethodDeclaration,
+      isExported: true,
+      kind: StructureKind.Function,
+    }));
 }

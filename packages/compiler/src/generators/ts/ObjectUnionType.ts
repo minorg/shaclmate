@@ -97,18 +97,19 @@ export class ObjectUnionType extends DeclaredType {
 
     const staticModuleStatements: StatementStructures[] = [
       ...this.equalsFunctionDeclaration.toList(),
-      ...this.fromRdfFunctionDeclaration.toList(),
       ...this.hashFunctionDeclaration.toList(),
       ...this.jsonTypeAliasDeclaration.toList(),
-      ...this.jsonParseFunctionDeclaration.toList(),
-      ...this.jsonUnparseFunctionDeclaration.toList(),
+      ...this.jsonDeserializeFunctionDeclaration.toList(),
+      ...this.jsonSerializeFunctionDeclaration.toList(),
       ...this.jsonZodSchemaFunctionDeclaration.toList(),
       ...this.jsonVariableStatement.toList(),
+      ...this.rdfDeserializeFunctionDeclaration.toList(),
+      ...this.rdfSerializeFunctionDeclaration.toList(),
+      ...this.rdfVariableStatement.toList(),
       ...this.sparqlFunctionDeclarations,
       ...sparqlVariableStatement
         .bind({ extern: false, features: this.features })()
         .toList(),
-      ...this.toRdfFunctionDeclaration.toList(),
     ];
 
     if (staticModuleStatements.length > 0) {
@@ -192,33 +193,6 @@ return $strictEquals(left.type, right.type).chain(() => {
     });
   }
 
-  private get fromRdfFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
-    if (!this.features.has("rdf")) {
-      return Maybe.empty();
-    }
-
-    return Maybe.of({
-      isExported: true,
-      kind: StructureKind.Function,
-      name: "fromRdf",
-      parameters: [
-        {
-          name: "{ ignoreRdfType, resource, ...context }",
-          type: `{ [_index: string]: any; ignoreRdfType?: boolean; resource: ${this.rdfjsResourceType().name}; }`,
-        },
-      ],
-      returnType: `purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>`,
-      statements: [
-        `return ${this.memberTypes.reduce((expression, memberType) => {
-          const memberTypeExpression = `(${memberType.staticModuleName}.fromRdf({ ...context, resource }) as purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>)`;
-          return expression.length > 0
-            ? `${expression}.altLazy(() => ${memberTypeExpression})`
-            : memberTypeExpression;
-        }, "")};`,
-      ],
-    });
-  }
-
   private get hashFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
     if (!this.features.has("hash")) {
       return Maybe.empty();
@@ -264,33 +238,7 @@ return $strictEquals(left.type, right.type).chain(() => {
     });
   }
 
-  private get jsonParseFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
-    if (!this.features.has("json")) {
-      return Maybe.empty();
-    }
-
-    return Maybe.of({
-      kind: StructureKind.Function,
-      name: "jsonParse",
-      parameters: [
-        {
-          name: "json",
-          type: "unknown",
-        },
-      ],
-      returnType: `purify.Either<zod.ZodError, ${this.name}>`,
-      statements: [
-        `return ${this.memberTypes.reduce((expression, memberType) => {
-          const memberTypeExpression = `(${memberType.staticModuleName}.Json.parse(json) as purify.Either<zod.ZodError, ${this.name}>)`;
-          return expression.length > 0
-            ? `${expression}.altLazy(() => ${memberTypeExpression})`
-            : memberTypeExpression;
-        }, "")};`,
-      ],
-    });
-  }
-
-  private get jsonUnparseFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
+  private get jsonSerializeFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
     if (!this.features.has("json")) {
       return Maybe.empty();
     }
@@ -302,7 +250,7 @@ return $strictEquals(left.type, right.type).chain(() => {
           returnExpression = `${this.thisVariable}.toJson()`;
           break;
         case "interface":
-          returnExpression = `${memberType.staticModuleName}.Json.unparse(${this.thisVariable})`;
+          returnExpression = `${memberType.staticModuleName}.Json.serialize(${this.thisVariable})`;
           break;
       }
       return `case "${memberType.name}": return ${returnExpression};`;
@@ -310,7 +258,7 @@ return $strictEquals(left.type, right.type).chain(() => {
 
     return Maybe.of({
       kind: StructureKind.Function,
-      name: "jsonUnparse",
+      name: "jsonSerialize",
       parameters: [
         {
           name: this.thisVariable,
@@ -319,6 +267,32 @@ return $strictEquals(left.type, right.type).chain(() => {
       ],
       returnType: this.jsonName,
       statements: `switch (${this.thisVariable}.${this._discriminatorProperty.name}) { ${caseBlocks.join(" ")} }`,
+    });
+  }
+
+  private get jsonDeserializeFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
+    if (!this.features.has("json")) {
+      return Maybe.empty();
+    }
+
+    return Maybe.of({
+      kind: StructureKind.Function,
+      name: "jsonDeserialize",
+      parameters: [
+        {
+          name: "json",
+          type: "unknown",
+        },
+      ],
+      returnType: `purify.Either<zod.ZodError, ${this.name}>`,
+      statements: [
+        `return ${this.memberTypes.reduce((expression, memberType) => {
+          const memberTypeExpression = `(${memberType.staticModuleName}.Json.deserialize(json) as purify.Either<zod.ZodError, ${this.name}>)`;
+          return expression.length > 0
+            ? `${expression}.altLazy(() => ${memberTypeExpression})`
+            : memberTypeExpression;
+        }, "")};`,
+      ],
     });
   }
 
@@ -333,8 +307,8 @@ return $strictEquals(left.type, right.type).chain(() => {
         {
           name: "Json",
           initializer: objectInitializer({
-            parse: "jsonParse",
-            unparse: "jsonUnparse",
+            parse: "jsonDeserialize",
+            unparse: "jsonSerialize",
             zodSchema: "jsonZodSchema",
           }),
         },
@@ -426,7 +400,7 @@ return $strictEquals(left.type, right.type).chain(() => {
     ];
   }
 
-  private get toRdfFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
+  private get rdfSerializeFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
     if (!this.features.has("rdf")) {
       return Maybe.empty();
     }
@@ -465,6 +439,33 @@ return $strictEquals(left.type, right.type).chain(() => {
     });
   }
 
+  private get rdfDeserializeFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
+    if (!this.features.has("rdf")) {
+      return Maybe.empty();
+    }
+
+    return Maybe.of({
+      isExported: true,
+      kind: StructureKind.Function,
+      name: "fromRdf",
+      parameters: [
+        {
+          name: "{ ignoreRdfType, resource, ...context }",
+          type: `{ [_index: string]: any; ignoreRdfType?: boolean; resource: ${this.rdfjsResourceType().name}; }`,
+        },
+      ],
+      returnType: `purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>`,
+      statements: [
+        `return ${this.memberTypes.reduce((expression, memberType) => {
+          const memberTypeExpression = `(${memberType.staticModuleName}.Rdf.deserialize({ ...context, resource }) as purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>)`;
+          return expression.length > 0
+            ? `${expression}.altLazy(() => ${memberTypeExpression})`
+            : memberTypeExpression;
+        }, "")};`,
+      ],
+    });
+  }
+
   private get typeAliasDeclaration(): TypeAliasDeclarationStructure {
     return {
       isExported: true,
@@ -486,7 +487,7 @@ return $strictEquals(left.type, right.type).chain(() => {
     variables,
   }: Parameters<Type["fromRdfExpression"]>[0]): string {
     // Don't ignoreRdfType, we may need it to distinguish the union members
-    return `${variables.resourceValues}.head().chain(value => value.to${this.rdfjsResourceType().named ? "Named" : ""}Resource()).chain(_resource => ${this.staticModuleName}.fromRdf({ ...${variables.context}, languageIn: ${variables.languageIn}, resource: _resource }))`;
+    return `${variables.resourceValues}.head().chain(value => value.to${this.rdfjsResourceType().named ? "Named" : ""}Resource()).chain(_resource => ${this.staticModuleName}.Rdf.deserialize({ ...${variables.context}, languageIn: ${variables.languageIn}, resource: _resource }))`;
   }
 
   override hashStatements({

@@ -7,12 +7,12 @@ const variables = {
   jsonObject: "_jsonObject",
 };
 
-function jsonParseFunctionDeclarations(
+function jsonDeserializeFunctionDeclarations(
   this: ObjectType,
 ): readonly FunctionDeclarationStructure[] {
+  const deserializePropertiesReturnType: string[] = [];
   const initializers: string[] = [];
   const propertyReturnTypeSignatures: string[] = [];
-  const parsePropertiesReturnType: string[] = [];
   const propertiesFromJsonStatements: string[] = [];
 
   propertiesFromJsonStatements.push(
@@ -28,7 +28,7 @@ function jsonParseFunctionDeclarations(
       `const _super${parentObjectTypeI} = _super${parentObjectTypeI}Either.unsafeCoerce()`,
     );
     initializers.push(`..._super${parentObjectTypeI}`);
-    parsePropertiesReturnType.push(
+    deserializePropertiesReturnType.push(
       `$UnwrapR<ReturnType<typeof ${parentObjectType.staticModuleName}.Json.parseProperties>>`,
     );
   });
@@ -49,7 +49,7 @@ function jsonParseFunctionDeclarations(
     `return purify.Either.of({ ${initializers.join(", ")} })`,
   );
   if (propertyReturnTypeSignatures.length > 0) {
-    parsePropertiesReturnType.splice(
+    deserializePropertiesReturnType.splice(
       0,
       0,
       `{ ${propertyReturnTypeSignatures.join(" ")} }`,
@@ -60,25 +60,25 @@ function jsonParseFunctionDeclarations(
 
   functionDeclarations.push({
     kind: StructureKind.Function,
-    name: "jsonParseProperties",
+    name: "jsonDeserializeProperties",
     parameters: [
       {
         name: "_json",
         type: "unknown",
       },
     ],
-    returnType: `purify.Either<zod.ZodError, ${parsePropertiesReturnType.join(" & ")}>`,
+    returnType: `purify.Either<zod.ZodError, ${deserializePropertiesReturnType.join(" & ")}>`,
     statements: propertiesFromJsonStatements,
   });
 
-  let fromJsonStatements: string[];
+  let jsonDeserializeStatements: string[];
   if (this.abstract) {
     if (this.childObjectTypes.length > 0) {
       // Similar to an object union type, alt-chain the fromJson of the different concrete subclasses together
-      fromJsonStatements = [
+      jsonDeserializeStatements = [
         `return ${this.childObjectTypes.reduce(
           (expression, childObjectType) => {
-            const childObjectTypeExpression = `(${childObjectType.staticModuleName}.Json.parse(json) as purify.Either<zod.ZodError, ${this.name}>)`;
+            const childObjectTypeExpression = `(${childObjectType.staticModuleName}.Json.deserialize(json) as purify.Either<zod.ZodError, ${this.name}>)`;
             return expression.length > 0
               ? `${expression}.altLazy(() => ${childObjectTypeExpression})`
               : childObjectTypeExpression;
@@ -87,7 +87,7 @@ function jsonParseFunctionDeclarations(
         )};`,
       ];
     } else {
-      fromJsonStatements = [];
+      jsonDeserializeStatements = [];
     }
   } else {
     let propertiesFromJsonExpression = "jsonParseProperties(json)";
@@ -96,10 +96,10 @@ function jsonParseFunctionDeclarations(
     }
 
     if (this.childObjectTypes.length > 0) {
-      fromJsonStatements = [
+      jsonDeserializeStatements = [
         `return ${this.childObjectTypes.reduce(
           (expression, childObjectType) => {
-            const childObjectTypeExpression = `(${childObjectType.staticModuleName}.Json.parse(json) as purify.Either<zod.ZodError, ${this.name}>)`;
+            const childObjectTypeExpression = `(${childObjectType.staticModuleName}.Json.deserialize(json) as purify.Either<zod.ZodError, ${this.name}>)`;
             return expression.length > 0
               ? `${expression}.altLazy(() => ${childObjectTypeExpression})`
               : childObjectTypeExpression;
@@ -108,14 +108,14 @@ function jsonParseFunctionDeclarations(
         )}.altLazy(() => ${propertiesFromJsonExpression});`,
       ];
     } else {
-      fromJsonStatements = [`return ${propertiesFromJsonExpression};`];
+      jsonDeserializeStatements = [`return ${propertiesFromJsonExpression};`];
     }
   }
 
-  if (fromJsonStatements.length > 0) {
+  if (jsonDeserializeStatements.length > 0) {
     functionDeclarations.push({
       kind: StructureKind.Function,
-      name: "jsonParse",
+      name: "jsonDeserialize",
       parameters: [
         {
           name: "json",
@@ -123,7 +123,7 @@ function jsonParseFunctionDeclarations(
         },
       ],
       returnType: `purify.Either<zod.ZodError, ${this.name}>`,
-      statements: fromJsonStatements,
+      statements: jsonDeserializeStatements,
     });
   }
 
@@ -138,6 +138,22 @@ function jsonSchemaFunctionDeclaration(
     name: "jsonSchema",
     statements: ["return zodToJsonSchema(jsonZodSchema());"],
   };
+}
+
+function jsonSerializeFunctionDeclaration(
+  this: ObjectType,
+): Maybe<FunctionDeclarationStructure> {
+  if (this.declarationType !== "interface") {
+    return Maybe.empty();
+  }
+
+  return toJsonFunctionOrMethodDeclaration
+    .bind(this)()
+    .map((toJsonFunctionOrMethodDeclaration) => ({
+      ...toJsonFunctionOrMethodDeclaration,
+      kind: StructureKind.Function,
+      name: "jsonSerialize",
+    }));
 }
 
 function jsonUiSchemaFunctionDeclaration(
@@ -170,22 +186,6 @@ function jsonUiSchemaFunctionDeclaration(
       `return { "elements": [ ${elements.join(", ")} ], label: "${this.label.orDefault(this.name)}", type: "Group" }`,
     ],
   };
-}
-
-function jsonUnparseFunctionDeclaration(
-  this: ObjectType,
-): Maybe<FunctionDeclarationStructure> {
-  if (this.declarationType !== "interface") {
-    return Maybe.empty();
-  }
-
-  return toJsonFunctionOrMethodDeclaration
-    .bind(this)()
-    .map((toJsonFunctionOrMethodDeclaration) => ({
-      ...toJsonFunctionOrMethodDeclaration,
-      kind: StructureKind.Function,
-      name: "jsonUnparse",
-    }));
 }
 
 function jsonZodSchemaFunctionDeclaration(
@@ -237,10 +237,10 @@ export function jsonFunctionDeclarations(
   }
 
   return [
-    ...jsonParseFunctionDeclarations.bind(this)(),
+    ...jsonDeserializeFunctionDeclarations.bind(this)(),
     jsonSchemaFunctionDeclaration.bind(this)(),
     jsonUiSchemaFunctionDeclaration.bind(this)(),
-    ...jsonUnparseFunctionDeclaration.bind(this)().toList(),
+    ...jsonSerializeFunctionDeclaration.bind(this)().toList(),
     jsonZodSchemaFunctionDeclaration.bind(this)(),
   ];
 }
