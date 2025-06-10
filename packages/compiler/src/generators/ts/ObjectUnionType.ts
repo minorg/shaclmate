@@ -324,8 +324,8 @@ return $strictEquals(left.type, right.type).chain(() => {
         {
           name: "Json",
           initializer: objectInitializer({
-            parse: "jsonDeserialize",
-            unparse: "jsonSerialize",
+            deserialize: "jsonDeserialize",
+            serialize: "jsonSerialize",
             zodSchema: "jsonZodSchema",
           }),
         },

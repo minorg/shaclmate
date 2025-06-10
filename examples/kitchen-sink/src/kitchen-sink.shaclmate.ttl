@@ -137,6 +137,18 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:defaultValue properties." ;
     sh:property [
+        sh:defaultValue false ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:name "falseBooleanProperty" ;
+        sh:path :falseBooleanProperty
+    ], [
+        sh:defaultValue "2018-04-09"^^xsd:date ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:name "dateProperty" ;
+        sh:path :dateProperty
+    ], [
         sh:defaultValue "2018-04-09T10:00:00Z"^^xsd:dateTime ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
@@ -160,18 +172,6 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:minCount 1 ;
         sh:name "trueBooleanProperty" ;
         sh:path :trueBooleanProperty
-    ], [
-        sh:defaultValue false ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:name "falseBooleanProperty" ;
-        sh:path :falseBooleanProperty
-    ], [
-        sh:defaultValue "2018-04-09"^^xsd:date ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:name "dateProperty" ;
-        sh:path :dateProperty
     ] .
 
 :ExplicitRdfTypesNodeShape
@@ -733,6 +733,17 @@ shaclmate:toRdfType's are added an serialization.""" ;
     rdfs:comment "Shape with sh:xone properties." ;
     sh:property [
         sh:maxCount 1 ;
+        sh:name "orUnrelatedProperty" ;
+        sh:path :orUnrelatedProperty ;
+        sh:xone ([
+                sh:datatype xsd:integer
+            ]
+            [
+                sh:node :NonClassNodeShape
+            ]
+        )
+    ], [
+        sh:maxCount 1 ;
         sh:name "orLiteralsProperty" ;
         sh:path :orLiteralsProperty ;
         sh:xone ([
@@ -751,17 +762,6 @@ shaclmate:toRdfType's are added an serialization.""" ;
             ]
             [
                 sh:nodeKind sh:IRI
-            ]
-        )
-    ], [
-        sh:maxCount 1 ;
-        sh:name "orUnrelatedProperty" ;
-        sh:path :orUnrelatedProperty ;
-        sh:xone ([
-                sh:datatype xsd:integer
-            ]
-            [
-                sh:node :NonClassNodeShape
             ]
         )
     ] .

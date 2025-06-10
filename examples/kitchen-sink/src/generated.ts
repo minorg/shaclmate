@@ -18412,8 +18412,8 @@ export namespace InterfaceUnionNodeShape {
   }
 
   export const Json = {
-    parse: jsonDeserialize,
-    unparse: jsonSerialize,
+    deserialize: jsonDeserialize,
+    serialize: jsonSerialize,
     zodSchema: jsonZodSchema,
   };
 
@@ -18725,8 +18725,8 @@ export namespace InterfaceUnionNodeShapeMember2 {
   }
 
   export const Json = {
-    parse: jsonDeserialize,
-    unparse: jsonSerialize,
+    deserialize: jsonDeserialize,
+    serialize: jsonSerialize,
     zodSchema: jsonZodSchema,
   };
 
@@ -18998,8 +18998,8 @@ export namespace UnionNodeShape {
   }
 
   export const Json = {
-    parse: jsonDeserialize,
-    unparse: jsonSerialize,
+    deserialize: jsonDeserialize,
+    serialize: jsonSerialize,
     zodSchema: jsonZodSchema,
   };
 
