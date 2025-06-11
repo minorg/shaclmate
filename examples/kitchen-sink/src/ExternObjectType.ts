@@ -100,6 +100,8 @@ export namespace ExternObjectType {
   export const jsonUiSchema =
     AbstractBaseClassForExternObjectTypeStatic.jsonUiSchema;
 
+  export const Pointers = {};
+
   export const sparqlConstructTemplateTriples =
     AbstractBaseClassForExternObjectTypeStatic.sparqlConstructTemplateTriples;
   export const sparqlWherePatterns =

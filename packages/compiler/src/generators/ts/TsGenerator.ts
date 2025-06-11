@@ -132,9 +132,8 @@ export class TsGenerator implements Generator {
                 .toSorted((left, right) => left.name.localeCompare(right.name))
                 .reduce(
                   (pointers, objectType) => {
-                    pointers[objectType.name!] = objectInitializer(
-                      objectType.pointers,
-                    );
+                    pointers[objectType.name!] =
+                      `${objectType.staticModuleName}.Pointers`;
                     return pointers;
                   },
                   {} as Record<string, string>,
@@ -149,9 +148,8 @@ export class TsGenerator implements Generator {
                 .toSorted((left, right) => left.name.localeCompare(right.name))
                 .reduce(
                   (pointers, objectUnionType) => {
-                    pointers[objectUnionType.name!] = objectInitializer(
-                      objectUnionType.pointers,
-                    );
+                    pointers[objectUnionType.name!] =
+                      `${objectUnionType.staticModuleName}.Pointers`;
                     return pointers;
                   },
                   {} as Record<string, string>,
@@ -170,7 +168,7 @@ export class TsGenerator implements Generator {
             initializer: objectInitializer({
               ObjectTypes: "$ObjectTypePointers",
               ObjectUnionTypes: "$ObjectUnionTypePointers",
-              Types: "{ ...$ObjectTypePointers, $ObjectUnionTypePointers }",
+              Types: "{ ...$ObjectTypePointers, ...$ObjectUnionTypePointers }",
             }),
           },
         ],

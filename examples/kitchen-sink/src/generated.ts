@@ -537,6 +537,20 @@ export namespace UuidV4IriNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * Shape with sh:xone properties.
@@ -1411,6 +1425,20 @@ export namespace UnionPropertiesNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 export class UnionNodeShapeMember2 {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
@@ -1730,6 +1758,20 @@ export namespace UnionNodeShapeMember2 {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 export class UnionNodeShapeMember1 {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
@@ -2049,6 +2091,20 @@ export namespace UnionNodeShapeMember1 {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * Shape with properties that are not nested objects
@@ -3182,6 +3238,20 @@ export namespace TermPropertiesNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied.
@@ -3517,6 +3587,20 @@ export namespace Sha256IriNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * Shape with properties that have visibility modifiers (private, protected, public)
@@ -3984,6 +4068,20 @@ export namespace PropertyVisibilitiesNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * Shape that has properties with different cardinalities
@@ -4649,6 +4747,20 @@ export namespace PropertyCardinalitiesNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * Shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.
@@ -5095,6 +5207,20 @@ export namespace OrderedPropertiesNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * Node shape that isn't an rdfs:Class.
@@ -5413,6 +5539,20 @@ export namespace NonClassNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * Shape with shaclmate:mutable properties.
@@ -6237,6 +6377,20 @@ export namespace MutablePropertiesNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * Shape that uses the list shapes in properties.
@@ -7169,6 +7323,20 @@ export namespace ListPropertiesNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * Shape that uses the StringListShape in a property.
@@ -7771,6 +7939,20 @@ export namespace LanguageInPropertiesNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * A node shape that only allows IRI identifiers.
@@ -7997,6 +8179,20 @@ export namespace IriNodeShape {
   }): readonly sparqljs.Pattern[] {
     return [];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 export interface InterfaceUnionNodeShapeMember2b {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8344,6 +8540,26 @@ export namespace InterfaceUnionNodeShapeMember2b {
       },
     ];
   }
+
+  export const Pointers = {
+    create,
+    equals,
+    fromJson,
+    fromRdf,
+    hash,
+    hashShaclProperties,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+    toJson,
+    toRdf,
+  };
 }
 export interface InterfaceUnionNodeShapeMember2a {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8691,6 +8907,26 @@ export namespace InterfaceUnionNodeShapeMember2a {
       },
     ];
   }
+
+  export const Pointers = {
+    create,
+    equals,
+    fromJson,
+    fromRdf,
+    hash,
+    hashShaclProperties,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+    toJson,
+    toRdf,
+  };
 }
 export interface InterfaceUnionNodeShapeMember1 {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9035,6 +9271,26 @@ export namespace InterfaceUnionNodeShapeMember1 {
       },
     ];
   }
+
+  export const Pointers = {
+    create,
+    equals,
+    fromJson,
+    fromRdf,
+    hash,
+    hashShaclProperties,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+    toJson,
+    toRdf,
+  };
 }
 /**
  * A node shape that's generated as a TypeScript interface instead of a class.
@@ -9359,6 +9615,26 @@ export namespace InterfaceNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    create,
+    equals,
+    fromJson,
+    fromRdf,
+    hash,
+    hashShaclProperties,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+    toJson,
+    toRdf,
+  };
 }
 /**
  * Shape with sh:in properties.
@@ -10258,6 +10534,20 @@ export namespace InPropertiesNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * Shape with sh:in constraining its identifier.
@@ -10642,6 +10932,20 @@ export namespace InIdentifierNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * Shape with sh:hasValue properties.
@@ -11112,6 +11416,20 @@ export namespace HasValuePropertiesNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 export class InlineNodeShape {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
@@ -11427,6 +11745,20 @@ export namespace InlineNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 export class ExternNodeShape {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
@@ -11742,6 +12074,20 @@ export namespace ExternNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * Node shape that inlines/nests another node shape and externs/references another.
@@ -12362,6 +12708,20 @@ export namespace ExternPropertiesNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * Shape with custom rdf:type's.
@@ -12770,6 +13130,20 @@ export namespace ExplicitRdfTypesNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * Shape with sh:defaultValue properties.
@@ -13628,6 +14002,20 @@ export namespace DefaultValuePropertiesNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * Base interface for other node shapes.
@@ -14096,6 +14484,26 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
       },
     ];
   }
+
+  export const Pointers = {
+    create,
+    equals,
+    fromJson,
+    fromRdf,
+    hash,
+    hashShaclProperties,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+    toJson,
+    toRdf,
+  };
 }
 /**
  * Base interface for other node shapes. Put the base interface with properties above the base interface without.
@@ -14504,6 +14912,26 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
           ]),
     ];
   }
+
+  export const Pointers = {
+    create,
+    equals,
+    fromJson,
+    fromRdf,
+    hash,
+    hashShaclProperties,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+    toJson,
+    toRdf,
+  };
 }
 /**
  * Interface node shape that inherits the base interface and is the parent of the ConcreteChildInterfaceNodeShape.
@@ -14986,6 +15414,26 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
       },
     ];
   }
+
+  export const Pointers = {
+    create,
+    equals,
+    fromJson,
+    fromRdf,
+    hash,
+    hashShaclProperties,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+    toJson,
+    toRdf,
+  };
 }
 /**
  * Child interface of ConcreteParentInterfaceNodeShape. Should inherit properties and node kinds.
@@ -15439,6 +15887,26 @@ export namespace ConcreteChildInterfaceNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    create,
+    equals,
+    fromJson,
+    fromRdf,
+    hash,
+    hashShaclProperties,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+    toJson,
+    toRdf,
+  };
 }
 /**
  * Node shape that serves as an abstract base class for child node shapes.
@@ -15795,6 +16263,20 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * Abstract base for other node shapes. Put the ABC with properties above the ABC without.
@@ -16049,6 +16531,20 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
       }),
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * Class node shape that inherits the abstract base class and is the parent of the ConcreteChildClassNodeShape.
@@ -16509,6 +17005,20 @@ export namespace ConcreteParentClassNodeShapeStatic {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * Child (class) of ConcreteParentClassNodeShape. Should inherit properties, node kinds, and minting strategy.
@@ -16927,6 +17437,20 @@ export namespace ConcreteChildClassNodeShape {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * Shape that can have a blank node or IRI as an identifier
@@ -17177,6 +17701,20 @@ export namespace BlankNodeShape {
   }): readonly sparqljs.Pattern[] {
     return [];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * An abstract base class that will be inherited by the extern object type, showing how to mix generated and hand-written code.
@@ -17499,6 +18037,20 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
       },
     ];
   }
+
+  export const Pointers = {
+    fromJson,
+    fromRdf,
+    jsonSchema,
+    jsonUiSchema,
+    jsonZodSchema,
+    propertiesFromJson,
+    propertiesFromRdf,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+  };
 }
 /**
  * Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.
@@ -17814,6 +18366,20 @@ export namespace InterfaceUnionNodeShape {
         );
     }
   }
+
+  export const Pointers = {
+    equals,
+    fromJson,
+    fromRdf,
+    hash,
+    jsonZodSchema,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+    toJson,
+    toRdf,
+  };
 }
 /**
  * A union node shape that is part of another union shape, to test composition of unions.
@@ -18073,6 +18639,20 @@ export namespace InterfaceUnionNodeShapeMember2 {
         );
     }
   }
+
+  export const Pointers = {
+    equals,
+    fromJson,
+    fromRdf,
+    hash,
+    jsonZodSchema,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+    toJson,
+    toRdf,
+  };
 }
 /**
  * Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.
@@ -18337,667 +18917,74 @@ export namespace UnionNodeShape {
         return _unionNodeShape.toRdf(_parameters);
     }
   }
+
+  export const Pointers = {
+    equals,
+    fromJson,
+    fromRdf,
+    hash,
+    jsonZodSchema,
+    sparqlConstructQuery,
+    sparqlConstructQueryString,
+    sparqlConstructTemplateTriples,
+    sparqlWherePatterns,
+    toJson,
+    toRdf,
+  };
 }
 
 const $ObjectTypePointers = {
-  AbstractBaseClassForExternObjectType: {
-    fromJson: AbstractBaseClassForExternObjectTypeStatic.fromJson,
-    fromRdf: AbstractBaseClassForExternObjectTypeStatic.fromRdf,
-    jsonSchema: AbstractBaseClassForExternObjectTypeStatic.jsonSchema,
-    jsonUiSchema: AbstractBaseClassForExternObjectTypeStatic.jsonUiSchema,
-    jsonZodSchema: AbstractBaseClassForExternObjectTypeStatic.jsonZodSchema,
-    propertiesFromJson:
-      AbstractBaseClassForExternObjectTypeStatic.propertiesFromJson,
-    propertiesFromRdf:
-      AbstractBaseClassForExternObjectTypeStatic.propertiesFromRdf,
-    sparqlConstructQuery:
-      AbstractBaseClassForExternObjectTypeStatic.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      AbstractBaseClassForExternObjectTypeStatic.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      AbstractBaseClassForExternObjectTypeStatic.sparqlConstructTemplateTriples,
-    sparqlWherePatterns:
-      AbstractBaseClassForExternObjectTypeStatic.sparqlWherePatterns,
-  },
-  AbstractBaseClassWithoutPropertiesNodeShape: {
-    fromJson: AbstractBaseClassWithoutPropertiesNodeShapeStatic.fromJson,
-    fromRdf: AbstractBaseClassWithoutPropertiesNodeShapeStatic.fromRdf,
-    jsonSchema: AbstractBaseClassWithoutPropertiesNodeShapeStatic.jsonSchema,
-    jsonUiSchema:
-      AbstractBaseClassWithoutPropertiesNodeShapeStatic.jsonUiSchema,
-    jsonZodSchema:
-      AbstractBaseClassWithoutPropertiesNodeShapeStatic.jsonZodSchema,
-    propertiesFromJson:
-      AbstractBaseClassWithoutPropertiesNodeShapeStatic.propertiesFromJson,
-    propertiesFromRdf:
-      AbstractBaseClassWithoutPropertiesNodeShapeStatic.propertiesFromRdf,
-    sparqlConstructQuery:
-      AbstractBaseClassWithoutPropertiesNodeShapeStatic.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      AbstractBaseClassWithoutPropertiesNodeShapeStatic.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      AbstractBaseClassWithoutPropertiesNodeShapeStatic.sparqlConstructTemplateTriples,
-    sparqlWherePatterns:
-      AbstractBaseClassWithoutPropertiesNodeShapeStatic.sparqlWherePatterns,
-  },
-  AbstractBaseClassWithPropertiesNodeShape: {
-    fromJson: AbstractBaseClassWithPropertiesNodeShapeStatic.fromJson,
-    fromRdf: AbstractBaseClassWithPropertiesNodeShapeStatic.fromRdf,
-    jsonSchema: AbstractBaseClassWithPropertiesNodeShapeStatic.jsonSchema,
-    jsonUiSchema: AbstractBaseClassWithPropertiesNodeShapeStatic.jsonUiSchema,
-    jsonZodSchema: AbstractBaseClassWithPropertiesNodeShapeStatic.jsonZodSchema,
-    propertiesFromJson:
-      AbstractBaseClassWithPropertiesNodeShapeStatic.propertiesFromJson,
-    propertiesFromRdf:
-      AbstractBaseClassWithPropertiesNodeShapeStatic.propertiesFromRdf,
-    sparqlConstructQuery:
-      AbstractBaseClassWithPropertiesNodeShapeStatic.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      AbstractBaseClassWithPropertiesNodeShapeStatic.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      AbstractBaseClassWithPropertiesNodeShapeStatic.sparqlConstructTemplateTriples,
-    sparqlWherePatterns:
-      AbstractBaseClassWithPropertiesNodeShapeStatic.sparqlWherePatterns,
-  },
-  BaseInterfaceWithoutPropertiesNodeShape: {
-    create: BaseInterfaceWithoutPropertiesNodeShapeStatic.create,
-    equals: BaseInterfaceWithoutPropertiesNodeShapeStatic.equals,
-    fromJson: BaseInterfaceWithoutPropertiesNodeShapeStatic.fromJson,
-    fromRdf: BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdf,
-    hash: BaseInterfaceWithoutPropertiesNodeShapeStatic.hash,
-    hashShaclProperties:
-      BaseInterfaceWithoutPropertiesNodeShapeStatic.hashShaclProperties,
-    jsonSchema: BaseInterfaceWithoutPropertiesNodeShapeStatic.jsonSchema,
-    jsonUiSchema: BaseInterfaceWithoutPropertiesNodeShapeStatic.jsonUiSchema,
-    jsonZodSchema: BaseInterfaceWithoutPropertiesNodeShapeStatic.jsonZodSchema,
-    propertiesFromJson:
-      BaseInterfaceWithoutPropertiesNodeShapeStatic.propertiesFromJson,
-    propertiesFromRdf:
-      BaseInterfaceWithoutPropertiesNodeShapeStatic.propertiesFromRdf,
-    sparqlConstructQuery:
-      BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlConstructTemplateTriples,
-    sparqlWherePatterns:
-      BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlWherePatterns,
-    toJson: BaseInterfaceWithoutPropertiesNodeShapeStatic.toJson,
-    toRdf: BaseInterfaceWithoutPropertiesNodeShapeStatic.toRdf,
-  },
-  BaseInterfaceWithPropertiesNodeShape: {
-    create: BaseInterfaceWithPropertiesNodeShapeStatic.create,
-    equals: BaseInterfaceWithPropertiesNodeShapeStatic.equals,
-    fromJson: BaseInterfaceWithPropertiesNodeShapeStatic.fromJson,
-    fromRdf: BaseInterfaceWithPropertiesNodeShapeStatic.fromRdf,
-    hash: BaseInterfaceWithPropertiesNodeShapeStatic.hash,
-    hashShaclProperties:
-      BaseInterfaceWithPropertiesNodeShapeStatic.hashShaclProperties,
-    jsonSchema: BaseInterfaceWithPropertiesNodeShapeStatic.jsonSchema,
-    jsonUiSchema: BaseInterfaceWithPropertiesNodeShapeStatic.jsonUiSchema,
-    jsonZodSchema: BaseInterfaceWithPropertiesNodeShapeStatic.jsonZodSchema,
-    propertiesFromJson:
-      BaseInterfaceWithPropertiesNodeShapeStatic.propertiesFromJson,
-    propertiesFromRdf:
-      BaseInterfaceWithPropertiesNodeShapeStatic.propertiesFromRdf,
-    sparqlConstructQuery:
-      BaseInterfaceWithPropertiesNodeShapeStatic.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      BaseInterfaceWithPropertiesNodeShapeStatic.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      BaseInterfaceWithPropertiesNodeShapeStatic.sparqlConstructTemplateTriples,
-    sparqlWherePatterns:
-      BaseInterfaceWithPropertiesNodeShapeStatic.sparqlWherePatterns,
-    toJson: BaseInterfaceWithPropertiesNodeShapeStatic.toJson,
-    toRdf: BaseInterfaceWithPropertiesNodeShapeStatic.toRdf,
-  },
-  BlankNodeShape: {
-    fromJson: BlankNodeShape.fromJson,
-    fromRdf: BlankNodeShape.fromRdf,
-    jsonSchema: BlankNodeShape.jsonSchema,
-    jsonUiSchema: BlankNodeShape.jsonUiSchema,
-    jsonZodSchema: BlankNodeShape.jsonZodSchema,
-    propertiesFromJson: BlankNodeShape.propertiesFromJson,
-    propertiesFromRdf: BlankNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: BlankNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString: BlankNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      BlankNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: BlankNodeShape.sparqlWherePatterns,
-  },
-  ConcreteChildClassNodeShape: {
-    fromJson: ConcreteChildClassNodeShape.fromJson,
-    fromRdf: ConcreteChildClassNodeShape.fromRdf,
-    jsonSchema: ConcreteChildClassNodeShape.jsonSchema,
-    jsonUiSchema: ConcreteChildClassNodeShape.jsonUiSchema,
-    jsonZodSchema: ConcreteChildClassNodeShape.jsonZodSchema,
-    propertiesFromJson: ConcreteChildClassNodeShape.propertiesFromJson,
-    propertiesFromRdf: ConcreteChildClassNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: ConcreteChildClassNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      ConcreteChildClassNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      ConcreteChildClassNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: ConcreteChildClassNodeShape.sparqlWherePatterns,
-  },
-  ConcreteChildInterfaceNodeShape: {
-    create: ConcreteChildInterfaceNodeShape.create,
-    equals: ConcreteChildInterfaceNodeShape.equals,
-    fromJson: ConcreteChildInterfaceNodeShape.fromJson,
-    fromRdf: ConcreteChildInterfaceNodeShape.fromRdf,
-    hash: ConcreteChildInterfaceNodeShape.hash,
-    hashShaclProperties: ConcreteChildInterfaceNodeShape.hashShaclProperties,
-    jsonSchema: ConcreteChildInterfaceNodeShape.jsonSchema,
-    jsonUiSchema: ConcreteChildInterfaceNodeShape.jsonUiSchema,
-    jsonZodSchema: ConcreteChildInterfaceNodeShape.jsonZodSchema,
-    propertiesFromJson: ConcreteChildInterfaceNodeShape.propertiesFromJson,
-    propertiesFromRdf: ConcreteChildInterfaceNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: ConcreteChildInterfaceNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      ConcreteChildInterfaceNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      ConcreteChildInterfaceNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: ConcreteChildInterfaceNodeShape.sparqlWherePatterns,
-    toJson: ConcreteChildInterfaceNodeShape.toJson,
-    toRdf: ConcreteChildInterfaceNodeShape.toRdf,
-  },
-  ConcreteParentClassNodeShape: {
-    fromJson: ConcreteParentClassNodeShapeStatic.fromJson,
-    fromRdf: ConcreteParentClassNodeShapeStatic.fromRdf,
-    jsonSchema: ConcreteParentClassNodeShapeStatic.jsonSchema,
-    jsonUiSchema: ConcreteParentClassNodeShapeStatic.jsonUiSchema,
-    jsonZodSchema: ConcreteParentClassNodeShapeStatic.jsonZodSchema,
-    propertiesFromJson: ConcreteParentClassNodeShapeStatic.propertiesFromJson,
-    propertiesFromRdf: ConcreteParentClassNodeShapeStatic.propertiesFromRdf,
-    sparqlConstructQuery:
-      ConcreteParentClassNodeShapeStatic.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      ConcreteParentClassNodeShapeStatic.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      ConcreteParentClassNodeShapeStatic.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: ConcreteParentClassNodeShapeStatic.sparqlWherePatterns,
-  },
-  ConcreteParentInterfaceNodeShape: {
-    create: ConcreteParentInterfaceNodeShapeStatic.create,
-    equals: ConcreteParentInterfaceNodeShapeStatic.equals,
-    fromJson: ConcreteParentInterfaceNodeShapeStatic.fromJson,
-    fromRdf: ConcreteParentInterfaceNodeShapeStatic.fromRdf,
-    hash: ConcreteParentInterfaceNodeShapeStatic.hash,
-    hashShaclProperties:
-      ConcreteParentInterfaceNodeShapeStatic.hashShaclProperties,
-    jsonSchema: ConcreteParentInterfaceNodeShapeStatic.jsonSchema,
-    jsonUiSchema: ConcreteParentInterfaceNodeShapeStatic.jsonUiSchema,
-    jsonZodSchema: ConcreteParentInterfaceNodeShapeStatic.jsonZodSchema,
-    propertiesFromJson:
-      ConcreteParentInterfaceNodeShapeStatic.propertiesFromJson,
-    propertiesFromRdf: ConcreteParentInterfaceNodeShapeStatic.propertiesFromRdf,
-    sparqlConstructQuery:
-      ConcreteParentInterfaceNodeShapeStatic.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      ConcreteParentInterfaceNodeShapeStatic.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      ConcreteParentInterfaceNodeShapeStatic.sparqlConstructTemplateTriples,
-    sparqlWherePatterns:
-      ConcreteParentInterfaceNodeShapeStatic.sparqlWherePatterns,
-    toJson: ConcreteParentInterfaceNodeShapeStatic.toJson,
-    toRdf: ConcreteParentInterfaceNodeShapeStatic.toRdf,
-  },
-  DefaultValuePropertiesNodeShape: {
-    fromJson: DefaultValuePropertiesNodeShape.fromJson,
-    fromRdf: DefaultValuePropertiesNodeShape.fromRdf,
-    jsonSchema: DefaultValuePropertiesNodeShape.jsonSchema,
-    jsonUiSchema: DefaultValuePropertiesNodeShape.jsonUiSchema,
-    jsonZodSchema: DefaultValuePropertiesNodeShape.jsonZodSchema,
-    propertiesFromJson: DefaultValuePropertiesNodeShape.propertiesFromJson,
-    propertiesFromRdf: DefaultValuePropertiesNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: DefaultValuePropertiesNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      DefaultValuePropertiesNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      DefaultValuePropertiesNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: DefaultValuePropertiesNodeShape.sparqlWherePatterns,
-  },
-  ExplicitRdfTypesNodeShape: {
-    fromJson: ExplicitRdfTypesNodeShape.fromJson,
-    fromRdf: ExplicitRdfTypesNodeShape.fromRdf,
-    jsonSchema: ExplicitRdfTypesNodeShape.jsonSchema,
-    jsonUiSchema: ExplicitRdfTypesNodeShape.jsonUiSchema,
-    jsonZodSchema: ExplicitRdfTypesNodeShape.jsonZodSchema,
-    propertiesFromJson: ExplicitRdfTypesNodeShape.propertiesFromJson,
-    propertiesFromRdf: ExplicitRdfTypesNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: ExplicitRdfTypesNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      ExplicitRdfTypesNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      ExplicitRdfTypesNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: ExplicitRdfTypesNodeShape.sparqlWherePatterns,
-  },
-  ExternNodeShape: {
-    fromJson: ExternNodeShape.fromJson,
-    fromRdf: ExternNodeShape.fromRdf,
-    jsonSchema: ExternNodeShape.jsonSchema,
-    jsonUiSchema: ExternNodeShape.jsonUiSchema,
-    jsonZodSchema: ExternNodeShape.jsonZodSchema,
-    propertiesFromJson: ExternNodeShape.propertiesFromJson,
-    propertiesFromRdf: ExternNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: ExternNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString: ExternNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      ExternNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: ExternNodeShape.sparqlWherePatterns,
-  },
-  ExternObjectType: {},
-  ExternPropertiesNodeShape: {
-    fromJson: ExternPropertiesNodeShape.fromJson,
-    fromRdf: ExternPropertiesNodeShape.fromRdf,
-    jsonSchema: ExternPropertiesNodeShape.jsonSchema,
-    jsonUiSchema: ExternPropertiesNodeShape.jsonUiSchema,
-    jsonZodSchema: ExternPropertiesNodeShape.jsonZodSchema,
-    propertiesFromJson: ExternPropertiesNodeShape.propertiesFromJson,
-    propertiesFromRdf: ExternPropertiesNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: ExternPropertiesNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      ExternPropertiesNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      ExternPropertiesNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: ExternPropertiesNodeShape.sparqlWherePatterns,
-  },
-  HasValuePropertiesNodeShape: {
-    fromJson: HasValuePropertiesNodeShape.fromJson,
-    fromRdf: HasValuePropertiesNodeShape.fromRdf,
-    jsonSchema: HasValuePropertiesNodeShape.jsonSchema,
-    jsonUiSchema: HasValuePropertiesNodeShape.jsonUiSchema,
-    jsonZodSchema: HasValuePropertiesNodeShape.jsonZodSchema,
-    propertiesFromJson: HasValuePropertiesNodeShape.propertiesFromJson,
-    propertiesFromRdf: HasValuePropertiesNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: HasValuePropertiesNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      HasValuePropertiesNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      HasValuePropertiesNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: HasValuePropertiesNodeShape.sparqlWherePatterns,
-  },
-  InIdentifierNodeShape: {
-    fromJson: InIdentifierNodeShape.fromJson,
-    fromRdf: InIdentifierNodeShape.fromRdf,
-    jsonSchema: InIdentifierNodeShape.jsonSchema,
-    jsonUiSchema: InIdentifierNodeShape.jsonUiSchema,
-    jsonZodSchema: InIdentifierNodeShape.jsonZodSchema,
-    propertiesFromJson: InIdentifierNodeShape.propertiesFromJson,
-    propertiesFromRdf: InIdentifierNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: InIdentifierNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      InIdentifierNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      InIdentifierNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: InIdentifierNodeShape.sparqlWherePatterns,
-  },
-  InlineNodeShape: {
-    fromJson: InlineNodeShape.fromJson,
-    fromRdf: InlineNodeShape.fromRdf,
-    jsonSchema: InlineNodeShape.jsonSchema,
-    jsonUiSchema: InlineNodeShape.jsonUiSchema,
-    jsonZodSchema: InlineNodeShape.jsonZodSchema,
-    propertiesFromJson: InlineNodeShape.propertiesFromJson,
-    propertiesFromRdf: InlineNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: InlineNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString: InlineNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      InlineNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: InlineNodeShape.sparqlWherePatterns,
-  },
-  InPropertiesNodeShape: {
-    fromJson: InPropertiesNodeShape.fromJson,
-    fromRdf: InPropertiesNodeShape.fromRdf,
-    jsonSchema: InPropertiesNodeShape.jsonSchema,
-    jsonUiSchema: InPropertiesNodeShape.jsonUiSchema,
-    jsonZodSchema: InPropertiesNodeShape.jsonZodSchema,
-    propertiesFromJson: InPropertiesNodeShape.propertiesFromJson,
-    propertiesFromRdf: InPropertiesNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: InPropertiesNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      InPropertiesNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      InPropertiesNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: InPropertiesNodeShape.sparqlWherePatterns,
-  },
-  InterfaceNodeShape: {
-    create: InterfaceNodeShape.create,
-    equals: InterfaceNodeShape.equals,
-    fromJson: InterfaceNodeShape.fromJson,
-    fromRdf: InterfaceNodeShape.fromRdf,
-    hash: InterfaceNodeShape.hash,
-    hashShaclProperties: InterfaceNodeShape.hashShaclProperties,
-    jsonSchema: InterfaceNodeShape.jsonSchema,
-    jsonUiSchema: InterfaceNodeShape.jsonUiSchema,
-    jsonZodSchema: InterfaceNodeShape.jsonZodSchema,
-    propertiesFromJson: InterfaceNodeShape.propertiesFromJson,
-    propertiesFromRdf: InterfaceNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: InterfaceNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString: InterfaceNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      InterfaceNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: InterfaceNodeShape.sparqlWherePatterns,
-    toJson: InterfaceNodeShape.toJson,
-    toRdf: InterfaceNodeShape.toRdf,
-  },
-  InterfaceUnionNodeShapeMember1: {
-    create: InterfaceUnionNodeShapeMember1.create,
-    equals: InterfaceUnionNodeShapeMember1.equals,
-    fromJson: InterfaceUnionNodeShapeMember1.fromJson,
-    fromRdf: InterfaceUnionNodeShapeMember1.fromRdf,
-    hash: InterfaceUnionNodeShapeMember1.hash,
-    hashShaclProperties: InterfaceUnionNodeShapeMember1.hashShaclProperties,
-    jsonSchema: InterfaceUnionNodeShapeMember1.jsonSchema,
-    jsonUiSchema: InterfaceUnionNodeShapeMember1.jsonUiSchema,
-    jsonZodSchema: InterfaceUnionNodeShapeMember1.jsonZodSchema,
-    propertiesFromJson: InterfaceUnionNodeShapeMember1.propertiesFromJson,
-    propertiesFromRdf: InterfaceUnionNodeShapeMember1.propertiesFromRdf,
-    sparqlConstructQuery: InterfaceUnionNodeShapeMember1.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      InterfaceUnionNodeShapeMember1.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      InterfaceUnionNodeShapeMember1.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: InterfaceUnionNodeShapeMember1.sparqlWherePatterns,
-    toJson: InterfaceUnionNodeShapeMember1.toJson,
-    toRdf: InterfaceUnionNodeShapeMember1.toRdf,
-  },
-  InterfaceUnionNodeShapeMember2a: {
-    create: InterfaceUnionNodeShapeMember2a.create,
-    equals: InterfaceUnionNodeShapeMember2a.equals,
-    fromJson: InterfaceUnionNodeShapeMember2a.fromJson,
-    fromRdf: InterfaceUnionNodeShapeMember2a.fromRdf,
-    hash: InterfaceUnionNodeShapeMember2a.hash,
-    hashShaclProperties: InterfaceUnionNodeShapeMember2a.hashShaclProperties,
-    jsonSchema: InterfaceUnionNodeShapeMember2a.jsonSchema,
-    jsonUiSchema: InterfaceUnionNodeShapeMember2a.jsonUiSchema,
-    jsonZodSchema: InterfaceUnionNodeShapeMember2a.jsonZodSchema,
-    propertiesFromJson: InterfaceUnionNodeShapeMember2a.propertiesFromJson,
-    propertiesFromRdf: InterfaceUnionNodeShapeMember2a.propertiesFromRdf,
-    sparqlConstructQuery: InterfaceUnionNodeShapeMember2a.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      InterfaceUnionNodeShapeMember2a.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      InterfaceUnionNodeShapeMember2a.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: InterfaceUnionNodeShapeMember2a.sparqlWherePatterns,
-    toJson: InterfaceUnionNodeShapeMember2a.toJson,
-    toRdf: InterfaceUnionNodeShapeMember2a.toRdf,
-  },
-  InterfaceUnionNodeShapeMember2b: {
-    create: InterfaceUnionNodeShapeMember2b.create,
-    equals: InterfaceUnionNodeShapeMember2b.equals,
-    fromJson: InterfaceUnionNodeShapeMember2b.fromJson,
-    fromRdf: InterfaceUnionNodeShapeMember2b.fromRdf,
-    hash: InterfaceUnionNodeShapeMember2b.hash,
-    hashShaclProperties: InterfaceUnionNodeShapeMember2b.hashShaclProperties,
-    jsonSchema: InterfaceUnionNodeShapeMember2b.jsonSchema,
-    jsonUiSchema: InterfaceUnionNodeShapeMember2b.jsonUiSchema,
-    jsonZodSchema: InterfaceUnionNodeShapeMember2b.jsonZodSchema,
-    propertiesFromJson: InterfaceUnionNodeShapeMember2b.propertiesFromJson,
-    propertiesFromRdf: InterfaceUnionNodeShapeMember2b.propertiesFromRdf,
-    sparqlConstructQuery: InterfaceUnionNodeShapeMember2b.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      InterfaceUnionNodeShapeMember2b.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      InterfaceUnionNodeShapeMember2b.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: InterfaceUnionNodeShapeMember2b.sparqlWherePatterns,
-    toJson: InterfaceUnionNodeShapeMember2b.toJson,
-    toRdf: InterfaceUnionNodeShapeMember2b.toRdf,
-  },
-  IriNodeShape: {
-    fromJson: IriNodeShape.fromJson,
-    fromRdf: IriNodeShape.fromRdf,
-    jsonSchema: IriNodeShape.jsonSchema,
-    jsonUiSchema: IriNodeShape.jsonUiSchema,
-    jsonZodSchema: IriNodeShape.jsonZodSchema,
-    propertiesFromJson: IriNodeShape.propertiesFromJson,
-    propertiesFromRdf: IriNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: IriNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString: IriNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples: IriNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: IriNodeShape.sparqlWherePatterns,
-  },
-  LanguageInPropertiesNodeShape: {
-    fromJson: LanguageInPropertiesNodeShape.fromJson,
-    fromRdf: LanguageInPropertiesNodeShape.fromRdf,
-    jsonSchema: LanguageInPropertiesNodeShape.jsonSchema,
-    jsonUiSchema: LanguageInPropertiesNodeShape.jsonUiSchema,
-    jsonZodSchema: LanguageInPropertiesNodeShape.jsonZodSchema,
-    propertiesFromJson: LanguageInPropertiesNodeShape.propertiesFromJson,
-    propertiesFromRdf: LanguageInPropertiesNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: LanguageInPropertiesNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      LanguageInPropertiesNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      LanguageInPropertiesNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: LanguageInPropertiesNodeShape.sparqlWherePatterns,
-  },
-  ListPropertiesNodeShape: {
-    fromJson: ListPropertiesNodeShape.fromJson,
-    fromRdf: ListPropertiesNodeShape.fromRdf,
-    jsonSchema: ListPropertiesNodeShape.jsonSchema,
-    jsonUiSchema: ListPropertiesNodeShape.jsonUiSchema,
-    jsonZodSchema: ListPropertiesNodeShape.jsonZodSchema,
-    propertiesFromJson: ListPropertiesNodeShape.propertiesFromJson,
-    propertiesFromRdf: ListPropertiesNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: ListPropertiesNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      ListPropertiesNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      ListPropertiesNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: ListPropertiesNodeShape.sparqlWherePatterns,
-  },
-  MutablePropertiesNodeShape: {
-    fromJson: MutablePropertiesNodeShape.fromJson,
-    fromRdf: MutablePropertiesNodeShape.fromRdf,
-    jsonSchema: MutablePropertiesNodeShape.jsonSchema,
-    jsonUiSchema: MutablePropertiesNodeShape.jsonUiSchema,
-    jsonZodSchema: MutablePropertiesNodeShape.jsonZodSchema,
-    propertiesFromJson: MutablePropertiesNodeShape.propertiesFromJson,
-    propertiesFromRdf: MutablePropertiesNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: MutablePropertiesNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      MutablePropertiesNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      MutablePropertiesNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: MutablePropertiesNodeShape.sparqlWherePatterns,
-  },
-  NonClassNodeShape: {
-    fromJson: NonClassNodeShape.fromJson,
-    fromRdf: NonClassNodeShape.fromRdf,
-    jsonSchema: NonClassNodeShape.jsonSchema,
-    jsonUiSchema: NonClassNodeShape.jsonUiSchema,
-    jsonZodSchema: NonClassNodeShape.jsonZodSchema,
-    propertiesFromJson: NonClassNodeShape.propertiesFromJson,
-    propertiesFromRdf: NonClassNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: NonClassNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString: NonClassNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      NonClassNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: NonClassNodeShape.sparqlWherePatterns,
-  },
-  OrderedPropertiesNodeShape: {
-    fromJson: OrderedPropertiesNodeShape.fromJson,
-    fromRdf: OrderedPropertiesNodeShape.fromRdf,
-    jsonSchema: OrderedPropertiesNodeShape.jsonSchema,
-    jsonUiSchema: OrderedPropertiesNodeShape.jsonUiSchema,
-    jsonZodSchema: OrderedPropertiesNodeShape.jsonZodSchema,
-    propertiesFromJson: OrderedPropertiesNodeShape.propertiesFromJson,
-    propertiesFromRdf: OrderedPropertiesNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: OrderedPropertiesNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      OrderedPropertiesNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      OrderedPropertiesNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: OrderedPropertiesNodeShape.sparqlWherePatterns,
-  },
-  PropertyCardinalitiesNodeShape: {
-    fromJson: PropertyCardinalitiesNodeShape.fromJson,
-    fromRdf: PropertyCardinalitiesNodeShape.fromRdf,
-    jsonSchema: PropertyCardinalitiesNodeShape.jsonSchema,
-    jsonUiSchema: PropertyCardinalitiesNodeShape.jsonUiSchema,
-    jsonZodSchema: PropertyCardinalitiesNodeShape.jsonZodSchema,
-    propertiesFromJson: PropertyCardinalitiesNodeShape.propertiesFromJson,
-    propertiesFromRdf: PropertyCardinalitiesNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: PropertyCardinalitiesNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      PropertyCardinalitiesNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      PropertyCardinalitiesNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: PropertyCardinalitiesNodeShape.sparqlWherePatterns,
-  },
-  PropertyVisibilitiesNodeShape: {
-    fromJson: PropertyVisibilitiesNodeShape.fromJson,
-    fromRdf: PropertyVisibilitiesNodeShape.fromRdf,
-    jsonSchema: PropertyVisibilitiesNodeShape.jsonSchema,
-    jsonUiSchema: PropertyVisibilitiesNodeShape.jsonUiSchema,
-    jsonZodSchema: PropertyVisibilitiesNodeShape.jsonZodSchema,
-    propertiesFromJson: PropertyVisibilitiesNodeShape.propertiesFromJson,
-    propertiesFromRdf: PropertyVisibilitiesNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: PropertyVisibilitiesNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      PropertyVisibilitiesNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      PropertyVisibilitiesNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: PropertyVisibilitiesNodeShape.sparqlWherePatterns,
-  },
-  Sha256IriNodeShape: {
-    fromJson: Sha256IriNodeShape.fromJson,
-    fromRdf: Sha256IriNodeShape.fromRdf,
-    jsonSchema: Sha256IriNodeShape.jsonSchema,
-    jsonUiSchema: Sha256IriNodeShape.jsonUiSchema,
-    jsonZodSchema: Sha256IriNodeShape.jsonZodSchema,
-    propertiesFromJson: Sha256IriNodeShape.propertiesFromJson,
-    propertiesFromRdf: Sha256IriNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: Sha256IriNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString: Sha256IriNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      Sha256IriNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: Sha256IriNodeShape.sparqlWherePatterns,
-  },
-  TermPropertiesNodeShape: {
-    fromJson: TermPropertiesNodeShape.fromJson,
-    fromRdf: TermPropertiesNodeShape.fromRdf,
-    jsonSchema: TermPropertiesNodeShape.jsonSchema,
-    jsonUiSchema: TermPropertiesNodeShape.jsonUiSchema,
-    jsonZodSchema: TermPropertiesNodeShape.jsonZodSchema,
-    propertiesFromJson: TermPropertiesNodeShape.propertiesFromJson,
-    propertiesFromRdf: TermPropertiesNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: TermPropertiesNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      TermPropertiesNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      TermPropertiesNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: TermPropertiesNodeShape.sparqlWherePatterns,
-  },
-  UnionNodeShapeMember1: {
-    fromJson: UnionNodeShapeMember1.fromJson,
-    fromRdf: UnionNodeShapeMember1.fromRdf,
-    jsonSchema: UnionNodeShapeMember1.jsonSchema,
-    jsonUiSchema: UnionNodeShapeMember1.jsonUiSchema,
-    jsonZodSchema: UnionNodeShapeMember1.jsonZodSchema,
-    propertiesFromJson: UnionNodeShapeMember1.propertiesFromJson,
-    propertiesFromRdf: UnionNodeShapeMember1.propertiesFromRdf,
-    sparqlConstructQuery: UnionNodeShapeMember1.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      UnionNodeShapeMember1.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      UnionNodeShapeMember1.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: UnionNodeShapeMember1.sparqlWherePatterns,
-  },
-  UnionNodeShapeMember2: {
-    fromJson: UnionNodeShapeMember2.fromJson,
-    fromRdf: UnionNodeShapeMember2.fromRdf,
-    jsonSchema: UnionNodeShapeMember2.jsonSchema,
-    jsonUiSchema: UnionNodeShapeMember2.jsonUiSchema,
-    jsonZodSchema: UnionNodeShapeMember2.jsonZodSchema,
-    propertiesFromJson: UnionNodeShapeMember2.propertiesFromJson,
-    propertiesFromRdf: UnionNodeShapeMember2.propertiesFromRdf,
-    sparqlConstructQuery: UnionNodeShapeMember2.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      UnionNodeShapeMember2.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      UnionNodeShapeMember2.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: UnionNodeShapeMember2.sparqlWherePatterns,
-  },
-  UnionPropertiesNodeShape: {
-    fromJson: UnionPropertiesNodeShape.fromJson,
-    fromRdf: UnionPropertiesNodeShape.fromRdf,
-    jsonSchema: UnionPropertiesNodeShape.jsonSchema,
-    jsonUiSchema: UnionPropertiesNodeShape.jsonUiSchema,
-    jsonZodSchema: UnionPropertiesNodeShape.jsonZodSchema,
-    propertiesFromJson: UnionPropertiesNodeShape.propertiesFromJson,
-    propertiesFromRdf: UnionPropertiesNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: UnionPropertiesNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      UnionPropertiesNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      UnionPropertiesNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: UnionPropertiesNodeShape.sparqlWherePatterns,
-  },
-  UuidV4IriNodeShape: {
-    fromJson: UuidV4IriNodeShape.fromJson,
-    fromRdf: UuidV4IriNodeShape.fromRdf,
-    jsonSchema: UuidV4IriNodeShape.jsonSchema,
-    jsonUiSchema: UuidV4IriNodeShape.jsonUiSchema,
-    jsonZodSchema: UuidV4IriNodeShape.jsonZodSchema,
-    propertiesFromJson: UuidV4IriNodeShape.propertiesFromJson,
-    propertiesFromRdf: UuidV4IriNodeShape.propertiesFromRdf,
-    sparqlConstructQuery: UuidV4IriNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString: UuidV4IriNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      UuidV4IriNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: UuidV4IriNodeShape.sparqlWherePatterns,
-  },
+  AbstractBaseClassForExternObjectType:
+    AbstractBaseClassForExternObjectTypeStatic.Pointers,
+  AbstractBaseClassWithoutPropertiesNodeShape:
+    AbstractBaseClassWithoutPropertiesNodeShapeStatic.Pointers,
+  AbstractBaseClassWithPropertiesNodeShape:
+    AbstractBaseClassWithPropertiesNodeShapeStatic.Pointers,
+  BaseInterfaceWithoutPropertiesNodeShape:
+    BaseInterfaceWithoutPropertiesNodeShapeStatic.Pointers,
+  BaseInterfaceWithPropertiesNodeShape:
+    BaseInterfaceWithPropertiesNodeShapeStatic.Pointers,
+  BlankNodeShape: BlankNodeShape.Pointers,
+  ConcreteChildClassNodeShape: ConcreteChildClassNodeShape.Pointers,
+  ConcreteChildInterfaceNodeShape: ConcreteChildInterfaceNodeShape.Pointers,
+  ConcreteParentClassNodeShape: ConcreteParentClassNodeShapeStatic.Pointers,
+  ConcreteParentInterfaceNodeShape:
+    ConcreteParentInterfaceNodeShapeStatic.Pointers,
+  DefaultValuePropertiesNodeShape: DefaultValuePropertiesNodeShape.Pointers,
+  ExplicitRdfTypesNodeShape: ExplicitRdfTypesNodeShape.Pointers,
+  ExternNodeShape: ExternNodeShape.Pointers,
+  ExternObjectType: ExternObjectType.Pointers,
+  ExternPropertiesNodeShape: ExternPropertiesNodeShape.Pointers,
+  HasValuePropertiesNodeShape: HasValuePropertiesNodeShape.Pointers,
+  InIdentifierNodeShape: InIdentifierNodeShape.Pointers,
+  InlineNodeShape: InlineNodeShape.Pointers,
+  InPropertiesNodeShape: InPropertiesNodeShape.Pointers,
+  InterfaceNodeShape: InterfaceNodeShape.Pointers,
+  InterfaceUnionNodeShapeMember1: InterfaceUnionNodeShapeMember1.Pointers,
+  InterfaceUnionNodeShapeMember2a: InterfaceUnionNodeShapeMember2a.Pointers,
+  InterfaceUnionNodeShapeMember2b: InterfaceUnionNodeShapeMember2b.Pointers,
+  IriNodeShape: IriNodeShape.Pointers,
+  LanguageInPropertiesNodeShape: LanguageInPropertiesNodeShape.Pointers,
+  ListPropertiesNodeShape: ListPropertiesNodeShape.Pointers,
+  MutablePropertiesNodeShape: MutablePropertiesNodeShape.Pointers,
+  NonClassNodeShape: NonClassNodeShape.Pointers,
+  OrderedPropertiesNodeShape: OrderedPropertiesNodeShape.Pointers,
+  PropertyCardinalitiesNodeShape: PropertyCardinalitiesNodeShape.Pointers,
+  PropertyVisibilitiesNodeShape: PropertyVisibilitiesNodeShape.Pointers,
+  Sha256IriNodeShape: Sha256IriNodeShape.Pointers,
+  TermPropertiesNodeShape: TermPropertiesNodeShape.Pointers,
+  UnionNodeShapeMember1: UnionNodeShapeMember1.Pointers,
+  UnionNodeShapeMember2: UnionNodeShapeMember2.Pointers,
+  UnionPropertiesNodeShape: UnionPropertiesNodeShape.Pointers,
+  UuidV4IriNodeShape: UuidV4IriNodeShape.Pointers,
 };
 const $ObjectUnionTypePointers = {
-  InterfaceUnionNodeShape: {
-    equals: InterfaceUnionNodeShape.equals,
-    fromJson: InterfaceUnionNodeShape.fromJson,
-    fromRdf: InterfaceUnionNodeShape.fromRdf,
-    hash: InterfaceUnionNodeShape.hash,
-    jsonZodSchema: InterfaceUnionNodeShape.jsonZodSchema,
-    sparqlConstructQuery: InterfaceUnionNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      InterfaceUnionNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      InterfaceUnionNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: InterfaceUnionNodeShape.sparqlWherePatterns,
-    toJson: InterfaceUnionNodeShape.toJson,
-    toRdf: InterfaceUnionNodeShape.toRdf,
-  },
-  InterfaceUnionNodeShapeMember2: {
-    equals: InterfaceUnionNodeShapeMember2.equals,
-    fromJson: InterfaceUnionNodeShapeMember2.fromJson,
-    fromRdf: InterfaceUnionNodeShapeMember2.fromRdf,
-    hash: InterfaceUnionNodeShapeMember2.hash,
-    jsonZodSchema: InterfaceUnionNodeShapeMember2.jsonZodSchema,
-    sparqlConstructQuery: InterfaceUnionNodeShapeMember2.sparqlConstructQuery,
-    sparqlConstructQueryString:
-      InterfaceUnionNodeShapeMember2.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      InterfaceUnionNodeShapeMember2.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: InterfaceUnionNodeShapeMember2.sparqlWherePatterns,
-    toJson: InterfaceUnionNodeShapeMember2.toJson,
-    toRdf: InterfaceUnionNodeShapeMember2.toRdf,
-  },
-  UnionNodeShape: {
-    equals: UnionNodeShape.equals,
-    fromJson: UnionNodeShape.fromJson,
-    fromRdf: UnionNodeShape.fromRdf,
-    hash: UnionNodeShape.hash,
-    jsonZodSchema: UnionNodeShape.jsonZodSchema,
-    sparqlConstructQuery: UnionNodeShape.sparqlConstructQuery,
-    sparqlConstructQueryString: UnionNodeShape.sparqlConstructQueryString,
-    sparqlConstructTemplateTriples:
-      UnionNodeShape.sparqlConstructTemplateTriples,
-    sparqlWherePatterns: UnionNodeShape.sparqlWherePatterns,
-    toJson: UnionNodeShape.toJson,
-    toRdf: UnionNodeShape.toRdf,
-  },
+  InterfaceUnionNodeShape: InterfaceUnionNodeShape.Pointers,
+  InterfaceUnionNodeShapeMember2: InterfaceUnionNodeShapeMember2.Pointers,
+  UnionNodeShape: UnionNodeShape.Pointers,
 };
 export const $Pointers = {
   ObjectTypes: $ObjectTypePointers,
   ObjectUnionTypes: $ObjectUnionTypePointers,
-  Types: { ...$ObjectTypePointers, $ObjectUnionTypePointers },
+  Types: { ...$ObjectTypePointers, ...$ObjectUnionTypePointers },
 };

@@ -7,6 +7,7 @@ import {
   type StatementStructures,
   StructureKind,
   type TypeAliasDeclarationStructure,
+  VariableDeclarationKind,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 
@@ -15,7 +16,6 @@ import type { Import } from "./Import.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { Type } from "./Type.js";
 import { hasherTypeConstraint } from "./_ObjectType/hashFunctionOrMethodDeclarations.js";
-import { pointers } from "./_ObjectType/pointers.js";
 import { sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/sparqlConstructQueryStringFunctionDeclaration.js";
 import { objectInitializer } from "./objectInitializer.js";
@@ -109,14 +109,29 @@ export class ObjectUnionType extends DeclaredType {
       ...this.toRdfFunctionDeclaration.toList(),
     ];
 
-    if (staticModuleStatements.length > 0) {
-      declarations.push({
-        isExported: this.export,
-        kind: StructureKind.Module,
-        name: this.staticModuleName,
-        statements: staticModuleStatements,
-      });
-    }
+    staticModuleStatements.push({
+      declarationKind: VariableDeclarationKind.Const,
+      isExported: true,
+      kind: StructureKind.VariableStatement,
+      declarations: [
+        {
+          name: "Pointers",
+          initializer: `{ ${staticModuleStatements
+            .flatMap((statement) =>
+              statement.kind === StructureKind.Function ? [statement.name] : [],
+            )
+            .toSorted()
+            .join(", ")} }`,
+        },
+      ],
+    });
+
+    declarations.push({
+      isExported: this.export,
+      kind: StructureKind.Module,
+      name: this.staticModuleName,
+      statements: staticModuleStatements,
+    });
 
     return declarations;
   }
@@ -137,10 +152,6 @@ export class ObjectUnionType extends DeclaredType {
 
   override get mutable(): boolean {
     return this.memberTypes.some((memberType) => memberType.mutable);
-  }
-
-  get pointers(): Record<string, string> {
-    return pointers.bind(this)();
   }
 
   get staticModuleName() {
