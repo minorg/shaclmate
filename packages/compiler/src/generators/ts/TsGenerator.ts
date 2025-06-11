@@ -2,13 +2,18 @@ import {
   type ImportDeclarationStructure,
   Project,
   type SourceFile,
+  StructureKind,
+  VariableDeclarationKind,
 } from "ts-morph";
+
 import * as ast from "../../ast/index.js";
+
 import type { Generator } from "../Generator.js";
 import type { Import } from "./Import.js";
 import { ObjectType } from "./ObjectType.js";
 import { ObjectUnionType } from "./ObjectUnionType.js";
 import { TypeFactory } from "./TypeFactory.js";
+import { objectInitializer } from "./objectInitializer.js";
 
 export class TsGenerator implements Generator {
   generate(ast_: ast.Ast): string {
@@ -98,12 +103,78 @@ export class TsGenerator implements Generator {
       }
     }
 
-    // Add type declarations
+    // Add declarations
     for (const objectType of objectTypes) {
       sourceFile.addStatements(objectType.declarations);
     }
     for (const objectUnionType of objectUnionTypes) {
       sourceFile.addStatements(objectUnionType.declarations);
     }
+
+    // Add pointers
+    // Must add an empty type in order to use the $ prefix
+    // sourceFile.addStatements([
+    //   {
+    //     kind: StructureKind.Interface,
+    //     name: "$Pointers",
+    //   },
+    // ]);
+
+    sourceFile.addVariableStatements([
+      {
+        declarationKind: VariableDeclarationKind.Const,
+        declarations: [
+          {
+            kind: StructureKind.VariableDeclaration,
+            name: "$ObjectTypePointers",
+            initializer: objectInitializer(
+              objectTypes
+                .toSorted((left, right) => left.name.localeCompare(right.name))
+                .reduce(
+                  (pointers, objectType) => {
+                    pointers[objectType.name!] = objectInitializer(
+                      objectType.pointers,
+                    );
+                    return pointers;
+                  },
+                  {} as Record<string, string>,
+                ),
+            ),
+          },
+          {
+            kind: StructureKind.VariableDeclaration,
+            name: "$ObjectUnionTypePointers",
+            initializer: objectInitializer(
+              objectUnionTypes
+                .toSorted((left, right) => left.name.localeCompare(right.name))
+                .reduce(
+                  (pointers, objectUnionType) => {
+                    pointers[objectUnionType.name!] = objectInitializer(
+                      objectUnionType.pointers,
+                    );
+                    return pointers;
+                  },
+                  {} as Record<string, string>,
+                ),
+            ),
+          },
+        ],
+      },
+      {
+        declarationKind: VariableDeclarationKind.Const,
+        isExported: true,
+        declarations: [
+          {
+            kind: StructureKind.VariableDeclaration,
+            name: "$Pointers",
+            initializer: objectInitializer({
+              ObjectTypes: "$ObjectTypePointers",
+              ObjectUnionTypes: "$ObjectUnionTypePointers",
+              Types: "{ ...$ObjectTypePointers, $ObjectUnionTypePointers }",
+            }),
+          },
+        ],
+      },
+    ]);
   }
 }

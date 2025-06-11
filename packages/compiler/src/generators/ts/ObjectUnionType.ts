@@ -15,6 +15,7 @@ import type { Import } from "./Import.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { Type } from "./Type.js";
 import { hasherTypeConstraint } from "./_ObjectType/hashFunctionOrMethodDeclarations.js";
+import { pointers } from "./_ObjectType/pointers.js";
 import { sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/sparqlConstructQueryStringFunctionDeclaration.js";
 import { objectInitializer } from "./objectInitializer.js";
@@ -89,6 +90,7 @@ export class ObjectUnionType extends DeclaredType {
     );
   }
 
+  @Memoize()
   get declarations() {
     const declarations: (
       | ModuleDeclarationStructure
@@ -135,6 +137,10 @@ export class ObjectUnionType extends DeclaredType {
 
   override get mutable(): boolean {
     return this.memberTypes.some((memberType) => memberType.mutable);
+  }
+
+  get pointers(): Record<string, string> {
+    return pointers.bind(this)();
   }
 
   get staticModuleName() {

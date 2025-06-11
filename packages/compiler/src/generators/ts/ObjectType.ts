@@ -146,6 +146,7 @@ export class ObjectType extends DeclaredType {
     return imports;
   }
 
+  @Memoize()
   get declarations() {
     const declarations: (
       | ClassDeclarationStructure
@@ -251,6 +252,10 @@ export class ObjectType extends DeclaredType {
   @Memoize()
   get parentObjectTypes(): readonly ObjectType[] {
     return this.lazyParentObjectTypes();
+  }
+
+  get pointers(): Record<string, string> {
+    return _ObjectType.pointers.bind(this)();
   }
 
   @Memoize()

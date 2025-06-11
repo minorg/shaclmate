@@ -18,6 +18,8 @@ export * from "./jsonFunctionDeclarations.js";
 
 export * from "./jsonTypeAliasDeclaration.js";
 
+export * from "./pointers.js";
+
 export * from "./Property.js";
 
 export * from "./rdfFunctionDeclarations.js";
