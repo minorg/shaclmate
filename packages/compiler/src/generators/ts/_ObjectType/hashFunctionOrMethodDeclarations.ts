@@ -71,7 +71,7 @@ export function hashFunctionOrMethodDeclarations(this: ObjectType): readonly {
       case "interface": {
         for (const parentObjectType of this.parentObjectTypes) {
           hashShaclPropertiesStatements.push(
-            `${parentObjectType.name}.${parentObjectType.hashShaclPropertiesFunctionName}(${this.thisVariable}, ${hasherVariable});`,
+            `${parentObjectType.staticModuleName}.hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
           );
         }
         break;
@@ -91,7 +91,7 @@ export function hashFunctionOrMethodDeclarations(this: ObjectType): readonly {
   return [
     {
       hasOverrideKeyword,
-      name: this.declarationType === "class" ? "hash" : this.hashFunctionName,
+      name: "hash",
       parameters,
       returnType,
       statements: [
@@ -108,17 +108,14 @@ export function hashFunctionOrMethodDeclarations(this: ObjectType): readonly {
           ),
         this.declarationType === "class"
           ? `this.hashShaclProperties(${hasherVariable});`
-          : `${this.name}.${this.hashShaclPropertiesFunctionName}(${this.thisVariable}, ${hasherVariable});`,
+          : `${this.staticModuleName}.hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
         `return ${hasherVariable};`,
       ],
       typeParameters,
     },
     {
       hasOverrideKeyword,
-      name:
-        this.declarationType === "class"
-          ? "hashShaclProperties"
-          : this.hashShaclPropertiesFunctionName,
+      name: "hashShaclProperties",
       parameters,
       returnType,
       scope: this.declarationType === "class" ? Scope.Protected : undefined,

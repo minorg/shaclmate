@@ -32,7 +32,7 @@ export function createFunctionDeclaration(
     .concat(
       this.parentObjectTypes.map(
         (parentObjectType) =>
-          `Parameters<typeof ${parentObjectType.name}.create>[0]`,
+          `Parameters<typeof ${parentObjectType.staticModuleName}.create>[0]`,
       ),
     )
     .join(" & ");
@@ -41,7 +41,9 @@ export function createFunctionDeclaration(
   const omitPropertyNames: string[] = [];
   const propertyStatements: string[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
-    propertyInitializers.push(`...${parentObjectType.name}.create(parameters)`);
+    propertyInitializers.push(
+      `...${parentObjectType.staticModuleName}.create(parameters)`,
+    );
   }
   for (const property of this.properties) {
     const thisPropertyStatements = property.interfaceConstructorStatements({

@@ -43,7 +43,9 @@ export function equalsFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
       case "interface": {
         // For every parent, find the nearest equals implementation
         for (const parentObjectType of this.parentObjectTypes) {
-          chain.push(`${parentObjectType.name}.equals(left, right)`);
+          chain.push(
+            `${parentObjectType.staticModuleName}.equals(left, right)`,
+          );
         }
         break;
       }
@@ -77,7 +79,7 @@ export function equalsFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
               type: this.name,
             },
           ],
-    returnType: "EqualsResult",
+    returnType: "$EqualsResult",
     statements: [
       `return ${chain
         .map((chainPart, chainPartI) =>

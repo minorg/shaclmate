@@ -1,26 +1,18 @@
 export type TsFeature =
   | "create"
   | "equals"
-  | "fromJson"
-  | "fromRdf"
   | "hash"
-  | "jsonSchema"
-  | "jsonUiSchema"
-  | "sparql"
-  | "toJson"
-  | "toRdf";
+  | "json"
+  | "rdf"
+  | "sparql";
 
 export namespace TsFeature {
   export const MEMBERS: readonly TsFeature[] = [
     "create",
     "equals",
-    "fromJson",
-    "fromRdf",
     "hash",
-    "jsonSchema",
-    "jsonUiSchema",
+    "json",
+    "rdf",
     "sparql",
-    "toJson",
-    "toRdf",
   ];
 }

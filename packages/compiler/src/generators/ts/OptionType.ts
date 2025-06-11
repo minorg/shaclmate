@@ -45,7 +45,7 @@ export class OptionType extends Type {
   }
 
   override get equalsFunction(): string {
-    return `((left, right) => maybeEquals(left, right, ${this.itemType.equalsFunction}))`;
+    return `((left, right) => $maybeEquals(left, right, ${this.itemType.equalsFunction}))`;
   }
 
   override get jsonName(): string {

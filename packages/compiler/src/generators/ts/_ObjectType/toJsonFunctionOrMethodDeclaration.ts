@@ -1,7 +1,7 @@
 import { Maybe } from "purify-ts";
 import type { OptionalKind, ParameterDeclarationStructure } from "ts-morph";
+
 import type { ObjectType } from "../ObjectType.js";
-import { toJsonReturnType } from "./toJsonReturnType.js";
 
 export function toJsonFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
   name: string;
@@ -9,7 +9,7 @@ export function toJsonFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
   returnType: string;
   statements: string[];
 }> {
-  if (!this.features.has("toJson")) {
+  if (!this.features.has("json")) {
     return Maybe.empty();
   }
 
@@ -33,7 +33,7 @@ export function toJsonFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
     case "interface":
       for (const parentObjectType of this.parentObjectTypes) {
         jsonObjectMembers.push(
-          `...${parentObjectType.name}.toJson(${this.thisVariable})`,
+          `...${parentObjectType.staticModuleName}.toJson(${this.thisVariable})`,
         );
       }
       parameters.push({
@@ -72,7 +72,7 @@ export function toJsonFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
   return Maybe.of({
     name: "toJson",
     parameters,
-    returnType: toJsonReturnType.bind(this)(),
+    returnType: this.jsonName,
     statements: [
       `return JSON.parse(JSON.stringify({ ${jsonObjectMembers.join(",")} } satisfies ${this.jsonName}));`,
     ],

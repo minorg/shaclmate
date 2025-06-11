@@ -1,11 +1,16 @@
 import { Maybe } from "purify-ts";
-import { StructureKind, type VariableStatementStructure } from "ts-morph";
+import {
+  StructureKind,
+  VariableDeclarationKind,
+  type VariableStatementStructure,
+} from "ts-morph";
+
 import type { ObjectType } from "../ObjectType.js";
 
-export function fromRdfTypeVariableDeclaration(
+export function fromRdfTypeVariableStatement(
   this: ObjectType,
 ): Maybe<VariableStatementStructure> {
-  if (!this.features.has("fromRdf")) {
+  if (!this.features.has("rdf")) {
     return Maybe.empty();
   }
 
@@ -18,6 +23,7 @@ export function fromRdfTypeVariableDeclaration(
   }
 
   return Maybe.of({
+    declarationKind: VariableDeclarationKind.Const,
     kind: StructureKind.VariableStatement,
     declarations: [
       {
@@ -27,5 +33,5 @@ export function fromRdfTypeVariableDeclaration(
       },
     ],
     isExported: true,
-  });
+  } satisfies VariableStatementStructure);
 }

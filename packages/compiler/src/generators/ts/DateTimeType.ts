@@ -7,7 +7,7 @@ import type { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 export class DateTimeType extends PrimitiveType<Date> {
-  override readonly equalsFunction = "dateEquals";
+  override readonly equalsFunction = "$dateEquals";
   readonly kind: "DateTimeType" | "DateType" = "DateTimeType";
   override readonly mutable = true;
   protected readonly xsdDatatype: NamedNode = xsd.dateTime;

@@ -1,4 +1,5 @@
 import type * as rdfjs from "@rdfjs/types";
+
 import { pascalCase } from "change-case";
 import { Maybe } from "purify-ts";
 import type {
@@ -8,6 +9,7 @@ import type {
   PropertySignatureStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
+
 import type { IdentifierType } from "../IdentifierType.js";
 import type { Import } from "../Import.js";
 import type { Type } from "../Type.js";
@@ -15,11 +17,12 @@ import { tsComment } from "../tsComment.js";
 import { Property } from "./Property.js";
 
 export class ShaclProperty extends Property<Type> {
-  override readonly mutable: boolean;
   private readonly comment: Maybe<string>;
   private readonly description: Maybe<string>;
   private readonly label: Maybe<string>;
-  private readonly path: rdfjs.NamedNode;
+
+  override readonly mutable: boolean;
+  readonly path: rdfjs.NamedNode;
 
   constructor({
     comment,

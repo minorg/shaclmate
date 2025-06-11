@@ -56,7 +56,7 @@ export class SetType extends Type {
   }
 
   override get equalsFunction(): string {
-    return `((left, right) => arrayEquals(left, right, ${this.itemType.equalsFunction}))`;
+    return `((left, right) => $arrayEquals(left, right, ${this.itemType.equalsFunction}))`;
   }
 
   override get jsonName(): string {

@@ -1,11 +1,11 @@
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 
 export function sparqlConstructQueryFunctionDeclaration(this: {
-  readonly name: string;
+  readonly staticModuleName: string;
 }): FunctionDeclarationStructure {
   return {
-    isExported: true,
     kind: StructureKind.Function,
+    isExported: true,
     name: "sparqlConstructQuery",
     parameters: [
       {
@@ -17,7 +17,7 @@ export function sparqlConstructQueryFunctionDeclaration(this: {
     returnType: "sparqljs.ConstructQuery",
     statements: [
       "const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {}",
-      `return { ...queryParameters, prefixes: parameters?.prefixes ?? {}, queryType: "CONSTRUCT", template: (queryParameters.template ?? []).concat(${this.name}.sparqlConstructTemplateTriples({ ignoreRdfType, subject })), type: "query", where: (queryParameters.where ?? []).concat(${this.name}.sparqlWherePatterns({ ignoreRdfType, subject })) };`,
+      `return { ...queryParameters, prefixes: parameters?.prefixes ?? {}, queryType: "CONSTRUCT", template: (queryParameters.template ?? []).concat(${this.staticModuleName}.sparqlConstructTemplateTriples({ ignoreRdfType, subject })), type: "query", where: (queryParameters.where ?? []).concat(${this.staticModuleName}.sparqlWherePatterns({ ignoreRdfType, subject })) };`,
     ],
   };
 }

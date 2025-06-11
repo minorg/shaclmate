@@ -38,7 +38,7 @@ export abstract class Property<
     OptionalKind<PropertySignatureStructure>
   >;
   /**
-   * Function declaration that takes two values of the property and compares them, returning and EqualsResult.
+   * Function declaration that takes two values of the property and compares them, returning an $EqualsResult.
    */
   abstract readonly equalsFunction: string;
   /**
