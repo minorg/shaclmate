@@ -9,7 +9,6 @@ import {
   type ModuleDeclarationStructure,
   type StatementStructures,
   StructureKind,
-  VariableDeclarationKind,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 
@@ -147,7 +146,6 @@ export class ObjectType extends DeclaredType {
     return imports;
   }
 
-  @Memoize()
   get declarations() {
     const declarations: (
       | ClassDeclarationStructure
@@ -169,26 +167,7 @@ export class ObjectType extends DeclaredType {
       ..._ObjectType.sparqlFunctionDeclarations.bind(this)(),
     ];
 
-    if (!this.extern) {
-      staticModuleStatements.push({
-        declarationKind: VariableDeclarationKind.Const,
-        isExported: true,
-        kind: StructureKind.VariableStatement,
-        declarations: [
-          {
-            name: "Pointers",
-            initializer: `{ ${staticModuleStatements
-              .flatMap((statement) =>
-                statement.kind === StructureKind.Function
-                  ? [statement.name]
-                  : [],
-              )
-              .toSorted()
-              .join(", ")} }`,
-          },
-        ],
-      });
-
+    if (staticModuleStatements.length > 0) {
       declarations.push({
         isExported: this.export,
         kind: StructureKind.Module,

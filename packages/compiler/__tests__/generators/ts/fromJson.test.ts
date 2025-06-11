@@ -18,7 +18,7 @@ describe("fromJson", () => {
 
   it("abstract base class fromJson", ({ expect }) => {
     const fromJsonInstance =
-      kitchenSink.AbstractBaseClassWithPropertiesNodeShapeStatic.Json.parse(
+      kitchenSink.AbstractBaseClassWithPropertiesNodeShapeStatic.fromJson(
         harnesses.concreteChildClassNodeShape.toJson(),
       ).unsafeCoerce() as any;
     expect(
@@ -28,7 +28,7 @@ describe("fromJson", () => {
 
   it("concrete base class fromJson", ({ expect }) => {
     const fromJsonInstance =
-      kitchenSink.ConcreteParentClassNodeShapeStatic.Json.parse(
+      kitchenSink.ConcreteParentClassNodeShapeStatic.fromJson(
         harnesses.concreteChildClassNodeShape.toJson(),
       ).unsafeCoerce() as any;
     expect(

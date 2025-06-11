@@ -126,14 +126,13 @@ export class TsGenerator implements Generator {
         declarations: [
           {
             kind: StructureKind.VariableDeclaration,
-            name: "$ObjectTypePointers",
+            name: "$ObjectTypes",
             initializer: objectInitializer(
               objectTypes
                 .toSorted((left, right) => left.name.localeCompare(right.name))
                 .reduce(
                   (pointers, objectType) => {
-                    pointers[objectType.name!] =
-                      `${objectType.staticModuleName}.Pointers`;
+                    pointers[objectType.name!] = objectType.staticModuleName;
                     return pointers;
                   },
                   {} as Record<string, string>,
@@ -142,36 +141,27 @@ export class TsGenerator implements Generator {
           },
           {
             kind: StructureKind.VariableDeclaration,
-            name: "$ObjectUnionTypePointers",
+            name: "$ObjectUnionTypes",
             initializer: objectInitializer(
               objectUnionTypes
                 .toSorted((left, right) => left.name.localeCompare(right.name))
                 .reduce(
                   (pointers, objectUnionType) => {
                     pointers[objectUnionType.name!] =
-                      `${objectUnionType.staticModuleName}.Pointers`;
+                      objectUnionType.staticModuleName;
                     return pointers;
                   },
                   {} as Record<string, string>,
                 ),
             ),
           },
-        ],
-      },
-      {
-        declarationKind: VariableDeclarationKind.Const,
-        isExported: true,
-        declarations: [
           {
             kind: StructureKind.VariableDeclaration,
-            name: "$Pointers",
-            initializer: objectInitializer({
-              ObjectTypes: "$ObjectTypePointers",
-              ObjectUnionTypes: "$ObjectUnionTypePointers",
-              Types: "{ ...$ObjectTypePointers, ...$ObjectUnionTypePointers }",
-            }),
+            name: "$Types",
+            initializer: "{ ...$ObjectTypes, ...$ObjectUnionTypes }",
           },
         ],
+        isExported: true,
       },
     ]);
   }

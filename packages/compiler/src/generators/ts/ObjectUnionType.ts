@@ -7,7 +7,6 @@ import {
   type StatementStructures,
   StructureKind,
   type TypeAliasDeclarationStructure,
-  VariableDeclarationKind,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 
@@ -90,7 +89,6 @@ export class ObjectUnionType extends DeclaredType {
     );
   }
 
-  @Memoize()
   get declarations() {
     const declarations: (
       | ModuleDeclarationStructure
@@ -109,29 +107,14 @@ export class ObjectUnionType extends DeclaredType {
       ...this.toRdfFunctionDeclaration.toList(),
     ];
 
-    staticModuleStatements.push({
-      declarationKind: VariableDeclarationKind.Const,
-      isExported: true,
-      kind: StructureKind.VariableStatement,
-      declarations: [
-        {
-          name: "Pointers",
-          initializer: `{ ${staticModuleStatements
-            .flatMap((statement) =>
-              statement.kind === StructureKind.Function ? [statement.name] : [],
-            )
-            .toSorted()
-            .join(", ")} }`,
-        },
-      ],
-    });
-
-    declarations.push({
-      isExported: this.export,
-      kind: StructureKind.Module,
-      name: this.staticModuleName,
-      statements: staticModuleStatements,
-    });
+    if (staticModuleStatements.length > 0) {
+      declarations.push({
+        isExported: this.export,
+        kind: StructureKind.Module,
+        name: this.staticModuleName,
+        statements: staticModuleStatements,
+      });
+    }
 
     return declarations;
   }

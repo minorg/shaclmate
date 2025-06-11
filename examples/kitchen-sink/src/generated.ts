@@ -537,20 +537,6 @@ export namespace UuidV4IriNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * Shape with sh:xone properties.
@@ -1425,20 +1411,6 @@ export namespace UnionPropertiesNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 export class UnionNodeShapeMember2 {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
@@ -1758,20 +1730,6 @@ export namespace UnionNodeShapeMember2 {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 export class UnionNodeShapeMember1 {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
@@ -2091,20 +2049,6 @@ export namespace UnionNodeShapeMember1 {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * Shape with properties that are not nested objects
@@ -3238,20 +3182,6 @@ export namespace TermPropertiesNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied.
@@ -3587,20 +3517,6 @@ export namespace Sha256IriNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * Shape with properties that have visibility modifiers (private, protected, public)
@@ -4068,20 +3984,6 @@ export namespace PropertyVisibilitiesNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * Shape that has properties with different cardinalities
@@ -4747,20 +4649,6 @@ export namespace PropertyCardinalitiesNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * Shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.
@@ -5207,20 +5095,6 @@ export namespace OrderedPropertiesNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * Node shape that isn't an rdfs:Class.
@@ -5539,20 +5413,6 @@ export namespace NonClassNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * Shape with shaclmate:mutable properties.
@@ -6377,20 +6237,6 @@ export namespace MutablePropertiesNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * Shape that uses the list shapes in properties.
@@ -7323,20 +7169,6 @@ export namespace ListPropertiesNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * Shape that uses the StringListShape in a property.
@@ -7939,20 +7771,6 @@ export namespace LanguageInPropertiesNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * A node shape that only allows IRI identifiers.
@@ -8179,20 +7997,6 @@ export namespace IriNodeShape {
   }): readonly sparqljs.Pattern[] {
     return [];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 export interface InterfaceUnionNodeShapeMember2b {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8540,26 +8344,6 @@ export namespace InterfaceUnionNodeShapeMember2b {
       },
     ];
   }
-
-  export const Pointers = {
-    create,
-    equals,
-    fromJson,
-    fromRdf,
-    hash,
-    hashShaclProperties,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-    toJson,
-    toRdf,
-  };
 }
 export interface InterfaceUnionNodeShapeMember2a {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8907,26 +8691,6 @@ export namespace InterfaceUnionNodeShapeMember2a {
       },
     ];
   }
-
-  export const Pointers = {
-    create,
-    equals,
-    fromJson,
-    fromRdf,
-    hash,
-    hashShaclProperties,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-    toJson,
-    toRdf,
-  };
 }
 export interface InterfaceUnionNodeShapeMember1 {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9271,26 +9035,6 @@ export namespace InterfaceUnionNodeShapeMember1 {
       },
     ];
   }
-
-  export const Pointers = {
-    create,
-    equals,
-    fromJson,
-    fromRdf,
-    hash,
-    hashShaclProperties,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-    toJson,
-    toRdf,
-  };
 }
 /**
  * A node shape that's generated as a TypeScript interface instead of a class.
@@ -9615,26 +9359,6 @@ export namespace InterfaceNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    create,
-    equals,
-    fromJson,
-    fromRdf,
-    hash,
-    hashShaclProperties,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-    toJson,
-    toRdf,
-  };
 }
 /**
  * Shape with sh:in properties.
@@ -10534,20 +10258,6 @@ export namespace InPropertiesNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * Shape with sh:in constraining its identifier.
@@ -10932,20 +10642,6 @@ export namespace InIdentifierNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * Shape with sh:hasValue properties.
@@ -11416,20 +11112,6 @@ export namespace HasValuePropertiesNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 export class InlineNodeShape {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
@@ -11745,20 +11427,6 @@ export namespace InlineNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 export class ExternNodeShape {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
@@ -12074,20 +11742,6 @@ export namespace ExternNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * Node shape that inlines/nests another node shape and externs/references another.
@@ -12708,20 +12362,6 @@ export namespace ExternPropertiesNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * Shape with custom rdf:type's.
@@ -13130,20 +12770,6 @@ export namespace ExplicitRdfTypesNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * Shape with sh:defaultValue properties.
@@ -14002,20 +13628,6 @@ export namespace DefaultValuePropertiesNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * Base interface for other node shapes.
@@ -14484,26 +14096,6 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
       },
     ];
   }
-
-  export const Pointers = {
-    create,
-    equals,
-    fromJson,
-    fromRdf,
-    hash,
-    hashShaclProperties,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-    toJson,
-    toRdf,
-  };
 }
 /**
  * Base interface for other node shapes. Put the base interface with properties above the base interface without.
@@ -14912,26 +14504,6 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
           ]),
     ];
   }
-
-  export const Pointers = {
-    create,
-    equals,
-    fromJson,
-    fromRdf,
-    hash,
-    hashShaclProperties,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-    toJson,
-    toRdf,
-  };
 }
 /**
  * Interface node shape that inherits the base interface and is the parent of the ConcreteChildInterfaceNodeShape.
@@ -15414,26 +14986,6 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
       },
     ];
   }
-
-  export const Pointers = {
-    create,
-    equals,
-    fromJson,
-    fromRdf,
-    hash,
-    hashShaclProperties,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-    toJson,
-    toRdf,
-  };
 }
 /**
  * Child interface of ConcreteParentInterfaceNodeShape. Should inherit properties and node kinds.
@@ -15887,26 +15439,6 @@ export namespace ConcreteChildInterfaceNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    create,
-    equals,
-    fromJson,
-    fromRdf,
-    hash,
-    hashShaclProperties,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-    toJson,
-    toRdf,
-  };
 }
 /**
  * Node shape that serves as an abstract base class for child node shapes.
@@ -16263,20 +15795,6 @@ export namespace AbstractBaseClassWithPropertiesNodeShapeStatic {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * Abstract base for other node shapes. Put the ABC with properties above the ABC without.
@@ -16531,20 +16049,6 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
       }),
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * Class node shape that inherits the abstract base class and is the parent of the ConcreteChildClassNodeShape.
@@ -17005,20 +16509,6 @@ export namespace ConcreteParentClassNodeShapeStatic {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * Child (class) of ConcreteParentClassNodeShape. Should inherit properties, node kinds, and minting strategy.
@@ -17437,20 +16927,6 @@ export namespace ConcreteChildClassNodeShape {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * Shape that can have a blank node or IRI as an identifier
@@ -17701,20 +17177,6 @@ export namespace BlankNodeShape {
   }): readonly sparqljs.Pattern[] {
     return [];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * An abstract base class that will be inherited by the extern object type, showing how to mix generated and hand-written code.
@@ -18037,20 +17499,6 @@ export namespace AbstractBaseClassForExternObjectTypeStatic {
       },
     ];
   }
-
-  export const Pointers = {
-    fromJson,
-    fromRdf,
-    jsonSchema,
-    jsonUiSchema,
-    jsonZodSchema,
-    propertiesFromJson,
-    propertiesFromRdf,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-  };
 }
 /**
  * Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.
@@ -18366,20 +17814,6 @@ export namespace InterfaceUnionNodeShape {
         );
     }
   }
-
-  export const Pointers = {
-    equals,
-    fromJson,
-    fromRdf,
-    hash,
-    jsonZodSchema,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-    toJson,
-    toRdf,
-  };
 }
 /**
  * A union node shape that is part of another union shape, to test composition of unions.
@@ -18639,20 +18073,6 @@ export namespace InterfaceUnionNodeShapeMember2 {
         );
     }
   }
-
-  export const Pointers = {
-    equals,
-    fromJson,
-    fromRdf,
-    hash,
-    jsonZodSchema,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-    toJson,
-    toRdf,
-  };
 }
 /**
  * Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.
@@ -18917,74 +18337,55 @@ export namespace UnionNodeShape {
         return _unionNodeShape.toRdf(_parameters);
     }
   }
-
-  export const Pointers = {
-    equals,
-    fromJson,
-    fromRdf,
-    hash,
-    jsonZodSchema,
-    sparqlConstructQuery,
-    sparqlConstructQueryString,
-    sparqlConstructTemplateTriples,
-    sparqlWherePatterns,
-    toJson,
-    toRdf,
-  };
 }
 
-const $ObjectTypePointers = {
-  AbstractBaseClassForExternObjectType:
-    AbstractBaseClassForExternObjectTypeStatic.Pointers,
-  AbstractBaseClassWithoutPropertiesNodeShape:
-    AbstractBaseClassWithoutPropertiesNodeShapeStatic.Pointers,
-  AbstractBaseClassWithPropertiesNodeShape:
-    AbstractBaseClassWithPropertiesNodeShapeStatic.Pointers,
-  BaseInterfaceWithoutPropertiesNodeShape:
-    BaseInterfaceWithoutPropertiesNodeShapeStatic.Pointers,
-  BaseInterfaceWithPropertiesNodeShape:
-    BaseInterfaceWithPropertiesNodeShapeStatic.Pointers,
-  BlankNodeShape: BlankNodeShape.Pointers,
-  ConcreteChildClassNodeShape: ConcreteChildClassNodeShape.Pointers,
-  ConcreteChildInterfaceNodeShape: ConcreteChildInterfaceNodeShape.Pointers,
-  ConcreteParentClassNodeShape: ConcreteParentClassNodeShapeStatic.Pointers,
-  ConcreteParentInterfaceNodeShape:
-    ConcreteParentInterfaceNodeShapeStatic.Pointers,
-  DefaultValuePropertiesNodeShape: DefaultValuePropertiesNodeShape.Pointers,
-  ExplicitRdfTypesNodeShape: ExplicitRdfTypesNodeShape.Pointers,
-  ExternNodeShape: ExternNodeShape.Pointers,
-  ExternObjectType: ExternObjectType.Pointers,
-  ExternPropertiesNodeShape: ExternPropertiesNodeShape.Pointers,
-  HasValuePropertiesNodeShape: HasValuePropertiesNodeShape.Pointers,
-  InIdentifierNodeShape: InIdentifierNodeShape.Pointers,
-  InlineNodeShape: InlineNodeShape.Pointers,
-  InPropertiesNodeShape: InPropertiesNodeShape.Pointers,
-  InterfaceNodeShape: InterfaceNodeShape.Pointers,
-  InterfaceUnionNodeShapeMember1: InterfaceUnionNodeShapeMember1.Pointers,
-  InterfaceUnionNodeShapeMember2a: InterfaceUnionNodeShapeMember2a.Pointers,
-  InterfaceUnionNodeShapeMember2b: InterfaceUnionNodeShapeMember2b.Pointers,
-  IriNodeShape: IriNodeShape.Pointers,
-  LanguageInPropertiesNodeShape: LanguageInPropertiesNodeShape.Pointers,
-  ListPropertiesNodeShape: ListPropertiesNodeShape.Pointers,
-  MutablePropertiesNodeShape: MutablePropertiesNodeShape.Pointers,
-  NonClassNodeShape: NonClassNodeShape.Pointers,
-  OrderedPropertiesNodeShape: OrderedPropertiesNodeShape.Pointers,
-  PropertyCardinalitiesNodeShape: PropertyCardinalitiesNodeShape.Pointers,
-  PropertyVisibilitiesNodeShape: PropertyVisibilitiesNodeShape.Pointers,
-  Sha256IriNodeShape: Sha256IriNodeShape.Pointers,
-  TermPropertiesNodeShape: TermPropertiesNodeShape.Pointers,
-  UnionNodeShapeMember1: UnionNodeShapeMember1.Pointers,
-  UnionNodeShapeMember2: UnionNodeShapeMember2.Pointers,
-  UnionPropertiesNodeShape: UnionPropertiesNodeShape.Pointers,
-  UuidV4IriNodeShape: UuidV4IriNodeShape.Pointers,
-};
-const $ObjectUnionTypePointers = {
-  InterfaceUnionNodeShape: InterfaceUnionNodeShape.Pointers,
-  InterfaceUnionNodeShapeMember2: InterfaceUnionNodeShapeMember2.Pointers,
-  UnionNodeShape: UnionNodeShape.Pointers,
-};
-export const $Pointers = {
-  ObjectTypes: $ObjectTypePointers,
-  ObjectUnionTypes: $ObjectUnionTypePointers,
-  Types: { ...$ObjectTypePointers, ...$ObjectUnionTypePointers },
-};
+export const $ObjectTypes = {
+    AbstractBaseClassForExternObjectType:
+      AbstractBaseClassForExternObjectTypeStatic,
+    AbstractBaseClassWithoutPropertiesNodeShape:
+      AbstractBaseClassWithoutPropertiesNodeShapeStatic,
+    AbstractBaseClassWithPropertiesNodeShape:
+      AbstractBaseClassWithPropertiesNodeShapeStatic,
+    BaseInterfaceWithoutPropertiesNodeShape:
+      BaseInterfaceWithoutPropertiesNodeShapeStatic,
+    BaseInterfaceWithPropertiesNodeShape:
+      BaseInterfaceWithPropertiesNodeShapeStatic,
+    BlankNodeShape,
+    ConcreteChildClassNodeShape,
+    ConcreteChildInterfaceNodeShape,
+    ConcreteParentClassNodeShape: ConcreteParentClassNodeShapeStatic,
+    ConcreteParentInterfaceNodeShape: ConcreteParentInterfaceNodeShapeStatic,
+    DefaultValuePropertiesNodeShape,
+    ExplicitRdfTypesNodeShape,
+    ExternNodeShape,
+    ExternObjectType,
+    ExternPropertiesNodeShape,
+    HasValuePropertiesNodeShape,
+    InIdentifierNodeShape,
+    InlineNodeShape,
+    InPropertiesNodeShape,
+    InterfaceNodeShape,
+    InterfaceUnionNodeShapeMember1,
+    InterfaceUnionNodeShapeMember2a,
+    InterfaceUnionNodeShapeMember2b,
+    IriNodeShape,
+    LanguageInPropertiesNodeShape,
+    ListPropertiesNodeShape,
+    MutablePropertiesNodeShape,
+    NonClassNodeShape,
+    OrderedPropertiesNodeShape,
+    PropertyCardinalitiesNodeShape,
+    PropertyVisibilitiesNodeShape,
+    Sha256IriNodeShape,
+    TermPropertiesNodeShape,
+    UnionNodeShapeMember1,
+    UnionNodeShapeMember2,
+    UnionPropertiesNodeShape,
+    UuidV4IriNodeShape,
+  },
+  $ObjectUnionTypes = {
+    InterfaceUnionNodeShape,
+    InterfaceUnionNodeShapeMember2,
+    UnionNodeShape,
+  },
+  $Types = { ...$ObjectTypes, ...$ObjectUnionTypes };

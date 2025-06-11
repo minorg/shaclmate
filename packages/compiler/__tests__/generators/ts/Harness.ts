@@ -17,26 +17,25 @@ export abstract class Harness<
     [_index: string]: any;
     resource: Resource<IdentifierT>;
   }) => Either<Resource.ValueError, T>;
-  readonly instance: T;
   readonly sparqlConstructQueryString: () => string;
 
-  constructor({
-    fromJson,
-    fromRdf,
-    instance,
-    sparqlConstructQueryString,
-  }: {
-    fromJson: Harness<T, IdentifierT>["fromJson"];
-    fromRdf: Harness<T, IdentifierT>["fromRdf"];
-    instance: T;
-    sparqlConstructQueryString: Harness<
-      T,
-      IdentifierT
-    >["sparqlConstructQueryString"];
-  }) {
+  constructor(
+    readonly instance: T,
+    {
+      fromJson,
+      fromRdf,
+      sparqlConstructQueryString,
+    }: {
+      fromJson: Harness<T, IdentifierT>["fromJson"];
+      fromRdf: Harness<T, IdentifierT>["fromRdf"];
+      sparqlConstructQueryString: Harness<
+        T,
+        IdentifierT
+      >["sparqlConstructQueryString"];
+    },
+  ) {
     this.fromJson = fromJson;
     this.fromRdf = fromRdf;
-    this.instance = instance;
     this.sparqlConstructQueryString = sparqlConstructQueryString;
   }
 

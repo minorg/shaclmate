@@ -18,23 +18,26 @@ export class InterfaceHarness<
     resourceSet: MutableResourceSet;
   }) => Resource<IdentifierT>;
 
-  constructor({
-    equals,
-    toJson,
-    toRdf,
-    ...superParameters
-  }: {
-    equals: (left: T, right: T) => $EqualsResult;
-    toJson: (instance: T) => any;
-    toRdf: (
-      instance: T,
-      options: {
-        mutateGraph: MutableResource.MutateGraph;
-        resourceSet: MutableResourceSet;
-      },
-    ) => Resource<IdentifierT>;
-  } & ConstructorParameters<typeof Harness<T, IdentifierT>>[0]) {
-    super(superParameters);
+  constructor(
+    instance: T,
+    {
+      equals,
+      toJson,
+      toRdf,
+      ...superParameters
+    }: {
+      equals: (left: T, right: T) => $EqualsResult;
+      toJson: (instance: T) => any;
+      toRdf: (
+        instance: T,
+        options: {
+          mutateGraph: MutableResource.MutateGraph;
+          resourceSet: MutableResourceSet;
+        },
+      ) => Resource<IdentifierT>;
+    } & ConstructorParameters<typeof Harness<T, IdentifierT>>[1],
+  ) {
+    super(instance, superParameters);
     this.equals = (other) => equals(this.instance, other);
     this.toJson = () => toJson(this.instance);
     this.toRdf = (kwds) => toRdf(this.instance, kwds);

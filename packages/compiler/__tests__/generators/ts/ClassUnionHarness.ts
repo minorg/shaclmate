@@ -20,13 +20,16 @@ export class ClassUnionHarness<
 > extends Harness<T, IdentifierT> {
   readonly equals: (other: T) => $EqualsResult;
 
-  constructor({
-    equals,
-    ...superParameters
-  }: {
-    equals: (left: T, right: T) => $EqualsResult;
-  } & ConstructorParameters<typeof Harness<T, IdentifierT>>[0]) {
-    super(superParameters);
+  constructor(
+    instance: T,
+    {
+      equals,
+      ...superParameters
+    }: {
+      equals: (left: T, right: T) => $EqualsResult;
+    } & ConstructorParameters<typeof Harness<T, IdentifierT>>[1],
+  ) {
+    super(instance, superParameters);
     this.equals = (other) => equals(this.instance, other);
   }
 
