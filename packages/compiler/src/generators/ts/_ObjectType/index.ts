@@ -22,6 +22,8 @@ export * from "./Property.js";
 
 export * from "./rdfFunctionDeclarations.js";
 
+export * from "./rdfPropertiesVariableStatement.js";
+
 export * from "./ShaclProperty.js";
 
 export * from "./sparqlFunctionDeclarations.js";

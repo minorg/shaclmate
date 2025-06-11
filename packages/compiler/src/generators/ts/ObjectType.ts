@@ -164,6 +164,7 @@ export class ObjectType extends DeclaredType {
       ..._ObjectType.jsonFunctionDeclarations.bind(this)(),
       ..._ObjectType.hashFunctionDeclarations.bind(this)(),
       ..._ObjectType.rdfFunctionDeclarations.bind(this)(),
+      ..._ObjectType.rdfPropertiesVariableStatement.bind(this)().toList(),
       ..._ObjectType.sparqlFunctionDeclarations.bind(this)(),
     ];
 
