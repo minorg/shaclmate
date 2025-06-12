@@ -114,17 +114,11 @@ shaclmate:tsFeatureExcludes
     sh:in (shaclmate:_TsFeature_All
         shaclmate:_TsFeature_Create
         shaclmate:_TsFeature_Equals
-        shaclmate:_TsFeature_FromJson
-        shaclmate:_TsFeature_FromRdf
         shaclmate:_TsFeature_Hash
         shaclmate:_TsFeature_Json
-        shaclmate:_TsFeature_JsonSchema
-        shaclmate:_TsFeature_JsonUiSchema
         shaclmate:_TsFeature_None
         shaclmate:_TsFeature_Rdf
         shaclmate:_TsFeature_Sparql
-        shaclmate:_TsFeature_ToJson
-        shaclmate:_TsFeature_ToRdf
     ) ;
     sh:name "tsFeatureExcludes" ;
     sh:path shaclmate:tsFeatureExclude .
@@ -134,17 +128,11 @@ shaclmate:tsFeatureIncludes
     sh:in (shaclmate:_TsFeature_All
         shaclmate:_TsFeature_Create
         shaclmate:_TsFeature_Equals
-        shaclmate:_TsFeature_FromJson
-        shaclmate:_TsFeature_FromRdf
         shaclmate:_TsFeature_Hash
         shaclmate:_TsFeature_Json
-        shaclmate:_TsFeature_JsonSchema
-        shaclmate:_TsFeature_JsonUiSchema
         shaclmate:_TsFeature_None
         shaclmate:_TsFeature_Rdf
         shaclmate:_TsFeature_Sparql
-        shaclmate:_TsFeature_ToJson
-        shaclmate:_TsFeature_ToRdf
     ) ;
     sh:name "tsFeatureIncludes" ;
     sh:path shaclmate:tsFeatureInclude .
