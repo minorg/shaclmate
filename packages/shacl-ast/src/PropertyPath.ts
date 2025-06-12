@@ -1,9 +1,8 @@
 import type { NamedNode } from "@rdfjs/types";
 import { rdf, sh } from "@tpluscode/rdf-ns-builders";
+
 import { Either, Left } from "purify-ts";
-import type * as purify from "purify-ts";
 import { Resource } from "rdfjs-resource";
-import type * as rdfjsResource from "rdfjs-resource";
 
 export interface AlternativePath {
   readonly kind: "AlternativePath";
@@ -57,8 +56,8 @@ export namespace PropertyPath {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<rdfjsResource.Resource.ValueError, PropertyPath> {
+    resource: Resource;
+  }): Either<Resource.ValueError, PropertyPath> {
     // Predicate path
     // sh:path ex:parent
     if (resource.identifier.termType === "NamedNode") {
@@ -185,5 +184,9 @@ export namespace PropertyPath {
         predicate: rdf.subject,
       }),
     );
+  }
+
+  export function toRdf(_propertyPath: PropertyPath, _options?: any): Resource {
+    throw new Error("not implemented");
   }
 }
