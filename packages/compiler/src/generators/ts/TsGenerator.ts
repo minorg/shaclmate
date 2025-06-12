@@ -17,8 +17,6 @@ import { objectInitializer } from "./objectInitializer.js";
 
 export class TsGenerator implements Generator {
   generate(ast_: ast.Ast): string {
-    const sortedAstObjectTypes = ast.ObjectType.toposort(ast_.objectTypes);
-
     const project = new Project({
       useInMemoryFileSystem: true,
     });
@@ -29,10 +27,12 @@ export class TsGenerator implements Generator {
     });
 
     this.addDeclarations({
-      objectTypes: sortedAstObjectTypes.flatMap((astObjectType) => {
-        const type = typeFactory.createTypeFromAstType(astObjectType);
-        return type instanceof ObjectType ? [type] : [];
-      }),
+      objectTypes: ast.ObjectType.toposort(ast_.objectTypes).flatMap(
+        (astObjectType) => {
+          const type = typeFactory.createTypeFromAstType(astObjectType);
+          return type instanceof ObjectType ? [type] : [];
+        },
+      ),
       objectUnionTypes: ast_.objectUnionTypes.flatMap((astObjectUnionType) => {
         const type = typeFactory.createTypeFromAstType(astObjectUnionType);
         return type instanceof ObjectUnionType ? [type] : [];
@@ -110,15 +110,6 @@ export class TsGenerator implements Generator {
     for (const objectUnionType of objectUnionTypes) {
       sourceFile.addStatements(objectUnionType.declarations);
     }
-
-    // Add pointers
-    // Must add an empty type in order to use the $ prefix
-    // sourceFile.addStatements([
-    //   {
-    //     kind: StructureKind.Interface,
-    //     name: "$Pointers",
-    //   },
-    // ]);
 
     sourceFile.addVariableStatements([
       {
