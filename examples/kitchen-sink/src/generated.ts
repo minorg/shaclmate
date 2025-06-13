@@ -14628,8 +14628,8 @@ export interface ConcreteParentInterfaceNodeShape
   extends BaseInterfaceWithoutPropertiesNodeShape {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
   readonly type:
-    | "ConcreteChildInterfaceNodeShape"
-    | "ConcreteParentInterfaceNodeShape";
+    | "ConcreteParentInterfaceNodeShape"
+    | "ConcreteChildInterfaceNodeShape";
   readonly parentStringProperty: string;
 }
 
@@ -14694,8 +14694,8 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       type:
-        | "ConcreteChildInterfaceNodeShape"
-        | "ConcreteParentInterfaceNodeShape";
+        | "ConcreteParentInterfaceNodeShape"
+        | "ConcreteChildInterfaceNodeShape";
       parentStringProperty: string;
     } & $UnwrapR<
       ReturnType<
@@ -14782,8 +14782,8 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
-          "ConcreteChildInterfaceNodeShape",
           "ConcreteParentInterfaceNodeShape",
+          "ConcreteChildInterfaceNodeShape",
         ]),
         parentStringProperty: zod.string(),
       }),
@@ -14837,8 +14837,8 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       type:
-        | "ConcreteChildInterfaceNodeShape"
-        | "ConcreteParentInterfaceNodeShape";
+        | "ConcreteParentInterfaceNodeShape"
+        | "ConcreteChildInterfaceNodeShape";
       parentStringProperty: string;
     } & $UnwrapR<
       ReturnType<
@@ -16186,8 +16186,8 @@ export namespace AbstractBaseClassWithoutPropertiesNodeShapeStatic {
 export class ConcreteParentClassNodeShape extends AbstractBaseClassWithoutPropertiesNodeShape {
   protected _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
   override readonly type:
-    | "ConcreteChildClassNodeShape"
-    | "ConcreteParentClassNodeShape" = "ConcreteParentClassNodeShape";
+    | "ConcreteParentClassNodeShape"
+    | "ConcreteChildClassNodeShape" = "ConcreteParentClassNodeShape";
   readonly parentStringProperty: string;
 
   constructor(
@@ -16389,8 +16389,8 @@ export namespace ConcreteParentClassNodeShapeStatic {
       zod.object({
         "@id": zod.string().min(1),
         type: zod.enum([
-          "ConcreteChildClassNodeShape",
           "ConcreteParentClassNodeShape",
+          "ConcreteChildClassNodeShape",
         ]),
         parentStringProperty: zod.string(),
       }),
