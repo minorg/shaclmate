@@ -3,7 +3,7 @@ import { NodeShape as ShaclCoreNodeShape } from "@shaclmate/shacl-ast";
 
 import { Maybe } from "purify-ts";
 
-import * as generated from "./generated.js";
+import type * as generated from "./generated.js";
 
 import type {
   IdentifierMintingStrategy,

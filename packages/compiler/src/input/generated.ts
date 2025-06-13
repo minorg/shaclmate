@@ -929,15 +929,6 @@ export namespace BaseShaclCoreShapeStatic {
 
                 currentSubListResource.add(
                   dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  dataFactory.namedNode(
-                    "http://purl.org/shaclmate/ontology#IdentifierList",
-                  ),
-                );
-
-                currentSubListResource.add(
-                  dataFactory.namedNode(
                     "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
                   ),
                   item,
@@ -1025,15 +1016,6 @@ export namespace BaseShaclCoreShapeStatic {
 
                 currentSubListResource.add(
                   dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  dataFactory.namedNode(
-                    "http://purl.org/shaclmate/ontology#TermList",
-                  ),
-                );
-
-                currentSubListResource.add(
-                  dataFactory.namedNode(
                     "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
                   ),
                   item,
@@ -1102,15 +1084,6 @@ export namespace BaseShaclCoreShapeStatic {
                   );
                   currentSubListResource = newSubListResource;
                 }
-
-                currentSubListResource.add(
-                  dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  dataFactory.namedNode(
-                    "http://purl.org/shaclmate/ontology#StringList",
-                  ),
-                );
 
                 currentSubListResource.add(
                   dataFactory.namedNode(
@@ -1221,15 +1194,6 @@ export namespace BaseShaclCoreShapeStatic {
 
                 currentSubListResource.add(
                   dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  dataFactory.namedNode(
-                    "http://purl.org/shaclmate/ontology#IdentifierList",
-                  ),
-                );
-
-                currentSubListResource.add(
-                  dataFactory.namedNode(
                     "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
                   ),
                   item,
@@ -1294,15 +1258,6 @@ export namespace BaseShaclCoreShapeStatic {
                   );
                   currentSubListResource = newSubListResource;
                 }
-
-                currentSubListResource.add(
-                  dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  dataFactory.namedNode(
-                    "http://purl.org/shaclmate/ontology#IdentifierList",
-                  ),
-                );
 
                 currentSubListResource.add(
                   dataFactory.namedNode(
@@ -1676,6 +1631,14 @@ export namespace ShaclCorePropertyShapeStatic {
           "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         ),
         _resource.dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#ShaclCorePropertyShape",
+        ),
+      );
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode(
           "http://www.w3.org/ns/shacl#PropertyShape",
         ),
       );
@@ -1975,6 +1938,14 @@ export namespace ShaclmatePropertyShape {
           "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         ),
         _resource.dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#ShaclmatePropertyShape",
+        ),
+      );
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode(
           "http://www.w3.org/ns/shacl#PropertyShape",
         ),
       );
@@ -2131,6 +2102,14 @@ export namespace OwlOntologyStatic {
       mutateGraph,
     });
     if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#OwlOntology",
+        ),
+      );
       _resource.add(
         _resource.dataFactory.namedNode(
           "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
@@ -2845,6 +2824,14 @@ export namespace ShaclmateOntology {
           "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         ),
         _resource.dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#ShaclmateOntology",
+        ),
+      );
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode(
           "http://www.w3.org/2002/07/owl#Ontology",
         ),
       );
@@ -3120,6 +3107,14 @@ export namespace ShaclCoreNodeShapeStatic {
         _resource.dataFactory.namedNode(
           "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         ),
+        _resource.dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#ShaclCoreNodeShape",
+        ),
+      );
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
         _resource.dataFactory.namedNode("http://www.w3.org/ns/shacl#NodeShape"),
       );
     }
@@ -3154,15 +3149,6 @@ export namespace ShaclCoreNodeShapeStatic {
                   );
                   currentSubListResource = newSubListResource;
                 }
-
-                currentSubListResource.add(
-                  dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  dataFactory.namedNode(
-                    "http://purl.org/shaclmate/ontology#IriList",
-                  ),
-                );
 
                 currentSubListResource.add(
                   dataFactory.namedNode(
@@ -3234,6 +3220,7 @@ export interface ShaclmateNodeShape extends ShaclCoreNodeShape {
   >;
   readonly mutable: purify.Maybe<boolean>;
   readonly name: purify.Maybe<string>;
+  readonly rdfType: purify.Maybe<rdfjs.NamedNode>;
   readonly toRdfTypes: readonly rdfjs.NamedNode[];
   readonly tsFeatureExcludes: readonly rdfjs.NamedNode<
     | "http://purl.org/shaclmate/ontology#_TsFeature_All"
@@ -3301,6 +3288,7 @@ export namespace ShaclmateNodeShape {
       >;
       mutable: purify.Maybe<boolean>;
       name: purify.Maybe<string>;
+      rdfType: purify.Maybe<rdfjs.NamedNode>;
       toRdfTypes: readonly rdfjs.NamedNode[];
       tsFeatureExcludes: readonly rdfjs.NamedNode<
         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
@@ -3551,6 +3539,26 @@ export namespace ShaclmateNodeShape {
     }
 
     const name = _nameEither.unsafeCoerce();
+    const _rdfTypeEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<rdfjs.NamedNode>
+    > = purify.Either.of(
+      _resource
+        .values(
+          dataFactory.namedNode(
+            "http://purl.org/shaclmate/ontology#fromRdfType",
+          ),
+          { unique: true },
+        )
+        .head()
+        .chain((_value) => _value.toIri())
+        .toMaybe(),
+    );
+    if (_rdfTypeEither.isLeft()) {
+      return _rdfTypeEither;
+    }
+
+    const rdfType = _rdfTypeEither.unsafeCoerce();
     const _toRdfTypesEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly rdfjs.NamedNode[]
@@ -4092,6 +4100,7 @@ export namespace ShaclmateNodeShape {
       identifierMintingStrategy,
       mutable,
       name,
+      rdfType,
       toRdfTypes,
       tsFeatureExcludes,
       tsFeatureIncludes,
@@ -4131,6 +4140,14 @@ export namespace ShaclmateNodeShape {
         _resource.dataFactory.namedNode(
           "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         ),
+        _resource.dataFactory.namedNode(
+          "http://purl.org/shaclmate/ontology#ShaclmateNodeShape",
+        ),
+      );
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
         _resource.dataFactory.namedNode("http://www.w3.org/ns/shacl#NodeShape"),
       );
     }
@@ -4164,6 +4181,10 @@ export namespace ShaclmateNodeShape {
     _resource.add(
       dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
       _shaclmateNodeShape.name,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#fromRdfType"),
+      _shaclmateNodeShape.rdfType,
     );
     _resource.add(
       dataFactory.namedNode("http://purl.org/shaclmate/ontology#toRdfType"),
@@ -4239,6 +4260,11 @@ export namespace ShaclmateNodeShape {
       path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#mutable"),
     },
     { path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name") },
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#fromRdfType",
+      ),
+    },
     {
       path: dataFactory.namedNode(
         "http://purl.org/shaclmate/ontology#toRdfType",
