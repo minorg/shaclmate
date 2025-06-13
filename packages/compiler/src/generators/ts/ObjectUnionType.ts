@@ -1,13 +1,7 @@
 import { camelCase, pascalCase } from "change-case";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
-import {
-  type FunctionDeclarationStructure,
-  type ModuleDeclarationStructure,
-  type StatementStructures,
-  StructureKind,
-  type TypeAliasDeclarationStructure,
-} from "ts-morph";
+import { type FunctionDeclarationStructure, type ModuleDeclarationStructure, type StatementStructures, StructureKind, type TypeAliasDeclarationStructure } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 
 import type { TsFeature } from "enums/TsFeature.js";
@@ -80,12 +74,12 @@ class MemberType {
     return this.delegate.staticModuleName;
   }
 
-  jsonZodSchema(parameters: { variables: { zod: string } }): any {
+  jsonZodSchema(parameters: Parameters<ObjectType["jsonZodSchema"]>[0]) {
     return this.delegate.jsonZodSchema(parameters);
   }
 
-  rdfjsResourceType(options?: { mutable?: boolean }) {
-    return this.delegate.rdfjsResourceType(options);
+  rdfjsResourceType(parameters: Parameters<ObjectType["rdfjsResourceType"]>[0]) {
+    return this.delegate.rdfjsResourceType(parameters);
   }
 
   useImports(features: Set<TsFeature>) {
