@@ -3,7 +3,7 @@ import { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
 import * as rdfjsResource from "rdfjs-resource";
 import { PropertyPath } from "./PropertyPath.js";
-type UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
+type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 export interface BaseShaclCoreShape {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
   readonly type:
@@ -53,8 +53,8 @@ export interface BaseShaclCoreShape {
   readonly xone: readonly (readonly (rdfjs.BlankNode | rdfjs.NamedNode)[])[];
 }
 
-export namespace BaseShaclCoreShape {
-  export function _propertiesFromRdf({
+export namespace BaseShaclCoreShapeStatic {
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -864,6 +864,522 @@ export namespace BaseShaclCoreShape {
       xone,
     });
   }
+
+  export function fromRdf(
+    parameters: Parameters<
+      typeof BaseShaclCoreShapeStatic.propertiesFromRdf
+    >[0],
+  ): purify.Either<rdfjsResource.Resource.ValueError, BaseShaclCoreShape> {
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      ShaclCoreNodeShapeStatic.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        BaseShaclCoreShape
+      >
+    ).altLazy(
+      () =>
+        ShaclCorePropertyShapeStatic.fromRdf(otherParameters) as purify.Either<
+          rdfjsResource.Resource.ValueError,
+          BaseShaclCoreShape
+        >,
+    );
+  }
+
+  export function toRdf(
+    _baseShaclCoreShape: BaseShaclCoreShape,
+    {
+      mutateGraph,
+      resourceSet,
+    }: {
+      ignoreRdfType?: boolean;
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(
+      _baseShaclCoreShape.identifier,
+      { mutateGraph },
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
+      _baseShaclCoreShape.and.map((_item) =>
+        _item.length > 0
+          ? _item.reduce(
+              (
+                { currentSubListResource, listResource },
+                item,
+                itemIndex,
+                list,
+              ) => {
+                if (itemIndex === 0) {
+                  currentSubListResource = listResource;
+                } else {
+                  const newSubListResource = resourceSet.mutableResource(
+                    dataFactory.blankNode(),
+                    { mutateGraph },
+                  );
+                  currentSubListResource!.add(
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+                    ),
+                    newSubListResource.identifier,
+                  );
+                  currentSubListResource = newSubListResource;
+                }
+
+                currentSubListResource.add(
+                  dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  dataFactory.namedNode(
+                    "http://purl.org/shaclmate/ontology#IdentifierList",
+                  ),
+                );
+
+                currentSubListResource.add(
+                  dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
+                  ),
+                  item,
+                );
+
+                if (itemIndex + 1 === list.length) {
+                  currentSubListResource.add(
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+                    ),
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+                    ),
+                  );
+                }
+
+                return { currentSubListResource, listResource };
+              },
+              {
+                currentSubListResource: null,
+                listResource: resourceSet.mutableResource(
+                  dataFactory.blankNode(),
+                  { mutateGraph },
+                ),
+              } as {
+                currentSubListResource: rdfjsResource.MutableResource | null;
+                listResource: rdfjsResource.MutableResource;
+              },
+            ).listResource.identifier
+          : dataFactory.namedNode(
+              "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+            ),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
+      _baseShaclCoreShape.classes.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
+      _baseShaclCoreShape.comments.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#datatype"),
+      _baseShaclCoreShape.datatype,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#deactivated"),
+      _baseShaclCoreShape.deactivated,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
+      _baseShaclCoreShape.flags.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#hasValue"),
+      _baseShaclCoreShape.hasValues.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#in"),
+      _baseShaclCoreShape.in_.map((_value) =>
+        _value.length > 0
+          ? _value.reduce(
+              (
+                { currentSubListResource, listResource },
+                item,
+                itemIndex,
+                list,
+              ) => {
+                if (itemIndex === 0) {
+                  currentSubListResource = listResource;
+                } else {
+                  const newSubListResource = resourceSet.mutableResource(
+                    dataFactory.blankNode(),
+                    { mutateGraph },
+                  );
+                  currentSubListResource!.add(
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+                    ),
+                    newSubListResource.identifier,
+                  );
+                  currentSubListResource = newSubListResource;
+                }
+
+                currentSubListResource.add(
+                  dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  dataFactory.namedNode(
+                    "http://purl.org/shaclmate/ontology#TermList",
+                  ),
+                );
+
+                currentSubListResource.add(
+                  dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
+                  ),
+                  item,
+                );
+
+                if (itemIndex + 1 === list.length) {
+                  currentSubListResource.add(
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+                    ),
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+                    ),
+                  );
+                }
+
+                return { currentSubListResource, listResource };
+              },
+              {
+                currentSubListResource: null,
+                listResource: resourceSet.mutableResource(
+                  dataFactory.blankNode(),
+                  { mutateGraph },
+                ),
+              } as {
+                currentSubListResource: rdfjsResource.MutableResource | null;
+                listResource: rdfjsResource.MutableResource;
+              },
+            ).listResource.identifier
+          : dataFactory.namedNode(
+              "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+            ),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#isDefinedBy"),
+      _baseShaclCoreShape.isDefinedBy,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
+      _baseShaclCoreShape.labels.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#languageIn"),
+      _baseShaclCoreShape.languageIn.map((_value) =>
+        _value.length > 0
+          ? _value.reduce(
+              (
+                { currentSubListResource, listResource },
+                item,
+                itemIndex,
+                list,
+              ) => {
+                if (itemIndex === 0) {
+                  currentSubListResource = listResource;
+                } else {
+                  const newSubListResource = resourceSet.mutableResource(
+                    dataFactory.blankNode(),
+                    { mutateGraph },
+                  );
+                  currentSubListResource!.add(
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+                    ),
+                    newSubListResource.identifier,
+                  );
+                  currentSubListResource = newSubListResource;
+                }
+
+                currentSubListResource.add(
+                  dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  dataFactory.namedNode(
+                    "http://purl.org/shaclmate/ontology#StringList",
+                  ),
+                );
+
+                currentSubListResource.add(
+                  dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
+                  ),
+                  item,
+                );
+
+                if (itemIndex + 1 === list.length) {
+                  currentSubListResource.add(
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+                    ),
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+                    ),
+                  );
+                }
+
+                return { currentSubListResource, listResource };
+              },
+              {
+                currentSubListResource: null,
+                listResource: resourceSet.mutableResource(
+                  dataFactory.blankNode(),
+                  { mutateGraph },
+                ),
+              } as {
+                currentSubListResource: rdfjsResource.MutableResource | null;
+                listResource: rdfjsResource.MutableResource;
+              },
+            ).listResource.identifier
+          : dataFactory.namedNode(
+              "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+            ),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount"),
+      _baseShaclCoreShape.maxCount,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#maxExclusive"),
+      _baseShaclCoreShape.maxExclusive,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#maxInclusive"),
+      _baseShaclCoreShape.maxInclusive,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
+      _baseShaclCoreShape.maxLength,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount"),
+      _baseShaclCoreShape.minCount,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#minExclusive"),
+      _baseShaclCoreShape.minExclusive,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#minInclusive"),
+      _baseShaclCoreShape.minInclusive,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
+      _baseShaclCoreShape.minLength,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#nodeKind"),
+      _baseShaclCoreShape.nodeKind,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#node"),
+      _baseShaclCoreShape.nodes.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#not"),
+      _baseShaclCoreShape.not.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#or"),
+      _baseShaclCoreShape.or.map((_item) =>
+        _item.length > 0
+          ? _item.reduce(
+              (
+                { currentSubListResource, listResource },
+                item,
+                itemIndex,
+                list,
+              ) => {
+                if (itemIndex === 0) {
+                  currentSubListResource = listResource;
+                } else {
+                  const newSubListResource = resourceSet.mutableResource(
+                    dataFactory.blankNode(),
+                    { mutateGraph },
+                  );
+                  currentSubListResource!.add(
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+                    ),
+                    newSubListResource.identifier,
+                  );
+                  currentSubListResource = newSubListResource;
+                }
+
+                currentSubListResource.add(
+                  dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  dataFactory.namedNode(
+                    "http://purl.org/shaclmate/ontology#IdentifierList",
+                  ),
+                );
+
+                currentSubListResource.add(
+                  dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
+                  ),
+                  item,
+                );
+
+                if (itemIndex + 1 === list.length) {
+                  currentSubListResource.add(
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+                    ),
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+                    ),
+                  );
+                }
+
+                return { currentSubListResource, listResource };
+              },
+              {
+                currentSubListResource: null,
+                listResource: resourceSet.mutableResource(
+                  dataFactory.blankNode(),
+                  { mutateGraph },
+                ),
+              } as {
+                currentSubListResource: rdfjsResource.MutableResource | null;
+                listResource: rdfjsResource.MutableResource;
+              },
+            ).listResource.identifier
+          : dataFactory.namedNode(
+              "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+            ),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
+      _baseShaclCoreShape.patterns.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#xone"),
+      _baseShaclCoreShape.xone.map((_item) =>
+        _item.length > 0
+          ? _item.reduce(
+              (
+                { currentSubListResource, listResource },
+                item,
+                itemIndex,
+                list,
+              ) => {
+                if (itemIndex === 0) {
+                  currentSubListResource = listResource;
+                } else {
+                  const newSubListResource = resourceSet.mutableResource(
+                    dataFactory.blankNode(),
+                    { mutateGraph },
+                  );
+                  currentSubListResource!.add(
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+                    ),
+                    newSubListResource.identifier,
+                  );
+                  currentSubListResource = newSubListResource;
+                }
+
+                currentSubListResource.add(
+                  dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  dataFactory.namedNode(
+                    "http://purl.org/shaclmate/ontology#IdentifierList",
+                  ),
+                );
+
+                currentSubListResource.add(
+                  dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
+                  ),
+                  item,
+                );
+
+                if (itemIndex + 1 === list.length) {
+                  currentSubListResource.add(
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+                    ),
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+                    ),
+                  );
+                }
+
+                return { currentSubListResource, listResource };
+              },
+              {
+                currentSubListResource: null,
+                listResource: resourceSet.mutableResource(
+                  dataFactory.blankNode(),
+                  { mutateGraph },
+                ),
+              } as {
+                currentSubListResource: rdfjsResource.MutableResource | null;
+                listResource: rdfjsResource.MutableResource;
+              },
+            ).listResource.identifier
+          : dataFactory.namedNode(
+              "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+            ),
+      ),
+    );
+    return _resource;
+  }
+
+  export const rdfProperties = [
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#and") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#class") },
+    {
+      path: dataFactory.namedNode(
+        "http://www.w3.org/2000/01/rdf-schema#comment",
+      ),
+    },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#datatype") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#deactivated") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#hasValue") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#in") },
+    {
+      path: dataFactory.namedNode(
+        "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
+      ),
+    },
+    {
+      path: dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
+    },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#languageIn") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxExclusive") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxInclusive") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minExclusive") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minInclusive") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#nodeKind") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#node") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#not") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#or") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#xone") },
+  ];
 }
 export interface ShaclCorePropertyShape extends BaseShaclCoreShape {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -879,8 +1395,12 @@ export interface ShaclCorePropertyShape extends BaseShaclCoreShape {
   readonly uniqueLang: purify.Maybe<boolean>;
 }
 
-export namespace ShaclCorePropertyShape {
-  export function _propertiesFromRdf({
+export namespace ShaclCorePropertyShapeStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://www.w3.org/ns/shacl#PropertyShape",
+  );
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -905,9 +1425,9 @@ export namespace ShaclCorePropertyShape {
       order: purify.Maybe<number>;
       path: PropertyPath;
       uniqueLang: purify.Maybe<boolean>;
-    } & UnwrapR<ReturnType<typeof BaseShaclCoreShape._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof BaseShaclCoreShapeStatic.propertiesFromRdf>>
   > {
-    const _super0Either = BaseShaclCoreShape._propertiesFromRdf({
+    const _super0Either = BaseShaclCoreShapeStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -927,7 +1447,7 @@ export namespace ShaclCorePropertyShape {
       return purify.Left(
         new rdfjsResource.Resource.ValueError({
           focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type`,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://www.w3.org/ns/shacl#PropertyShape)`,
           predicate: dataFactory.namedNode(
             "http://www.w3.org/ns/shacl#PropertyShape",
           ),
@@ -1120,14 +1640,91 @@ export namespace ShaclCorePropertyShape {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof ShaclCorePropertyShape._propertiesFromRdf>[0],
+    parameters: Parameters<
+      typeof ShaclCorePropertyShapeStatic.propertiesFromRdf
+    >[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, ShaclCorePropertyShape> {
-    return ShaclCorePropertyShape._propertiesFromRdf(parameters);
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      ShaclmatePropertyShape.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        ShaclCorePropertyShape
+      >
+    ).altLazy(() => ShaclCorePropertyShapeStatic.propertiesFromRdf(parameters));
   }
 
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://www.w3.org/ns/shacl#PropertyShape",
-  );
+  export function toRdf(
+    _shaclCorePropertyShape: ShaclCorePropertyShape,
+    {
+      ignoreRdfType,
+      mutateGraph,
+      resourceSet,
+    }: {
+      ignoreRdfType?: boolean;
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    const _resource = BaseShaclCoreShapeStatic.toRdf(_shaclCorePropertyShape, {
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#PropertyShape",
+        ),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#defaultValue"),
+      _shaclCorePropertyShape.defaultValue,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#description"),
+      _shaclCorePropertyShape.descriptions.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#group"),
+      _shaclCorePropertyShape.groups.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#name"),
+      _shaclCorePropertyShape.names.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#order"),
+      _shaclCorePropertyShape.order,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#path"),
+      PropertyPath.toRdf(_shaclCorePropertyShape.path, {
+        mutateGraph: mutateGraph,
+        resourceSet: resourceSet,
+      }),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#uniqueLang"),
+      _shaclCorePropertyShape.uniqueLang,
+    );
+    return _resource;
+  }
+
+  export const rdfProperties = [
+    ...BaseShaclCoreShapeStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#defaultValue") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#description") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#group") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#name") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#order") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#path") },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#uniqueLang") },
+  ];
 }
 export interface ShaclmatePropertyShape extends ShaclCorePropertyShape {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -1145,7 +1742,11 @@ export interface ShaclmatePropertyShape extends ShaclCorePropertyShape {
 }
 
 export namespace ShaclmatePropertyShape {
-  export function _propertiesFromRdf({
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://www.w3.org/ns/shacl#PropertyShape",
+  );
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -1171,9 +1772,11 @@ export namespace ShaclmatePropertyShape {
           | "http://purl.org/shaclmate/ontology#_Visibility_Public"
         >
       >;
-    } & UnwrapR<ReturnType<typeof ShaclCorePropertyShape._propertiesFromRdf>>
+    } & $UnwrapR<
+      ReturnType<typeof ShaclCorePropertyShapeStatic.propertiesFromRdf>
+    >
   > {
-    const _super0Either = ShaclCorePropertyShape._propertiesFromRdf({
+    const _super0Either = ShaclCorePropertyShapeStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -1193,7 +1796,7 @@ export namespace ShaclmatePropertyShape {
       return purify.Left(
         new rdfjsResource.Resource.ValueError({
           focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type`,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://www.w3.org/ns/shacl#PropertyShape)`,
           predicate: dataFactory.namedNode(
             "http://www.w3.org/ns/shacl#PropertyShape",
           ),
@@ -1345,14 +1948,72 @@ export namespace ShaclmatePropertyShape {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof ShaclmatePropertyShape._propertiesFromRdf>[0],
+    parameters: Parameters<typeof ShaclmatePropertyShape.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, ShaclmatePropertyShape> {
-    return ShaclmatePropertyShape._propertiesFromRdf(parameters);
+    return ShaclmatePropertyShape.propertiesFromRdf(parameters);
   }
 
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://www.w3.org/ns/shacl#PropertyShape",
-  );
+  export function toRdf(
+    _shaclmatePropertyShape: ShaclmatePropertyShape,
+    {
+      ignoreRdfType,
+      mutateGraph,
+      resourceSet,
+    }: {
+      ignoreRdfType?: boolean;
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    const _resource = ShaclCorePropertyShapeStatic.toRdf(
+      _shaclmatePropertyShape,
+      { ignoreRdfType: true, mutateGraph, resourceSet },
+    );
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#PropertyShape",
+        ),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#extern"),
+      _shaclmatePropertyShape.extern,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#mutable"),
+      _shaclmatePropertyShape.mutable,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
+      _shaclmatePropertyShape.name,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#visibility"),
+      _shaclmatePropertyShape.visibility,
+    );
+    return _resource;
+  }
+
+  export const rdfProperties = [
+    ...ShaclCorePropertyShapeStatic.rdfProperties,
+    {
+      path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#extern"),
+    },
+    {
+      path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#mutable"),
+    },
+    { path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name") },
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#visibility",
+      ),
+    },
+  ];
 }
 export interface OwlOntology {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -1360,8 +2021,12 @@ export interface OwlOntology {
   readonly labels: readonly rdfjs.Literal[];
 }
 
-export namespace OwlOntology {
-  export function _propertiesFromRdf({
+export namespace OwlOntologyStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://www.w3.org/2002/07/owl#Ontology",
+  );
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -1389,7 +2054,7 @@ export namespace OwlOntology {
       return purify.Left(
         new rdfjsResource.Resource.ValueError({
           focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type`,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://www.w3.org/2002/07/owl#Ontology)`,
           predicate: dataFactory.namedNode(
             "http://www.w3.org/2002/07/owl#Ontology",
           ),
@@ -1439,14 +2104,55 @@ export namespace OwlOntology {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof OwlOntology._propertiesFromRdf>[0],
+    parameters: Parameters<typeof OwlOntologyStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, OwlOntology> {
-    return OwlOntology._propertiesFromRdf(parameters);
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      ShaclmateOntology.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        OwlOntology
+      >
+    ).altLazy(() => OwlOntologyStatic.propertiesFromRdf(parameters));
   }
 
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://www.w3.org/2002/07/owl#Ontology",
-  );
+  export function toRdf(
+    _owlOntology: OwlOntology,
+    {
+      ignoreRdfType,
+      mutateGraph,
+      resourceSet,
+    }: {
+      ignoreRdfType?: boolean;
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(_owlOntology.identifier, {
+      mutateGraph,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/2002/07/owl#Ontology",
+        ),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
+      _owlOntology.labels.map((_item) => _item),
+    );
+    return _resource;
+  }
+
+  export const rdfProperties = [
+    {
+      path: dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
+    },
+  ];
 }
 export interface ShaclmateOntology extends OwlOntology {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -1456,33 +2162,21 @@ export interface ShaclmateOntology extends OwlOntology {
     | "http://purl.org/shaclmate/ontology#_TsFeature_All"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
     | "http://purl.org/shaclmate/ontology#_TsFeature_None"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
   >[];
   readonly tsFeatureIncludes: readonly rdfjs.NamedNode<
     | "http://purl.org/shaclmate/ontology#_TsFeature_All"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
     | "http://purl.org/shaclmate/ontology#_TsFeature_None"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
   >[];
   readonly tsImports: readonly string[];
   readonly tsObjectDeclarationType: purify.Maybe<
@@ -1497,7 +2191,11 @@ export interface ShaclmateOntology extends OwlOntology {
 }
 
 export namespace ShaclmateOntology {
-  export function _propertiesFromRdf({
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://www.w3.org/2002/07/owl#Ontology",
+  );
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -1518,33 +2216,21 @@ export namespace ShaclmateOntology {
         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
       >[];
       tsFeatureIncludes: readonly rdfjs.NamedNode<
         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
       >[];
       tsImports: readonly string[];
       tsObjectDeclarationType: purify.Maybe<
@@ -1556,9 +2242,9 @@ export namespace ShaclmateOntology {
       tsObjectIdentifierPrefixPropertyName: purify.Maybe<string>;
       tsObjectIdentifierPropertyName: purify.Maybe<string>;
       tsObjectTypeDiscriminatorPropertyName: purify.Maybe<string>;
-    } & UnwrapR<ReturnType<typeof OwlOntology._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof OwlOntologyStatic.propertiesFromRdf>>
   > {
-    const _super0Either = OwlOntology._propertiesFromRdf({
+    const _super0Either = OwlOntologyStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -1578,7 +2264,7 @@ export namespace ShaclmateOntology {
       return purify.Left(
         new rdfjsResource.Resource.ValueError({
           focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type`,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://www.w3.org/2002/07/owl#Ontology)`,
           predicate: dataFactory.namedNode(
             "http://www.w3.org/2002/07/owl#Ontology",
           ),
@@ -1614,17 +2300,11 @@ export namespace ShaclmateOntology {
         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
       >[]
     > = purify.Either.of([
       ..._resource
@@ -1648,17 +2328,11 @@ export namespace ShaclmateOntology {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_All">,
@@ -1670,17 +2344,11 @@ export namespace ShaclmateOntology {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Create">,
@@ -1692,64 +2360,14 @@ export namespace ShaclmateOntology {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Equals">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_FromJson":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_FromJson">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_FromRdf">,
                     );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_Hash":
                     return purify.Either.of<
@@ -1758,17 +2376,11 @@ export namespace ShaclmateOntology {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Hash">,
@@ -1780,64 +2392,14 @@ export namespace ShaclmateOntology {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Json">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema">,
                     );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_None":
                     return purify.Either.of<
@@ -1846,17 +2408,11 @@ export namespace ShaclmateOntology {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_None">,
@@ -1868,17 +2424,11 @@ export namespace ShaclmateOntology {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Rdf">,
@@ -1890,71 +2440,21 @@ export namespace ShaclmateOntology {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Sparql">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_ToJson":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_ToJson">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_ToRdf">,
                     );
                   default:
                     return purify.Left(
                       new rdfjsResource.Resource.MistypedValueError({
                         actualValue: iri,
                         expectedValueType:
-                          'rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_All" | "http://purl.org/shaclmate/ontology#_TsFeature_Create" | "http://purl.org/shaclmate/ontology#_TsFeature_Equals" | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson" | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Hash" | "http://purl.org/shaclmate/ontology#_TsFeature_Json" | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema" | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema" | "http://purl.org/shaclmate/ontology#_TsFeature_None" | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql" | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson" | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf">',
+                          'rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_All" | "http://purl.org/shaclmate/ontology#_TsFeature_Create" | "http://purl.org/shaclmate/ontology#_TsFeature_Equals" | "http://purl.org/shaclmate/ontology#_TsFeature_Hash" | "http://purl.org/shaclmate/ontology#_TsFeature_Json" | "http://purl.org/shaclmate/ontology#_TsFeature_None" | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql">',
                         focusResource: _resource,
                         predicate: dataFactory.namedNode(
                           "http://purl.org/shaclmate/ontology#tsFeatureExclude",
@@ -1979,17 +2479,11 @@ export namespace ShaclmateOntology {
         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
       >[]
     > = purify.Either.of([
       ..._resource
@@ -2013,17 +2507,11 @@ export namespace ShaclmateOntology {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_All">,
@@ -2035,17 +2523,11 @@ export namespace ShaclmateOntology {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Create">,
@@ -2057,64 +2539,14 @@ export namespace ShaclmateOntology {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Equals">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_FromJson":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_FromJson">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_FromRdf">,
                     );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_Hash":
                     return purify.Either.of<
@@ -2123,17 +2555,11 @@ export namespace ShaclmateOntology {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Hash">,
@@ -2145,64 +2571,14 @@ export namespace ShaclmateOntology {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Json">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema">,
                     );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_None":
                     return purify.Either.of<
@@ -2211,17 +2587,11 @@ export namespace ShaclmateOntology {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_None">,
@@ -2233,17 +2603,11 @@ export namespace ShaclmateOntology {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Rdf">,
@@ -2255,71 +2619,21 @@ export namespace ShaclmateOntology {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Sparql">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_ToJson":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_ToJson">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_ToRdf">,
                     );
                   default:
                     return purify.Left(
                       new rdfjsResource.Resource.MistypedValueError({
                         actualValue: iri,
                         expectedValueType:
-                          'rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_All" | "http://purl.org/shaclmate/ontology#_TsFeature_Create" | "http://purl.org/shaclmate/ontology#_TsFeature_Equals" | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson" | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Hash" | "http://purl.org/shaclmate/ontology#_TsFeature_Json" | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema" | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema" | "http://purl.org/shaclmate/ontology#_TsFeature_None" | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql" | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson" | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf">',
+                          'rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_All" | "http://purl.org/shaclmate/ontology#_TsFeature_Create" | "http://purl.org/shaclmate/ontology#_TsFeature_Equals" | "http://purl.org/shaclmate/ontology#_TsFeature_Hash" | "http://purl.org/shaclmate/ontology#_TsFeature_Json" | "http://purl.org/shaclmate/ontology#_TsFeature_None" | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql">',
                         focusResource: _resource,
                         predicate: dataFactory.namedNode(
                           "http://purl.org/shaclmate/ontology#tsFeatureInclude",
@@ -2503,14 +2817,131 @@ export namespace ShaclmateOntology {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof ShaclmateOntology._propertiesFromRdf>[0],
+    parameters: Parameters<typeof ShaclmateOntology.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, ShaclmateOntology> {
-    return ShaclmateOntology._propertiesFromRdf(parameters);
+    return ShaclmateOntology.propertiesFromRdf(parameters);
   }
 
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://www.w3.org/2002/07/owl#Ontology",
-  );
+  export function toRdf(
+    _shaclmateOntology: ShaclmateOntology,
+    {
+      ignoreRdfType,
+      mutateGraph,
+      resourceSet,
+    }: {
+      ignoreRdfType?: boolean;
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    const _resource = OwlOntologyStatic.toRdf(_shaclmateOntology, {
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/2002/07/owl#Ontology",
+        ),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsDataFactoryVariable",
+      ),
+      _shaclmateOntology.tsDataFactoryVariable,
+    );
+    _resource.add(
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsFeatureExclude",
+      ),
+      _shaclmateOntology.tsFeatureExcludes.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsFeatureInclude",
+      ),
+      _shaclmateOntology.tsFeatureIncludes.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#tsImport"),
+      _shaclmateOntology.tsImports.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsObjectDeclarationType",
+      ),
+      _shaclmateOntology.tsObjectDeclarationType,
+    );
+    _resource.add(
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsObjectIdentifierPrefixPropertyName",
+      ),
+      _shaclmateOntology.tsObjectIdentifierPrefixPropertyName,
+    );
+    _resource.add(
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsObjectIdentifierPropertyName",
+      ),
+      _shaclmateOntology.tsObjectIdentifierPropertyName,
+    );
+    _resource.add(
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsObjectTypeDiscriminatorPropertyName",
+      ),
+      _shaclmateOntology.tsObjectTypeDiscriminatorPropertyName,
+    );
+    return _resource;
+  }
+
+  export const rdfProperties = [
+    ...OwlOntologyStatic.rdfProperties,
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsDataFactoryVariable",
+      ),
+    },
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsFeatureExclude",
+      ),
+    },
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsFeatureInclude",
+      ),
+    },
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsImport",
+      ),
+    },
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsObjectDeclarationType",
+      ),
+    },
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsObjectIdentifierPrefixPropertyName",
+      ),
+    },
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsObjectIdentifierPropertyName",
+      ),
+    },
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsObjectTypeDiscriminatorPropertyName",
+      ),
+    },
+  ];
 }
 export interface ShaclCoreNodeShape extends BaseShaclCoreShape {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2520,8 +2951,12 @@ export interface ShaclCoreNodeShape extends BaseShaclCoreShape {
   readonly properties: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
 }
 
-export namespace ShaclCoreNodeShape {
-  export function _propertiesFromRdf({
+export namespace ShaclCoreNodeShapeStatic {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://www.w3.org/ns/shacl#NodeShape",
+  );
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -2540,9 +2975,9 @@ export namespace ShaclCoreNodeShape {
       closed: purify.Maybe<boolean>;
       ignoredProperties: purify.Maybe<readonly rdfjs.NamedNode[]>;
       properties: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
-    } & UnwrapR<ReturnType<typeof BaseShaclCoreShape._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof BaseShaclCoreShapeStatic.propertiesFromRdf>>
   > {
-    const _super0Either = BaseShaclCoreShape._propertiesFromRdf({
+    const _super0Either = BaseShaclCoreShapeStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -2562,7 +2997,7 @@ export namespace ShaclCoreNodeShape {
       return purify.Left(
         new rdfjsResource.Resource.ValueError({
           focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type`,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://www.w3.org/ns/shacl#NodeShape)`,
           predicate: dataFactory.namedNode(
             "http://www.w3.org/ns/shacl#NodeShape",
           ),
@@ -2650,14 +3085,138 @@ export namespace ShaclCoreNodeShape {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof ShaclCoreNodeShape._propertiesFromRdf>[0],
+    parameters: Parameters<
+      typeof ShaclCoreNodeShapeStatic.propertiesFromRdf
+    >[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, ShaclCoreNodeShape> {
-    return ShaclCoreNodeShape._propertiesFromRdf(parameters);
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      ShaclmateNodeShape.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        ShaclCoreNodeShape
+      >
+    ).altLazy(() => ShaclCoreNodeShapeStatic.propertiesFromRdf(parameters));
   }
 
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://www.w3.org/ns/shacl#NodeShape",
-  );
+  export function toRdf(
+    _shaclCoreNodeShape: ShaclCoreNodeShape,
+    {
+      ignoreRdfType,
+      mutateGraph,
+      resourceSet,
+    }: {
+      ignoreRdfType?: boolean;
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    const _resource = BaseShaclCoreShapeStatic.toRdf(_shaclCoreNodeShape, {
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://www.w3.org/ns/shacl#NodeShape"),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#closed"),
+      _shaclCoreNodeShape.closed,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#ignoredProperties"),
+      _shaclCoreNodeShape.ignoredProperties.map((_value) =>
+        _value.length > 0
+          ? _value.reduce(
+              (
+                { currentSubListResource, listResource },
+                item,
+                itemIndex,
+                list,
+              ) => {
+                if (itemIndex === 0) {
+                  currentSubListResource = listResource;
+                } else {
+                  const newSubListResource = resourceSet.mutableResource(
+                    dataFactory.blankNode(),
+                    { mutateGraph },
+                  );
+                  currentSubListResource!.add(
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+                    ),
+                    newSubListResource.identifier,
+                  );
+                  currentSubListResource = newSubListResource;
+                }
+
+                currentSubListResource.add(
+                  dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  dataFactory.namedNode(
+                    "http://purl.org/shaclmate/ontology#IriList",
+                  ),
+                );
+
+                currentSubListResource.add(
+                  dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
+                  ),
+                  item,
+                );
+
+                if (itemIndex + 1 === list.length) {
+                  currentSubListResource.add(
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+                    ),
+                    dataFactory.namedNode(
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+                    ),
+                  );
+                }
+
+                return { currentSubListResource, listResource };
+              },
+              {
+                currentSubListResource: null,
+                listResource: resourceSet.mutableResource(
+                  dataFactory.blankNode(),
+                  { mutateGraph },
+                ),
+              } as {
+                currentSubListResource: rdfjsResource.MutableResource | null;
+                listResource: rdfjsResource.MutableResource;
+              },
+            ).listResource.identifier
+          : dataFactory.namedNode(
+              "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+            ),
+      ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#property"),
+      _shaclCoreNodeShape.properties.map((_item) => _item),
+    );
+    return _resource;
+  }
+
+  export const rdfProperties = [
+    ...BaseShaclCoreShapeStatic.rdfProperties,
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#closed") },
+    {
+      path: dataFactory.namedNode(
+        "http://www.w3.org/ns/shacl#ignoredProperties",
+      ),
+    },
+    { path: dataFactory.namedNode("http://www.w3.org/ns/shacl#property") },
+  ];
 }
 export interface ShaclmateNodeShape extends ShaclCoreNodeShape {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2680,33 +3239,21 @@ export interface ShaclmateNodeShape extends ShaclCoreNodeShape {
     | "http://purl.org/shaclmate/ontology#_TsFeature_All"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
     | "http://purl.org/shaclmate/ontology#_TsFeature_None"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
   >[];
   readonly tsFeatureIncludes: readonly rdfjs.NamedNode<
     | "http://purl.org/shaclmate/ontology#_TsFeature_All"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
     | "http://purl.org/shaclmate/ontology#_TsFeature_None"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
   >[];
   readonly tsImports: readonly string[];
   readonly tsObjectDeclarationType: purify.Maybe<
@@ -2721,7 +3268,11 @@ export interface ShaclmateNodeShape extends ShaclCoreNodeShape {
 }
 
 export namespace ShaclmateNodeShape {
-  export function _propertiesFromRdf({
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://www.w3.org/ns/shacl#NodeShape",
+  );
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -2755,33 +3306,21 @@ export namespace ShaclmateNodeShape {
         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
       >[];
       tsFeatureIncludes: readonly rdfjs.NamedNode<
         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
       >[];
       tsImports: readonly string[];
       tsObjectDeclarationType: purify.Maybe<
@@ -2793,9 +3332,9 @@ export namespace ShaclmateNodeShape {
       tsObjectIdentifierPrefixPropertyName: purify.Maybe<string>;
       tsObjectIdentifierPropertyName: purify.Maybe<string>;
       tsObjectTypeDiscriminatorPropertyName: purify.Maybe<string>;
-    } & UnwrapR<ReturnType<typeof ShaclCoreNodeShape._propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof ShaclCoreNodeShapeStatic.propertiesFromRdf>>
   > {
-    const _super0Either = ShaclCoreNodeShape._propertiesFromRdf({
+    const _super0Either = ShaclCoreNodeShapeStatic.propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
@@ -2815,7 +3354,7 @@ export namespace ShaclmateNodeShape {
       return purify.Left(
         new rdfjsResource.Resource.ValueError({
           focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type`,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://www.w3.org/ns/shacl#NodeShape)`,
           predicate: dataFactory.namedNode(
             "http://www.w3.org/ns/shacl#NodeShape",
           ),
@@ -3041,17 +3580,11 @@ export namespace ShaclmateNodeShape {
         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
       >[]
     > = purify.Either.of([
       ..._resource
@@ -3075,17 +3608,11 @@ export namespace ShaclmateNodeShape {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_All">,
@@ -3097,17 +3624,11 @@ export namespace ShaclmateNodeShape {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Create">,
@@ -3119,64 +3640,14 @@ export namespace ShaclmateNodeShape {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Equals">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_FromJson":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_FromJson">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_FromRdf">,
                     );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_Hash":
                     return purify.Either.of<
@@ -3185,17 +3656,11 @@ export namespace ShaclmateNodeShape {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Hash">,
@@ -3207,64 +3672,14 @@ export namespace ShaclmateNodeShape {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Json">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema">,
                     );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_None":
                     return purify.Either.of<
@@ -3273,17 +3688,11 @@ export namespace ShaclmateNodeShape {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_None">,
@@ -3295,17 +3704,11 @@ export namespace ShaclmateNodeShape {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Rdf">,
@@ -3317,71 +3720,21 @@ export namespace ShaclmateNodeShape {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Sparql">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_ToJson":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_ToJson">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_ToRdf">,
                     );
                   default:
                     return purify.Left(
                       new rdfjsResource.Resource.MistypedValueError({
                         actualValue: iri,
                         expectedValueType:
-                          'rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_All" | "http://purl.org/shaclmate/ontology#_TsFeature_Create" | "http://purl.org/shaclmate/ontology#_TsFeature_Equals" | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson" | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Hash" | "http://purl.org/shaclmate/ontology#_TsFeature_Json" | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema" | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema" | "http://purl.org/shaclmate/ontology#_TsFeature_None" | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql" | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson" | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf">',
+                          'rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_All" | "http://purl.org/shaclmate/ontology#_TsFeature_Create" | "http://purl.org/shaclmate/ontology#_TsFeature_Equals" | "http://purl.org/shaclmate/ontology#_TsFeature_Hash" | "http://purl.org/shaclmate/ontology#_TsFeature_Json" | "http://purl.org/shaclmate/ontology#_TsFeature_None" | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql">',
                         focusResource: _resource,
                         predicate: dataFactory.namedNode(
                           "http://purl.org/shaclmate/ontology#tsFeatureExclude",
@@ -3406,17 +3759,11 @@ export namespace ShaclmateNodeShape {
         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
       >[]
     > = purify.Either.of([
       ..._resource
@@ -3440,17 +3787,11 @@ export namespace ShaclmateNodeShape {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_All">,
@@ -3462,17 +3803,11 @@ export namespace ShaclmateNodeShape {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Create">,
@@ -3484,64 +3819,14 @@ export namespace ShaclmateNodeShape {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Equals">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_FromJson":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_FromJson">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_FromRdf">,
                     );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_Hash":
                     return purify.Either.of<
@@ -3550,17 +3835,11 @@ export namespace ShaclmateNodeShape {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Hash">,
@@ -3572,64 +3851,14 @@ export namespace ShaclmateNodeShape {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Json">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema">,
                     );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_None":
                     return purify.Either.of<
@@ -3638,17 +3867,11 @@ export namespace ShaclmateNodeShape {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_None">,
@@ -3660,17 +3883,11 @@ export namespace ShaclmateNodeShape {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Rdf">,
@@ -3682,71 +3899,21 @@ export namespace ShaclmateNodeShape {
                         | "http://purl.org/shaclmate/ontology#_TsFeature_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Sparql">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_ToJson":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_ToJson">,
-                    );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf":
-                    return purify.Either.of<
-                      rdfjsResource.Resource.ValueError,
-                      rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf"
-                      >
-                    >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_ToRdf">,
                     );
                   default:
                     return purify.Left(
                       new rdfjsResource.Resource.MistypedValueError({
                         actualValue: iri,
                         expectedValueType:
-                          'rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_All" | "http://purl.org/shaclmate/ontology#_TsFeature_Create" | "http://purl.org/shaclmate/ontology#_TsFeature_Equals" | "http://purl.org/shaclmate/ontology#_TsFeature_FromJson" | "http://purl.org/shaclmate/ontology#_TsFeature_FromRdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Hash" | "http://purl.org/shaclmate/ontology#_TsFeature_Json" | "http://purl.org/shaclmate/ontology#_TsFeature_JsonSchema" | "http://purl.org/shaclmate/ontology#_TsFeature_JsonUiSchema" | "http://purl.org/shaclmate/ontology#_TsFeature_None" | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql" | "http://purl.org/shaclmate/ontology#_TsFeature_ToJson" | "http://purl.org/shaclmate/ontology#_TsFeature_ToRdf">',
+                          'rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_All" | "http://purl.org/shaclmate/ontology#_TsFeature_Create" | "http://purl.org/shaclmate/ontology#_TsFeature_Equals" | "http://purl.org/shaclmate/ontology#_TsFeature_Hash" | "http://purl.org/shaclmate/ontology#_TsFeature_Json" | "http://purl.org/shaclmate/ontology#_TsFeature_None" | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql">',
                         focusResource: _resource,
                         predicate: dataFactory.namedNode(
                           "http://purl.org/shaclmate/ontology#tsFeatureInclude",
@@ -3937,14 +4104,182 @@ export namespace ShaclmateNodeShape {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof ShaclmateNodeShape._propertiesFromRdf>[0],
+    parameters: Parameters<typeof ShaclmateNodeShape.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, ShaclmateNodeShape> {
-    return ShaclmateNodeShape._propertiesFromRdf(parameters);
+    return ShaclmateNodeShape.propertiesFromRdf(parameters);
   }
 
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://www.w3.org/ns/shacl#NodeShape",
-  );
+  export function toRdf(
+    _shaclmateNodeShape: ShaclmateNodeShape,
+    {
+      ignoreRdfType,
+      mutateGraph,
+      resourceSet,
+    }: {
+      ignoreRdfType?: boolean;
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    const _resource = ShaclCoreNodeShapeStatic.toRdf(_shaclmateNodeShape, {
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://www.w3.org/ns/shacl#NodeShape"),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#abstract"),
+      _shaclmateNodeShape.abstract,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#export"),
+      _shaclmateNodeShape.export_,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#extern"),
+      _shaclmateNodeShape.extern,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#fromRdfType"),
+      _shaclmateNodeShape.fromRdfType,
+    );
+    _resource.add(
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#identifierMintingStrategy",
+      ),
+      _shaclmateNodeShape.identifierMintingStrategy,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#mutable"),
+      _shaclmateNodeShape.mutable,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
+      _shaclmateNodeShape.name,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#toRdfType"),
+      _shaclmateNodeShape.toRdfTypes.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsFeatureExclude",
+      ),
+      _shaclmateNodeShape.tsFeatureExcludes.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsFeatureInclude",
+      ),
+      _shaclmateNodeShape.tsFeatureIncludes.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#tsImport"),
+      _shaclmateNodeShape.tsImports.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsObjectDeclarationType",
+      ),
+      _shaclmateNodeShape.tsObjectDeclarationType,
+    );
+    _resource.add(
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsObjectIdentifierPrefixPropertyName",
+      ),
+      _shaclmateNodeShape.tsObjectIdentifierPrefixPropertyName,
+    );
+    _resource.add(
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsObjectIdentifierPropertyName",
+      ),
+      _shaclmateNodeShape.tsObjectIdentifierPropertyName,
+    );
+    _resource.add(
+      dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsObjectTypeDiscriminatorPropertyName",
+      ),
+      _shaclmateNodeShape.tsObjectTypeDiscriminatorPropertyName,
+    );
+    return _resource;
+  }
+
+  export const rdfProperties = [
+    ...ShaclCoreNodeShapeStatic.rdfProperties,
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#abstract",
+      ),
+    },
+    {
+      path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#export"),
+    },
+    {
+      path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#extern"),
+    },
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#fromRdfType",
+      ),
+    },
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#identifierMintingStrategy",
+      ),
+    },
+    {
+      path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#mutable"),
+    },
+    { path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name") },
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#toRdfType",
+      ),
+    },
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsFeatureExclude",
+      ),
+    },
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsFeatureInclude",
+      ),
+    },
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsImport",
+      ),
+    },
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsObjectDeclarationType",
+      ),
+    },
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsObjectIdentifierPrefixPropertyName",
+      ),
+    },
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsObjectIdentifierPropertyName",
+      ),
+    },
+    {
+      path: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#tsObjectTypeDiscriminatorPropertyName",
+      ),
+    },
+  ];
 }
 export interface ShaclCorePropertyGroup {
   readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3954,7 +4289,11 @@ export interface ShaclCorePropertyGroup {
 }
 
 export namespace ShaclCorePropertyGroup {
-  export function _propertiesFromRdf({
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://www.w3.org/ns/shacl#PropertyGroup",
+  );
+
+  export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -3983,7 +4322,7 @@ export namespace ShaclCorePropertyGroup {
       return purify.Left(
         new rdfjsResource.Resource.ValueError({
           focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type`,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://www.w3.org/ns/shacl#PropertyGroup)`,
           predicate: dataFactory.namedNode(
             "http://www.w3.org/ns/shacl#PropertyGroup",
           ),
@@ -4069,14 +4408,59 @@ export namespace ShaclCorePropertyGroup {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof ShaclCorePropertyGroup._propertiesFromRdf>[0],
+    parameters: Parameters<typeof ShaclCorePropertyGroup.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, ShaclCorePropertyGroup> {
-    return ShaclCorePropertyGroup._propertiesFromRdf(parameters);
+    return ShaclCorePropertyGroup.propertiesFromRdf(parameters);
   }
 
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://www.w3.org/ns/shacl#PropertyGroup",
-  );
+  export function toRdf(
+    _shaclCorePropertyGroup: ShaclCorePropertyGroup,
+    {
+      ignoreRdfType,
+      mutateGraph,
+      resourceSet,
+    }: {
+      ignoreRdfType?: boolean;
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(
+      _shaclCorePropertyGroup.identifier,
+      { mutateGraph },
+    );
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/ns/shacl#PropertyGroup",
+        ),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
+      _shaclCorePropertyGroup.comments.map((_item) => _item),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
+      _shaclCorePropertyGroup.labels.map((_item) => _item),
+    );
+    return _resource;
+  }
+
+  export const rdfProperties = [
+    {
+      path: dataFactory.namedNode(
+        "http://www.w3.org/2000/01/rdf-schema#comment",
+      ),
+    },
+    {
+      path: dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
+    },
+  ];
 }
 export type ShaclCoreShape = ShaclCoreNodeShape | ShaclCorePropertyShape;
 
@@ -4091,17 +4475,34 @@ export namespace ShaclCoreShape {
     resource: rdfjsResource.Resource;
   }): purify.Either<rdfjsResource.Resource.ValueError, ShaclCoreShape> {
     return (
-      ShaclCoreNodeShape.fromRdf({ ...context, resource }) as purify.Either<
-        rdfjsResource.Resource.ValueError,
-        ShaclCoreShape
-      >
+      ShaclCoreNodeShapeStatic.fromRdf({
+        ...context,
+        resource,
+      }) as purify.Either<rdfjsResource.Resource.ValueError, ShaclCoreShape>
     ).altLazy(
       () =>
-        ShaclCorePropertyShape.fromRdf({
+        ShaclCorePropertyShapeStatic.fromRdf({
           ...context,
           resource,
         }) as purify.Either<rdfjsResource.Resource.ValueError, ShaclCoreShape>,
     );
+  }
+
+  export function toRdf(
+    _shaclCoreShape: ShaclCoreShape,
+    _parameters: {
+      mutateGraph: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    switch (_shaclCoreShape.type) {
+      case "ShaclCoreNodeShape":
+      case "ShaclmateNodeShape":
+        return ShaclCoreNodeShapeStatic.toRdf(_shaclCoreShape, _parameters);
+      case "ShaclCorePropertyShape":
+      case "ShaclmatePropertyShape":
+        return ShaclCorePropertyShapeStatic.toRdf(_shaclCoreShape, _parameters);
+    }
   }
 }
 export type ShaclmateShape = ShaclmateNodeShape | ShaclCorePropertyShape;
@@ -4123,10 +4524,40 @@ export namespace ShaclmateShape {
       >
     ).altLazy(
       () =>
-        ShaclCorePropertyShape.fromRdf({
+        ShaclCorePropertyShapeStatic.fromRdf({
           ...context,
           resource,
         }) as purify.Either<rdfjsResource.Resource.ValueError, ShaclmateShape>,
     );
   }
+
+  export function toRdf(
+    _shaclmateShape: ShaclmateShape,
+    _parameters: {
+      mutateGraph: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    switch (_shaclmateShape.type) {
+      case "ShaclmateNodeShape":
+        return ShaclmateNodeShape.toRdf(_shaclmateShape, _parameters);
+      case "ShaclCorePropertyShape":
+      case "ShaclmatePropertyShape":
+        return ShaclCorePropertyShapeStatic.toRdf(_shaclmateShape, _parameters);
+    }
+  }
 }
+
+export const $ObjectTypes = {
+    BaseShaclCoreShape: BaseShaclCoreShapeStatic,
+    OwlOntology: OwlOntologyStatic,
+    PropertyPath,
+    ShaclCoreNodeShape: ShaclCoreNodeShapeStatic,
+    ShaclCorePropertyGroup,
+    ShaclCorePropertyShape: ShaclCorePropertyShapeStatic,
+    ShaclmateNodeShape,
+    ShaclmateOntology,
+    ShaclmatePropertyShape,
+  },
+  $ObjectUnionTypes = { ShaclCoreShape, ShaclmateShape },
+  $Types = { ...$ObjectTypes, ...$ObjectUnionTypes };
