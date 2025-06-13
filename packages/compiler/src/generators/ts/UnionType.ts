@@ -1,11 +1,14 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
 import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
+// We can't extend the member Type directly since it's an arbitrary Type subclass,
+// so we wrap it.
 interface MemberTypeTraits {
   readonly discriminatorPropertyValues: readonly string[];
   readonly memberType: Type;
@@ -13,8 +16,11 @@ interface MemberTypeTraits {
 }
 
 export class UnionType extends Type {
+  private readonly memberTypes: readonly Type[];
+
+  private _name?: string;
+
   readonly kind = "UnionType";
-  readonly memberTypes: readonly Type[];
 
   constructor({
     memberTypes,
@@ -28,24 +34,6 @@ export class UnionType extends Type {
     invariant(memberTypes.length >= 2);
     this.memberTypes = memberTypes;
     this._name = name;
-  }
-
-  private _name?: string;
-
-  override get name(): string {
-    if (typeof this._name === "undefined") {
-      switch (this._discriminatorProperty.kind) {
-        case "shared":
-          // If every type shares a discriminator (e.g., RDF/JS "termType" or generated ObjectType "type"),
-          // just join their names with "|"
-          this._name = `(${this.memberTypes.map((memberType) => memberType.name).join(" | ")})`;
-          break;
-        case "synthetic":
-          this._name = `(${this.memberTypeTraits.map((memberTypeTraits) => `{ ${this._discriminatorProperty.name}: "${memberTypeTraits.discriminatorPropertyValues[0]}", value: ${memberTypeTraits.memberType.name} }`).join(" | ")})`;
-          break;
-      }
-    }
-    return this._name!;
   }
 
   override get conversions(): readonly Type.Conversion[] {
@@ -99,13 +87,30 @@ ${this.memberTypeTraits
     return this.memberTypes.some((memberType) => memberType.mutable);
   }
 
+  override get name(): string {
+    if (typeof this._name === "undefined") {
+      switch (this._discriminatorProperty.kind) {
+        case "shared":
+          // If every type shares a discriminator (e.g., RDF/JS "termType" or generated ObjectType "type"),
+          // just join their names with "|"
+          this._name = `(${this.memberTypes.map((memberType) => memberType.name).join(" | ")})`;
+          break;
+        case "synthetic":
+          this._name = `(${this.memberTypeTraits.map((memberTypeTraits) => `{ ${this._discriminatorProperty.name}: "${memberTypeTraits.discriminatorPropertyValues[0]}", value: ${memberTypeTraits.memberType.name} }`).join(" | ")})`;
+          break;
+      }
+    }
+    return this._name!;
+  }
+
   @Memoize()
   private get _discriminatorProperty(): Type.DiscriminatorProperty & {
     readonly kind: "shared" | "synthetic";
   } {
     let sharedDiscriminatorProperty:
-      | (Omit<Type.DiscriminatorProperty, "values"> & {
-          values: string[];
+      | (Omit<Type.DiscriminatorProperty, "descendantValues" | "ownValues"> & {
+          descendantValues: string[];
+          ownValues: string[];
         })
       | undefined;
     for (const memberType of this.memberTypes) {
@@ -118,15 +123,21 @@ ${this.memberTypeTraits
       if (!sharedDiscriminatorProperty) {
         sharedDiscriminatorProperty = {
           name: memberTypeDiscriminatorProperty.name,
-          values: memberTypeDiscriminatorProperty.values.concat(),
+          ownValues: memberTypeDiscriminatorProperty.ownValues.concat(),
+          descendantValues:
+            memberTypeDiscriminatorProperty.descendantValues.concat(),
         };
       } else if (
         memberTypeDiscriminatorProperty.name ===
         sharedDiscriminatorProperty.name
       ) {
-        sharedDiscriminatorProperty.values =
-          sharedDiscriminatorProperty.values.concat(
-            memberTypeDiscriminatorProperty.values,
+        sharedDiscriminatorProperty.descendantValues =
+          sharedDiscriminatorProperty.descendantValues.concat(
+            memberTypeDiscriminatorProperty.descendantValues,
+          );
+        sharedDiscriminatorProperty.ownValues =
+          sharedDiscriminatorProperty.ownValues.concat(
+            memberTypeDiscriminatorProperty.ownValues,
           );
       } else {
         sharedDiscriminatorProperty = undefined;
@@ -142,9 +153,10 @@ ${this.memberTypeTraits
     }
 
     return {
+      descendantValues: [],
       kind: "synthetic",
       name: "type",
-      values: this.memberTypes.map(
+      ownValues: this.memberTypes.map(
         (memberType, memberTypeIndex) =>
           `${memberTypeIndex}-${memberType.name}`,
       ),
@@ -154,13 +166,43 @@ ${this.memberTypeTraits
   @Memoize()
   private get memberTypeTraits(): readonly MemberTypeTraits[] {
     switch (this._discriminatorProperty.kind) {
-      case "shared":
-        return this.memberTypes.map((memberType) => ({
-          discriminatorPropertyValues:
-            memberType.discriminatorProperty.unsafeCoerce().values,
-          memberType,
-          payload: (instance) => instance,
-        }));
+      case "shared": {
+        // A member type's combined discriminator property values are its "own" values plus any descendant values that are
+        // not the "own" values of some other member type.
+        // So if you have type A, type B, and B inherits A, then
+        // A has
+        //   own discriminator property values: ["A"]
+        //   descendant discriminator property values: ["B"]
+        // and B has
+        //  own discriminator property values: ["B"]
+        //  descendant discriminator property values ["B"]
+        // In this case A shouldn't have "B" as a combined discriminator property value since it's "claimed" by B.
+        const memberOwnDiscriminatorPropertyValues = new Set<string>();
+        for (const memberType of this.memberTypes) {
+          for (const ownDiscriminatorPropertyValue of memberType.discriminatorProperty.unsafeCoerce()
+            .ownValues) {
+            memberOwnDiscriminatorPropertyValues.add(
+              ownDiscriminatorPropertyValue,
+            );
+          }
+        }
+
+        const memberTypeTraits: readonly MemberTypeTraits[] =
+          this.memberTypes.map((memberType) => ({
+            discriminatorPropertyValues: memberType.discriminatorProperty
+              .unsafeCoerce()
+              .ownValues.concat(
+                memberType.discriminatorProperty
+                  .unsafeCoerce()
+                  .descendantValues.filter(
+                    (value) => !memberOwnDiscriminatorPropertyValues.has(value),
+                  ),
+              ),
+            memberType,
+            payload: (instance) => instance,
+          }));
+        return memberTypeTraits;
+      }
       case "synthetic":
         return this.memberTypes.map((memberType, memberTypeIndex) => ({
           discriminatorPropertyValues: [

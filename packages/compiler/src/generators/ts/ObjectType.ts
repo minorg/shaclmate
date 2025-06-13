@@ -98,7 +98,8 @@ export class ObjectType extends DeclaredType {
     invariant(discriminatorProperty);
     return {
       name: discriminatorProperty.name,
-      values: [this.discriminatorValue],
+      ownValues: discriminatorProperty.type.ownValues,
+      descendantValues: discriminatorProperty.type.descendantValues,
     };
   }
 

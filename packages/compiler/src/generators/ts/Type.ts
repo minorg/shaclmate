@@ -1,6 +1,8 @@
 import type { BlankNode, Literal, NamedNode, Variable } from "@rdfjs/types";
+
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
+
 import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
 import { rdfjsTermExpression } from "./_ObjectType/rdfjsTermExpression.js";
@@ -12,6 +14,8 @@ import { objectInitializer } from "./objectInitializer.js";
  * Subclasses are used for both property types (c.f., property* methods) and node/object types.
  */
 export abstract class Type {
+  protected readonly dataFactoryVariable: string;
+
   /**
    * Expressions that convert a source type or types to this type. It should include the type itself.
    */
@@ -27,15 +31,16 @@ export abstract class Type {
    * JSON-compatible returned by propertyToJsonExpression.
    */
   abstract readonly jsonName: string;
+
   /**
    * Is a value of this type mutable?
    */
   abstract readonly mutable: boolean;
+
   /**
    * Name of the type.
    */
   abstract readonly name: string;
-  protected readonly dataFactoryVariable: string;
 
   constructor({
     dataFactoryVariable,
@@ -284,6 +289,7 @@ export namespace Type {
 
   export interface DiscriminatorProperty {
     readonly name: string;
-    readonly values: readonly string[];
+    readonly ownValues: readonly string[];
+    readonly descendantValues: readonly string[];
   }
 }
