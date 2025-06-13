@@ -244,7 +244,7 @@ export class ObjectUnionType extends DeclaredType {
           returnExpression = `${memberType.staticModuleName}.equals(left, right as unknown as ${memberType.name})`;
           break;
       }
-      return `case "${memberType.name}": return ${returnExpression};`;
+      return `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${returnExpression};`;
     });
 
     return Maybe.of({
@@ -342,7 +342,7 @@ return $strictEquals(left.type, right.type).chain(() => {
           returnExpression = `${memberType.staticModuleName}.hash(${this.thisVariable}, ${hasherVariable})`;
           break;
       }
-      return `case "${memberType.name}": return ${returnExpression};`;
+      return `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${returnExpression};`;
     });
 
     return Maybe.of({
@@ -469,7 +469,7 @@ return $strictEquals(left.type, right.type).chain(() => {
           returnExpression = `${memberType.staticModuleName}.toJson(${this.thisVariable})`;
           break;
       }
-      return `case "${memberType.name}": return ${returnExpression};`;
+      return `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${returnExpression};`;
     });
 
     return Maybe.of({
@@ -504,7 +504,7 @@ return $strictEquals(left.type, right.type).chain(() => {
           returnExpression = `${memberType.staticModuleName}.toRdf(${this.thisVariable}, ${parametersVariable})`;
           break;
       }
-      return `case "${memberType.name}": return ${returnExpression};`;
+      return `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${returnExpression};`;
     });
 
     return Maybe.of({

@@ -332,19 +332,17 @@ ${this.memberTypes
   }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
     const caseBlocks: string[] = [];
     for (const memberType of this.memberTypes) {
-      for (const discriminatorPropertyValue of memberType.discriminatorPropertyValues) {
-        caseBlocks.push(
-          `case "${discriminatorPropertyValue}": { ${memberType
-            .hashStatements({
-              depth: depth + 1,
-              variables: {
-                hasher: variables.hasher,
-                value: `${memberType.payload(variables.value)}`,
-              },
-            })
-            .join("\n")}; break; }`,
-        );
-      }
+      caseBlocks.push(
+        `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} { ${memberType
+          .hashStatements({
+            depth: depth + 1,
+            variables: {
+              hasher: variables.hasher,
+              value: `${memberType.payload(variables.value)}`,
+            },
+          })
+          .join("\n")}; break; }`,
+      );
     }
     return [
       `switch (${variables.value}.${this._discriminatorProperty.name}) { ${caseBlocks.join("\n")} }`,
