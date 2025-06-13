@@ -1,10 +1,13 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
+
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
-import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
+
 import type * as ast from "../ast/index.js";
-import { TsFeature } from "../enums/index.js";
 import * as input from "../input/index.js";
+
+import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
+import { TsFeature } from "../enums/index.js";
 import { logger } from "../logger.js";
 import type { NodeShapeAstType } from "./NodeShapeAstType.js";
 import { pickLiteral } from "./pickLiteral.js";
@@ -195,6 +198,18 @@ export function transformNodeShapeToAstType(
     return Either.of(compositeType);
   }
 
+  const fromRdfType = nodeShape.fromRdfType.alt(nodeShape.rdfType);
+  const toRdfTypes = nodeShape.toRdfTypes.concat();
+  if (toRdfTypes.length === 0) {
+    toRdfTypes.push(...nodeShape.rdfType.toList());
+  }
+  // Ensure toRdfTypes has fromRdfType
+  fromRdfType.ifJust((fromRdfType) => {
+    if (!toRdfTypes.some((toRdfType) => toRdfType.equals(fromRdfType))) {
+      toRdfTypes.push(fromRdfType);
+    }
+  });
+
   const identifierIn = nodeShape.constraints.in_.filter(
     (term) => term.termType === "NamedNode",
   );
@@ -210,7 +225,7 @@ export function transformNodeShapeToAstType(
     descendantObjectTypes: [],
     export: export_,
     extern: nodeShape.extern.orDefault(false),
-    fromRdfType: nodeShape.fromRdfType,
+    fromRdfType,
     label: pickLiteral(nodeShape.labels).map((literal) => literal.value),
     kind: "ObjectType",
     identifierIn,
@@ -223,7 +238,7 @@ export function transformNodeShapeToAstType(
     name: this.shapeAstName(nodeShape),
     properties: [], // This is mutable, we'll populate it below.
     parentObjectTypes: [], // This is mutable, we'll populate it below
-    toRdfTypes: nodeShape.toRdfTypes,
+    toRdfTypes,
     tsFeatures: nodeShape.tsFeatures.orDefault(new Set(TsFeature.MEMBERS)),
     tsIdentifierPrefixPropertyName:
       nodeShape.tsObjectIdentifierPrefixPropertyName.orDefault(
