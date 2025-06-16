@@ -2303,6 +2303,9 @@ export namespace ShaclCoreShape {
         return ShaclCoreNodeShape.toRdf(_shaclCoreShape, _parameters);
       case "ShaclCorePropertyShape":
         return ShaclCorePropertyShape.toRdf(_shaclCoreShape, _parameters);
+      default:
+        _shaclCoreShape satisfies never;
+        throw new Error("unrecognized type");
     }
   }
 }
