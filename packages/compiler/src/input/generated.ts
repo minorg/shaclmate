@@ -1631,14 +1631,6 @@ export namespace ShaclCorePropertyShapeStatic {
           "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         ),
         _resource.dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#ShaclCorePropertyShape",
-        ),
-      );
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode(
           "http://www.w3.org/ns/shacl#PropertyShape",
         ),
       );
@@ -1938,14 +1930,6 @@ export namespace ShaclmatePropertyShape {
           "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         ),
         _resource.dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#ShaclmatePropertyShape",
-        ),
-      );
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode(
           "http://www.w3.org/ns/shacl#PropertyShape",
         ),
       );
@@ -2102,14 +2086,6 @@ export namespace OwlOntologyStatic {
       mutateGraph,
     });
     if (!ignoreRdfType) {
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#OwlOntology",
-        ),
-      );
       _resource.add(
         _resource.dataFactory.namedNode(
           "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
@@ -2824,14 +2800,6 @@ export namespace ShaclmateOntology {
           "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         ),
         _resource.dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#ShaclmateOntology",
-        ),
-      );
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode(
           "http://www.w3.org/2002/07/owl#Ontology",
         ),
       );
@@ -3103,14 +3071,6 @@ export namespace ShaclCoreNodeShapeStatic {
       resourceSet,
     });
     if (!ignoreRdfType) {
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#ShaclCoreNodeShape",
-        ),
-      );
       _resource.add(
         _resource.dataFactory.namedNode(
           "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
@@ -3545,9 +3505,7 @@ export namespace ShaclmateNodeShape {
     > = purify.Either.of(
       _resource
         .values(
-          dataFactory.namedNode(
-            "http://purl.org/shaclmate/ontology#fromRdfType",
-          ),
+          dataFactory.namedNode("http://purl.org/shaclmate/ontology#rdfType"),
           { unique: true },
         )
         .head()
@@ -4140,14 +4098,6 @@ export namespace ShaclmateNodeShape {
         _resource.dataFactory.namedNode(
           "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         ),
-        _resource.dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#ShaclmateNodeShape",
-        ),
-      );
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
         _resource.dataFactory.namedNode("http://www.w3.org/ns/shacl#NodeShape"),
       );
     }
@@ -4183,7 +4133,7 @@ export namespace ShaclmateNodeShape {
       _shaclmateNodeShape.name,
     );
     _resource.add(
-      dataFactory.namedNode("http://purl.org/shaclmate/ontology#fromRdfType"),
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#rdfType"),
       _shaclmateNodeShape.rdfType,
     );
     _resource.add(
@@ -4261,9 +4211,7 @@ export namespace ShaclmateNodeShape {
     },
     { path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name") },
     {
-      path: dataFactory.namedNode(
-        "http://purl.org/shaclmate/ontology#fromRdfType",
-      ),
+      path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#rdfType"),
     },
     {
       path: dataFactory.namedNode(

@@ -1,7 +1,9 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
+
 import N3, { DataFactory as dataFactory } from "n3";
 import { MutableResourceSet } from "rdfjs-resource";
 import { describe, it } from "vitest";
+
 import { harnesses } from "./harnesses.js";
 
 describe("toRdf", () => {
@@ -49,9 +51,32 @@ describe("toRdf", () => {
     expect(ttl).not.toHaveLength(0);
   });
 
-  it("explicit RDF types", ({ expect }) => {
+  it("explicit rdfType", ({ expect }) => {
     const dataset = new N3.Store();
-    const resource = harnesses.explicitRdfTypes.toRdf({
+    const resource = harnesses.explicitRdfType.toRdf({
+      mutateGraph: dataFactory.defaultGraph(),
+      resourceSet: new MutableResourceSet({
+        dataFactory,
+        dataset,
+      }),
+    });
+    expect(dataset.size).toStrictEqual(2); // One rdf:type and the property
+    expect(
+      resource.isInstanceOf(
+        dataFactory.namedNode("http://example.com/RdfType"),
+      ),
+    ).toBe(true);
+    expect(
+      resource
+        .value(dataFactory.namedNode("http://example.com/stringProperty"))
+        .chain((value) => value.toString())
+        .unsafeCoerce(),
+    ).toStrictEqual("test");
+  });
+
+  it("explicit toRdfType", ({ expect }) => {
+    const dataset = new N3.Store();
+    const resource = harnesses.explicitFromToRdfTypes.toRdf({
       mutateGraph: dataFactory.defaultGraph(),
       resourceSet: new MutableResourceSet({
         dataFactory,
@@ -63,12 +88,12 @@ describe("toRdf", () => {
       resource.isInstanceOf(
         dataFactory.namedNode("http://example.com/FromRdfType"),
       ),
-    );
+    ).toBe(true);
     expect(
       resource.isInstanceOf(
         dataFactory.namedNode("http://example.com/ToRdfType"),
       ),
-    );
+    ).toBe(true);
     expect(
       resource
         .value(dataFactory.namedNode("http://example.com/stringProperty"))

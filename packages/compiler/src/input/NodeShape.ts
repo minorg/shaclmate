@@ -172,11 +172,11 @@ export class NodeShape extends ShaclCoreNodeShape<
   }
 
   get rdfType(): Maybe<NamedNode> {
-    // Check for an explicit shaclmate:fromRdfType
-    // const rdfType = this.generatedShaclmateNodeShape.rdfType;
-    // if (rdfType.isJust()) {
-    //   return rdfType;
-    // }
+    // Check for an explicit shaclmate:rdfType
+    const rdfType = this.generatedShaclmateNodeShape.rdfType;
+    if (rdfType.isJust()) {
+      return rdfType;
+    }
 
     // No explicit shaclmate:rdfType
     // If the shape is a class, not abstract, and identified by an IRI then use the shape IRI as the fromRdfType.

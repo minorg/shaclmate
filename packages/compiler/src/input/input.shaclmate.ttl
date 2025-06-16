@@ -49,7 +49,7 @@ shaclmate:ShaclmateNodeShape-rdfType
     sh:maxCount 1 ;
     sh:name "rdfType" ;
     sh:nodeKind sh:IRI ;
-    sh:path shaclmate:fromRdfType .
+    sh:path shaclmate:rdfType .
 
 shaclmate:ShaclmateNodeShape-toRdfTypes
     a sh:PropertyShape ;

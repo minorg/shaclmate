@@ -1,7 +1,10 @@
-import type { BlankNode, NamedNode } from "@rdfjs/types";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
+
+import type { BlankNode, NamedNode } from "@rdfjs/types";
+
 import { DataFactory as dataFactory } from "n3";
 import { NonEmptyList } from "purify-ts";
+
 import { ClassHarness } from "./ClassHarness.js";
 import { ClassUnionHarness } from "./ClassUnionHarness.js";
 import { InterfaceHarness } from "./InterfaceHarness.js";
@@ -84,12 +87,19 @@ export const harnesses = {
     }),
     kitchenSink.ListPropertiesNodeShape,
   ),
-  explicitRdfTypes: new ClassHarness(
-    new kitchenSink.ExplicitRdfTypesNodeShape({
+  explicitFromToRdfTypes: new ClassHarness(
+    new kitchenSink.ExplicitFromToRdfTypesNodeShape({
       identifier,
       stringProperty: "test",
     }),
-    kitchenSink.ExplicitRdfTypesNodeShape,
+    kitchenSink.ExplicitFromToRdfTypesNodeShape,
+  ),
+  explicitRdfType: new ClassHarness(
+    new kitchenSink.ExplicitRdfTypeNodeShape({
+      identifier,
+      stringProperty: "test",
+    }),
+    kitchenSink.ExplicitRdfTypeNodeShape,
   ),
   externProperties: new ClassHarness(
     new kitchenSink.ExternPropertiesNodeShape({

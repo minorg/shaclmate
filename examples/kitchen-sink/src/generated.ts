@@ -920,7 +920,9 @@ export namespace UnionPropertiesNodeShape {
       | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2571,7 +2573,9 @@ export namespace TermPropertiesNodeShape {
       | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3716,7 +3720,9 @@ export namespace PropertyVisibilitiesNodeShape {
     readonly publicProperty: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4256,7 +4262,9 @@ export namespace PropertyCardinalitiesNodeShape {
     readonly requiredStringProperty: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4867,7 +4875,9 @@ export namespace OrderedPropertiesNodeShape {
     readonly propertyA: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5715,15 +5725,6 @@ export class MutablePropertiesNodeShape {
 
                 currentSubListResource.add(
                   dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  dataFactory.namedNode(
-                    "http://example.com/MutableStringListShape",
-                  ),
-                );
-
-                currentSubListResource.add(
-                  dataFactory.namedNode(
                     "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
                   ),
                   item,
@@ -5783,7 +5784,9 @@ export namespace MutablePropertiesNodeShape {
     readonly mutableStringProperty: string | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6490,13 +6493,6 @@ export class ListPropertiesNodeShape {
 
                 currentSubListResource.add(
                   dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  dataFactory.namedNode("http://example.com/ObjectListShape"),
-                );
-
-                currentSubListResource.add(
-                  dataFactory.namedNode(
                     "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
                   ),
                   item.toRdf({
@@ -6563,13 +6559,6 @@ export class ListPropertiesNodeShape {
 
                 currentSubListResource.add(
                   dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
-                  dataFactory.namedNode("http://example.com/StringListShape"),
-                );
-
-                currentSubListResource.add(
-                  dataFactory.namedNode(
                     "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
                   ),
                   item,
@@ -6620,7 +6609,9 @@ export namespace ListPropertiesNodeShape {
     readonly stringListProperty: readonly string[] | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -7493,7 +7484,9 @@ export namespace LanguageInPropertiesNodeShape {
       | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8133,7 +8126,9 @@ export namespace InterfaceUnionNodeShapeMember2b {
     readonly stringProperty2b: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8482,7 +8477,9 @@ export namespace InterfaceUnionNodeShapeMember2a {
     readonly stringProperty2a: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8831,7 +8828,9 @@ export namespace InterfaceUnionNodeShapeMember1 {
     readonly stringProperty1: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9180,7 +9179,9 @@ export namespace InterfaceNodeShape {
     readonly stringProperty: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9759,7 +9760,9 @@ export namespace InPropertiesNodeShape {
     readonly inStringsProperty: ("text" | "html") | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9922,20 +9925,22 @@ export namespace InPropertiesNodeShape {
         )
         .head()
         .chain((_value) =>
-          _value.toBoolean().chain((value) =>
-            value === true
-              ? purify.Either.of(value)
-              : purify.Left(
-                  new rdfjsResource.Resource.MistypedValueError({
-                    actualValue: rdfLiteral.toRdf(value),
-                    expectedValueType: "true",
-                    focusResource: _resource,
-                    predicate: dataFactory.namedNode(
-                      "http://example.com/inBooleansProperty",
-                    ),
-                  }),
-                ),
-          ),
+          _value
+            .toBoolean()
+            .chain((value) =>
+              value === true
+                ? purify.Either.of(value)
+                : purify.Left(
+                    new rdfjsResource.Resource.MistypedValueError({
+                      actualValue: rdfLiteral.toRdf(value),
+                      expectedValueType: "true",
+                      focusResource: _resource,
+                      predicate: dataFactory.namedNode(
+                        "http://example.com/inBooleansProperty",
+                      ),
+                    }),
+                  ),
+            ),
         )
         .toMaybe(),
     );
@@ -10475,7 +10480,9 @@ export namespace InIdentifierNodeShape {
     readonly stringProperty: string | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.NamedNode<
@@ -10908,7 +10915,9 @@ export namespace HasValuePropertiesNodeShape {
     readonly hasLiteralProperty: string | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12075,7 +12084,9 @@ export namespace ExternPropertiesNodeShape {
     readonly inlineProperty: InlineNodeShape.Json | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12467,12 +12478,11 @@ export namespace ExternPropertiesNodeShape {
 /**
  * Shape with custom rdf:type's.
  *
- * The shaclmate:fromRdfType is expected on deserialization.
- * shaclmate:toRdfType's are added an serialization.
+ * The shaclmate:rdfType is expected on deserialization and added on serialization.
  */
-export class ExplicitRdfTypesNodeShape {
+export class ExplicitRdfTypeNodeShape {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
-  readonly type = "ExplicitRdfTypesNodeShape";
+  readonly type = "ExplicitRdfTypeNodeShape";
   readonly stringProperty: string;
 
   constructor(parameters: {
@@ -12498,7 +12508,7 @@ export class ExplicitRdfTypesNodeShape {
     return this._identifier;
   }
 
-  equals(other: ExplicitRdfTypesNodeShape): $EqualsResult {
+  equals(other: ExplicitRdfTypeNodeShape): $EqualsResult {
     return $booleanEquals(this.identifier, other.identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
@@ -12551,7 +12561,7 @@ export class ExplicitRdfTypesNodeShape {
     return _hasher;
   }
 
-  toJson(): ExplicitRdfTypesNodeShape.Json {
+  toJson(): ExplicitRdfTypeNodeShape.Json {
     return JSON.parse(
       JSON.stringify({
         "@id":
@@ -12560,7 +12570,411 @@ export class ExplicitRdfTypesNodeShape {
             : this.identifier.value,
         type: this.type,
         stringProperty: this.stringProperty,
-      } satisfies ExplicitRdfTypesNodeShape.Json),
+      } satisfies ExplicitRdfTypeNodeShape.Json),
+    );
+  }
+
+  toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.identifier, {
+      mutateGraph,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        _resource.dataFactory.namedNode(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        ),
+        _resource.dataFactory.namedNode("http://example.com/RdfType"),
+      );
+    }
+
+    _resource.add(
+      dataFactory.namedNode("http://example.com/stringProperty"),
+      this.stringProperty,
+    );
+    return _resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.toJson());
+  }
+}
+
+export namespace ExplicitRdfTypeNodeShape {
+  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/RdfType",
+  );
+  export type Json = {
+    readonly "@id": string;
+    readonly type: "ExplicitRdfTypeNodeShape";
+    readonly stringProperty: string;
+  };
+
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode; stringProperty: string }
+  > {
+    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
+    if (!_jsonSafeParseResult.success) {
+      return purify.Left(_jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = _jsonSafeParseResult.data;
+    const identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const stringProperty = _jsonObject["stringProperty"];
+    return purify.Either.of({ identifier, stringProperty });
+  }
+
+  export function fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, ExplicitRdfTypeNodeShape> {
+    return propertiesFromJson(json).map(
+      (properties) => new ExplicitRdfTypeNodeShape(properties),
+    );
+  }
+
+  export function jsonSchema() {
+    return zodToJsonSchema(jsonZodSchema());
+  }
+
+  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "ExplicitRdfTypeNodeShape" },
+              scope: `${scopePrefix}/properties/type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/type`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/stringProperty`, type: "Control" },
+      ],
+      label: "ExplicitRdfTypeNodeShape",
+      type: "Group",
+    };
+  }
+
+  export function jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      type: zod.literal("ExplicitRdfTypeNodeShape"),
+      stringProperty: zod.string(),
+    });
+  }
+
+  export function propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    { identifier: rdfjs.BlankNode | rdfjs.NamedNode; stringProperty: string }
+  > {
+    if (
+      !_ignoreRdfType &&
+      !_resource.isInstanceOf(
+        dataFactory.namedNode("http://example.com/RdfType"),
+      )
+    ) {
+      return purify.Left(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://example.com/RdfType)`,
+          predicate: dataFactory.namedNode("http://example.com/RdfType"),
+        }),
+      );
+    }
+
+    const identifier = _resource.identifier;
+    const _stringPropertyEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      string
+    > = _resource
+      .values(dataFactory.namedNode("http://example.com/stringProperty"), {
+        unique: true,
+      })
+      .head()
+      .chain((_value) => _value.toString());
+    if (_stringPropertyEither.isLeft()) {
+      return _stringPropertyEither;
+    }
+
+    const stringProperty = _stringPropertyEither.unsafeCoerce();
+    return purify.Either.of({ identifier, stringProperty });
+  }
+
+  export function fromRdf(
+    parameters: Parameters<
+      typeof ExplicitRdfTypeNodeShape.propertiesFromRdf
+    >[0],
+  ): purify.Either<
+    rdfjsResource.Resource.ValueError,
+    ExplicitRdfTypeNodeShape
+  > {
+    return ExplicitRdfTypeNodeShape.propertiesFromRdf(parameters).map(
+      (properties) => new ExplicitRdfTypeNodeShape(properties),
+    );
+  }
+
+  export const rdfProperties = [
+    { path: dataFactory.namedNode("http://example.com/stringProperty") },
+  ];
+
+  export function sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ExplicitRdfTypeNodeShape.sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ExplicitRdfTypeNodeShape.sparqlWherePatterns({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ExplicitRdfTypeNodeShape.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("explicitRdfTypeNodeShape");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "explicitRdfTypeNodeShape");
+    return [
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              subject,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+              object: dataFactory.variable!(`${variablePrefix}RdfType`),
+            },
+          ]),
+      {
+        object: dataFactory.variable!(`${variablePrefix}StringProperty`),
+        predicate: dataFactory.namedNode("http://example.com/stringProperty"),
+        subject,
+      },
+    ];
+  }
+
+  export function sparqlWherePatterns(parameters: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("explicitRdfTypeNodeShape");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "explicitRdfTypeNodeShape");
+    return [
+      ...(parameters?.ignoreRdfType
+        ? []
+        : [
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.namedNode("http://example.com/RdfType"),
+                },
+              ],
+              type: "bgp" as const,
+            },
+            {
+              triples: [
+                {
+                  subject,
+                  predicate: dataFactory.namedNode(
+                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                  ),
+                  object: dataFactory.variable!(`${variablePrefix}RdfType`),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ]),
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(`${variablePrefix}StringProperty`),
+            predicate: dataFactory.namedNode(
+              "http://example.com/stringProperty",
+            ),
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+    ];
+  }
+}
+/**
+ * Shape with custom rdf:type's.
+ *
+ * The shaclmate:fromRdfType is expected on deserialization.
+ * shaclmate:toRdfType's are added an serialization.
+ */
+export class ExplicitFromToRdfTypesNodeShape {
+  private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
+  readonly type = "ExplicitFromToRdfTypesNodeShape";
+  readonly stringProperty: string;
+
+  constructor(parameters: {
+    readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly stringProperty: string;
+  }) {
+    if (typeof parameters.identifier === "object") {
+      this._identifier = parameters.identifier;
+    } else if (typeof parameters.identifier === "string") {
+      this._identifier = dataFactory.namedNode(parameters.identifier);
+    } else if (typeof parameters.identifier === "undefined") {
+    } else {
+      this._identifier = parameters.identifier as never;
+    }
+
+    this.stringProperty = parameters.stringProperty;
+  }
+
+  get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+    if (typeof this._identifier === "undefined") {
+      this._identifier = dataFactory.blankNode();
+    }
+    return this._identifier;
+  }
+
+  equals(other: ExplicitFromToRdfTypesNodeShape): $EqualsResult {
+    return $booleanEquals(this.identifier, other.identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.type, other.type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(this.stringProperty, other.stringProperty).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "stringProperty",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      );
+  }
+
+  hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.identifier.value);
+    _hasher.update(this.type);
+    this.hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.stringProperty);
+    return _hasher;
+  }
+
+  toJson(): ExplicitFromToRdfTypesNodeShape.Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.identifier.termType === "BlankNode"
+            ? `_:${this.identifier.value}`
+            : this.identifier.value,
+        type: this.type,
+        stringProperty: this.stringProperty,
+      } satisfies ExplicitFromToRdfTypesNodeShape.Json),
     );
   }
 
@@ -12603,13 +13017,13 @@ export class ExplicitRdfTypesNodeShape {
   }
 }
 
-export namespace ExplicitRdfTypesNodeShape {
+export namespace ExplicitFromToRdfTypesNodeShape {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/FromRdfType",
   );
   export type Json = {
     readonly "@id": string;
-    readonly type: "ExplicitRdfTypesNodeShape";
+    readonly type: "ExplicitFromToRdfTypesNodeShape";
     readonly stringProperty: string;
   };
 
@@ -12634,9 +13048,9 @@ export namespace ExplicitRdfTypesNodeShape {
 
   export function fromJson(
     json: unknown,
-  ): purify.Either<zod.ZodError, ExplicitRdfTypesNodeShape> {
+  ): purify.Either<zod.ZodError, ExplicitFromToRdfTypesNodeShape> {
     return propertiesFromJson(json).map(
-      (properties) => new ExplicitRdfTypesNodeShape(properties),
+      (properties) => new ExplicitFromToRdfTypesNodeShape(properties),
     );
   }
 
@@ -12656,7 +13070,7 @@ export namespace ExplicitRdfTypesNodeShape {
         {
           rule: {
             condition: {
-              schema: { const: "ExplicitRdfTypesNodeShape" },
+              schema: { const: "ExplicitFromToRdfTypesNodeShape" },
               scope: `${scopePrefix}/properties/type`,
             },
             effect: "HIDE",
@@ -12666,7 +13080,7 @@ export namespace ExplicitRdfTypesNodeShape {
         },
         { scope: `${scopePrefix}/properties/stringProperty`, type: "Control" },
       ],
-      label: "ExplicitRdfTypesNodeShape",
+      label: "ExplicitFromToRdfTypesNodeShape",
       type: "Group",
     };
   }
@@ -12674,7 +13088,7 @@ export namespace ExplicitRdfTypesNodeShape {
   export function jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("ExplicitRdfTypesNodeShape"),
+      type: zod.literal("ExplicitFromToRdfTypesNodeShape"),
       stringProperty: zod.string(),
     });
   }
@@ -12729,14 +13143,14 @@ export namespace ExplicitRdfTypesNodeShape {
 
   export function fromRdf(
     parameters: Parameters<
-      typeof ExplicitRdfTypesNodeShape.propertiesFromRdf
+      typeof ExplicitFromToRdfTypesNodeShape.propertiesFromRdf
     >[0],
   ): purify.Either<
     rdfjsResource.Resource.ValueError,
-    ExplicitRdfTypesNodeShape
+    ExplicitFromToRdfTypesNodeShape
   > {
-    return ExplicitRdfTypesNodeShape.propertiesFromRdf(parameters).map(
-      (properties) => new ExplicitRdfTypesNodeShape(properties),
+    return ExplicitFromToRdfTypesNodeShape.propertiesFromRdf(parameters).map(
+      (properties) => new ExplicitFromToRdfTypesNodeShape(properties),
     );
   }
 
@@ -12758,14 +13172,14 @@ export namespace ExplicitRdfTypesNodeShape {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ExplicitRdfTypesNodeShape.sparqlConstructTemplateTriples({
+        ExplicitFromToRdfTypesNodeShape.sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ExplicitRdfTypesNodeShape.sparqlWherePatterns({
+        ExplicitFromToRdfTypesNodeShape.sparqlWherePatterns({
           ignoreRdfType,
           subject,
         }),
@@ -12782,7 +13196,7 @@ export namespace ExplicitRdfTypesNodeShape {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ExplicitRdfTypesNodeShape.sparqlConstructQuery(parameters),
+      ExplicitFromToRdfTypesNodeShape.sparqlConstructQuery(parameters),
     );
   }
 
@@ -12792,12 +13206,13 @@ export namespace ExplicitRdfTypesNodeShape {
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     const subject =
-      parameters?.subject ?? dataFactory.variable!("explicitRdfTypesNodeShape");
+      parameters?.subject ??
+      dataFactory.variable!("explicitFromToRdfTypesNodeShape");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable"
         ? subject.value
-        : "explicitRdfTypesNodeShape");
+        : "explicitFromToRdfTypesNodeShape");
     return [
       ...(parameters?.ignoreRdfType
         ? []
@@ -12824,12 +13239,13 @@ export namespace ExplicitRdfTypesNodeShape {
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
     const subject =
-      parameters?.subject ?? dataFactory.variable!("explicitRdfTypesNodeShape");
+      parameters?.subject ??
+      dataFactory.variable!("explicitFromToRdfTypesNodeShape");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable"
         ? subject.value
-        : "explicitRdfTypesNodeShape");
+        : "explicitFromToRdfTypesNodeShape");
     return [
       ...(parameters?.ignoreRdfType
         ? []
@@ -13192,7 +13608,9 @@ export namespace DefaultValuePropertiesNodeShape {
     readonly trueBooleanProperty: boolean;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13823,7 +14241,9 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     readonly baseStringProperty: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14258,7 +14678,9 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
   );
   export type Json = BaseInterfaceWithPropertiesNodeShapeStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14689,7 +15111,9 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     readonly parentStringProperty: string;
   } & BaseInterfaceWithoutPropertiesNodeShapeStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15168,7 +15592,9 @@ export namespace ConcreteChildInterfaceNodeShape {
     readonly childStringProperty: string;
   } & ConcreteParentInterfaceNodeShapeStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16228,18 +16654,20 @@ export class ConcreteParentClassNodeShape extends AbstractBaseClassWithoutProper
   }
 
   override equals(other: ConcreteParentClassNodeShape): $EqualsResult {
-    return super.equals(other).chain(() =>
-      $strictEquals(
-        this.parentStringProperty,
-        other.parentStringProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "parentStringProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.parentStringProperty,
+          other.parentStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "parentStringProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -16315,7 +16743,9 @@ export namespace ConcreteParentClassNodeShapeStatic {
     readonly parentStringProperty: string;
   } & AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16675,18 +17105,20 @@ export class ConcreteChildClassNodeShape extends ConcreteParentClassNodeShape {
   }
 
   override equals(other: ConcreteChildClassNodeShape): $EqualsResult {
-    return super.equals(other).chain(() =>
-      $strictEquals(
-        this.childStringProperty,
-        other.childStringProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "childStringProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.childStringProperty,
+          other.childStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "childStringProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -16762,7 +17194,9 @@ export namespace ConcreteChildClassNodeShape {
     readonly childStringProperty: string;
   } & ConcreteParentClassNodeShapeStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18494,7 +18928,8 @@ export const $ObjectTypes = {
     ConcreteParentClassNodeShape: ConcreteParentClassNodeShapeStatic,
     ConcreteParentInterfaceNodeShape: ConcreteParentInterfaceNodeShapeStatic,
     DefaultValuePropertiesNodeShape,
-    ExplicitRdfTypesNodeShape,
+    ExplicitFromToRdfTypesNodeShape,
+    ExplicitRdfTypeNodeShape,
     ExternNodeShape,
     ExternObjectType,
     ExternPropertiesNodeShape,
