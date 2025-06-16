@@ -7,8 +7,8 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 shaclmate:ShaclmateNodeShape
-    shaclmate:fromRdfType sh:NodeShape ;
     shaclmate:name "ShaclmateNodeShape" ;
+    shaclmate:rdfType sh:NodeShape ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf shaclmate:ShaclCoreNodeShape ;
     sh:property shaclmate:ShaclmateNodeShape-abstract, shaclmate:ShaclmateNodeShape-export, shaclmate:ShaclmateNodeShape-fromRdfType, shaclmate:ShaclmateNodeShape-identifierMintingStrategy, shaclmate:ShaclmateNodeShape-rdfType, shaclmate:ShaclmateNodeShape-toRdfTypes, shaclmate:ShaclmateShape-extern, shaclmate:ShaclmateShape-mutable, shaclmate:ShaclmateShape-name, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType, shaclmate:tsObjectIdentifierPrefixPropertyName, shaclmate:tsObjectIdentifierPropertyName, shaclmate:tsObjectTypeDiscriminatorPropertyName .
@@ -58,8 +58,8 @@ shaclmate:ShaclmateNodeShape-toRdfTypes
     sh:path shaclmate:toRdfType .
 
 shaclmate:ShaclmateOntology
-    shaclmate:fromRdfType owl:Ontology ;
     shaclmate:name "ShaclmateOntology" ;
+    shaclmate:rdfType owl:Ontology ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf shaclmate:OwlOntology ;
     sh:property shaclmate:ShaclmateOntology-tsDataFactoryVariable, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType, shaclmate:tsObjectIdentifierPrefixPropertyName, shaclmate:tsObjectIdentifierPropertyName, shaclmate:tsObjectTypeDiscriminatorPropertyName .
@@ -72,8 +72,8 @@ shaclmate:ShaclmateOntology-tsDataFactoryVariable
     sh:path shaclmate:tsDataFactoryVariable .
 
 shaclmate:ShaclmatePropertyShape
-    shaclmate:fromRdfType sh:PropertyShape ;
     shaclmate:name "ShaclmatePropertyShape" ;
+    shaclmate:rdfType sh:PropertyShape ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf shaclmate:ShaclCorePropertyShape ;
     sh:property shaclmate:ShaclmatePropertyShape-visibility, shaclmate:ShaclmateShape-extern, shaclmate:ShaclmateShape-mutable, shaclmate:ShaclmateShape-name .

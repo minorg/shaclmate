@@ -1938,14 +1938,6 @@ export namespace ShaclmatePropertyShape {
           "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         ),
         _resource.dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#ShaclmatePropertyShape",
-        ),
-      );
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode(
           "http://www.w3.org/ns/shacl#PropertyShape",
         ),
       );
@@ -2819,14 +2811,6 @@ export namespace ShaclmateOntology {
       resourceSet,
     });
     if (!ignoreRdfType) {
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#ShaclmateOntology",
-        ),
-      );
       _resource.add(
         _resource.dataFactory.namedNode(
           "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
@@ -4134,14 +4118,6 @@ export namespace ShaclmateNodeShape {
       resourceSet,
     });
     if (!ignoreRdfType) {
-      _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
-        _resource.dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#ShaclmateNodeShape",
-        ),
-      );
       _resource.add(
         _resource.dataFactory.namedNode(
           "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
