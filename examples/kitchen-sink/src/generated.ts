@@ -798,6 +798,9 @@ export class UnionPropertiesNodeShape {
           _value0.value.hash(_hasher);
           break;
         }
+        default:
+          _value0 satisfies never;
+          throw new Error("unrecognized type");
       }
     });
     return _hasher;
@@ -18102,6 +18105,9 @@ export namespace InterfaceUnionNodeShape {
             left,
             right as unknown as InterfaceUnionNodeShapeMember2b,
           );
+        default:
+          left satisfies never;
+          throw new Error("unrecognized type");
       }
     });
   }
@@ -18198,6 +18204,9 @@ export namespace InterfaceUnionNodeShape {
           _interfaceUnionNodeShape,
           _hasher,
         );
+      default:
+        _interfaceUnionNodeShape satisfies never;
+        throw new Error("unrecognized type");
     }
   }
 
@@ -18358,6 +18367,9 @@ export namespace InterfaceUnionNodeShape {
         return InterfaceUnionNodeShapeMember2a.toJson(_interfaceUnionNodeShape);
       case "InterfaceUnionNodeShapeMember2b":
         return InterfaceUnionNodeShapeMember2b.toJson(_interfaceUnionNodeShape);
+      default:
+        _interfaceUnionNodeShape satisfies never;
+        throw new Error("unrecognized type");
     }
   }
 
@@ -18384,6 +18396,9 @@ export namespace InterfaceUnionNodeShape {
           _interfaceUnionNodeShape,
           _parameters,
         );
+      default:
+        _interfaceUnionNodeShape satisfies never;
+        throw new Error("unrecognized type");
     }
   }
 }
@@ -18411,6 +18426,9 @@ export namespace InterfaceUnionNodeShapeMember2 {
             left,
             right as unknown as InterfaceUnionNodeShapeMember2b,
           );
+        default:
+          left satisfies never;
+          throw new Error("unrecognized type");
       }
     });
   }
@@ -18483,6 +18501,9 @@ export namespace InterfaceUnionNodeShapeMember2 {
           _interfaceUnionNodeShapeMember2,
           _hasher,
         );
+      default:
+        _interfaceUnionNodeShapeMember2 satisfies never;
+        throw new Error("unrecognized type");
     }
   }
 
@@ -18622,6 +18643,9 @@ export namespace InterfaceUnionNodeShapeMember2 {
         return InterfaceUnionNodeShapeMember2b.toJson(
           _interfaceUnionNodeShapeMember2,
         );
+      default:
+        _interfaceUnionNodeShapeMember2 satisfies never;
+        throw new Error("unrecognized type");
     }
   }
 
@@ -18643,6 +18667,9 @@ export namespace InterfaceUnionNodeShapeMember2 {
           _interfaceUnionNodeShapeMember2,
           _parameters,
         );
+      default:
+        _interfaceUnionNodeShapeMember2 satisfies never;
+        throw new Error("unrecognized type");
     }
   }
 }
@@ -18667,6 +18694,9 @@ export namespace UnionNodeShape {
           return left.equals(right as unknown as UnionNodeShapeMember2);
         case "ExternObjectType":
           return left.equals(right as unknown as ExternObjectType);
+        default:
+          left satisfies never;
+          throw new Error("unrecognized type");
       }
     });
   }
@@ -18742,6 +18772,9 @@ export namespace UnionNodeShape {
         return _unionNodeShape.hash(_hasher);
       case "ExternObjectType":
         return _unionNodeShape.hash(_hasher);
+      default:
+        _unionNodeShape satisfies never;
+        throw new Error("unrecognized type");
     }
   }
 
@@ -18890,6 +18923,9 @@ export namespace UnionNodeShape {
         return _unionNodeShape.toJson();
       case "ExternObjectType":
         return _unionNodeShape.toJson();
+      default:
+        _unionNodeShape satisfies never;
+        throw new Error("unrecognized type");
     }
   }
 
@@ -18907,6 +18943,9 @@ export namespace UnionNodeShape {
         return _unionNodeShape.toRdf(_parameters);
       case "ExternObjectType":
         return _unionNodeShape.toRdf(_parameters);
+      default:
+        _unionNodeShape satisfies never;
+        throw new Error("unrecognized type");
     }
   }
 }

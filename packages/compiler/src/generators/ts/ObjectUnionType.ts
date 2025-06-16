@@ -246,6 +246,9 @@ export class ObjectUnionType extends DeclaredType {
       }
       return `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${returnExpression};`;
     });
+    caseBlocks.push(
+      'default: left satisfies never; throw new Error("unrecognized type");',
+    );
 
     return Maybe.of({
       isExported: true,
@@ -344,6 +347,9 @@ return $strictEquals(left.type, right.type).chain(() => {
       }
       return `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${returnExpression};`;
     });
+    caseBlocks.push(
+      `default: ${this.thisVariable} satisfies never; throw new Error("unrecognized type");`,
+    );
 
     return Maybe.of({
       isExported: true,
@@ -471,6 +477,9 @@ return $strictEquals(left.type, right.type).chain(() => {
       }
       return `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${returnExpression};`;
     });
+    caseBlocks.push(
+      `default: ${this.thisVariable} satisfies never; throw new Error("unrecognized type");`,
+    );
 
     return Maybe.of({
       isExported: true,
@@ -506,6 +515,9 @@ return $strictEquals(left.type, right.type).chain(() => {
       }
       return `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${returnExpression};`;
     });
+    caseBlocks.push(
+      `default: ${this.thisVariable} satisfies never; throw new Error("unrecognized type");`,
+    );
 
     return Maybe.of({
       isExported: true,

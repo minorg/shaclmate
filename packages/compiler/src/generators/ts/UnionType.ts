@@ -344,6 +344,9 @@ ${this.memberTypes
           .join("\n")}; break; }`,
       );
     }
+    caseBlocks.push(
+      `default: ${variables.value} satisfies never; throw new Error("unrecognized type");`,
+    );
     return [
       `switch (${variables.value}.${this._discriminatorProperty.name}) { ${caseBlocks.join("\n")} }`,
     ];
