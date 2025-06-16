@@ -1,8 +1,10 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import type { TsFeature } from "../../enums/index.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
@@ -95,8 +97,9 @@ export class TermType<
   override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
     return Maybe.of({
       name: "termType",
+      ownValues: [...this.nodeKinds],
+      descendantValues: [],
       type: "string" as const,
-      values: [...this.nodeKinds],
     });
   }
 

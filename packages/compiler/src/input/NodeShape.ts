@@ -1,13 +1,16 @@
 import type { NamedNode } from "@rdfjs/types";
 import { NodeShape as ShaclCoreNodeShape } from "@shaclmate/shacl-ast";
+
 import { Maybe } from "purify-ts";
+
+import type * as generated from "./generated.js";
+
 import type {
   IdentifierMintingStrategy,
   TsFeature,
   TsObjectDeclarationType,
 } from "../enums/index.js";
 import type { Shape } from "./Shape.js";
-import type * as generated from "./generated.js";
 import type {
   Ontology,
   PropertyGroup,
@@ -23,13 +26,14 @@ export class NodeShape extends ShaclCoreNodeShape<
   PropertyShape,
   Shape
 > {
-  readonly isClass: boolean;
-  readonly isList: boolean;
   private readonly ancestorClassIris: readonly NamedNode[];
   private readonly childClassIris: readonly NamedNode[];
   private readonly descendantClassIris: readonly NamedNode[];
   private readonly generatedShaclmateNodeShape: generated.ShaclmateNodeShape;
   private readonly parentClassIris: readonly NamedNode[];
+
+  readonly isClass: boolean;
+  readonly isList: boolean;
 
   constructor({
     ancestorClassIris,
@@ -97,23 +101,7 @@ export class NodeShape extends ShaclCoreNodeShape<
   }
 
   get fromRdfType(): Maybe<NamedNode> {
-    // Check for an explicit shaclmate:fromRdfType
-    const fromRdfType = this.generatedShaclmateNodeShape.fromRdfType;
-    if (fromRdfType.isJust()) {
-      return fromRdfType;
-    }
-
-    // No explicit shaclmate:fromRdfType
-    // If the shape is a class, not abstract, and identified by an IRI then use the shape IRI as the fromRdfType.
-    if (
-      !this.abstract.orDefault(false) &&
-      this.isClass &&
-      this.identifier.termType === "NamedNode"
-    ) {
-      return Maybe.of(this.identifier);
-    }
-
-    return Maybe.empty();
+    return this.generatedShaclmateNodeShape.fromRdfType;
   }
 
   get identifierMintingStrategy(): Maybe<IdentifierMintingStrategy> {
@@ -183,34 +171,32 @@ export class NodeShape extends ShaclCoreNodeShape<
       : [];
   }
 
+  get rdfType(): Maybe<NamedNode> {
+    // Check for an explicit shaclmate:rdfType
+    const rdfType = this.generatedShaclmateNodeShape.rdfType;
+    if (rdfType.isJust()) {
+      return rdfType;
+    }
+
+    // No explicit shaclmate:rdfType
+    // If the shape is a class, not abstract, and identified by an IRI then use the shape IRI as the fromRdfType.
+    if (
+      !this.abstract.orDefault(false) &&
+      this.isClass &&
+      this.identifier.termType === "NamedNode"
+    ) {
+      return Maybe.of(this.identifier);
+    }
+
+    return Maybe.empty();
+  }
+
   get shaclmateName(): Maybe<string> {
     return this.generatedShaclmateNodeShape.name;
   }
 
   get toRdfTypes(): readonly NamedNode[] {
-    // Look for one or more explicit shaclmate:toRdfType's
-    const toRdfTypes = this.generatedShaclmateNodeShape.toRdfTypes.concat();
-
-    // Ensure the toRdfTypes includes the fromRdfType if there is one
-    this.fromRdfType.ifJust((fromRdfType) => {
-      if (!toRdfTypes.some((toRdfType) => toRdfType.equals(fromRdfType))) {
-        toRdfTypes.push(fromRdfType);
-      }
-    });
-
-    if (toRdfTypes.length === 0) {
-      // No explicit shaclmate:toRdfType's
-      // If the shape is a class, not abstract, and identified by an IRI then use the shape IRI as the fromRdfType.
-      if (
-        !this.abstract.orDefault(false) &&
-        this.isClass &&
-        this.identifier.termType === "NamedNode"
-      ) {
-        toRdfTypes.push(this.identifier);
-      }
-    }
-
-    return toRdfTypes;
+    return this.generatedShaclmateNodeShape.toRdfTypes;
   }
 
   get tsFeatures(): Maybe<Set<TsFeature>> {

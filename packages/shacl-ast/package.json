@@ -35,6 +35,8 @@
     "check:write": "biome check --write",
     "check:write:unsafe": "biome check --write --unsafe",
     "clean": "rimraf dist",
+    "dev": "tsc -w --preserveWatchOutput",
+    "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
     "format": "biome format",
     "format:write": "biome format --write",
     "format:write:unsafe": "biome format --write --unsafe",
@@ -46,9 +48,7 @@
     "test": "biome check && vitest run",
     "test:coverage": "biome check && vitest run --coverage",
     "test:watch": "vitest watch",
-    "unlink": "npm unlink -g @shaclmate/shacl-ast",
-    "watch": "tsc -w --preserveWatchOutput",
-    "watch:noEmit": "tsc --noEmit -w --preserveWatchOutput"
+    "unlink": "npm unlink -g @shaclmate/shacl-ast"
   },
   "type": "module",
   "version": "2.0.22"

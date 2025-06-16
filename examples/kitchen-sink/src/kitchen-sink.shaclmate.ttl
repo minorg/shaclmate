@@ -174,15 +174,30 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:path :dateProperty
     ] .
 
-:ExplicitRdfTypesNodeShape
+:ExplicitFromToRdfTypesNodeShape
     shaclmate:fromRdfType :FromRdfType ;
-    shaclmate:name "ExplicitRdfTypesNodeShape" ;
+    shaclmate:name "ExplicitFromToRdfTypesNodeShape" ;
     shaclmate:toRdfType :ToRdfType ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment """Shape with custom rdf:type's.
 
 The shaclmate:fromRdfType is expected on deserialization.
 shaclmate:toRdfType's are added an serialization.""" ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:name "stringProperty" ;
+        sh:path :stringProperty
+    ] .
+
+:ExplicitRdfTypeNodeShape
+    shaclmate:name "ExplicitRdfTypeNodeShape" ;
+    shaclmate:rdfType :RdfType ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment """Shape with custom rdf:type's.
+
+The shaclmate:rdfType is expected on deserialization and added on serialization.""" ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;

@@ -2,9 +2,12 @@ import TermMap from "@rdfjs/term-map";
 import TermSet from "@rdfjs/term-set";
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
+
 import { Maybe } from "purify-ts";
 import { fromRdf } from "rdf-literal";
+
 import type * as ast from "../../ast/index.js";
+
 import { logger } from "../../logger.js";
 import { BooleanType } from "./BooleanType.js";
 import { DateTimeType } from "./DateTimeType.js";
@@ -23,23 +26,9 @@ import type { Type } from "./Type.js";
 import { UnionType } from "./UnionType.js";
 import { tsName } from "./tsName.js";
 
-function objectTypeNeedsIdentifierPrefixProperty(
-  objectType: ast.ObjectType,
-): boolean {
-  return objectType.identifierMintingStrategy
-    .map((identifierMintingStrategy) => {
-      switch (identifierMintingStrategy) {
-        case "blankNode":
-          return false;
-        case "sha256":
-        case "uuidv4":
-          return true;
-      }
-    })
-    .orDefault(false);
-}
-
 export class TypeFactory {
+  private readonly dataFactoryVariable: string;
+
   private cachedObjectTypePropertiesByIdentifier: TermMap<
     BlankNode | NamedNode,
     ObjectType.Property
@@ -48,7 +37,6 @@ export class TypeFactory {
     BlankNode | NamedNode,
     ObjectType
   > = new TermMap();
-  private readonly dataFactoryVariable: string;
 
   constructor({ dataFactoryVariable }: { dataFactoryVariable: string }) {
     this.dataFactoryVariable = dataFactoryVariable;
@@ -318,18 +306,21 @@ export class TypeFactory {
           );
 
         // Type discriminator property
-        const typeDiscriminatorValues = new Set<string>();
-        if (!astType.abstract) {
-          typeDiscriminatorValues.add(objectType.discriminatorValue);
-        }
+        const typeDiscriminatorOwnValue = !astType.abstract
+          ? objectType.discriminatorValue
+          : undefined;
+        const typeDiscriminatorDescendantValues = new Set<string>();
         for (const descendantObjectType of objectType.descendantObjectTypes) {
           if (!descendantObjectType.abstract) {
-            typeDiscriminatorValues.add(
+            typeDiscriminatorDescendantValues.add(
               descendantObjectType.discriminatorValue,
             );
           }
         }
-        if (typeDiscriminatorValues.size > 0) {
+        if (
+          typeDiscriminatorOwnValue ||
+          typeDiscriminatorDescendantValues.size > 0
+        ) {
           properties.splice(
             0,
             0,
@@ -337,6 +328,7 @@ export class TypeFactory {
               abstract: astType.abstract,
               dataFactoryVariable: this.dataFactoryVariable,
               name: astType.tsTypeDiscriminatorPropertyName,
+              initializer: objectType.discriminatorValue,
               objectType: {
                 declarationType: astType.tsObjectDeclarationType,
                 features: astType.tsFeatures,
@@ -344,11 +336,13 @@ export class TypeFactory {
               },
               override: objectType.parentObjectTypes.length > 0,
               type: new ObjectType.TypeDiscriminatorProperty.Type({
+                descendantValues: [...typeDiscriminatorDescendantValues].sort(),
                 mutable: false,
-                values: [...typeDiscriminatorValues].sort(),
+                ownValues: typeDiscriminatorOwnValue
+                  ? [typeDiscriminatorOwnValue]
+                  : [],
               }),
               visibility: "public",
-              value: objectType.discriminatorValue,
             }),
           );
         }
@@ -476,4 +470,20 @@ export class TypeFactory {
     );
     return property;
   }
+}
+
+function objectTypeNeedsIdentifierPrefixProperty(
+  objectType: ast.ObjectType,
+): boolean {
+  return objectType.identifierMintingStrategy
+    .map((identifierMintingStrategy) => {
+      switch (identifierMintingStrategy) {
+        case "blankNode":
+          return false;
+        case "sha256":
+        case "uuidv4":
+          return true;
+      }
+    })
+    .orDefault(false);
 }

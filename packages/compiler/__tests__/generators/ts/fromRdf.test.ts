@@ -1,9 +1,12 @@
+import * as kitchenSink from "@shaclmate/kitchen-sink-example";
+
+import { rdf } from "@tpluscode/rdf-ns-builders";
+
 import N3, { DataFactory as dataFactory } from "n3";
 import { MutableResourceSet } from "rdfjs-resource";
 import { describe, it } from "vitest";
-import "./harnesses.js"; // Must be imported before kitchenSink
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
-import { harnesses } from "./harnesses.js";
+
+import { harnesses } from "./harnesses.js"; // Must be imported before kitchenSink
 
 describe("fromRdf", () => {
   for (const [id, harness] of Object.entries(harnesses)) {
@@ -54,6 +57,54 @@ describe("fromRdf", () => {
     expect(
       harnesses.concreteChildClassNodeShape.equals(fromRdfInstance).extract(),
     ).toStrictEqual(true);
+  });
+
+  it("explicit fromRdfType ignore default rdf:type", ({ expect }) => {
+    const resourceSet = new MutableResourceSet({
+      dataFactory,
+      dataset: new N3.Store(),
+    });
+    const resource = resourceSet.mutableResource(dataFactory.blankNode());
+    resource.add(
+      rdf.type,
+      dataFactory.namedNode(
+        "http://example.com/ExplicitFromToRdfTypesNodeShape",
+      ),
+    );
+    resource.add(
+      dataFactory.namedNode("http://example.com/stringProperty"),
+      dataFactory.literal("test"),
+    );
+
+    const fromRdfInstance = kitchenSink.ExplicitFromToRdfTypesNodeShape.fromRdf(
+      {
+        resource,
+      },
+    );
+    expect(fromRdfInstance.isLeft()).toBe(true);
+  });
+
+  it("explicit fromRdfType accept non-default rdf:type", ({ expect }) => {
+    const resourceSet = new MutableResourceSet({
+      dataFactory,
+      dataset: new N3.Store(),
+    });
+    const resource = resourceSet.mutableResource(dataFactory.blankNode());
+    resource.add(
+      rdf.type,
+      dataFactory.namedNode("http://example.com/FromRdfType"),
+    );
+    resource.add(
+      dataFactory.namedNode("http://example.com/stringProperty"),
+      dataFactory.literal("test"),
+    );
+
+    const fromRdfInstance = kitchenSink.ExplicitFromToRdfTypesNodeShape.fromRdf(
+      {
+        resource,
+      },
+    );
+    expect(fromRdfInstance.isRight()).toBe(true);
   });
 
   it("ensure hasValue (sh:hasValue)", ({ expect }) => {
