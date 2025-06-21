@@ -4,6 +4,7 @@ import type {
   ModuleDeclarationStructure,
   TypeAliasDeclarationStructure,
 } from "ts-morph";
+
 import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
 import { Type } from "./Type.js";

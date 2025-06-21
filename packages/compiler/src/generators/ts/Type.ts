@@ -42,6 +42,11 @@ export abstract class Type {
    */
   abstract readonly name: string;
 
+  /**
+   * JavaScript typeof the type.
+   */
+  abstract readonly typeof: "boolean" | "object" | "number" | "string";
+
   constructor({
     dataFactoryVariable,
   }: {

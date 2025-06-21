@@ -112,6 +112,7 @@ export class ObjectUnionType extends DeclaredType {
   private readonly memberTypes: readonly MemberType[];
 
   readonly kind = "ObjectUnionType";
+  readonly typeof = "object";
 
   constructor({
     comment,

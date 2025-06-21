@@ -1,10 +1,12 @@
 import { Memoize } from "typescript-memoize";
+
 import { PrimitiveType } from "./PrimitiveType.js";
 import type { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 export class NumberType extends PrimitiveType<number> {
   readonly kind = "NumberType";
+  override readonly typeof = "number";
 
   override get conversions(): readonly Type.Conversion[] {
     const conversions: Type.Conversion[] = [
@@ -29,7 +31,7 @@ export class NumberType extends PrimitiveType<number> {
     if (this.primitiveIn.length > 0) {
       return this.primitiveIn.map((value) => value.toString()).join(" | ");
     }
-    return "number";
+    return this.typeof;
   }
 
   override jsonZodSchema({

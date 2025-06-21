@@ -1,5 +1,6 @@
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
@@ -7,10 +8,12 @@ import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 export class SetType extends Type {
+  private readonly _mutable: boolean;
+  private readonly minCount: number;
+
   readonly itemType: Type;
   readonly kind = "SetType";
-  private readonly minCount: number;
-  private readonly _mutable: boolean;
+  readonly typeof = "object";
 
   constructor({
     itemType,
