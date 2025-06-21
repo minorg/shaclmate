@@ -200,13 +200,27 @@ export class UnionType extends Type {
   }
 
   override get conversions(): readonly Type.Conversion[] {
-    return [
-      {
-        conversionExpression: (value) => value,
-        sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
-        sourceTypeName: this.name,
-      },
-    ];
+    switch (this._discriminator.kind) {
+      case "sharedProperty":
+      case "syntheticProperty":
+        return [
+          {
+            conversionExpression: (value) => value,
+            sourceTypeCheckExpression: (value) =>
+              `typeof ${value} === "object"`,
+            sourceTypeName: this.name,
+          },
+        ];
+      case "typeof":
+        return this.memberTypes.map((memberType) => ({
+          conversionExpression: (value) => value,
+          sourceTypeCheckExpression: (value) =>
+            `typeof ${value} === "${memberType.discriminatorValues[0]}"`,
+          sourceTypeName: memberType.name,
+        }));
+      default:
+        throw this._discriminator satisfies never;
+    }
   }
 
   @Memoize()

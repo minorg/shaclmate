@@ -49,8 +49,12 @@ export class ListType extends Type {
   override get conversions(): readonly Type.Conversion[] {
     return [
       {
-        conversionExpression: (value) => value,
-        sourceTypeCheckExpression: (value) => `Array.isArray(${value})`,
+        // Defensive copy
+        conversionExpression: (value) =>
+          `${value}${this.mutable ? ".concat()" : ""}`,
+        // Array.isArray doesn't narrow correctly
+        // sourceTypeCheckExpression: (value) => `Array.isArray(${value})`,
+        sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
         sourceTypeName: this.name,
       },
     ];

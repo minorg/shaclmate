@@ -569,7 +569,8 @@ export class UnionPropertiesNodeShape {
       | purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>
       | string;
     readonly orUnrelatedProperty?:
-      | (number | NonClassNodeShape)
+      | NonClassNodeShape
+      | number
       | purify.Maybe<number | NonClassNodeShape>;
   }) {
     if (typeof parameters.identifier === "object") {
@@ -641,6 +642,10 @@ export class UnionPropertiesNodeShape {
 
     if (purify.Maybe.isMaybe(parameters.orUnrelatedProperty)) {
       this.orUnrelatedProperty = parameters.orUnrelatedProperty;
+    } else if (typeof parameters.orUnrelatedProperty === "number") {
+      this.orUnrelatedProperty = purify.Maybe.of(
+        parameters.orUnrelatedProperty,
+      );
     } else if (typeof parameters.orUnrelatedProperty === "object") {
       this.orUnrelatedProperty = purify.Maybe.of(
         parameters.orUnrelatedProperty,
@@ -4002,7 +4007,7 @@ export class PropertyCardinalitiesNodeShape {
 
     if (typeof parameters.emptyStringSetProperty === "undefined") {
       this.emptyStringSetProperty = [];
-    } else if (Array.isArray(parameters.emptyStringSetProperty)) {
+    } else if (typeof parameters.emptyStringSetProperty === "object") {
       this.emptyStringSetProperty = parameters.emptyStringSetProperty;
     } else {
       this.emptyStringSetProperty =
@@ -5458,9 +5463,9 @@ export class MutablePropertiesNodeShape {
     this._identifierPrefix = parameters.identifierPrefix;
     if (purify.Maybe.isMaybe(parameters.mutableListProperty)) {
       this.mutableListProperty = parameters.mutableListProperty;
-    } else if (Array.isArray(parameters.mutableListProperty)) {
+    } else if (typeof parameters.mutableListProperty === "object") {
       this.mutableListProperty = purify.Maybe.of(
-        parameters.mutableListProperty,
+        parameters.mutableListProperty.concat(),
       );
     } else if (typeof parameters.mutableListProperty === "undefined") {
       this.mutableListProperty = purify.Maybe.empty();
@@ -5470,8 +5475,8 @@ export class MutablePropertiesNodeShape {
 
     if (typeof parameters.mutableSetProperty === "undefined") {
       this.mutableSetProperty = [];
-    } else if (Array.isArray(parameters.mutableSetProperty)) {
-      this.mutableSetProperty = parameters.mutableSetProperty;
+    } else if (typeof parameters.mutableSetProperty === "object") {
+      this.mutableSetProperty = parameters.mutableSetProperty.concat();
     } else {
       this.mutableSetProperty = parameters.mutableSetProperty satisfies never;
     }
@@ -6270,7 +6275,7 @@ export class ListPropertiesNodeShape {
 
     if (purify.Maybe.isMaybe(parameters.objectListProperty)) {
       this.objectListProperty = parameters.objectListProperty;
-    } else if (Array.isArray(parameters.objectListProperty)) {
+    } else if (typeof parameters.objectListProperty === "object") {
       this.objectListProperty = purify.Maybe.of(parameters.objectListProperty);
     } else if (typeof parameters.objectListProperty === "undefined") {
       this.objectListProperty = purify.Maybe.empty();
@@ -6280,7 +6285,7 @@ export class ListPropertiesNodeShape {
 
     if (purify.Maybe.isMaybe(parameters.stringListProperty)) {
       this.stringListProperty = parameters.stringListProperty;
-    } else if (Array.isArray(parameters.stringListProperty)) {
+    } else if (typeof parameters.stringListProperty === "object") {
       this.stringListProperty = purify.Maybe.of(parameters.stringListProperty);
     } else if (typeof parameters.stringListProperty === "undefined") {
       this.stringListProperty = purify.Maybe.empty();

@@ -42,8 +42,12 @@ export class SetType extends Type {
         sourceTypeName: "undefined",
       });
       conversions.push({
-        conversionExpression: (value) => value,
-        sourceTypeCheckExpression: (value) => `Array.isArray(${value})`,
+        // Defensive copy
+        conversionExpression: (value) =>
+          `${value}${this.mutable ? ".concat()" : ""}`,
+        // Array.isArray doesn't narrow correctly
+        // sourceTypeCheckExpression: (value) => `Array.isArray(${value})`,
+        sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
         sourceTypeName: `readonly (${this.itemType.name})[]`,
       });
     } else {
