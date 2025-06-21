@@ -223,7 +223,7 @@ export class UuidV4IriNodeShape {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     this._identifierPrefix = parameters.identifierPrefix;
@@ -578,7 +578,7 @@ export class UnionPropertiesNodeShape {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.orLiteralsProperty)) {
@@ -607,7 +607,7 @@ export class UnionPropertiesNodeShape {
     } else if (typeof parameters.orLiteralsProperty === "undefined") {
       this.orLiteralsProperty = purify.Maybe.empty();
     } else {
-      this.orLiteralsProperty = parameters.orLiteralsProperty as never;
+      this.orLiteralsProperty = parameters.orLiteralsProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.orTermsProperty)) {
@@ -636,7 +636,7 @@ export class UnionPropertiesNodeShape {
     } else if (typeof parameters.orTermsProperty === "undefined") {
       this.orTermsProperty = purify.Maybe.empty();
     } else {
-      this.orTermsProperty = parameters.orTermsProperty as never;
+      this.orTermsProperty = parameters.orTermsProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.orUnrelatedProperty)) {
@@ -648,7 +648,7 @@ export class UnionPropertiesNodeShape {
     } else if (typeof parameters.orUnrelatedProperty === "undefined") {
       this.orUnrelatedProperty = purify.Maybe.empty();
     } else {
-      this.orUnrelatedProperty = parameters.orUnrelatedProperty as never;
+      this.orUnrelatedProperty = parameters.orUnrelatedProperty satisfies never;
     }
   }
 
@@ -1374,7 +1374,7 @@ export class UnionNodeShapeMember2 {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     this.stringProperty2 = parameters.stringProperty2;
@@ -1697,7 +1697,7 @@ export class UnionNodeShapeMember1 {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     this.stringProperty1 = parameters.stringProperty1;
@@ -2054,7 +2054,7 @@ export class TermPropertiesNodeShape {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.booleanProperty)) {
@@ -2064,7 +2064,7 @@ export class TermPropertiesNodeShape {
     } else if (typeof parameters.booleanProperty === "undefined") {
       this.booleanProperty = purify.Maybe.empty();
     } else {
-      this.booleanProperty = parameters.booleanProperty as never;
+      this.booleanProperty = parameters.booleanProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.dateProperty)) {
@@ -2077,7 +2077,7 @@ export class TermPropertiesNodeShape {
     } else if (typeof parameters.dateProperty === "undefined") {
       this.dateProperty = purify.Maybe.empty();
     } else {
-      this.dateProperty = parameters.dateProperty as never;
+      this.dateProperty = parameters.dateProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.dateTimeProperty)) {
@@ -2090,7 +2090,7 @@ export class TermPropertiesNodeShape {
     } else if (typeof parameters.dateTimeProperty === "undefined") {
       this.dateTimeProperty = purify.Maybe.empty();
     } else {
-      this.dateTimeProperty = parameters.dateTimeProperty as never;
+      this.dateTimeProperty = parameters.dateTimeProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.iriProperty)) {
@@ -2104,7 +2104,7 @@ export class TermPropertiesNodeShape {
     } else if (typeof parameters.iriProperty === "undefined") {
       this.iriProperty = purify.Maybe.empty();
     } else {
-      this.iriProperty = parameters.iriProperty as never;
+      this.iriProperty = parameters.iriProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.literalProperty)) {
@@ -2133,7 +2133,7 @@ export class TermPropertiesNodeShape {
     } else if (typeof parameters.literalProperty === "undefined") {
       this.literalProperty = purify.Maybe.empty();
     } else {
-      this.literalProperty = parameters.literalProperty as never;
+      this.literalProperty = parameters.literalProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.numberProperty)) {
@@ -2143,7 +2143,7 @@ export class TermPropertiesNodeShape {
     } else if (typeof parameters.numberProperty === "undefined") {
       this.numberProperty = purify.Maybe.empty();
     } else {
-      this.numberProperty = parameters.numberProperty as never;
+      this.numberProperty = parameters.numberProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.stringProperty)) {
@@ -2153,7 +2153,7 @@ export class TermPropertiesNodeShape {
     } else if (typeof parameters.stringProperty === "undefined") {
       this.stringProperty = purify.Maybe.empty();
     } else {
-      this.stringProperty = parameters.stringProperty as never;
+      this.stringProperty = parameters.stringProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.termProperty)) {
@@ -2182,7 +2182,7 @@ export class TermPropertiesNodeShape {
     } else if (typeof parameters.termProperty === "undefined") {
       this.termProperty = purify.Maybe.empty();
     } else {
-      this.termProperty = parameters.termProperty as never;
+      this.termProperty = parameters.termProperty satisfies never;
     }
   }
 
@@ -3169,7 +3169,7 @@ export class Sha256IriNodeShape {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     this._identifierPrefix = parameters.identifierPrefix;
@@ -3510,7 +3510,7 @@ export class PropertyVisibilitiesNodeShape {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     this.privateProperty = parameters.privateProperty;
@@ -3997,7 +3997,7 @@ export class PropertyCardinalitiesNodeShape {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     if (typeof parameters.emptyStringSetProperty === "undefined") {
@@ -4005,7 +4005,8 @@ export class PropertyCardinalitiesNodeShape {
     } else if (Array.isArray(parameters.emptyStringSetProperty)) {
       this.emptyStringSetProperty = parameters.emptyStringSetProperty;
     } else {
-      this.emptyStringSetProperty = parameters.emptyStringSetProperty as never;
+      this.emptyStringSetProperty =
+        parameters.emptyStringSetProperty satisfies never;
     }
 
     this.nonEmptyStringSetProperty = parameters.nonEmptyStringSetProperty;
@@ -4018,7 +4019,8 @@ export class PropertyCardinalitiesNodeShape {
     } else if (typeof parameters.optionalStringProperty === "undefined") {
       this.optionalStringProperty = purify.Maybe.empty();
     } else {
-      this.optionalStringProperty = parameters.optionalStringProperty as never;
+      this.optionalStringProperty =
+        parameters.optionalStringProperty satisfies never;
     }
 
     this.requiredStringProperty = parameters.requiredStringProperty;
@@ -4665,7 +4667,7 @@ export class OrderedPropertiesNodeShape {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     this.propertyC = parameters.propertyC;
@@ -5113,7 +5115,7 @@ export class NonClassNodeShape {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     this.stringProperty = parameters.stringProperty;
@@ -5450,7 +5452,7 @@ export class MutablePropertiesNodeShape {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     this._identifierPrefix = parameters.identifierPrefix;
@@ -5463,7 +5465,7 @@ export class MutablePropertiesNodeShape {
     } else if (typeof parameters.mutableListProperty === "undefined") {
       this.mutableListProperty = purify.Maybe.empty();
     } else {
-      this.mutableListProperty = parameters.mutableListProperty as never;
+      this.mutableListProperty = parameters.mutableListProperty satisfies never;
     }
 
     if (typeof parameters.mutableSetProperty === "undefined") {
@@ -5471,7 +5473,7 @@ export class MutablePropertiesNodeShape {
     } else if (Array.isArray(parameters.mutableSetProperty)) {
       this.mutableSetProperty = parameters.mutableSetProperty;
     } else {
-      this.mutableSetProperty = parameters.mutableSetProperty as never;
+      this.mutableSetProperty = parameters.mutableSetProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.mutableStringProperty)) {
@@ -5483,7 +5485,8 @@ export class MutablePropertiesNodeShape {
     } else if (typeof parameters.mutableStringProperty === "undefined") {
       this.mutableStringProperty = purify.Maybe.empty();
     } else {
-      this.mutableStringProperty = parameters.mutableStringProperty as never;
+      this.mutableStringProperty =
+        parameters.mutableStringProperty satisfies never;
     }
   }
 
@@ -6262,7 +6265,7 @@ export class ListPropertiesNodeShape {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.objectListProperty)) {
@@ -6272,7 +6275,7 @@ export class ListPropertiesNodeShape {
     } else if (typeof parameters.objectListProperty === "undefined") {
       this.objectListProperty = purify.Maybe.empty();
     } else {
-      this.objectListProperty = parameters.objectListProperty as never;
+      this.objectListProperty = parameters.objectListProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.stringListProperty)) {
@@ -6282,7 +6285,7 @@ export class ListPropertiesNodeShape {
     } else if (typeof parameters.stringListProperty === "undefined") {
       this.stringListProperty = purify.Maybe.empty();
     } else {
-      this.stringListProperty = parameters.stringListProperty as never;
+      this.stringListProperty = parameters.stringListProperty satisfies never;
     }
   }
 
@@ -7196,7 +7199,7 @@ export class LanguageInPropertiesNodeShape {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.languageInProperty)) {
@@ -7225,7 +7228,7 @@ export class LanguageInPropertiesNodeShape {
     } else if (typeof parameters.languageInProperty === "undefined") {
       this.languageInProperty = purify.Maybe.empty();
     } else {
-      this.languageInProperty = parameters.languageInProperty as never;
+      this.languageInProperty = parameters.languageInProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.literalProperty)) {
@@ -7254,7 +7257,7 @@ export class LanguageInPropertiesNodeShape {
     } else if (typeof parameters.literalProperty === "undefined") {
       this.literalProperty = purify.Maybe.empty();
     } else {
-      this.literalProperty = parameters.literalProperty as never;
+      this.literalProperty = parameters.literalProperty satisfies never;
     }
   }
 
@@ -7781,7 +7784,7 @@ export class IriNodeShape {
     } else if (typeof parameters.identifier === "string") {
       this.identifier = dataFactory.namedNode(parameters.identifier);
     } else {
-      this.identifier = parameters.identifier as never;
+      this.identifier = parameters.identifier satisfies never;
     }
   }
 
@@ -8013,7 +8016,7 @@ export namespace InterfaceUnionNodeShapeMember2b {
     } else if (typeof parameters.identifier === "string") {
       identifier = dataFactory.namedNode(parameters.identifier);
     } else {
-      identifier = parameters.identifier as never;
+      identifier = parameters.identifier satisfies never;
     }
 
     const type = "InterfaceUnionNodeShapeMember2b" as const;
@@ -8364,7 +8367,7 @@ export namespace InterfaceUnionNodeShapeMember2a {
     } else if (typeof parameters.identifier === "string") {
       identifier = dataFactory.namedNode(parameters.identifier);
     } else {
-      identifier = parameters.identifier as never;
+      identifier = parameters.identifier satisfies never;
     }
 
     const type = "InterfaceUnionNodeShapeMember2a" as const;
@@ -8715,7 +8718,7 @@ export namespace InterfaceUnionNodeShapeMember1 {
     } else if (typeof parameters.identifier === "string") {
       identifier = dataFactory.namedNode(parameters.identifier);
     } else {
-      identifier = parameters.identifier as never;
+      identifier = parameters.identifier satisfies never;
     }
 
     const type = "InterfaceUnionNodeShapeMember1" as const;
@@ -9066,7 +9069,7 @@ export namespace InterfaceNodeShape {
     } else if (typeof parameters.identifier === "string") {
       identifier = dataFactory.namedNode(parameters.identifier);
     } else {
-      identifier = parameters.identifier as never;
+      identifier = parameters.identifier satisfies never;
     }
 
     const type = "InterfaceNodeShape" as const;
@@ -9420,7 +9423,7 @@ export class InPropertiesNodeShape {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.inBooleansProperty)) {
@@ -9430,7 +9433,7 @@ export class InPropertiesNodeShape {
     } else if (typeof parameters.inBooleansProperty === "undefined") {
       this.inBooleansProperty = purify.Maybe.empty();
     } else {
-      this.inBooleansProperty = parameters.inBooleansProperty as never;
+      this.inBooleansProperty = parameters.inBooleansProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.inDateTimesProperty)) {
@@ -9445,7 +9448,7 @@ export class InPropertiesNodeShape {
     } else if (typeof parameters.inDateTimesProperty === "undefined") {
       this.inDateTimesProperty = purify.Maybe.empty();
     } else {
-      this.inDateTimesProperty = parameters.inDateTimesProperty as never;
+      this.inDateTimesProperty = parameters.inDateTimesProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.inIrisProperty)) {
@@ -9459,7 +9462,7 @@ export class InPropertiesNodeShape {
     } else if (typeof parameters.inIrisProperty === "undefined") {
       this.inIrisProperty = purify.Maybe.empty();
     } else {
-      this.inIrisProperty = parameters.inIrisProperty as never;
+      this.inIrisProperty = parameters.inIrisProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.inNumbersProperty)) {
@@ -9469,7 +9472,7 @@ export class InPropertiesNodeShape {
     } else if (typeof parameters.inNumbersProperty === "undefined") {
       this.inNumbersProperty = purify.Maybe.empty();
     } else {
-      this.inNumbersProperty = parameters.inNumbersProperty as never;
+      this.inNumbersProperty = parameters.inNumbersProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.inStringsProperty)) {
@@ -9479,7 +9482,7 @@ export class InPropertiesNodeShape {
     } else if (typeof parameters.inStringsProperty === "undefined") {
       this.inStringsProperty = purify.Maybe.empty();
     } else {
-      this.inStringsProperty = parameters.inStringsProperty as never;
+      this.inStringsProperty = parameters.inStringsProperty satisfies never;
     }
   }
 
@@ -10307,7 +10310,7 @@ export class InIdentifierNodeShape {
     } else if (typeof parameters.identifier === "string") {
       this.identifier = dataFactory.namedNode(parameters.identifier);
     } else {
-      this.identifier = parameters.identifier as never;
+      this.identifier = parameters.identifier satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.stringProperty)) {
@@ -10317,7 +10320,7 @@ export class InIdentifierNodeShape {
     } else if (typeof parameters.stringProperty === "undefined") {
       this.stringProperty = purify.Maybe.empty();
     } else {
-      this.stringProperty = parameters.stringProperty as never;
+      this.stringProperty = parameters.stringProperty satisfies never;
     }
   }
 
@@ -10692,7 +10695,7 @@ export class HasValuePropertiesNodeShape {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.hasIriProperty)) {
@@ -10706,7 +10709,7 @@ export class HasValuePropertiesNodeShape {
     } else if (typeof parameters.hasIriProperty === "undefined") {
       this.hasIriProperty = purify.Maybe.empty();
     } else {
-      this.hasIriProperty = parameters.hasIriProperty as never;
+      this.hasIriProperty = parameters.hasIriProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.hasLiteralProperty)) {
@@ -10716,7 +10719,7 @@ export class HasValuePropertiesNodeShape {
     } else if (typeof parameters.hasLiteralProperty === "undefined") {
       this.hasLiteralProperty = purify.Maybe.empty();
     } else {
-      this.hasLiteralProperty = parameters.hasLiteralProperty as never;
+      this.hasLiteralProperty = parameters.hasLiteralProperty satisfies never;
     }
   }
 
@@ -11159,7 +11162,7 @@ export class InlineNodeShape {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     this.stringProperty = parameters.stringProperty;
@@ -11478,7 +11481,7 @@ export class ExternNodeShape {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     this.stringProperty = parameters.stringProperty;
@@ -11809,7 +11812,7 @@ export class ExternPropertiesNodeShape {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.externObjectTypeProperty)) {
@@ -11825,7 +11828,7 @@ export class ExternPropertiesNodeShape {
       this.externObjectTypeProperty = purify.Maybe.empty();
     } else {
       this.externObjectTypeProperty =
-        parameters.externObjectTypeProperty as never;
+        parameters.externObjectTypeProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.externProperty)) {
@@ -11839,7 +11842,7 @@ export class ExternPropertiesNodeShape {
     } else if (typeof parameters.externProperty === "undefined") {
       this.externProperty = purify.Maybe.empty();
     } else {
-      this.externProperty = parameters.externProperty as never;
+      this.externProperty = parameters.externProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.inlineProperty)) {
@@ -11852,7 +11855,7 @@ export class ExternPropertiesNodeShape {
     } else if (typeof parameters.inlineProperty === "undefined") {
       this.inlineProperty = purify.Maybe.empty();
     } else {
-      this.inlineProperty = parameters.inlineProperty as never;
+      this.inlineProperty = parameters.inlineProperty satisfies never;
     }
   }
 
@@ -12432,7 +12435,7 @@ export class ExplicitRdfTypeNodeShape {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     this.stringProperty = parameters.stringProperty;
@@ -12836,7 +12839,7 @@ export class ExplicitFromToRdfTypesNodeShape {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     this.stringProperty = parameters.stringProperty;
@@ -13259,7 +13262,7 @@ export class DefaultValuePropertiesNodeShape {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     this._identifierPrefix = parameters.identifierPrefix;
@@ -13271,7 +13274,7 @@ export class DefaultValuePropertiesNodeShape {
     } else if (typeof parameters.dateProperty === "undefined") {
       this.dateProperty = new Date("2018-04-09T00:00:00.000Z");
     } else {
-      this.dateProperty = parameters.dateProperty as never;
+      this.dateProperty = parameters.dateProperty satisfies never;
     }
 
     if (
@@ -13282,7 +13285,7 @@ export class DefaultValuePropertiesNodeShape {
     } else if (typeof parameters.dateTimeProperty === "undefined") {
       this.dateTimeProperty = new Date("2018-04-09T10:00:00.000Z");
     } else {
-      this.dateTimeProperty = parameters.dateTimeProperty as never;
+      this.dateTimeProperty = parameters.dateTimeProperty satisfies never;
     }
 
     if (typeof parameters.falseBooleanProperty === "boolean") {
@@ -13290,7 +13293,8 @@ export class DefaultValuePropertiesNodeShape {
     } else if (typeof parameters.falseBooleanProperty === "undefined") {
       this.falseBooleanProperty = false;
     } else {
-      this.falseBooleanProperty = parameters.falseBooleanProperty as never;
+      this.falseBooleanProperty =
+        parameters.falseBooleanProperty satisfies never;
     }
 
     if (typeof parameters.numberProperty === "number") {
@@ -13298,7 +13302,7 @@ export class DefaultValuePropertiesNodeShape {
     } else if (typeof parameters.numberProperty === "undefined") {
       this.numberProperty = 0;
     } else {
-      this.numberProperty = parameters.numberProperty as never;
+      this.numberProperty = parameters.numberProperty satisfies never;
     }
 
     if (typeof parameters.stringProperty === "string") {
@@ -13306,7 +13310,7 @@ export class DefaultValuePropertiesNodeShape {
     } else if (typeof parameters.stringProperty === "undefined") {
       this.stringProperty = "";
     } else {
-      this.stringProperty = parameters.stringProperty as never;
+      this.stringProperty = parameters.stringProperty satisfies never;
     }
 
     if (typeof parameters.trueBooleanProperty === "boolean") {
@@ -13314,7 +13318,7 @@ export class DefaultValuePropertiesNodeShape {
     } else if (typeof parameters.trueBooleanProperty === "undefined") {
       this.trueBooleanProperty = true;
     } else {
-      this.trueBooleanProperty = parameters.trueBooleanProperty as never;
+      this.trueBooleanProperty = parameters.trueBooleanProperty satisfies never;
     }
   }
 
@@ -14120,7 +14124,7 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     } else if (typeof parameters.identifier === "string") {
       identifier = dataFactory.namedNode(parameters.identifier);
     } else {
-      identifier = parameters.identifier as never;
+      identifier = parameters.identifier satisfies never;
     }
 
     const type = "BaseInterfaceWithPropertiesNodeShape" as const;
@@ -14592,7 +14596,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
     } else if (typeof parameters.identifier === "string") {
       identifier = dataFactory.namedNode(parameters.identifier);
     } else {
-      identifier = parameters.identifier as never;
+      identifier = parameters.identifier satisfies never;
     }
 
     const type = "BaseInterfaceWithoutPropertiesNodeShape" as const;
@@ -15007,7 +15011,7 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     } else if (typeof parameters.identifier === "string") {
       identifier = dataFactory.namedNode(parameters.identifier);
     } else {
-      identifier = parameters.identifier as never;
+      identifier = parameters.identifier satisfies never;
     }
 
     const type = "ConcreteParentInterfaceNodeShape" as const;
@@ -15490,7 +15494,7 @@ export namespace ConcreteChildInterfaceNodeShape {
     } else if (typeof parameters.identifier === "string") {
       identifier = dataFactory.namedNode(parameters.identifier);
     } else {
-      identifier = parameters.identifier as never;
+      identifier = parameters.identifier satisfies never;
     }
 
     const type = "ConcreteChildInterfaceNodeShape" as const;
@@ -16569,7 +16573,7 @@ export class ConcreteParentClassNodeShape extends AbstractBaseClassWithoutProper
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
 
     this.parentStringProperty = parameters.parentStringProperty;
@@ -17447,7 +17451,7 @@ export class BlankNodeShape {
       this._identifier = dataFactory.namedNode(parameters.identifier);
     } else if (typeof parameters.identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier as never;
+      this._identifier = parameters.identifier satisfies never;
     }
   }
 

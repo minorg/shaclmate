@@ -238,7 +238,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
 
     // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
     statements.push(
-      `{ this.${classPropertyDeclaration.name} =( ${variables.parameter}) as never;\n }`,
+      `{ this.${classPropertyDeclaration.name} =( ${variables.parameter}) satisfies never;\n }`,
     );
 
     return [statements.join(" else ")];
@@ -296,7 +296,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
     }
     // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
     conversionBranches.push(
-      `{ ${this.name} =( ${variables.parameter}) as never;\n }`,
+      `{ ${this.name} =( ${variables.parameter}) satisfies never;\n }`,
     );
     statements.push(conversionBranches.join(" else "));
     return statements;
