@@ -68,8 +68,8 @@ export namespace $EqualsResult {
         readonly type: "Primitive";
       }
     | {
-        readonly left: object;
-        readonly right: object;
+        readonly left: any;
+        readonly right: any;
         readonly propertyName: string;
         readonly propertyValuesUnequal: Unequal;
         readonly type: "Property";
@@ -550,10 +550,7 @@ export class UnionPropertiesNodeShape {
   readonly type = "UnionPropertiesNodeShape";
   readonly orLiteralsProperty: purify.Maybe<rdfjs.Literal>;
   readonly orTermsProperty: purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>;
-  readonly orUnrelatedProperty: purify.Maybe<
-    | { type: "0-number"; value: number }
-    | { type: "1-NonClassNodeShape"; value: NonClassNodeShape }
-  >;
+  readonly orUnrelatedProperty: purify.Maybe<number | NonClassNodeShape>;
 
   constructor(parameters: {
     readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
@@ -572,14 +569,8 @@ export class UnionPropertiesNodeShape {
       | purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>
       | string;
     readonly orUnrelatedProperty?:
-      | (
-          | { type: "0-number"; value: number }
-          | { type: "1-NonClassNodeShape"; value: NonClassNodeShape }
-        )
-      | purify.Maybe<
-          | { type: "0-number"; value: number }
-          | { type: "1-NonClassNodeShape"; value: NonClassNodeShape }
-        >;
+      | (number | NonClassNodeShape)
+      | purify.Maybe<number | NonClassNodeShape>;
   }) {
     if (typeof parameters.identifier === "object") {
       this._identifier = parameters.identifier;
@@ -718,24 +709,14 @@ export class UnionPropertiesNodeShape {
             left,
             right,
             (
-              left:
-                | { type: "0-number"; value: number }
-                | { type: "1-NonClassNodeShape"; value: NonClassNodeShape },
-              right:
-                | { type: "0-number"; value: number }
-                | { type: "1-NonClassNodeShape"; value: NonClassNodeShape },
+              left: number | NonClassNodeShape,
+              right: number | NonClassNodeShape,
             ) => {
-              if (left.type === "0-number" && right.type === "0-number") {
-                return $strictEquals(left.value, right.value);
+              if (typeof left === "number" && typeof right === "number") {
+                return $strictEquals(left, right);
               }
-              if (
-                left.type === "1-NonClassNodeShape" &&
-                right.type === "1-NonClassNodeShape"
-              ) {
-                return ((left, right) => left.equals(right))(
-                  left.value,
-                  right.value,
-                );
+              if (typeof left === "object" && typeof right === "object") {
+                return ((left, right) => left.equals(right))(left, right);
               }
 
               return purify.Left({
@@ -789,13 +770,13 @@ export class UnionPropertiesNodeShape {
       _hasher.update(_value0.value);
     });
     this.orUnrelatedProperty.ifJust((_value0) => {
-      switch (_value0.type) {
-        case "0-number": {
-          _hasher.update(_value0.value.toString());
+      switch (typeof _value0) {
+        case "number": {
+          _hasher.update(_value0.toString());
           break;
         }
-        case "1-NonClassNodeShape": {
-          _value0.value.hash(_hasher);
+        case "object": {
+          _value0.hash(_hasher);
           break;
         }
         default:
@@ -842,14 +823,7 @@ export class UnionPropertiesNodeShape {
           )
           .extract(),
         orUnrelatedProperty: this.orUnrelatedProperty
-          .map((_item) =>
-            _item.type === "1-NonClassNodeShape"
-              ? {
-                  type: "1-NonClassNodeShape" as const,
-                  value: _item.value.toJson(),
-                }
-              : { type: "0-number" as const, value: _item.value },
-          )
+          .map((_item) => (typeof _item === "object" ? _item.toJson() : _item))
           .extract(),
       } satisfies UnionPropertiesNodeShape.Json),
     );
@@ -877,12 +851,9 @@ export class UnionPropertiesNodeShape {
     _resource.add(
       dataFactory.namedNode("http://example.com/orUnrelatedProperty"),
       this.orUnrelatedProperty.map((_value) =>
-        _value.type === "1-NonClassNodeShape"
-          ? _value.value.toRdf({
-              mutateGraph: mutateGraph,
-              resourceSet: resourceSet,
-            })
-          : _value.value,
+        typeof _value === "object"
+          ? _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          : _value,
       ),
     );
     return _resource;
@@ -915,12 +886,7 @@ export namespace UnionPropertiesNodeShape {
             }
         )
       | undefined;
-    readonly orUnrelatedProperty:
-      | (
-          | { type: "0-number"; value: number }
-          | { type: "1-NonClassNodeShape"; value: NonClassNodeShape.Json }
-        )
-      | undefined;
+    readonly orUnrelatedProperty: (number | NonClassNodeShape.Json) | undefined;
   };
 
   export function propertiesFromJson(
@@ -931,10 +897,7 @@ export namespace UnionPropertiesNodeShape {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       orLiteralsProperty: purify.Maybe<rdfjs.Literal>;
       orTermsProperty: purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>;
-      orUnrelatedProperty: purify.Maybe<
-        | { type: "0-number"; value: number }
-        | { type: "1-NonClassNodeShape"; value: NonClassNodeShape }
-      >;
+      orUnrelatedProperty: purify.Maybe<number | NonClassNodeShape>;
     }
   > {
     const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
@@ -975,12 +938,9 @@ export namespace UnionPropertiesNodeShape {
     const orUnrelatedProperty = purify.Maybe.fromNullable(
       _jsonObject["orUnrelatedProperty"],
     ).map((_item) =>
-      _item.type === "1-NonClassNodeShape"
-        ? {
-            type: "1-NonClassNodeShape" as const,
-            value: NonClassNodeShape.fromJson(_item.value).unsafeCoerce(),
-          }
-        : { type: "0-number" as const, value: _item.value },
+      typeof _item === "object"
+        ? NonClassNodeShape.fromJson(_item).unsafeCoerce()
+        : _item,
     );
     return purify.Either.of({
       identifier,
@@ -1063,13 +1023,7 @@ export namespace UnionPropertiesNodeShape {
         ])
         .optional(),
       orUnrelatedProperty: zod
-        .discriminatedUnion("type", [
-          zod.object({ type: zod.literal("0-number"), value: zod.number() }),
-          zod.object({
-            type: zod.literal("1-NonClassNodeShape"),
-            value: NonClassNodeShape.jsonZodSchema(),
-          }),
-        ])
+        .union([zod.number(), NonClassNodeShape.jsonZodSchema()])
         .optional(),
     });
   }
@@ -1091,10 +1045,7 @@ export namespace UnionPropertiesNodeShape {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       orLiteralsProperty: purify.Maybe<rdfjs.Literal>;
       orTermsProperty: purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>;
-      orUnrelatedProperty: purify.Maybe<
-        | { type: "0-number"; value: number }
-        | { type: "1-NonClassNodeShape"; value: NonClassNodeShape }
-      >;
+      orUnrelatedProperty: purify.Maybe<number | NonClassNodeShape>;
     }
   > {
     const identifier = _resource.identifier;
@@ -1167,10 +1118,7 @@ export namespace UnionPropertiesNodeShape {
     const orTermsProperty = _orTermsPropertyEither.unsafeCoerce();
     const _orUnrelatedPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      purify.Maybe<
-        | { type: "0-number"; value: number }
-        | { type: "1-NonClassNodeShape"; value: NonClassNodeShape }
-      >
+      purify.Maybe<number | NonClassNodeShape>
     > = purify.Either.of(
       (
         _resource
@@ -1179,16 +1127,9 @@ export namespace UnionPropertiesNodeShape {
             { unique: true },
           )
           .head()
-          .chain((_value) => _value.toNumber())
-          .map(
-            (value) =>
-              ({ type: "0-number" as const, value }) as
-                | { type: "0-number"; value: number }
-                | { type: "1-NonClassNodeShape"; value: NonClassNodeShape },
-          ) as purify.Either<
+          .chain((_value) => _value.toNumber()) as purify.Either<
           rdfjsResource.Resource.ValueError,
-          | { type: "0-number"; value: number }
-          | { type: "1-NonClassNodeShape"; value: NonClassNodeShape }
+          number | NonClassNodeShape
         >
       )
         .altLazy(
@@ -1206,16 +1147,9 @@ export namespace UnionPropertiesNodeShape {
                   languageIn: _languageIn,
                   resource: _resource,
                 }),
-              )
-              .map(
-                (value) =>
-                  ({ type: "1-NonClassNodeShape" as const, value }) as
-                    | { type: "0-number"; value: number }
-                    | { type: "1-NonClassNodeShape"; value: NonClassNodeShape },
               ) as purify.Either<
               rdfjsResource.Resource.ValueError,
-              | { type: "0-number"; value: number }
-              | { type: "1-NonClassNodeShape"; value: NonClassNodeShape }
+              number | NonClassNodeShape
             >,
         )
         .toMaybe(),

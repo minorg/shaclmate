@@ -299,11 +299,22 @@ export const harnesses = {
     }),
     kitchenSink.UnionNodeShape,
   ),
-  unionProperties: new ClassHarness(
+  unionProperties1: new ClassHarness(
     new kitchenSink.UnionPropertiesNodeShape({
       identifier,
       orLiteralsProperty: 1,
-      orUnrelatedProperty: { type: "0-number", value: 1 },
+      orUnrelatedProperty: 1,
+      orTermsProperty: dataFactory.literal("test"),
+    }),
+    kitchenSink.UnionPropertiesNodeShape,
+  ),
+  unionProperties2: new ClassHarness(
+    new kitchenSink.UnionPropertiesNodeShape({
+      identifier,
+      orLiteralsProperty: new Date(),
+      orUnrelatedProperty: new kitchenSink.NonClassNodeShape({
+        stringProperty: "test",
+      }),
       orTermsProperty: dataFactory.literal("test"),
     }),
     kitchenSink.UnionPropertiesNodeShape,

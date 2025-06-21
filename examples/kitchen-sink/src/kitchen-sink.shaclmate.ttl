@@ -137,6 +137,18 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:defaultValue properties." ;
     sh:property [
+        sh:defaultValue "2018-04-09T10:00:00Z"^^xsd:dateTime ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:name "dateTimeProperty" ;
+        sh:path :dateTimeProperty
+    ], [
+        sh:defaultValue 0 ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:name "numberProperty" ;
+        sh:path :numberProperty
+    ], [
         sh:defaultValue "" ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
@@ -160,18 +172,6 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:minCount 1 ;
         sh:name "dateProperty" ;
         sh:path :dateProperty
-    ], [
-        sh:defaultValue "2018-04-09T10:00:00Z"^^xsd:dateTime ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:name "dateTimeProperty" ;
-        sh:path :dateTimeProperty
-    ], [
-        sh:defaultValue 0 ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:name "numberProperty" ;
-        sh:path :numberProperty
     ] .
 
 :ExplicitFromToRdfTypesNodeShape
@@ -748,6 +748,17 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     rdfs:comment "Shape with sh:xone properties." ;
     sh:property [
         sh:maxCount 1 ;
+        sh:name "orLiteralsProperty" ;
+        sh:path :orLiteralsProperty ;
+        sh:xone ([
+                sh:datatype xsd:integer
+            ]
+            [
+                sh:datatype xsd:string
+            ]
+        )
+    ], [
+        sh:maxCount 1 ;
         sh:name "orTermsProperty" ;
         sh:path :orTermsProperty ;
         sh:xone ([
@@ -766,17 +777,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
             [
                 sh:node :NonClassNodeShape
-            ]
-        )
-    ], [
-        sh:maxCount 1 ;
-        sh:name "orLiteralsProperty" ;
-        sh:path :orLiteralsProperty ;
-        sh:xone ([
-                sh:datatype xsd:integer
-            ]
-            [
-                sh:datatype xsd:string
             ]
         )
     ] .
