@@ -1,6 +1,8 @@
 import type { NamedNode } from "@rdfjs/types";
 import { rdf } from "@tpluscode/rdf-ns-builders";
+
 import { Maybe } from "purify-ts";
+
 import type {
   IdentifierMintingStrategy,
   TsFeature,
@@ -11,12 +13,14 @@ import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 export class ListType extends Type {
+  private readonly _mutable: boolean;
+  private readonly identifierMintingStrategy: IdentifierMintingStrategy;
+  private readonly identifierNodeKind: "BlankNode" | "NamedNode";
+  private readonly toRdfTypes: readonly NamedNode[];
+
   readonly itemType: Type;
   readonly kind = "ListType";
-  private readonly identifierNodeKind: "BlankNode" | "NamedNode";
-  private readonly identifierMintingStrategy: IdentifierMintingStrategy;
-  private readonly _mutable: boolean;
-  private readonly toRdfTypes: readonly NamedNode[];
+  readonly typeof = "object";
 
   constructor({
     identifierNodeKind,
@@ -45,8 +49,12 @@ export class ListType extends Type {
   override get conversions(): readonly Type.Conversion[] {
     return [
       {
-        conversionExpression: (value) => value,
-        sourceTypeCheckExpression: (value) => `Array.isArray(${value})`,
+        // Defensive copy
+        conversionExpression: (value) =>
+          `${value}${this.mutable ? ".concat()" : ""}`,
+        // Array.isArray doesn't narrow correctly
+        // sourceTypeCheckExpression: (value) => `Array.isArray(${value})`,
+        sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
         sourceTypeName: this.name,
       },
     ];

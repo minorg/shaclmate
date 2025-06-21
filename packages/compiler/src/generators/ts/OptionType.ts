@@ -1,4 +1,5 @@
 import { Memoize } from "typescript-memoize";
+
 import type { TsFeature } from "../../enums/index.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
@@ -7,6 +8,7 @@ import { Type } from "./Type.js";
 export class OptionType extends Type {
   readonly itemType: Type;
   readonly kind = "OptionType";
+  readonly typeof = "object";
 
   constructor({
     itemType,

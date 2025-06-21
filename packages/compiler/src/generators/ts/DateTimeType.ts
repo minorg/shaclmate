@@ -1,5 +1,6 @@
 import type { NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+
 import type { TsFeature } from "../../enums/index.js";
 import { PrimitiveType } from "./PrimitiveType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
@@ -7,11 +8,13 @@ import type { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 export class DateTimeType extends PrimitiveType<Date> {
+  protected readonly xsdDatatype: NamedNode = xsd.dateTime;
+  protected readonly zodDatatype: string = "datetime";
+
   override readonly equalsFunction = "$dateEquals";
   readonly kind: "DateTimeType" | "DateType" = "DateTimeType";
   override readonly mutable = true;
-  protected readonly xsdDatatype: NamedNode = xsd.dateTime;
-  protected readonly zodDatatype: string = "datetime";
+  override readonly typeof = "object";
 
   override get conversions(): readonly Type.Conversion[] {
     const conversions: Type.Conversion[] = [

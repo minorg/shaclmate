@@ -1,5 +1,7 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
+
 import { Memoize } from "typescript-memoize";
+
 import { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 

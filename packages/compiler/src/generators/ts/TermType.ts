@@ -23,6 +23,7 @@ export class TermType<
   readonly in_: readonly TermT[];
   readonly mutable: boolean = false;
   readonly nodeKinds: Set<TermT["termType"]>;
+  readonly typeof: "boolean" | "number" | "object" | "string" = "object";
 
   constructor({
     defaultValue,

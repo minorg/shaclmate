@@ -1,10 +1,12 @@
 import { Memoize } from "typescript-memoize";
+
 import { PrimitiveType } from "./PrimitiveType.js";
 import type { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 export class BooleanType extends PrimitiveType<boolean> {
   readonly kind = "BooleanType";
+  override readonly typeof = "boolean";
 
   override get conversions(): readonly Type.Conversion[] {
     const conversions: Type.Conversion[] = [
@@ -29,7 +31,7 @@ export class BooleanType extends PrimitiveType<boolean> {
     if (this.primitiveIn.length > 0) {
       return this.primitiveIn.map((value) => value.toString()).join(" | ");
     }
-    return "boolean";
+    return this.typeof;
   }
 
   override jsonZodSchema({

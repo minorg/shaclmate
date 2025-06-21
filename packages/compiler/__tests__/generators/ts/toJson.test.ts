@@ -3,7 +3,7 @@ import { harnesses } from "./harnesses.js";
 
 describe("toJson", () => {
   it("union properties", ({ expect }) => {
-    const jsonObject = harnesses.unionProperties.instance.toJson();
+    const jsonObject = harnesses.unionProperties1.instance.toJson();
     expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
     expect(jsonObject.type).toStrictEqual("UnionPropertiesNodeShape");
     expect(jsonObject.orLiteralsProperty).toStrictEqual({

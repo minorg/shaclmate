@@ -39,6 +39,7 @@ export class ObjectType extends DeclaredType {
   readonly declarationType: TsObjectDeclarationType;
   readonly extern: boolean;
   readonly kind = "ObjectType";
+  readonly typeof = "object";
 
   constructor({
     abstract,

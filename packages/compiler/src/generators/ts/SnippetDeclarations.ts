@@ -151,8 +151,8 @@ export namespace $EqualsResult {
     readonly type: "Primitive";
   }
   | {
-    readonly left: object;
-    readonly right: object;
+    readonly left: any;
+    readonly right: any;
     readonly propertyName: string;
     readonly propertyValuesUnequal: Unequal;
     readonly type: "Property";

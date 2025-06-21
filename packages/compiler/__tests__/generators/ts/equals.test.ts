@@ -70,12 +70,12 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesNodeShape({
         identifier,
-        orUnrelatedProperty: { type: "0-number", value: 1 },
+        orUnrelatedProperty: 1,
       })
         .equals(
           new kitchenSink.UnionPropertiesNodeShape({
             identifier,
-            orUnrelatedProperty: { type: "0-number", value: 1 },
+            orUnrelatedProperty: 1,
           }),
         )
         .extract(),
@@ -84,18 +84,15 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesNodeShape({
         identifier,
-        orUnrelatedProperty: { type: "0-number", value: 1 },
+        orUnrelatedProperty: 1,
       })
         .equals(
           new kitchenSink.UnionPropertiesNodeShape({
             identifier,
-            orUnrelatedProperty: {
-              type: "1-NonClassNodeShape",
-              value: new kitchenSink.NonClassNodeShape({
-                identifier: dataFactory.blankNode(),
-                stringProperty: "test",
-              }),
-            },
+            orUnrelatedProperty: new kitchenSink.NonClassNodeShape({
+              identifier: dataFactory.blankNode(),
+              stringProperty: "test",
+            }),
           }),
         )
         .extract(),
