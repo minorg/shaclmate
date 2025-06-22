@@ -548,30 +548,35 @@ export namespace UuidV4IriNodeShape {
 export class UnionPropertiesNodeShape {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
   readonly type = "UnionPropertiesNodeShape";
-  readonly orLiteralsProperty: purify.Maybe<rdfjs.Literal>;
-  readonly orTermsProperty: purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>;
-  readonly orUnrelatedProperty: purify.Maybe<number | NonClassNodeShape>;
+  readonly narrowLiteralsProperty: purify.Maybe<number | string>;
+  readonly unrelatedTypesProperty: purify.Maybe<number | NonClassNodeShape>;
+  readonly widenedLiteralsProperty: purify.Maybe<rdfjs.Literal>;
+  readonly widenedTermsProperty: purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>;
 
   constructor(parameters: {
     readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly orLiteralsProperty?:
+    readonly narrowLiteralsProperty?:
+      | number
+      | purify.Maybe<number | string>
+      | string;
+    readonly unrelatedTypesProperty?:
+      | NonClassNodeShape
+      | number
+      | purify.Maybe<number | NonClassNodeShape>;
+    readonly widenedLiteralsProperty?:
       | rdfjs.Literal
       | Date
       | boolean
       | number
       | purify.Maybe<rdfjs.Literal>
       | string;
-    readonly orTermsProperty?:
+    readonly widenedTermsProperty?:
       | (rdfjs.Literal | rdfjs.NamedNode)
       | Date
       | boolean
       | number
       | purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>
       | string;
-    readonly orUnrelatedProperty?:
-      | NonClassNodeShape
-      | number
-      | purify.Maybe<number | NonClassNodeShape>;
   }) {
     if (typeof parameters.identifier === "object") {
       this._identifier = parameters.identifier;
@@ -582,78 +587,102 @@ export class UnionPropertiesNodeShape {
       this._identifier = parameters.identifier satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.orLiteralsProperty)) {
-      this.orLiteralsProperty = parameters.orLiteralsProperty;
-    } else if (typeof parameters.orLiteralsProperty === "boolean") {
-      this.orLiteralsProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.orLiteralsProperty, { dataFactory }),
+    if (purify.Maybe.isMaybe(parameters.narrowLiteralsProperty)) {
+      this.narrowLiteralsProperty = parameters.narrowLiteralsProperty;
+    } else if (typeof parameters.narrowLiteralsProperty === "number") {
+      this.narrowLiteralsProperty = purify.Maybe.of(
+        parameters.narrowLiteralsProperty,
       );
-    } else if (
-      typeof parameters.orLiteralsProperty === "object" &&
-      parameters.orLiteralsProperty instanceof Date
-    ) {
-      this.orLiteralsProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.orLiteralsProperty, { dataFactory }),
+    } else if (typeof parameters.narrowLiteralsProperty === "string") {
+      this.narrowLiteralsProperty = purify.Maybe.of(
+        parameters.narrowLiteralsProperty,
       );
-    } else if (typeof parameters.orLiteralsProperty === "number") {
-      this.orLiteralsProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.orLiteralsProperty, { dataFactory }),
-      );
-    } else if (typeof parameters.orLiteralsProperty === "string") {
-      this.orLiteralsProperty = purify.Maybe.of(
-        dataFactory.literal(parameters.orLiteralsProperty),
-      );
-    } else if (typeof parameters.orLiteralsProperty === "object") {
-      this.orLiteralsProperty = purify.Maybe.of(parameters.orLiteralsProperty);
-    } else if (typeof parameters.orLiteralsProperty === "undefined") {
-      this.orLiteralsProperty = purify.Maybe.empty();
+    } else if (typeof parameters.narrowLiteralsProperty === "undefined") {
+      this.narrowLiteralsProperty = purify.Maybe.empty();
     } else {
-      this.orLiteralsProperty = parameters.orLiteralsProperty satisfies never;
+      this.narrowLiteralsProperty =
+        parameters.narrowLiteralsProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.orTermsProperty)) {
-      this.orTermsProperty = parameters.orTermsProperty;
-    } else if (typeof parameters.orTermsProperty === "boolean") {
-      this.orTermsProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.orTermsProperty, { dataFactory }),
+    if (purify.Maybe.isMaybe(parameters.unrelatedTypesProperty)) {
+      this.unrelatedTypesProperty = parameters.unrelatedTypesProperty;
+    } else if (typeof parameters.unrelatedTypesProperty === "number") {
+      this.unrelatedTypesProperty = purify.Maybe.of(
+        parameters.unrelatedTypesProperty,
       );
-    } else if (
-      typeof parameters.orTermsProperty === "object" &&
-      parameters.orTermsProperty instanceof Date
-    ) {
-      this.orTermsProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.orTermsProperty, { dataFactory }),
+    } else if (typeof parameters.unrelatedTypesProperty === "object") {
+      this.unrelatedTypesProperty = purify.Maybe.of(
+        parameters.unrelatedTypesProperty,
       );
-    } else if (typeof parameters.orTermsProperty === "number") {
-      this.orTermsProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.orTermsProperty, { dataFactory }),
-      );
-    } else if (typeof parameters.orTermsProperty === "string") {
-      this.orTermsProperty = purify.Maybe.of(
-        dataFactory.literal(parameters.orTermsProperty),
-      );
-    } else if (typeof parameters.orTermsProperty === "object") {
-      this.orTermsProperty = purify.Maybe.of(parameters.orTermsProperty);
-    } else if (typeof parameters.orTermsProperty === "undefined") {
-      this.orTermsProperty = purify.Maybe.empty();
+    } else if (typeof parameters.unrelatedTypesProperty === "undefined") {
+      this.unrelatedTypesProperty = purify.Maybe.empty();
     } else {
-      this.orTermsProperty = parameters.orTermsProperty satisfies never;
+      this.unrelatedTypesProperty =
+        parameters.unrelatedTypesProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.orUnrelatedProperty)) {
-      this.orUnrelatedProperty = parameters.orUnrelatedProperty;
-    } else if (typeof parameters.orUnrelatedProperty === "number") {
-      this.orUnrelatedProperty = purify.Maybe.of(
-        parameters.orUnrelatedProperty,
+    if (purify.Maybe.isMaybe(parameters.widenedLiteralsProperty)) {
+      this.widenedLiteralsProperty = parameters.widenedLiteralsProperty;
+    } else if (typeof parameters.widenedLiteralsProperty === "boolean") {
+      this.widenedLiteralsProperty = purify.Maybe.of(
+        rdfLiteral.toRdf(parameters.widenedLiteralsProperty, { dataFactory }),
       );
-    } else if (typeof parameters.orUnrelatedProperty === "object") {
-      this.orUnrelatedProperty = purify.Maybe.of(
-        parameters.orUnrelatedProperty,
+    } else if (
+      typeof parameters.widenedLiteralsProperty === "object" &&
+      parameters.widenedLiteralsProperty instanceof Date
+    ) {
+      this.widenedLiteralsProperty = purify.Maybe.of(
+        rdfLiteral.toRdf(parameters.widenedLiteralsProperty, { dataFactory }),
       );
-    } else if (typeof parameters.orUnrelatedProperty === "undefined") {
-      this.orUnrelatedProperty = purify.Maybe.empty();
+    } else if (typeof parameters.widenedLiteralsProperty === "number") {
+      this.widenedLiteralsProperty = purify.Maybe.of(
+        rdfLiteral.toRdf(parameters.widenedLiteralsProperty, { dataFactory }),
+      );
+    } else if (typeof parameters.widenedLiteralsProperty === "string") {
+      this.widenedLiteralsProperty = purify.Maybe.of(
+        dataFactory.literal(parameters.widenedLiteralsProperty),
+      );
+    } else if (typeof parameters.widenedLiteralsProperty === "object") {
+      this.widenedLiteralsProperty = purify.Maybe.of(
+        parameters.widenedLiteralsProperty,
+      );
+    } else if (typeof parameters.widenedLiteralsProperty === "undefined") {
+      this.widenedLiteralsProperty = purify.Maybe.empty();
     } else {
-      this.orUnrelatedProperty = parameters.orUnrelatedProperty satisfies never;
+      this.widenedLiteralsProperty =
+        parameters.widenedLiteralsProperty satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.widenedTermsProperty)) {
+      this.widenedTermsProperty = parameters.widenedTermsProperty;
+    } else if (typeof parameters.widenedTermsProperty === "boolean") {
+      this.widenedTermsProperty = purify.Maybe.of(
+        rdfLiteral.toRdf(parameters.widenedTermsProperty, { dataFactory }),
+      );
+    } else if (
+      typeof parameters.widenedTermsProperty === "object" &&
+      parameters.widenedTermsProperty instanceof Date
+    ) {
+      this.widenedTermsProperty = purify.Maybe.of(
+        rdfLiteral.toRdf(parameters.widenedTermsProperty, { dataFactory }),
+      );
+    } else if (typeof parameters.widenedTermsProperty === "number") {
+      this.widenedTermsProperty = purify.Maybe.of(
+        rdfLiteral.toRdf(parameters.widenedTermsProperty, { dataFactory }),
+      );
+    } else if (typeof parameters.widenedTermsProperty === "string") {
+      this.widenedTermsProperty = purify.Maybe.of(
+        dataFactory.literal(parameters.widenedTermsProperty),
+      );
+    } else if (typeof parameters.widenedTermsProperty === "object") {
+      this.widenedTermsProperty = purify.Maybe.of(
+        parameters.widenedTermsProperty,
+      );
+    } else if (typeof parameters.widenedTermsProperty === "undefined") {
+      this.widenedTermsProperty = purify.Maybe.empty();
+    } else {
+      this.widenedTermsProperty =
+        parameters.widenedTermsProperty satisfies never;
     }
   }
 
@@ -685,28 +714,39 @@ export class UnionPropertiesNodeShape {
         ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
-          this.orLiteralsProperty,
-          other.orLiteralsProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "orLiteralsProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
-          this.orTermsProperty,
-          other.orTermsProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "orTermsProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
+        ((left, right) =>
+          $maybeEquals(
+            left,
+            right,
+            (left: number | string, right: number | string) => {
+              if (typeof left === "number" && typeof right === "number") {
+                return $strictEquals(left, right);
+              }
+              if (typeof left === "string" && typeof right === "string") {
+                return $strictEquals(left, right);
+              }
+
+              return purify.Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "BooleanEquals" as const,
+                },
+                type: "Property" as const,
+              });
+            },
+          ))(this.narrowLiteralsProperty, other.narrowLiteralsProperty).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "narrowLiteralsProperty",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
       )
       .chain(() =>
         ((left, right) =>
@@ -736,15 +776,39 @@ export class UnionPropertiesNodeShape {
                 type: "Property" as const,
               });
             },
-          ))(this.orUnrelatedProperty, other.orUnrelatedProperty).mapLeft(
+          ))(this.unrelatedTypesProperty, other.unrelatedTypesProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "orUnrelatedProperty",
+            propertyName: "unrelatedTypesProperty",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
         ),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+          this.widenedLiteralsProperty,
+          other.widenedLiteralsProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "widenedLiteralsProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+          this.widenedTermsProperty,
+          other.widenedTermsProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "widenedTermsProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
       );
   }
 
@@ -764,17 +828,22 @@ export class UnionPropertiesNodeShape {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    this.orLiteralsProperty.ifJust((_value0) => {
-      _hasher.update(_value0.datatype.value);
-      _hasher.update(_value0.language);
-      _hasher.update(_value0.termType);
-      _hasher.update(_value0.value);
+    this.narrowLiteralsProperty.ifJust((_value0) => {
+      switch (typeof _value0) {
+        case "number": {
+          _hasher.update(_value0.toString());
+          break;
+        }
+        case "string": {
+          _hasher.update(_value0);
+          break;
+        }
+        default:
+          _value0 satisfies never;
+          throw new Error("unrecognized type");
+      }
     });
-    this.orTermsProperty.ifJust((_value0) => {
-      _hasher.update(_value0.termType);
-      _hasher.update(_value0.value);
-    });
-    this.orUnrelatedProperty.ifJust((_value0) => {
+    this.unrelatedTypesProperty.ifJust((_value0) => {
       switch (typeof _value0) {
         case "number": {
           _hasher.update(_value0.toString());
@@ -789,6 +858,16 @@ export class UnionPropertiesNodeShape {
           throw new Error("unrecognized type");
       }
     });
+    this.widenedLiteralsProperty.ifJust((_value0) => {
+      _hasher.update(_value0.datatype.value);
+      _hasher.update(_value0.language);
+      _hasher.update(_value0.termType);
+      _hasher.update(_value0.value);
+    });
+    this.widenedTermsProperty.ifJust((_value0) => {
+      _hasher.update(_value0.termType);
+      _hasher.update(_value0.value);
+    });
     return _hasher;
   }
 
@@ -800,7 +879,13 @@ export class UnionPropertiesNodeShape {
             ? `_:${this.identifier.value}`
             : this.identifier.value,
         type: this.type,
-        orLiteralsProperty: this.orLiteralsProperty
+        narrowLiteralsProperty: this.narrowLiteralsProperty
+          .map((_item) => (typeof _item === "string" ? _item : _item))
+          .extract(),
+        unrelatedTypesProperty: this.unrelatedTypesProperty
+          .map((_item) => (typeof _item === "object" ? _item.toJson() : _item))
+          .extract(),
+        widenedLiteralsProperty: this.widenedLiteralsProperty
           .map((_item) => ({
             "@language": _item.language.length > 0 ? _item.language : undefined,
             "@type":
@@ -810,7 +895,7 @@ export class UnionPropertiesNodeShape {
             "@value": _item.value,
           }))
           .extract(),
-        orTermsProperty: this.orTermsProperty
+        widenedTermsProperty: this.widenedTermsProperty
           .map((_item) =>
             _item.termType === "NamedNode"
               ? { "@id": _item.value, termType: "NamedNode" as const }
@@ -826,9 +911,6 @@ export class UnionPropertiesNodeShape {
                   termType: "Literal" as const,
                 },
           )
-          .extract(),
-        orUnrelatedProperty: this.orUnrelatedProperty
-          .map((_item) => (typeof _item === "object" ? _item.toJson() : _item))
           .extract(),
       } satisfies UnionPropertiesNodeShape.Json),
     );
@@ -846,20 +928,26 @@ export class UnionPropertiesNodeShape {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode("http://example.com/orLiteralsProperty"),
-      this.orLiteralsProperty,
+      dataFactory.namedNode("http://example.com/narrowLiteralsProperty"),
+      this.narrowLiteralsProperty.map((_value) =>
+        typeof _value === "string" ? _value : _value,
+      ),
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/orTermsProperty"),
-      this.orTermsProperty,
-    );
-    _resource.add(
-      dataFactory.namedNode("http://example.com/orUnrelatedProperty"),
-      this.orUnrelatedProperty.map((_value) =>
+      dataFactory.namedNode("http://example.com/unrelatedTypesProperty"),
+      this.unrelatedTypesProperty.map((_value) =>
         typeof _value === "object"
           ? _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
           : _value,
       ),
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/widenedLiteralsProperty"),
+      this.widenedLiteralsProperty,
+    );
+    _resource.add(
+      dataFactory.namedNode("http://example.com/widenedTermsProperty"),
+      this.widenedTermsProperty,
     );
     return _resource;
   }
@@ -873,14 +961,18 @@ export namespace UnionPropertiesNodeShape {
   export type Json = {
     readonly "@id": string;
     readonly type: "UnionPropertiesNodeShape";
-    readonly orLiteralsProperty:
+    readonly narrowLiteralsProperty: (number | string) | undefined;
+    readonly unrelatedTypesProperty:
+      | (number | NonClassNodeShape.Json)
+      | undefined;
+    readonly widenedLiteralsProperty:
       | {
           readonly "@language": string | undefined;
           readonly "@type": string | undefined;
           readonly "@value": string;
         }
       | undefined;
-    readonly orTermsProperty:
+    readonly widenedTermsProperty:
       | (
           | { readonly "@id": string; readonly termType: "NamedNode" }
           | {
@@ -891,16 +983,18 @@ export namespace UnionPropertiesNodeShape {
             }
         )
       | undefined;
-    readonly orUnrelatedProperty: (number | NonClassNodeShape.Json) | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      orLiteralsProperty: purify.Maybe<rdfjs.Literal>;
-      orTermsProperty: purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>;
-      orUnrelatedProperty: purify.Maybe<number | NonClassNodeShape>;
+      narrowLiteralsProperty: purify.Maybe<number | string>;
+      unrelatedTypesProperty: purify.Maybe<number | NonClassNodeShape>;
+      widenedLiteralsProperty: purify.Maybe<rdfjs.Literal>;
+      widenedTermsProperty: purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>;
     }
   > {
     const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
@@ -912,8 +1006,18 @@ export namespace UnionPropertiesNodeShape {
     const identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    const orLiteralsProperty = purify.Maybe.fromNullable(
-      _jsonObject["orLiteralsProperty"],
+    const narrowLiteralsProperty = purify.Maybe.fromNullable(
+      _jsonObject["narrowLiteralsProperty"],
+    ).map((_item) => (typeof _item === "string" ? _item : _item));
+    const unrelatedTypesProperty = purify.Maybe.fromNullable(
+      _jsonObject["unrelatedTypesProperty"],
+    ).map((_item) =>
+      typeof _item === "object"
+        ? NonClassNodeShape.fromJson(_item).unsafeCoerce()
+        : _item,
+    );
+    const widenedLiteralsProperty = purify.Maybe.fromNullable(
+      _jsonObject["widenedLiteralsProperty"],
     ).map((_item) =>
       dataFactory.literal(
         _item["@value"],
@@ -924,8 +1028,8 @@ export namespace UnionPropertiesNodeShape {
             : undefined,
       ),
     );
-    const orTermsProperty = purify.Maybe.fromNullable(
-      _jsonObject["orTermsProperty"],
+    const widenedTermsProperty = purify.Maybe.fromNullable(
+      _jsonObject["widenedTermsProperty"],
     ).map((_item) =>
       _item.termType === "NamedNode"
         ? dataFactory.namedNode(_item["@id"])
@@ -938,18 +1042,12 @@ export namespace UnionPropertiesNodeShape {
                 : undefined,
           ),
     );
-    const orUnrelatedProperty = purify.Maybe.fromNullable(
-      _jsonObject["orUnrelatedProperty"],
-    ).map((_item) =>
-      typeof _item === "object"
-        ? NonClassNodeShape.fromJson(_item).unsafeCoerce()
-        : _item,
-    );
     return purify.Either.of({
       identifier,
-      orLiteralsProperty,
-      orTermsProperty,
-      orUnrelatedProperty,
+      narrowLiteralsProperty,
+      unrelatedTypesProperty,
+      widenedLiteralsProperty,
+      widenedTermsProperty,
     });
   }
 
@@ -986,12 +1084,19 @@ export namespace UnionPropertiesNodeShape {
           type: "Control",
         },
         {
-          scope: `${scopePrefix}/properties/orLiteralsProperty`,
+          scope: `${scopePrefix}/properties/narrowLiteralsProperty`,
           type: "Control",
         },
-        { scope: `${scopePrefix}/properties/orTermsProperty`, type: "Control" },
         {
-          scope: `${scopePrefix}/properties/orUnrelatedProperty`,
+          scope: `${scopePrefix}/properties/unrelatedTypesProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/widenedLiteralsProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/widenedTermsProperty`,
           type: "Control",
         },
       ],
@@ -1004,14 +1109,20 @@ export namespace UnionPropertiesNodeShape {
     return zod.object({
       "@id": zod.string().min(1),
       type: zod.literal("UnionPropertiesNodeShape"),
-      orLiteralsProperty: zod
+      narrowLiteralsProperty: zod
+        .union([zod.number(), zod.string()])
+        .optional(),
+      unrelatedTypesProperty: zod
+        .union([zod.number(), NonClassNodeShape.jsonZodSchema()])
+        .optional(),
+      widenedLiteralsProperty: zod
         .object({
           "@language": zod.string().optional(),
           "@type": zod.string().optional(),
           "@value": zod.string(),
         })
         .optional(),
-      orTermsProperty: zod
+      widenedTermsProperty: zod
         .discriminatedUnion("termType", [
           zod.object({
             "@language": zod.string().optional(),
@@ -1024,9 +1135,6 @@ export namespace UnionPropertiesNodeShape {
             termType: zod.literal("NamedNode"),
           }),
         ])
-        .optional(),
-      orUnrelatedProperty: zod
-        .union([zod.number(), NonClassNodeShape.jsonZodSchema()])
         .optional(),
     });
   }
@@ -1046,19 +1154,103 @@ export namespace UnionPropertiesNodeShape {
     rdfjsResource.Resource.ValueError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      orLiteralsProperty: purify.Maybe<rdfjs.Literal>;
-      orTermsProperty: purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>;
-      orUnrelatedProperty: purify.Maybe<number | NonClassNodeShape>;
+      narrowLiteralsProperty: purify.Maybe<number | string>;
+      unrelatedTypesProperty: purify.Maybe<number | NonClassNodeShape>;
+      widenedLiteralsProperty: purify.Maybe<rdfjs.Literal>;
+      widenedTermsProperty: purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>;
     }
   > {
     const identifier = _resource.identifier;
-    const _orLiteralsPropertyEither: purify.Either<
+    const _narrowLiteralsPropertyEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<number | string>
+    > = purify.Either.of(
+      (
+        _resource
+          .values(
+            dataFactory.namedNode("http://example.com/narrowLiteralsProperty"),
+            { unique: true },
+          )
+          .head()
+          .chain((_value) => _value.toNumber()) as purify.Either<
+          rdfjsResource.Resource.ValueError,
+          number | string
+        >
+      )
+        .altLazy(
+          () =>
+            _resource
+              .values(
+                dataFactory.namedNode(
+                  "http://example.com/narrowLiteralsProperty",
+                ),
+                { unique: true },
+              )
+              .head()
+              .chain((_value) => _value.toString()) as purify.Either<
+              rdfjsResource.Resource.ValueError,
+              number | string
+            >,
+        )
+        .toMaybe(),
+    );
+    if (_narrowLiteralsPropertyEither.isLeft()) {
+      return _narrowLiteralsPropertyEither;
+    }
+
+    const narrowLiteralsProperty = _narrowLiteralsPropertyEither.unsafeCoerce();
+    const _unrelatedTypesPropertyEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<number | NonClassNodeShape>
+    > = purify.Either.of(
+      (
+        _resource
+          .values(
+            dataFactory.namedNode("http://example.com/unrelatedTypesProperty"),
+            { unique: true },
+          )
+          .head()
+          .chain((_value) => _value.toNumber()) as purify.Either<
+          rdfjsResource.Resource.ValueError,
+          number | NonClassNodeShape
+        >
+      )
+        .altLazy(
+          () =>
+            _resource
+              .values(
+                dataFactory.namedNode(
+                  "http://example.com/unrelatedTypesProperty",
+                ),
+                { unique: true },
+              )
+              .head()
+              .chain((value) => value.toResource())
+              .chain((_resource) =>
+                NonClassNodeShape.fromRdf({
+                  ..._context,
+                  languageIn: _languageIn,
+                  resource: _resource,
+                }),
+              ) as purify.Either<
+              rdfjsResource.Resource.ValueError,
+              number | NonClassNodeShape
+            >,
+        )
+        .toMaybe(),
+    );
+    if (_unrelatedTypesPropertyEither.isLeft()) {
+      return _unrelatedTypesPropertyEither;
+    }
+
+    const unrelatedTypesProperty = _unrelatedTypesPropertyEither.unsafeCoerce();
+    const _widenedLiteralsPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<rdfjs.Literal>
     > = purify.Either.of(
       _resource
         .values(
-          dataFactory.namedNode("http://example.com/orLiteralsProperty"),
+          dataFactory.namedNode("http://example.com/widenedLiteralsProperty"),
           { unique: true },
         )
         .filter((_value) => {
@@ -1078,19 +1270,21 @@ export namespace UnionPropertiesNodeShape {
         .chain((_value) => _value.toLiteral())
         .toMaybe(),
     );
-    if (_orLiteralsPropertyEither.isLeft()) {
-      return _orLiteralsPropertyEither;
+    if (_widenedLiteralsPropertyEither.isLeft()) {
+      return _widenedLiteralsPropertyEither;
     }
 
-    const orLiteralsProperty = _orLiteralsPropertyEither.unsafeCoerce();
-    const _orTermsPropertyEither: purify.Either<
+    const widenedLiteralsProperty =
+      _widenedLiteralsPropertyEither.unsafeCoerce();
+    const _widenedTermsPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>
     > = purify.Either.of(
       _resource
-        .values(dataFactory.namedNode("http://example.com/orTermsProperty"), {
-          unique: true,
-        })
+        .values(
+          dataFactory.namedNode("http://example.com/widenedTermsProperty"),
+          { unique: true },
+        )
         .head()
         .chain((_value) =>
           purify.Either.of(_value.toTerm()).chain((term) => {
@@ -1105,7 +1299,7 @@ export namespace UnionPropertiesNodeShape {
                     expectedValueType: "(rdfjs.Literal | rdfjs.NamedNode)",
                     focusResource: _resource,
                     predicate: dataFactory.namedNode(
-                      "http://example.com/orTermsProperty",
+                      "http://example.com/widenedTermsProperty",
                     ),
                   }),
                 );
@@ -1114,59 +1308,17 @@ export namespace UnionPropertiesNodeShape {
         )
         .toMaybe(),
     );
-    if (_orTermsPropertyEither.isLeft()) {
-      return _orTermsPropertyEither;
+    if (_widenedTermsPropertyEither.isLeft()) {
+      return _widenedTermsPropertyEither;
     }
 
-    const orTermsProperty = _orTermsPropertyEither.unsafeCoerce();
-    const _orUnrelatedPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<number | NonClassNodeShape>
-    > = purify.Either.of(
-      (
-        _resource
-          .values(
-            dataFactory.namedNode("http://example.com/orUnrelatedProperty"),
-            { unique: true },
-          )
-          .head()
-          .chain((_value) => _value.toNumber()) as purify.Either<
-          rdfjsResource.Resource.ValueError,
-          number | NonClassNodeShape
-        >
-      )
-        .altLazy(
-          () =>
-            _resource
-              .values(
-                dataFactory.namedNode("http://example.com/orUnrelatedProperty"),
-                { unique: true },
-              )
-              .head()
-              .chain((value) => value.toResource())
-              .chain((_resource) =>
-                NonClassNodeShape.fromRdf({
-                  ..._context,
-                  languageIn: _languageIn,
-                  resource: _resource,
-                }),
-              ) as purify.Either<
-              rdfjsResource.Resource.ValueError,
-              number | NonClassNodeShape
-            >,
-        )
-        .toMaybe(),
-    );
-    if (_orUnrelatedPropertyEither.isLeft()) {
-      return _orUnrelatedPropertyEither;
-    }
-
-    const orUnrelatedProperty = _orUnrelatedPropertyEither.unsafeCoerce();
+    const widenedTermsProperty = _widenedTermsPropertyEither.unsafeCoerce();
     return purify.Either.of({
       identifier,
-      orLiteralsProperty,
-      orTermsProperty,
-      orUnrelatedProperty,
+      narrowLiteralsProperty,
+      unrelatedTypesProperty,
+      widenedLiteralsProperty,
+      widenedTermsProperty,
     });
   }
 
@@ -1184,9 +1336,16 @@ export namespace UnionPropertiesNodeShape {
   }
 
   export const rdfProperties = [
-    { path: dataFactory.namedNode("http://example.com/orLiteralsProperty") },
-    { path: dataFactory.namedNode("http://example.com/orTermsProperty") },
-    { path: dataFactory.namedNode("http://example.com/orUnrelatedProperty") },
+    {
+      path: dataFactory.namedNode("http://example.com/narrowLiteralsProperty"),
+    },
+    {
+      path: dataFactory.namedNode("http://example.com/unrelatedTypesProperty"),
+    },
+    {
+      path: dataFactory.namedNode("http://example.com/widenedLiteralsProperty"),
+    },
+    { path: dataFactory.namedNode("http://example.com/widenedTermsProperty") },
   ];
 
   export function sparqlConstructQuery(
@@ -1245,29 +1404,46 @@ export namespace UnionPropertiesNodeShape {
         : "unionPropertiesNodeShape");
     return [
       {
-        object: dataFactory.variable!(`${variablePrefix}OrLiteralsProperty`),
+        object: dataFactory.variable!(
+          `${variablePrefix}NarrowLiteralsProperty`,
+        ),
         predicate: dataFactory.namedNode(
-          "http://example.com/orLiteralsProperty",
+          "http://example.com/narrowLiteralsProperty",
         ),
         subject,
       },
       {
-        object: dataFactory.variable!(`${variablePrefix}OrTermsProperty`),
-        predicate: dataFactory.namedNode("http://example.com/orTermsProperty"),
-        subject,
-      },
-      {
-        object: dataFactory.variable!(`${variablePrefix}OrUnrelatedProperty`),
+        object: dataFactory.variable!(
+          `${variablePrefix}UnrelatedTypesProperty`,
+        ),
         predicate: dataFactory.namedNode(
-          "http://example.com/orUnrelatedProperty",
+          "http://example.com/unrelatedTypesProperty",
         ),
         subject,
       },
       ...NonClassNodeShape.sparqlConstructTemplateTriples({
         ignoreRdfType: true,
-        subject: dataFactory.variable!(`${variablePrefix}OrUnrelatedProperty`),
-        variablePrefix: `${variablePrefix}OrUnrelatedProperty`,
+        subject: dataFactory.variable!(
+          `${variablePrefix}UnrelatedTypesProperty`,
+        ),
+        variablePrefix: `${variablePrefix}UnrelatedTypesProperty`,
       }),
+      {
+        object: dataFactory.variable!(
+          `${variablePrefix}WidenedLiteralsProperty`,
+        ),
+        predicate: dataFactory.namedNode(
+          "http://example.com/widenedLiteralsProperty",
+        ),
+        subject,
+      },
+      {
+        object: dataFactory.variable!(`${variablePrefix}WidenedTermsProperty`),
+        predicate: dataFactory.namedNode(
+          "http://example.com/widenedTermsProperty",
+        ),
+        subject,
+      },
     ];
   }
 
@@ -1290,16 +1466,17 @@ export namespace UnionPropertiesNodeShape {
             triples: [
               {
                 object: dataFactory.variable!(
-                  `${variablePrefix}OrLiteralsProperty`,
+                  `${variablePrefix}NarrowLiteralsProperty`,
                 ),
                 predicate: dataFactory.namedNode(
-                  "http://example.com/orLiteralsProperty",
+                  "http://example.com/narrowLiteralsProperty",
                 ),
                 subject,
               },
             ],
             type: "bgp",
           },
+          { patterns: [{ patterns: [], type: "group" }], type: "union" },
         ],
         type: "optional",
       },
@@ -1309,29 +1486,10 @@ export namespace UnionPropertiesNodeShape {
             triples: [
               {
                 object: dataFactory.variable!(
-                  `${variablePrefix}OrTermsProperty`,
+                  `${variablePrefix}UnrelatedTypesProperty`,
                 ),
                 predicate: dataFactory.namedNode(
-                  "http://example.com/orTermsProperty",
-                ),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-        ],
-        type: "optional",
-      },
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}OrUnrelatedProperty`,
-                ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/orUnrelatedProperty",
+                  "http://example.com/unrelatedTypesProperty",
                 ),
                 subject,
               },
@@ -1346,15 +1504,53 @@ export namespace UnionPropertiesNodeShape {
                   ...NonClassNodeShape.sparqlWherePatterns({
                     ignoreRdfType: true,
                     subject: dataFactory.variable!(
-                      `${variablePrefix}OrUnrelatedProperty`,
+                      `${variablePrefix}UnrelatedTypesProperty`,
                     ),
-                    variablePrefix: `${variablePrefix}OrUnrelatedProperty`,
+                    variablePrefix: `${variablePrefix}UnrelatedTypesProperty`,
                   }),
                 ],
                 type: "group",
               },
             ],
             type: "union",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}WidenedLiteralsProperty`,
+                ),
+                predicate: dataFactory.namedNode(
+                  "http://example.com/widenedLiteralsProperty",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}WidenedTermsProperty`,
+                ),
+                predicate: dataFactory.namedNode(
+                  "http://example.com/widenedTermsProperty",
+                ),
+                subject,
+              },
+            ],
+            type: "bgp",
           },
         ],
         type: "optional",
@@ -2513,7 +2709,9 @@ export namespace TermPropertiesNodeShape {
       | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3658,7 +3856,9 @@ export namespace PropertyVisibilitiesNodeShape {
     readonly publicProperty: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4200,7 +4400,9 @@ export namespace PropertyCardinalitiesNodeShape {
     readonly requiredStringProperty: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4811,7 +5013,9 @@ export namespace OrderedPropertiesNodeShape {
     readonly propertyA: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5719,7 +5923,9 @@ export namespace MutablePropertiesNodeShape {
     readonly mutableStringProperty: string | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6542,7 +6748,9 @@ export namespace ListPropertiesNodeShape {
     readonly stringListProperty: readonly string[] | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -7415,7 +7623,9 @@ export namespace LanguageInPropertiesNodeShape {
       | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8055,7 +8265,9 @@ export namespace InterfaceUnionNodeShapeMember2b {
     readonly stringProperty2b: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8404,7 +8616,9 @@ export namespace InterfaceUnionNodeShapeMember2a {
     readonly stringProperty2a: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8753,7 +8967,9 @@ export namespace InterfaceUnionNodeShapeMember1 {
     readonly stringProperty1: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9102,7 +9318,9 @@ export namespace InterfaceNodeShape {
     readonly stringProperty: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9681,7 +9899,9 @@ export namespace InPropertiesNodeShape {
     readonly inStringsProperty: ("text" | "html") | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9844,20 +10064,22 @@ export namespace InPropertiesNodeShape {
         )
         .head()
         .chain((_value) =>
-          _value.toBoolean().chain((value) =>
-            value === true
-              ? purify.Either.of(value)
-              : purify.Left(
-                  new rdfjsResource.Resource.MistypedValueError({
-                    actualValue: rdfLiteral.toRdf(value),
-                    expectedValueType: "true",
-                    focusResource: _resource,
-                    predicate: dataFactory.namedNode(
-                      "http://example.com/inBooleansProperty",
-                    ),
-                  }),
-                ),
-          ),
+          _value
+            .toBoolean()
+            .chain((value) =>
+              value === true
+                ? purify.Either.of(value)
+                : purify.Left(
+                    new rdfjsResource.Resource.MistypedValueError({
+                      actualValue: rdfLiteral.toRdf(value),
+                      expectedValueType: "true",
+                      focusResource: _resource,
+                      predicate: dataFactory.namedNode(
+                        "http://example.com/inBooleansProperty",
+                      ),
+                    }),
+                  ),
+            ),
         )
         .toMaybe(),
     );
@@ -10397,7 +10619,9 @@ export namespace InIdentifierNodeShape {
     readonly stringProperty: string | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.NamedNode<
@@ -10830,7 +11054,9 @@ export namespace HasValuePropertiesNodeShape {
     readonly hasLiteralProperty: string | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11997,7 +12223,9 @@ export namespace ExternPropertiesNodeShape {
     readonly inlineProperty: InlineNodeShape.Json | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13520,7 +13748,9 @@ export namespace DefaultValuePropertiesNodeShape {
     readonly trueBooleanProperty: boolean;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14151,7 +14381,9 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     readonly baseStringProperty: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14586,7 +14818,9 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
   );
   export type Json = BaseInterfaceWithPropertiesNodeShapeStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15017,7 +15251,9 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     readonly parentStringProperty: string;
   } & BaseInterfaceWithoutPropertiesNodeShapeStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15496,7 +15732,9 @@ export namespace ConcreteChildInterfaceNodeShape {
     readonly childStringProperty: string;
   } & ConcreteParentInterfaceNodeShapeStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16556,18 +16794,20 @@ export class ConcreteParentClassNodeShape extends AbstractBaseClassWithoutProper
   }
 
   override equals(other: ConcreteParentClassNodeShape): $EqualsResult {
-    return super.equals(other).chain(() =>
-      $strictEquals(
-        this.parentStringProperty,
-        other.parentStringProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "parentStringProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.parentStringProperty,
+          other.parentStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "parentStringProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -16643,7 +16883,9 @@ export namespace ConcreteParentClassNodeShapeStatic {
     readonly parentStringProperty: string;
   } & AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17003,18 +17245,20 @@ export class ConcreteChildClassNodeShape extends ConcreteParentClassNodeShape {
   }
 
   override equals(other: ConcreteChildClassNodeShape): $EqualsResult {
-    return super.equals(other).chain(() =>
-      $strictEquals(
-        this.childStringProperty,
-        other.childStringProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "childStringProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.childStringProperty,
+          other.childStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "childStringProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -17090,7 +17334,9 @@ export namespace ConcreteChildClassNodeShape {
     readonly childStringProperty: string;
   } & ConcreteParentClassNodeShapeStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;

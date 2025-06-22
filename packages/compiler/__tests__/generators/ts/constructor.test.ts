@@ -26,8 +26,8 @@ describe("constructor", () => {
     expect(
       new kitchenSink.UnionPropertiesNodeShape({
         identifier: dataFactory.blankNode(),
-        orLiteralsProperty: dataFactory.literal("test"),
-      }).orLiteralsProperty.unsafeCoerce().value,
+        widenedLiteralsProperty: dataFactory.literal("test"),
+      }).widenedLiteralsProperty.unsafeCoerce().value,
     ).toStrictEqual("test");
   });
 });

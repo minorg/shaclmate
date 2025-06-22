@@ -39,12 +39,14 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesNodeShape({
         identifier,
-        orTermsProperty: dataFactory.namedNode("http://example.com/term"),
+        widenedTermsProperty: dataFactory.namedNode("http://example.com/term"),
       })
         .equals(
           new kitchenSink.UnionPropertiesNodeShape({
             identifier,
-            orTermsProperty: dataFactory.namedNode("http://example.com/term"),
+            widenedTermsProperty: dataFactory.namedNode(
+              "http://example.com/term",
+            ),
           }),
         )
         .extract(),
@@ -53,12 +55,12 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesNodeShape({
         identifier,
-        orTermsProperty: dataFactory.namedNode("http://example.com/term"),
+        widenedTermsProperty: dataFactory.namedNode("http://example.com/term"),
       })
         .equals(
           new kitchenSink.UnionPropertiesNodeShape({
             identifier,
-            orTermsProperty: dataFactory.literal("test"),
+            widenedTermsProperty: dataFactory.literal("test"),
           }),
         )
         .extract(),
@@ -70,12 +72,12 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesNodeShape({
         identifier,
-        orUnrelatedProperty: 1,
+        unrelatedTypesProperty: 1,
       })
         .equals(
           new kitchenSink.UnionPropertiesNodeShape({
             identifier,
-            orUnrelatedProperty: 1,
+            unrelatedTypesProperty: 1,
           }),
         )
         .extract(),
@@ -84,12 +86,12 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesNodeShape({
         identifier,
-        orUnrelatedProperty: 1,
+        unrelatedTypesProperty: 1,
       })
         .equals(
           new kitchenSink.UnionPropertiesNodeShape({
             identifier,
-            orUnrelatedProperty: new kitchenSink.NonClassNodeShape({
+            unrelatedTypesProperty: new kitchenSink.NonClassNodeShape({
               identifier: dataFactory.blankNode(),
               stringProperty: "test",
             }),
