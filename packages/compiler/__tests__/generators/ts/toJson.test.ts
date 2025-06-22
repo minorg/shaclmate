@@ -6,11 +6,11 @@ describe("toJson", () => {
     const jsonObject = harnesses.unionProperties1.instance.toJson();
     expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
     expect(jsonObject.type).toStrictEqual("UnionPropertiesNodeShape");
-    expect(jsonObject.orLiteralsProperty).toStrictEqual({
+    expect(jsonObject.widenedLiteralsProperty).toStrictEqual({
       "@type": "http://www.w3.org/2001/XMLSchema#integer",
       "@value": "1",
     });
-    expect(jsonObject.orTermsProperty).toStrictEqual({
+    expect(jsonObject.widenedTermsProperty).toStrictEqual({
       termType: "Literal",
       "@value": "test",
     });

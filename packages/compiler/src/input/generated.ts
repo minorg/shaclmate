@@ -1702,6 +1702,7 @@ export interface ShaclmatePropertyShape extends ShaclCorePropertyShape {
       | "http://purl.org/shaclmate/ontology#_Visibility_Public"
     >
   >;
+  readonly widen: purify.Maybe<boolean>;
 }
 
 export namespace ShaclmatePropertyShape {
@@ -1735,6 +1736,7 @@ export namespace ShaclmatePropertyShape {
           | "http://purl.org/shaclmate/ontology#_Visibility_Public"
         >
       >;
+      widen: purify.Maybe<boolean>;
     } & $UnwrapR<
       ReturnType<typeof ShaclCorePropertyShapeStatic.propertiesFromRdf>
     >
@@ -1899,6 +1901,24 @@ export namespace ShaclmatePropertyShape {
     }
 
     const visibility = _visibilityEither.unsafeCoerce();
+    const _widenEither: purify.Either<
+      rdfjsResource.Resource.ValueError,
+      purify.Maybe<boolean>
+    > = purify.Either.of(
+      _resource
+        .values(
+          dataFactory.namedNode("http://purl.org/shaclmate/ontology#widen"),
+          { unique: true },
+        )
+        .head()
+        .chain((_value) => _value.toBoolean())
+        .toMaybe(),
+    );
+    if (_widenEither.isLeft()) {
+      return _widenEither;
+    }
+
+    const widen = _widenEither.unsafeCoerce();
     return purify.Either.of({
       ..._super0,
       identifier,
@@ -1907,6 +1927,7 @@ export namespace ShaclmatePropertyShape {
       mutable,
       name,
       visibility,
+      widen,
     });
   }
 
@@ -1959,6 +1980,10 @@ export namespace ShaclmatePropertyShape {
       dataFactory.namedNode("http://purl.org/shaclmate/ontology#visibility"),
       _shaclmatePropertyShape.visibility,
     );
+    _resource.add(
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#widen"),
+      _shaclmatePropertyShape.widen,
+    );
     return _resource;
   }
 
@@ -1976,6 +2001,7 @@ export namespace ShaclmatePropertyShape {
         "http://purl.org/shaclmate/ontology#visibility",
       ),
     },
+    { path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#widen") },
   ];
 }
 export interface OwlOntology {

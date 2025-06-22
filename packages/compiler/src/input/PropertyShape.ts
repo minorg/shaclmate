@@ -55,4 +55,8 @@ export class PropertyShape extends ShaclCorePropertyShape<
       })
       .orDefault("public" as const);
   }
+
+  get widen(): Maybe<boolean> {
+    return this.generatedShaclmatePropertyShape.widen;
+  }
 }

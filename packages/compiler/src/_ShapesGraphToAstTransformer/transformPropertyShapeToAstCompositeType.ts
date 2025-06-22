@@ -23,7 +23,6 @@ export function transformPropertyShapeToAstCompositeType(
     shape instanceof input.PropertyShape ? shape.defaultValue : Maybe.empty()
   ).alt(inherited !== null ? inherited.defaultValue : Maybe.empty());
 
-  const hasValues = shape.constraints.hasValues;
   const extern = shape.extern.alt(
     inherited !== null ? inherited.extern : Maybe.empty(),
   );
@@ -150,135 +149,163 @@ export function transformPropertyShapeToAstCompositeType(
     return Either.of(memberTypes[0]);
   }
 
+  return widenAstCompositeTypeToSingleType({
+    defaultValue,
+    memberTypes,
+    shape,
+  }).altLazy(() =>
+    Either.of({
+      kind: compositeTypeKind,
+      memberTypes,
+    }),
+  );
+}
+
+function widenAstCompositeTypeToSingleType({
+  defaultValue,
+  memberTypes,
+  shape,
+}: {
+  defaultValue: Maybe<BlankNode | Literal | NamedNode>;
+  memberTypes: readonly ast.Type[];
+  shape: input.Shape;
+}): Either<Error, ast.Type> {
+  if (shape.constraints.hasValues.length > 0) {
+    return Left(
+      new Error(
+        `shape ${shape} hasValues, not attempting to widen composite type into a single type`,
+      ),
+    );
+  }
+
+  if (shape instanceof input.PropertyShape && !shape.widen.orDefault(true)) {
+    return Left(new Error(`shape ${shape} has widening disabled`));
+  }
+
   // Get the type underlying a set or option
   const memberItemTypes = memberTypes.map((memberType) => {
     switch (memberType.kind) {
-      case "SetType":
-        return memberType.itemType;
       case "OptionType":
+        return memberType.itemType;
+      case "SetType":
         return memberType.itemType;
       default:
         return memberType;
     }
   });
 
-  if (hasValues.length === 0) {
-    // Can't handle hasValues when coalescing types
-    const canCoalesce = (
-      memberItemType:
-        | ast.IdentifierType
-        | ast.LiteralType
-        | ast.TermType<BlankNode | Literal | NamedNode>,
-    ) => {
-      if (memberItemType.in_.length > 0) {
-        return false;
-      }
+  const canWiden = (
+    memberItemType:
+      | ast.IdentifierType
+      | ast.LiteralType
+      | ast.TermType<BlankNode | Literal | NamedNode>,
+  ) => {
+    if (memberItemType.in_.length > 0) {
+      return false;
+    }
 
-      switch (memberItemType.kind) {
-        case "LiteralType": {
-          if ((memberItemType as ast.LiteralType).maxExclusive.isJust()) {
-            return false;
-          }
-          if ((memberItemType as ast.LiteralType).maxInclusive.isJust()) {
-            return false;
-          }
-          if ((memberItemType as ast.LiteralType).minExclusive.isJust()) {
-            return false;
-          }
-          if ((memberItemType as ast.LiteralType).minInclusive.isJust()) {
-            return false;
-          }
+    switch (memberItemType.kind) {
+      case "LiteralType": {
+        if ((memberItemType as ast.LiteralType).maxExclusive.isJust()) {
+          return false;
+        }
+        if ((memberItemType as ast.LiteralType).maxInclusive.isJust()) {
+          return false;
+        }
+        if ((memberItemType as ast.LiteralType).minExclusive.isJust()) {
+          return false;
+        }
+        if ((memberItemType as ast.LiteralType).minInclusive.isJust()) {
+          return false;
         }
       }
-
-      return true;
-    };
-
-    if (
-      memberItemTypes.every(
-        (memberItemType) =>
-          memberItemType.kind === "IdentifierType" &&
-          canCoalesce(memberItemType),
-      )
-    ) {
-      // Special case: all member types are identifiers without further constraints
-      return Either.of({
-        defaultValue: defaultValue.filter(
-          (term) => term.termType === "NamedNode",
-        ) as Maybe<NamedNode>,
-        hasValues: [],
-        in_: [],
-        kind: "IdentifierType",
-        nodeKinds: new Set<"BlankNode" | "NamedNode">(
-          memberItemTypes
-            .filter(
-              (memberItemType) => memberItemType.kind === "IdentifierType",
-            )
-            .flatMap((memberItemType) => [
-              ...(memberItemType as ast.IdentifierType).nodeKinds,
-            ]),
-        ),
-      });
     }
 
-    if (
-      memberItemTypes.every(
-        (memberItemType) =>
-          memberItemType.kind === "LiteralType" && canCoalesce(memberItemType),
-      )
-    ) {
-      // Special case: all the member types are Literals without further constraints,
-      // like dash:StringOrLangString
-      // Don't try to coalesce range constraints.
-      return Either.of({
-        datatype: Maybe.empty(),
-        defaultValue: defaultValue.filter(
-          (term) => term.termType === "Literal",
-        ) as Maybe<Literal>,
-        hasValues: [],
-        in_: [],
-        kind: "LiteralType",
-        languageIn: [],
-        maxExclusive: Maybe.empty(),
-        maxInclusive: Maybe.empty(),
-        minExclusive: Maybe.empty(),
-        minInclusive: Maybe.empty(),
-        nodeKinds: new Set<"Literal">(["Literal"]),
-      });
-    }
+    return true;
+  };
 
-    if (
-      memberItemTypes.every(
-        (memberItemType) =>
-          (memberItemType.kind === "IdentifierType" ||
-            memberItemType.kind === "LiteralType" ||
-            memberItemType.kind === "TermType") &&
-          canCoalesce(memberItemType),
-      )
-    ) {
-      // Special case: all member types are terms without further constraints
-      const nodeKinds = new Set<NodeKind>(
-        memberItemTypes.flatMap((memberItemType) => [
-          ...(memberItemType as ast.TermType<BlankNode | Literal | NamedNode>)
-            .nodeKinds,
-        ]),
-      );
-      invariant(
-        nodeKinds.has("Literal") &&
-          (nodeKinds.has("BlankNode") || nodeKinds.has("NamedNode")),
-      ); // The identifier-identifier and literal-literal cases should have been caught above
-      return Either.of({
-        defaultValue,
-        hasValues: [],
-        in_: [],
-        kind: "TermType",
-        nodeKinds,
-      });
-    }
+  if (
+    memberItemTypes.every(
+      (memberItemType) =>
+        memberItemType.kind === "IdentifierType" && canWiden(memberItemType),
+    )
+  ) {
+    // Special case: all member types are identifiers without further constraints
+    return Either.of({
+      defaultValue: defaultValue.filter(
+        (term) => term.termType === "NamedNode",
+      ) as Maybe<NamedNode>,
+      hasValues: [],
+      in_: [],
+      kind: "IdentifierType",
+      nodeKinds: new Set<"BlankNode" | "NamedNode">(
+        memberItemTypes
+          .filter((memberItemType) => memberItemType.kind === "IdentifierType")
+          .flatMap((memberItemType) => [
+            ...(memberItemType as ast.IdentifierType).nodeKinds,
+          ]),
+      ),
+    });
   }
 
-  return Either.of({
-    kind: compositeTypeKind,
-    memberTypes: memberTypes,
-  });
+  if (
+    memberItemTypes.every(
+      (memberItemType) =>
+        memberItemType.kind === "LiteralType" && canWiden(memberItemType),
+    )
+  ) {
+    // Special case: all the member types are Literals without further constraints,
+    // like dash:StringOrLangString
+    // Don't try to widen range constraints.
+    return Either.of({
+      datatype: Maybe.empty(),
+      defaultValue: defaultValue.filter(
+        (term) => term.termType === "Literal",
+      ) as Maybe<Literal>,
+      hasValues: [],
+      in_: [],
+      kind: "LiteralType",
+      languageIn: [],
+      maxExclusive: Maybe.empty(),
+      maxInclusive: Maybe.empty(),
+      minExclusive: Maybe.empty(),
+      minInclusive: Maybe.empty(),
+      nodeKinds: new Set<"Literal">(["Literal"]),
+    });
+  }
+
+  if (
+    memberItemTypes.every(
+      (memberItemType) =>
+        (memberItemType.kind === "IdentifierType" ||
+          memberItemType.kind === "LiteralType" ||
+          memberItemType.kind === "TermType") &&
+        canWiden(memberItemType),
+    )
+  ) {
+    // Special case: all member types are terms without further constraints
+    const nodeKinds = new Set<NodeKind>(
+      memberItemTypes.flatMap((memberItemType) => [
+        ...(memberItemType as ast.TermType<BlankNode | Literal | NamedNode>)
+          .nodeKinds,
+      ]),
+    );
+    invariant(
+      nodeKinds.has("Literal") &&
+        (nodeKinds.has("BlankNode") || nodeKinds.has("NamedNode")),
+    ); // The identifier-identifier and literal-literal cases should have been caught above
+    return Either.of({
+      defaultValue,
+      hasValues: [],
+      in_: [],
+      kind: "TermType",
+      nodeKinds,
+    });
+  }
+
+  return Left(
+    new Error(
+      `shape ${shape} member types could not be widened into a single type`,
+    ),
+  );
 }

@@ -302,20 +302,22 @@ export const harnesses = {
   unionProperties1: new ClassHarness(
     new kitchenSink.UnionPropertiesNodeShape({
       identifier,
-      orLiteralsProperty: 1,
-      orUnrelatedProperty: 1,
-      orTermsProperty: dataFactory.literal("test"),
+      narrowLiteralsProperty: 1,
+      unrelatedTypesProperty: 1,
+      widenedLiteralsProperty: 1,
+      widenedTermsProperty: dataFactory.literal("test"),
     }),
     kitchenSink.UnionPropertiesNodeShape,
   ),
   unionProperties2: new ClassHarness(
     new kitchenSink.UnionPropertiesNodeShape({
       identifier,
-      orLiteralsProperty: new Date(),
-      orUnrelatedProperty: new kitchenSink.NonClassNodeShape({
+      narrowLiteralsProperty: 1,
+      unrelatedTypesProperty: new kitchenSink.NonClassNodeShape({
         stringProperty: "test",
       }),
-      orTermsProperty: dataFactory.literal("test"),
+      widenedLiteralsProperty: new Date(),
+      widenedTermsProperty: dataFactory.literal("test"),
     }),
     kitchenSink.UnionPropertiesNodeShape,
   ),

@@ -137,6 +137,18 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:defaultValue properties." ;
     sh:property [
+        sh:defaultValue false ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:name "falseBooleanProperty" ;
+        sh:path :falseBooleanProperty
+    ], [
+        sh:defaultValue "2018-04-09"^^xsd:date ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:name "dateProperty" ;
+        sh:path :dateProperty
+    ], [
         sh:defaultValue "2018-04-09T10:00:00Z"^^xsd:dateTime ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
@@ -160,18 +172,6 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:minCount 1 ;
         sh:name "trueBooleanProperty" ;
         sh:path :trueBooleanProperty
-    ], [
-        sh:defaultValue false ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:name "falseBooleanProperty" ;
-        sh:path :falseBooleanProperty
-    ], [
-        sh:defaultValue "2018-04-09"^^xsd:date ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:name "dateProperty" ;
-        sh:path :dateProperty
     ] .
 
 :ExplicitFromToRdfTypesNodeShape
@@ -747,9 +747,10 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:xone properties." ;
     sh:property [
+        shaclmate:widen false ;
         sh:maxCount 1 ;
-        sh:name "orLiteralsProperty" ;
-        sh:path :orLiteralsProperty ;
+        sh:name "narrowLiteralsProperty" ;
+        sh:path :narrowLiteralsProperty ;
         sh:xone ([
                 sh:datatype xsd:integer
             ]
@@ -759,8 +760,19 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         )
     ], [
         sh:maxCount 1 ;
-        sh:name "orTermsProperty" ;
-        sh:path :orTermsProperty ;
+        sh:name "widenedLiteralsProperty" ;
+        sh:path :widenedLiteralsProperty ;
+        sh:xone ([
+                sh:datatype xsd:integer
+            ]
+            [
+                sh:datatype xsd:string
+            ]
+        )
+    ], [
+        sh:maxCount 1 ;
+        sh:name "widenedTermsProperty" ;
+        sh:path :widenedTermsProperty ;
         sh:xone ([
                 sh:nodeKind sh:Literal
             ]
@@ -770,8 +782,8 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         )
     ], [
         sh:maxCount 1 ;
-        sh:name "orUnrelatedProperty" ;
-        sh:path :orUnrelatedProperty ;
+        sh:name "unrelatedTypesProperty" ;
+        sh:path :unrelatedTypesProperty ;
         sh:xone ([
                 sh:datatype xsd:integer
             ]
