@@ -37,7 +37,8 @@
     "watch:compiler": "npm run watch -w @shaclmate/compiler",
     "watch:runtime": "npm run watch -w @shaclmate/runtime",
     "watch:cli": "npm run watch -w @shaclmate/cli",
-    "watch:forms": "npm run watch -w @shaclmate/forms"
+    "watch:forms": "npm run watch -w @shaclmate/forms",
+    "watch:graphql": "npm run watch -w @shaclmate/graphql"
   },
   "workspaces": [
     "examples/kitchen-sink",
@@ -45,6 +46,7 @@
     "packages/compiler",
     "packages/runtime",
     "packages/cli",
-    "examples/forms"
+    "examples/forms",
+    "examples/graphql"
   ]
 }

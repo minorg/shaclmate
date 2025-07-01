@@ -11,6 +11,7 @@ type PackageName =
   | "cli"
   | "compiler"
   | "kitchen-sink"
+  | "graphql"
   | "forms"
   | "runtime"
   | "shacl-ast";
@@ -184,11 +185,31 @@ const packages: readonly Package[] = [
     directory: "examples",
     name: "forms",
     scripts: {
+      build: "tsc && vite build",
       clean: "rimraf dist",
       dev: "vite --port 3000",
-      build: "tsc && vite build",
       rebuild: "run-s clean build",
       start: "vite preview --port 3000",
+    },
+  },
+  {
+    dependencies: {
+      external: {
+        "@faker-js/faker": "^9.8.0",
+        graphql: "16.11.0",
+        "graphql-yoga": "5.14.0",
+        "@pothos/core": "4.7.0",
+      },
+      internal: ["runtime"],
+    },
+    directory: "examples",
+    name: "graphql",
+    scripts: {
+      build: "tsc",
+      clean: "rimraf dist",
+      dev: "tsx src/server.ts",
+      rebuild: "run-s clean build",
+      start: "tsx src/server.ts",
     },
   },
 ];

@@ -1,0 +1,36 @@
+{
+  "dependencies": {
+    "@shaclmate/runtime": "2.0.22",
+    "@faker-js/faker": "^9.8.0",
+    "graphql": "16.11.0",
+    "graphql-yoga": "5.14.0",
+    "@pothos/core": "4.7.0"
+  },
+  "devDependencies": {},
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/*.d.ts",
+    "dist/*.js"
+  ],
+  "license": "Apache-2.0",
+  "name": "@shaclmate/graphql-example",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minorg/shaclmate"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf dist",
+    "dev": "tsx src/server.ts",
+    "rebuild": "run-s clean build",
+    "start": "tsx src/server.ts"
+  },
+  "type": "module",
+  "version": "2.0.22"
+}
