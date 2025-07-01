@@ -13,7 +13,6 @@
 
 :AbstractBaseClassForExternObjectType
     shaclmate:abstract true ;
-    shaclmate:name "AbstractBaseClassForExternObjectType" ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "An abstract base class that will be inherited by the extern object type, showing how to mix generated and hand-written code." ;
     sh:property [
@@ -27,7 +26,6 @@
 :AbstractBaseClassWithPropertiesNodeShape
     shaclmate:abstract true ;
     shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
-    shaclmate:name "AbstractBaseClassWithPropertiesNodeShape" ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment """Node shape that serves as an abstract base class for child node shapes.
 
@@ -46,13 +44,11 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
 
 :AbstractBaseClassWithoutPropertiesNodeShape
     shaclmate:abstract true ;
-    shaclmate:name "AbstractBaseClassWithoutPropertiesNodeShape" ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Abstract base for other node shapes. Put the ABC with properties above the ABC without." ;
     rdfs:subClassOf :AbstractBaseClassWithPropertiesNodeShape .
 
 :BaseInterfaceWithPropertiesNodeShape
-    shaclmate:name "BaseInterfaceWithPropertiesNodeShape" ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Base interface for other node shapes." ;
@@ -66,19 +62,16 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     ] .
 
 :BaseInterfaceWithoutPropertiesNodeShape
-    shaclmate:name "BaseInterfaceWithoutPropertiesNodeShape" ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Base interface for other node shapes. Put the base interface with properties above the base interface without." ;
     rdfs:subClassOf :BaseInterfaceWithPropertiesNodeShape .
 
 :BlankNodeShape
-    shaclmate:name "BlankNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape that can have a blank node or IRI as an identifier" .
 
 :ConcreteChildClassNodeShape
-    shaclmate:name "ConcreteChildClassNodeShape" ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Child (class) of ConcreteParentClassNodeShape. Should inherit properties, node kinds, and minting strategy." ;
     rdfs:subClassOf :ConcreteParentClassNodeShape ;
@@ -91,7 +84,6 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     ] .
 
 :ConcreteChildInterfaceNodeShape
-    shaclmate:name "ConcreteChildInterfaceNodeShape" ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Child interface of ConcreteParentInterfaceNodeShape. Should inherit properties and node kinds." ;
@@ -105,7 +97,6 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     ] .
 
 :ConcreteParentClassNodeShape
-    shaclmate:name "ConcreteParentClassNodeShape" ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Class node shape that inherits the abstract base class and is the parent of the ConcreteChildClassNodeShape." ;
     rdfs:subClassOf :AbstractBaseClassWithoutPropertiesNodeShape ;
@@ -118,7 +109,6 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     ] .
 
 :ConcreteParentInterfaceNodeShape
-    shaclmate:name "ConcreteParentInterfaceNodeShape" ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Interface node shape that inherits the base interface and is the parent of the ConcreteChildInterfaceNodeShape." ;
@@ -133,7 +123,6 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
 
 :DefaultValuePropertiesNodeShape
     shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
-    shaclmate:name "DefaultValuePropertiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:defaultValue properties." ;
     sh:property [
@@ -176,7 +165,6 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
 
 :ExplicitFromToRdfTypesNodeShape
     shaclmate:fromRdfType :FromRdfType ;
-    shaclmate:name "ExplicitFromToRdfTypesNodeShape" ;
     shaclmate:toRdfType :ToRdfType ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment """Shape with custom rdf:type's.
@@ -192,7 +180,6 @@ shaclmate:toRdfType's are added an serialization.""" ;
     ] .
 
 :ExplicitRdfTypeNodeShape
-    shaclmate:name "ExplicitRdfTypeNodeShape" ;
     shaclmate:rdfType :RdfType ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment """Shape with custom rdf:type's.
@@ -208,14 +195,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :ExternObjectType
     shaclmate:extern true ;
-    shaclmate:name "ExternObjectType" ;
     shaclmate:tsImport "import { ExternObjectType } from \"./ExternObjectType.js\";" ;
     a sh:NodeShape ;
     rdfs:comment "An extern object type in TypeScript" ;
     rdfs:subClassOf :AbstractBaseClassForExternObjectType .
 
 :ExternPropertiesNodeShape
-    shaclmate:name "ExternPropertiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Node shape that inlines/nests another node shape and externs/references another." ;
     sh:property [
@@ -263,7 +248,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :HasValuePropertiesNodeShape
-    shaclmate:name "HasValuePropertiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:hasValue properties." ;
     sh:property [
@@ -279,7 +263,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :InIdentifierNodeShape
-    shaclmate:name "InIdentifierNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:in constraining its identifier." ;
     sh:in (:InIdentifierNodeShapeInstance1
@@ -293,7 +276,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :InPropertiesNodeShape
-    shaclmate:name "InPropertiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:in properties." ;
     sh:property [
@@ -332,7 +314,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :InterfaceNodeShape
-    shaclmate:name "InterfaceNodeShape" ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a sh:NodeShape ;
     rdfs:comment "A node shape that's generated as a TypeScript interface instead of a class." ;
@@ -345,7 +326,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :InterfaceUnionNodeShape
-    shaclmate:name "InterfaceUnionNodeShape" ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a sh:NodeShape ;
     rdfs:comment "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
@@ -354,7 +334,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ) .
 
 :InterfaceUnionNodeShapeMember1
-    shaclmate:name "InterfaceUnionNodeShapeMember1" ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a sh:NodeShape ;
     sh:property [
@@ -366,7 +345,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :InterfaceUnionNodeShapeMember2
-    shaclmate:name "InterfaceUnionNodeShapeMember2" ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a sh:NodeShape ;
     rdfs:comment "A union node shape that is part of another union shape, to test composition of unions." ;
@@ -375,7 +353,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ) .
 
 :InterfaceUnionNodeShapeMember2a
-    shaclmate:name "InterfaceUnionNodeShapeMember2a" ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a sh:NodeShape ;
     sh:property [
@@ -387,7 +364,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :InterfaceUnionNodeShapeMember2b
-    shaclmate:name "InterfaceUnionNodeShapeMember2b" ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a sh:NodeShape ;
     sh:property [
@@ -399,13 +375,11 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :IriNodeShape
-    shaclmate:name "IriNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "A node shape that only allows IRI identifiers." ;
     sh:nodeKind sh:IRI .
 
 :LanguageInPropertiesNodeShape
-    shaclmate:name "LanguageInPropertiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape that uses the StringListShape in a property." ;
     sh:property [
@@ -424,7 +398,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :ListPropertiesNodeShape
-    shaclmate:name "ListPropertiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape that uses the list shapes in properties." ;
     sh:property [
@@ -441,7 +414,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :MutablePropertiesNodeShape
     shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
-    shaclmate:name "MutablePropertiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape with shaclmate:mutable properties." ;
     sh:property [
@@ -467,7 +439,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :MutableStringListShape
     shaclmate:mutable true ;
-    shaclmate:name "MutableStringListShape" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf rdf:List ;
     sh:nodeKind sh:BlankNodeOrIRI ;
@@ -496,7 +467,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ) .
 
 :NonClassNodeShape
-    shaclmate:name "NonClassNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Node shape that isn't an rdfs:Class." ;
     sh:property [
@@ -508,7 +478,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :ObjectListShape
-    shaclmate:name "ObjectListShape" ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "A node shape that models an RDF list. Should be transformed into a list data structure when used as a property instead of surfacing the RDF list structure in code." ;
     rdfs:subClassOf rdf:List ;
@@ -538,7 +507,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ) .
 
 :OrderedPropertiesNodeShape
-    shaclmate:name "OrderedPropertiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders." ;
     sh:property [
@@ -565,7 +533,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :PropertyCardinalitiesNodeShape
-    shaclmate:name "PropertyCardinalitiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape that has properties with different cardinalities" ;
     sh:property [
@@ -596,7 +563,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :PropertyVisibilitiesNodeShape
-    shaclmate:name "PropertyVisibilitiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape with properties that have visibility modifiers (private, protected, public)" ;
     sh:property [
@@ -624,7 +590,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :Sha256IriNodeShape
     shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
-    shaclmate:name "Sha256IriNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied." ;
     sh:nodeKind sh:IRI ;
@@ -637,7 +602,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :StringListShape
-    shaclmate:name "StringListShape" ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "A node shape that models an RDF list. Should be transformed into a list data structure when used as a property instead of surfacing the RDF list structure in code." ;
     rdfs:subClassOf rdf:List ;
@@ -667,7 +631,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ) .
 
 :TermPropertiesNodeShape
-    shaclmate:name "TermPropertiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape with properties that are not nested objects" ;
     sh:property [
@@ -712,7 +675,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :UnionNodeShape
-    shaclmate:name "UnionNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
     sh:xone (:UnionNodeShapeMember1
@@ -721,7 +683,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ) .
 
 :UnionNodeShapeMember1
-    shaclmate:name "UnionNodeShapeMember1" ;
     a sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
@@ -732,7 +693,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :UnionNodeShapeMember2
-    shaclmate:name "UnionNodeShapeMember2" ;
     a sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
@@ -743,7 +703,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :UnionPropertiesNodeShape
-    shaclmate:name "UnionPropertiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:xone properties." ;
     sh:property [
@@ -795,7 +754,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :UuidV4IriNodeShape
     shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_UUIDv4 ;
-    shaclmate:name "UuidV4IriNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied." ;
     sh:nodeKind sh:IRI ;
