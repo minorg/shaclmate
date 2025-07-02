@@ -26,6 +26,9 @@ interface Package {
     external?: Record<string, string>;
     internal?: readonly string[];
   };
+  peerDependencies?: {
+    external?: Record<string, string>;
+  };
   directory: "examples" | "packages";
   linkableDependencies?: readonly string[];
   name: PackageName;
@@ -42,6 +45,7 @@ const externalDependencyVersions = {
   "@types/rdfjs__term-set": "^2.0.9",
   n3: "^1.21.3",
   pino: "^9.1.0",
+  "@pothos/core": "4.7.0",
   "purify-ts": "^2.1.0",
   "rdfjs-resource": "1.0.19",
 };
@@ -78,9 +82,9 @@ const packages: readonly Package[] = [
         n3: externalDependencyVersions["n3"],
       },
     },
+    directory: "packages",
     linkableDependencies: ["rdfjs-resource"],
     name: "shacl-ast",
-    directory: "packages",
   },
   {
     dependencies: {
@@ -115,9 +119,9 @@ const packages: readonly Package[] = [
       },
       internal: ["runtime"],
     },
+    directory: "packages",
     linkableDependencies: ["rdfjs-resource"],
     name: "compiler",
-    directory: "packages",
   },
   {
     dependencies: {
@@ -137,9 +141,14 @@ const packages: readonly Package[] = [
         "zod-to-json-schema": "3.24.1",
       },
     },
-    linkableDependencies: ["rdfjs-resource"],
-    name: "runtime",
     directory: "packages",
+    linkableDependencies: ["rdfjs-resource"],
+    peerDependencies: {
+      external: {
+        "@pothos/core": externalDependencyVersions["@pothos/core"],
+      },
+    },
+    name: "runtime",
   },
   {
     bin: {
@@ -156,8 +165,8 @@ const packages: readonly Package[] = [
       },
       internal: ["compiler"],
     },
-    name: "cli",
     directory: "packages",
+    name: "cli",
   },
   {
     dependencies: {
@@ -198,7 +207,7 @@ const packages: readonly Package[] = [
         "@faker-js/faker": "^9.8.0",
         graphql: "16.11.0",
         "graphql-yoga": "5.14.0",
-        "@pothos/core": "4.7.0",
+        "@pothos/core": externalDependencyVersions["@pothos/core"],
       },
       internal: ["runtime"],
     },
@@ -283,6 +292,7 @@ for (const package_ of packages) {
         files: files.size > 0 ? [...files].sort() : undefined,
         license: "Apache-2.0",
         name: `@shaclmate/${package_.name}${package_.directory === "examples" ? "-example" : ""}`,
+        peerDependencies: package_.peerDependencies?.external,
         private: package_.directory !== "packages" ? true : undefined,
         repository: {
           type: "git",

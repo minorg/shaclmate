@@ -27,6 +27,9 @@
   ],
   "license": "Apache-2.0",
   "name": "@shaclmate/runtime",
+  "peerDependencies": {
+    "@pothos/core": "4.7.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/minorg/shaclmate"
