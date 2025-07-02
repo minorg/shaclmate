@@ -7,7 +7,6 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 shaclmate:ShaclmateNodeShape
-    shaclmate:name "ShaclmateNodeShape" ;
     shaclmate:rdfType sh:NodeShape ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf shaclmate:ShaclCoreNodeShape ;
@@ -17,20 +16,18 @@ shaclmate:ShaclmateNodeShape-abstract
     a sh:PropertyShape ;
     sh:datatype xsd:boolean ;
     sh:maxCount 1 ;
-    sh:name "abstract" ;
     sh:path shaclmate:abstract .
 
 shaclmate:ShaclmateNodeShape-export
+    shaclmate:name "export_" ;
     a sh:PropertyShape ;
     sh:datatype xsd:boolean ;
     sh:maxCount 1 ;
-    sh:name "export_" ;
     sh:path shaclmate:export .
 
 shaclmate:ShaclmateNodeShape-fromRdfType
     a sh:PropertyShape ;
     sh:maxCount 1 ;
-    sh:name "fromRdfType" ;
     sh:nodeKind sh:IRI ;
     sh:path shaclmate:fromRdfType .
 
@@ -41,24 +38,20 @@ shaclmate:ShaclmateNodeShape-identifierMintingStrategy
         shaclmate:_IdentifierMintingStrategy_UUIDv4
     ) ;
     sh:maxCount 1 ;
-    sh:name "identifierMintingStrategy" ;
     sh:path shaclmate:identifierMintingStrategy .
 
 shaclmate:ShaclmateNodeShape-rdfType
     a sh:PropertyShape ;
     sh:maxCount 1 ;
-    sh:name "rdfType" ;
     sh:nodeKind sh:IRI ;
     sh:path shaclmate:rdfType .
 
 shaclmate:ShaclmateNodeShape-toRdfTypes
     a sh:PropertyShape ;
-    sh:name "toRdfTypes" ;
     sh:nodeKind sh:IRI ;
     sh:path shaclmate:toRdfType .
 
 shaclmate:ShaclmateOntology
-    shaclmate:name "ShaclmateOntology" ;
     shaclmate:rdfType owl:Ontology ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf shaclmate:OwlOntology ;
@@ -68,11 +61,9 @@ shaclmate:ShaclmateOntology-tsDataFactoryVariable
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
-    sh:name "tsDataFactoryVariable" ;
     sh:path shaclmate:tsDataFactoryVariable .
 
 shaclmate:ShaclmatePropertyShape
-    shaclmate:name "ShaclmatePropertyShape" ;
     shaclmate:rdfType sh:PropertyShape ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf shaclmate:ShaclCorePropertyShape ;
@@ -85,18 +76,15 @@ shaclmate:ShaclmatePropertyShape-visibility
         shaclmate:_Visibility_Public
     ) ;
     sh:maxCount 1 ;
-    sh:name "visibility" ;
     sh:path shaclmate:visibility .
 
 shaclmate:ShaclmatePropertyShape-widen
     a sh:PropertyShape ;
     sh:datatype xsd:boolean ;
     sh:maxCount 1 ;
-    sh:name "widen" ;
     sh:path shaclmate:widen .
 
 shaclmate:ShaclmateShape
-    shaclmate:name "ShaclmateShape" ;
     a sh:NodeShape ;
     sh:xone (shaclmate:ShaclmateNodeShape
         shaclmate:ShaclCorePropertyShape
@@ -106,14 +94,12 @@ shaclmate:ShaclmateShape-extern
     a sh:PropertyShape ;
     sh:datatype xsd:boolean ;
     sh:maxCount 1 ;
-    sh:name "extern" ;
     sh:path shaclmate:extern .
 
 shaclmate:ShaclmateShape-mutable
     a sh:PropertyShape ;
     sh:datatype xsd:boolean ;
     sh:maxCount 1 ;
-    sh:name "mutable" ;
     sh:path shaclmate:mutable .
 
 shaclmate:ShaclmateShape-name
@@ -134,7 +120,6 @@ shaclmate:tsFeatureExcludes
         shaclmate:_TsFeature_Rdf
         shaclmate:_TsFeature_Sparql
     ) ;
-    sh:name "tsFeatureExcludes" ;
     sh:path shaclmate:tsFeatureExclude .
 
 shaclmate:tsFeatureIncludes
@@ -148,13 +133,11 @@ shaclmate:tsFeatureIncludes
         shaclmate:_TsFeature_Rdf
         shaclmate:_TsFeature_Sparql
     ) ;
-    sh:name "tsFeatureIncludes" ;
     sh:path shaclmate:tsFeatureInclude .
 
 shaclmate:tsImports
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
-    sh:name "tsImports" ;
     sh:path shaclmate:tsImport .
 
 shaclmate:tsObjectDeclarationType
@@ -163,27 +146,23 @@ shaclmate:tsObjectDeclarationType
         shaclmate:_TsObjectDeclarationType_Interface
     ) ;
     sh:maxCount 1 ;
-    sh:name "tsObjectDeclarationType" ;
     sh:path shaclmate:tsObjectDeclarationType .
 
 shaclmate:tsObjectIdentifierPrefixPropertyName
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
-    sh:name "tsObjectIdentifierPrefixPropertyName" ;
     sh:path shaclmate:tsObjectIdentifierPrefixPropertyName .
 
 shaclmate:tsObjectIdentifierPropertyName
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
-    sh:name "tsObjectIdentifierPropertyName" ;
     sh:path shaclmate:tsObjectIdentifierPropertyName .
 
 shaclmate:tsObjectTypeDiscriminatorPropertyName
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
-    sh:name "tsObjectTypeDiscriminatorPropertyName" ;
     sh:path shaclmate:tsObjectTypeDiscriminatorPropertyName .
 

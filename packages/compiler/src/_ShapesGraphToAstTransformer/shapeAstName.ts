@@ -4,6 +4,7 @@ import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer
 import { Curie } from "../ast/Curie.js";
 import type * as ast from "../ast/index.js";
 import * as input from "../input/index.js";
+import { logger } from "../logger.js";
 import { pickLiteral } from "./pickLiteral.js";
 
 export function shapeAstName(
@@ -38,10 +39,17 @@ export function shapeAstName(
       termType: "NamedNode" as const,
       uniqueLocalPart: () =>
         curie
-          .filter(
-            (curie) =>
-              Object.entries(this.iriLocalParts[curie.reference]).length === 1,
-          )
+          .filter((curie) => {
+            const curieReferenceInPrefixes =
+              this.iriLocalParts[curie.reference];
+            if (Object.entries(curieReferenceInPrefixes).length === 1) {
+              return true;
+            }
+            logger.debug(
+              `duplicate local part ${curie.reference} in ${JSON.stringify(curieReferenceInPrefixes)}`,
+            );
+            return false;
+          })
           .map((curie) => curie.reference),
       value: namedNode.value,
     };
