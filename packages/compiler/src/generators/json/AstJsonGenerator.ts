@@ -42,6 +42,13 @@ function nameToJson(name: ast.Name): AstJson.Name {
           : undefined,
       value: name.identifier.value,
     },
+    label: name.label.extract(),
+    propertyPath: name.propertyPath.map((propertyPath) => ({
+      curie: propertyPath.curie.map((curie) => curie.toString()).extract(),
+      uniqueLocalPart: propertyPath.uniqueLocalPart().extract(),
+      termType: propertyPath.termType,
+      value: propertyPath.value,
+    })),
     shName: name.shName.extract(),
     shaclmateName: name.shaclmateName.extract(),
   };

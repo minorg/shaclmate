@@ -16,6 +16,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-139"
+            },
+            "propertyPath": {
+              "curie": ":abcStringProperty",
+              "uniqueLocalPart": "abcStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/abcStringProperty"
             }
           },
           "path": "http://example.com/abcStringProperty",
@@ -46,6 +52,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-140"
+            },
+            "propertyPath": {
+              "curie": ":abcStringProperty",
+              "uniqueLocalPart": "abcStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/abcStringProperty"
             }
           },
           "path": "http://example.com/abcStringProperty",
@@ -88,6 +100,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-141"
+            },
+            "propertyPath": {
+              "curie": ":baseStringProperty",
+              "uniqueLocalPart": "baseStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/baseStringProperty"
             }
           },
           "path": "http://example.com/baseStringProperty",
@@ -142,6 +160,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-142"
+            },
+            "propertyPath": {
+              "curie": ":childStringProperty",
+              "uniqueLocalPart": "childStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/childStringProperty"
             }
           },
           "path": "http://example.com/childStringProperty",
@@ -172,6 +196,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-144"
+            },
+            "propertyPath": {
+              "curie": ":parentStringProperty",
+              "uniqueLocalPart": "parentStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/parentStringProperty"
             }
           },
           "path": "http://example.com/parentStringProperty",
@@ -202,6 +232,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-143"
+            },
+            "propertyPath": {
+              "curie": ":childStringProperty",
+              "uniqueLocalPart": "childStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/childStringProperty"
             }
           },
           "path": "http://example.com/childStringProperty",
@@ -232,6 +268,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-145"
+            },
+            "propertyPath": {
+              "curie": ":parentStringProperty",
+              "uniqueLocalPart": "parentStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/parentStringProperty"
             }
           },
           "path": "http://example.com/parentStringProperty",
@@ -262,32 +304,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-146"
-            }
-          },
-          "path": "http://example.com/falseBooleanProperty",
-          "type": {
-            "hasValue": [],
-            "kind": "LiteralType"
-          }
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-147"
-            }
-          },
-          "path": "http://example.com/dateProperty",
-          "type": {
-            "hasValue": [],
-            "kind": "LiteralType"
-          }
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-148"
+            },
+            "propertyPath": {
+              "curie": ":dateTimeProperty",
+              "uniqueLocalPart": "dateTimeProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/dateTimeProperty"
             }
           },
           "path": "http://example.com/dateTimeProperty",
@@ -300,7 +322,13 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-149"
+              "value": "n3-147"
+            },
+            "propertyPath": {
+              "curie": ":numberProperty",
+              "uniqueLocalPart": "numberProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/numberProperty"
             }
           },
           "path": "http://example.com/numberProperty",
@@ -313,7 +341,13 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-150"
+              "value": "n3-148"
+            },
+            "propertyPath": {
+              "curie": ":stringProperty",
+              "uniqueLocalPart": "stringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/stringProperty"
             }
           },
           "path": "http://example.com/stringProperty",
@@ -326,10 +360,54 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-151"
+              "value": "n3-149"
+            },
+            "propertyPath": {
+              "curie": ":trueBooleanProperty",
+              "uniqueLocalPart": "trueBooleanProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/trueBooleanProperty"
             }
           },
           "path": "http://example.com/trueBooleanProperty",
+          "type": {
+            "hasValue": [],
+            "kind": "LiteralType"
+          }
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-150"
+            },
+            "propertyPath": {
+              "curie": ":falseBooleanProperty",
+              "uniqueLocalPart": "falseBooleanProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/falseBooleanProperty"
+            }
+          },
+          "path": "http://example.com/falseBooleanProperty",
+          "type": {
+            "hasValue": [],
+            "kind": "LiteralType"
+          }
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-151"
+            },
+            "propertyPath": {
+              "curie": ":dateProperty",
+              "uniqueLocalPart": "dateProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/dateProperty"
+            }
+          },
+          "path": "http://example.com/dateProperty",
           "type": {
             "hasValue": [],
             "kind": "LiteralType"
@@ -353,6 +431,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-152"
+            },
+            "propertyPath": {
+              "curie": ":stringProperty",
+              "uniqueLocalPart": "stringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/stringProperty"
             }
           },
           "path": "http://example.com/stringProperty",
@@ -383,6 +467,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-153"
+            },
+            "propertyPath": {
+              "curie": ":stringProperty",
+              "uniqueLocalPart": "stringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/stringProperty"
             }
           },
           "path": "http://example.com/stringProperty",
@@ -425,6 +515,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-154"
+            },
+            "propertyPath": {
+              "curie": ":externObjectTypeProperty",
+              "uniqueLocalPart": "externObjectTypeProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/externObjectTypeProperty"
             }
           },
           "path": "http://example.com/externObjectTypeProperty",
@@ -453,6 +549,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-155"
+            },
+            "propertyPath": {
+              "curie": ":externProperty",
+              "uniqueLocalPart": "externProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/externProperty"
             }
           },
           "path": "http://example.com/externProperty",
@@ -473,6 +575,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-156"
+            },
+            "propertyPath": {
+              "curie": ":inlineProperty",
+              "uniqueLocalPart": "inlineProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/inlineProperty"
             }
           },
           "path": "http://example.com/inlineProperty",
@@ -516,6 +624,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-157"
+            },
+            "propertyPath": {
+              "curie": ":stringProperty",
+              "uniqueLocalPart": "stringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/stringProperty"
             }
           },
           "path": "http://example.com/stringProperty",
@@ -547,6 +661,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-158"
+            },
+            "propertyPath": {
+              "curie": ":stringProperty",
+              "uniqueLocalPart": "stringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/stringProperty"
             }
           },
           "path": "http://example.com/stringProperty",
@@ -577,6 +697,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-159"
+            },
+            "propertyPath": {
+              "curie": ":hasIriProperty",
+              "uniqueLocalPart": "hasIriProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/hasIriProperty"
             }
           },
           "path": "http://example.com/hasIriProperty",
@@ -601,6 +727,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-160"
+            },
+            "propertyPath": {
+              "curie": ":hasLiteralProperty",
+              "uniqueLocalPart": "hasLiteralProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/hasLiteralProperty"
             }
           },
           "path": "http://example.com/hasLiteralProperty",
@@ -637,6 +769,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-163"
+            },
+            "propertyPath": {
+              "curie": ":stringProperty",
+              "uniqueLocalPart": "stringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/stringProperty"
             }
           },
           "path": "http://example.com/stringProperty",
@@ -670,6 +808,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-164"
+            },
+            "propertyPath": {
+              "curie": ":inBooleansProperty",
+              "uniqueLocalPart": "inBooleansProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/inBooleansProperty"
             }
           },
           "path": "http://example.com/inBooleansProperty",
@@ -686,6 +830,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-166"
+            },
+            "propertyPath": {
+              "curie": ":inDateTimesProperty",
+              "uniqueLocalPart": "inDateTimesProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/inDateTimesProperty"
             }
           },
           "path": "http://example.com/inDateTimesProperty",
@@ -702,6 +852,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-168"
+            },
+            "propertyPath": {
+              "curie": ":inIrisProperty",
+              "uniqueLocalPart": "inIrisProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/inIrisProperty"
             }
           },
           "path": "http://example.com/inIrisProperty",
@@ -721,6 +877,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-171"
+            },
+            "propertyPath": {
+              "curie": ":inNumbersProperty",
+              "uniqueLocalPart": "inNumbersProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/inNumbersProperty"
             }
           },
           "path": "http://example.com/inNumbersProperty",
@@ -737,6 +899,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-174"
+            },
+            "propertyPath": {
+              "curie": ":inStringsProperty",
+              "uniqueLocalPart": "inStringsProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/inStringsProperty"
             }
           },
           "path": "http://example.com/inStringsProperty",
@@ -766,6 +934,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-177"
+            },
+            "propertyPath": {
+              "curie": ":stringProperty",
+              "uniqueLocalPart": "stringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/stringProperty"
             }
           },
           "path": "http://example.com/stringProperty",
@@ -796,6 +970,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-180"
+            },
+            "propertyPath": {
+              "curie": ":stringProperty1",
+              "uniqueLocalPart": "stringProperty1",
+              "termType": "NamedNode",
+              "value": "http://example.com/stringProperty1"
             }
           },
           "path": "http://example.com/stringProperty1",
@@ -826,6 +1006,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-183"
+            },
+            "propertyPath": {
+              "curie": ":stringProperty2a",
+              "uniqueLocalPart": "stringProperty2a",
+              "termType": "NamedNode",
+              "value": "http://example.com/stringProperty2a"
             }
           },
           "path": "http://example.com/stringProperty2a",
@@ -856,6 +1042,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-184"
+            },
+            "propertyPath": {
+              "curie": ":stringProperty2b",
+              "uniqueLocalPart": "stringProperty2b",
+              "termType": "NamedNode",
+              "value": "http://example.com/stringProperty2b"
             }
           },
           "path": "http://example.com/stringProperty2b",
@@ -898,6 +1090,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-185"
+            },
+            "propertyPath": {
+              "curie": ":languageInProperty",
+              "uniqueLocalPart": "languageInProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/languageInProperty"
             }
           },
           "path": "http://example.com/languageInProperty",
@@ -914,6 +1112,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-188"
+            },
+            "propertyPath": {
+              "curie": ":literalProperty",
+              "uniqueLocalPart": "literalProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/literalProperty"
             }
           },
           "path": "http://example.com/literalProperty",
@@ -943,6 +1147,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-189"
+            },
+            "propertyPath": {
+              "curie": ":objectListProperty",
+              "uniqueLocalPart": "objectListProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/objectListProperty"
             }
           },
           "path": "http://example.com/objectListProperty",
@@ -974,6 +1184,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-190"
+            },
+            "propertyPath": {
+              "curie": ":stringListProperty",
+              "uniqueLocalPart": "stringListProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/stringListProperty"
             }
           },
           "path": "http://example.com/stringListProperty",
@@ -1010,6 +1226,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-191"
+            },
+            "propertyPath": {
+              "curie": ":mutableStringProperty",
+              "uniqueLocalPart": "mutableStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/mutableStringProperty"
             }
           },
           "mutable": true,
@@ -1031,6 +1253,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-192"
+            },
+            "propertyPath": {
+              "curie": ":mutableListProperty",
+              "uniqueLocalPart": "mutableListProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/mutableListProperty"
             }
           },
           "path": "http://example.com/mutableListProperty",
@@ -1055,6 +1283,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-193"
+            },
+            "propertyPath": {
+              "curie": ":mutableSetProperty",
+              "uniqueLocalPart": "mutableSetProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/mutableSetProperty"
             }
           },
           "mutable": true,
@@ -1089,6 +1323,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-198"
+            },
+            "propertyPath": {
+              "curie": ":stringProperty",
+              "uniqueLocalPart": "stringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/stringProperty"
             }
           },
           "path": "http://example.com/stringProperty",
@@ -1119,6 +1359,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-205"
+            },
+            "propertyPath": {
+              "curie": ":propertyC",
+              "uniqueLocalPart": "propertyC",
+              "termType": "NamedNode",
+              "value": "http://example.com/propertyC"
             }
           },
           "path": "http://example.com/propertyC",
@@ -1136,6 +1382,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-204"
+            },
+            "propertyPath": {
+              "curie": ":propertyB",
+              "uniqueLocalPart": "propertyB",
+              "termType": "NamedNode",
+              "value": "http://example.com/propertyB"
             }
           },
           "path": "http://example.com/propertyB",
@@ -1153,6 +1405,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-203"
+            },
+            "propertyPath": {
+              "curie": ":propertyA",
+              "uniqueLocalPart": "propertyA",
+              "termType": "NamedNode",
+              "value": "http://example.com/propertyA"
             }
           },
           "path": "http://example.com/propertyA",
@@ -1183,6 +1441,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-206"
+            },
+            "propertyPath": {
+              "curie": ":requiredStringProperty",
+              "uniqueLocalPart": "requiredStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/requiredStringProperty"
             }
           },
           "path": "http://example.com/requiredStringProperty",
@@ -1200,6 +1464,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-207"
+            },
+            "propertyPath": {
+              "curie": ":optionalStringProperty",
+              "uniqueLocalPart": "optionalStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/optionalStringProperty"
             }
           },
           "path": "http://example.com/optionalStringProperty",
@@ -1220,6 +1490,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-208"
+            },
+            "propertyPath": {
+              "curie": ":emptyStringSetProperty",
+              "uniqueLocalPart": "emptyStringSetProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/emptyStringSetProperty"
             }
           },
           "path": "http://example.com/emptyStringSetProperty",
@@ -1240,6 +1516,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-209"
+            },
+            "propertyPath": {
+              "curie": ":nonEmptyStringSetProperty",
+              "uniqueLocalPart": "nonEmptyStringSetProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/nonEmptyStringSetProperty"
             }
           },
           "path": "http://example.com/nonEmptyStringSetProperty",
@@ -1273,6 +1555,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-210"
+            },
+            "propertyPath": {
+              "curie": ":protectedProperty",
+              "uniqueLocalPart": "protectedProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/protectedProperty"
             }
           },
           "path": "http://example.com/protectedProperty",
@@ -1290,6 +1578,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-211"
+            },
+            "propertyPath": {
+              "curie": ":privateProperty",
+              "uniqueLocalPart": "privateProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/privateProperty"
             }
           },
           "path": "http://example.com/privateProperty",
@@ -1307,6 +1601,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-212"
+            },
+            "propertyPath": {
+              "curie": ":publicProperty",
+              "uniqueLocalPart": "publicProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/publicProperty"
             }
           },
           "path": "http://example.com/publicProperty",
@@ -1337,6 +1637,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-213"
+            },
+            "propertyPath": {
+              "curie": ":stringProperty",
+              "uniqueLocalPart": "stringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/stringProperty"
             }
           },
           "path": "http://example.com/stringProperty",
@@ -1367,6 +1673,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-218"
+            },
+            "propertyPath": {
+              "curie": ":booleanProperty",
+              "uniqueLocalPart": "booleanProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/booleanProperty"
             }
           },
           "path": "http://example.com/booleanProperty",
@@ -1387,6 +1699,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-219"
+            },
+            "propertyPath": {
+              "curie": ":dateProperty",
+              "uniqueLocalPart": "dateProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/dateProperty"
             }
           },
           "path": "http://example.com/dateProperty",
@@ -1407,6 +1725,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-220"
+            },
+            "propertyPath": {
+              "curie": ":dateTimeProperty",
+              "uniqueLocalPart": "dateTimeProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/dateTimeProperty"
             }
           },
           "path": "http://example.com/dateTimeProperty",
@@ -1427,6 +1751,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-221"
+            },
+            "propertyPath": {
+              "curie": ":iriProperty",
+              "uniqueLocalPart": "iriProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/iriProperty"
             }
           },
           "path": "http://example.com/iriProperty",
@@ -1446,6 +1776,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-222"
+            },
+            "propertyPath": {
+              "curie": ":literalProperty",
+              "uniqueLocalPart": "literalProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/literalProperty"
             }
           },
           "path": "http://example.com/literalProperty",
@@ -1462,6 +1798,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-223"
+            },
+            "propertyPath": {
+              "curie": ":numberProperty",
+              "uniqueLocalPart": "numberProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/numberProperty"
             }
           },
           "path": "http://example.com/numberProperty",
@@ -1482,6 +1824,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-224"
+            },
+            "propertyPath": {
+              "curie": ":stringProperty",
+              "uniqueLocalPart": "stringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/stringProperty"
             }
           },
           "path": "http://example.com/stringProperty",
@@ -1502,6 +1850,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-225"
+            },
+            "propertyPath": {
+              "curie": ":termProperty",
+              "uniqueLocalPart": "termProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/termProperty"
             }
           },
           "path": "http://example.com/termProperty",
@@ -1530,6 +1884,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-229"
+            },
+            "propertyPath": {
+              "curie": ":stringProperty1",
+              "uniqueLocalPart": "stringProperty1",
+              "termType": "NamedNode",
+              "value": "http://example.com/stringProperty1"
             }
           },
           "path": "http://example.com/stringProperty1",
@@ -1560,6 +1920,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-230"
+            },
+            "propertyPath": {
+              "curie": ":stringProperty2",
+              "uniqueLocalPart": "stringProperty2",
+              "termType": "NamedNode",
+              "value": "http://example.com/stringProperty2"
             }
           },
           "path": "http://example.com/stringProperty2",
@@ -1590,6 +1956,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-231"
+            },
+            "propertyPath": {
+              "curie": ":narrowLiteralsProperty",
+              "uniqueLocalPart": "narrowLiteralsProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/narrowLiteralsProperty"
             }
           },
           "path": "http://example.com/narrowLiteralsProperty",
@@ -1623,6 +1995,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-236"
+            },
+            "propertyPath": {
+              "curie": ":widenedLiteralsProperty",
+              "uniqueLocalPart": "widenedLiteralsProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/widenedLiteralsProperty"
             }
           },
           "path": "http://example.com/widenedLiteralsProperty",
@@ -1639,6 +2017,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-241"
+            },
+            "propertyPath": {
+              "curie": ":widenedTermsProperty",
+              "uniqueLocalPart": "widenedTermsProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/widenedTermsProperty"
             }
           },
           "path": "http://example.com/widenedTermsProperty",
@@ -1654,6 +2038,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-246"
+            },
+            "propertyPath": {
+              "curie": ":unrelatedTypesProperty",
+              "uniqueLocalPart": "unrelatedTypesProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/unrelatedTypesProperty"
             }
           },
           "path": "http://example.com/unrelatedTypesProperty",
@@ -1708,6 +2098,12 @@
             "identifier": {
               "termType": "BlankNode",
               "value": "n3-251"
+            },
+            "propertyPath": {
+              "curie": ":stringProperty",
+              "uniqueLocalPart": "stringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/stringProperty"
             }
           },
           "path": "http://example.com/stringProperty",

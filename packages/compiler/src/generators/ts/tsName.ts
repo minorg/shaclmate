@@ -6,12 +6,6 @@ function* tsNameAlternatives(astName: ast.Name): Iterable<string | undefined> {
   yield astName.shaclmateName.extract();
   yield astName.shName.extract()?.replace(" ", "_");
   yield astName.label.extract()?.replace(" ", "_");
-  if (astName.identifier.termType === "NamedNode") {
-    yield astName.identifier.uniqueLocalPart().extract();
-    yield astName.identifier.curie
-      .map((curie) => `${curie.prefix}_${curie.reference}`)
-      .extract();
-  }
   yield astName.propertyPath
     .chain((propertyPath) => propertyPath.uniqueLocalPart())
     .extract();
@@ -20,6 +14,12 @@ function* tsNameAlternatives(astName: ast.Name): Iterable<string | undefined> {
       propertyPath.curie.map((curie) => `${curie.prefix}_${curie.reference}`),
     )
     .extract();
+  if (astName.identifier.termType === "NamedNode") {
+    yield astName.identifier.uniqueLocalPart().extract();
+    yield astName.identifier.curie
+      .map((curie) => `${curie.prefix}_${curie.reference}`)
+      .extract();
+  }
   yield astName.propertyPath
     .map((propertyPath) => Resource.Identifier.toString(propertyPath))
     .extract();

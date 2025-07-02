@@ -11,9 +11,6 @@ export function shapeAstName(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
 ): ast.Name {
-  let propertyPath: ast.Name["propertyPath"] = Maybe.empty();
-  let shName: Maybe<string> = Maybe.empty();
-
   const namedIdentifier = (namedNode: NamedNode) => {
     const curie = Maybe.fromNullable(
       this.iriPrefixMap.shrink(namedNode)?.value,
@@ -55,12 +52,23 @@ export function shapeAstName(
     };
   };
 
+  let propertyPath: ast.Name["propertyPath"];
+  let shName: Maybe<string>;
   if (shape instanceof input.PropertyShape) {
     if (shape.path.kind === "PredicatePath") {
       propertyPath = Maybe.of(namedIdentifier(shape.path.iri));
+      // logger.debug(
+      //   `shape ${shape} property path: ${JSON.stringify(propertyPath.unsafeCoerce())}`,
+      // );
+    } else {
+      propertyPath = Maybe.empty();
+      logger.warn(`property shape ${shape} has ${shape.path.kind} path`);
     }
 
     shName = pickLiteral(shape.names).map((literal) => literal.value);
+  } else {
+    propertyPath = Maybe.empty();
+    shName = Maybe.empty();
   }
 
   return {
@@ -70,7 +78,7 @@ export function shapeAstName(
         : shape.identifier,
     label: pickLiteral(shape.labels).map((literal) => literal.value),
     propertyPath,
-    shName: shName,
+    shName,
     shaclmateName: shape.shaclmateName,
   };
 }

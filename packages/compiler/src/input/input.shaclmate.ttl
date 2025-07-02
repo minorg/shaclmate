@@ -48,6 +48,7 @@ shaclmate:ShaclmateNodeShape-rdfType
 
 shaclmate:ShaclmateNodeShape-toRdfTypes
     a sh:PropertyShape ;
+    sh:name "toRdfTypes" ;
     sh:nodeKind sh:IRI ;
     sh:path shaclmate:toRdfType .
 
@@ -120,6 +121,7 @@ shaclmate:tsFeatureExcludes
         shaclmate:_TsFeature_Rdf
         shaclmate:_TsFeature_Sparql
     ) ;
+    sh:name "tsFeatureExcludes" ;
     sh:path shaclmate:tsFeatureExclude .
 
 shaclmate:tsFeatureIncludes
@@ -133,11 +135,13 @@ shaclmate:tsFeatureIncludes
         shaclmate:_TsFeature_Rdf
         shaclmate:_TsFeature_Sparql
     ) ;
+    sh:name "tsFeatureIncludes" ;
     sh:path shaclmate:tsFeatureInclude .
 
 shaclmate:tsImports
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
+    sh:name "tsImports" ;
     sh:path shaclmate:tsImport .
 
 shaclmate:tsObjectDeclarationType
