@@ -18,10 +18,16 @@ export function shapeAstName(
       this.iriPrefixMap.shrink(namedNode)?.value,
     ).map(Curie.parse);
     curie.ifJust((curie) => {
-      this.iriLocalParts[curie.reference] =
-        typeof this.iriLocalParts[curie.reference] !== "undefined"
-          ? this.iriLocalParts[curie.reference] + 1
-          : 1;
+      if (typeof this.iriLocalParts[curie.reference] === "undefined") {
+        this.iriLocalParts[curie.reference] = {};
+      }
+      if (
+        typeof this.iriLocalParts[curie.reference][curie.prefix] === "undefined"
+      ) {
+        this.iriLocalParts[curie.reference][curie.prefix] = 1;
+      } else {
+        this.iriLocalParts[curie.reference][curie.prefix] += 1;
+      }
     });
 
     return {
@@ -32,7 +38,10 @@ export function shapeAstName(
       termType: "NamedNode" as const,
       uniqueLocalPart: () =>
         curie
-          .filter((curie) => this.iriLocalParts[curie.reference] === 1)
+          .filter(
+            (curie) =>
+              Object.entries(this.iriLocalParts[curie.reference]).length === 1,
+          )
           .map((curie) => curie.reference),
       value: namedNode.value,
     };

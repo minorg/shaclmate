@@ -13,7 +13,7 @@ export class ShapesGraphToAstTransformer {
     rdfjs.BlankNode | rdfjs.NamedNode,
     ast.ObjectType.Property
   > = new TermMap();
-  protected readonly iriLocalParts: Record<string, number> = {};
+  protected readonly iriLocalParts: Record<string, Record<string, number>> = {};
   protected readonly iriPrefixMap: PrefixMap;
   protected readonly nodeShapeAstTypesByIdentifier: TermMap<
     rdfjs.BlankNode | rdfjs.NamedNode,
