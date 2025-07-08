@@ -1,5 +1,13 @@
+import pothosSchemaBuilder from "@pothos/core";
 import type * as rdfjs from "@rdfjs/types";
 import { DataFactory as dataFactory } from "n3";
+export const graphqlSchemaBuilder = new pothosSchemaBuilder<{
+  DefaultFieldNullability: false;
+  DefaultInputFieldRequiredness: true;
+}>({ defaultFieldNullability: false, defaultInputFieldRequiredness: true });
+/**
+ * Node shape
+ */
 export class NodeShape {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
   readonly type = "NodeShape";
@@ -27,6 +35,15 @@ export class NodeShape {
     }
     return this._identifier;
   }
+}
+
+export namespace NodeShape {
+  export const graphqlObjectRef =
+    graphqlSchemaBuilder.objectRef<object>("NodeShape");
+  graphqlObjectRef.implement({
+    description: "Node shape",
+    fields: (fieldBuilder) => ({}),
+  });
 }
 
 export const $ObjectTypes = { NodeShape },

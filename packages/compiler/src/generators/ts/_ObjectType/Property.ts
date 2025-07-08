@@ -42,6 +42,12 @@ export abstract class Property<
    */
   abstract readonly equalsFunction: string;
   /**
+   * Signature of the property in GraphQL (the type returned by the resolver).
+   */
+  abstract readonly graphqlPropertySignature: Maybe<
+    OptionalKind<PropertySignatureStructure>
+  >;
+  /**
    * Signature of the property in an interface version of the object.
    */
   abstract readonly interfacePropertySignature: Maybe<

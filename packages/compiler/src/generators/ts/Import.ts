@@ -6,6 +6,12 @@ export type Import = ImportDeclarationStructure | string;
  * Singleton values for common imports.
  */
 export namespace Import {
+  export const POTHOS: Import = {
+    kind: StructureKind.ImportDeclaration,
+    moduleSpecifier: "@pothos/core",
+    defaultImport: "pothosSchemaBuilder",
+  };
+
   export const PURIFY: Import = {
     kind: StructureKind.ImportDeclaration,
     moduleSpecifier: "purify-ts",

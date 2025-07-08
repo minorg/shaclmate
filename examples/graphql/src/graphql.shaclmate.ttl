@@ -13,6 +13,7 @@
 
 :NodeShape
     a owl:Class, sh:NodeShape ;
+    rdfs:comment "Node shape" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property [
         sh:datatype xsd:string ;
