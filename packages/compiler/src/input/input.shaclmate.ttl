@@ -112,12 +112,14 @@ shaclmate:ShaclmateShape-name
 
 shaclmate:tsFeatureExcludes
     a sh:PropertyShape ;
-    sh:in (shaclmate:_TsFeature_All
+    sh:in (shaclmate:_TsFeatures_All
         shaclmate:_TsFeature_Create
+        shaclmate:_TsFeatures_Default
         shaclmate:_TsFeature_Equals
+        shaclmate:_TsFeature_Graphql
         shaclmate:_TsFeature_Hash
         shaclmate:_TsFeature_Json
-        shaclmate:_TsFeature_None
+        shaclmate:_TsFeatures_None
         shaclmate:_TsFeature_Rdf
         shaclmate:_TsFeature_Sparql
     ) ;
@@ -126,12 +128,14 @@ shaclmate:tsFeatureExcludes
 
 shaclmate:tsFeatureIncludes
     a sh:PropertyShape ;
-    sh:in (shaclmate:_TsFeature_All
+    sh:in (shaclmate:_TsFeatures_All
         shaclmate:_TsFeature_Create
+        shaclmate:_TsFeatures_Default
         shaclmate:_TsFeature_Equals
+        shaclmate:_TsFeature_Graphql
         shaclmate:_TsFeature_Hash
         shaclmate:_TsFeature_Json
-        shaclmate:_TsFeature_None
+        shaclmate:_TsFeatures_None
         shaclmate:_TsFeature_Rdf
         shaclmate:_TsFeature_Sparql
     ) ;
