@@ -95,6 +95,16 @@ export class ShaclProperty extends Property<Type> {
     return this.type.equalsFunction;
   }
 
+  override get graphqlPropertySignature(): Maybe<
+    OptionalKind<PropertySignatureStructure>
+  > {
+    return Maybe.of({
+      isReadonly: !this.mutable,
+      name: this.name,
+      type: this.type.graphqlName,
+    });
+  }
+
   override get interfacePropertySignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {

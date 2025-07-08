@@ -28,7 +28,12 @@ export abstract class Type {
   abstract readonly equalsFunction: string;
 
   /**
-   * JSON-compatible returned by propertyToJsonExpression.
+   * GraphQL-compatible version of the type.
+   */
+  abstract readonly graphqlName: string;
+
+  /**
+   * JSON-compatible version of the type.
    */
   abstract readonly jsonName: string;
 
@@ -63,7 +68,7 @@ export abstract class Type {
   }
 
   /**
-   * An expression that converts a JSON object in the same format as the propertyToJsonExpression to a value of this type.
+   * An expression that converts this type's JSON type to a value of this type.
    */
   abstract fromJsonExpression(parameters: {
     variables: {
@@ -107,7 +112,7 @@ export abstract class Type {
   }
 
   /**
-   * Zod schema for the JSON version of the type (the result of propertyToJson).
+   * Zod schema for the JSON type of this type.
    */
   abstract jsonZodSchema(parameters: { variables: { zod: string } }): string;
 

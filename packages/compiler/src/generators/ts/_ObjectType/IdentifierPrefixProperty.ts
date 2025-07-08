@@ -18,6 +18,17 @@ export class IdentifierPrefixProperty extends Property<StringType> {
   readonly mutable = false;
   private readonly own: boolean;
 
+  override readonly declarationImports: readonly Import[] = [];
+  override readonly graphqlPropertySignature: Maybe<
+    OptionalKind<PropertySignatureStructure>
+  > = Maybe.empty();
+  override readonly interfacePropertySignature: Maybe<
+    OptionalKind<PropertySignatureStructure>
+  > = Maybe.empty();
+  override readonly jsonPropertySignature: Maybe<
+    OptionalKind<PropertySignatureStructure>
+  > = Maybe.empty();
+
   constructor({
     own,
     ...superParameters
@@ -66,22 +77,6 @@ export class IdentifierPrefixProperty extends Property<StringType> {
       name: this.name,
       type: this.type.name,
     });
-  }
-
-  override get declarationImports(): readonly Import[] {
-    return [];
-  }
-
-  override get interfacePropertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    return Maybe.empty();
-  }
-
-  override get jsonPropertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    return Maybe.empty();
   }
 
   override get snippetDeclarations(): readonly string[] {

@@ -176,6 +176,16 @@ export class IdentifierProperty extends Property<IdentifierType> {
     return imports;
   }
 
+  override get graphqlPropertySignature(): Maybe<
+    OptionalKind<PropertySignatureStructure>
+  > {
+    return Maybe.of({
+      isReadonly: true,
+      name: "id",
+      type: "string",
+    });
+  }
+
   override get interfacePropertySignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {

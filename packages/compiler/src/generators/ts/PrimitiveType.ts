@@ -28,6 +28,10 @@ export abstract class PrimitiveType<
     return Maybe.empty();
   }
 
+  override get graphqlName(): string {
+    return this.name;
+  }
+
   override get jsonName(): string {
     return this.name;
   }
