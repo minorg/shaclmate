@@ -6,16 +6,16 @@ export type Import = ImportDeclarationStructure | string;
  * Singleton values for common imports.
  */
 export namespace Import {
+  export const GRAPHQL: Import = {
+    kind: StructureKind.ImportDeclaration,
+    moduleSpecifier: "graphql",
+    namespaceImport: "graphql",
+  };
+
   export const GRAPHQL_SCALARS: Import = {
     kind: StructureKind.ImportDeclaration,
     moduleSpecifier: "graphql-scalars",
     namespaceImport: "graphqlScalars",
-  };
-
-  export const POTHOS: Import = {
-    kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "@pothos/core",
-    defaultImport: "pothosSchemaBuilder",
   };
 
   export const PURIFY: Import = {
