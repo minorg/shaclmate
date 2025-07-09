@@ -19,9 +19,6 @@ export class IdentifierPrefixProperty extends Property<StringType> {
   private readonly own: boolean;
 
   override readonly declarationImports: readonly Import[] = [];
-  override readonly graphqlPropertySignature: Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > = Maybe.empty();
   override readonly interfacePropertySignature: Maybe<
     OptionalKind<PropertySignatureStructure>
   > = Maybe.empty();
@@ -97,10 +94,6 @@ export class IdentifierPrefixProperty extends Property<StringType> {
         `this.${classPropertyDeclaration.name} = ${variables.parameter};`,
       ])
       .orDefault([]);
-  }
-
-  override graphqlFieldBuilderExpression(): Maybe<string> {
-    return Maybe.empty();
   }
 
   override fromJsonStatements(): readonly string[] {

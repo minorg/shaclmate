@@ -23,9 +23,6 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
   > = Maybe.empty();
   override readonly declarationImports: readonly Import[] = [];
   override readonly equalsFunction = "$strictEquals";
-  override readonly graphqlPropertySignature: Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > = Maybe.empty();
   readonly initializer: string;
   override readonly mutable = false;
 
@@ -108,10 +105,6 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
     return !this.abstract && this.objectType.declarationType === "interface"
       ? [`const ${this.name} = "${this.initializer}" as const`]
       : [];
-  }
-
-  override graphqlFieldBuilderExpression(): Maybe<string> {
-    return Maybe.empty();
   }
 
   override hashStatements({
