@@ -1,6 +1,7 @@
 import type * as rdfjs from "@rdfjs/types";
 import * as graphql from "graphql";
 import { DataFactory as dataFactory } from "n3";
+import * as purify from "purify-ts";
 /**
  * Node shape
  */
@@ -8,13 +9,18 @@ export class NodeShape {
   private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
   readonly type = "NodeShape";
   /**
-   * String property
+   * Optional string property
    */
-  readonly stringProperty: string;
+  readonly optionalStringProperty: purify.Maybe<string>;
+  /**
+   * Required string property
+   */
+  readonly requiredStringProperty: string;
 
   constructor(parameters: {
     readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly stringProperty: string;
+    readonly optionalStringProperty?: purify.Maybe<string> | string;
+    readonly requiredStringProperty: string;
   }) {
     if (typeof parameters.identifier === "object") {
       this._identifier = parameters.identifier;
@@ -25,7 +31,20 @@ export class NodeShape {
       this._identifier = parameters.identifier satisfies never;
     }
 
-    this.stringProperty = parameters.stringProperty;
+    if (purify.Maybe.isMaybe(parameters.optionalStringProperty)) {
+      this.optionalStringProperty = parameters.optionalStringProperty;
+    } else if (typeof parameters.optionalStringProperty === "string") {
+      this.optionalStringProperty = purify.Maybe.of(
+        parameters.optionalStringProperty,
+      );
+    } else if (typeof parameters.optionalStringProperty === "undefined") {
+      this.optionalStringProperty = purify.Maybe.empty();
+    } else {
+      this.optionalStringProperty =
+        parameters.optionalStringProperty satisfies never;
+    }
+
+    this.requiredStringProperty = parameters.requiredStringProperty;
   }
 
   get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
@@ -41,8 +60,12 @@ export namespace NodeShape {
     description: "Node shape",
     fields: () => ({
       identifier: { type: graphql.GraphQLString },
-      stringProperty: {
-        description: "String property",
+      optionalStringProperty: {
+        description: "Optional string property",
+        type: graphql.GraphQLString,
+      },
+      requiredStringProperty: {
+        description: "Required string property",
         type: new graphql.GraphQLNonNull(graphql.GraphQLString),
       },
     }),

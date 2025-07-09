@@ -16,10 +16,15 @@
     rdfs:comment "Node shape" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property [
-        rdfs:comment "String property" ;
+        rdfs:comment "Optional string property" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :optionalStringProperty
+    ], [
+        rdfs:comment "Required string property" ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :stringProperty
+        sh:path :requiredStringProperty
     ] .
 
