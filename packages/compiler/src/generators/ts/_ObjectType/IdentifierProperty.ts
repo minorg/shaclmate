@@ -176,6 +176,12 @@ export class IdentifierProperty extends Property<IdentifierType> {
     return imports;
   }
 
+  override get graphqlField(): Property<IdentifierType>["graphqlField"] {
+    return Maybe.of({
+      type: this.type.graphqlName,
+    });
+  }
+
   override get interfacePropertySignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {

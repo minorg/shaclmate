@@ -19,6 +19,8 @@ export class IdentifierPrefixProperty extends Property<StringType> {
   private readonly own: boolean;
 
   override readonly declarationImports: readonly Import[] = [];
+  override readonly graphqlField: Property<StringType>["graphqlField"] =
+    Maybe.empty();
   override readonly interfacePropertySignature: Maybe<
     OptionalKind<PropertySignatureStructure>
   > = Maybe.empty();

@@ -21,6 +21,8 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
   override readonly constructorParametersPropertySignature: Maybe<
     OptionalKind<PropertySignatureStructure>
   > = Maybe.empty();
+  override readonly graphqlField: Property<TypeDiscriminatorProperty.Type>["graphqlField"] =
+    Maybe.empty();
   override readonly declarationImports: readonly Import[] = [];
   override readonly equalsFunction = "$strictEquals";
   readonly initializer: string;

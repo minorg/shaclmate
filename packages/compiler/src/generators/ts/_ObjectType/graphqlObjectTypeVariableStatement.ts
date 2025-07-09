@@ -6,6 +6,9 @@ import {
 
 import { Maybe } from "purify-ts";
 import type { ObjectType } from "../ObjectType.js";
+import { OptionType } from "../OptionType.js";
+import { objectInitializer } from "../objectInitializer.js";
+import { ShaclProperty } from "./ShaclProperty.js";
 
 export function graphqlObjectTypeVariableStatement(
   this: ObjectType,
@@ -24,7 +27,29 @@ export function graphqlObjectTypeVariableStatement(
     declarations: [
       {
         name: "GraphQL",
-        initializer: `new graphql.GraphQLObjectType<${this.name}>({ name: "${this.name}" })`,
+        initializer: `new graphql.GraphQLObjectType<${this.name}>(${objectInitializer(
+          {
+            description: this.comment.map(JSON.stringify).extract(),
+            fields: objectInitializer(
+              this.properties.reduce(
+                (fields, property) => {
+                  property.graphqlField.ifJust((field) => {
+                    if (
+                      property instanceof ShaclProperty &&
+                      !(property.type instanceof OptionType)
+                    ) {
+                      field.type = `graphql.GraphQLNonNull(${field.type})`;
+                    }
+                    fields[property.name] = field;
+                  });
+                  return fields;
+                },
+                {} as Record<string, any>,
+              ),
+            ),
+            name: `"${this.name}"`,
+          },
+        )})`,
       },
     ],
     isExported: true,

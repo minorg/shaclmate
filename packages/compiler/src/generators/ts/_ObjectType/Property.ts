@@ -46,6 +46,14 @@ export abstract class Property<
   abstract readonly equalsFunction: string;
 
   /**
+   * GraphQL.js field definition.
+   */
+  abstract readonly graphqlField: Maybe<{
+    description?: string;
+    type: string;
+  }>;
+
+  /**
    * Signature of the property in an interface version of the object.
    */
   abstract readonly interfacePropertySignature: Maybe<
