@@ -110,6 +110,10 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
       : [];
   }
 
+  override graphqlFieldBuilderExpression(): Maybe<string> {
+    return Maybe.empty();
+  }
+
   override hashStatements({
     variables,
   }: Parameters<

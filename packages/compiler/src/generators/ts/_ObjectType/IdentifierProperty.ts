@@ -186,6 +186,10 @@ export class IdentifierProperty extends Property<IdentifierType> {
     });
   }
 
+  override graphqlFieldBuilderExpression(): Maybe<string> {
+    return Maybe.empty();
+  }
+
   override get interfacePropertySignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {

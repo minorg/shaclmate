@@ -43,9 +43,10 @@ const externalDependencyVersions = {
   "@types/n3": "^1.21.1",
   "@types/rdfjs__term-map": "^2.0.10",
   "@types/rdfjs__term-set": "^2.0.9",
+  graphql: "16.11.0",
+  "graphql-scalars": "1.24.2",
   n3: "^1.21.3",
   pino: "^9.1.0",
-  "@pothos/core": "4.7.0",
   "purify-ts": "^2.1.0",
   "rdfjs-resource": "1.0.19",
 };
@@ -145,7 +146,8 @@ const packages: readonly Package[] = [
     linkableDependencies: ["rdfjs-resource"],
     peerDependencies: {
       external: {
-        "@pothos/core": externalDependencyVersions["@pothos/core"],
+        graphql: externalDependencyVersions.graphql,
+        "graphql-scalars": externalDependencyVersions["graphql-scalars"],
       },
     },
     name: "runtime",
@@ -205,9 +207,9 @@ const packages: readonly Package[] = [
     dependencies: {
       external: {
         "@faker-js/faker": "^9.8.0",
-        graphql: "16.11.0",
+        graphql: externalDependencyVersions.graphql,
+        "graphql-scalars": externalDependencyVersions["graphql-scalars"],
         "graphql-yoga": "5.14.0",
-        "@pothos/core": externalDependencyVersions["@pothos/core"],
       },
       internal: ["runtime"],
     },

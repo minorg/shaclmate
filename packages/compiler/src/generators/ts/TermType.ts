@@ -104,6 +104,10 @@ export class TermType<
     });
   }
 
+  override get graphqlName(): string {
+    throw new Error("not implemented");
+  }
+
   get jsonName(): string {
     invariant(
       this.nodeKinds.has("Literal") &&

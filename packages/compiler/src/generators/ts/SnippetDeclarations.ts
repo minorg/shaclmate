@@ -169,10 +169,6 @@ export namespace $EqualsResult {
 }    
 `;
 
-  export const graphqlSchemaBuilder = `\
-export const graphqlSchemaBuilder = new pothosSchemaBuilder<{ DefaultFieldNullability: false; DefaultInputFieldRequiredness: true; }>({  defaultFieldNullability: false, defaultInputFieldRequiredness: true });
-`;
-
   export const maybeEquals = `\
 export function $maybeEquals<T>(
   leftMaybe: purify.Maybe<T>,

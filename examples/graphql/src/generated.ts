@@ -1,10 +1,27 @@
 import pothosSchemaBuilder from "@pothos/core";
 import type * as rdfjs from "@rdfjs/types";
+import * as graphqlScalars from "graphql-scalars";
 import { DataFactory as dataFactory } from "n3";
 export const graphqlSchemaBuilder = new pothosSchemaBuilder<{
   DefaultFieldNullability: false;
   DefaultInputFieldRequiredness: true;
-}>({ defaultFieldNullability: false, defaultInputFieldRequiredness: true });
+  Scalars: {
+    Date: {
+      Input: Date;
+      Output: Date;
+    };
+    DateTime: {
+      Input: Date;
+      Output: Date;
+    };
+  };
+}>({
+  defaultFieldNullability: false,
+  defaultInputFieldRequiredness: true,
+});
+
+graphqlSchemaBuilder.addScalarType("Date", graphqlScalars.DateResolver);
+graphqlSchemaBuilder.addScalarType("DateTime", graphqlScalars.DateTimeResolver);
 /**
  * Node shape
  */
@@ -39,11 +56,18 @@ export class NodeShape {
 
 export namespace NodeShape {
   export const graphqlObjectRef =
-    graphqlSchemaBuilder.objectRef<object>("NodeShape");
+    graphqlSchemaBuilder.objectRef<NodeShape.Graphql>("NodeShape.Graphql");
   graphqlObjectRef.implement({
     description: "Node shape",
-    fields: (fieldBuilder) => ({}),
+    fields: (fieldBuilder) => ({
+      id: fieldBuilder.field({}),
+      stringProperty: fieldBuilder.field({}),
+    }),
   });
+  export type Graphql = {
+    readonly id: string;
+    readonly stringProperty: string;
+  };
 }
 
 export const $ObjectTypes = { NodeShape },

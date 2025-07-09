@@ -99,6 +99,10 @@ export class IdentifierPrefixProperty extends Property<StringType> {
       .orDefault([]);
   }
 
+  override graphqlFieldBuilderExpression(): Maybe<string> {
+    return Maybe.empty();
+  }
+
   override fromJsonStatements(): readonly string[] {
     return [];
   }

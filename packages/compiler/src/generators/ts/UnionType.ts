@@ -255,6 +255,10 @@ ${this.memberTypes
 }`;
   }
 
+  override get graphqlName(): string {
+    throw new Error("not implemented");
+  }
+
   override get jsonName(): string {
     switch (this._discriminator.kind) {
       case "sharedProperty":

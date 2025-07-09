@@ -64,6 +64,10 @@ class MemberType {
     );
   }
 
+  get graphqlName() {
+    return this.delegate.graphqlName;
+  }
+
   get jsonName() {
     return this.delegate.jsonName;
   }
@@ -209,6 +213,12 @@ export class ObjectUnionType extends DeclaredType {
 
   override get equalsFunction(): string {
     return `${this.staticModuleName}.equals`;
+  }
+
+  override get graphqlName(): string {
+    return this.memberTypes
+      .map((memberType) => memberType.graphqlName)
+      .join(" | ");
   }
 
   override get jsonName(): string {

@@ -19,28 +19,29 @@ export function graphqlObjectRefStatements(
     return [];
   }
 
-  const statements: (StatementStructures | string)[] = [
+  return [
     {
       declarationKind: VariableDeclarationKind.Const,
       kind: StructureKind.VariableStatement,
       declarations: [
         {
           name: "graphqlObjectRef",
-          initializer: `graphqlSchemaBuilder.objectRef<object>("${this.graphqlName}")`,
+          initializer: `graphqlSchemaBuilder.objectRef<${this.graphqlName}>("${this.graphqlName}")`,
         },
       ],
       isExported: true,
     } satisfies VariableStatementStructure,
-  ];
-
-  // From https://pothos-graphql.dev/docs/guide/objects#using-refs
-  // When using objectRefs with circular dependencies, ensure that the implement method is called as a separate statement, or typescript may complain about circular references:
-  statements.push(
+    // From https://pothos-graphql.dev/docs/guide/objects#using-refs
+    // When using objectRefs with circular dependencies, ensure that the implement method is called as a separate statement, or typescript may complain about circular references:
     `graphqlObjectRef.implement(${objectInitializer({
       description: this.comment.map(JSON.stringify).extract(),
-      fields: "fieldBuilder => ({})",
+      fields: `fieldBuilder => ({${this.properties.flatMap((property) =>
+        property.graphqlPropertySignature
+          .map((graphqlPropertySignature) => {
+            return `${graphqlPropertySignature.name}: ${property.graphqlFieldBuilderExpression({ variables: { fieldBuilder: "fieldBuilder" } }).unsafeCoerce()}`;
+          })
+          .toList(),
+      )}})`,
     })})`,
-  );
-
-  return statements;
+  ];
 }

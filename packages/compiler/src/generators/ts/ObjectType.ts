@@ -135,6 +135,7 @@ export class ObjectType extends DeclaredType {
       (property) => property.declarationImports,
     );
     if (this.features.has("graphql")) {
+      imports.push(Import.GRAPHQL_SCALARS);
       imports.push(Import.POTHOS);
     }
     if (this.features.has("json")) {
@@ -166,6 +167,7 @@ export class ObjectType extends DeclaredType {
       ..._ObjectType.equalsFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
       ..._ObjectType.graphqlObjectRefStatements.bind(this)(),
+      ..._ObjectType.graphqlTypeAliasDeclaration.bind(this)().toList(),
       ..._ObjectType.jsonTypeAliasDeclaration.bind(this)().toList(),
       ..._ObjectType.jsonFunctionDeclarations.bind(this)(),
       ..._ObjectType.hashFunctionDeclarations.bind(this)(),
@@ -214,8 +216,8 @@ export class ObjectType extends DeclaredType {
   }
 
   @Memoize()
-  get graphqlName(): string {
-    return this.name;
+  override get graphqlName(): string {
+    return `${this.staticModuleName}.Graphql`;
   }
 
   @Memoize()
@@ -233,12 +235,12 @@ export class ObjectType extends DeclaredType {
   }
 
   @Memoize()
-  get jsonName(): string {
+  override get jsonName(): string {
     return `${this.staticModuleName}.Json`;
   }
 
   @Memoize()
-  get mutable(): boolean {
+  override get mutable(): boolean {
     return this.properties.some((property) => property.mutable);
   }
 

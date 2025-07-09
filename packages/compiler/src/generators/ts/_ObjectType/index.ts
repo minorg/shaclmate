@@ -8,6 +8,8 @@ export * from "./fromRdfTypeVariableStatement.js";
 
 export * from "./graphqlObjectRefStatements.js";
 
+export * from "./graphqlTypeAliasDeclaration.js";
+
 export * from "./hashFunctionDeclarations.js";
 
 export * from "./IdentifierPrefixProperty.js";

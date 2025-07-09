@@ -28,7 +28,8 @@
   "license": "Apache-2.0",
   "name": "@shaclmate/runtime",
   "peerDependencies": {
-    "@pothos/core": "4.7.0"
+    "graphql": "16.11.0",
+    "graphql-scalars": "1.24.2"
   },
   "repository": {
     "type": "git",

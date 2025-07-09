@@ -50,6 +50,10 @@ export class OptionType extends Type {
     return `((left, right) => $maybeEquals(left, right, ${this.itemType.equalsFunction}))`;
   }
 
+  override get graphqlName(): string {
+    return `(${this.itemType.graphqlName}) | null`;
+  }
+
   override get jsonName(): string {
     return `(${this.itemType.jsonName}) | undefined`;
   }

@@ -26,6 +26,10 @@ export class IdentifierType extends TermType<BlankNode | NamedNode> {
     return this.nodeKinds.size === 1 && this.nodeKinds.has("NamedNode");
   }
 
+  override get graphqlName(): string {
+    return "string";
+  }
+
   override get jsonName(): string {
     if (this.in_.length > 0 && this.isNamedNodeKind) {
       // Treat sh:in as a union of the IRIs
