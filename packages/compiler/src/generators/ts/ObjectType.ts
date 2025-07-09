@@ -135,8 +135,8 @@ export class ObjectType extends DeclaredType {
       (property) => property.declarationImports,
     );
     if (this.features.has("graphql")) {
+      imports.push(Import.GRAPHQL);
       imports.push(Import.GRAPHQL_SCALARS);
-      imports.push(Import.POTHOS);
     }
     if (this.features.has("json")) {
       imports.push(Import.ZOD);
@@ -166,8 +166,7 @@ export class ObjectType extends DeclaredType {
       ..._ObjectType.createFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.equalsFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
-      ..._ObjectType.graphqlObjectRefStatements.bind(this)(),
-      ..._ObjectType.graphqlTypeAliasDeclaration.bind(this)().toList(),
+      ..._ObjectType.graphqlObjectTypeVariableStatement.bind(this)().toList(),
       ..._ObjectType.jsonTypeAliasDeclaration.bind(this)().toList(),
       ..._ObjectType.jsonFunctionDeclarations.bind(this)(),
       ..._ObjectType.hashFunctionDeclarations.bind(this)(),
@@ -213,11 +212,6 @@ export class ObjectType extends DeclaredType {
       default:
         throw new RangeError(this.declarationType);
     }
-  }
-
-  @Memoize()
-  override get graphqlName(): string {
-    return `${this.staticModuleName}.Graphql`;
   }
 
   @Memoize()
@@ -355,9 +349,6 @@ export class ObjectType extends DeclaredType {
     const snippetDeclarations: string[] = [];
     if (this.features.has("equals")) {
       snippetDeclarations.push(SnippetDeclarations.EqualsResult);
-    }
-    if (this.features.has("graphql")) {
-      snippetDeclarations.push(SnippetDeclarations.graphqlSchemaBuilder);
     }
     if (
       (this.features.has("json") || this.features.has("rdf")) &&
