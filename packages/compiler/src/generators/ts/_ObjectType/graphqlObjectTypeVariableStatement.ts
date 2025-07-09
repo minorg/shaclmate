@@ -30,7 +30,7 @@ export function graphqlObjectTypeVariableStatement(
         initializer: `new graphql.GraphQLObjectType<${this.name}>(${objectInitializer(
           {
             description: this.comment.map(JSON.stringify).extract(),
-            fields: objectInitializer(
+            fields: `() => (${objectInitializer(
               this.properties.reduce(
                 (fields, property) => {
                   property.graphqlField.ifJust((field) => {
@@ -38,15 +38,15 @@ export function graphqlObjectTypeVariableStatement(
                       property instanceof ShaclProperty &&
                       !(property.type instanceof OptionType)
                     ) {
-                      field.type = `graphql.GraphQLNonNull(${field.type})`;
+                      field.type = `new graphql.GraphQLNonNull(${field.type})`;
                     }
-                    fields[property.name] = field;
+                    fields[property.name] = objectInitializer(field);
                   });
                   return fields;
                 },
-                {} as Record<string, any>,
+                {} as Record<string, string>,
               ),
-            ),
+            )})`,
             name: `"${this.name}"`,
           },
         )})`,

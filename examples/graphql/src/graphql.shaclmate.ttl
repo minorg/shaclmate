@@ -16,6 +16,7 @@
     rdfs:comment "Node shape" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property [
+        rdfs:comment "String property" ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;

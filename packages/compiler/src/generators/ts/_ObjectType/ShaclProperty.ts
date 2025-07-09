@@ -95,9 +95,9 @@ export class ShaclProperty extends Property<Type> {
     return this.type.equalsFunction;
   }
 
-  override get graphqlField(): Property<IdentifierType>["graphqlField"] {
+  override get graphqlField(): Property<Type>["graphqlField"] {
     return Maybe.of({
-      description: this.comment.extract(),
+      description: this.comment.map(JSON.stringify).extract(),
       type: this.type.graphqlName,
     });
   }
