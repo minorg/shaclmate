@@ -27,7 +27,7 @@ export class IdentifierType extends TermType<BlankNode | NamedNode> {
   }
 
   override get graphqlName(): string {
-    return "string";
+    return "graphql.GraphQLString";
   }
 
   override get jsonName(): string {

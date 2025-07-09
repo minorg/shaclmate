@@ -229,6 +229,11 @@ export class ObjectType extends DeclaredType {
   }
 
   @Memoize()
+  get graphqlName(): string {
+    return `${this.staticModuleName}.GraphQL`;
+  }
+
+  @Memoize()
   override get jsonName(): string {
     return `${this.staticModuleName}.Json`;
   }

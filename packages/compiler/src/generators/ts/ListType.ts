@@ -69,7 +69,7 @@ export class ListType extends Type {
   }
 
   override get graphqlName(): string {
-    return `readonly (${this.itemType.graphqlName})[]`;
+    return `graphql.GraphQLList(graphql.GraphQLNonNull(${this.itemType.graphqlName}))`;
   }
 
   override get jsonName(): string {

@@ -216,9 +216,7 @@ export class ObjectUnionType extends DeclaredType {
   }
 
   override get graphqlName(): string {
-    return this.memberTypes
-      .map((memberType) => memberType.graphqlName)
-      .join(" | ");
+    return `${this.staticModuleName}.GraphQL`;
   }
 
   override get jsonName(): string {

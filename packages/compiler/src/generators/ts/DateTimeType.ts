@@ -38,7 +38,7 @@ export class DateTimeType extends PrimitiveType<Date> {
   }
 
   override get graphqlName(): string {
-    return "Date";
+    return "graphqlScalars.DateTime";
   }
 
   override get jsonName(): string {

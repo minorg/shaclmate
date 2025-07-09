@@ -51,7 +51,7 @@ export class OptionType extends Type {
   }
 
   override get graphqlName(): string {
-    return `(${this.itemType.graphqlName}) | null`;
+    return this.itemType.graphqlName; // Which is nullable by default
   }
 
   override get jsonName(): string {
