@@ -11,20 +11,61 @@
     shaclmate:tsFeatureInclude shaclmate:_TsFeature_Graphql ;
     a owl:Ontology .
 
-:NodeShape
+:ConcreteChild
     a owl:Class, sh:NodeShape ;
-    rdfs:comment "Node shape" ;
+    rdfs:comment "Concrete child" ;
+    rdfs:subClassOf :ParentNodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property :optionalNestedObjectProperty, :optionalStringProperty, :requiredStringProperty, [
+        rdfs:comment "Child string property" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :childStringProperty
+    ] .
+
+:ConcreteParent
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Concrete parent" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property [
-        rdfs:comment "Optional string property" ;
+        rdfs:comment "Parent string property" ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
-        sh:path :optionalStringProperty
-    ], [
-        rdfs:comment "Required string property" ;
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :requiredStringProperty
+        sh:path :parentStringProperty
     ] .
+
+:Nested
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Nested" ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property :optionalNumberProperty, :optionalStringProperty, :requiredStringProperty .
+
+:optionalNestedObjectProperty
+    a sh:PropertyShape ;
+    rdfs:comment "Optional nested object property" ;
+    sh:minCount 1 ;
+    sh:node :Nested ;
+    sh:path :optionalNestedObjectProperty .
+
+:optionalNumberProperty
+    a sh:PropertyShape ;
+    rdfs:comment "Optional number property" ;
+    sh:datatype xsd:decimal ;
+    sh:minCount 1 ;
+    sh:path :optionalNumberProperty .
+
+:optionalStringProperty
+    a sh:PropertyShape ;
+    rdfs:comment "Optional string property" ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:path :optionalStringProperty .
+
+:requiredStringProperty
+    a sh:PropertyShape ;
+    rdfs:comment "Required string property" ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:path :requiredStringProperty .
 
