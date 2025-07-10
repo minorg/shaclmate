@@ -69,6 +69,10 @@ export function tsFeatures(generated: {
     tsFeatures.delete(tsFeatureExclude);
   }
 
+  if (tsFeatures.has("graphql")) {
+    tsFeatures.add("rdf");
+  }
+
   return Maybe.of(tsFeatures);
 }
 

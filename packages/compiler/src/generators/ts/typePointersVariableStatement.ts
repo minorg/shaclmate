@@ -7,7 +7,7 @@ import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectInitializer } from "./objectInitializer.js";
 
-export function typePointerVariableStatement({
+export function typePointersVariableStatement({
   objectTypes,
   objectUnionTypes,
 }: {

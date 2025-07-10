@@ -11,7 +11,8 @@ import type { Import } from "./Import.js";
 import { ObjectType } from "./ObjectType.js";
 import { ObjectUnionType } from "./ObjectUnionType.js";
 import { TypeFactory } from "./TypeFactory.js";
-import { typePointerVariableStatement } from "./typePointerVariableStatement.js";
+import { objectSetDeclarations } from "./objectSetDeclarations.js";
+import { typePointersVariableStatement } from "./typePointersVariableStatement.js";
 
 export class TsGenerator implements Generator {
   generate(ast_: ast.Ast): string {
@@ -101,7 +102,6 @@ export class TsGenerator implements Generator {
       }
     }
 
-    // Add declarations
     for (const objectType of objectTypes) {
       sourceFile.addStatements(objectType.declarations);
     }
@@ -109,9 +109,9 @@ export class TsGenerator implements Generator {
       sourceFile.addStatements(objectUnionType.declarations);
     }
 
-    // Add pointers to the static sides of the types
     sourceFile.addVariableStatements([
-      typePointerVariableStatement({ objectTypes, objectUnionTypes }),
+      typePointersVariableStatement({ objectTypes, objectUnionTypes }),
     ]);
+    sourceFile.addStatements(objectSetDeclarations({ objectTypes }));
   }
 }
