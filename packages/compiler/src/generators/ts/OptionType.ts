@@ -85,6 +85,12 @@ export class OptionType extends Type {
     return `purify.Either.of(${this.itemType.fromRdfExpression(parameters)}.toMaybe())`;
   }
 
+  override graphqlResolveExpression(
+    parameters: Parameters<Type["graphqlResolveExpression"]>[0],
+  ): string {
+    return `${this.itemType.graphqlResolveExpression(parameters)}.extractNullable()`;
+  }
+
   override hashStatements({
     depth,
     variables,

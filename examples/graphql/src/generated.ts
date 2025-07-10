@@ -62,10 +62,12 @@ export namespace NodeShape {
       identifier: { type: graphql.GraphQLString },
       optionalStringProperty: {
         description: "Optional string property",
+        resolve: (source) => source.optionalStringProperty.extractNullable(),
         type: graphql.GraphQLString,
       },
       requiredStringProperty: {
         description: "Required string property",
+        resolve: (source) => source.requiredStringProperty,
         type: new graphql.GraphQLNonNull(graphql.GraphQLString),
       },
     }),

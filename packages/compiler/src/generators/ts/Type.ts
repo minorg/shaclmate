@@ -92,6 +92,19 @@ export abstract class Type {
   }): string;
 
   /**
+   * An expression that resolves a value of this type in the GraphQL server.
+   */
+  graphqlResolveExpression({
+    variables,
+  }: {
+    variables: {
+      value: string;
+    };
+  }): string {
+    return variables.value;
+  }
+
+  /**
    * Statements that use hasher.update to hash a property value of this type.
    */
   abstract hashStatements(parameters: {

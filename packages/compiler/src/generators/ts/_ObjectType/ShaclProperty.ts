@@ -98,6 +98,7 @@ export class ShaclProperty extends Property<Type> {
   override get graphqlField(): Property<Type>["graphqlField"] {
     return Maybe.of({
       description: this.comment.map(JSON.stringify).extract(),
+      resolve: `(source) => ${this.type.graphqlResolveExpression({ variables: { value: `source.${this.name}` } })}`,
       type: this.type.graphqlName,
     });
   }

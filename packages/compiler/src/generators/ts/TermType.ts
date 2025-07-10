@@ -192,6 +192,12 @@ export class TermType<
     return chain.join(".");
   }
 
+  override graphqlResolveExpression(
+    _parameters: Parameters<Type["graphqlResolveExpression"]>[0],
+  ): string {
+    throw new Error("not implemented");
+  }
+
   override hashStatements({
     variables,
   }: Parameters<Type["hashStatements"]>[0]): readonly string[] {

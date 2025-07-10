@@ -334,6 +334,12 @@ ${this.memberTypes
     }, "");
   }
 
+  override graphqlResolveExpression(
+    _parameters: Parameters<Type["graphqlResolveExpression"]>[0],
+  ): string {
+    throw new Error("not implemented");
+  }
+
   override hashStatements({
     depth,
     variables,
