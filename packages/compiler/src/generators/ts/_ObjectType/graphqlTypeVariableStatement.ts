@@ -10,7 +10,7 @@ import { OptionType } from "../OptionType.js";
 import { objectInitializer } from "../objectInitializer.js";
 import { ShaclProperty } from "./ShaclProperty.js";
 
-export function graphqlObjectTypeVariableStatement(
+export function graphqlTypeVariableStatement(
   this: ObjectType,
 ): Maybe<VariableStatementStructure> {
   if (!this.features.has("graphql")) {

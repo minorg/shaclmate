@@ -6,7 +6,7 @@ export * from "./equalsFunctionDeclaration.js";
 
 export * from "./fromRdfTypeVariableStatement.js";
 
-export * from "./graphqlObjectTypeVariableStatement.js";
+export * from "./graphqlTypeVariableStatement.js";
 
 export * from "./hashFunctionDeclarations.js";
 
