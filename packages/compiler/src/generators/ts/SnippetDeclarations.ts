@@ -200,6 +200,104 @@ export function $maybeEquals<T>(
 }
 `;
 
+  export const ObjectSet = `
+export interface $ObjectSet {
+  object<ObjectT extends { type: keyof typeof $ObjectTypes }>(
+    identifier: rdfjs.NamedNode,
+    type: ObjectT["type"],
+  ): Promise<purify.Either<Error, ObjectT>>;
+
+  // objectCount(
+  //   type: keyof typeof $ObjectTypes,
+  // ): Promise<purify.Either<Error, number>>;
+
+  // objectIdentifiers(
+  //   type: keyof typeof $ObjectTypes,
+  //   options?: { limit?: number; offset?: number },
+  // ): Promise<purify.Either<Error, readonly rdfjs.NamedNode[]>>;
+
+  // objects<ObjectT>(
+  //   identifiers: readonly rdfjs.NamedNode[],
+  //   type: keyof typeof $ObjectTypes,
+  // ): Promise<readonly purify.Either<Error, ObjectT>[]>;  
+}`;
+
+  export const RdfjsDatasetObjectSet = `
+export class $RdfjsDatasetObjectSet implements $ObjectSet {
+  readonly resourceSet: rdfjsResource.ResourceSet;
+
+  constructor({
+    dataset,
+  }: {
+    dataset: rdfjs.DatasetCore;
+  }) {
+    this.resourceSet = new rdfjsResource.ResourceSet({
+      dataset,
+    });
+  }
+
+  async object<ObjectT extends { type: keyof typeof $ObjectTypes }>(
+    identifier: rdfjs.NamedNode,
+    type: ObjectT["type"],
+  ): Promise<purify.Either<Error, ObjectT>> {
+    return this.objectSync<ObjectT>(identifier, type);
+  }
+
+  objectSync<ObjectT extends { type: keyof typeof $ObjectTypes }>(
+    identifier: rdfjs.NamedNode,
+    type: ObjectT["type"],
+  ): purify.Either<Error, ObjectT> {
+    const fromRdf = $ObjectTypes[type].fromRdf;
+    const resource = this.resourceSet.resource(identifier);
+    return fromRdf({ resource }) as unknown as purify.Either<Error, ObjectT>;
+  }
+
+  // async objects<ObjectT extends Object>(
+  //   type: ObjectT["type"],
+  // ): Promise<Either<Error, readonly ObjectT[]>> {
+  //   return this.objectsSync(type);
+  // }
+
+  // objectsSync<ObjectT extends Object>(
+  //   type: ObjectT["type"],
+  // ): Either<Error, readonly ObjectT[]> {
+  //   const fromRdf = $ObjectTypes[type].fromRdf;
+  //   const objects: ObjectT[] = [];
+  //   for (const resource of this.resourceSet.instancesOf(
+  //     $ObjectTypes[type].fromRdfType,
+  //   )) {
+  //     const objectEither = fromRdf({ resource }) as unknown as Either<
+  //       Error,
+  //       ObjectT
+  //     >;
+  //     if (objectEither.isLeft()) {
+  //       return objectEither;
+  //     }
+  //     objects.push(objectEither.unsafeCoerce());
+  //   }
+  //   return Either.of(objects);
+  // }
+
+  // async objectCount(type: Object["type"]): Promise<Either<Error, number>> {
+  //   return this.objectCountSync(type);
+  // }
+
+  // objectCountSync(type: Object["type"]): Either<Error, number> {
+  //   const fromRdf = $ObjectTypes[type].fromRdf;
+  //   let count = 0;
+  //   for (const resource of this.resourceSet.instancesOf(
+  //     $ObjectTypes[type].fromRdfType,
+  //   )) {
+  //     const objectEither = fromRdf({ resource });
+  //     if (objectEither.isRight()) {
+  //       count++;
+  //     }
+  //   }
+  //   return Either.of(count);
+  // }
+}
+`;
+
   export const strictEquals = `\
 /**
  * Compare two values for strict equality (===), returning an $EqualsResult rather than a boolean.

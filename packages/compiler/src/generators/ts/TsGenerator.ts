@@ -10,8 +10,8 @@ import type { Generator } from "../Generator.js";
 import type { Import } from "./Import.js";
 import { ObjectType } from "./ObjectType.js";
 import { ObjectUnionType } from "./ObjectUnionType.js";
+import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { TypeFactory } from "./TypeFactory.js";
-import { objectSetDeclarations } from "./objectSetDeclarations.js";
 import { typePointersVariableStatement } from "./typePointersVariableStatement.js";
 
 export class TsGenerator implements Generator {
@@ -112,6 +112,19 @@ export class TsGenerator implements Generator {
     sourceFile.addVariableStatements([
       typePointersVariableStatement({ objectTypes, objectUnionTypes }),
     ]);
-    sourceFile.addStatements(objectSetDeclarations({ objectTypes }));
+
+    const someObjectTypeHasRdfFeature = objectTypes.some((objectType) =>
+      objectType.features.has("rdf"),
+    );
+    const someObjectTypeHasSparqlFeature = objectTypes.some((objectType) =>
+      objectType.features.has("sparql"),
+    );
+
+    if (someObjectTypeHasRdfFeature || someObjectTypeHasSparqlFeature) {
+      sourceFile.addStatements(SnippetDeclarations.ObjectSet);
+      if (someObjectTypeHasRdfFeature) {
+        sourceFile.addStatements(SnippetDeclarations.RdfjsDatasetObjectSet);
+      }
+    }
   }
 }
