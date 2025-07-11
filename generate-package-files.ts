@@ -116,6 +116,7 @@ const packages: readonly Package[] = [
     },
     devDependencies: {
       external: {
+        "@kos-kit/sparql-client": "2.0.115",
         "@types/n3": externalDependencyVersions["@types/n3"],
         oxigraph: "^0.4.0",
         n3: externalDependencyVersions.n3,
@@ -124,7 +125,7 @@ const packages: readonly Package[] = [
       internal: ["kitchen-sink-example", "runtime"],
     },
     directory: "packages",
-    linkableDependencies: ["rdfjs-resource"],
+    linkableDependencies: ["@kos-kit/sparql-client", "rdfjs-resource"],
     name: "compiler",
   },
   {
