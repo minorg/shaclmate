@@ -4,6 +4,7 @@ import {
   type MethodSignatureStructure,
   type ModuleDeclarationStructure,
   type OptionalKind,
+  Scope,
   StructureKind,
 } from "ts-morph";
 import type { ObjectType } from "./ObjectType.js";
@@ -119,8 +120,10 @@ function objectSetModuleDeclaration({
 }
 
 export function objectSetDeclarations({
+  dataFactoryVariable,
   objectTypes,
 }: {
+  dataFactoryVariable: string;
   objectTypes: readonly ObjectType[];
 }): readonly (
   | ClassDeclarationStructure
@@ -189,6 +192,18 @@ export function objectSetDeclarations({
       rdfjsDatasetObjectSetClassDeclaration({
         objectTypeIdentifierNodeKinds,
         objectTypes: objectTypesWithRdfFeature.sort((left, right) =>
+          left.name.localeCompare(right.name),
+        ),
+      }),
+    );
+  }
+
+  if (objectTypesWithSparqlFeature.length > 0) {
+    statements.push(
+      sparqlObjectSetClassDeclaration({
+        dataFactoryVariable,
+        objectTypeIdentifierNodeKinds,
+        objectTypes: objectTypesWithSparqlFeature.sort((left, right) =>
           left.name.localeCompare(right.name),
         ),
       }),
@@ -268,6 +283,9 @@ function rdfjsDatasetObjectSetClassDeclaration({
 }`,
               ];
             })
+            .concat(
+              "default: return purify.Left(new Error(`unrecognized type ${type}`));",
+            )
             .join("\n")} }`,
           "return purify.Either.of(count);",
         ],
@@ -310,6 +328,9 @@ function rdfjsDatasetObjectSetClassDeclaration({
 }`,
               ];
             })
+            .concat(
+              "default: return purify.Left(new Error(`unrecognized type ${type}`));",
+            )
             .join("\n")} }`,
           "return purify.Either.of(result);",
         ],
@@ -345,6 +366,9 @@ function rdfjsDatasetObjectSetClassDeclaration({
 ${objectType._discriminatorProperty.ownValues.map((value) => `case "${value}":`).join("\n")} 
   return identifiers.map(identifier => ${identifierTypeChecks.length > 0 ? `{ ${identifierTypeChecks.join("\n")} return ${fromRdfExpression}; }` : fromRdfExpression});`;
             })
+            .concat(
+              "default: return identifiers.map(() => purify.Left(new Error(`unrecognized type ${type}`)));",
+            )
             .join("\n")}}`,
         ],
       },
@@ -354,6 +378,107 @@ ${objectType._discriminatorProperty.ownValues.map((value) => `case "${value}":`)
         isReadonly: true,
         name: "resourceSet",
         type: "rdfjsResource.ResourceSet",
+      },
+    ],
+  };
+}
+
+function sparqlObjectSetClassDeclaration({
+  dataFactoryVariable,
+  objectTypeIdentifierNodeKinds,
+  objectTypes,
+}: {
+  dataFactoryVariable: string;
+  objectTypeIdentifierNodeKinds: readonly ("BlankNode" | "NamedNode")[];
+  objectTypes: readonly ObjectType[];
+}): ClassDeclarationStructure {
+  return {
+    ctors: [
+      {
+        parameters: [
+          {
+            name: "{ sparqlClient }",
+            type: '{ sparqlClient: $SparqlObjectSet["sparqlClient"] }',
+          },
+        ],
+        statements: ["this.sparqlClient = sparqlClient;"],
+      },
+    ],
+    implements: ["$ObjectSet"],
+    isExported: true,
+    kind: StructureKind.Class,
+    name: "$SparqlObjectSet",
+    methods: [
+      {
+        ...objectSetInterfaceMethodSignatures["object"],
+        kind: StructureKind.Method,
+        isAsync: true,
+        statements: [
+          "return (await this.objects<ObjectT>([identifier], type))[0];",
+        ],
+      },
+      {
+        ...objectSetInterfaceMethodSignatures["objects"],
+        kind: StructureKind.Method,
+        isAsync: true,
+        statements: [
+          "if (identifiers.length === 0) { return []; }",
+          ...(objectTypeIdentifierNodeKinds.some(
+            (value) => value === "BlankNode",
+          )
+            ? [
+                'if (identifiers.some(identifier => identifier.termType === "BlankNode")) { return identifiers.map(identifier => identifier.termType === "BlankNode" ? purify.Left(new Error("can\'t use blank node object identifiers with SPARQL")) : purify.Left(new Error("one of the supplied object identifiers is a blank node, which can\'t be used with SPARQL"))); }',
+              ]
+            : []),
+          `const objectVariable = ${dataFactoryVariable}.variable!("object");`,
+          `const constructQueryWhere = [{
+            values: identifiers.map((identifier) => {
+              const valuePatternRow: sparqljs.ValuePatternRow = {};
+              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
+              return valuePatternRow;
+            }),
+            type: "values" as const,
+          }]`,
+          `switch (type) { ${objectTypes
+            .map(
+              (
+                objectType,
+              ) => `${objectType._discriminatorProperty.ownValues.map((value) => `case "${value}":`).join("\n")} {
+              const constructQueryString = ${objectType.staticModuleName}.sparqlConstructQueryString({
+                subject: objectVariable,
+                where: constructQueryWhere
+              });
+
+              let quads: readonly rdfjs.Quad[];
+              try {
+                quads = await this.sparqlClient.queryQuads(constructQueryString);
+              } catch (e) {
+                const left = purify.Left<Error, ObjectT>(e as Error);
+                return identifiers.map(() => left);
+              }
+              
+              const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+              return identifiers.map((identifier) =>
+                ${objectType.staticModuleName}.fromRdf({
+                  resource: new rdfjsResource.Resource<rdfjs.NamedNode>({ dataset, identifier: identifier as rdfjs.NamedNode })
+                }) as unknown as purify.Either<Error, ObjectT>,
+              );
+            }`,
+            )
+            .concat(
+              "default: return identifiers.map(() => purify.Left(new Error(`unrecognized type ${type}`)));",
+            )
+            .join("\n")}}`,
+        ],
+      },
+    ],
+    properties: [
+      {
+        isReadonly: true,
+        name: "sparqlClient",
+        scope: Scope.Private,
+        type: "{ queryBindings: (query: string) => Promise<readonly Record<string, rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>[]>; queryQuads: (query: string) => Promise<readonly rdfjs.Quad[]>; }",
       },
     ],
   };

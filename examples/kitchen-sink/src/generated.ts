@@ -1,6 +1,6 @@
 import type * as rdfjs from "@rdfjs/types";
 import { sha256 } from "js-sha256";
-import { DataFactory as dataFactory } from "n3";
+import N3, { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
 import * as rdfLiteral from "rdf-literal";
 import * as rdfjsResource from "rdfjs-resource";
@@ -19322,6 +19322,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         }
         break;
       }
+      default:
+        return purify.Left(new Error(`unrecognized type ${type}`));
     }
 
     return purify.Either.of(count);
@@ -19487,6 +19489,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         }
         break;
       }
+      default:
+        return purify.Left(new Error(`unrecognized type ${type}`));
     }
 
     return purify.Either.of(result);
@@ -19765,6 +19769,1000 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
             resource: this.resourceSet.namedResource(identifier),
           }) as unknown as purify.Either<Error, ObjectT>;
         });
+      default:
+        return identifiers.map(() =>
+          purify.Left(new Error(`unrecognized type ${type}`)),
+        );
+    }
+  }
+}
+
+export class $SparqlObjectSet implements $ObjectSet {
+  private readonly sparqlClient: {
+    queryBindings: (
+      query: string,
+    ) => Promise<
+      readonly Record<
+        string,
+        rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
+      >[]
+    >;
+    queryQuads: (query: string) => Promise<readonly rdfjs.Quad[]>;
+  };
+
+  constructor({
+    sparqlClient,
+  }: { sparqlClient: $SparqlObjectSet["sparqlClient"] }) {
+    this.sparqlClient = sparqlClient;
+  }
+
+  async object<ObjectT>(
+    identifier: $ObjectSet.ObjectIdentifier,
+    type: $ObjectSet.ObjectTypeName,
+  ): Promise<purify.Either<Error, ObjectT>> {
+    return (await this.objects<ObjectT>([identifier], type))[0];
+  }
+
+  async objects<ObjectT>(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    type: $ObjectSet.ObjectTypeName,
+  ): Promise<readonly purify.Either<Error, ObjectT>[]> {
+    if (identifiers.length === 0) {
+      return [];
+    }
+
+    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
+      return identifiers.map((identifier) =>
+        identifier.termType === "BlankNode"
+          ? purify.Left(
+              new Error("can't use blank node object identifiers with SPARQL"),
+            )
+          : purify.Left(
+              new Error(
+                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
+              ),
+            ),
+      );
+    }
+
+    const objectVariable = dataFactory.variable!("object");
+    const constructQueryWhere = [
+      {
+        values: identifiers.map((identifier) => {
+          const valuePatternRow: sparqljs.ValuePatternRow = {};
+          valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
+          return valuePatternRow;
+        }),
+        type: "values" as const,
+      },
+    ];
+    switch (type) {
+      case "BaseInterfaceWithoutPropertiesNodeShape": {
+        const constructQueryString =
+          BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlConstructQueryString(
+            {
+              subject: objectVariable,
+              where: constructQueryWhere,
+            },
+          );
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "BaseInterfaceWithPropertiesNodeShape": {
+        const constructQueryString =
+          BaseInterfaceWithPropertiesNodeShapeStatic.sparqlConstructQueryString(
+            {
+              subject: objectVariable,
+              where: constructQueryWhere,
+            },
+          );
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            BaseInterfaceWithPropertiesNodeShapeStatic.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "BlankNodeShape": {
+        const constructQueryString = BlankNodeShape.sparqlConstructQueryString({
+          subject: objectVariable,
+          where: constructQueryWhere,
+        });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            BlankNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "ConcreteChildClassNodeShape": {
+        const constructQueryString =
+          ConcreteChildClassNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            ConcreteChildClassNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "ConcreteChildInterfaceNodeShape": {
+        const constructQueryString =
+          ConcreteChildInterfaceNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            ConcreteChildInterfaceNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "ConcreteParentClassNodeShape": {
+        const constructQueryString =
+          ConcreteParentClassNodeShapeStatic.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            ConcreteParentClassNodeShapeStatic.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "ConcreteParentInterfaceNodeShape": {
+        const constructQueryString =
+          ConcreteParentInterfaceNodeShapeStatic.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            ConcreteParentInterfaceNodeShapeStatic.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "DefaultValuePropertiesNodeShape": {
+        const constructQueryString =
+          DefaultValuePropertiesNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            DefaultValuePropertiesNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "ExplicitFromToRdfTypesNodeShape": {
+        const constructQueryString =
+          ExplicitFromToRdfTypesNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            ExplicitFromToRdfTypesNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "ExplicitRdfTypeNodeShape": {
+        const constructQueryString =
+          ExplicitRdfTypeNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            ExplicitRdfTypeNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "ExternNodeShape": {
+        const constructQueryString = ExternNodeShape.sparqlConstructQueryString(
+          {
+            subject: objectVariable,
+            where: constructQueryWhere,
+          },
+        );
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            ExternNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "ExternPropertiesNodeShape": {
+        const constructQueryString =
+          ExternPropertiesNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            ExternPropertiesNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "HasValuePropertiesNodeShape": {
+        const constructQueryString =
+          HasValuePropertiesNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            HasValuePropertiesNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "InIdentifierNodeShape": {
+        const constructQueryString =
+          InIdentifierNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            InIdentifierNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "InlineNodeShape": {
+        const constructQueryString = InlineNodeShape.sparqlConstructQueryString(
+          {
+            subject: objectVariable,
+            where: constructQueryWhere,
+          },
+        );
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            InlineNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "InPropertiesNodeShape": {
+        const constructQueryString =
+          InPropertiesNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            InPropertiesNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "InterfaceNodeShape": {
+        const constructQueryString =
+          InterfaceNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            InterfaceNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "InterfaceUnionNodeShapeMember1": {
+        const constructQueryString =
+          InterfaceUnionNodeShapeMember1.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            InterfaceUnionNodeShapeMember1.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "InterfaceUnionNodeShapeMember2a": {
+        const constructQueryString =
+          InterfaceUnionNodeShapeMember2a.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            InterfaceUnionNodeShapeMember2a.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "InterfaceUnionNodeShapeMember2b": {
+        const constructQueryString =
+          InterfaceUnionNodeShapeMember2b.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            InterfaceUnionNodeShapeMember2b.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "IriNodeShape": {
+        const constructQueryString = IriNodeShape.sparqlConstructQueryString({
+          subject: objectVariable,
+          where: constructQueryWhere,
+        });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            IriNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "LanguageInPropertiesNodeShape": {
+        const constructQueryString =
+          LanguageInPropertiesNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            LanguageInPropertiesNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "ListPropertiesNodeShape": {
+        const constructQueryString =
+          ListPropertiesNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            ListPropertiesNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "MutablePropertiesNodeShape": {
+        const constructQueryString =
+          MutablePropertiesNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            MutablePropertiesNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "NonClassNodeShape": {
+        const constructQueryString =
+          NonClassNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            NonClassNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "OrderedPropertiesNodeShape": {
+        const constructQueryString =
+          OrderedPropertiesNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            OrderedPropertiesNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "PropertyCardinalitiesNodeShape": {
+        const constructQueryString =
+          PropertyCardinalitiesNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            PropertyCardinalitiesNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "PropertyVisibilitiesNodeShape": {
+        const constructQueryString =
+          PropertyVisibilitiesNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            PropertyVisibilitiesNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "Sha256IriNodeShape": {
+        const constructQueryString =
+          Sha256IriNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            Sha256IriNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "TermPropertiesNodeShape": {
+        const constructQueryString =
+          TermPropertiesNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            TermPropertiesNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "UnionNodeShapeMember1": {
+        const constructQueryString =
+          UnionNodeShapeMember1.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            UnionNodeShapeMember1.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "UnionNodeShapeMember2": {
+        const constructQueryString =
+          UnionNodeShapeMember2.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            UnionNodeShapeMember2.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "UnionPropertiesNodeShape": {
+        const constructQueryString =
+          UnionPropertiesNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            UnionPropertiesNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      case "UuidV4IriNodeShape": {
+        const constructQueryString =
+          UuidV4IriNodeShape.sparqlConstructQueryString({
+            subject: objectVariable,
+            where: constructQueryWhere,
+          });
+
+        let quads: readonly rdfjs.Quad[];
+        try {
+          quads = await this.sparqlClient.queryQuads(constructQueryString);
+        } catch (e) {
+          const left = purify.Left<Error, ObjectT>(e as Error);
+          return identifiers.map(() => left);
+        }
+
+        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+        return identifiers.map(
+          (identifier) =>
+            UuidV4IriNodeShape.fromRdf({
+              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      }
+      default:
+        return identifiers.map(() =>
+          purify.Left(new Error(`unrecognized type ${type}`)),
+        );
     }
   }
 }

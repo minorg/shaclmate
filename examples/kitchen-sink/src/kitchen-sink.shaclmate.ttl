@@ -121,16 +121,6 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:defaultValue properties." ;
     sh:property [
-        sh:defaultValue false ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :falseBooleanProperty
-    ], [
-        sh:defaultValue "2018-04-09"^^xsd:date ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :dateProperty
-    ], [
         sh:defaultValue "2018-04-09T10:00:00Z"^^xsd:dateTime ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
@@ -150,6 +140,16 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :trueBooleanProperty
+    ], [
+        sh:defaultValue false ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :falseBooleanProperty
+    ], [
+        sh:defaultValue "2018-04-09"^^xsd:date ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :dateProperty
     ] .
 
 :ExplicitFromToRdfTypesNodeShape
@@ -182,6 +182,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :ExternObjectType
     shaclmate:extern true ;
+    shaclmate:tsFeatureExclude shaclmate:_TsFeature_Sparql ;
     shaclmate:tsImport "import { ExternObjectType } from \"./ExternObjectType.js\";" ;
     a sh:NodeShape ;
     rdfs:comment "An extern object type in TypeScript" ;
@@ -641,17 +642,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:xone properties." ;
     sh:property [
-        shaclmate:widen false ;
-        sh:maxCount 1 ;
-        sh:path :narrowLiteralsProperty ;
-        sh:xone ([
-                sh:datatype xsd:integer
-            ]
-            [
-                sh:datatype xsd:string
-            ]
-        )
-    ], [
         sh:maxCount 1 ;
         sh:path :widenedLiteralsProperty ;
         sh:xone ([
@@ -679,6 +669,17 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
             [
                 sh:node :NonClassNodeShape
+            ]
+        )
+    ], [
+        shaclmate:widen false ;
+        sh:maxCount 1 ;
+        sh:path :narrowLiteralsProperty ;
+        sh:xone ([
+                sh:datatype xsd:integer
+            ]
+            [
+                sh:datatype xsd:string
             ]
         )
     ] .
