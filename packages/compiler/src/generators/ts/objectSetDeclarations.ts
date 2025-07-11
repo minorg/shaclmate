@@ -46,7 +46,7 @@ const objectSetInterfaceMethodSignatures: Record<
     parameters: [
       {
         name: "type",
-        type: "$ObjectSet.ObjectIdentifier",
+        type: "$ObjectSet.ObjectTypeName",
       },
       {
         hasQuestionToken: true,
@@ -236,24 +236,7 @@ function rdfjsDatasetObjectSetClassDeclaration({
         name: "objectSync",
         returnType: "purify.Either<Error, ObjectT>",
         statements: [
-          `switch (type) { ${objectTypes
-            .map((objectType) => {
-              const caseBlockStatements: string[] = [];
-              for (const identifierNodeKind of objectTypeIdentifierNodeKinds) {
-                if (
-                  !objectType.identifierType.nodeKinds.has(identifierNodeKind)
-                ) {
-                  caseBlockStatements.push(
-                    `if (identifier.termType === "${identifierNodeKind}") { return purify.Left(new Error(\`\${type} does not accept ${identifierNodeKind} identifiers\`)); }`,
-                  );
-                }
-              }
-              caseBlockStatements.push(
-                `return ${objectType.staticModuleName}.fromRdf({ resource: this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedResource" : "resource"}(identifier) }) as unknown as purify.Either<Error, ObjectT>;`,
-              );
-              return `${objectType._discriminatorProperty.ownValues.map((value) => `case "${value}":`).join("\n")} { ${caseBlockStatements.join("\n")} }`;
-            })
-            .join("\n")}}`,
+          "return this.objectsSync<ObjectT>([identifier], type)[0];",
         ],
       },
       {
@@ -287,6 +270,82 @@ function rdfjsDatasetObjectSetClassDeclaration({
             })
             .join("\n")} }`,
           "return purify.Either.of(count);",
+        ],
+      },
+      {
+        ...objectSetInterfaceMethodSignatures["objectIdentifiers"],
+        kind: StructureKind.Method,
+        isAsync: true,
+        statements: ["return this.objectIdentifiersSync(type, options);"],
+      },
+      {
+        ...objectSetInterfaceMethodSignatures["objectIdentifiers"],
+        kind: StructureKind.Method,
+        name: "objectIdentifiersSync",
+        returnType:
+          "purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>",
+        statements: [
+          "const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;",
+          "if (limit <= 0) { return purify.Either.of([]); }",
+          "let offset = options?.offset ?? 0;",
+          "if (offset < 0) { offset = 0; }",
+          "let identifierI = 0;",
+          "const result: $ObjectSet.ObjectIdentifier[] = []",
+          `switch (type) { ${objectTypes
+            .flatMap((objectType) => {
+              if (objectType.fromRdfType.isNothing()) {
+                return [];
+              }
+              return [
+                `${objectType._discriminatorProperty.ownValues.map((value) => `case "${value}":`).join("\n")} { 
+  for (const resource of this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedInstancesOf" : "instancesOf"}(${objectType.staticModuleName}.fromRdfType)) {
+    if (${objectType.staticModuleName}.fromRdf({ resource }).isRight() && identifierI++ >= offset) {
+      result.push(resource.identifier);
+      if (result.length === limit) {
+        break;
+      }
+    }
+  }
+  break;
+}`,
+              ];
+            })
+            .join("\n")} }`,
+          "return purify.Either.of(result);",
+        ],
+      },
+      {
+        ...objectSetInterfaceMethodSignatures["objects"],
+        kind: StructureKind.Method,
+        isAsync: true,
+        statements: ["return this.objectsSync<ObjectT>(identifiers, type);"],
+      },
+      {
+        ...objectSetInterfaceMethodSignatures["objects"],
+        kind: StructureKind.Method,
+        name: "objectsSync",
+        returnType: "readonly purify.Either<Error, ObjectT>[]",
+        statements: [
+          `switch (type) { ${objectTypes
+            .map((objectType) => {
+              const fromRdfExpression = `${objectType.staticModuleName}.fromRdf({ resource: this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedResource" : "resource"}(identifier) }) as unknown as purify.Either<Error, ObjectT>`;
+              const identifierTypeChecks = objectTypeIdentifierNodeKinds
+                .filter(
+                  (identifierNodeKind) =>
+                    !objectType.identifierType.nodeKinds.has(
+                      identifierNodeKind,
+                    ),
+                )
+                .map(
+                  (identifierNodeKind) =>
+                    `if (identifier.termType === "${identifierNodeKind}") { return purify.Left(new Error(\`\${type} does not accept ${identifierNodeKind} identifiers\`)); }`,
+                );
+
+              return `\
+${objectType._discriminatorProperty.ownValues.map((value) => `case "${value}":`).join("\n")} 
+  return identifiers.map(identifier => ${identifierTypeChecks.length > 0 ? `{ ${identifierTypeChecks.join("\n")} return ${fromRdfExpression}; }` : fromRdfExpression});`;
+            })
+            .join("\n")}}`,
         ],
       },
     ],

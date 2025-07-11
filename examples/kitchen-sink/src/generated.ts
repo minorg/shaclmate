@@ -19147,7 +19147,7 @@ export interface $ObjectSet {
     type: $ObjectSet.ObjectTypeName,
   ): Promise<purify.Either<Error, number>>;
   objectIdentifiers(
-    type: $ObjectSet.ObjectIdentifier,
+    type: $ObjectSet.ObjectTypeName,
     options?: { limit?: number; offset?: number },
   ): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
   objects<ObjectT>(
@@ -19214,203 +19214,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: $ObjectSet.ObjectIdentifier,
     type: $ObjectSet.ObjectTypeName,
   ): purify.Either<Error, ObjectT> {
-    switch (type) {
-      case "BaseInterfaceWithoutPropertiesNodeShape": {
-        return BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "BaseInterfaceWithPropertiesNodeShape": {
-        return BaseInterfaceWithPropertiesNodeShapeStatic.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "BlankNodeShape": {
-        return BlankNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "ConcreteChildClassNodeShape": {
-        return ConcreteChildClassNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "ConcreteChildInterfaceNodeShape": {
-        return ConcreteChildInterfaceNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "ConcreteParentClassNodeShape": {
-        return ConcreteParentClassNodeShapeStatic.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "ConcreteParentInterfaceNodeShape": {
-        return ConcreteParentInterfaceNodeShapeStatic.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "DefaultValuePropertiesNodeShape": {
-        return DefaultValuePropertiesNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "ExplicitFromToRdfTypesNodeShape": {
-        return ExplicitFromToRdfTypesNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "ExplicitRdfTypeNodeShape": {
-        return ExplicitRdfTypeNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "ExternNodeShape": {
-        return ExternNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "ExternObjectType": {
-        return ExternObjectType.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "ExternPropertiesNodeShape": {
-        return ExternPropertiesNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "HasValuePropertiesNodeShape": {
-        return HasValuePropertiesNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "InIdentifierNodeShape": {
-        if (identifier.termType === "BlankNode") {
-          return purify.Left(
-            new Error(`${type} does not accept BlankNode identifiers`),
-          );
-        }
-        return InIdentifierNodeShape.fromRdf({
-          resource: this.resourceSet.namedResource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "InlineNodeShape": {
-        return InlineNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "InPropertiesNodeShape": {
-        return InPropertiesNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "InterfaceNodeShape": {
-        return InterfaceNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "InterfaceUnionNodeShapeMember1": {
-        return InterfaceUnionNodeShapeMember1.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "InterfaceUnionNodeShapeMember2a": {
-        return InterfaceUnionNodeShapeMember2a.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "InterfaceUnionNodeShapeMember2b": {
-        return InterfaceUnionNodeShapeMember2b.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "IriNodeShape": {
-        if (identifier.termType === "BlankNode") {
-          return purify.Left(
-            new Error(`${type} does not accept BlankNode identifiers`),
-          );
-        }
-        return IriNodeShape.fromRdf({
-          resource: this.resourceSet.namedResource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "LanguageInPropertiesNodeShape": {
-        return LanguageInPropertiesNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "ListPropertiesNodeShape": {
-        return ListPropertiesNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "MutablePropertiesNodeShape": {
-        return MutablePropertiesNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "NonClassNodeShape": {
-        return NonClassNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "OrderedPropertiesNodeShape": {
-        return OrderedPropertiesNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "PropertyCardinalitiesNodeShape": {
-        return PropertyCardinalitiesNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "PropertyVisibilitiesNodeShape": {
-        return PropertyVisibilitiesNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "Sha256IriNodeShape": {
-        if (identifier.termType === "BlankNode") {
-          return purify.Left(
-            new Error(`${type} does not accept BlankNode identifiers`),
-          );
-        }
-        return Sha256IriNodeShape.fromRdf({
-          resource: this.resourceSet.namedResource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "TermPropertiesNodeShape": {
-        return TermPropertiesNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "UnionNodeShapeMember1": {
-        return UnionNodeShapeMember1.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "UnionNodeShapeMember2": {
-        return UnionNodeShapeMember2.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "UnionPropertiesNodeShape": {
-        return UnionPropertiesNodeShape.fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-      case "UuidV4IriNodeShape": {
-        if (identifier.termType === "BlankNode") {
-          return purify.Left(
-            new Error(`${type} does not accept BlankNode identifiers`),
-          );
-        }
-        return UuidV4IriNodeShape.fromRdf({
-          resource: this.resourceSet.namedResource(identifier),
-        }) as unknown as purify.Either<Error, ObjectT>;
-      }
-    }
+    return this.objectsSync<ObjectT>([identifier], type)[0];
   }
 
   async objectCount(
@@ -19521,5 +19325,446 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     return purify.Either.of(count);
+  }
+
+  async objectIdentifiers(
+    type: $ObjectSet.ObjectTypeName,
+    options?: { limit?: number; offset?: number },
+  ): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return this.objectIdentifiersSync(type, options);
+  }
+
+  objectIdentifiersSync(
+    type: $ObjectSet.ObjectTypeName,
+    options?: { limit?: number; offset?: number },
+  ): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return purify.Either.of([]);
+    }
+
+    let offset = options?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    let identifierI = 0;
+    const result: $ObjectSet.ObjectIdentifier[] = [];
+    switch (type) {
+      case "BaseInterfaceWithoutPropertiesNodeShape": {
+        for (const resource of this.resourceSet.instancesOf(
+          BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdfType,
+        )) {
+          if (
+            BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdf({
+              resource,
+            }).isRight() &&
+            identifierI++ >= offset
+          ) {
+            result.push(resource.identifier);
+            if (result.length === limit) {
+              break;
+            }
+          }
+        }
+        break;
+      }
+      case "BaseInterfaceWithPropertiesNodeShape": {
+        for (const resource of this.resourceSet.instancesOf(
+          BaseInterfaceWithPropertiesNodeShapeStatic.fromRdfType,
+        )) {
+          if (
+            BaseInterfaceWithPropertiesNodeShapeStatic.fromRdf({
+              resource,
+            }).isRight() &&
+            identifierI++ >= offset
+          ) {
+            result.push(resource.identifier);
+            if (result.length === limit) {
+              break;
+            }
+          }
+        }
+        break;
+      }
+      case "ConcreteChildClassNodeShape": {
+        for (const resource of this.resourceSet.instancesOf(
+          ConcreteChildClassNodeShape.fromRdfType,
+        )) {
+          if (
+            ConcreteChildClassNodeShape.fromRdf({ resource }).isRight() &&
+            identifierI++ >= offset
+          ) {
+            result.push(resource.identifier);
+            if (result.length === limit) {
+              break;
+            }
+          }
+        }
+        break;
+      }
+      case "ConcreteChildInterfaceNodeShape": {
+        for (const resource of this.resourceSet.instancesOf(
+          ConcreteChildInterfaceNodeShape.fromRdfType,
+        )) {
+          if (
+            ConcreteChildInterfaceNodeShape.fromRdf({ resource }).isRight() &&
+            identifierI++ >= offset
+          ) {
+            result.push(resource.identifier);
+            if (result.length === limit) {
+              break;
+            }
+          }
+        }
+        break;
+      }
+      case "ConcreteParentClassNodeShape": {
+        for (const resource of this.resourceSet.instancesOf(
+          ConcreteParentClassNodeShapeStatic.fromRdfType,
+        )) {
+          if (
+            ConcreteParentClassNodeShapeStatic.fromRdf({
+              resource,
+            }).isRight() &&
+            identifierI++ >= offset
+          ) {
+            result.push(resource.identifier);
+            if (result.length === limit) {
+              break;
+            }
+          }
+        }
+        break;
+      }
+      case "ConcreteParentInterfaceNodeShape": {
+        for (const resource of this.resourceSet.instancesOf(
+          ConcreteParentInterfaceNodeShapeStatic.fromRdfType,
+        )) {
+          if (
+            ConcreteParentInterfaceNodeShapeStatic.fromRdf({
+              resource,
+            }).isRight() &&
+            identifierI++ >= offset
+          ) {
+            result.push(resource.identifier);
+            if (result.length === limit) {
+              break;
+            }
+          }
+        }
+        break;
+      }
+      case "ExplicitFromToRdfTypesNodeShape": {
+        for (const resource of this.resourceSet.instancesOf(
+          ExplicitFromToRdfTypesNodeShape.fromRdfType,
+        )) {
+          if (
+            ExplicitFromToRdfTypesNodeShape.fromRdf({ resource }).isRight() &&
+            identifierI++ >= offset
+          ) {
+            result.push(resource.identifier);
+            if (result.length === limit) {
+              break;
+            }
+          }
+        }
+        break;
+      }
+      case "ExplicitRdfTypeNodeShape": {
+        for (const resource of this.resourceSet.instancesOf(
+          ExplicitRdfTypeNodeShape.fromRdfType,
+        )) {
+          if (
+            ExplicitRdfTypeNodeShape.fromRdf({ resource }).isRight() &&
+            identifierI++ >= offset
+          ) {
+            result.push(resource.identifier);
+            if (result.length === limit) {
+              break;
+            }
+          }
+        }
+        break;
+      }
+    }
+
+    return purify.Either.of(result);
+  }
+
+  async objects<ObjectT>(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    type: $ObjectSet.ObjectTypeName,
+  ): Promise<readonly purify.Either<Error, ObjectT>[]> {
+    return this.objectsSync<ObjectT>(identifiers, type);
+  }
+
+  objectsSync<ObjectT>(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    type: $ObjectSet.ObjectTypeName,
+  ): readonly purify.Either<Error, ObjectT>[] {
+    switch (type) {
+      case "BaseInterfaceWithoutPropertiesNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "BaseInterfaceWithPropertiesNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            BaseInterfaceWithPropertiesNodeShapeStatic.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "BlankNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            BlankNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "ConcreteChildClassNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            ConcreteChildClassNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "ConcreteChildInterfaceNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            ConcreteChildInterfaceNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "ConcreteParentClassNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            ConcreteParentClassNodeShapeStatic.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "ConcreteParentInterfaceNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            ConcreteParentInterfaceNodeShapeStatic.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "DefaultValuePropertiesNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            DefaultValuePropertiesNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "ExplicitFromToRdfTypesNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            ExplicitFromToRdfTypesNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "ExplicitRdfTypeNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            ExplicitRdfTypeNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "ExternNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            ExternNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "ExternObjectType":
+        return identifiers.map(
+          (identifier) =>
+            ExternObjectType.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "ExternPropertiesNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            ExternPropertiesNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "HasValuePropertiesNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            HasValuePropertiesNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "InIdentifierNodeShape":
+        return identifiers.map((identifier) => {
+          if (identifier.termType === "BlankNode") {
+            return purify.Left(
+              new Error(`${type} does not accept BlankNode identifiers`),
+            );
+          }
+          return InIdentifierNodeShape.fromRdf({
+            resource: this.resourceSet.namedResource(identifier),
+          }) as unknown as purify.Either<Error, ObjectT>;
+        });
+      case "InlineNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            InlineNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "InPropertiesNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            InPropertiesNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "InterfaceNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            InterfaceNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "InterfaceUnionNodeShapeMember1":
+        return identifiers.map(
+          (identifier) =>
+            InterfaceUnionNodeShapeMember1.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "InterfaceUnionNodeShapeMember2a":
+        return identifiers.map(
+          (identifier) =>
+            InterfaceUnionNodeShapeMember2a.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "InterfaceUnionNodeShapeMember2b":
+        return identifiers.map(
+          (identifier) =>
+            InterfaceUnionNodeShapeMember2b.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "IriNodeShape":
+        return identifiers.map((identifier) => {
+          if (identifier.termType === "BlankNode") {
+            return purify.Left(
+              new Error(`${type} does not accept BlankNode identifiers`),
+            );
+          }
+          return IriNodeShape.fromRdf({
+            resource: this.resourceSet.namedResource(identifier),
+          }) as unknown as purify.Either<Error, ObjectT>;
+        });
+      case "LanguageInPropertiesNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            LanguageInPropertiesNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "ListPropertiesNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            ListPropertiesNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "MutablePropertiesNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            MutablePropertiesNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "NonClassNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            NonClassNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "OrderedPropertiesNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            OrderedPropertiesNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "PropertyCardinalitiesNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            PropertyCardinalitiesNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "PropertyVisibilitiesNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            PropertyVisibilitiesNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "Sha256IriNodeShape":
+        return identifiers.map((identifier) => {
+          if (identifier.termType === "BlankNode") {
+            return purify.Left(
+              new Error(`${type} does not accept BlankNode identifiers`),
+            );
+          }
+          return Sha256IriNodeShape.fromRdf({
+            resource: this.resourceSet.namedResource(identifier),
+          }) as unknown as purify.Either<Error, ObjectT>;
+        });
+      case "TermPropertiesNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            TermPropertiesNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "UnionNodeShapeMember1":
+        return identifiers.map(
+          (identifier) =>
+            UnionNodeShapeMember1.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "UnionNodeShapeMember2":
+        return identifiers.map(
+          (identifier) =>
+            UnionNodeShapeMember2.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "UnionPropertiesNodeShape":
+        return identifiers.map(
+          (identifier) =>
+            UnionPropertiesNodeShape.fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            }) as unknown as purify.Either<Error, ObjectT>,
+        );
+      case "UuidV4IriNodeShape":
+        return identifiers.map((identifier) => {
+          if (identifier.termType === "BlankNode") {
+            return purify.Left(
+              new Error(`${type} does not accept BlankNode identifiers`),
+            );
+          }
+          return UuidV4IriNodeShape.fromRdf({
+            resource: this.resourceSet.namedResource(identifier),
+          }) as unknown as purify.Either<Error, ObjectT>;
+        });
+    }
   }
 }
