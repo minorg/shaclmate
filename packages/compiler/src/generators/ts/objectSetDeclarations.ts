@@ -237,7 +237,7 @@ function rdfjsDatasetObjectSetClassDeclaration({
         returnType: "purify.Either<Error, ObjectT>",
         statements: [
           `switch (type) { ${objectTypes
-            .flatMap((objectType) => {
+            .map((objectType) => {
               const caseBlockStatements: string[] = [];
               for (const identifierNodeKind of objectTypeIdentifierNodeKinds) {
                 if (
@@ -254,6 +254,39 @@ function rdfjsDatasetObjectSetClassDeclaration({
               return `${objectType._discriminatorProperty.ownValues.map((value) => `case "${value}":`).join("\n")} { ${caseBlockStatements.join("\n")} }`;
             })
             .join("\n")}}`,
+        ],
+      },
+      {
+        ...objectSetInterfaceMethodSignatures["objectCount"],
+        kind: StructureKind.Method,
+        isAsync: true,
+        statements: ["return this.objectCountSync(type);"],
+      },
+      {
+        ...objectSetInterfaceMethodSignatures["objectCount"],
+        kind: StructureKind.Method,
+        name: "objectCountSync",
+        returnType: "purify.Either<Error, number>",
+        statements: [
+          "let count = 0",
+          `switch (type) { ${objectTypes
+            .flatMap((objectType) => {
+              if (objectType.fromRdfType.isNothing()) {
+                return [];
+              }
+              return [
+                `${objectType._discriminatorProperty.ownValues.map((value) => `case "${value}":`).join("\n")} { 
+  for (const resource of this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedInstancesOf" : "instancesOf"}(${objectType.staticModuleName}.fromRdfType)) {
+    if (${objectType.staticModuleName}.fromRdf({ resource }).isRight()) {
+      count++;
+    }
+  }
+  break;
+}`,
+              ];
+            })
+            .join("\n")} }`,
+          "return purify.Either.of(count);",
         ],
       },
     ],

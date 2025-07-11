@@ -30,7 +30,6 @@ export class ObjectType extends DeclaredType {
   private readonly imports: readonly string[];
 
   protected readonly comment: Maybe<string>;
-  protected readonly fromRdfType: Maybe<NamedNode>;
   protected readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
   protected readonly label: Maybe<string>;
   protected readonly toRdfTypes: readonly NamedNode[];
@@ -38,6 +37,7 @@ export class ObjectType extends DeclaredType {
   readonly abstract: boolean;
   readonly declarationType: TsObjectDeclarationType;
   readonly extern: boolean;
+  readonly fromRdfType: Maybe<NamedNode>;
   readonly kind = "ObjectType";
   readonly typeof = "object";
 

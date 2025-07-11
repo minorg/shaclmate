@@ -19412,4 +19412,114 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       }
     }
   }
+
+  async objectCount(
+    type: $ObjectSet.ObjectTypeName,
+  ): Promise<purify.Either<Error, number>> {
+    return this.objectCountSync(type);
+  }
+
+  objectCountSync(
+    type: $ObjectSet.ObjectTypeName,
+  ): purify.Either<Error, number> {
+    let count = 0;
+    switch (type) {
+      case "BaseInterfaceWithoutPropertiesNodeShape": {
+        for (const resource of this.resourceSet.instancesOf(
+          BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdfType,
+        )) {
+          if (
+            BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdf({
+              resource,
+            }).isRight()
+          ) {
+            count++;
+          }
+        }
+        break;
+      }
+      case "BaseInterfaceWithPropertiesNodeShape": {
+        for (const resource of this.resourceSet.instancesOf(
+          BaseInterfaceWithPropertiesNodeShapeStatic.fromRdfType,
+        )) {
+          if (
+            BaseInterfaceWithPropertiesNodeShapeStatic.fromRdf({
+              resource,
+            }).isRight()
+          ) {
+            count++;
+          }
+        }
+        break;
+      }
+      case "ConcreteChildClassNodeShape": {
+        for (const resource of this.resourceSet.instancesOf(
+          ConcreteChildClassNodeShape.fromRdfType,
+        )) {
+          if (ConcreteChildClassNodeShape.fromRdf({ resource }).isRight()) {
+            count++;
+          }
+        }
+        break;
+      }
+      case "ConcreteChildInterfaceNodeShape": {
+        for (const resource of this.resourceSet.instancesOf(
+          ConcreteChildInterfaceNodeShape.fromRdfType,
+        )) {
+          if (ConcreteChildInterfaceNodeShape.fromRdf({ resource }).isRight()) {
+            count++;
+          }
+        }
+        break;
+      }
+      case "ConcreteParentClassNodeShape": {
+        for (const resource of this.resourceSet.instancesOf(
+          ConcreteParentClassNodeShapeStatic.fromRdfType,
+        )) {
+          if (
+            ConcreteParentClassNodeShapeStatic.fromRdf({ resource }).isRight()
+          ) {
+            count++;
+          }
+        }
+        break;
+      }
+      case "ConcreteParentInterfaceNodeShape": {
+        for (const resource of this.resourceSet.instancesOf(
+          ConcreteParentInterfaceNodeShapeStatic.fromRdfType,
+        )) {
+          if (
+            ConcreteParentInterfaceNodeShapeStatic.fromRdf({
+              resource,
+            }).isRight()
+          ) {
+            count++;
+          }
+        }
+        break;
+      }
+      case "ExplicitFromToRdfTypesNodeShape": {
+        for (const resource of this.resourceSet.instancesOf(
+          ExplicitFromToRdfTypesNodeShape.fromRdfType,
+        )) {
+          if (ExplicitFromToRdfTypesNodeShape.fromRdf({ resource }).isRight()) {
+            count++;
+          }
+        }
+        break;
+      }
+      case "ExplicitRdfTypeNodeShape": {
+        for (const resource of this.resourceSet.instancesOf(
+          ExplicitRdfTypeNodeShape.fromRdfType,
+        )) {
+          if (ExplicitRdfTypeNodeShape.fromRdf({ resource }).isRight()) {
+            count++;
+          }
+        }
+        break;
+      }
+    }
+
+    return purify.Either.of(count);
+  }
 }
