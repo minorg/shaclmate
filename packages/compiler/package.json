@@ -21,8 +21,12 @@
     "typescript-memoize": "^1.1.1"
   },
   "devDependencies": {
+    "@shaclmate/kitchen-sink-example": "2.0.22",
     "@shaclmate/runtime": "2.0.22",
-    "oxigraph": "^0.4.0"
+    "@types/n3": "^1.21.1",
+    "oxigraph": "^0.4.0",
+    "n3": "^1.21.3",
+    "rdfjs-resource": "1.0.19"
   },
   "exports": {
     ".": {

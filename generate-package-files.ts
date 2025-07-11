@@ -116,9 +116,12 @@ const packages: readonly Package[] = [
     },
     devDependencies: {
       external: {
+        "@types/n3": externalDependencyVersions["@types/n3"],
         oxigraph: "^0.4.0",
+        n3: externalDependencyVersions.n3,
+        "rdfjs-resource": externalDependencyVersions["rdfjs-resource"],
       },
-      internal: ["runtime"],
+      internal: ["kitchen-sink-example", "runtime"],
     },
     directory: "packages",
     linkableDependencies: ["rdfjs-resource"],

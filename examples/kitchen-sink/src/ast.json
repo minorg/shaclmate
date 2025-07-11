@@ -1958,27 +1958,6 @@
               "value": "n3-231"
             },
             "propertyPath": {
-              "curie": ":widenedTermsProperty",
-              "uniqueLocalPart": "widenedTermsProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/widenedTermsProperty"
-            }
-          },
-          "path": "http://example.com/widenedTermsProperty",
-          "type": {
-            "itemType": {
-              "kind": "TermType"
-            },
-            "kind": "OptionType"
-          }
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-236"
-            },
-            "propertyPath": {
               "curie": ":unrelatedTypesProperty",
               "uniqueLocalPart": "unrelatedTypesProperty",
               "termType": "NamedNode",
@@ -2023,7 +2002,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-241"
+              "value": "n3-236"
             },
             "propertyPath": {
               "curie": ":narrowLiteralsProperty",
@@ -2062,7 +2041,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-246"
+              "value": "n3-241"
             },
             "propertyPath": {
               "curie": ":widenedLiteralsProperty",
@@ -2076,6 +2055,27 @@
             "itemType": {
               "hasValue": [],
               "kind": "LiteralType"
+            },
+            "kind": "OptionType"
+          }
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-246"
+            },
+            "propertyPath": {
+              "curie": ":widenedTermsProperty",
+              "uniqueLocalPart": "widenedTermsProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/widenedTermsProperty"
+            }
+          },
+          "path": "http://example.com/widenedTermsProperty",
+          "type": {
+            "itemType": {
+              "kind": "TermType"
             },
             "kind": "OptionType"
           }

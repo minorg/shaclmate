@@ -8,6 +8,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <http://example.com/>
+    shaclmate:tsFeatureExclude shaclmate:_TsFeature_Graphql ;
     shaclmate:tsFeatureInclude shaclmate:_TsFeatures_All ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Class ;
     a owl:Ontology .
@@ -641,16 +642,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     rdfs:comment "Shape with sh:xone properties." ;
     sh:property [
         sh:maxCount 1 ;
-        sh:path :widenedTermsProperty ;
-        sh:xone ([
-                sh:nodeKind sh:Literal
-            ]
-            [
-                sh:nodeKind sh:IRI
-            ]
-        )
-    ], [
-        sh:maxCount 1 ;
         sh:path :unrelatedTypesProperty ;
         sh:xone ([
                 sh:datatype xsd:integer
@@ -678,6 +669,16 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
             [
                 sh:datatype xsd:string
+            ]
+        )
+    ], [
+        sh:maxCount 1 ;
+        sh:path :widenedTermsProperty ;
+        sh:xone ([
+                sh:nodeKind sh:Literal
+            ]
+            [
+                sh:nodeKind sh:IRI
             ]
         )
     ] .

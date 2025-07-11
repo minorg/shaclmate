@@ -985,7 +985,9 @@ export namespace UnionPropertiesNodeShape {
       | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2707,7 +2709,9 @@ export namespace TermPropertiesNodeShape {
       | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3852,7 +3856,9 @@ export namespace PropertyVisibilitiesNodeShape {
     readonly publicProperty: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4394,7 +4400,9 @@ export namespace PropertyCardinalitiesNodeShape {
     readonly requiredStringProperty: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5005,7 +5013,9 @@ export namespace OrderedPropertiesNodeShape {
     readonly propertyA: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5913,7 +5923,9 @@ export namespace MutablePropertiesNodeShape {
     readonly mutableStringProperty: string | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6736,7 +6748,9 @@ export namespace ListPropertiesNodeShape {
     readonly stringListProperty: readonly string[] | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -7609,7 +7623,9 @@ export namespace LanguageInPropertiesNodeShape {
       | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8249,7 +8265,9 @@ export namespace InterfaceUnionNodeShapeMember2b {
     readonly stringProperty2b: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8598,7 +8616,9 @@ export namespace InterfaceUnionNodeShapeMember2a {
     readonly stringProperty2a: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8947,7 +8967,9 @@ export namespace InterfaceUnionNodeShapeMember1 {
     readonly stringProperty1: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9296,7 +9318,9 @@ export namespace InterfaceNodeShape {
     readonly stringProperty: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9875,7 +9899,9 @@ export namespace InPropertiesNodeShape {
     readonly inStringsProperty: ("text" | "html") | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -10038,20 +10064,22 @@ export namespace InPropertiesNodeShape {
         )
         .head()
         .chain((_value) =>
-          _value.toBoolean().chain((value) =>
-            value === true
-              ? purify.Either.of(value)
-              : purify.Left(
-                  new rdfjsResource.Resource.MistypedValueError({
-                    actualValue: rdfLiteral.toRdf(value),
-                    expectedValueType: "true",
-                    focusResource: _resource,
-                    predicate: dataFactory.namedNode(
-                      "http://example.com/inBooleansProperty",
-                    ),
-                  }),
-                ),
-          ),
+          _value
+            .toBoolean()
+            .chain((value) =>
+              value === true
+                ? purify.Either.of(value)
+                : purify.Left(
+                    new rdfjsResource.Resource.MistypedValueError({
+                      actualValue: rdfLiteral.toRdf(value),
+                      expectedValueType: "true",
+                      focusResource: _resource,
+                      predicate: dataFactory.namedNode(
+                        "http://example.com/inBooleansProperty",
+                      ),
+                    }),
+                  ),
+            ),
         )
         .toMaybe(),
     );
@@ -10591,7 +10619,9 @@ export namespace InIdentifierNodeShape {
     readonly stringProperty: string | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.NamedNode<
@@ -11024,7 +11054,9 @@ export namespace HasValuePropertiesNodeShape {
     readonly hasLiteralProperty: string | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12191,7 +12223,9 @@ export namespace ExternPropertiesNodeShape {
     readonly inlineProperty: InlineNodeShape.Json | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13714,7 +13748,9 @@ export namespace DefaultValuePropertiesNodeShape {
     readonly trueBooleanProperty: boolean;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14345,7 +14381,9 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     readonly baseStringProperty: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14780,7 +14818,9 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
   );
   export type Json = BaseInterfaceWithPropertiesNodeShapeStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15211,7 +15251,9 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     readonly parentStringProperty: string;
   } & BaseInterfaceWithoutPropertiesNodeShapeStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15690,7 +15732,9 @@ export namespace ConcreteChildInterfaceNodeShape {
     readonly childStringProperty: string;
   } & ConcreteParentInterfaceNodeShapeStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16750,18 +16794,20 @@ export class ConcreteParentClassNodeShape extends AbstractBaseClassWithoutProper
   }
 
   override equals(other: ConcreteParentClassNodeShape): $EqualsResult {
-    return super.equals(other).chain(() =>
-      $strictEquals(
-        this.parentStringProperty,
-        other.parentStringProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "parentStringProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.parentStringProperty,
+          other.parentStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "parentStringProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -16837,7 +16883,9 @@ export namespace ConcreteParentClassNodeShapeStatic {
     readonly parentStringProperty: string;
   } & AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17197,18 +17245,20 @@ export class ConcreteChildClassNodeShape extends ConcreteParentClassNodeShape {
   }
 
   override equals(other: ConcreteChildClassNodeShape): $EqualsResult {
-    return super.equals(other).chain(() =>
-      $strictEquals(
-        this.childStringProperty,
-        other.childStringProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "childStringProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.childStringProperty,
+          other.childStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "childStringProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -17284,7 +17334,9 @@ export namespace ConcreteChildClassNodeShape {
     readonly childStringProperty: string;
   } & ConcreteParentClassNodeShapeStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19086,3 +19138,278 @@ export const $ObjectTypes = {
     UnionNodeShape,
   },
   $Types = { ...$ObjectTypes, ...$ObjectUnionTypes };
+export interface $ObjectSet {
+  object<ObjectT>(
+    identifier: $ObjectSet.ObjectIdentifier,
+    type: $ObjectSet.ObjectTypeName,
+  ): Promise<purify.Either<Error, ObjectT>>;
+  objectCount(
+    type: $ObjectSet.ObjectTypeName,
+  ): Promise<purify.Either<Error, number>>;
+  objectIdentifiers(
+    type: $ObjectSet.ObjectIdentifier,
+    options?: { limit?: number; offset?: number },
+  ): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  objects<ObjectT>(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    type: $ObjectSet.ObjectTypeName,
+  ): Promise<readonly purify.Either<Error, ObjectT>[]>;
+}
+
+namespace $ObjectSet {
+  export type ObjectIdentifier = rdfjs.BlankNode | rdfjs.NamedNode;
+  export type ObjectTypeName =
+    | "BaseInterfaceWithPropertiesNodeShape"
+    | "BaseInterfaceWithoutPropertiesNodeShape"
+    | "BlankNodeShape"
+    | "ConcreteChildClassNodeShape"
+    | "ConcreteChildInterfaceNodeShape"
+    | "ConcreteParentClassNodeShape"
+    | "ConcreteParentInterfaceNodeShape"
+    | "DefaultValuePropertiesNodeShape"
+    | "ExplicitFromToRdfTypesNodeShape"
+    | "ExplicitRdfTypeNodeShape"
+    | "ExternNodeShape"
+    | "ExternObjectType"
+    | "ExternPropertiesNodeShape"
+    | "HasValuePropertiesNodeShape"
+    | "InIdentifierNodeShape"
+    | "InPropertiesNodeShape"
+    | "InlineNodeShape"
+    | "InterfaceNodeShape"
+    | "InterfaceUnionNodeShapeMember1"
+    | "InterfaceUnionNodeShapeMember2a"
+    | "InterfaceUnionNodeShapeMember2b"
+    | "IriNodeShape"
+    | "LanguageInPropertiesNodeShape"
+    | "ListPropertiesNodeShape"
+    | "MutablePropertiesNodeShape"
+    | "NonClassNodeShape"
+    | "OrderedPropertiesNodeShape"
+    | "PropertyCardinalitiesNodeShape"
+    | "PropertyVisibilitiesNodeShape"
+    | "Sha256IriNodeShape"
+    | "TermPropertiesNodeShape"
+    | "UnionNodeShapeMember1"
+    | "UnionNodeShapeMember2"
+    | "UnionPropertiesNodeShape"
+    | "UuidV4IriNodeShape";
+}
+
+export class $RdfjsDatasetObjectSet implements $ObjectSet {
+  readonly resourceSet: rdfjsResource.ResourceSet;
+
+  constructor({ dataset }: { dataset: rdfjs.DatasetCore }) {
+    this.resourceSet = new rdfjsResource.ResourceSet({ dataset });
+  }
+
+  async object<ObjectT>(
+    identifier: $ObjectSet.ObjectIdentifier,
+    type: $ObjectSet.ObjectTypeName,
+  ): Promise<purify.Either<Error, ObjectT>> {
+    return this.objectSync<ObjectT>(identifier, type);
+  }
+
+  objectSync<ObjectT>(
+    identifier: $ObjectSet.ObjectIdentifier,
+    type: $ObjectSet.ObjectTypeName,
+  ): purify.Either<Error, ObjectT> {
+    switch (type) {
+      case "BaseInterfaceWithoutPropertiesNodeShape": {
+        return BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "BaseInterfaceWithPropertiesNodeShape": {
+        return BaseInterfaceWithPropertiesNodeShapeStatic.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "BlankNodeShape": {
+        return BlankNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "ConcreteChildClassNodeShape": {
+        return ConcreteChildClassNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "ConcreteChildInterfaceNodeShape": {
+        return ConcreteChildInterfaceNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "ConcreteParentClassNodeShape": {
+        return ConcreteParentClassNodeShapeStatic.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "ConcreteParentInterfaceNodeShape": {
+        return ConcreteParentInterfaceNodeShapeStatic.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "DefaultValuePropertiesNodeShape": {
+        return DefaultValuePropertiesNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "ExplicitFromToRdfTypesNodeShape": {
+        return ExplicitFromToRdfTypesNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "ExplicitRdfTypeNodeShape": {
+        return ExplicitRdfTypeNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "ExternNodeShape": {
+        return ExternNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "ExternObjectType": {
+        return ExternObjectType.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "ExternPropertiesNodeShape": {
+        return ExternPropertiesNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "HasValuePropertiesNodeShape": {
+        return HasValuePropertiesNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "InIdentifierNodeShape": {
+        if (identifier.termType === "BlankNode") {
+          return purify.Left(
+            new Error(`${type} does not accept BlankNode identifiers`),
+          );
+        }
+        return InIdentifierNodeShape.fromRdf({
+          resource: this.resourceSet.namedResource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "InlineNodeShape": {
+        return InlineNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "InPropertiesNodeShape": {
+        return InPropertiesNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "InterfaceNodeShape": {
+        return InterfaceNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "InterfaceUnionNodeShapeMember1": {
+        return InterfaceUnionNodeShapeMember1.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "InterfaceUnionNodeShapeMember2a": {
+        return InterfaceUnionNodeShapeMember2a.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "InterfaceUnionNodeShapeMember2b": {
+        return InterfaceUnionNodeShapeMember2b.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "IriNodeShape": {
+        if (identifier.termType === "BlankNode") {
+          return purify.Left(
+            new Error(`${type} does not accept BlankNode identifiers`),
+          );
+        }
+        return IriNodeShape.fromRdf({
+          resource: this.resourceSet.namedResource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "LanguageInPropertiesNodeShape": {
+        return LanguageInPropertiesNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "ListPropertiesNodeShape": {
+        return ListPropertiesNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "MutablePropertiesNodeShape": {
+        return MutablePropertiesNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "NonClassNodeShape": {
+        return NonClassNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "OrderedPropertiesNodeShape": {
+        return OrderedPropertiesNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "PropertyCardinalitiesNodeShape": {
+        return PropertyCardinalitiesNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "PropertyVisibilitiesNodeShape": {
+        return PropertyVisibilitiesNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "Sha256IriNodeShape": {
+        if (identifier.termType === "BlankNode") {
+          return purify.Left(
+            new Error(`${type} does not accept BlankNode identifiers`),
+          );
+        }
+        return Sha256IriNodeShape.fromRdf({
+          resource: this.resourceSet.namedResource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "TermPropertiesNodeShape": {
+        return TermPropertiesNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "UnionNodeShapeMember1": {
+        return UnionNodeShapeMember1.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "UnionNodeShapeMember2": {
+        return UnionNodeShapeMember2.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "UnionPropertiesNodeShape": {
+        return UnionPropertiesNodeShape.fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+      case "UuidV4IriNodeShape": {
+        if (identifier.termType === "BlankNode") {
+          return purify.Left(
+            new Error(`${type} does not accept BlankNode identifiers`),
+          );
+        }
+        return UuidV4IriNodeShape.fromRdf({
+          resource: this.resourceSet.namedResource(identifier),
+        }) as unknown as purify.Either<Error, ObjectT>;
+      }
+    }
+  }
+}
