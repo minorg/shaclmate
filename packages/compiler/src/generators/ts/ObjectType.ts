@@ -245,13 +245,14 @@ export class ObjectType extends DeclaredType {
   }
 
   @Memoize()
-  get objectSetMethodNamePrefixSingular(): string {
-    return camelCase(this.name);
-  }
-
-  @Memoize()
-  get objectSetMethodNamePrefixPlural(): string {
-    return plur(this.objectSetMethodNamePrefixSingular);
+  get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
+    const prefix = camelCase(this.name);
+    return {
+      objectByIdentifier: `${prefix}ByIdentifier`,
+      objectCount: `${prefix}Count`,
+      objectIdentifiers: `${prefix}Identifiers`,
+      objectsByIdentifiers: `${plur(prefix)}ByIdentifiers`,
+    };
   }
 
   @Memoize()
@@ -466,6 +467,12 @@ export namespace ObjectType {
   export type IdentifierPrefixProperty = _ObjectType.IdentifierPrefixProperty;
   export const IdentifierProperty = _ObjectType.IdentifierProperty;
   export type IdentifierProperty = _ObjectType.IdentifierProperty;
+  export type ObjectSetMethodNames = {
+    readonly objectByIdentifier: string;
+    readonly objectCount: string;
+    readonly objectIdentifiers: string;
+    readonly objectsByIdentifiers: string;
+  };
   export const Property = _ObjectType.Property;
   export type Property = _ObjectType.Property<any>;
   export const ShaclProperty = _ObjectType.ShaclProperty;

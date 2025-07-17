@@ -11,12 +11,10 @@ import type { ObjectType } from "./ObjectType.js";
 
 type ObjectSetInterfaceMethodSignaturesByObjectTypeName = Record<
   string,
-  {
-    readonly object: OptionalKind<MethodSignatureStructure>;
-    readonly objectCount: OptionalKind<MethodSignatureStructure>;
-    readonly objectIdentifiers: OptionalKind<MethodSignatureStructure>;
-    readonly objects: OptionalKind<MethodSignatureStructure>;
-  }
+  Record<
+    keyof ObjectType.ObjectSetMethodNames,
+    OptionalKind<MethodSignatureStructure>
+  >
 >;
 
 function objectSetInterfaceDeclaration({
@@ -108,9 +106,10 @@ export function objectSetDeclarations({
 
   const objectSetInterfaceMethodSignaturesByObjectTypeName = objectTypes.reduce(
     (result, objectType) => {
+      const methodNames = objectType.objectSetMethodNames;
       result[objectType.name] = {
-        object: {
-          name: objectType.objectSetMethodNamePrefixSingular,
+        objectByIdentifier: {
+          name: methodNames.objectByIdentifier,
           parameters: [
             {
               name: "identifier",
@@ -120,11 +119,11 @@ export function objectSetDeclarations({
           returnType: `Promise<purify.Either<Error, ${objectType.name}>>`,
         },
         objectCount: {
-          name: `${objectType.objectSetMethodNamePrefixSingular}Count`,
+          name: methodNames.objectCount,
           returnType: "Promise<purify.Either<Error, number>>",
         },
         objectIdentifiers: {
-          name: `${objectType.objectSetMethodNamePrefixSingular}Identifiers`,
+          name: methodNames.objectIdentifiers,
           parameters: [
             {
               hasQuestionToken: true,
@@ -135,8 +134,8 @@ export function objectSetDeclarations({
           returnType:
             "Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>",
         },
-        objects: {
-          name: objectType.objectSetMethodNamePrefixPlural,
+        objectsByIdentifiers: {
+          name: methodNames.objectsByIdentifiers,
           parameters: [
             {
               name: "identifiers",
@@ -246,20 +245,20 @@ function rdfjsDatasetObjectSetClassDeclaration({
 
       return [
         {
-          ...objectSetInterfaceMethodSignatures.object,
+          ...objectSetInterfaceMethodSignatures.objectByIdentifier,
           isAsync: true,
           kind: StructureKind.Method,
           statements: [
-            `return this.${objectSetInterfaceMethodSignatures.object.name}Sync(identifier);`,
+            `return this.${objectSetInterfaceMethodSignatures.objectByIdentifier.name}Sync(identifier);`,
           ],
         },
         {
-          ...objectSetInterfaceMethodSignatures.object,
+          ...objectSetInterfaceMethodSignatures.objectByIdentifier,
           kind: StructureKind.Method,
-          name: `${objectSetInterfaceMethodSignatures.object.name}Sync`,
+          name: `${objectSetInterfaceMethodSignatures.objectByIdentifier.name}Sync`,
           returnType: `purify.Either<Error, ${objectType.name}>`,
           statements: [
-            `return this.${objectSetInterfaceMethodSignatures.objects.name}Sync([identifier])[0];`,
+            `return this.${objectSetInterfaceMethodSignatures.objectsByIdentifiers.name}Sync([identifier])[0];`,
           ],
         },
         {
@@ -331,17 +330,17 @@ function rdfjsDatasetObjectSetClassDeclaration({
               ],
         },
         {
-          ...objectSetInterfaceMethodSignatures.objects,
+          ...objectSetInterfaceMethodSignatures.objectsByIdentifiers,
           isAsync: true,
           kind: StructureKind.Method,
           statements: [
-            `return this.${objectSetInterfaceMethodSignatures.objects.name}Sync(identifiers);`,
+            `return this.${objectSetInterfaceMethodSignatures.objectsByIdentifiers.name}Sync(identifiers);`,
           ],
         },
         {
-          ...objectSetInterfaceMethodSignatures.objects,
+          ...objectSetInterfaceMethodSignatures.objectsByIdentifiers,
           kind: StructureKind.Method,
-          name: `${objectSetInterfaceMethodSignatures.objects.name}Sync`,
+          name: `${objectSetInterfaceMethodSignatures.objectsByIdentifiers.name}Sync`,
           returnType: `readonly purify.Either<Error, ${objectType.name}>[]`,
           statements: [
             `${objectType.staticModuleName}.fromRdf({ resource: this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedResource" : "resource"}(identifier) })`,
@@ -361,7 +360,7 @@ function rdfjsDatasetObjectSetClassDeclaration({
                   )
                   .map(
                     (identifierNodeKind) =>
-                      `if (identifier.termType === "${identifierNodeKind}") { return purify.Left(new Error(\`${objectSetInterfaceMethodSignatures.objects.name} does not accept ${identifierNodeKind} identifiers\`)); }`,
+                      `if (identifier.termType === "${identifierNodeKind}") { return purify.Left(new Error(\`${objectSetInterfaceMethodSignatures.objectsByIdentifiers.name} does not accept ${identifierNodeKind} identifiers\`)); }`,
                   )
                   .join("\n")} return ${fromRdfExpression}; });`
               : `return identifiers.map(identifier => ${fromRdfExpression});`,
