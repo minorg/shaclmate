@@ -36,10 +36,10 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     }
   });
 
-  it("object", async ({ expect }) => {
+  it("objectByIdentifier", async ({ expect }) => {
     expect(
       (
-        await objectSet.concreteChildClassNodeShape(
+        await objectSet.concreteChildClassNodeShapeByIdentifier(
           expectedObjects[0].identifier,
         )
       )
@@ -102,9 +102,9 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     ]);
   });
 
-  it("objects (all)", async ({ expect }) => {
+  it("objectsByIdentifiers (all)", async ({ expect }) => {
     const actualObjects = (
-      await objectSet.concreteChildClassNodeShapes(
+      await objectSet.concreteChildClassNodeShapesByIdentifiers(
         expectedObjects.map((object) => object.identifier),
       )
     ).map((either) => either.unsafeCoerce());
@@ -118,10 +118,10 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     }
   });
 
-  it("objects (subset)", async ({ expect }) => {
+  it("objectsByIdentifiers (subset)", async ({ expect }) => {
     const sliceStart = 2;
     const actualObjects = (
-      await objectSet.concreteChildClassNodeShapes(
+      await objectSet.concreteChildClassNodeShapesByIdentifiers(
         expectedObjects.slice(sliceStart).map((object) => object.identifier),
       )
     ).map((either) => either.unsafeCoerce());
