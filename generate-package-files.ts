@@ -105,6 +105,7 @@ const packages: readonly Package[] = [
         "@types/toposort": "2.0.7",
         "change-case": "^5.4.4",
         pino: externalDependencyVersions["pino"],
+        plur: "^5.1.0",
         "purify-ts": externalDependencyVersions["purify-ts"],
         "reserved-identifiers": "^1.0.0",
         toposort: "2.0.2",

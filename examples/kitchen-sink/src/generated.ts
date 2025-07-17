@@ -1,6 +1,6 @@
 import type * as rdfjs from "@rdfjs/types";
 import { sha256 } from "js-sha256";
-import N3, { DataFactory as dataFactory } from "n3";
+import { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
 import * as rdfLiteral from "rdf-literal";
 import * as rdfjsResource from "rdfjs-resource";
@@ -19139,61 +19139,450 @@ export const $ObjectTypes = {
   },
   $Types = { ...$ObjectTypes, ...$ObjectUnionTypes };
 export interface $ObjectSet {
-  object<ObjectT>(
+  abstractBaseClassForExternObjectType(
     identifier: $ObjectSet.ObjectIdentifier,
-    type: $ObjectSet.ObjectTypeName,
-  ): Promise<purify.Either<Error, ObjectT>>;
-  objectCount(
-    type: $ObjectSet.ObjectTypeName,
-  ): Promise<purify.Either<Error, number>>;
-  objectIdentifiers(
-    type: $ObjectSet.ObjectTypeName,
-    options?: { limit?: number; offset?: number },
-  ): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
-  objects<ObjectT>(
+  ): Promise<purify.Either<Error, AbstractBaseClassForExternObjectType>>;
+  abstractBaseClassForExternObjectTypeCount(): Promise<
+    purify.Either<Error, number>
+  >;
+  abstractBaseClassForExternObjectTypeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  abstractBaseClassForExternObjectTypes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
-    type: $ObjectSet.ObjectTypeName,
-  ): Promise<readonly purify.Either<Error, ObjectT>[]>;
+  ): Promise<
+    readonly purify.Either<Error, AbstractBaseClassForExternObjectType>[]
+  >;
+  abstractBaseClassWithoutPropertiesNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape>>;
+  abstractBaseClassWithoutPropertiesNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  >;
+  abstractBaseClassWithoutPropertiesNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  abstractBaseClassWithoutPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<
+    readonly purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape>[]
+  >;
+  abstractBaseClassWithPropertiesNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>>;
+  abstractBaseClassWithPropertiesNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  >;
+  abstractBaseClassWithPropertiesNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  abstractBaseClassWithPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<
+    readonly purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>[]
+  >;
+  baseInterfaceWithoutPropertiesNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, BaseInterfaceWithoutPropertiesNodeShape>>;
+  baseInterfaceWithoutPropertiesNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  >;
+  baseInterfaceWithoutPropertiesNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  baseInterfaceWithoutPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<
+    readonly purify.Either<Error, BaseInterfaceWithoutPropertiesNodeShape>[]
+  >;
+  baseInterfaceWithPropertiesNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, BaseInterfaceWithPropertiesNodeShape>>;
+  baseInterfaceWithPropertiesNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  >;
+  baseInterfaceWithPropertiesNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  baseInterfaceWithPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<
+    readonly purify.Either<Error, BaseInterfaceWithPropertiesNodeShape>[]
+  >;
+  blankNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, BlankNodeShape>>;
+  blankNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  blankNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  blankNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, BlankNodeShape>[]>;
+  concreteChildClassNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, ConcreteChildClassNodeShape>>;
+  concreteChildClassNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  concreteChildClassNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  concreteChildClassNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, ConcreteChildClassNodeShape>[]>;
+  concreteChildInterfaceNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, ConcreteChildInterfaceNodeShape>>;
+  concreteChildInterfaceNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  concreteChildInterfaceNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  concreteChildInterfaceNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, ConcreteChildInterfaceNodeShape>[]>;
+  concreteParentClassNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, ConcreteParentClassNodeShape>>;
+  concreteParentClassNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  concreteParentClassNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  concreteParentClassNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, ConcreteParentClassNodeShape>[]>;
+  concreteParentInterfaceNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, ConcreteParentInterfaceNodeShape>>;
+  concreteParentInterfaceNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  >;
+  concreteParentInterfaceNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  concreteParentInterfaceNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, ConcreteParentInterfaceNodeShape>[]>;
+  defaultValuePropertiesNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, DefaultValuePropertiesNodeShape>>;
+  defaultValuePropertiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  defaultValuePropertiesNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  defaultValuePropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, DefaultValuePropertiesNodeShape>[]>;
+  explicitFromToRdfTypesNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, ExplicitFromToRdfTypesNodeShape>>;
+  explicitFromToRdfTypesNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  explicitFromToRdfTypesNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  explicitFromToRdfTypesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, ExplicitFromToRdfTypesNodeShape>[]>;
+  explicitRdfTypeNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, ExplicitRdfTypeNodeShape>>;
+  explicitRdfTypeNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  explicitRdfTypeNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  explicitRdfTypeNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, ExplicitRdfTypeNodeShape>[]>;
+  externNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, ExternNodeShape>>;
+  externNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  externNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  externNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, ExternNodeShape>[]>;
+  externObjectType(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, ExternObjectType>>;
+  externObjectTypeCount(): Promise<purify.Either<Error, number>>;
+  externObjectTypeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  externObjectTypes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, ExternObjectType>[]>;
+  externPropertiesNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, ExternPropertiesNodeShape>>;
+  externPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  externPropertiesNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  externPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, ExternPropertiesNodeShape>[]>;
+  hasValuePropertiesNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, HasValuePropertiesNodeShape>>;
+  hasValuePropertiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  hasValuePropertiesNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  hasValuePropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, HasValuePropertiesNodeShape>[]>;
+  inIdentifierNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, InIdentifierNodeShape>>;
+  inIdentifierNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  inIdentifierNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  inIdentifierNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, InIdentifierNodeShape>[]>;
+  inlineNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, InlineNodeShape>>;
+  inlineNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  inlineNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  inlineNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, InlineNodeShape>[]>;
+  inPropertiesNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, InPropertiesNodeShape>>;
+  inPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  inPropertiesNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  inPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, InPropertiesNodeShape>[]>;
+  interfaceNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, InterfaceNodeShape>>;
+  interfaceNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  interfaceNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  interfaceNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, InterfaceNodeShape>[]>;
+  interfaceUnionNodeShapeMember1(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember1>>;
+  interfaceUnionNodeShapeMember1Count(): Promise<purify.Either<Error, number>>;
+  interfaceUnionNodeShapeMember1Identifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  interfaceUnionNodeShapeMember1s(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember1>[]>;
+  interfaceUnionNodeShapeMember2a(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember2a>>;
+  interfaceUnionNodeShapeMember2aCount(): Promise<purify.Either<Error, number>>;
+  interfaceUnionNodeShapeMember2aIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  interfaceUnionNodeShapeMember2as(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember2a>[]>;
+  interfaceUnionNodeShapeMember2b(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember2b>>;
+  interfaceUnionNodeShapeMember2bCount(): Promise<purify.Either<Error, number>>;
+  interfaceUnionNodeShapeMember2bIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  interfaceUnionNodeShapeMember2bs(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember2b>[]>;
+  iriNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, IriNodeShape>>;
+  iriNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  iriNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  iriNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, IriNodeShape>[]>;
+  languageInPropertiesNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, LanguageInPropertiesNodeShape>>;
+  languageInPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  languageInPropertiesNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  languageInPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, LanguageInPropertiesNodeShape>[]>;
+  listPropertiesNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, ListPropertiesNodeShape>>;
+  listPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  listPropertiesNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  listPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, ListPropertiesNodeShape>[]>;
+  mutablePropertiesNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, MutablePropertiesNodeShape>>;
+  mutablePropertiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  mutablePropertiesNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  mutablePropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, MutablePropertiesNodeShape>[]>;
+  nonClassNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, NonClassNodeShape>>;
+  nonClassNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  nonClassNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  nonClassNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, NonClassNodeShape>[]>;
+  orderedPropertiesNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, OrderedPropertiesNodeShape>>;
+  orderedPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  orderedPropertiesNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  orderedPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, OrderedPropertiesNodeShape>[]>;
+  propertyCardinalitiesNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, PropertyCardinalitiesNodeShape>>;
+  propertyCardinalitiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  propertyCardinalitiesNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  propertyCardinalitiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, PropertyCardinalitiesNodeShape>[]>;
+  propertyVisibilitiesNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, PropertyVisibilitiesNodeShape>>;
+  propertyVisibilitiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  propertyVisibilitiesNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  propertyVisibilitiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, PropertyVisibilitiesNodeShape>[]>;
+  sha256IriNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, Sha256IriNodeShape>>;
+  sha256IriNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  sha256IriNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  sha256IriNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, Sha256IriNodeShape>[]>;
+  termPropertiesNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, TermPropertiesNodeShape>>;
+  termPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  termPropertiesNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  termPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, TermPropertiesNodeShape>[]>;
+  unionNodeShapeMember1(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, UnionNodeShapeMember1>>;
+  unionNodeShapeMember1Count(): Promise<purify.Either<Error, number>>;
+  unionNodeShapeMember1Identifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  unionNodeShapeMember1s(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, UnionNodeShapeMember1>[]>;
+  unionNodeShapeMember2(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, UnionNodeShapeMember2>>;
+  unionNodeShapeMember2Count(): Promise<purify.Either<Error, number>>;
+  unionNodeShapeMember2Identifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  unionNodeShapeMember2s(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, UnionNodeShapeMember2>[]>;
+  unionPropertiesNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, UnionPropertiesNodeShape>>;
+  unionPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  unionPropertiesNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  unionPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, UnionPropertiesNodeShape>[]>;
+  uuidV4IriNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, UuidV4IriNodeShape>>;
+  uuidV4IriNodeShapeCount(): Promise<purify.Either<Error, number>>;
+  uuidV4IriNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  uuidV4IriNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, UuidV4IriNodeShape>[]>;
 }
 
 namespace $ObjectSet {
   export type ObjectIdentifier = rdfjs.BlankNode | rdfjs.NamedNode;
-  export type ObjectTypeName =
-    | "BaseInterfaceWithPropertiesNodeShape"
-    | "BaseInterfaceWithoutPropertiesNodeShape"
-    | "BlankNodeShape"
-    | "ConcreteChildClassNodeShape"
-    | "ConcreteChildInterfaceNodeShape"
-    | "ConcreteParentClassNodeShape"
-    | "ConcreteParentInterfaceNodeShape"
-    | "DefaultValuePropertiesNodeShape"
-    | "ExplicitFromToRdfTypesNodeShape"
-    | "ExplicitRdfTypeNodeShape"
-    | "ExternNodeShape"
-    | "ExternObjectType"
-    | "ExternPropertiesNodeShape"
-    | "HasValuePropertiesNodeShape"
-    | "InIdentifierNodeShape"
-    | "InPropertiesNodeShape"
-    | "InlineNodeShape"
-    | "InterfaceNodeShape"
-    | "InterfaceUnionNodeShapeMember1"
-    | "InterfaceUnionNodeShapeMember2a"
-    | "InterfaceUnionNodeShapeMember2b"
-    | "IriNodeShape"
-    | "LanguageInPropertiesNodeShape"
-    | "ListPropertiesNodeShape"
-    | "MutablePropertiesNodeShape"
-    | "NonClassNodeShape"
-    | "OrderedPropertiesNodeShape"
-    | "PropertyCardinalitiesNodeShape"
-    | "PropertyVisibilitiesNodeShape"
-    | "Sha256IriNodeShape"
-    | "TermPropertiesNodeShape"
-    | "UnionNodeShapeMember1"
-    | "UnionNodeShapeMember2"
-    | "UnionPropertiesNodeShape"
-    | "UuidV4IriNodeShape";
 }
 
 export class $RdfjsDatasetObjectSet implements $ObjectSet {
@@ -19203,143 +19592,144 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     this.resourceSet = new rdfjsResource.ResourceSet({ dataset });
   }
 
-  async object<ObjectT>(
+  async abstractBaseClassForExternObjectType(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, AbstractBaseClassForExternObjectType>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async abstractBaseClassForExternObjectTypeCount(): Promise<
+    purify.Either<Error, number>
+  > {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async abstractBaseClassForExternObjectTypeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async abstractBaseClassForExternObjectTypes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<
+    readonly purify.Either<Error, AbstractBaseClassForExternObjectType>[]
+  > {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async abstractBaseClassWithoutPropertiesNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<
+    purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape>
+  > {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async abstractBaseClassWithoutPropertiesNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  > {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async abstractBaseClassWithoutPropertiesNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async abstractBaseClassWithoutPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<
+    readonly purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape>[]
+  > {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async abstractBaseClassWithPropertiesNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async abstractBaseClassWithPropertiesNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  > {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async abstractBaseClassWithPropertiesNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async abstractBaseClassWithPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<
+    readonly purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>[]
+  > {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async baseInterfaceWithoutPropertiesNodeShape(
     identifier: $ObjectSet.ObjectIdentifier,
-    type: $ObjectSet.ObjectTypeName,
-  ): Promise<purify.Either<Error, ObjectT>> {
-    return this.objectSync<ObjectT>(identifier, type);
+  ): Promise<purify.Either<Error, BaseInterfaceWithoutPropertiesNodeShape>> {
+    return this.baseInterfaceWithoutPropertiesNodeShapeSync(identifier);
   }
 
-  objectSync<ObjectT>(
+  baseInterfaceWithoutPropertiesNodeShapeSync(
     identifier: $ObjectSet.ObjectIdentifier,
-    type: $ObjectSet.ObjectTypeName,
-  ): purify.Either<Error, ObjectT> {
-    return this.objectsSync<ObjectT>([identifier], type)[0];
+  ): purify.Either<Error, BaseInterfaceWithoutPropertiesNodeShape> {
+    return this.baseInterfaceWithoutPropertiesNodeShapesSync([identifier])[0];
   }
 
-  async objectCount(
-    type: $ObjectSet.ObjectTypeName,
-  ): Promise<purify.Either<Error, number>> {
-    return this.objectCountSync(type);
+  async baseInterfaceWithoutPropertiesNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  > {
+    return this.baseInterfaceWithoutPropertiesNodeShapeCountSync();
   }
 
-  objectCountSync(
-    type: $ObjectSet.ObjectTypeName,
-  ): purify.Either<Error, number> {
+  baseInterfaceWithoutPropertiesNodeShapeCountSync(): purify.Either<
+    Error,
+    number
+  > {
     let count = 0;
-    switch (type) {
-      case "BaseInterfaceWithoutPropertiesNodeShape": {
-        for (const resource of this.resourceSet.instancesOf(
-          BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdfType,
-        )) {
-          if (
-            BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdf({
-              resource,
-            }).isRight()
-          ) {
-            count++;
-          }
-        }
-        break;
+    for (const resource of this.resourceSet.instancesOf(
+      BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdfType,
+    )) {
+      if (
+        BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdf({
+          resource,
+        }).isRight()
+      ) {
+        count++;
       }
-      case "BaseInterfaceWithPropertiesNodeShape": {
-        for (const resource of this.resourceSet.instancesOf(
-          BaseInterfaceWithPropertiesNodeShapeStatic.fromRdfType,
-        )) {
-          if (
-            BaseInterfaceWithPropertiesNodeShapeStatic.fromRdf({
-              resource,
-            }).isRight()
-          ) {
-            count++;
-          }
-        }
-        break;
-      }
-      case "ConcreteChildClassNodeShape": {
-        for (const resource of this.resourceSet.instancesOf(
-          ConcreteChildClassNodeShape.fromRdfType,
-        )) {
-          if (ConcreteChildClassNodeShape.fromRdf({ resource }).isRight()) {
-            count++;
-          }
-        }
-        break;
-      }
-      case "ConcreteChildInterfaceNodeShape": {
-        for (const resource of this.resourceSet.instancesOf(
-          ConcreteChildInterfaceNodeShape.fromRdfType,
-        )) {
-          if (ConcreteChildInterfaceNodeShape.fromRdf({ resource }).isRight()) {
-            count++;
-          }
-        }
-        break;
-      }
-      case "ConcreteParentClassNodeShape": {
-        for (const resource of this.resourceSet.instancesOf(
-          ConcreteParentClassNodeShapeStatic.fromRdfType,
-        )) {
-          if (
-            ConcreteParentClassNodeShapeStatic.fromRdf({ resource }).isRight()
-          ) {
-            count++;
-          }
-        }
-        break;
-      }
-      case "ConcreteParentInterfaceNodeShape": {
-        for (const resource of this.resourceSet.instancesOf(
-          ConcreteParentInterfaceNodeShapeStatic.fromRdfType,
-        )) {
-          if (
-            ConcreteParentInterfaceNodeShapeStatic.fromRdf({
-              resource,
-            }).isRight()
-          ) {
-            count++;
-          }
-        }
-        break;
-      }
-      case "ExplicitFromToRdfTypesNodeShape": {
-        for (const resource of this.resourceSet.instancesOf(
-          ExplicitFromToRdfTypesNodeShape.fromRdfType,
-        )) {
-          if (ExplicitFromToRdfTypesNodeShape.fromRdf({ resource }).isRight()) {
-            count++;
-          }
-        }
-        break;
-      }
-      case "ExplicitRdfTypeNodeShape": {
-        for (const resource of this.resourceSet.instancesOf(
-          ExplicitRdfTypeNodeShape.fromRdfType,
-        )) {
-          if (ExplicitRdfTypeNodeShape.fromRdf({ resource }).isRight()) {
-            count++;
-          }
-        }
-        break;
-      }
-      default:
-        return purify.Left(new Error(`unrecognized type ${type}`));
     }
 
     return purify.Either.of(count);
   }
 
-  async objectIdentifiers(
-    type: $ObjectSet.ObjectTypeName,
-    options?: { limit?: number; offset?: number },
-  ): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return this.objectIdentifiersSync(type, options);
+  async baseInterfaceWithoutPropertiesNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return this.baseInterfaceWithoutPropertiesNodeShapeIdentifiersSync(options);
   }
 
-  objectIdentifiersSync(
-    type: $ObjectSet.ObjectTypeName,
-    options?: { limit?: number; offset?: number },
-  ): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  baseInterfaceWithoutPropertiesNodeShapeIdentifiersSync(options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
     const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
       return purify.Either.of([]);
@@ -19352,428 +19742,1362 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
     let identifierI = 0;
     const result: $ObjectSet.ObjectIdentifier[] = [];
-    switch (type) {
-      case "BaseInterfaceWithoutPropertiesNodeShape": {
-        for (const resource of this.resourceSet.instancesOf(
-          BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdfType,
-        )) {
-          if (
-            BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdf({
-              resource,
-            }).isRight() &&
-            identifierI++ >= offset
-          ) {
-            result.push(resource.identifier);
-            if (result.length === limit) {
-              break;
-            }
-          }
+    for (const resource of this.resourceSet.instancesOf(
+      BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdfType,
+    )) {
+      if (
+        BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdf({
+          resource,
+        }).isRight() &&
+        identifierI++ >= offset
+      ) {
+        result.push(resource.identifier);
+        if (result.length === limit) {
+          break;
         }
-        break;
       }
-      case "BaseInterfaceWithPropertiesNodeShape": {
-        for (const resource of this.resourceSet.instancesOf(
-          BaseInterfaceWithPropertiesNodeShapeStatic.fromRdfType,
-        )) {
-          if (
-            BaseInterfaceWithPropertiesNodeShapeStatic.fromRdf({
-              resource,
-            }).isRight() &&
-            identifierI++ >= offset
-          ) {
-            result.push(resource.identifier);
-            if (result.length === limit) {
-              break;
-            }
-          }
-        }
-        break;
-      }
-      case "ConcreteChildClassNodeShape": {
-        for (const resource of this.resourceSet.instancesOf(
-          ConcreteChildClassNodeShape.fromRdfType,
-        )) {
-          if (
-            ConcreteChildClassNodeShape.fromRdf({ resource }).isRight() &&
-            identifierI++ >= offset
-          ) {
-            result.push(resource.identifier);
-            if (result.length === limit) {
-              break;
-            }
-          }
-        }
-        break;
-      }
-      case "ConcreteChildInterfaceNodeShape": {
-        for (const resource of this.resourceSet.instancesOf(
-          ConcreteChildInterfaceNodeShape.fromRdfType,
-        )) {
-          if (
-            ConcreteChildInterfaceNodeShape.fromRdf({ resource }).isRight() &&
-            identifierI++ >= offset
-          ) {
-            result.push(resource.identifier);
-            if (result.length === limit) {
-              break;
-            }
-          }
-        }
-        break;
-      }
-      case "ConcreteParentClassNodeShape": {
-        for (const resource of this.resourceSet.instancesOf(
-          ConcreteParentClassNodeShapeStatic.fromRdfType,
-        )) {
-          if (
-            ConcreteParentClassNodeShapeStatic.fromRdf({
-              resource,
-            }).isRight() &&
-            identifierI++ >= offset
-          ) {
-            result.push(resource.identifier);
-            if (result.length === limit) {
-              break;
-            }
-          }
-        }
-        break;
-      }
-      case "ConcreteParentInterfaceNodeShape": {
-        for (const resource of this.resourceSet.instancesOf(
-          ConcreteParentInterfaceNodeShapeStatic.fromRdfType,
-        )) {
-          if (
-            ConcreteParentInterfaceNodeShapeStatic.fromRdf({
-              resource,
-            }).isRight() &&
-            identifierI++ >= offset
-          ) {
-            result.push(resource.identifier);
-            if (result.length === limit) {
-              break;
-            }
-          }
-        }
-        break;
-      }
-      case "ExplicitFromToRdfTypesNodeShape": {
-        for (const resource of this.resourceSet.instancesOf(
-          ExplicitFromToRdfTypesNodeShape.fromRdfType,
-        )) {
-          if (
-            ExplicitFromToRdfTypesNodeShape.fromRdf({ resource }).isRight() &&
-            identifierI++ >= offset
-          ) {
-            result.push(resource.identifier);
-            if (result.length === limit) {
-              break;
-            }
-          }
-        }
-        break;
-      }
-      case "ExplicitRdfTypeNodeShape": {
-        for (const resource of this.resourceSet.instancesOf(
-          ExplicitRdfTypeNodeShape.fromRdfType,
-        )) {
-          if (
-            ExplicitRdfTypeNodeShape.fromRdf({ resource }).isRight() &&
-            identifierI++ >= offset
-          ) {
-            result.push(resource.identifier);
-            if (result.length === limit) {
-              break;
-            }
-          }
-        }
-        break;
-      }
-      default:
-        return purify.Left(new Error(`unrecognized type ${type}`));
     }
 
     return purify.Either.of(result);
   }
 
-  async objects<ObjectT>(
+  async baseInterfaceWithoutPropertiesNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
-    type: $ObjectSet.ObjectTypeName,
-  ): Promise<readonly purify.Either<Error, ObjectT>[]> {
-    return this.objectsSync<ObjectT>(identifiers, type);
+  ): Promise<
+    readonly purify.Either<Error, BaseInterfaceWithoutPropertiesNodeShape>[]
+  > {
+    return this.baseInterfaceWithoutPropertiesNodeShapesSync(identifiers);
   }
 
-  objectsSync<ObjectT>(
+  baseInterfaceWithoutPropertiesNodeShapesSync(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
-    type: $ObjectSet.ObjectTypeName,
-  ): readonly purify.Either<Error, ObjectT>[] {
-    switch (type) {
-      case "BaseInterfaceWithoutPropertiesNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "BaseInterfaceWithPropertiesNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            BaseInterfaceWithPropertiesNodeShapeStatic.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "BlankNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            BlankNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "ConcreteChildClassNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            ConcreteChildClassNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "ConcreteChildInterfaceNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            ConcreteChildInterfaceNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "ConcreteParentClassNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            ConcreteParentClassNodeShapeStatic.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "ConcreteParentInterfaceNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            ConcreteParentInterfaceNodeShapeStatic.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "DefaultValuePropertiesNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            DefaultValuePropertiesNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "ExplicitFromToRdfTypesNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            ExplicitFromToRdfTypesNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "ExplicitRdfTypeNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            ExplicitRdfTypeNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "ExternNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            ExternNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "ExternObjectType":
-        return identifiers.map(
-          (identifier) =>
-            ExternObjectType.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "ExternPropertiesNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            ExternPropertiesNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "HasValuePropertiesNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            HasValuePropertiesNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "InIdentifierNodeShape":
-        return identifiers.map((identifier) => {
-          if (identifier.termType === "BlankNode") {
-            return purify.Left(
-              new Error(`${type} does not accept BlankNode identifiers`),
-            );
-          }
-          return InIdentifierNodeShape.fromRdf({
-            resource: this.resourceSet.namedResource(identifier),
-          }) as unknown as purify.Either<Error, ObjectT>;
-        });
-      case "InlineNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            InlineNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "InPropertiesNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            InPropertiesNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "InterfaceNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            InterfaceNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "InterfaceUnionNodeShapeMember1":
-        return identifiers.map(
-          (identifier) =>
-            InterfaceUnionNodeShapeMember1.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "InterfaceUnionNodeShapeMember2a":
-        return identifiers.map(
-          (identifier) =>
-            InterfaceUnionNodeShapeMember2a.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "InterfaceUnionNodeShapeMember2b":
-        return identifiers.map(
-          (identifier) =>
-            InterfaceUnionNodeShapeMember2b.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "IriNodeShape":
-        return identifiers.map((identifier) => {
-          if (identifier.termType === "BlankNode") {
-            return purify.Left(
-              new Error(`${type} does not accept BlankNode identifiers`),
-            );
-          }
-          return IriNodeShape.fromRdf({
-            resource: this.resourceSet.namedResource(identifier),
-          }) as unknown as purify.Either<Error, ObjectT>;
-        });
-      case "LanguageInPropertiesNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            LanguageInPropertiesNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "ListPropertiesNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            ListPropertiesNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "MutablePropertiesNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            MutablePropertiesNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "NonClassNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            NonClassNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "OrderedPropertiesNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            OrderedPropertiesNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "PropertyCardinalitiesNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            PropertyCardinalitiesNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "PropertyVisibilitiesNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            PropertyVisibilitiesNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "Sha256IriNodeShape":
-        return identifiers.map((identifier) => {
-          if (identifier.termType === "BlankNode") {
-            return purify.Left(
-              new Error(`${type} does not accept BlankNode identifiers`),
-            );
-          }
-          return Sha256IriNodeShape.fromRdf({
-            resource: this.resourceSet.namedResource(identifier),
-          }) as unknown as purify.Either<Error, ObjectT>;
-        });
-      case "TermPropertiesNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            TermPropertiesNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "UnionNodeShapeMember1":
-        return identifiers.map(
-          (identifier) =>
-            UnionNodeShapeMember1.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "UnionNodeShapeMember2":
-        return identifiers.map(
-          (identifier) =>
-            UnionNodeShapeMember2.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "UnionPropertiesNodeShape":
-        return identifiers.map(
-          (identifier) =>
-            UnionPropertiesNodeShape.fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      case "UuidV4IriNodeShape":
-        return identifiers.map((identifier) => {
-          if (identifier.termType === "BlankNode") {
-            return purify.Left(
-              new Error(`${type} does not accept BlankNode identifiers`),
-            );
-          }
-          return UuidV4IriNodeShape.fromRdf({
-            resource: this.resourceSet.namedResource(identifier),
-          }) as unknown as purify.Either<Error, ObjectT>;
-        });
-      default:
-        return identifiers.map(() =>
-          purify.Left(new Error(`unrecognized type ${type}`)),
-        );
+  ): readonly purify.Either<Error, BaseInterfaceWithoutPropertiesNodeShape>[] {
+    return identifiers.map((identifier) =>
+      BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
+    );
+  }
+
+  async baseInterfaceWithPropertiesNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, BaseInterfaceWithPropertiesNodeShape>> {
+    return this.baseInterfaceWithPropertiesNodeShapeSync(identifier);
+  }
+
+  baseInterfaceWithPropertiesNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, BaseInterfaceWithPropertiesNodeShape> {
+    return this.baseInterfaceWithPropertiesNodeShapesSync([identifier])[0];
+  }
+
+  async baseInterfaceWithPropertiesNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  > {
+    return this.baseInterfaceWithPropertiesNodeShapeCountSync();
+  }
+
+  baseInterfaceWithPropertiesNodeShapeCountSync(): purify.Either<
+    Error,
+    number
+  > {
+    let count = 0;
+    for (const resource of this.resourceSet.instancesOf(
+      BaseInterfaceWithPropertiesNodeShapeStatic.fromRdfType,
+    )) {
+      if (
+        BaseInterfaceWithPropertiesNodeShapeStatic.fromRdf({
+          resource,
+        }).isRight()
+      ) {
+        count++;
+      }
     }
+
+    return purify.Either.of(count);
+  }
+
+  async baseInterfaceWithPropertiesNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return this.baseInterfaceWithPropertiesNodeShapeIdentifiersSync(options);
+  }
+
+  baseInterfaceWithPropertiesNodeShapeIdentifiersSync(options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return purify.Either.of([]);
+    }
+
+    let offset = options?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    let identifierI = 0;
+    const result: $ObjectSet.ObjectIdentifier[] = [];
+    for (const resource of this.resourceSet.instancesOf(
+      BaseInterfaceWithPropertiesNodeShapeStatic.fromRdfType,
+    )) {
+      if (
+        BaseInterfaceWithPropertiesNodeShapeStatic.fromRdf({
+          resource,
+        }).isRight() &&
+        identifierI++ >= offset
+      ) {
+        result.push(resource.identifier);
+        if (result.length === limit) {
+          break;
+        }
+      }
+    }
+
+    return purify.Either.of(result);
+  }
+
+  async baseInterfaceWithPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<
+    readonly purify.Either<Error, BaseInterfaceWithPropertiesNodeShape>[]
+  > {
+    return this.baseInterfaceWithPropertiesNodeShapesSync(identifiers);
+  }
+
+  baseInterfaceWithPropertiesNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, BaseInterfaceWithPropertiesNodeShape>[] {
+    return identifiers.map((identifier) =>
+      BaseInterfaceWithPropertiesNodeShapeStatic.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
+    );
+  }
+
+  async blankNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, BlankNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async blankNodeShapeCount(): Promise<purify.Either<Error, number>> {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async blankNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async blankNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, BlankNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async concreteChildClassNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, ConcreteChildClassNodeShape>> {
+    return this.concreteChildClassNodeShapeSync(identifier);
+  }
+
+  concreteChildClassNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, ConcreteChildClassNodeShape> {
+    return this.concreteChildClassNodeShapesSync([identifier])[0];
+  }
+
+  async concreteChildClassNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  > {
+    return this.concreteChildClassNodeShapeCountSync();
+  }
+
+  concreteChildClassNodeShapeCountSync(): purify.Either<Error, number> {
+    let count = 0;
+    for (const resource of this.resourceSet.instancesOf(
+      ConcreteChildClassNodeShape.fromRdfType,
+    )) {
+      if (ConcreteChildClassNodeShape.fromRdf({ resource }).isRight()) {
+        count++;
+      }
+    }
+
+    return purify.Either.of(count);
+  }
+
+  async concreteChildClassNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return this.concreteChildClassNodeShapeIdentifiersSync(options);
+  }
+
+  concreteChildClassNodeShapeIdentifiersSync(options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return purify.Either.of([]);
+    }
+
+    let offset = options?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    let identifierI = 0;
+    const result: $ObjectSet.ObjectIdentifier[] = [];
+    for (const resource of this.resourceSet.instancesOf(
+      ConcreteChildClassNodeShape.fromRdfType,
+    )) {
+      if (
+        ConcreteChildClassNodeShape.fromRdf({ resource }).isRight() &&
+        identifierI++ >= offset
+      ) {
+        result.push(resource.identifier);
+        if (result.length === limit) {
+          break;
+        }
+      }
+    }
+
+    return purify.Either.of(result);
+  }
+
+  async concreteChildClassNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, ConcreteChildClassNodeShape>[]> {
+    return this.concreteChildClassNodeShapesSync(identifiers);
+  }
+
+  concreteChildClassNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, ConcreteChildClassNodeShape>[] {
+    return identifiers.map((identifier) =>
+      ConcreteChildClassNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
+    );
+  }
+
+  async concreteChildInterfaceNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, ConcreteChildInterfaceNodeShape>> {
+    return this.concreteChildInterfaceNodeShapeSync(identifier);
+  }
+
+  concreteChildInterfaceNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, ConcreteChildInterfaceNodeShape> {
+    return this.concreteChildInterfaceNodeShapesSync([identifier])[0];
+  }
+
+  async concreteChildInterfaceNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  > {
+    return this.concreteChildInterfaceNodeShapeCountSync();
+  }
+
+  concreteChildInterfaceNodeShapeCountSync(): purify.Either<Error, number> {
+    let count = 0;
+    for (const resource of this.resourceSet.instancesOf(
+      ConcreteChildInterfaceNodeShape.fromRdfType,
+    )) {
+      if (ConcreteChildInterfaceNodeShape.fromRdf({ resource }).isRight()) {
+        count++;
+      }
+    }
+
+    return purify.Either.of(count);
+  }
+
+  async concreteChildInterfaceNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return this.concreteChildInterfaceNodeShapeIdentifiersSync(options);
+  }
+
+  concreteChildInterfaceNodeShapeIdentifiersSync(options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return purify.Either.of([]);
+    }
+
+    let offset = options?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    let identifierI = 0;
+    const result: $ObjectSet.ObjectIdentifier[] = [];
+    for (const resource of this.resourceSet.instancesOf(
+      ConcreteChildInterfaceNodeShape.fromRdfType,
+    )) {
+      if (
+        ConcreteChildInterfaceNodeShape.fromRdf({ resource }).isRight() &&
+        identifierI++ >= offset
+      ) {
+        result.push(resource.identifier);
+        if (result.length === limit) {
+          break;
+        }
+      }
+    }
+
+    return purify.Either.of(result);
+  }
+
+  async concreteChildInterfaceNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, ConcreteChildInterfaceNodeShape>[]> {
+    return this.concreteChildInterfaceNodeShapesSync(identifiers);
+  }
+
+  concreteChildInterfaceNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, ConcreteChildInterfaceNodeShape>[] {
+    return identifiers.map((identifier) =>
+      ConcreteChildInterfaceNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
+    );
+  }
+
+  async concreteParentClassNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, ConcreteParentClassNodeShape>> {
+    return this.concreteParentClassNodeShapeSync(identifier);
+  }
+
+  concreteParentClassNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, ConcreteParentClassNodeShape> {
+    return this.concreteParentClassNodeShapesSync([identifier])[0];
+  }
+
+  async concreteParentClassNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  > {
+    return this.concreteParentClassNodeShapeCountSync();
+  }
+
+  concreteParentClassNodeShapeCountSync(): purify.Either<Error, number> {
+    let count = 0;
+    for (const resource of this.resourceSet.instancesOf(
+      ConcreteParentClassNodeShapeStatic.fromRdfType,
+    )) {
+      if (ConcreteParentClassNodeShapeStatic.fromRdf({ resource }).isRight()) {
+        count++;
+      }
+    }
+
+    return purify.Either.of(count);
+  }
+
+  async concreteParentClassNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return this.concreteParentClassNodeShapeIdentifiersSync(options);
+  }
+
+  concreteParentClassNodeShapeIdentifiersSync(options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return purify.Either.of([]);
+    }
+
+    let offset = options?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    let identifierI = 0;
+    const result: $ObjectSet.ObjectIdentifier[] = [];
+    for (const resource of this.resourceSet.instancesOf(
+      ConcreteParentClassNodeShapeStatic.fromRdfType,
+    )) {
+      if (
+        ConcreteParentClassNodeShapeStatic.fromRdf({ resource }).isRight() &&
+        identifierI++ >= offset
+      ) {
+        result.push(resource.identifier);
+        if (result.length === limit) {
+          break;
+        }
+      }
+    }
+
+    return purify.Either.of(result);
+  }
+
+  async concreteParentClassNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, ConcreteParentClassNodeShape>[]> {
+    return this.concreteParentClassNodeShapesSync(identifiers);
+  }
+
+  concreteParentClassNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, ConcreteParentClassNodeShape>[] {
+    return identifiers.map((identifier) =>
+      ConcreteParentClassNodeShapeStatic.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
+    );
+  }
+
+  async concreteParentInterfaceNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, ConcreteParentInterfaceNodeShape>> {
+    return this.concreteParentInterfaceNodeShapeSync(identifier);
+  }
+
+  concreteParentInterfaceNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, ConcreteParentInterfaceNodeShape> {
+    return this.concreteParentInterfaceNodeShapesSync([identifier])[0];
+  }
+
+  async concreteParentInterfaceNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  > {
+    return this.concreteParentInterfaceNodeShapeCountSync();
+  }
+
+  concreteParentInterfaceNodeShapeCountSync(): purify.Either<Error, number> {
+    let count = 0;
+    for (const resource of this.resourceSet.instancesOf(
+      ConcreteParentInterfaceNodeShapeStatic.fromRdfType,
+    )) {
+      if (
+        ConcreteParentInterfaceNodeShapeStatic.fromRdf({ resource }).isRight()
+      ) {
+        count++;
+      }
+    }
+
+    return purify.Either.of(count);
+  }
+
+  async concreteParentInterfaceNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return this.concreteParentInterfaceNodeShapeIdentifiersSync(options);
+  }
+
+  concreteParentInterfaceNodeShapeIdentifiersSync(options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return purify.Either.of([]);
+    }
+
+    let offset = options?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    let identifierI = 0;
+    const result: $ObjectSet.ObjectIdentifier[] = [];
+    for (const resource of this.resourceSet.instancesOf(
+      ConcreteParentInterfaceNodeShapeStatic.fromRdfType,
+    )) {
+      if (
+        ConcreteParentInterfaceNodeShapeStatic.fromRdf({
+          resource,
+        }).isRight() &&
+        identifierI++ >= offset
+      ) {
+        result.push(resource.identifier);
+        if (result.length === limit) {
+          break;
+        }
+      }
+    }
+
+    return purify.Either.of(result);
+  }
+
+  async concreteParentInterfaceNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<
+    readonly purify.Either<Error, ConcreteParentInterfaceNodeShape>[]
+  > {
+    return this.concreteParentInterfaceNodeShapesSync(identifiers);
+  }
+
+  concreteParentInterfaceNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, ConcreteParentInterfaceNodeShape>[] {
+    return identifiers.map((identifier) =>
+      ConcreteParentInterfaceNodeShapeStatic.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
+    );
+  }
+
+  async defaultValuePropertiesNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, DefaultValuePropertiesNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async defaultValuePropertiesNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  > {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async defaultValuePropertiesNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async defaultValuePropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, DefaultValuePropertiesNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async explicitFromToRdfTypesNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, ExplicitFromToRdfTypesNodeShape>> {
+    return this.explicitFromToRdfTypesNodeShapeSync(identifier);
+  }
+
+  explicitFromToRdfTypesNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, ExplicitFromToRdfTypesNodeShape> {
+    return this.explicitFromToRdfTypesNodeShapesSync([identifier])[0];
+  }
+
+  async explicitFromToRdfTypesNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  > {
+    return this.explicitFromToRdfTypesNodeShapeCountSync();
+  }
+
+  explicitFromToRdfTypesNodeShapeCountSync(): purify.Either<Error, number> {
+    let count = 0;
+    for (const resource of this.resourceSet.instancesOf(
+      ExplicitFromToRdfTypesNodeShape.fromRdfType,
+    )) {
+      if (ExplicitFromToRdfTypesNodeShape.fromRdf({ resource }).isRight()) {
+        count++;
+      }
+    }
+
+    return purify.Either.of(count);
+  }
+
+  async explicitFromToRdfTypesNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return this.explicitFromToRdfTypesNodeShapeIdentifiersSync(options);
+  }
+
+  explicitFromToRdfTypesNodeShapeIdentifiersSync(options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return purify.Either.of([]);
+    }
+
+    let offset = options?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    let identifierI = 0;
+    const result: $ObjectSet.ObjectIdentifier[] = [];
+    for (const resource of this.resourceSet.instancesOf(
+      ExplicitFromToRdfTypesNodeShape.fromRdfType,
+    )) {
+      if (
+        ExplicitFromToRdfTypesNodeShape.fromRdf({ resource }).isRight() &&
+        identifierI++ >= offset
+      ) {
+        result.push(resource.identifier);
+        if (result.length === limit) {
+          break;
+        }
+      }
+    }
+
+    return purify.Either.of(result);
+  }
+
+  async explicitFromToRdfTypesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, ExplicitFromToRdfTypesNodeShape>[]> {
+    return this.explicitFromToRdfTypesNodeShapesSync(identifiers);
+  }
+
+  explicitFromToRdfTypesNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, ExplicitFromToRdfTypesNodeShape>[] {
+    return identifiers.map((identifier) =>
+      ExplicitFromToRdfTypesNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
+    );
+  }
+
+  async explicitRdfTypeNodeShape(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, ExplicitRdfTypeNodeShape>> {
+    return this.explicitRdfTypeNodeShapeSync(identifier);
+  }
+
+  explicitRdfTypeNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, ExplicitRdfTypeNodeShape> {
+    return this.explicitRdfTypeNodeShapesSync([identifier])[0];
+  }
+
+  async explicitRdfTypeNodeShapeCount(): Promise<purify.Either<Error, number>> {
+    return this.explicitRdfTypeNodeShapeCountSync();
+  }
+
+  explicitRdfTypeNodeShapeCountSync(): purify.Either<Error, number> {
+    let count = 0;
+    for (const resource of this.resourceSet.instancesOf(
+      ExplicitRdfTypeNodeShape.fromRdfType,
+    )) {
+      if (ExplicitRdfTypeNodeShape.fromRdf({ resource }).isRight()) {
+        count++;
+      }
+    }
+
+    return purify.Either.of(count);
+  }
+
+  async explicitRdfTypeNodeShapeIdentifiers(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return this.explicitRdfTypeNodeShapeIdentifiersSync(options);
+  }
+
+  explicitRdfTypeNodeShapeIdentifiersSync(options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return purify.Either.of([]);
+    }
+
+    let offset = options?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    let identifierI = 0;
+    const result: $ObjectSet.ObjectIdentifier[] = [];
+    for (const resource of this.resourceSet.instancesOf(
+      ExplicitRdfTypeNodeShape.fromRdfType,
+    )) {
+      if (
+        ExplicitRdfTypeNodeShape.fromRdf({ resource }).isRight() &&
+        identifierI++ >= offset
+      ) {
+        result.push(resource.identifier);
+        if (result.length === limit) {
+          break;
+        }
+      }
+    }
+
+    return purify.Either.of(result);
+  }
+
+  async explicitRdfTypeNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, ExplicitRdfTypeNodeShape>[]> {
+    return this.explicitRdfTypeNodeShapesSync(identifiers);
+  }
+
+  explicitRdfTypeNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, ExplicitRdfTypeNodeShape>[] {
+    return identifiers.map((identifier) =>
+      ExplicitRdfTypeNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
+    );
+  }
+
+  async externNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, ExternNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async externNodeShapeCount(): Promise<purify.Either<Error, number>> {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async externNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async externNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, ExternNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async externObjectType(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, ExternObjectType>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async externObjectTypeCount(): Promise<purify.Either<Error, number>> {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async externObjectTypeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async externObjectTypes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, ExternObjectType>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async externPropertiesNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, ExternPropertiesNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async externPropertiesNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  > {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async externPropertiesNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async externPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, ExternPropertiesNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async hasValuePropertiesNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, HasValuePropertiesNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async hasValuePropertiesNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  > {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async hasValuePropertiesNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async hasValuePropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, HasValuePropertiesNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async inIdentifierNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, InIdentifierNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async inIdentifierNodeShapeCount(): Promise<purify.Either<Error, number>> {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async inIdentifierNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async inIdentifierNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, InIdentifierNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async inlineNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, InlineNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async inlineNodeShapeCount(): Promise<purify.Either<Error, number>> {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async inlineNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async inlineNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, InlineNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async inPropertiesNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, InPropertiesNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async inPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>> {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async inPropertiesNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async inPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, InPropertiesNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async interfaceNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, InterfaceNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async interfaceNodeShapeCount(): Promise<purify.Either<Error, number>> {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async interfaceNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async interfaceNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, InterfaceNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async interfaceUnionNodeShapeMember1(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember1>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async interfaceUnionNodeShapeMember1Count(): Promise<
+    purify.Either<Error, number>
+  > {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async interfaceUnionNodeShapeMember1Identifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async interfaceUnionNodeShapeMember1s(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember1>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async interfaceUnionNodeShapeMember2a(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember2a>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async interfaceUnionNodeShapeMember2aCount(): Promise<
+    purify.Either<Error, number>
+  > {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async interfaceUnionNodeShapeMember2aIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async interfaceUnionNodeShapeMember2as(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember2a>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async interfaceUnionNodeShapeMember2b(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember2b>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async interfaceUnionNodeShapeMember2bCount(): Promise<
+    purify.Either<Error, number>
+  > {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async interfaceUnionNodeShapeMember2bIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async interfaceUnionNodeShapeMember2bs(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember2b>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async iriNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, IriNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async iriNodeShapeCount(): Promise<purify.Either<Error, number>> {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async iriNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async iriNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, IriNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async languageInPropertiesNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, LanguageInPropertiesNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async languageInPropertiesNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  > {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async languageInPropertiesNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async languageInPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, LanguageInPropertiesNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async listPropertiesNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, ListPropertiesNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async listPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>> {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async listPropertiesNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async listPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, ListPropertiesNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async mutablePropertiesNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, MutablePropertiesNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async mutablePropertiesNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  > {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async mutablePropertiesNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async mutablePropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, MutablePropertiesNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async nonClassNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, NonClassNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async nonClassNodeShapeCount(): Promise<purify.Either<Error, number>> {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async nonClassNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async nonClassNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, NonClassNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async orderedPropertiesNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, OrderedPropertiesNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async orderedPropertiesNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  > {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async orderedPropertiesNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async orderedPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, OrderedPropertiesNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async propertyCardinalitiesNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, PropertyCardinalitiesNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async propertyCardinalitiesNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  > {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async propertyCardinalitiesNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async propertyCardinalitiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, PropertyCardinalitiesNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async propertyVisibilitiesNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, PropertyVisibilitiesNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async propertyVisibilitiesNodeShapeCount(): Promise<
+    purify.Either<Error, number>
+  > {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async propertyVisibilitiesNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async propertyVisibilitiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, PropertyVisibilitiesNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async sha256IriNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, Sha256IriNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async sha256IriNodeShapeCount(): Promise<purify.Either<Error, number>> {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async sha256IriNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async sha256IriNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, Sha256IriNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async termPropertiesNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, TermPropertiesNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async termPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>> {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async termPropertiesNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async termPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, TermPropertiesNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async unionNodeShapeMember1(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, UnionNodeShapeMember1>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async unionNodeShapeMember1Count(): Promise<purify.Either<Error, number>> {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async unionNodeShapeMember1Identifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async unionNodeShapeMember1s(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, UnionNodeShapeMember1>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async unionNodeShapeMember2(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, UnionNodeShapeMember2>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async unionNodeShapeMember2Count(): Promise<purify.Either<Error, number>> {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async unionNodeShapeMember2Identifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async unionNodeShapeMember2s(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, UnionNodeShapeMember2>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async unionPropertiesNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, UnionPropertiesNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async unionPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>> {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async unionPropertiesNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async unionPropertiesNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, UnionPropertiesNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
+  }
+
+  async uuidV4IriNodeShape(
+    _identifier: $ObjectSet.ObjectIdentifier,
+  ): Promise<purify.Either<Error, UuidV4IriNodeShape>> {
+    return purify.Left(new Error("object: fromRdf not supported"));
+  }
+
+  async uuidV4IriNodeShapeCount(): Promise<purify.Either<Error, number>> {
+    return purify.Left(new Error("objectCount: fromRdf not supported"));
+  }
+
+  async uuidV4IriNodeShapeIdentifiers(_options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+  }
+
+  async uuidV4IriNodeShapes(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): Promise<readonly purify.Either<Error, UuidV4IriNodeShape>[]> {
+    return identifiers.map(() =>
+      purify.Left(new Error("objects: fromRdf not supported")),
+    );
   }
 }
 
@@ -19794,975 +21118,5 @@ export class $SparqlObjectSet implements $ObjectSet {
     sparqlClient,
   }: { sparqlClient: $SparqlObjectSet["sparqlClient"] }) {
     this.sparqlClient = sparqlClient;
-  }
-
-  async object<ObjectT>(
-    identifier: $ObjectSet.ObjectIdentifier,
-    type: $ObjectSet.ObjectTypeName,
-  ): Promise<purify.Either<Error, ObjectT>> {
-    return (await this.objects<ObjectT>([identifier], type))[0];
-  }
-
-  async objects<ObjectT>(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
-    type: $ObjectSet.ObjectTypeName,
-  ): Promise<readonly purify.Either<Error, ObjectT>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryWhere = [
-      {
-        values: identifiers.map((identifier) => {
-          const valuePatternRow: sparqljs.ValuePatternRow = {};
-          valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-          return valuePatternRow;
-        }),
-        type: "values" as const,
-      },
-    ];
-    switch (type) {
-      case "BaseInterfaceWithoutPropertiesNodeShape": {
-        const constructQueryString =
-          BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlConstructQueryString(
-            {
-              subject: objectVariable,
-              where: constructQueryWhere,
-            },
-          );
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "BaseInterfaceWithPropertiesNodeShape": {
-        const constructQueryString =
-          BaseInterfaceWithPropertiesNodeShapeStatic.sparqlConstructQueryString(
-            {
-              subject: objectVariable,
-              where: constructQueryWhere,
-            },
-          );
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            BaseInterfaceWithPropertiesNodeShapeStatic.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "BlankNodeShape": {
-        const constructQueryString = BlankNodeShape.sparqlConstructQueryString({
-          subject: objectVariable,
-          where: constructQueryWhere,
-        });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            BlankNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "ConcreteChildClassNodeShape": {
-        const constructQueryString =
-          ConcreteChildClassNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            ConcreteChildClassNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "ConcreteChildInterfaceNodeShape": {
-        const constructQueryString =
-          ConcreteChildInterfaceNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            ConcreteChildInterfaceNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "ConcreteParentClassNodeShape": {
-        const constructQueryString =
-          ConcreteParentClassNodeShapeStatic.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            ConcreteParentClassNodeShapeStatic.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "ConcreteParentInterfaceNodeShape": {
-        const constructQueryString =
-          ConcreteParentInterfaceNodeShapeStatic.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            ConcreteParentInterfaceNodeShapeStatic.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "DefaultValuePropertiesNodeShape": {
-        const constructQueryString =
-          DefaultValuePropertiesNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            DefaultValuePropertiesNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "ExplicitFromToRdfTypesNodeShape": {
-        const constructQueryString =
-          ExplicitFromToRdfTypesNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            ExplicitFromToRdfTypesNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "ExplicitRdfTypeNodeShape": {
-        const constructQueryString =
-          ExplicitRdfTypeNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            ExplicitRdfTypeNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "ExternNodeShape": {
-        const constructQueryString = ExternNodeShape.sparqlConstructQueryString(
-          {
-            subject: objectVariable,
-            where: constructQueryWhere,
-          },
-        );
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            ExternNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "ExternPropertiesNodeShape": {
-        const constructQueryString =
-          ExternPropertiesNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            ExternPropertiesNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "HasValuePropertiesNodeShape": {
-        const constructQueryString =
-          HasValuePropertiesNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            HasValuePropertiesNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "InIdentifierNodeShape": {
-        const constructQueryString =
-          InIdentifierNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            InIdentifierNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "InlineNodeShape": {
-        const constructQueryString = InlineNodeShape.sparqlConstructQueryString(
-          {
-            subject: objectVariable,
-            where: constructQueryWhere,
-          },
-        );
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            InlineNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "InPropertiesNodeShape": {
-        const constructQueryString =
-          InPropertiesNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            InPropertiesNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "InterfaceNodeShape": {
-        const constructQueryString =
-          InterfaceNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            InterfaceNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "InterfaceUnionNodeShapeMember1": {
-        const constructQueryString =
-          InterfaceUnionNodeShapeMember1.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            InterfaceUnionNodeShapeMember1.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "InterfaceUnionNodeShapeMember2a": {
-        const constructQueryString =
-          InterfaceUnionNodeShapeMember2a.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            InterfaceUnionNodeShapeMember2a.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "InterfaceUnionNodeShapeMember2b": {
-        const constructQueryString =
-          InterfaceUnionNodeShapeMember2b.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            InterfaceUnionNodeShapeMember2b.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "IriNodeShape": {
-        const constructQueryString = IriNodeShape.sparqlConstructQueryString({
-          subject: objectVariable,
-          where: constructQueryWhere,
-        });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            IriNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "LanguageInPropertiesNodeShape": {
-        const constructQueryString =
-          LanguageInPropertiesNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            LanguageInPropertiesNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "ListPropertiesNodeShape": {
-        const constructQueryString =
-          ListPropertiesNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            ListPropertiesNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "MutablePropertiesNodeShape": {
-        const constructQueryString =
-          MutablePropertiesNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            MutablePropertiesNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "NonClassNodeShape": {
-        const constructQueryString =
-          NonClassNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            NonClassNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "OrderedPropertiesNodeShape": {
-        const constructQueryString =
-          OrderedPropertiesNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            OrderedPropertiesNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "PropertyCardinalitiesNodeShape": {
-        const constructQueryString =
-          PropertyCardinalitiesNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            PropertyCardinalitiesNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "PropertyVisibilitiesNodeShape": {
-        const constructQueryString =
-          PropertyVisibilitiesNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            PropertyVisibilitiesNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "Sha256IriNodeShape": {
-        const constructQueryString =
-          Sha256IriNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            Sha256IriNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "TermPropertiesNodeShape": {
-        const constructQueryString =
-          TermPropertiesNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            TermPropertiesNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "UnionNodeShapeMember1": {
-        const constructQueryString =
-          UnionNodeShapeMember1.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            UnionNodeShapeMember1.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "UnionNodeShapeMember2": {
-        const constructQueryString =
-          UnionNodeShapeMember2.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            UnionNodeShapeMember2.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "UnionPropertiesNodeShape": {
-        const constructQueryString =
-          UnionPropertiesNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            UnionPropertiesNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      case "UuidV4IriNodeShape": {
-        const constructQueryString =
-          UuidV4IriNodeShape.sparqlConstructQueryString({
-            subject: objectVariable,
-            where: constructQueryWhere,
-          });
-
-        let quads: readonly rdfjs.Quad[];
-        try {
-          quads = await this.sparqlClient.queryQuads(constructQueryString);
-        } catch (e) {
-          const left = purify.Left<Error, ObjectT>(e as Error);
-          return identifiers.map(() => left);
-        }
-
-        const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-        return identifiers.map(
-          (identifier) =>
-            UuidV4IriNodeShape.fromRdf({
-              resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-                dataset,
-                identifier: identifier as rdfjs.NamedNode,
-              }),
-            }) as unknown as purify.Either<Error, ObjectT>,
-        );
-      }
-      default:
-        return identifiers.map(() =>
-          purify.Left(new Error(`unrecognized type ${type}`)),
-        );
-    }
   }
 }

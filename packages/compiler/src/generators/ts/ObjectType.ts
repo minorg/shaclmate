@@ -14,6 +14,7 @@ import { Memoize } from "typescript-memoize";
 
 import * as _ObjectType from "./_ObjectType/index.js";
 
+import plur from "plur";
 import type {
   IdentifierMintingStrategy,
   TsFeature,
@@ -241,6 +242,16 @@ export class ObjectType extends DeclaredType {
   @Memoize()
   override get mutable(): boolean {
     return this.properties.some((property) => property.mutable);
+  }
+
+  @Memoize()
+  get objectSetMethodNamePrefixSingular(): string {
+    return camelCase(this.name);
+  }
+
+  @Memoize()
+  get objectSetMethodNamePrefixPlural(): string {
+    return plur(this.objectSetMethodNamePrefixSingular);
   }
 
   @Memoize()

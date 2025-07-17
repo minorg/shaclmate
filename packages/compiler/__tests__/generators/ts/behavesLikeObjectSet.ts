@@ -39,9 +39,8 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
   it("object", async ({ expect }) => {
     expect(
       (
-        await objectSet.object<kitchenSink.ConcreteChildClassNodeShape>(
+        await objectSet.concreteChildClassNodeShape(
           expectedObjects[0].identifier,
-          expectedObjects[0].type,
         )
       )
         .unsafeCoerce()
@@ -52,13 +51,13 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
 
   it("objectCount", async ({ expect }) => {
     expect(
-      (await objectSet.objectCount(expectedObjects[0].type)).unsafeCoerce(),
+      (await objectSet.concreteChildClassNodeShapeCount()).unsafeCoerce(),
     ).toStrictEqual(expectedObjects.length);
   });
 
   it("objectIdentifiers (no options)", async ({ expect }) => {
     expect(
-      (await objectSet.objectIdentifiers(expectedObjects[0].type))
+      (await objectSet.concreteChildClassNodeShapeIdentifiers())
         .unsafeCoerce()
         .map((identifier) => identifier.value),
     ).toStrictEqual(expectedObjects.map((object) => object.identifier.value));
@@ -66,7 +65,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
 
   it("objectIdentifiers (limit 1)", async ({ expect }) => {
     expect(
-      (await objectSet.objectIdentifiers(expectedObjects[0].type, { limit: 1 }))
+      (await objectSet.concreteChildClassNodeShapeIdentifiers({ limit: 1 }))
         .unsafeCoerce()
         .map((identifier) => identifier.value),
     ).toStrictEqual([expectedObjects[0].identifier.value]);
@@ -75,7 +74,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
   it("objectIdentifiers (offset 1)", async ({ expect }) => {
     expect(
       (
-        await objectSet.objectIdentifiers(expectedObjects[0].type, {
+        await objectSet.concreteChildClassNodeShapeIdentifiers({
           offset: 1,
         })
       )
@@ -89,7 +88,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
   it("objectIdentifiers (limit 2 offset 1)", async ({ expect }) => {
     expect(
       (
-        await objectSet.objectIdentifiers(expectedObjects[0].type, {
+        await objectSet.concreteChildClassNodeShapeIdentifiers({
           limit: 2,
           offset: 1,
         })
@@ -105,9 +104,8 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
 
   it("objects (all)", async ({ expect }) => {
     const actualObjects = (
-      await objectSet.objects<kitchenSink.ConcreteChildClassNodeShape>(
+      await objectSet.concreteChildClassNodeShapes(
         expectedObjects.map((object) => object.identifier),
-        expectedObjects[0].type,
       )
     ).map((either) => either.unsafeCoerce());
     expect(actualObjects).toHaveLength(expectedObjects.length);
@@ -123,9 +121,8 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
   it("objects (subset)", async ({ expect }) => {
     const sliceStart = 2;
     const actualObjects = (
-      await objectSet.objects<kitchenSink.ConcreteChildClassNodeShape>(
+      await objectSet.concreteChildClassNodeShapes(
         expectedObjects.slice(sliceStart).map((object) => object.identifier),
-        expectedObjects[0].type,
       )
     ).map((either) => either.unsafeCoerce());
     expect(actualObjects).toHaveLength(
