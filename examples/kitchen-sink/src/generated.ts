@@ -19087,57 +19087,6 @@ export namespace UnionNodeShape {
   }
 }
 export interface $ObjectSet {
-  abstractBaseClassForExternObjectTypeByIdentifier(
-    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
-  ): Promise<purify.Either<Error, AbstractBaseClassForExternObjectType>>;
-  abstractBaseClassForExternObjectTypeCount(): Promise<
-    purify.Either<Error, number>
-  >;
-  abstractBaseClassForExternObjectTypeIdentifiers(options?: {
-    limit?: number;
-    offset?: number;
-  }): Promise<
-    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
-  >;
-  abstractBaseClassForExternObjectTypesByIdentifiers(
-    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
-  ): Promise<
-    readonly purify.Either<Error, AbstractBaseClassForExternObjectType>[]
-  >;
-  abstractBaseClassWithoutPropertiesNodeShapeByIdentifier(
-    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
-  ): Promise<purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape>>;
-  abstractBaseClassWithoutPropertiesNodeShapeCount(): Promise<
-    purify.Either<Error, number>
-  >;
-  abstractBaseClassWithoutPropertiesNodeShapeIdentifiers(options?: {
-    limit?: number;
-    offset?: number;
-  }): Promise<
-    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
-  >;
-  abstractBaseClassWithoutPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
-  ): Promise<
-    readonly purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape>[]
-  >;
-  abstractBaseClassWithPropertiesNodeShapeByIdentifier(
-    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
-  ): Promise<purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>>;
-  abstractBaseClassWithPropertiesNodeShapeCount(): Promise<
-    purify.Either<Error, number>
-  >;
-  abstractBaseClassWithPropertiesNodeShapeIdentifiers(options?: {
-    limit?: number;
-    offset?: number;
-  }): Promise<
-    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
-  >;
-  abstractBaseClassWithPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
-  ): Promise<
-    readonly purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>[]
-  >;
   baseInterfaceWithoutPropertiesNodeShapeByIdentifier(
     identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, BaseInterfaceWithoutPropertiesNodeShape>>;
@@ -19616,226 +19565,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   constructor({ dataset }: { dataset: rdfjs.DatasetCore }) {
     this.resourceSet = new rdfjsResource.ResourceSet({ dataset });
-  }
-
-  async abstractBaseClassForExternObjectTypeByIdentifier(
-    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
-  ): Promise<purify.Either<Error, AbstractBaseClassForExternObjectType>> {
-    return this.abstractBaseClassForExternObjectTypeByIdentifierSync(
-      identifier,
-    );
-  }
-
-  abstractBaseClassForExternObjectTypeByIdentifierSync(
-    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
-  ): purify.Either<Error, AbstractBaseClassForExternObjectType> {
-    return this.abstractBaseClassForExternObjectTypesByIdentifiersSync([
-      identifier,
-    ])[0];
-  }
-
-  async abstractBaseClassForExternObjectTypeCount(): Promise<
-    purify.Either<Error, number>
-  > {
-    return this.abstractBaseClassForExternObjectTypeCountSync();
-  }
-
-  abstractBaseClassForExternObjectTypeCountSync(): purify.Either<
-    Error,
-    number
-  > {
-    return purify.Left(
-      new Error("AbstractBaseClassForExternObjectType has no fromRdfType"),
-    );
-  }
-
-  async abstractBaseClassForExternObjectTypeIdentifiers(options?: {
-    limit?: number;
-    offset?: number;
-  }): Promise<
-    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
-  > {
-    return this.abstractBaseClassForExternObjectTypeIdentifiersSync(options);
-  }
-
-  abstractBaseClassForExternObjectTypeIdentifiersSync(_options?: {
-    limit?: number;
-    offset?: number;
-  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
-    return purify.Left(
-      new Error("AbstractBaseClassForExternObjectType has no fromRdfType"),
-    );
-  }
-
-  async abstractBaseClassForExternObjectTypesByIdentifiers(
-    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
-  ): Promise<
-    readonly purify.Either<Error, AbstractBaseClassForExternObjectType>[]
-  > {
-    return this.abstractBaseClassForExternObjectTypesByIdentifiersSync(
-      identifiers,
-    );
-  }
-
-  abstractBaseClassForExternObjectTypesByIdentifiersSync(
-    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
-  ): readonly purify.Either<Error, AbstractBaseClassForExternObjectType>[] {
-    return identifiers.map((identifier) =>
-      AbstractBaseClassForExternObjectTypeStatic.fromRdf({
-        resource: this.resourceSet.resource(identifier),
-      }),
-    );
-  }
-
-  async abstractBaseClassWithoutPropertiesNodeShapeByIdentifier(
-    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
-  ): Promise<
-    purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape>
-  > {
-    return this.abstractBaseClassWithoutPropertiesNodeShapeByIdentifierSync(
-      identifier,
-    );
-  }
-
-  abstractBaseClassWithoutPropertiesNodeShapeByIdentifierSync(
-    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
-  ): purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape> {
-    return this.abstractBaseClassWithoutPropertiesNodeShapesByIdentifiersSync([
-      identifier,
-    ])[0];
-  }
-
-  async abstractBaseClassWithoutPropertiesNodeShapeCount(): Promise<
-    purify.Either<Error, number>
-  > {
-    return this.abstractBaseClassWithoutPropertiesNodeShapeCountSync();
-  }
-
-  abstractBaseClassWithoutPropertiesNodeShapeCountSync(): purify.Either<
-    Error,
-    number
-  > {
-    return purify.Left(
-      new Error(
-        "AbstractBaseClassWithoutPropertiesNodeShape has no fromRdfType",
-      ),
-    );
-  }
-
-  async abstractBaseClassWithoutPropertiesNodeShapeIdentifiers(options?: {
-    limit?: number;
-    offset?: number;
-  }): Promise<
-    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
-  > {
-    return this.abstractBaseClassWithoutPropertiesNodeShapeIdentifiersSync(
-      options,
-    );
-  }
-
-  abstractBaseClassWithoutPropertiesNodeShapeIdentifiersSync(_options?: {
-    limit?: number;
-    offset?: number;
-  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
-    return purify.Left(
-      new Error(
-        "AbstractBaseClassWithoutPropertiesNodeShape has no fromRdfType",
-      ),
-    );
-  }
-
-  async abstractBaseClassWithoutPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
-  ): Promise<
-    readonly purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape>[]
-  > {
-    return this.abstractBaseClassWithoutPropertiesNodeShapesByIdentifiersSync(
-      identifiers,
-    );
-  }
-
-  abstractBaseClassWithoutPropertiesNodeShapesByIdentifiersSync(
-    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
-  ): readonly purify.Either<
-    Error,
-    AbstractBaseClassWithoutPropertiesNodeShape
-  >[] {
-    return identifiers.map((identifier) =>
-      AbstractBaseClassWithoutPropertiesNodeShapeStatic.fromRdf({
-        resource: this.resourceSet.resource(identifier),
-      }),
-    );
-  }
-
-  async abstractBaseClassWithPropertiesNodeShapeByIdentifier(
-    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
-  ): Promise<purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>> {
-    return this.abstractBaseClassWithPropertiesNodeShapeByIdentifierSync(
-      identifier,
-    );
-  }
-
-  abstractBaseClassWithPropertiesNodeShapeByIdentifierSync(
-    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
-  ): purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape> {
-    return this.abstractBaseClassWithPropertiesNodeShapesByIdentifiersSync([
-      identifier,
-    ])[0];
-  }
-
-  async abstractBaseClassWithPropertiesNodeShapeCount(): Promise<
-    purify.Either<Error, number>
-  > {
-    return this.abstractBaseClassWithPropertiesNodeShapeCountSync();
-  }
-
-  abstractBaseClassWithPropertiesNodeShapeCountSync(): purify.Either<
-    Error,
-    number
-  > {
-    return purify.Left(
-      new Error("AbstractBaseClassWithPropertiesNodeShape has no fromRdfType"),
-    );
-  }
-
-  async abstractBaseClassWithPropertiesNodeShapeIdentifiers(options?: {
-    limit?: number;
-    offset?: number;
-  }): Promise<
-    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
-  > {
-    return this.abstractBaseClassWithPropertiesNodeShapeIdentifiersSync(
-      options,
-    );
-  }
-
-  abstractBaseClassWithPropertiesNodeShapeIdentifiersSync(_options?: {
-    limit?: number;
-    offset?: number;
-  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
-    return purify.Left(
-      new Error("AbstractBaseClassWithPropertiesNodeShape has no fromRdfType"),
-    );
-  }
-
-  async abstractBaseClassWithPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
-  ): Promise<
-    readonly purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>[]
-  > {
-    return this.abstractBaseClassWithPropertiesNodeShapesByIdentifiersSync(
-      identifiers,
-    );
-  }
-
-  abstractBaseClassWithPropertiesNodeShapesByIdentifiersSync(
-    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
-  ): readonly purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>[] {
-    return identifiers.map((identifier) =>
-      AbstractBaseClassWithPropertiesNodeShapeStatic.fromRdf({
-        resource: this.resourceSet.resource(identifier),
-      }),
-    );
   }
 
   async baseInterfaceWithoutPropertiesNodeShapeByIdentifier(
@@ -22119,252 +21848,6 @@ export class $SparqlObjectSet implements $ObjectSet {
     this.sparqlClient = sparqlClient;
   }
 
-  async abstractBaseClassForExternObjectTypeByIdentifier(
-    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
-  ): Promise<purify.Either<Error, AbstractBaseClassForExternObjectType>> {
-    return (
-      await this.abstractBaseClassForExternObjectTypesByIdentifiers([
-        identifier,
-      ])
-    )[0];
-  }
-
-  async abstractBaseClassForExternObjectTypeCount(): Promise<
-    purify.Either<Error, number>
-  > {
-    return purify.Left(
-      new Error("AbstractBaseClassForExternObjectType has no fromRdfType"),
-    );
-  }
-
-  async abstractBaseClassForExternObjectTypesByIdentifiers(
-    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
-  ): Promise<
-    readonly purify.Either<Error, AbstractBaseClassForExternObjectType>[]
-  > {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      AbstractBaseClassForExternObjectTypeStatic.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, AbstractBaseClassForExternObjectType>(
-        e as Error,
-      );
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      AbstractBaseClassForExternObjectTypeStatic.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
-  }
-
-  async abstractBaseClassWithoutPropertiesNodeShapeByIdentifier(
-    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
-  ): Promise<
-    purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape>
-  > {
-    return (
-      await this.abstractBaseClassWithoutPropertiesNodeShapesByIdentifiers([
-        identifier,
-      ])
-    )[0];
-  }
-
-  async abstractBaseClassWithoutPropertiesNodeShapeCount(): Promise<
-    purify.Either<Error, number>
-  > {
-    return purify.Left(
-      new Error(
-        "AbstractBaseClassWithoutPropertiesNodeShape has no fromRdfType",
-      ),
-    );
-  }
-
-  async abstractBaseClassWithoutPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
-  ): Promise<
-    readonly purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape>[]
-  > {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      AbstractBaseClassWithoutPropertiesNodeShapeStatic.sparqlConstructQueryString(
-        {
-          subject: objectVariable,
-          where: [
-            {
-              type: "values" as const,
-              values: identifiers.map((identifier) => {
-                const valuePatternRow: sparqljs.ValuePatternRow = {};
-                valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-                return valuePatternRow;
-              }),
-            },
-          ],
-        },
-      );
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<
-        Error,
-        AbstractBaseClassWithoutPropertiesNodeShape
-      >(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      AbstractBaseClassWithoutPropertiesNodeShapeStatic.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
-  }
-
-  async abstractBaseClassWithPropertiesNodeShapeByIdentifier(
-    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
-  ): Promise<purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>> {
-    return (
-      await this.abstractBaseClassWithPropertiesNodeShapesByIdentifiers([
-        identifier,
-      ])
-    )[0];
-  }
-
-  async abstractBaseClassWithPropertiesNodeShapeCount(): Promise<
-    purify.Either<Error, number>
-  > {
-    return purify.Left(
-      new Error("AbstractBaseClassWithPropertiesNodeShape has no fromRdfType"),
-    );
-  }
-
-  async abstractBaseClassWithPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
-  ): Promise<
-    readonly purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>[]
-  > {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      AbstractBaseClassWithPropertiesNodeShapeStatic.sparqlConstructQueryString(
-        {
-          subject: objectVariable,
-          where: [
-            {
-              type: "values" as const,
-              values: identifiers.map((identifier) => {
-                const valuePatternRow: sparqljs.ValuePatternRow = {};
-                valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-                return valuePatternRow;
-              }),
-            },
-          ],
-        },
-      );
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, AbstractBaseClassWithPropertiesNodeShape>(
-        e as Error,
-      );
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      AbstractBaseClassWithPropertiesNodeShapeStatic.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
-  }
-
   async baseInterfaceWithoutPropertiesNodeShapeByIdentifier(
     identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, BaseInterfaceWithoutPropertiesNodeShape>> {
@@ -22390,60 +21873,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     readonly purify.Either<Error, BaseInterfaceWithoutPropertiesNodeShape>[]
   > {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      BaseInterfaceWithoutPropertiesNodeShapeStatic.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, BaseInterfaceWithoutPropertiesNodeShape>(
-        e as Error,
-      );
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      BaseInterfaceWithoutPropertiesNodeShape
+    >(identifiers, BaseInterfaceWithoutPropertiesNodeShapeStatic);
   }
 
   async baseInterfaceWithPropertiesNodeShapeByIdentifier(
@@ -22471,60 +21904,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     readonly purify.Either<Error, BaseInterfaceWithPropertiesNodeShape>[]
   > {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      BaseInterfaceWithPropertiesNodeShapeStatic.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, BaseInterfaceWithPropertiesNodeShape>(
-        e as Error,
-      );
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      BaseInterfaceWithPropertiesNodeShapeStatic.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      BaseInterfaceWithPropertiesNodeShape
+    >(identifiers, BaseInterfaceWithPropertiesNodeShapeStatic);
   }
 
   async blankNodeShapeByIdentifier(
@@ -22540,57 +21923,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async blankNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, BlankNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString = BlankNodeShape.sparqlConstructQueryString({
-      subject: objectVariable,
-      where: [
-        {
-          type: "values" as const,
-          values: identifiers.map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-            return valuePatternRow;
-          }),
-        },
-      ],
-    });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, BlankNodeShape>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      BlankNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      BlankNodeShape
+    >(identifiers, BlankNodeShape);
   }
 
   async concreteChildClassNodeShapeByIdentifier(
@@ -22612,58 +21948,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async concreteChildClassNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ConcreteChildClassNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      ConcreteChildClassNodeShape.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, ConcreteChildClassNodeShape>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      ConcreteChildClassNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      ConcreteChildClassNodeShape
+    >(identifiers, ConcreteChildClassNodeShape);
   }
 
   async concreteChildInterfaceNodeShapeByIdentifier(
@@ -22687,60 +21975,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async concreteChildInterfaceNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ConcreteChildInterfaceNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      ConcreteChildInterfaceNodeShape.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, ConcreteChildInterfaceNodeShape>(
-        e as Error,
-      );
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      ConcreteChildInterfaceNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      ConcreteChildInterfaceNodeShape
+    >(identifiers, ConcreteChildInterfaceNodeShape);
   }
 
   async concreteParentClassNodeShapeByIdentifier(
@@ -22762,58 +22000,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async concreteParentClassNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ConcreteParentClassNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      ConcreteParentClassNodeShapeStatic.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, ConcreteParentClassNodeShape>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      ConcreteParentClassNodeShapeStatic.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      ConcreteParentClassNodeShape
+    >(identifiers, ConcreteParentClassNodeShapeStatic);
   }
 
   async concreteParentInterfaceNodeShapeByIdentifier(
@@ -22839,60 +22029,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     readonly purify.Either<Error, ConcreteParentInterfaceNodeShape>[]
   > {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      ConcreteParentInterfaceNodeShapeStatic.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, ConcreteParentInterfaceNodeShape>(
-        e as Error,
-      );
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      ConcreteParentInterfaceNodeShapeStatic.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      ConcreteParentInterfaceNodeShape
+    >(identifiers, ConcreteParentInterfaceNodeShapeStatic);
   }
 
   async defaultValuePropertiesNodeShapeByIdentifier(
@@ -22914,60 +22054,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async defaultValuePropertiesNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, DefaultValuePropertiesNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      DefaultValuePropertiesNodeShape.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, DefaultValuePropertiesNodeShape>(
-        e as Error,
-      );
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      DefaultValuePropertiesNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      DefaultValuePropertiesNodeShape
+    >(identifiers, DefaultValuePropertiesNodeShape);
   }
 
   async explicitFromToRdfTypesNodeShapeByIdentifier(
@@ -22989,60 +22079,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async explicitFromToRdfTypesNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ExplicitFromToRdfTypesNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      ExplicitFromToRdfTypesNodeShape.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, ExplicitFromToRdfTypesNodeShape>(
-        e as Error,
-      );
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      ExplicitFromToRdfTypesNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      ExplicitFromToRdfTypesNodeShape
+    >(identifiers, ExplicitFromToRdfTypesNodeShape);
   }
 
   async explicitRdfTypeNodeShapeByIdentifier(
@@ -23060,58 +22100,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async explicitRdfTypeNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ExplicitRdfTypeNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      ExplicitRdfTypeNodeShape.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, ExplicitRdfTypeNodeShape>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      ExplicitRdfTypeNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      ExplicitRdfTypeNodeShape
+    >(identifiers, ExplicitRdfTypeNodeShape);
   }
 
   async externNodeShapeByIdentifier(
@@ -23127,57 +22119,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async externNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ExternNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString = ExternNodeShape.sparqlConstructQueryString({
-      subject: objectVariable,
-      where: [
-        {
-          type: "values" as const,
-          values: identifiers.map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-            return valuePatternRow;
-          }),
-        },
-      ],
-    });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, ExternNodeShape>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      ExternNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      ExternNodeShape
+    >(identifiers, ExternNodeShape);
   }
 
   async externObjectTypeByIdentifier(
@@ -23226,58 +22171,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async externPropertiesNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ExternPropertiesNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      ExternPropertiesNodeShape.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, ExternPropertiesNodeShape>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      ExternPropertiesNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      ExternPropertiesNodeShape
+    >(identifiers, ExternPropertiesNodeShape);
   }
 
   async hasValuePropertiesNodeShapeByIdentifier(
@@ -23299,58 +22196,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async hasValuePropertiesNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, HasValuePropertiesNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      HasValuePropertiesNodeShape.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, HasValuePropertiesNodeShape>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      HasValuePropertiesNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      HasValuePropertiesNodeShape
+    >(identifiers, HasValuePropertiesNodeShape);
   }
 
   async inIdentifierNodeShapeByIdentifier(
@@ -23372,44 +22221,13 @@ export class $SparqlObjectSet implements $ObjectSet {
       | "http://example.com/InIdentifierNodeShapeInstance2"
     >[],
   ): Promise<readonly purify.Either<Error, InIdentifierNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      InIdentifierNodeShape.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, InIdentifierNodeShape>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      InIdentifierNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.NamedNode<
+        | "http://example.com/InIdentifierNodeShapeInstance1"
+        | "http://example.com/InIdentifierNodeShapeInstance2"
+      >,
+      InIdentifierNodeShape
+    >(identifiers, InIdentifierNodeShape);
   }
 
   async inlineNodeShapeByIdentifier(
@@ -23425,57 +22243,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async inlineNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InlineNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString = InlineNodeShape.sparqlConstructQueryString({
-      subject: objectVariable,
-      where: [
-        {
-          type: "values" as const,
-          values: identifiers.map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-            return valuePatternRow;
-          }),
-        },
-      ],
-    });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, InlineNodeShape>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      InlineNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      InlineNodeShape
+    >(identifiers, InlineNodeShape);
   }
 
   async inPropertiesNodeShapeByIdentifier(
@@ -23491,58 +22262,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async inPropertiesNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InPropertiesNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      InPropertiesNodeShape.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, InPropertiesNodeShape>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      InPropertiesNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      InPropertiesNodeShape
+    >(identifiers, InPropertiesNodeShape);
   }
 
   async interfaceNodeShapeByIdentifier(
@@ -23558,57 +22281,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async interfaceNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InterfaceNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString = InterfaceNodeShape.sparqlConstructQueryString({
-      subject: objectVariable,
-      where: [
-        {
-          type: "values" as const,
-          values: identifiers.map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-            return valuePatternRow;
-          }),
-        },
-      ],
-    });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, InterfaceNodeShape>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      InterfaceNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      InterfaceNodeShape
+    >(identifiers, InterfaceNodeShape);
   }
 
   async interfaceUnionNodeShapeMember1ByIdentifier(
@@ -23630,60 +22306,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async interfaceUnionNodeShapeMember1sByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember1>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      InterfaceUnionNodeShapeMember1.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, InterfaceUnionNodeShapeMember1>(
-        e as Error,
-      );
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      InterfaceUnionNodeShapeMember1.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      InterfaceUnionNodeShapeMember1
+    >(identifiers, InterfaceUnionNodeShapeMember1);
   }
 
   async interfaceUnionNodeShapeMember2aByIdentifier(
@@ -23705,60 +22331,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async interfaceUnionNodeShapeMember2asByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember2a>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      InterfaceUnionNodeShapeMember2a.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, InterfaceUnionNodeShapeMember2a>(
-        e as Error,
-      );
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      InterfaceUnionNodeShapeMember2a.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      InterfaceUnionNodeShapeMember2a
+    >(identifiers, InterfaceUnionNodeShapeMember2a);
   }
 
   async interfaceUnionNodeShapeMember2bByIdentifier(
@@ -23780,60 +22356,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async interfaceUnionNodeShapeMember2bsByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember2b>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      InterfaceUnionNodeShapeMember2b.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, InterfaceUnionNodeShapeMember2b>(
-        e as Error,
-      );
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      InterfaceUnionNodeShapeMember2b.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      InterfaceUnionNodeShapeMember2b
+    >(identifiers, InterfaceUnionNodeShapeMember2b);
   }
 
   async iriNodeShapeByIdentifier(
@@ -23849,42 +22375,9 @@ export class $SparqlObjectSet implements $ObjectSet {
   async iriNodeShapesByIdentifiers(
     identifiers: readonly rdfjs.NamedNode[],
   ): Promise<readonly purify.Either<Error, IriNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString = IriNodeShape.sparqlConstructQueryString({
-      subject: objectVariable,
-      where: [
-        {
-          type: "values" as const,
-          values: identifiers.map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-            return valuePatternRow;
-          }),
-        },
-      ],
-    });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, IriNodeShape>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      IriNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
+    return this.objectsByIdentifiers<rdfjs.NamedNode, IriNodeShape>(
+      identifiers,
+      IriNodeShape,
     );
   }
 
@@ -23907,60 +22400,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async languageInPropertiesNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, LanguageInPropertiesNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      LanguageInPropertiesNodeShape.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, LanguageInPropertiesNodeShape>(
-        e as Error,
-      );
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      LanguageInPropertiesNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      LanguageInPropertiesNodeShape
+    >(identifiers, LanguageInPropertiesNodeShape);
   }
 
   async listPropertiesNodeShapeByIdentifier(
@@ -23976,58 +22419,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async listPropertiesNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ListPropertiesNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      ListPropertiesNodeShape.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, ListPropertiesNodeShape>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      ListPropertiesNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      ListPropertiesNodeShape
+    >(identifiers, ListPropertiesNodeShape);
   }
 
   async mutablePropertiesNodeShapeByIdentifier(
@@ -24049,58 +22444,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async mutablePropertiesNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, MutablePropertiesNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      MutablePropertiesNodeShape.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, MutablePropertiesNodeShape>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      MutablePropertiesNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      MutablePropertiesNodeShape
+    >(identifiers, MutablePropertiesNodeShape);
   }
 
   async nonClassNodeShapeByIdentifier(
@@ -24116,57 +22463,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async nonClassNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, NonClassNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString = NonClassNodeShape.sparqlConstructQueryString({
-      subject: objectVariable,
-      where: [
-        {
-          type: "values" as const,
-          values: identifiers.map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-            return valuePatternRow;
-          }),
-        },
-      ],
-    });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, NonClassNodeShape>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      NonClassNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      NonClassNodeShape
+    >(identifiers, NonClassNodeShape);
   }
 
   async orderedPropertiesNodeShapeByIdentifier(
@@ -24188,58 +22488,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async orderedPropertiesNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, OrderedPropertiesNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      OrderedPropertiesNodeShape.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, OrderedPropertiesNodeShape>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      OrderedPropertiesNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      OrderedPropertiesNodeShape
+    >(identifiers, OrderedPropertiesNodeShape);
   }
 
   async propertyCardinalitiesNodeShapeByIdentifier(
@@ -24261,60 +22513,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async propertyCardinalitiesNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, PropertyCardinalitiesNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      PropertyCardinalitiesNodeShape.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, PropertyCardinalitiesNodeShape>(
-        e as Error,
-      );
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      PropertyCardinalitiesNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      PropertyCardinalitiesNodeShape
+    >(identifiers, PropertyCardinalitiesNodeShape);
   }
 
   async propertyVisibilitiesNodeShapeByIdentifier(
@@ -24336,60 +22538,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async propertyVisibilitiesNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, PropertyVisibilitiesNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      PropertyVisibilitiesNodeShape.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, PropertyVisibilitiesNodeShape>(
-        e as Error,
-      );
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      PropertyVisibilitiesNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      PropertyVisibilitiesNodeShape
+    >(identifiers, PropertyVisibilitiesNodeShape);
   }
 
   async sha256IriNodeShapeByIdentifier(
@@ -24405,42 +22557,9 @@ export class $SparqlObjectSet implements $ObjectSet {
   async sha256IriNodeShapesByIdentifiers(
     identifiers: readonly rdfjs.NamedNode[],
   ): Promise<readonly purify.Either<Error, Sha256IriNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString = Sha256IriNodeShape.sparqlConstructQueryString({
-      subject: objectVariable,
-      where: [
-        {
-          type: "values" as const,
-          values: identifiers.map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-            return valuePatternRow;
-          }),
-        },
-      ],
-    });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, Sha256IriNodeShape>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      Sha256IriNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
+    return this.objectsByIdentifiers<rdfjs.NamedNode, Sha256IriNodeShape>(
+      identifiers,
+      Sha256IriNodeShape,
     );
   }
 
@@ -24457,58 +22576,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async termPropertiesNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, TermPropertiesNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      TermPropertiesNodeShape.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, TermPropertiesNodeShape>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      TermPropertiesNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      TermPropertiesNodeShape
+    >(identifiers, TermPropertiesNodeShape);
   }
 
   async unionNodeShapeMember1ByIdentifier(
@@ -24524,58 +22595,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async unionNodeShapeMember1sByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, UnionNodeShapeMember1>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      UnionNodeShapeMember1.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, UnionNodeShapeMember1>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      UnionNodeShapeMember1.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      UnionNodeShapeMember1
+    >(identifiers, UnionNodeShapeMember1);
   }
 
   async unionNodeShapeMember2ByIdentifier(
@@ -24591,58 +22614,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async unionNodeShapeMember2sByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, UnionNodeShapeMember2>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      UnionNodeShapeMember2.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, UnionNodeShapeMember2>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      UnionNodeShapeMember2.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      UnionNodeShapeMember2
+    >(identifiers, UnionNodeShapeMember2);
   }
 
   async unionPropertiesNodeShapeByIdentifier(
@@ -24660,58 +22635,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   async unionPropertiesNodeShapesByIdentifiers(
     identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, UnionPropertiesNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString =
-      UnionPropertiesNodeShape.sparqlConstructQueryString({
-        subject: objectVariable,
-        where: [
-          {
-            type: "values" as const,
-            values: identifiers.map((identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            }),
-          },
-        ],
-      });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, UnionPropertiesNodeShape>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      UnionPropertiesNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
-    );
+    return this.objectsByIdentifiers<
+      rdfjs.BlankNode | rdfjs.NamedNode,
+      UnionPropertiesNodeShape
+    >(identifiers, UnionPropertiesNodeShape);
   }
 
   async uuidV4IriNodeShapeByIdentifier(
@@ -24727,43 +22654,37 @@ export class $SparqlObjectSet implements $ObjectSet {
   async uuidV4IriNodeShapesByIdentifiers(
     identifiers: readonly rdfjs.NamedNode[],
   ): Promise<readonly purify.Either<Error, UuidV4IriNodeShape>[]> {
-    if (identifiers.length === 0) {
-      return [];
-    }
-
-    const objectVariable = dataFactory.variable!("object");
-    const constructQueryString = UuidV4IriNodeShape.sparqlConstructQueryString({
-      subject: objectVariable,
-      where: [
-        {
-          type: "values" as const,
-          values: identifiers.map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-            return valuePatternRow;
-          }),
-        },
-      ],
-    });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      const left = purify.Left<Error, UuidV4IriNodeShape>(e as Error);
-      return identifiers.map(() => left);
-    }
-
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      UuidV4IriNodeShape.fromRdf({
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-      }),
+    return this.objectsByIdentifiers<rdfjs.NamedNode, UuidV4IriNodeShape>(
+      identifiers,
+      UuidV4IriNodeShape,
     );
+  }
+
+  protected mapBindingsToCount(
+    bindings: readonly Record<
+      string,
+      rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
+    >[],
+    variable: string,
+  ): purify.Either<Error, number> {
+    if (bindings.length === 0) {
+      return purify.Left(new Error("empty result rows"));
+    }
+    if (bindings.length > 1) {
+      return purify.Left(new Error("more than one result row"));
+    }
+    const count = bindings[0][variable];
+    if (typeof count === "undefined") {
+      return purify.Left(new Error("no 'count' variable in result row"));
+    }
+    if (count.termType !== "Literal") {
+      return purify.Left(new Error("'count' variable is not a Literal"));
+    }
+    const parsedCount = Number.parseInt(count.value);
+    if (Number.isNaN(parsedCount)) {
+      return purify.Left(new Error("'count' variable is NaN"));
+    }
+    return purify.Either.of(parsedCount);
   }
 
   protected async objectCount(
@@ -24826,30 +22747,75 @@ export class $SparqlObjectSet implements $ObjectSet {
     );
   }
 
-  protected mapBindingsToCount(
-    bindings: readonly Record<
-      string,
-      rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
-    >[],
-    variable: string,
-  ): purify.Either<Error, number> {
-    if (bindings.length === 0) {
-      return purify.Left(new Error("empty result rows"));
+  async objectsByIdentifiers<
+    IdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+    ObjectT extends { readonly identifier: IdentifierT },
+  >(
+    identifiers: readonly IdentifierT[],
+    objectType: {
+      fromRdf: (parameters: {
+        resource: rdfjsResource.Resource<rdfjs.NamedNode>;
+      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      sparqlConstructQueryString: (
+        parameters?: {
+          ignoreRdfType?: boolean;
+          subject?: sparqljs.Triple["subject"];
+          variablePrefix?: string;
+        } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+          sparqljs.GeneratorOptions,
+      ) => string;
+    },
+  ): Promise<readonly purify.Either<Error, ObjectT>[]> {
+    if (identifiers.length === 0) {
+      return [];
     }
-    if (bindings.length > 1) {
-      return purify.Left(new Error("more than one result row"));
+
+    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
+      return identifiers.map((identifier) =>
+        identifier.termType === "BlankNode"
+          ? purify.Left(
+              new Error("can't use blank node object identifiers with SPARQL"),
+            )
+          : purify.Left(
+              new Error(
+                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
+              ),
+            ),
+      );
     }
-    const count = bindings[0][variable];
-    if (typeof count === "undefined") {
-      return purify.Left(new Error("no 'count' variable in result row"));
+
+    const objectVariable = dataFactory.variable!("object");
+    const constructQueryString = objectType.sparqlConstructQueryString({
+      subject: objectVariable,
+      where: [
+        {
+          type: "values" as const,
+          values: identifiers.map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+      ],
+    });
+
+    let quads: readonly rdfjs.Quad[];
+    try {
+      quads = await this.sparqlClient.queryQuads(constructQueryString);
+    } catch (e) {
+      const left = purify.Left<Error, ObjectT>(e as Error);
+      return identifiers.map(() => left);
     }
-    if (count.termType !== "Literal") {
-      return purify.Left(new Error("'count' variable is not a Literal"));
-    }
-    const parsedCount = Number.parseInt(count.value);
-    if (Number.isNaN(parsedCount)) {
-      return purify.Left(new Error("'count' variable is NaN"));
-    }
-    return purify.Either.of(parsedCount);
+
+    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+    return identifiers.map((identifier) =>
+      objectType.fromRdf({
+        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+          dataset,
+          identifier: identifier as rdfjs.NamedNode,
+        }),
+      }),
+    );
   }
 }

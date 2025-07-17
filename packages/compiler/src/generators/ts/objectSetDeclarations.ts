@@ -45,16 +45,12 @@ export function objectSetDeclarations({
   | InterfaceDeclarationStructure
   | ModuleDeclarationStructure
 )[] {
-  const objectTypes = objectTypesUnsorted.toSorted((left, right) =>
-    left.name.localeCompare(right.name),
-  );
+  const objectTypes = objectTypesUnsorted
+    .filter((objectType) => !objectType.abstract)
+    .toSorted((left, right) => left.name.localeCompare(right.name));
   let objectTypesWithRdfFeatureCount = 0;
   let objectTypesWithSparqlFeatureCount = 0;
   for (const objectType of objectTypes) {
-    if (objectType.abstract) {
-      continue;
-    }
-
     const objectTypeHasRdfFeature = objectType.features.has("rdf");
     const objectTypeHasSparqlFeature = objectType.features.has("sparql");
 
@@ -367,45 +363,49 @@ function sparqlObjectSetClassDeclaration({
             kind: StructureKind.Method,
             isAsync: true,
             statements: [
-              "if (identifiers.length === 0) { return []; }",
-              ...(objectType.identifierType.nodeKinds.has("BlankNode")
-                ? [
-                    'if (identifiers.some(identifier => identifier.termType === "BlankNode")) { return identifiers.map(identifier => identifier.termType === "BlankNode" ? purify.Left(new Error("can\'t use blank node object identifiers with SPARQL")) : purify.Left(new Error("one of the supplied object identifiers is a blank node, which can\'t be used with SPARQL"))); }',
-                  ]
-                : []),
-              `const objectVariable = ${dataFactoryVariable}.variable!("object");`,
-              `const constructQueryString = ${objectType.staticModuleName}.sparqlConstructQueryString({
-              subject: objectVariable,
-              where: [{
-                type: "values" as const,
-                values: identifiers.map((identifier) => {
-                  const valuePatternRow: sparqljs.ValuePatternRow = {};
-                  valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-                  return valuePatternRow;
-                }),
-              }]
-            });
-
-            let quads: readonly rdfjs.Quad[];
-            try {
-              quads = await this.sparqlClient.queryQuads(constructQueryString);
-            } catch (e) {
-              const left = purify.Left<Error, ${objectType.name}>(e as Error);
-              return identifiers.map(() => left);
-            }
-
-            const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-            return identifiers.map((identifier) =>
-              ${objectType.staticModuleName}.fromRdf({
-                resource: new rdfjsResource.Resource<rdfjs.NamedNode>({ dataset, identifier: identifier as rdfjs.NamedNode })
-              })
-            );`,
+              `return this.objectsByIdentifiers<${objectType.identifierType.name}, ${objectType.name}>(identifiers, ${objectType.staticModuleName});`,
             ],
           },
         ];
       }) satisfies MethodDeclarationStructure[]
     ).concat(
+      {
+        kind: StructureKind.Method,
+        name: "mapBindingsToCount",
+        parameters: [
+          {
+            name: "bindings",
+            type: "readonly Record<string, rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>[]",
+          },
+          {
+            name: "variable",
+            type: "string",
+          },
+        ],
+        returnType: "purify.Either<Error, number>",
+        scope: Scope.Protected,
+        statements: [
+          `\
+if (bindings.length === 0) {
+  return purify.Left(new Error("empty result rows"));
+}
+if (bindings.length > 1) {
+  return purify.Left(new Error("more than one result row"));
+}
+const count = bindings[0][variable];
+if (typeof count === "undefined") {
+  return purify.Left(new Error("no 'count' variable in result row"));
+}
+if (count.termType !== "Literal") {
+  return purify.Left(new Error("'count' variable is not a Literal"));
+}
+const parsedCount = Number.parseInt(count.value);
+if (Number.isNaN(parsedCount)) {
+  return purify.Left(new Error("'count' variable is NaN"));
+}
+return purify.Either.of(parsedCount);`,
+        ],
+      },
       {
         kind: StructureKind.Method,
         isAsync: true,
@@ -472,40 +472,64 @@ return purify.EitherAsync(async ({ liftEither }) =>
         ],
       },
       {
+        isAsync: true,
         kind: StructureKind.Method,
-        name: "mapBindingsToCount",
+        name: "objectsByIdentifiers",
         parameters: [
           {
-            name: "bindings",
-            type: "readonly Record<string, rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>[]",
+            name: "identifiers",
+            type: "readonly IdentifierT[]",
           },
           {
-            name: "variable",
-            type: "string",
+            name: "objectType",
+            type: `{
+fromRdf: (parameters: { resource: rdfjsResource.Resource<rdfjs.NamedNode> }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+sparqlConstructQueryString: (parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"]; variablePrefix?: string; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> & sparqljs.GeneratorOptions) => string;
+            }`,
           },
         ],
-        returnType: "purify.Either<Error, number>",
-        scope: Scope.Protected,
+        returnType: "Promise<readonly purify.Either<Error, ObjectT>[]>",
         statements: [
-          `\
-if (bindings.length === 0) {
-  return purify.Left(new Error("empty result rows"));
-}
-if (bindings.length > 1) {
-  return purify.Left(new Error("more than one result row"));
-}
-const count = bindings[0][variable];
-if (typeof count === "undefined") {
-  return purify.Left(new Error("no 'count' variable in result row"));
-}
-if (count.termType !== "Literal") {
-  return purify.Left(new Error("'count' variable is not a Literal"));
-}
-const parsedCount = Number.parseInt(count.value);
-if (Number.isNaN(parsedCount)) {
-  return purify.Left(new Error("'count' variable is NaN"));
-}
-return purify.Either.of(parsedCount);`,
+          "if (identifiers.length === 0) { return []; }",
+          'if (identifiers.some(identifier => identifier.termType === "BlankNode")) { return identifiers.map(identifier => identifier.termType === "BlankNode" ? purify.Left(new Error("can\'t use blank node object identifiers with SPARQL")) : purify.Left(new Error("one of the supplied object identifiers is a blank node, which can\'t be used with SPARQL"))); }',
+          `const objectVariable = ${dataFactoryVariable}.variable!("object");`,
+          `const constructQueryString = objectType.sparqlConstructQueryString({
+              subject: objectVariable,
+              where: [{
+                type: "values" as const,
+                values: identifiers.map((identifier) => {
+                  const valuePatternRow: sparqljs.ValuePatternRow = {};
+                  valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
+                  return valuePatternRow;
+                }),
+              }]
+            });
+
+            let quads: readonly rdfjs.Quad[];
+            try {
+              quads = await this.sparqlClient.queryQuads(constructQueryString);
+            } catch (e) {
+              const left = purify.Left<Error, ObjectT>(e as Error);
+              return identifiers.map(() => left);
+            }
+
+            const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+            return identifiers.map((identifier) =>
+              objectType.fromRdf({
+                resource: new rdfjsResource.Resource<rdfjs.NamedNode>({ dataset, identifier: identifier as rdfjs.NamedNode })
+              })
+            );`,
+        ],
+        typeParameters: [
+          {
+            constraint: "rdfjs.BlankNode | rdfjs.NamedNode",
+            name: "IdentifierT",
+          },
+          {
+            constraint: "{ readonly identifier: IdentifierT }",
+            name: "ObjectT",
+          },
         ],
       },
     ),
