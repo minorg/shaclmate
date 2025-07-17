@@ -219,10 +219,7 @@ function rdfjsDatasetObjectSetClassDeclaration({
       const objectSetInterfaceMethodSignatures =
         objectSetInterfaceMethodSignaturesByObjectTypeName[objectType.name];
 
-      if (
-        !objectType.features.has("rdf") ||
-        objectType.fromRdfType.isNothing()
-      ) {
+      if (!objectType.features.has("rdf")) {
         return Object.entries(objectSetInterfaceMethodSignatures).map(
           ([methodName, methodSignature]) => ({
             ...methodSignature,
@@ -278,15 +275,19 @@ function rdfjsDatasetObjectSetClassDeclaration({
           kind: StructureKind.Method,
           name: `${objectSetInterfaceMethodSignatures.objectCount.name}Sync`,
           returnType: "purify.Either<Error, number>",
-          statements: [
-            "let count = 0",
-            `for (const resource of this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedInstancesOf" : "instancesOf"}(${objectType.staticModuleName}.fromRdfType)) {
+          statements: objectType.fromRdfType.isJust()
+            ? [
+                "let count = 0",
+                `for (const resource of this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedInstancesOf" : "instancesOf"}(${objectType.staticModuleName}.fromRdfType)) {
               if (${objectType.staticModuleName}.fromRdf({ resource }).isRight()) {
                 count++;
               }
             }`,
-            "return purify.Either.of(count);",
-          ],
+                "return purify.Either.of(count);",
+              ]
+            : [
+                `return purify.Left(new Error("${objectType.name} has no fromRdfType"));`,
+              ],
         },
         {
           ...objectSetInterfaceMethodSignatures.objectIdentifiers,
@@ -300,16 +301,22 @@ function rdfjsDatasetObjectSetClassDeclaration({
           ...objectSetInterfaceMethodSignatures.objectIdentifiers,
           kind: StructureKind.Method,
           name: `${objectSetInterfaceMethodSignatures.objectIdentifiers.name}Sync`,
+          parameters: objectType.fromRdfType.isJust()
+            ? objectSetInterfaceMethodSignatures.objectIdentifiers.parameters
+            : objectSetInterfaceMethodSignatures.objectIdentifiers.parameters!.map(
+                (parameter) => ({ ...parameter, name: `_${parameter.name}` }),
+              ),
           returnType:
             "purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>",
-          statements: [
-            "const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;",
-            "if (limit <= 0) { return purify.Either.of([]); }",
-            "let offset = options?.offset ?? 0;",
-            "if (offset < 0) { offset = 0; }",
-            "let identifierI = 0;",
-            "const result: $ObjectSet.ObjectIdentifier[] = []",
-            `for (const resource of this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedInstancesOf" : "instancesOf"}(${objectType.staticModuleName}.fromRdfType)) {
+          statements: objectType.fromRdfType.isJust()
+            ? [
+                "const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;",
+                "if (limit <= 0) { return purify.Either.of([]); }",
+                "let offset = options?.offset ?? 0;",
+                "if (offset < 0) { offset = 0; }",
+                "let identifierI = 0;",
+                "const result: $ObjectSet.ObjectIdentifier[] = []",
+                `for (const resource of this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedInstancesOf" : "instancesOf"}(${objectType.staticModuleName}.fromRdfType)) {
               if (${objectType.staticModuleName}.fromRdf({ resource }).isRight() && identifierI++ >= offset) {
                 result.push(resource.identifier);
                 if (result.length === limit) {
@@ -317,8 +324,11 @@ function rdfjsDatasetObjectSetClassDeclaration({
                 }
               }
             }`,
-            "return purify.Either.of(result);",
-          ],
+                "return purify.Either.of(result);",
+              ]
+            : [
+                `return purify.Left(new Error("${objectType.name} has no fromRdfType"));`,
+              ],
         },
         {
           ...objectSetInterfaceMethodSignatures.objects,
@@ -351,7 +361,7 @@ function rdfjsDatasetObjectSetClassDeclaration({
                   )
                   .map(
                     (identifierNodeKind) =>
-                      `if (identifier.termType === "${identifierNodeKind}") { return purify.Left(new Error(\`\${type} does not accept ${identifierNodeKind} identifiers\`)); }`,
+                      `if (identifier.termType === "${identifierNodeKind}") { return purify.Left(new Error(\`${objectSetInterfaceMethodSignatures.objects.name} does not accept ${identifierNodeKind} identifiers\`)); }`,
                   )
                   .join("\n")} return ${fromRdfExpression}; });`
               : `return identifiers.map(identifier => ${fromRdfExpression});`,

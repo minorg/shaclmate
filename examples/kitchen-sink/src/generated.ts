@@ -19593,22 +19593,46 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async abstractBaseClassForExternObjectType(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, AbstractBaseClassForExternObjectType>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.abstractBaseClassForExternObjectTypeSync(identifier);
+  }
+
+  abstractBaseClassForExternObjectTypeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, AbstractBaseClassForExternObjectType> {
+    return this.abstractBaseClassForExternObjectTypesSync([identifier])[0];
   }
 
   async abstractBaseClassForExternObjectTypeCount(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.abstractBaseClassForExternObjectTypeCountSync();
   }
 
-  async abstractBaseClassForExternObjectTypeIdentifiers(_options?: {
+  abstractBaseClassForExternObjectTypeCountSync(): purify.Either<
+    Error,
+    number
+  > {
+    return purify.Left(
+      new Error("AbstractBaseClassForExternObjectType has no fromRdfType"),
+    );
+  }
+
+  async abstractBaseClassForExternObjectTypeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.abstractBaseClassForExternObjectTypeIdentifiersSync(options);
+  }
+
+  abstractBaseClassForExternObjectTypeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(
+      new Error("AbstractBaseClassForExternObjectType has no fromRdfType"),
+    );
   }
 
   async abstractBaseClassForExternObjectTypes(
@@ -19616,30 +19640,70 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<
     readonly purify.Either<Error, AbstractBaseClassForExternObjectType>[]
   > {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.abstractBaseClassForExternObjectTypesSync(identifiers);
+  }
+
+  abstractBaseClassForExternObjectTypesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, AbstractBaseClassForExternObjectType>[] {
+    return identifiers.map((identifier) =>
+      AbstractBaseClassForExternObjectTypeStatic.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async abstractBaseClassWithoutPropertiesNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<
     purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape>
   > {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.abstractBaseClassWithoutPropertiesNodeShapeSync(identifier);
+  }
+
+  abstractBaseClassWithoutPropertiesNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape> {
+    return this.abstractBaseClassWithoutPropertiesNodeShapesSync([
+      identifier,
+    ])[0];
   }
 
   async abstractBaseClassWithoutPropertiesNodeShapeCount(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.abstractBaseClassWithoutPropertiesNodeShapeCountSync();
   }
 
-  async abstractBaseClassWithoutPropertiesNodeShapeIdentifiers(_options?: {
+  abstractBaseClassWithoutPropertiesNodeShapeCountSync(): purify.Either<
+    Error,
+    number
+  > {
+    return purify.Left(
+      new Error(
+        "AbstractBaseClassWithoutPropertiesNodeShape has no fromRdfType",
+      ),
+    );
+  }
+
+  async abstractBaseClassWithoutPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.abstractBaseClassWithoutPropertiesNodeShapeIdentifiersSync(
+      options,
+    );
+  }
+
+  abstractBaseClassWithoutPropertiesNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(
+      new Error(
+        "AbstractBaseClassWithoutPropertiesNodeShape has no fromRdfType",
+      ),
+    );
   }
 
   async abstractBaseClassWithoutPropertiesNodeShapes(
@@ -19647,28 +19711,65 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<
     readonly purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape>[]
   > {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.abstractBaseClassWithoutPropertiesNodeShapesSync(identifiers);
+  }
+
+  abstractBaseClassWithoutPropertiesNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<
+    Error,
+    AbstractBaseClassWithoutPropertiesNodeShape
+  >[] {
+    return identifiers.map((identifier) =>
+      AbstractBaseClassWithoutPropertiesNodeShapeStatic.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async abstractBaseClassWithPropertiesNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.abstractBaseClassWithPropertiesNodeShapeSync(identifier);
+  }
+
+  abstractBaseClassWithPropertiesNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape> {
+    return this.abstractBaseClassWithPropertiesNodeShapesSync([identifier])[0];
   }
 
   async abstractBaseClassWithPropertiesNodeShapeCount(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.abstractBaseClassWithPropertiesNodeShapeCountSync();
   }
 
-  async abstractBaseClassWithPropertiesNodeShapeIdentifiers(_options?: {
+  abstractBaseClassWithPropertiesNodeShapeCountSync(): purify.Either<
+    Error,
+    number
+  > {
+    return purify.Left(
+      new Error("AbstractBaseClassWithPropertiesNodeShape has no fromRdfType"),
+    );
+  }
+
+  async abstractBaseClassWithPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.abstractBaseClassWithPropertiesNodeShapeIdentifiersSync(
+      options,
+    );
+  }
+
+  abstractBaseClassWithPropertiesNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(
+      new Error("AbstractBaseClassWithPropertiesNodeShape has no fromRdfType"),
+    );
   }
 
   async abstractBaseClassWithPropertiesNodeShapes(
@@ -19676,8 +19777,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<
     readonly purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>[]
   > {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.abstractBaseClassWithPropertiesNodeShapesSync(identifiers);
+  }
+
+  abstractBaseClassWithPropertiesNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>[] {
+    return identifiers.map((identifier) =>
+      AbstractBaseClassWithPropertiesNodeShapeStatic.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
@@ -19878,27 +19987,52 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async blankNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, BlankNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.blankNodeShapeSync(identifier);
+  }
+
+  blankNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, BlankNodeShape> {
+    return this.blankNodeShapesSync([identifier])[0];
   }
 
   async blankNodeShapeCount(): Promise<purify.Either<Error, number>> {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.blankNodeShapeCountSync();
   }
 
-  async blankNodeShapeIdentifiers(_options?: {
+  blankNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(new Error("BlankNodeShape has no fromRdfType"));
+  }
+
+  async blankNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.blankNodeShapeIdentifiersSync(options);
+  }
+
+  blankNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(new Error("BlankNodeShape has no fromRdfType"));
   }
 
   async blankNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, BlankNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.blankNodeShapesSync(identifiers);
+  }
+
+  blankNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, BlankNodeShape>[] {
+    return identifiers.map((identifier) =>
+      BlankNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
@@ -20257,29 +20391,58 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async defaultValuePropertiesNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, DefaultValuePropertiesNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.defaultValuePropertiesNodeShapeSync(identifier);
+  }
+
+  defaultValuePropertiesNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, DefaultValuePropertiesNodeShape> {
+    return this.defaultValuePropertiesNodeShapesSync([identifier])[0];
   }
 
   async defaultValuePropertiesNodeShapeCount(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.defaultValuePropertiesNodeShapeCountSync();
   }
 
-  async defaultValuePropertiesNodeShapeIdentifiers(_options?: {
+  defaultValuePropertiesNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(
+      new Error("DefaultValuePropertiesNodeShape has no fromRdfType"),
+    );
+  }
+
+  async defaultValuePropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.defaultValuePropertiesNodeShapeIdentifiersSync(options);
+  }
+
+  defaultValuePropertiesNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(
+      new Error("DefaultValuePropertiesNodeShape has no fromRdfType"),
+    );
   }
 
   async defaultValuePropertiesNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, DefaultValuePropertiesNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.defaultValuePropertiesNodeShapesSync(identifiers);
+  }
+
+  defaultValuePropertiesNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, DefaultValuePropertiesNodeShape>[] {
+    return identifiers.map((identifier) =>
+      DefaultValuePropertiesNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
@@ -20456,648 +20619,1343 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async externNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, ExternNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.externNodeShapeSync(identifier);
+  }
+
+  externNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, ExternNodeShape> {
+    return this.externNodeShapesSync([identifier])[0];
   }
 
   async externNodeShapeCount(): Promise<purify.Either<Error, number>> {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.externNodeShapeCountSync();
   }
 
-  async externNodeShapeIdentifiers(_options?: {
+  externNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(new Error("ExternNodeShape has no fromRdfType"));
+  }
+
+  async externNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.externNodeShapeIdentifiersSync(options);
+  }
+
+  externNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(new Error("ExternNodeShape has no fromRdfType"));
   }
 
   async externNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, ExternNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.externNodeShapesSync(identifiers);
+  }
+
+  externNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, ExternNodeShape>[] {
+    return identifiers.map((identifier) =>
+      ExternNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async externObjectType(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, ExternObjectType>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.externObjectTypeSync(identifier);
+  }
+
+  externObjectTypeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, ExternObjectType> {
+    return this.externObjectTypesSync([identifier])[0];
   }
 
   async externObjectTypeCount(): Promise<purify.Either<Error, number>> {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.externObjectTypeCountSync();
   }
 
-  async externObjectTypeIdentifiers(_options?: {
+  externObjectTypeCountSync(): purify.Either<Error, number> {
+    return purify.Left(new Error("ExternObjectType has no fromRdfType"));
+  }
+
+  async externObjectTypeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.externObjectTypeIdentifiersSync(options);
+  }
+
+  externObjectTypeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(new Error("ExternObjectType has no fromRdfType"));
   }
 
   async externObjectTypes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, ExternObjectType>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.externObjectTypesSync(identifiers);
+  }
+
+  externObjectTypesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, ExternObjectType>[] {
+    return identifiers.map((identifier) =>
+      ExternObjectType.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async externPropertiesNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, ExternPropertiesNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.externPropertiesNodeShapeSync(identifier);
+  }
+
+  externPropertiesNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, ExternPropertiesNodeShape> {
+    return this.externPropertiesNodeShapesSync([identifier])[0];
   }
 
   async externPropertiesNodeShapeCount(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.externPropertiesNodeShapeCountSync();
   }
 
-  async externPropertiesNodeShapeIdentifiers(_options?: {
+  externPropertiesNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(
+      new Error("ExternPropertiesNodeShape has no fromRdfType"),
+    );
+  }
+
+  async externPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.externPropertiesNodeShapeIdentifiersSync(options);
+  }
+
+  externPropertiesNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(
+      new Error("ExternPropertiesNodeShape has no fromRdfType"),
+    );
   }
 
   async externPropertiesNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, ExternPropertiesNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.externPropertiesNodeShapesSync(identifiers);
+  }
+
+  externPropertiesNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, ExternPropertiesNodeShape>[] {
+    return identifiers.map((identifier) =>
+      ExternPropertiesNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async hasValuePropertiesNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, HasValuePropertiesNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.hasValuePropertiesNodeShapeSync(identifier);
+  }
+
+  hasValuePropertiesNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, HasValuePropertiesNodeShape> {
+    return this.hasValuePropertiesNodeShapesSync([identifier])[0];
   }
 
   async hasValuePropertiesNodeShapeCount(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.hasValuePropertiesNodeShapeCountSync();
   }
 
-  async hasValuePropertiesNodeShapeIdentifiers(_options?: {
+  hasValuePropertiesNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(
+      new Error("HasValuePropertiesNodeShape has no fromRdfType"),
+    );
+  }
+
+  async hasValuePropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.hasValuePropertiesNodeShapeIdentifiersSync(options);
+  }
+
+  hasValuePropertiesNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(
+      new Error("HasValuePropertiesNodeShape has no fromRdfType"),
+    );
   }
 
   async hasValuePropertiesNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, HasValuePropertiesNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.hasValuePropertiesNodeShapesSync(identifiers);
+  }
+
+  hasValuePropertiesNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, HasValuePropertiesNodeShape>[] {
+    return identifiers.map((identifier) =>
+      HasValuePropertiesNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async inIdentifierNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, InIdentifierNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.inIdentifierNodeShapeSync(identifier);
+  }
+
+  inIdentifierNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, InIdentifierNodeShape> {
+    return this.inIdentifierNodeShapesSync([identifier])[0];
   }
 
   async inIdentifierNodeShapeCount(): Promise<purify.Either<Error, number>> {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.inIdentifierNodeShapeCountSync();
   }
 
-  async inIdentifierNodeShapeIdentifiers(_options?: {
+  inIdentifierNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(new Error("InIdentifierNodeShape has no fromRdfType"));
+  }
+
+  async inIdentifierNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.inIdentifierNodeShapeIdentifiersSync(options);
+  }
+
+  inIdentifierNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(new Error("InIdentifierNodeShape has no fromRdfType"));
   }
 
   async inIdentifierNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, InIdentifierNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
-    );
+    return this.inIdentifierNodeShapesSync(identifiers);
+  }
+
+  inIdentifierNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, InIdentifierNodeShape>[] {
+    return identifiers.map((identifier) => {
+      if (identifier.termType === "BlankNode") {
+        return purify.Left(
+          new Error(
+            "inIdentifierNodeShapes does not accept BlankNode identifiers",
+          ),
+        );
+      }
+      return InIdentifierNodeShape.fromRdf({
+        resource: this.resourceSet.namedResource(identifier),
+      });
+    });
   }
 
   async inlineNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, InlineNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.inlineNodeShapeSync(identifier);
+  }
+
+  inlineNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, InlineNodeShape> {
+    return this.inlineNodeShapesSync([identifier])[0];
   }
 
   async inlineNodeShapeCount(): Promise<purify.Either<Error, number>> {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.inlineNodeShapeCountSync();
   }
 
-  async inlineNodeShapeIdentifiers(_options?: {
+  inlineNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(new Error("InlineNodeShape has no fromRdfType"));
+  }
+
+  async inlineNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.inlineNodeShapeIdentifiersSync(options);
+  }
+
+  inlineNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(new Error("InlineNodeShape has no fromRdfType"));
   }
 
   async inlineNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, InlineNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.inlineNodeShapesSync(identifiers);
+  }
+
+  inlineNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, InlineNodeShape>[] {
+    return identifiers.map((identifier) =>
+      InlineNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async inPropertiesNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, InPropertiesNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.inPropertiesNodeShapeSync(identifier);
+  }
+
+  inPropertiesNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, InPropertiesNodeShape> {
+    return this.inPropertiesNodeShapesSync([identifier])[0];
   }
 
   async inPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>> {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.inPropertiesNodeShapeCountSync();
   }
 
-  async inPropertiesNodeShapeIdentifiers(_options?: {
+  inPropertiesNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(new Error("InPropertiesNodeShape has no fromRdfType"));
+  }
+
+  async inPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.inPropertiesNodeShapeIdentifiersSync(options);
+  }
+
+  inPropertiesNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(new Error("InPropertiesNodeShape has no fromRdfType"));
   }
 
   async inPropertiesNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, InPropertiesNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.inPropertiesNodeShapesSync(identifiers);
+  }
+
+  inPropertiesNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, InPropertiesNodeShape>[] {
+    return identifiers.map((identifier) =>
+      InPropertiesNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async interfaceNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, InterfaceNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.interfaceNodeShapeSync(identifier);
+  }
+
+  interfaceNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, InterfaceNodeShape> {
+    return this.interfaceNodeShapesSync([identifier])[0];
   }
 
   async interfaceNodeShapeCount(): Promise<purify.Either<Error, number>> {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.interfaceNodeShapeCountSync();
   }
 
-  async interfaceNodeShapeIdentifiers(_options?: {
+  interfaceNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(new Error("InterfaceNodeShape has no fromRdfType"));
+  }
+
+  async interfaceNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.interfaceNodeShapeIdentifiersSync(options);
+  }
+
+  interfaceNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(new Error("InterfaceNodeShape has no fromRdfType"));
   }
 
   async interfaceNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, InterfaceNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.interfaceNodeShapesSync(identifiers);
+  }
+
+  interfaceNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, InterfaceNodeShape>[] {
+    return identifiers.map((identifier) =>
+      InterfaceNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async interfaceUnionNodeShapeMember1(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember1>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.interfaceUnionNodeShapeMember1Sync(identifier);
+  }
+
+  interfaceUnionNodeShapeMember1Sync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, InterfaceUnionNodeShapeMember1> {
+    return this.interfaceUnionNodeShapeMember1sSync([identifier])[0];
   }
 
   async interfaceUnionNodeShapeMember1Count(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.interfaceUnionNodeShapeMember1CountSync();
   }
 
-  async interfaceUnionNodeShapeMember1Identifiers(_options?: {
+  interfaceUnionNodeShapeMember1CountSync(): purify.Either<Error, number> {
+    return purify.Left(
+      new Error("InterfaceUnionNodeShapeMember1 has no fromRdfType"),
+    );
+  }
+
+  async interfaceUnionNodeShapeMember1Identifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.interfaceUnionNodeShapeMember1IdentifiersSync(options);
+  }
+
+  interfaceUnionNodeShapeMember1IdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(
+      new Error("InterfaceUnionNodeShapeMember1 has no fromRdfType"),
+    );
   }
 
   async interfaceUnionNodeShapeMember1s(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember1>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.interfaceUnionNodeShapeMember1sSync(identifiers);
+  }
+
+  interfaceUnionNodeShapeMember1sSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, InterfaceUnionNodeShapeMember1>[] {
+    return identifiers.map((identifier) =>
+      InterfaceUnionNodeShapeMember1.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async interfaceUnionNodeShapeMember2a(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember2a>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.interfaceUnionNodeShapeMember2aSync(identifier);
+  }
+
+  interfaceUnionNodeShapeMember2aSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, InterfaceUnionNodeShapeMember2a> {
+    return this.interfaceUnionNodeShapeMember2asSync([identifier])[0];
   }
 
   async interfaceUnionNodeShapeMember2aCount(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.interfaceUnionNodeShapeMember2aCountSync();
   }
 
-  async interfaceUnionNodeShapeMember2aIdentifiers(_options?: {
+  interfaceUnionNodeShapeMember2aCountSync(): purify.Either<Error, number> {
+    return purify.Left(
+      new Error("InterfaceUnionNodeShapeMember2a has no fromRdfType"),
+    );
+  }
+
+  async interfaceUnionNodeShapeMember2aIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.interfaceUnionNodeShapeMember2aIdentifiersSync(options);
+  }
+
+  interfaceUnionNodeShapeMember2aIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(
+      new Error("InterfaceUnionNodeShapeMember2a has no fromRdfType"),
+    );
   }
 
   async interfaceUnionNodeShapeMember2as(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember2a>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.interfaceUnionNodeShapeMember2asSync(identifiers);
+  }
+
+  interfaceUnionNodeShapeMember2asSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, InterfaceUnionNodeShapeMember2a>[] {
+    return identifiers.map((identifier) =>
+      InterfaceUnionNodeShapeMember2a.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async interfaceUnionNodeShapeMember2b(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember2b>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.interfaceUnionNodeShapeMember2bSync(identifier);
+  }
+
+  interfaceUnionNodeShapeMember2bSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, InterfaceUnionNodeShapeMember2b> {
+    return this.interfaceUnionNodeShapeMember2bsSync([identifier])[0];
   }
 
   async interfaceUnionNodeShapeMember2bCount(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.interfaceUnionNodeShapeMember2bCountSync();
   }
 
-  async interfaceUnionNodeShapeMember2bIdentifiers(_options?: {
+  interfaceUnionNodeShapeMember2bCountSync(): purify.Either<Error, number> {
+    return purify.Left(
+      new Error("InterfaceUnionNodeShapeMember2b has no fromRdfType"),
+    );
+  }
+
+  async interfaceUnionNodeShapeMember2bIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.interfaceUnionNodeShapeMember2bIdentifiersSync(options);
+  }
+
+  interfaceUnionNodeShapeMember2bIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(
+      new Error("InterfaceUnionNodeShapeMember2b has no fromRdfType"),
+    );
   }
 
   async interfaceUnionNodeShapeMember2bs(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember2b>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.interfaceUnionNodeShapeMember2bsSync(identifiers);
+  }
+
+  interfaceUnionNodeShapeMember2bsSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, InterfaceUnionNodeShapeMember2b>[] {
+    return identifiers.map((identifier) =>
+      InterfaceUnionNodeShapeMember2b.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async iriNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, IriNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.iriNodeShapeSync(identifier);
+  }
+
+  iriNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, IriNodeShape> {
+    return this.iriNodeShapesSync([identifier])[0];
   }
 
   async iriNodeShapeCount(): Promise<purify.Either<Error, number>> {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.iriNodeShapeCountSync();
   }
 
-  async iriNodeShapeIdentifiers(_options?: {
+  iriNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(new Error("IriNodeShape has no fromRdfType"));
+  }
+
+  async iriNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.iriNodeShapeIdentifiersSync(options);
+  }
+
+  iriNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(new Error("IriNodeShape has no fromRdfType"));
   }
 
   async iriNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, IriNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
-    );
+    return this.iriNodeShapesSync(identifiers);
+  }
+
+  iriNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, IriNodeShape>[] {
+    return identifiers.map((identifier) => {
+      if (identifier.termType === "BlankNode") {
+        return purify.Left(
+          new Error("iriNodeShapes does not accept BlankNode identifiers"),
+        );
+      }
+      return IriNodeShape.fromRdf({
+        resource: this.resourceSet.namedResource(identifier),
+      });
+    });
   }
 
   async languageInPropertiesNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, LanguageInPropertiesNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.languageInPropertiesNodeShapeSync(identifier);
+  }
+
+  languageInPropertiesNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, LanguageInPropertiesNodeShape> {
+    return this.languageInPropertiesNodeShapesSync([identifier])[0];
   }
 
   async languageInPropertiesNodeShapeCount(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.languageInPropertiesNodeShapeCountSync();
   }
 
-  async languageInPropertiesNodeShapeIdentifiers(_options?: {
+  languageInPropertiesNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(
+      new Error("LanguageInPropertiesNodeShape has no fromRdfType"),
+    );
+  }
+
+  async languageInPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.languageInPropertiesNodeShapeIdentifiersSync(options);
+  }
+
+  languageInPropertiesNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(
+      new Error("LanguageInPropertiesNodeShape has no fromRdfType"),
+    );
   }
 
   async languageInPropertiesNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, LanguageInPropertiesNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.languageInPropertiesNodeShapesSync(identifiers);
+  }
+
+  languageInPropertiesNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, LanguageInPropertiesNodeShape>[] {
+    return identifiers.map((identifier) =>
+      LanguageInPropertiesNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async listPropertiesNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, ListPropertiesNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.listPropertiesNodeShapeSync(identifier);
+  }
+
+  listPropertiesNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, ListPropertiesNodeShape> {
+    return this.listPropertiesNodeShapesSync([identifier])[0];
   }
 
   async listPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>> {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.listPropertiesNodeShapeCountSync();
   }
 
-  async listPropertiesNodeShapeIdentifiers(_options?: {
+  listPropertiesNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(new Error("ListPropertiesNodeShape has no fromRdfType"));
+  }
+
+  async listPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.listPropertiesNodeShapeIdentifiersSync(options);
+  }
+
+  listPropertiesNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(new Error("ListPropertiesNodeShape has no fromRdfType"));
   }
 
   async listPropertiesNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, ListPropertiesNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.listPropertiesNodeShapesSync(identifiers);
+  }
+
+  listPropertiesNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, ListPropertiesNodeShape>[] {
+    return identifiers.map((identifier) =>
+      ListPropertiesNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async mutablePropertiesNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, MutablePropertiesNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.mutablePropertiesNodeShapeSync(identifier);
+  }
+
+  mutablePropertiesNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, MutablePropertiesNodeShape> {
+    return this.mutablePropertiesNodeShapesSync([identifier])[0];
   }
 
   async mutablePropertiesNodeShapeCount(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.mutablePropertiesNodeShapeCountSync();
   }
 
-  async mutablePropertiesNodeShapeIdentifiers(_options?: {
+  mutablePropertiesNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(
+      new Error("MutablePropertiesNodeShape has no fromRdfType"),
+    );
+  }
+
+  async mutablePropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.mutablePropertiesNodeShapeIdentifiersSync(options);
+  }
+
+  mutablePropertiesNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(
+      new Error("MutablePropertiesNodeShape has no fromRdfType"),
+    );
   }
 
   async mutablePropertiesNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, MutablePropertiesNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.mutablePropertiesNodeShapesSync(identifiers);
+  }
+
+  mutablePropertiesNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, MutablePropertiesNodeShape>[] {
+    return identifiers.map((identifier) =>
+      MutablePropertiesNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async nonClassNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, NonClassNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.nonClassNodeShapeSync(identifier);
+  }
+
+  nonClassNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, NonClassNodeShape> {
+    return this.nonClassNodeShapesSync([identifier])[0];
   }
 
   async nonClassNodeShapeCount(): Promise<purify.Either<Error, number>> {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.nonClassNodeShapeCountSync();
   }
 
-  async nonClassNodeShapeIdentifiers(_options?: {
+  nonClassNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(new Error("NonClassNodeShape has no fromRdfType"));
+  }
+
+  async nonClassNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.nonClassNodeShapeIdentifiersSync(options);
+  }
+
+  nonClassNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(new Error("NonClassNodeShape has no fromRdfType"));
   }
 
   async nonClassNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, NonClassNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.nonClassNodeShapesSync(identifiers);
+  }
+
+  nonClassNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, NonClassNodeShape>[] {
+    return identifiers.map((identifier) =>
+      NonClassNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async orderedPropertiesNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, OrderedPropertiesNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.orderedPropertiesNodeShapeSync(identifier);
+  }
+
+  orderedPropertiesNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, OrderedPropertiesNodeShape> {
+    return this.orderedPropertiesNodeShapesSync([identifier])[0];
   }
 
   async orderedPropertiesNodeShapeCount(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.orderedPropertiesNodeShapeCountSync();
   }
 
-  async orderedPropertiesNodeShapeIdentifiers(_options?: {
+  orderedPropertiesNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(
+      new Error("OrderedPropertiesNodeShape has no fromRdfType"),
+    );
+  }
+
+  async orderedPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.orderedPropertiesNodeShapeIdentifiersSync(options);
+  }
+
+  orderedPropertiesNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(
+      new Error("OrderedPropertiesNodeShape has no fromRdfType"),
+    );
   }
 
   async orderedPropertiesNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, OrderedPropertiesNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.orderedPropertiesNodeShapesSync(identifiers);
+  }
+
+  orderedPropertiesNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, OrderedPropertiesNodeShape>[] {
+    return identifiers.map((identifier) =>
+      OrderedPropertiesNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async propertyCardinalitiesNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, PropertyCardinalitiesNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.propertyCardinalitiesNodeShapeSync(identifier);
+  }
+
+  propertyCardinalitiesNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, PropertyCardinalitiesNodeShape> {
+    return this.propertyCardinalitiesNodeShapesSync([identifier])[0];
   }
 
   async propertyCardinalitiesNodeShapeCount(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.propertyCardinalitiesNodeShapeCountSync();
   }
 
-  async propertyCardinalitiesNodeShapeIdentifiers(_options?: {
+  propertyCardinalitiesNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(
+      new Error("PropertyCardinalitiesNodeShape has no fromRdfType"),
+    );
+  }
+
+  async propertyCardinalitiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.propertyCardinalitiesNodeShapeIdentifiersSync(options);
+  }
+
+  propertyCardinalitiesNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(
+      new Error("PropertyCardinalitiesNodeShape has no fromRdfType"),
+    );
   }
 
   async propertyCardinalitiesNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, PropertyCardinalitiesNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.propertyCardinalitiesNodeShapesSync(identifiers);
+  }
+
+  propertyCardinalitiesNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, PropertyCardinalitiesNodeShape>[] {
+    return identifiers.map((identifier) =>
+      PropertyCardinalitiesNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async propertyVisibilitiesNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, PropertyVisibilitiesNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.propertyVisibilitiesNodeShapeSync(identifier);
+  }
+
+  propertyVisibilitiesNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, PropertyVisibilitiesNodeShape> {
+    return this.propertyVisibilitiesNodeShapesSync([identifier])[0];
   }
 
   async propertyVisibilitiesNodeShapeCount(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.propertyVisibilitiesNodeShapeCountSync();
   }
 
-  async propertyVisibilitiesNodeShapeIdentifiers(_options?: {
+  propertyVisibilitiesNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(
+      new Error("PropertyVisibilitiesNodeShape has no fromRdfType"),
+    );
+  }
+
+  async propertyVisibilitiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.propertyVisibilitiesNodeShapeIdentifiersSync(options);
+  }
+
+  propertyVisibilitiesNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(
+      new Error("PropertyVisibilitiesNodeShape has no fromRdfType"),
+    );
   }
 
   async propertyVisibilitiesNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, PropertyVisibilitiesNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.propertyVisibilitiesNodeShapesSync(identifiers);
+  }
+
+  propertyVisibilitiesNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, PropertyVisibilitiesNodeShape>[] {
+    return identifiers.map((identifier) =>
+      PropertyVisibilitiesNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async sha256IriNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, Sha256IriNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.sha256IriNodeShapeSync(identifier);
+  }
+
+  sha256IriNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, Sha256IriNodeShape> {
+    return this.sha256IriNodeShapesSync([identifier])[0];
   }
 
   async sha256IriNodeShapeCount(): Promise<purify.Either<Error, number>> {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.sha256IriNodeShapeCountSync();
   }
 
-  async sha256IriNodeShapeIdentifiers(_options?: {
+  sha256IriNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(new Error("Sha256IriNodeShape has no fromRdfType"));
+  }
+
+  async sha256IriNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.sha256IriNodeShapeIdentifiersSync(options);
+  }
+
+  sha256IriNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(new Error("Sha256IriNodeShape has no fromRdfType"));
   }
 
   async sha256IriNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, Sha256IriNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
-    );
+    return this.sha256IriNodeShapesSync(identifiers);
+  }
+
+  sha256IriNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, Sha256IriNodeShape>[] {
+    return identifiers.map((identifier) => {
+      if (identifier.termType === "BlankNode") {
+        return purify.Left(
+          new Error(
+            "sha256IriNodeShapes does not accept BlankNode identifiers",
+          ),
+        );
+      }
+      return Sha256IriNodeShape.fromRdf({
+        resource: this.resourceSet.namedResource(identifier),
+      });
+    });
   }
 
   async termPropertiesNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, TermPropertiesNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.termPropertiesNodeShapeSync(identifier);
+  }
+
+  termPropertiesNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, TermPropertiesNodeShape> {
+    return this.termPropertiesNodeShapesSync([identifier])[0];
   }
 
   async termPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>> {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.termPropertiesNodeShapeCountSync();
   }
 
-  async termPropertiesNodeShapeIdentifiers(_options?: {
+  termPropertiesNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(new Error("TermPropertiesNodeShape has no fromRdfType"));
+  }
+
+  async termPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.termPropertiesNodeShapeIdentifiersSync(options);
+  }
+
+  termPropertiesNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(new Error("TermPropertiesNodeShape has no fromRdfType"));
   }
 
   async termPropertiesNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, TermPropertiesNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.termPropertiesNodeShapesSync(identifiers);
+  }
+
+  termPropertiesNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, TermPropertiesNodeShape>[] {
+    return identifiers.map((identifier) =>
+      TermPropertiesNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async unionNodeShapeMember1(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, UnionNodeShapeMember1>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.unionNodeShapeMember1Sync(identifier);
+  }
+
+  unionNodeShapeMember1Sync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, UnionNodeShapeMember1> {
+    return this.unionNodeShapeMember1sSync([identifier])[0];
   }
 
   async unionNodeShapeMember1Count(): Promise<purify.Either<Error, number>> {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.unionNodeShapeMember1CountSync();
   }
 
-  async unionNodeShapeMember1Identifiers(_options?: {
+  unionNodeShapeMember1CountSync(): purify.Either<Error, number> {
+    return purify.Left(new Error("UnionNodeShapeMember1 has no fromRdfType"));
+  }
+
+  async unionNodeShapeMember1Identifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.unionNodeShapeMember1IdentifiersSync(options);
+  }
+
+  unionNodeShapeMember1IdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(new Error("UnionNodeShapeMember1 has no fromRdfType"));
   }
 
   async unionNodeShapeMember1s(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, UnionNodeShapeMember1>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.unionNodeShapeMember1sSync(identifiers);
+  }
+
+  unionNodeShapeMember1sSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, UnionNodeShapeMember1>[] {
+    return identifiers.map((identifier) =>
+      UnionNodeShapeMember1.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async unionNodeShapeMember2(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, UnionNodeShapeMember2>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.unionNodeShapeMember2Sync(identifier);
+  }
+
+  unionNodeShapeMember2Sync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, UnionNodeShapeMember2> {
+    return this.unionNodeShapeMember2sSync([identifier])[0];
   }
 
   async unionNodeShapeMember2Count(): Promise<purify.Either<Error, number>> {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.unionNodeShapeMember2CountSync();
   }
 
-  async unionNodeShapeMember2Identifiers(_options?: {
+  unionNodeShapeMember2CountSync(): purify.Either<Error, number> {
+    return purify.Left(new Error("UnionNodeShapeMember2 has no fromRdfType"));
+  }
+
+  async unionNodeShapeMember2Identifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.unionNodeShapeMember2IdentifiersSync(options);
+  }
+
+  unionNodeShapeMember2IdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(new Error("UnionNodeShapeMember2 has no fromRdfType"));
   }
 
   async unionNodeShapeMember2s(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, UnionNodeShapeMember2>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.unionNodeShapeMember2sSync(identifiers);
+  }
+
+  unionNodeShapeMember2sSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, UnionNodeShapeMember2>[] {
+    return identifiers.map((identifier) =>
+      UnionNodeShapeMember2.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async unionPropertiesNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, UnionPropertiesNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.unionPropertiesNodeShapeSync(identifier);
+  }
+
+  unionPropertiesNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, UnionPropertiesNodeShape> {
+    return this.unionPropertiesNodeShapesSync([identifier])[0];
   }
 
   async unionPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>> {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.unionPropertiesNodeShapeCountSync();
   }
 
-  async unionPropertiesNodeShapeIdentifiers(_options?: {
+  unionPropertiesNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(
+      new Error("UnionPropertiesNodeShape has no fromRdfType"),
+    );
+  }
+
+  async unionPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.unionPropertiesNodeShapeIdentifiersSync(options);
+  }
+
+  unionPropertiesNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(
+      new Error("UnionPropertiesNodeShape has no fromRdfType"),
+    );
   }
 
   async unionPropertiesNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, UnionPropertiesNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
+    return this.unionPropertiesNodeShapesSync(identifiers);
+  }
+
+  unionPropertiesNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, UnionPropertiesNodeShape>[] {
+    return identifiers.map((identifier) =>
+      UnionPropertiesNodeShape.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      }),
     );
   }
 
   async uuidV4IriNodeShape(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    identifier: $ObjectSet.ObjectIdentifier,
   ): Promise<purify.Either<Error, UuidV4IriNodeShape>> {
-    return purify.Left(new Error("object: fromRdf not supported"));
+    return this.uuidV4IriNodeShapeSync(identifier);
+  }
+
+  uuidV4IriNodeShapeSync(
+    identifier: $ObjectSet.ObjectIdentifier,
+  ): purify.Either<Error, UuidV4IriNodeShape> {
+    return this.uuidV4IriNodeShapesSync([identifier])[0];
   }
 
   async uuidV4IriNodeShapeCount(): Promise<purify.Either<Error, number>> {
-    return purify.Left(new Error("objectCount: fromRdf not supported"));
+    return this.uuidV4IriNodeShapeCountSync();
   }
 
-  async uuidV4IriNodeShapeIdentifiers(_options?: {
+  uuidV4IriNodeShapeCountSync(): purify.Either<Error, number> {
+    return purify.Left(new Error("UuidV4IriNodeShape has no fromRdfType"));
+  }
+
+  async uuidV4IriNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
   }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: fromRdf not supported"));
+    return this.uuidV4IriNodeShapeIdentifiersSync(options);
+  }
+
+  uuidV4IriNodeShapeIdentifiersSync(_options?: {
+    limit?: number;
+    offset?: number;
+  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+    return purify.Left(new Error("UuidV4IriNodeShape has no fromRdfType"));
   }
 
   async uuidV4IriNodeShapes(
     identifiers: readonly $ObjectSet.ObjectIdentifier[],
   ): Promise<readonly purify.Either<Error, UuidV4IriNodeShape>[]> {
-    return identifiers.map(() =>
-      purify.Left(new Error("objects: fromRdf not supported")),
-    );
+    return this.uuidV4IriNodeShapesSync(identifiers);
+  }
+
+  uuidV4IriNodeShapesSync(
+    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+  ): readonly purify.Either<Error, UuidV4IriNodeShape>[] {
+    return identifiers.map((identifier) => {
+      if (identifier.termType === "BlankNode") {
+        return purify.Left(
+          new Error(
+            "uuidV4IriNodeShapes does not accept BlankNode identifiers",
+          ),
+        );
+      }
+      return UuidV4IriNodeShape.fromRdf({
+        resource: this.resourceSet.namedResource(identifier),
+      });
+    });
   }
 }
 
