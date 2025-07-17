@@ -19088,7 +19088,7 @@ export namespace UnionNodeShape {
 }
 export interface $ObjectSet {
   abstractBaseClassForExternObjectTypeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, AbstractBaseClassForExternObjectType>>;
   abstractBaseClassForExternObjectTypeCount(): Promise<
     purify.Either<Error, number>
@@ -19096,14 +19096,16 @@ export interface $ObjectSet {
   abstractBaseClassForExternObjectTypeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   abstractBaseClassForExternObjectTypesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<
     readonly purify.Either<Error, AbstractBaseClassForExternObjectType>[]
   >;
   abstractBaseClassWithoutPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape>>;
   abstractBaseClassWithoutPropertiesNodeShapeCount(): Promise<
     purify.Either<Error, number>
@@ -19111,14 +19113,16 @@ export interface $ObjectSet {
   abstractBaseClassWithoutPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   abstractBaseClassWithoutPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<
     readonly purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape>[]
   >;
   abstractBaseClassWithPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>>;
   abstractBaseClassWithPropertiesNodeShapeCount(): Promise<
     purify.Either<Error, number>
@@ -19126,14 +19130,16 @@ export interface $ObjectSet {
   abstractBaseClassWithPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   abstractBaseClassWithPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<
     readonly purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>[]
   >;
   baseInterfaceWithoutPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, BaseInterfaceWithoutPropertiesNodeShape>>;
   baseInterfaceWithoutPropertiesNodeShapeCount(): Promise<
     purify.Either<Error, number>
@@ -19141,14 +19147,16 @@ export interface $ObjectSet {
   baseInterfaceWithoutPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   baseInterfaceWithoutPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<
     readonly purify.Either<Error, BaseInterfaceWithoutPropertiesNodeShape>[]
   >;
   baseInterfaceWithPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, BaseInterfaceWithPropertiesNodeShape>>;
   baseInterfaceWithPropertiesNodeShapeCount(): Promise<
     purify.Either<Error, number>
@@ -19156,58 +19164,68 @@ export interface $ObjectSet {
   baseInterfaceWithPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   baseInterfaceWithPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<
     readonly purify.Either<Error, BaseInterfaceWithPropertiesNodeShape>[]
   >;
   blankNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, BlankNodeShape>>;
   blankNodeShapeCount(): Promise<purify.Either<Error, number>>;
   blankNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   blankNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, BlankNodeShape>[]>;
   concreteChildClassNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ConcreteChildClassNodeShape>>;
   concreteChildClassNodeShapeCount(): Promise<purify.Either<Error, number>>;
   concreteChildClassNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   concreteChildClassNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ConcreteChildClassNodeShape>[]>;
   concreteChildInterfaceNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ConcreteChildInterfaceNodeShape>>;
   concreteChildInterfaceNodeShapeCount(): Promise<purify.Either<Error, number>>;
   concreteChildInterfaceNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   concreteChildInterfaceNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ConcreteChildInterfaceNodeShape>[]>;
   concreteParentClassNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ConcreteParentClassNodeShape>>;
   concreteParentClassNodeShapeCount(): Promise<purify.Either<Error, number>>;
   concreteParentClassNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   concreteParentClassNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ConcreteParentClassNodeShape>[]>;
   concreteParentInterfaceNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ConcreteParentInterfaceNodeShape>>;
   concreteParentInterfaceNodeShapeCount(): Promise<
     purify.Either<Error, number>
@@ -19215,322 +19233,382 @@ export interface $ObjectSet {
   concreteParentInterfaceNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   concreteParentInterfaceNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ConcreteParentInterfaceNodeShape>[]>;
   defaultValuePropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, DefaultValuePropertiesNodeShape>>;
   defaultValuePropertiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
   defaultValuePropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   defaultValuePropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, DefaultValuePropertiesNodeShape>[]>;
   explicitFromToRdfTypesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ExplicitFromToRdfTypesNodeShape>>;
   explicitFromToRdfTypesNodeShapeCount(): Promise<purify.Either<Error, number>>;
   explicitFromToRdfTypesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   explicitFromToRdfTypesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ExplicitFromToRdfTypesNodeShape>[]>;
   explicitRdfTypeNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ExplicitRdfTypeNodeShape>>;
   explicitRdfTypeNodeShapeCount(): Promise<purify.Either<Error, number>>;
   explicitRdfTypeNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   explicitRdfTypeNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ExplicitRdfTypeNodeShape>[]>;
   externNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ExternNodeShape>>;
   externNodeShapeCount(): Promise<purify.Either<Error, number>>;
   externNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   externNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ExternNodeShape>[]>;
   externObjectTypeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ExternObjectType>>;
   externObjectTypeCount(): Promise<purify.Either<Error, number>>;
   externObjectTypeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   externObjectTypesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ExternObjectType>[]>;
   externPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ExternPropertiesNodeShape>>;
   externPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
   externPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   externPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ExternPropertiesNodeShape>[]>;
   hasValuePropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, HasValuePropertiesNodeShape>>;
   hasValuePropertiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
   hasValuePropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   hasValuePropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, HasValuePropertiesNodeShape>[]>;
   inIdentifierNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.NamedNode<
+      | "http://example.com/InIdentifierNodeShapeInstance1"
+      | "http://example.com/InIdentifierNodeShapeInstance2"
+    >,
   ): Promise<purify.Either<Error, InIdentifierNodeShape>>;
   inIdentifierNodeShapeCount(): Promise<purify.Either<Error, number>>;
   inIdentifierNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<
+      Error,
+      readonly rdfjs.NamedNode<
+        | "http://example.com/InIdentifierNodeShapeInstance1"
+        | "http://example.com/InIdentifierNodeShapeInstance2"
+      >[]
+    >
+  >;
   inIdentifierNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly rdfjs.NamedNode<
+      | "http://example.com/InIdentifierNodeShapeInstance1"
+      | "http://example.com/InIdentifierNodeShapeInstance2"
+    >[],
   ): Promise<readonly purify.Either<Error, InIdentifierNodeShape>[]>;
   inlineNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, InlineNodeShape>>;
   inlineNodeShapeCount(): Promise<purify.Either<Error, number>>;
   inlineNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   inlineNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InlineNodeShape>[]>;
   inPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, InPropertiesNodeShape>>;
   inPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
   inPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   inPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InPropertiesNodeShape>[]>;
   interfaceNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, InterfaceNodeShape>>;
   interfaceNodeShapeCount(): Promise<purify.Either<Error, number>>;
   interfaceNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   interfaceNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InterfaceNodeShape>[]>;
   interfaceUnionNodeShapeMember1ByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember1>>;
   interfaceUnionNodeShapeMember1Count(): Promise<purify.Either<Error, number>>;
   interfaceUnionNodeShapeMember1Identifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   interfaceUnionNodeShapeMember1sByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember1>[]>;
   interfaceUnionNodeShapeMember2aByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember2a>>;
   interfaceUnionNodeShapeMember2aCount(): Promise<purify.Either<Error, number>>;
   interfaceUnionNodeShapeMember2aIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   interfaceUnionNodeShapeMember2asByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember2a>[]>;
   interfaceUnionNodeShapeMember2bByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember2b>>;
   interfaceUnionNodeShapeMember2bCount(): Promise<purify.Either<Error, number>>;
   interfaceUnionNodeShapeMember2bIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   interfaceUnionNodeShapeMember2bsByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember2b>[]>;
   iriNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.NamedNode,
   ): Promise<purify.Either<Error, IriNodeShape>>;
   iriNodeShapeCount(): Promise<purify.Either<Error, number>>;
   iriNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<purify.Either<Error, readonly rdfjs.NamedNode[]>>;
   iriNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly rdfjs.NamedNode[],
   ): Promise<readonly purify.Either<Error, IriNodeShape>[]>;
   languageInPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, LanguageInPropertiesNodeShape>>;
   languageInPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
   languageInPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   languageInPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, LanguageInPropertiesNodeShape>[]>;
   listPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ListPropertiesNodeShape>>;
   listPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
   listPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   listPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ListPropertiesNodeShape>[]>;
   mutablePropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, MutablePropertiesNodeShape>>;
   mutablePropertiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
   mutablePropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   mutablePropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, MutablePropertiesNodeShape>[]>;
   nonClassNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, NonClassNodeShape>>;
   nonClassNodeShapeCount(): Promise<purify.Either<Error, number>>;
   nonClassNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   nonClassNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, NonClassNodeShape>[]>;
   orderedPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, OrderedPropertiesNodeShape>>;
   orderedPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
   orderedPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   orderedPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, OrderedPropertiesNodeShape>[]>;
   propertyCardinalitiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, PropertyCardinalitiesNodeShape>>;
   propertyCardinalitiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
   propertyCardinalitiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   propertyCardinalitiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, PropertyCardinalitiesNodeShape>[]>;
   propertyVisibilitiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, PropertyVisibilitiesNodeShape>>;
   propertyVisibilitiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
   propertyVisibilitiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   propertyVisibilitiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, PropertyVisibilitiesNodeShape>[]>;
   sha256IriNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.NamedNode,
   ): Promise<purify.Either<Error, Sha256IriNodeShape>>;
   sha256IriNodeShapeCount(): Promise<purify.Either<Error, number>>;
   sha256IriNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<purify.Either<Error, readonly rdfjs.NamedNode[]>>;
   sha256IriNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly rdfjs.NamedNode[],
   ): Promise<readonly purify.Either<Error, Sha256IriNodeShape>[]>;
   termPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, TermPropertiesNodeShape>>;
   termPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
   termPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   termPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, TermPropertiesNodeShape>[]>;
   unionNodeShapeMember1ByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, UnionNodeShapeMember1>>;
   unionNodeShapeMember1Count(): Promise<purify.Either<Error, number>>;
   unionNodeShapeMember1Identifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   unionNodeShapeMember1sByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, UnionNodeShapeMember1>[]>;
   unionNodeShapeMember2ByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, UnionNodeShapeMember2>>;
   unionNodeShapeMember2Count(): Promise<purify.Either<Error, number>>;
   unionNodeShapeMember2Identifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   unionNodeShapeMember2sByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, UnionNodeShapeMember2>[]>;
   unionPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, UnionPropertiesNodeShape>>;
   unionPropertiesNodeShapeCount(): Promise<purify.Either<Error, number>>;
   unionPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
   unionPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, UnionPropertiesNodeShape>[]>;
   uuidV4IriNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.NamedNode,
   ): Promise<purify.Either<Error, UuidV4IriNodeShape>>;
   uuidV4IriNodeShapeCount(): Promise<purify.Either<Error, number>>;
   uuidV4IriNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>;
+  }): Promise<purify.Either<Error, readonly rdfjs.NamedNode[]>>;
   uuidV4IriNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly rdfjs.NamedNode[],
   ): Promise<readonly purify.Either<Error, UuidV4IriNodeShape>[]>;
-}
-
-namespace $ObjectSet {
-  export type ObjectIdentifier = rdfjs.BlankNode | rdfjs.NamedNode;
 }
 
 export class $RdfjsDatasetObjectSet implements $ObjectSet {
@@ -19541,7 +19619,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async abstractBaseClassForExternObjectTypeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, AbstractBaseClassForExternObjectType>> {
     return this.abstractBaseClassForExternObjectTypeByIdentifierSync(
       identifier,
@@ -19549,7 +19627,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   abstractBaseClassForExternObjectTypeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, AbstractBaseClassForExternObjectType> {
     return this.abstractBaseClassForExternObjectTypesByIdentifiersSync([
       identifier,
@@ -19574,21 +19652,23 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async abstractBaseClassForExternObjectTypeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.abstractBaseClassForExternObjectTypeIdentifiersSync(options);
   }
 
   abstractBaseClassForExternObjectTypeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(
       new Error("AbstractBaseClassForExternObjectType has no fromRdfType"),
     );
   }
 
   async abstractBaseClassForExternObjectTypesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<
     readonly purify.Either<Error, AbstractBaseClassForExternObjectType>[]
   > {
@@ -19598,7 +19678,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   abstractBaseClassForExternObjectTypesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, AbstractBaseClassForExternObjectType>[] {
     return identifiers.map((identifier) =>
       AbstractBaseClassForExternObjectTypeStatic.fromRdf({
@@ -19608,7 +19688,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async abstractBaseClassWithoutPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<
     purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape>
   > {
@@ -19618,7 +19698,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   abstractBaseClassWithoutPropertiesNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape> {
     return this.abstractBaseClassWithoutPropertiesNodeShapesByIdentifiersSync([
       identifier,
@@ -19645,7 +19725,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async abstractBaseClassWithoutPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.abstractBaseClassWithoutPropertiesNodeShapeIdentifiersSync(
       options,
     );
@@ -19654,7 +19736,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   abstractBaseClassWithoutPropertiesNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(
       new Error(
         "AbstractBaseClassWithoutPropertiesNodeShape has no fromRdfType",
@@ -19663,7 +19745,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async abstractBaseClassWithoutPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<
     readonly purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape>[]
   > {
@@ -19673,7 +19755,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   abstractBaseClassWithoutPropertiesNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<
     Error,
     AbstractBaseClassWithoutPropertiesNodeShape
@@ -19686,7 +19768,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async abstractBaseClassWithPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>> {
     return this.abstractBaseClassWithPropertiesNodeShapeByIdentifierSync(
       identifier,
@@ -19694,7 +19776,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   abstractBaseClassWithPropertiesNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape> {
     return this.abstractBaseClassWithPropertiesNodeShapesByIdentifiersSync([
       identifier,
@@ -19719,7 +19801,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async abstractBaseClassWithPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.abstractBaseClassWithPropertiesNodeShapeIdentifiersSync(
       options,
     );
@@ -19728,14 +19812,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   abstractBaseClassWithPropertiesNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(
       new Error("AbstractBaseClassWithPropertiesNodeShape has no fromRdfType"),
     );
   }
 
   async abstractBaseClassWithPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<
     readonly purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>[]
   > {
@@ -19745,7 +19829,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   abstractBaseClassWithPropertiesNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>[] {
     return identifiers.map((identifier) =>
       AbstractBaseClassWithPropertiesNodeShapeStatic.fromRdf({
@@ -19755,7 +19839,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async baseInterfaceWithoutPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, BaseInterfaceWithoutPropertiesNodeShape>> {
     return this.baseInterfaceWithoutPropertiesNodeShapeByIdentifierSync(
       identifier,
@@ -19763,7 +19847,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   baseInterfaceWithoutPropertiesNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, BaseInterfaceWithoutPropertiesNodeShape> {
     return this.baseInterfaceWithoutPropertiesNodeShapesByIdentifiersSync([
       identifier,
@@ -19799,14 +19883,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async baseInterfaceWithoutPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.baseInterfaceWithoutPropertiesNodeShapeIdentifiersSync(options);
   }
 
   baseInterfaceWithoutPropertiesNodeShapeIdentifiersSync(options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
       return purify.Either.of([]);
@@ -19818,20 +19904,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     let identifierI = 0;
-    const result: $ObjectSet.ObjectIdentifier[] = [];
+    const result: (rdfjs.BlankNode | rdfjs.NamedNode)[] = [];
     for (const resource of this.resourceSet.instancesOf(
       BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdfType,
     )) {
-      if (
-        BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdf({
-          resource,
-        }).isRight() &&
-        identifierI++ >= offset
-      ) {
-        result.push(resource.identifier);
-        if (result.length === limit) {
-          break;
+      BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdf({
+        resource,
+      }).ifRight((object) => {
+        if (identifierI++ >= offset) {
+          result.push(object.identifier);
         }
+      });
+      if (result.length === limit) {
+        break;
       }
     }
 
@@ -19839,7 +19924,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async baseInterfaceWithoutPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<
     readonly purify.Either<Error, BaseInterfaceWithoutPropertiesNodeShape>[]
   > {
@@ -19849,7 +19934,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   baseInterfaceWithoutPropertiesNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, BaseInterfaceWithoutPropertiesNodeShape>[] {
     return identifiers.map((identifier) =>
       BaseInterfaceWithoutPropertiesNodeShapeStatic.fromRdf({
@@ -19859,7 +19944,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async baseInterfaceWithPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, BaseInterfaceWithPropertiesNodeShape>> {
     return this.baseInterfaceWithPropertiesNodeShapeByIdentifierSync(
       identifier,
@@ -19867,7 +19952,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   baseInterfaceWithPropertiesNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, BaseInterfaceWithPropertiesNodeShape> {
     return this.baseInterfaceWithPropertiesNodeShapesByIdentifiersSync([
       identifier,
@@ -19903,14 +19988,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async baseInterfaceWithPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.baseInterfaceWithPropertiesNodeShapeIdentifiersSync(options);
   }
 
   baseInterfaceWithPropertiesNodeShapeIdentifiersSync(options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
       return purify.Either.of([]);
@@ -19922,20 +20009,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     let identifierI = 0;
-    const result: $ObjectSet.ObjectIdentifier[] = [];
+    const result: (rdfjs.BlankNode | rdfjs.NamedNode)[] = [];
     for (const resource of this.resourceSet.instancesOf(
       BaseInterfaceWithPropertiesNodeShapeStatic.fromRdfType,
     )) {
-      if (
-        BaseInterfaceWithPropertiesNodeShapeStatic.fromRdf({
-          resource,
-        }).isRight() &&
-        identifierI++ >= offset
-      ) {
-        result.push(resource.identifier);
-        if (result.length === limit) {
-          break;
-        }
+      BaseInterfaceWithPropertiesNodeShapeStatic.fromRdf({ resource }).ifRight(
+        (object) => {
+          if (identifierI++ >= offset) {
+            result.push(object.identifier);
+          }
+        },
+      );
+      if (result.length === limit) {
+        break;
       }
     }
 
@@ -19943,7 +20029,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async baseInterfaceWithPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<
     readonly purify.Either<Error, BaseInterfaceWithPropertiesNodeShape>[]
   > {
@@ -19953,7 +20039,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   baseInterfaceWithPropertiesNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, BaseInterfaceWithPropertiesNodeShape>[] {
     return identifiers.map((identifier) =>
       BaseInterfaceWithPropertiesNodeShapeStatic.fromRdf({
@@ -19963,13 +20049,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async blankNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, BlankNodeShape>> {
     return this.blankNodeShapeByIdentifierSync(identifier);
   }
 
   blankNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, BlankNodeShape> {
     return this.blankNodeShapesByIdentifiersSync([identifier])[0];
   }
@@ -19985,25 +20071,27 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async blankNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.blankNodeShapeIdentifiersSync(options);
   }
 
   blankNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(new Error("BlankNodeShape has no fromRdfType"));
   }
 
   async blankNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, BlankNodeShape>[]> {
     return this.blankNodeShapesByIdentifiersSync(identifiers);
   }
 
   blankNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, BlankNodeShape>[] {
     return identifiers.map((identifier) =>
       BlankNodeShape.fromRdf({
@@ -20013,13 +20101,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteChildClassNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ConcreteChildClassNodeShape>> {
     return this.concreteChildClassNodeShapeByIdentifierSync(identifier);
   }
 
   concreteChildClassNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, ConcreteChildClassNodeShape> {
     return this.concreteChildClassNodeShapesByIdentifiersSync([identifier])[0];
   }
@@ -20046,14 +20134,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async concreteChildClassNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.concreteChildClassNodeShapeIdentifiersSync(options);
   }
 
   concreteChildClassNodeShapeIdentifiersSync(options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
       return purify.Either.of([]);
@@ -20065,18 +20155,17 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     let identifierI = 0;
-    const result: $ObjectSet.ObjectIdentifier[] = [];
+    const result: (rdfjs.BlankNode | rdfjs.NamedNode)[] = [];
     for (const resource of this.resourceSet.instancesOf(
       ConcreteChildClassNodeShape.fromRdfType,
     )) {
-      if (
-        ConcreteChildClassNodeShape.fromRdf({ resource }).isRight() &&
-        identifierI++ >= offset
-      ) {
-        result.push(resource.identifier);
-        if (result.length === limit) {
-          break;
+      ConcreteChildClassNodeShape.fromRdf({ resource }).ifRight((object) => {
+        if (identifierI++ >= offset) {
+          result.push(object.identifier);
         }
+      });
+      if (result.length === limit) {
+        break;
       }
     }
 
@@ -20084,13 +20173,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteChildClassNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ConcreteChildClassNodeShape>[]> {
     return this.concreteChildClassNodeShapesByIdentifiersSync(identifiers);
   }
 
   concreteChildClassNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, ConcreteChildClassNodeShape>[] {
     return identifiers.map((identifier) =>
       ConcreteChildClassNodeShape.fromRdf({
@@ -20100,13 +20189,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteChildInterfaceNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ConcreteChildInterfaceNodeShape>> {
     return this.concreteChildInterfaceNodeShapeByIdentifierSync(identifier);
   }
 
   concreteChildInterfaceNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, ConcreteChildInterfaceNodeShape> {
     return this.concreteChildInterfaceNodeShapesByIdentifiersSync([
       identifier,
@@ -20135,14 +20224,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async concreteChildInterfaceNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.concreteChildInterfaceNodeShapeIdentifiersSync(options);
   }
 
   concreteChildInterfaceNodeShapeIdentifiersSync(options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
       return purify.Either.of([]);
@@ -20154,18 +20245,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     let identifierI = 0;
-    const result: $ObjectSet.ObjectIdentifier[] = [];
+    const result: (rdfjs.BlankNode | rdfjs.NamedNode)[] = [];
     for (const resource of this.resourceSet.instancesOf(
       ConcreteChildInterfaceNodeShape.fromRdfType,
     )) {
-      if (
-        ConcreteChildInterfaceNodeShape.fromRdf({ resource }).isRight() &&
-        identifierI++ >= offset
-      ) {
-        result.push(resource.identifier);
-        if (result.length === limit) {
-          break;
-        }
+      ConcreteChildInterfaceNodeShape.fromRdf({ resource }).ifRight(
+        (object) => {
+          if (identifierI++ >= offset) {
+            result.push(object.identifier);
+          }
+        },
+      );
+      if (result.length === limit) {
+        break;
       }
     }
 
@@ -20173,13 +20265,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteChildInterfaceNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ConcreteChildInterfaceNodeShape>[]> {
     return this.concreteChildInterfaceNodeShapesByIdentifiersSync(identifiers);
   }
 
   concreteChildInterfaceNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, ConcreteChildInterfaceNodeShape>[] {
     return identifiers.map((identifier) =>
       ConcreteChildInterfaceNodeShape.fromRdf({
@@ -20189,13 +20281,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteParentClassNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ConcreteParentClassNodeShape>> {
     return this.concreteParentClassNodeShapeByIdentifierSync(identifier);
   }
 
   concreteParentClassNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, ConcreteParentClassNodeShape> {
     return this.concreteParentClassNodeShapesByIdentifiersSync([identifier])[0];
   }
@@ -20222,14 +20314,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async concreteParentClassNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.concreteParentClassNodeShapeIdentifiersSync(options);
   }
 
   concreteParentClassNodeShapeIdentifiersSync(options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
       return purify.Either.of([]);
@@ -20241,18 +20335,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     let identifierI = 0;
-    const result: $ObjectSet.ObjectIdentifier[] = [];
+    const result: (rdfjs.BlankNode | rdfjs.NamedNode)[] = [];
     for (const resource of this.resourceSet.instancesOf(
       ConcreteParentClassNodeShapeStatic.fromRdfType,
     )) {
-      if (
-        ConcreteParentClassNodeShapeStatic.fromRdf({ resource }).isRight() &&
-        identifierI++ >= offset
-      ) {
-        result.push(resource.identifier);
-        if (result.length === limit) {
-          break;
-        }
+      ConcreteParentClassNodeShapeStatic.fromRdf({ resource }).ifRight(
+        (object) => {
+          if (identifierI++ >= offset) {
+            result.push(object.identifier);
+          }
+        },
+      );
+      if (result.length === limit) {
+        break;
       }
     }
 
@@ -20260,13 +20355,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteParentClassNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ConcreteParentClassNodeShape>[]> {
     return this.concreteParentClassNodeShapesByIdentifiersSync(identifiers);
   }
 
   concreteParentClassNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, ConcreteParentClassNodeShape>[] {
     return identifiers.map((identifier) =>
       ConcreteParentClassNodeShapeStatic.fromRdf({
@@ -20276,13 +20371,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteParentInterfaceNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ConcreteParentInterfaceNodeShape>> {
     return this.concreteParentInterfaceNodeShapeByIdentifierSync(identifier);
   }
 
   concreteParentInterfaceNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, ConcreteParentInterfaceNodeShape> {
     return this.concreteParentInterfaceNodeShapesByIdentifiersSync([
       identifier,
@@ -20313,14 +20408,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async concreteParentInterfaceNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.concreteParentInterfaceNodeShapeIdentifiersSync(options);
   }
 
   concreteParentInterfaceNodeShapeIdentifiersSync(options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
       return purify.Either.of([]);
@@ -20332,20 +20429,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     let identifierI = 0;
-    const result: $ObjectSet.ObjectIdentifier[] = [];
+    const result: (rdfjs.BlankNode | rdfjs.NamedNode)[] = [];
     for (const resource of this.resourceSet.instancesOf(
       ConcreteParentInterfaceNodeShapeStatic.fromRdfType,
     )) {
-      if (
-        ConcreteParentInterfaceNodeShapeStatic.fromRdf({
-          resource,
-        }).isRight() &&
-        identifierI++ >= offset
-      ) {
-        result.push(resource.identifier);
-        if (result.length === limit) {
-          break;
-        }
+      ConcreteParentInterfaceNodeShapeStatic.fromRdf({ resource }).ifRight(
+        (object) => {
+          if (identifierI++ >= offset) {
+            result.push(object.identifier);
+          }
+        },
+      );
+      if (result.length === limit) {
+        break;
       }
     }
 
@@ -20353,7 +20449,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteParentInterfaceNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<
     readonly purify.Either<Error, ConcreteParentInterfaceNodeShape>[]
   > {
@@ -20361,7 +20457,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   concreteParentInterfaceNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, ConcreteParentInterfaceNodeShape>[] {
     return identifiers.map((identifier) =>
       ConcreteParentInterfaceNodeShapeStatic.fromRdf({
@@ -20371,13 +20467,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async defaultValuePropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, DefaultValuePropertiesNodeShape>> {
     return this.defaultValuePropertiesNodeShapeByIdentifierSync(identifier);
   }
 
   defaultValuePropertiesNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, DefaultValuePropertiesNodeShape> {
     return this.defaultValuePropertiesNodeShapesByIdentifiersSync([
       identifier,
@@ -20399,27 +20495,29 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async defaultValuePropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.defaultValuePropertiesNodeShapeIdentifiersSync(options);
   }
 
   defaultValuePropertiesNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(
       new Error("DefaultValuePropertiesNodeShape has no fromRdfType"),
     );
   }
 
   async defaultValuePropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, DefaultValuePropertiesNodeShape>[]> {
     return this.defaultValuePropertiesNodeShapesByIdentifiersSync(identifiers);
   }
 
   defaultValuePropertiesNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, DefaultValuePropertiesNodeShape>[] {
     return identifiers.map((identifier) =>
       DefaultValuePropertiesNodeShape.fromRdf({
@@ -20429,13 +20527,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async explicitFromToRdfTypesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ExplicitFromToRdfTypesNodeShape>> {
     return this.explicitFromToRdfTypesNodeShapeByIdentifierSync(identifier);
   }
 
   explicitFromToRdfTypesNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, ExplicitFromToRdfTypesNodeShape> {
     return this.explicitFromToRdfTypesNodeShapesByIdentifiersSync([
       identifier,
@@ -20464,14 +20562,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async explicitFromToRdfTypesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.explicitFromToRdfTypesNodeShapeIdentifiersSync(options);
   }
 
   explicitFromToRdfTypesNodeShapeIdentifiersSync(options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
       return purify.Either.of([]);
@@ -20483,18 +20583,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     let identifierI = 0;
-    const result: $ObjectSet.ObjectIdentifier[] = [];
+    const result: (rdfjs.BlankNode | rdfjs.NamedNode)[] = [];
     for (const resource of this.resourceSet.instancesOf(
       ExplicitFromToRdfTypesNodeShape.fromRdfType,
     )) {
-      if (
-        ExplicitFromToRdfTypesNodeShape.fromRdf({ resource }).isRight() &&
-        identifierI++ >= offset
-      ) {
-        result.push(resource.identifier);
-        if (result.length === limit) {
-          break;
-        }
+      ExplicitFromToRdfTypesNodeShape.fromRdf({ resource }).ifRight(
+        (object) => {
+          if (identifierI++ >= offset) {
+            result.push(object.identifier);
+          }
+        },
+      );
+      if (result.length === limit) {
+        break;
       }
     }
 
@@ -20502,13 +20603,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async explicitFromToRdfTypesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ExplicitFromToRdfTypesNodeShape>[]> {
     return this.explicitFromToRdfTypesNodeShapesByIdentifiersSync(identifiers);
   }
 
   explicitFromToRdfTypesNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, ExplicitFromToRdfTypesNodeShape>[] {
     return identifiers.map((identifier) =>
       ExplicitFromToRdfTypesNodeShape.fromRdf({
@@ -20518,13 +20619,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async explicitRdfTypeNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ExplicitRdfTypeNodeShape>> {
     return this.explicitRdfTypeNodeShapeByIdentifierSync(identifier);
   }
 
   explicitRdfTypeNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, ExplicitRdfTypeNodeShape> {
     return this.explicitRdfTypeNodeShapesByIdentifiersSync([identifier])[0];
   }
@@ -20549,14 +20650,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async explicitRdfTypeNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.explicitRdfTypeNodeShapeIdentifiersSync(options);
   }
 
   explicitRdfTypeNodeShapeIdentifiersSync(options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
       return purify.Either.of([]);
@@ -20568,18 +20671,17 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     let identifierI = 0;
-    const result: $ObjectSet.ObjectIdentifier[] = [];
+    const result: (rdfjs.BlankNode | rdfjs.NamedNode)[] = [];
     for (const resource of this.resourceSet.instancesOf(
       ExplicitRdfTypeNodeShape.fromRdfType,
     )) {
-      if (
-        ExplicitRdfTypeNodeShape.fromRdf({ resource }).isRight() &&
-        identifierI++ >= offset
-      ) {
-        result.push(resource.identifier);
-        if (result.length === limit) {
-          break;
+      ExplicitRdfTypeNodeShape.fromRdf({ resource }).ifRight((object) => {
+        if (identifierI++ >= offset) {
+          result.push(object.identifier);
         }
+      });
+      if (result.length === limit) {
+        break;
       }
     }
 
@@ -20587,13 +20689,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async explicitRdfTypeNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ExplicitRdfTypeNodeShape>[]> {
     return this.explicitRdfTypeNodeShapesByIdentifiersSync(identifiers);
   }
 
   explicitRdfTypeNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, ExplicitRdfTypeNodeShape>[] {
     return identifiers.map((identifier) =>
       ExplicitRdfTypeNodeShape.fromRdf({
@@ -20603,13 +20705,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async externNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ExternNodeShape>> {
     return this.externNodeShapeByIdentifierSync(identifier);
   }
 
   externNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, ExternNodeShape> {
     return this.externNodeShapesByIdentifiersSync([identifier])[0];
   }
@@ -20625,25 +20727,27 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async externNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.externNodeShapeIdentifiersSync(options);
   }
 
   externNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(new Error("ExternNodeShape has no fromRdfType"));
   }
 
   async externNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ExternNodeShape>[]> {
     return this.externNodeShapesByIdentifiersSync(identifiers);
   }
 
   externNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, ExternNodeShape>[] {
     return identifiers.map((identifier) =>
       ExternNodeShape.fromRdf({
@@ -20653,13 +20757,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async externObjectTypeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ExternObjectType>> {
     return this.externObjectTypeByIdentifierSync(identifier);
   }
 
   externObjectTypeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, ExternObjectType> {
     return this.externObjectTypesByIdentifiersSync([identifier])[0];
   }
@@ -20675,25 +20779,27 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async externObjectTypeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.externObjectTypeIdentifiersSync(options);
   }
 
   externObjectTypeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(new Error("ExternObjectType has no fromRdfType"));
   }
 
   async externObjectTypesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ExternObjectType>[]> {
     return this.externObjectTypesByIdentifiersSync(identifiers);
   }
 
   externObjectTypesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, ExternObjectType>[] {
     return identifiers.map((identifier) =>
       ExternObjectType.fromRdf({
@@ -20703,13 +20809,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async externPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ExternPropertiesNodeShape>> {
     return this.externPropertiesNodeShapeByIdentifierSync(identifier);
   }
 
   externPropertiesNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, ExternPropertiesNodeShape> {
     return this.externPropertiesNodeShapesByIdentifiersSync([identifier])[0];
   }
@@ -20729,27 +20835,29 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async externPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.externPropertiesNodeShapeIdentifiersSync(options);
   }
 
   externPropertiesNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(
       new Error("ExternPropertiesNodeShape has no fromRdfType"),
     );
   }
 
   async externPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ExternPropertiesNodeShape>[]> {
     return this.externPropertiesNodeShapesByIdentifiersSync(identifiers);
   }
 
   externPropertiesNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, ExternPropertiesNodeShape>[] {
     return identifiers.map((identifier) =>
       ExternPropertiesNodeShape.fromRdf({
@@ -20759,13 +20867,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async hasValuePropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, HasValuePropertiesNodeShape>> {
     return this.hasValuePropertiesNodeShapeByIdentifierSync(identifier);
   }
 
   hasValuePropertiesNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, HasValuePropertiesNodeShape> {
     return this.hasValuePropertiesNodeShapesByIdentifiersSync([identifier])[0];
   }
@@ -20785,27 +20893,29 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async hasValuePropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.hasValuePropertiesNodeShapeIdentifiersSync(options);
   }
 
   hasValuePropertiesNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(
       new Error("HasValuePropertiesNodeShape has no fromRdfType"),
     );
   }
 
   async hasValuePropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, HasValuePropertiesNodeShape>[]> {
     return this.hasValuePropertiesNodeShapesByIdentifiersSync(identifiers);
   }
 
   hasValuePropertiesNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, HasValuePropertiesNodeShape>[] {
     return identifiers.map((identifier) =>
       HasValuePropertiesNodeShape.fromRdf({
@@ -20815,13 +20925,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async inIdentifierNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.NamedNode<
+      | "http://example.com/InIdentifierNodeShapeInstance1"
+      | "http://example.com/InIdentifierNodeShapeInstance2"
+    >,
   ): Promise<purify.Either<Error, InIdentifierNodeShape>> {
     return this.inIdentifierNodeShapeByIdentifierSync(identifier);
   }
 
   inIdentifierNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.NamedNode<
+      | "http://example.com/InIdentifierNodeShapeInstance1"
+      | "http://example.com/InIdentifierNodeShapeInstance2"
+    >,
   ): purify.Either<Error, InIdentifierNodeShape> {
     return this.inIdentifierNodeShapesByIdentifiersSync([identifier])[0];
   }
@@ -20837,48 +20953,61 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async inIdentifierNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<
+      Error,
+      readonly rdfjs.NamedNode<
+        | "http://example.com/InIdentifierNodeShapeInstance1"
+        | "http://example.com/InIdentifierNodeShapeInstance2"
+      >[]
+    >
+  > {
     return this.inIdentifierNodeShapeIdentifiersSync(options);
   }
 
   inIdentifierNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<
+    Error,
+    readonly rdfjs.NamedNode<
+      | "http://example.com/InIdentifierNodeShapeInstance1"
+      | "http://example.com/InIdentifierNodeShapeInstance2"
+    >[]
+  > {
     return purify.Left(new Error("InIdentifierNodeShape has no fromRdfType"));
   }
 
   async inIdentifierNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly rdfjs.NamedNode<
+      | "http://example.com/InIdentifierNodeShapeInstance1"
+      | "http://example.com/InIdentifierNodeShapeInstance2"
+    >[],
   ): Promise<readonly purify.Either<Error, InIdentifierNodeShape>[]> {
     return this.inIdentifierNodeShapesByIdentifiersSync(identifiers);
   }
 
   inIdentifierNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly rdfjs.NamedNode<
+      | "http://example.com/InIdentifierNodeShapeInstance1"
+      | "http://example.com/InIdentifierNodeShapeInstance2"
+    >[],
   ): readonly purify.Either<Error, InIdentifierNodeShape>[] {
-    return identifiers.map((identifier) => {
-      if (identifier.termType === "BlankNode") {
-        return purify.Left(
-          new Error(
-            "inIdentifierNodeShapesByIdentifiers does not accept BlankNode identifiers",
-          ),
-        );
-      }
-      return InIdentifierNodeShape.fromRdf({
+    return identifiers.map((identifier) =>
+      InIdentifierNodeShape.fromRdf({
         resource: this.resourceSet.namedResource(identifier),
-      });
-    });
+      }),
+    );
   }
 
   async inlineNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, InlineNodeShape>> {
     return this.inlineNodeShapeByIdentifierSync(identifier);
   }
 
   inlineNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, InlineNodeShape> {
     return this.inlineNodeShapesByIdentifiersSync([identifier])[0];
   }
@@ -20894,25 +21023,27 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async inlineNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.inlineNodeShapeIdentifiersSync(options);
   }
 
   inlineNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(new Error("InlineNodeShape has no fromRdfType"));
   }
 
   async inlineNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InlineNodeShape>[]> {
     return this.inlineNodeShapesByIdentifiersSync(identifiers);
   }
 
   inlineNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, InlineNodeShape>[] {
     return identifiers.map((identifier) =>
       InlineNodeShape.fromRdf({
@@ -20922,13 +21053,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async inPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, InPropertiesNodeShape>> {
     return this.inPropertiesNodeShapeByIdentifierSync(identifier);
   }
 
   inPropertiesNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, InPropertiesNodeShape> {
     return this.inPropertiesNodeShapesByIdentifiersSync([identifier])[0];
   }
@@ -20944,25 +21075,27 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async inPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.inPropertiesNodeShapeIdentifiersSync(options);
   }
 
   inPropertiesNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(new Error("InPropertiesNodeShape has no fromRdfType"));
   }
 
   async inPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InPropertiesNodeShape>[]> {
     return this.inPropertiesNodeShapesByIdentifiersSync(identifiers);
   }
 
   inPropertiesNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, InPropertiesNodeShape>[] {
     return identifiers.map((identifier) =>
       InPropertiesNodeShape.fromRdf({
@@ -20972,13 +21105,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async interfaceNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, InterfaceNodeShape>> {
     return this.interfaceNodeShapeByIdentifierSync(identifier);
   }
 
   interfaceNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, InterfaceNodeShape> {
     return this.interfaceNodeShapesByIdentifiersSync([identifier])[0];
   }
@@ -20994,25 +21127,27 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async interfaceNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.interfaceNodeShapeIdentifiersSync(options);
   }
 
   interfaceNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(new Error("InterfaceNodeShape has no fromRdfType"));
   }
 
   async interfaceNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InterfaceNodeShape>[]> {
     return this.interfaceNodeShapesByIdentifiersSync(identifiers);
   }
 
   interfaceNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, InterfaceNodeShape>[] {
     return identifiers.map((identifier) =>
       InterfaceNodeShape.fromRdf({
@@ -21022,13 +21157,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async interfaceUnionNodeShapeMember1ByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember1>> {
     return this.interfaceUnionNodeShapeMember1ByIdentifierSync(identifier);
   }
 
   interfaceUnionNodeShapeMember1ByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, InterfaceUnionNodeShapeMember1> {
     return this.interfaceUnionNodeShapeMember1sByIdentifiersSync([
       identifier,
@@ -21050,27 +21185,29 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async interfaceUnionNodeShapeMember1Identifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.interfaceUnionNodeShapeMember1IdentifiersSync(options);
   }
 
   interfaceUnionNodeShapeMember1IdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(
       new Error("InterfaceUnionNodeShapeMember1 has no fromRdfType"),
     );
   }
 
   async interfaceUnionNodeShapeMember1sByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember1>[]> {
     return this.interfaceUnionNodeShapeMember1sByIdentifiersSync(identifiers);
   }
 
   interfaceUnionNodeShapeMember1sByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, InterfaceUnionNodeShapeMember1>[] {
     return identifiers.map((identifier) =>
       InterfaceUnionNodeShapeMember1.fromRdf({
@@ -21080,13 +21217,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async interfaceUnionNodeShapeMember2aByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember2a>> {
     return this.interfaceUnionNodeShapeMember2aByIdentifierSync(identifier);
   }
 
   interfaceUnionNodeShapeMember2aByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, InterfaceUnionNodeShapeMember2a> {
     return this.interfaceUnionNodeShapeMember2asByIdentifiersSync([
       identifier,
@@ -21108,27 +21245,29 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async interfaceUnionNodeShapeMember2aIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.interfaceUnionNodeShapeMember2aIdentifiersSync(options);
   }
 
   interfaceUnionNodeShapeMember2aIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(
       new Error("InterfaceUnionNodeShapeMember2a has no fromRdfType"),
     );
   }
 
   async interfaceUnionNodeShapeMember2asByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember2a>[]> {
     return this.interfaceUnionNodeShapeMember2asByIdentifiersSync(identifiers);
   }
 
   interfaceUnionNodeShapeMember2asByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, InterfaceUnionNodeShapeMember2a>[] {
     return identifiers.map((identifier) =>
       InterfaceUnionNodeShapeMember2a.fromRdf({
@@ -21138,13 +21277,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async interfaceUnionNodeShapeMember2bByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember2b>> {
     return this.interfaceUnionNodeShapeMember2bByIdentifierSync(identifier);
   }
 
   interfaceUnionNodeShapeMember2bByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, InterfaceUnionNodeShapeMember2b> {
     return this.interfaceUnionNodeShapeMember2bsByIdentifiersSync([
       identifier,
@@ -21166,27 +21305,29 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async interfaceUnionNodeShapeMember2bIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.interfaceUnionNodeShapeMember2bIdentifiersSync(options);
   }
 
   interfaceUnionNodeShapeMember2bIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(
       new Error("InterfaceUnionNodeShapeMember2b has no fromRdfType"),
     );
   }
 
   async interfaceUnionNodeShapeMember2bsByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember2b>[]> {
     return this.interfaceUnionNodeShapeMember2bsByIdentifiersSync(identifiers);
   }
 
   interfaceUnionNodeShapeMember2bsByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, InterfaceUnionNodeShapeMember2b>[] {
     return identifiers.map((identifier) =>
       InterfaceUnionNodeShapeMember2b.fromRdf({
@@ -21196,13 +21337,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async iriNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.NamedNode,
   ): Promise<purify.Either<Error, IriNodeShape>> {
     return this.iriNodeShapeByIdentifierSync(identifier);
   }
 
   iriNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.NamedNode,
   ): purify.Either<Error, IriNodeShape> {
     return this.iriNodeShapesByIdentifiersSync([identifier])[0];
   }
@@ -21218,48 +21359,41 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async iriNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<purify.Either<Error, readonly rdfjs.NamedNode[]>> {
     return this.iriNodeShapeIdentifiersSync(options);
   }
 
   iriNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly rdfjs.NamedNode[]> {
     return purify.Left(new Error("IriNodeShape has no fromRdfType"));
   }
 
   async iriNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly rdfjs.NamedNode[],
   ): Promise<readonly purify.Either<Error, IriNodeShape>[]> {
     return this.iriNodeShapesByIdentifiersSync(identifiers);
   }
 
   iriNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly rdfjs.NamedNode[],
   ): readonly purify.Either<Error, IriNodeShape>[] {
-    return identifiers.map((identifier) => {
-      if (identifier.termType === "BlankNode") {
-        return purify.Left(
-          new Error(
-            "iriNodeShapesByIdentifiers does not accept BlankNode identifiers",
-          ),
-        );
-      }
-      return IriNodeShape.fromRdf({
+    return identifiers.map((identifier) =>
+      IriNodeShape.fromRdf({
         resource: this.resourceSet.namedResource(identifier),
-      });
-    });
+      }),
+    );
   }
 
   async languageInPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, LanguageInPropertiesNodeShape>> {
     return this.languageInPropertiesNodeShapeByIdentifierSync(identifier);
   }
 
   languageInPropertiesNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, LanguageInPropertiesNodeShape> {
     return this.languageInPropertiesNodeShapesByIdentifiersSync([
       identifier,
@@ -21281,27 +21415,29 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async languageInPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.languageInPropertiesNodeShapeIdentifiersSync(options);
   }
 
   languageInPropertiesNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(
       new Error("LanguageInPropertiesNodeShape has no fromRdfType"),
     );
   }
 
   async languageInPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, LanguageInPropertiesNodeShape>[]> {
     return this.languageInPropertiesNodeShapesByIdentifiersSync(identifiers);
   }
 
   languageInPropertiesNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, LanguageInPropertiesNodeShape>[] {
     return identifiers.map((identifier) =>
       LanguageInPropertiesNodeShape.fromRdf({
@@ -21311,13 +21447,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async listPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ListPropertiesNodeShape>> {
     return this.listPropertiesNodeShapeByIdentifierSync(identifier);
   }
 
   listPropertiesNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, ListPropertiesNodeShape> {
     return this.listPropertiesNodeShapesByIdentifiersSync([identifier])[0];
   }
@@ -21333,25 +21469,27 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async listPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.listPropertiesNodeShapeIdentifiersSync(options);
   }
 
   listPropertiesNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(new Error("ListPropertiesNodeShape has no fromRdfType"));
   }
 
   async listPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ListPropertiesNodeShape>[]> {
     return this.listPropertiesNodeShapesByIdentifiersSync(identifiers);
   }
 
   listPropertiesNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, ListPropertiesNodeShape>[] {
     return identifiers.map((identifier) =>
       ListPropertiesNodeShape.fromRdf({
@@ -21361,13 +21499,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async mutablePropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, MutablePropertiesNodeShape>> {
     return this.mutablePropertiesNodeShapeByIdentifierSync(identifier);
   }
 
   mutablePropertiesNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, MutablePropertiesNodeShape> {
     return this.mutablePropertiesNodeShapesByIdentifiersSync([identifier])[0];
   }
@@ -21387,27 +21525,29 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async mutablePropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.mutablePropertiesNodeShapeIdentifiersSync(options);
   }
 
   mutablePropertiesNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(
       new Error("MutablePropertiesNodeShape has no fromRdfType"),
     );
   }
 
   async mutablePropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, MutablePropertiesNodeShape>[]> {
     return this.mutablePropertiesNodeShapesByIdentifiersSync(identifiers);
   }
 
   mutablePropertiesNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, MutablePropertiesNodeShape>[] {
     return identifiers.map((identifier) =>
       MutablePropertiesNodeShape.fromRdf({
@@ -21417,13 +21557,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async nonClassNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, NonClassNodeShape>> {
     return this.nonClassNodeShapeByIdentifierSync(identifier);
   }
 
   nonClassNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, NonClassNodeShape> {
     return this.nonClassNodeShapesByIdentifiersSync([identifier])[0];
   }
@@ -21439,25 +21579,27 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async nonClassNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.nonClassNodeShapeIdentifiersSync(options);
   }
 
   nonClassNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(new Error("NonClassNodeShape has no fromRdfType"));
   }
 
   async nonClassNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, NonClassNodeShape>[]> {
     return this.nonClassNodeShapesByIdentifiersSync(identifiers);
   }
 
   nonClassNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, NonClassNodeShape>[] {
     return identifiers.map((identifier) =>
       NonClassNodeShape.fromRdf({
@@ -21467,13 +21609,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async orderedPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, OrderedPropertiesNodeShape>> {
     return this.orderedPropertiesNodeShapeByIdentifierSync(identifier);
   }
 
   orderedPropertiesNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, OrderedPropertiesNodeShape> {
     return this.orderedPropertiesNodeShapesByIdentifiersSync([identifier])[0];
   }
@@ -21493,27 +21635,29 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async orderedPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.orderedPropertiesNodeShapeIdentifiersSync(options);
   }
 
   orderedPropertiesNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(
       new Error("OrderedPropertiesNodeShape has no fromRdfType"),
     );
   }
 
   async orderedPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, OrderedPropertiesNodeShape>[]> {
     return this.orderedPropertiesNodeShapesByIdentifiersSync(identifiers);
   }
 
   orderedPropertiesNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, OrderedPropertiesNodeShape>[] {
     return identifiers.map((identifier) =>
       OrderedPropertiesNodeShape.fromRdf({
@@ -21523,13 +21667,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async propertyCardinalitiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, PropertyCardinalitiesNodeShape>> {
     return this.propertyCardinalitiesNodeShapeByIdentifierSync(identifier);
   }
 
   propertyCardinalitiesNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, PropertyCardinalitiesNodeShape> {
     return this.propertyCardinalitiesNodeShapesByIdentifiersSync([
       identifier,
@@ -21551,27 +21695,29 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async propertyCardinalitiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.propertyCardinalitiesNodeShapeIdentifiersSync(options);
   }
 
   propertyCardinalitiesNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(
       new Error("PropertyCardinalitiesNodeShape has no fromRdfType"),
     );
   }
 
   async propertyCardinalitiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, PropertyCardinalitiesNodeShape>[]> {
     return this.propertyCardinalitiesNodeShapesByIdentifiersSync(identifiers);
   }
 
   propertyCardinalitiesNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, PropertyCardinalitiesNodeShape>[] {
     return identifiers.map((identifier) =>
       PropertyCardinalitiesNodeShape.fromRdf({
@@ -21581,13 +21727,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async propertyVisibilitiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, PropertyVisibilitiesNodeShape>> {
     return this.propertyVisibilitiesNodeShapeByIdentifierSync(identifier);
   }
 
   propertyVisibilitiesNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, PropertyVisibilitiesNodeShape> {
     return this.propertyVisibilitiesNodeShapesByIdentifiersSync([
       identifier,
@@ -21609,27 +21755,29 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async propertyVisibilitiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.propertyVisibilitiesNodeShapeIdentifiersSync(options);
   }
 
   propertyVisibilitiesNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(
       new Error("PropertyVisibilitiesNodeShape has no fromRdfType"),
     );
   }
 
   async propertyVisibilitiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, PropertyVisibilitiesNodeShape>[]> {
     return this.propertyVisibilitiesNodeShapesByIdentifiersSync(identifiers);
   }
 
   propertyVisibilitiesNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, PropertyVisibilitiesNodeShape>[] {
     return identifiers.map((identifier) =>
       PropertyVisibilitiesNodeShape.fromRdf({
@@ -21639,13 +21787,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async sha256IriNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.NamedNode,
   ): Promise<purify.Either<Error, Sha256IriNodeShape>> {
     return this.sha256IriNodeShapeByIdentifierSync(identifier);
   }
 
   sha256IriNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.NamedNode,
   ): purify.Either<Error, Sha256IriNodeShape> {
     return this.sha256IriNodeShapesByIdentifiersSync([identifier])[0];
   }
@@ -21661,48 +21809,41 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async sha256IriNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<purify.Either<Error, readonly rdfjs.NamedNode[]>> {
     return this.sha256IriNodeShapeIdentifiersSync(options);
   }
 
   sha256IriNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly rdfjs.NamedNode[]> {
     return purify.Left(new Error("Sha256IriNodeShape has no fromRdfType"));
   }
 
   async sha256IriNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly rdfjs.NamedNode[],
   ): Promise<readonly purify.Either<Error, Sha256IriNodeShape>[]> {
     return this.sha256IriNodeShapesByIdentifiersSync(identifiers);
   }
 
   sha256IriNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly rdfjs.NamedNode[],
   ): readonly purify.Either<Error, Sha256IriNodeShape>[] {
-    return identifiers.map((identifier) => {
-      if (identifier.termType === "BlankNode") {
-        return purify.Left(
-          new Error(
-            "sha256IriNodeShapesByIdentifiers does not accept BlankNode identifiers",
-          ),
-        );
-      }
-      return Sha256IriNodeShape.fromRdf({
+    return identifiers.map((identifier) =>
+      Sha256IriNodeShape.fromRdf({
         resource: this.resourceSet.namedResource(identifier),
-      });
-    });
+      }),
+    );
   }
 
   async termPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, TermPropertiesNodeShape>> {
     return this.termPropertiesNodeShapeByIdentifierSync(identifier);
   }
 
   termPropertiesNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, TermPropertiesNodeShape> {
     return this.termPropertiesNodeShapesByIdentifiersSync([identifier])[0];
   }
@@ -21718,25 +21859,27 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async termPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.termPropertiesNodeShapeIdentifiersSync(options);
   }
 
   termPropertiesNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(new Error("TermPropertiesNodeShape has no fromRdfType"));
   }
 
   async termPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, TermPropertiesNodeShape>[]> {
     return this.termPropertiesNodeShapesByIdentifiersSync(identifiers);
   }
 
   termPropertiesNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, TermPropertiesNodeShape>[] {
     return identifiers.map((identifier) =>
       TermPropertiesNodeShape.fromRdf({
@@ -21746,13 +21889,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async unionNodeShapeMember1ByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, UnionNodeShapeMember1>> {
     return this.unionNodeShapeMember1ByIdentifierSync(identifier);
   }
 
   unionNodeShapeMember1ByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, UnionNodeShapeMember1> {
     return this.unionNodeShapeMember1sByIdentifiersSync([identifier])[0];
   }
@@ -21768,25 +21911,27 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async unionNodeShapeMember1Identifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.unionNodeShapeMember1IdentifiersSync(options);
   }
 
   unionNodeShapeMember1IdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(new Error("UnionNodeShapeMember1 has no fromRdfType"));
   }
 
   async unionNodeShapeMember1sByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, UnionNodeShapeMember1>[]> {
     return this.unionNodeShapeMember1sByIdentifiersSync(identifiers);
   }
 
   unionNodeShapeMember1sByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, UnionNodeShapeMember1>[] {
     return identifiers.map((identifier) =>
       UnionNodeShapeMember1.fromRdf({
@@ -21796,13 +21941,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async unionNodeShapeMember2ByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, UnionNodeShapeMember2>> {
     return this.unionNodeShapeMember2ByIdentifierSync(identifier);
   }
 
   unionNodeShapeMember2ByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, UnionNodeShapeMember2> {
     return this.unionNodeShapeMember2sByIdentifiersSync([identifier])[0];
   }
@@ -21818,25 +21963,27 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async unionNodeShapeMember2Identifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.unionNodeShapeMember2IdentifiersSync(options);
   }
 
   unionNodeShapeMember2IdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(new Error("UnionNodeShapeMember2 has no fromRdfType"));
   }
 
   async unionNodeShapeMember2sByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, UnionNodeShapeMember2>[]> {
     return this.unionNodeShapeMember2sByIdentifiersSync(identifiers);
   }
 
   unionNodeShapeMember2sByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, UnionNodeShapeMember2>[] {
     return identifiers.map((identifier) =>
       UnionNodeShapeMember2.fromRdf({
@@ -21846,13 +21993,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async unionPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, UnionPropertiesNodeShape>> {
     return this.unionPropertiesNodeShapeByIdentifierSync(identifier);
   }
 
   unionPropertiesNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): purify.Either<Error, UnionPropertiesNodeShape> {
     return this.unionPropertiesNodeShapesByIdentifiersSync([identifier])[0];
   }
@@ -21870,27 +22017,29 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async unionPropertiesNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return this.unionPropertiesNodeShapeIdentifiersSync(options);
   }
 
   unionPropertiesNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Left(
       new Error("UnionPropertiesNodeShape has no fromRdfType"),
     );
   }
 
   async unionPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, UnionPropertiesNodeShape>[]> {
     return this.unionPropertiesNodeShapesByIdentifiersSync(identifiers);
   }
 
   unionPropertiesNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): readonly purify.Either<Error, UnionPropertiesNodeShape>[] {
     return identifiers.map((identifier) =>
       UnionPropertiesNodeShape.fromRdf({
@@ -21900,13 +22049,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async uuidV4IriNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.NamedNode,
   ): Promise<purify.Either<Error, UuidV4IriNodeShape>> {
     return this.uuidV4IriNodeShapeByIdentifierSync(identifier);
   }
 
   uuidV4IriNodeShapeByIdentifierSync(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.NamedNode,
   ): purify.Either<Error, UuidV4IriNodeShape> {
     return this.uuidV4IriNodeShapesByIdentifiersSync([identifier])[0];
   }
@@ -21922,38 +22071,31 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async uuidV4IriNodeShapeIdentifiers(options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<purify.Either<Error, readonly rdfjs.NamedNode[]>> {
     return this.uuidV4IriNodeShapeIdentifiersSync(options);
   }
 
   uuidV4IriNodeShapeIdentifiersSync(_options?: {
     limit?: number;
     offset?: number;
-  }): purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]> {
+  }): purify.Either<Error, readonly rdfjs.NamedNode[]> {
     return purify.Left(new Error("UuidV4IriNodeShape has no fromRdfType"));
   }
 
   async uuidV4IriNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly rdfjs.NamedNode[],
   ): Promise<readonly purify.Either<Error, UuidV4IriNodeShape>[]> {
     return this.uuidV4IriNodeShapesByIdentifiersSync(identifiers);
   }
 
   uuidV4IriNodeShapesByIdentifiersSync(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly rdfjs.NamedNode[],
   ): readonly purify.Either<Error, UuidV4IriNodeShape>[] {
-    return identifiers.map((identifier) => {
-      if (identifier.termType === "BlankNode") {
-        return purify.Left(
-          new Error(
-            "uuidV4IriNodeShapesByIdentifiers does not accept BlankNode identifiers",
-          ),
-        );
-      }
-      return UuidV4IriNodeShape.fromRdf({
+    return identifiers.map((identifier) =>
+      UuidV4IriNodeShape.fromRdf({
         resource: this.resourceSet.namedResource(identifier),
-      });
-    });
+      }),
+    );
   }
 }
 
@@ -21978,7 +22120,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async abstractBaseClassForExternObjectTypeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, AbstractBaseClassForExternObjectType>> {
     return (
       await this.abstractBaseClassForExternObjectTypesByIdentifiers([
@@ -21996,7 +22138,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async abstractBaseClassForExternObjectTypesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<
     readonly purify.Either<Error, AbstractBaseClassForExternObjectType>[]
   > {
@@ -22057,7 +22199,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async abstractBaseClassWithoutPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<
     purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape>
   > {
@@ -22079,7 +22221,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async abstractBaseClassWithoutPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<
     readonly purify.Either<Error, AbstractBaseClassWithoutPropertiesNodeShape>[]
   > {
@@ -22143,7 +22285,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async abstractBaseClassWithPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>> {
     return (
       await this.abstractBaseClassWithPropertiesNodeShapesByIdentifiers([
@@ -22161,7 +22303,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async abstractBaseClassWithPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<
     readonly purify.Either<Error, AbstractBaseClassWithPropertiesNodeShape>[]
   > {
@@ -22224,7 +22366,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async baseInterfaceWithoutPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, BaseInterfaceWithoutPropertiesNodeShape>> {
     return (
       await this.baseInterfaceWithoutPropertiesNodeShapesByIdentifiers([
@@ -22236,67 +22378,15 @@ export class $SparqlObjectSet implements $ObjectSet {
   async baseInterfaceWithoutPropertiesNodeShapeCount(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.EitherAsync(async ({ liftEither }) =>
-      liftEither(
-        this.mapBindingsToCount(
-          await this.sparqlClient.queryBindings(
-            this.sparqlGenerator.stringify({
-              distinct: true,
-              prefixes: {},
-              queryType: "SELECT",
-              type: "query",
-              variables: [
-                {
-                  expression: {
-                    aggregation: "COUNT",
-                    distinct: true,
-                    expression: dataFactory.variable!("object"),
-                    type: "aggregate",
-                  },
-                  variable: dataFactory.variable!("count"),
-                },
-              ],
-              where: [
-                {
-                  triples: [
-                    {
-                      object: dataFactory.namedNode(
-                        "http://example.com/BaseInterfaceWithoutPropertiesNodeShape",
-                      ),
-                      subject: dataFactory.variable!("object"),
-                      predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                          ),
-                          {
-                            items: [
-                              dataFactory.namedNode(
-                                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                              ),
-                            ],
-                            pathType: "*",
-                            type: "path",
-                          },
-                        ],
-                        pathType: "/",
-                        type: "path",
-                      },
-                    },
-                  ],
-                  type: "bgp",
-                },
-              ],
-            }),
-          ),
-          "count",
-        ),
+    return this.objectCount(
+      dataFactory.namedNode(
+        "http://example.com/BaseInterfaceWithoutPropertiesNodeShape",
       ),
     );
   }
 
   async baseInterfaceWithoutPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<
     readonly purify.Either<Error, BaseInterfaceWithoutPropertiesNodeShape>[]
   > {
@@ -22357,7 +22447,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async baseInterfaceWithPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, BaseInterfaceWithPropertiesNodeShape>> {
     return (
       await this.baseInterfaceWithPropertiesNodeShapesByIdentifiers([
@@ -22369,67 +22459,15 @@ export class $SparqlObjectSet implements $ObjectSet {
   async baseInterfaceWithPropertiesNodeShapeCount(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.EitherAsync(async ({ liftEither }) =>
-      liftEither(
-        this.mapBindingsToCount(
-          await this.sparqlClient.queryBindings(
-            this.sparqlGenerator.stringify({
-              distinct: true,
-              prefixes: {},
-              queryType: "SELECT",
-              type: "query",
-              variables: [
-                {
-                  expression: {
-                    aggregation: "COUNT",
-                    distinct: true,
-                    expression: dataFactory.variable!("object"),
-                    type: "aggregate",
-                  },
-                  variable: dataFactory.variable!("count"),
-                },
-              ],
-              where: [
-                {
-                  triples: [
-                    {
-                      object: dataFactory.namedNode(
-                        "http://example.com/BaseInterfaceWithPropertiesNodeShape",
-                      ),
-                      subject: dataFactory.variable!("object"),
-                      predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                          ),
-                          {
-                            items: [
-                              dataFactory.namedNode(
-                                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                              ),
-                            ],
-                            pathType: "*",
-                            type: "path",
-                          },
-                        ],
-                        pathType: "/",
-                        type: "path",
-                      },
-                    },
-                  ],
-                  type: "bgp",
-                },
-              ],
-            }),
-          ),
-          "count",
-        ),
+    return this.objectCount(
+      dataFactory.namedNode(
+        "http://example.com/BaseInterfaceWithPropertiesNodeShape",
       ),
     );
   }
 
   async baseInterfaceWithPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<
     readonly purify.Either<Error, BaseInterfaceWithPropertiesNodeShape>[]
   > {
@@ -22490,7 +22528,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async blankNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, BlankNodeShape>> {
     return (await this.blankNodeShapesByIdentifiers([identifier]))[0];
   }
@@ -22500,7 +22538,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async blankNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, BlankNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -22556,7 +22594,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async concreteChildClassNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ConcreteChildClassNodeShape>> {
     return (
       await this.concreteChildClassNodeShapesByIdentifiers([identifier])
@@ -22566,67 +22604,13 @@ export class $SparqlObjectSet implements $ObjectSet {
   async concreteChildClassNodeShapeCount(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.EitherAsync(async ({ liftEither }) =>
-      liftEither(
-        this.mapBindingsToCount(
-          await this.sparqlClient.queryBindings(
-            this.sparqlGenerator.stringify({
-              distinct: true,
-              prefixes: {},
-              queryType: "SELECT",
-              type: "query",
-              variables: [
-                {
-                  expression: {
-                    aggregation: "COUNT",
-                    distinct: true,
-                    expression: dataFactory.variable!("object"),
-                    type: "aggregate",
-                  },
-                  variable: dataFactory.variable!("count"),
-                },
-              ],
-              where: [
-                {
-                  triples: [
-                    {
-                      object: dataFactory.namedNode(
-                        "http://example.com/ConcreteChildClassNodeShape",
-                      ),
-                      subject: dataFactory.variable!("object"),
-                      predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                          ),
-                          {
-                            items: [
-                              dataFactory.namedNode(
-                                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                              ),
-                            ],
-                            pathType: "*",
-                            type: "path",
-                          },
-                        ],
-                        pathType: "/",
-                        type: "path",
-                      },
-                    },
-                  ],
-                  type: "bgp",
-                },
-              ],
-            }),
-          ),
-          "count",
-        ),
-      ),
+    return this.objectCount(
+      dataFactory.namedNode("http://example.com/ConcreteChildClassNodeShape"),
     );
   }
 
   async concreteChildClassNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ConcreteChildClassNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -22683,7 +22667,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async concreteChildInterfaceNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ConcreteChildInterfaceNodeShape>> {
     return (
       await this.concreteChildInterfaceNodeShapesByIdentifiers([identifier])
@@ -22693,67 +22677,15 @@ export class $SparqlObjectSet implements $ObjectSet {
   async concreteChildInterfaceNodeShapeCount(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.EitherAsync(async ({ liftEither }) =>
-      liftEither(
-        this.mapBindingsToCount(
-          await this.sparqlClient.queryBindings(
-            this.sparqlGenerator.stringify({
-              distinct: true,
-              prefixes: {},
-              queryType: "SELECT",
-              type: "query",
-              variables: [
-                {
-                  expression: {
-                    aggregation: "COUNT",
-                    distinct: true,
-                    expression: dataFactory.variable!("object"),
-                    type: "aggregate",
-                  },
-                  variable: dataFactory.variable!("count"),
-                },
-              ],
-              where: [
-                {
-                  triples: [
-                    {
-                      object: dataFactory.namedNode(
-                        "http://example.com/ConcreteChildInterfaceNodeShape",
-                      ),
-                      subject: dataFactory.variable!("object"),
-                      predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                          ),
-                          {
-                            items: [
-                              dataFactory.namedNode(
-                                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                              ),
-                            ],
-                            pathType: "*",
-                            type: "path",
-                          },
-                        ],
-                        pathType: "/",
-                        type: "path",
-                      },
-                    },
-                  ],
-                  type: "bgp",
-                },
-              ],
-            }),
-          ),
-          "count",
-        ),
+    return this.objectCount(
+      dataFactory.namedNode(
+        "http://example.com/ConcreteChildInterfaceNodeShape",
       ),
     );
   }
 
   async concreteChildInterfaceNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ConcreteChildInterfaceNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -22812,7 +22744,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async concreteParentClassNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ConcreteParentClassNodeShape>> {
     return (
       await this.concreteParentClassNodeShapesByIdentifiers([identifier])
@@ -22822,67 +22754,13 @@ export class $SparqlObjectSet implements $ObjectSet {
   async concreteParentClassNodeShapeCount(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.EitherAsync(async ({ liftEither }) =>
-      liftEither(
-        this.mapBindingsToCount(
-          await this.sparqlClient.queryBindings(
-            this.sparqlGenerator.stringify({
-              distinct: true,
-              prefixes: {},
-              queryType: "SELECT",
-              type: "query",
-              variables: [
-                {
-                  expression: {
-                    aggregation: "COUNT",
-                    distinct: true,
-                    expression: dataFactory.variable!("object"),
-                    type: "aggregate",
-                  },
-                  variable: dataFactory.variable!("count"),
-                },
-              ],
-              where: [
-                {
-                  triples: [
-                    {
-                      object: dataFactory.namedNode(
-                        "http://example.com/ConcreteParentClassNodeShape",
-                      ),
-                      subject: dataFactory.variable!("object"),
-                      predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                          ),
-                          {
-                            items: [
-                              dataFactory.namedNode(
-                                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                              ),
-                            ],
-                            pathType: "*",
-                            type: "path",
-                          },
-                        ],
-                        pathType: "/",
-                        type: "path",
-                      },
-                    },
-                  ],
-                  type: "bgp",
-                },
-              ],
-            }),
-          ),
-          "count",
-        ),
-      ),
+    return this.objectCount(
+      dataFactory.namedNode("http://example.com/ConcreteParentClassNodeShape"),
     );
   }
 
   async concreteParentClassNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ConcreteParentClassNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -22939,7 +22817,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async concreteParentInterfaceNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ConcreteParentInterfaceNodeShape>> {
     return (
       await this.concreteParentInterfaceNodeShapesByIdentifiers([identifier])
@@ -22949,67 +22827,15 @@ export class $SparqlObjectSet implements $ObjectSet {
   async concreteParentInterfaceNodeShapeCount(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.EitherAsync(async ({ liftEither }) =>
-      liftEither(
-        this.mapBindingsToCount(
-          await this.sparqlClient.queryBindings(
-            this.sparqlGenerator.stringify({
-              distinct: true,
-              prefixes: {},
-              queryType: "SELECT",
-              type: "query",
-              variables: [
-                {
-                  expression: {
-                    aggregation: "COUNT",
-                    distinct: true,
-                    expression: dataFactory.variable!("object"),
-                    type: "aggregate",
-                  },
-                  variable: dataFactory.variable!("count"),
-                },
-              ],
-              where: [
-                {
-                  triples: [
-                    {
-                      object: dataFactory.namedNode(
-                        "http://example.com/ConcreteParentInterfaceNodeShape",
-                      ),
-                      subject: dataFactory.variable!("object"),
-                      predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                          ),
-                          {
-                            items: [
-                              dataFactory.namedNode(
-                                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                              ),
-                            ],
-                            pathType: "*",
-                            type: "path",
-                          },
-                        ],
-                        pathType: "/",
-                        type: "path",
-                      },
-                    },
-                  ],
-                  type: "bgp",
-                },
-              ],
-            }),
-          ),
-          "count",
-        ),
+    return this.objectCount(
+      dataFactory.namedNode(
+        "http://example.com/ConcreteParentInterfaceNodeShape",
       ),
     );
   }
 
   async concreteParentInterfaceNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<
     readonly purify.Either<Error, ConcreteParentInterfaceNodeShape>[]
   > {
@@ -23070,7 +22896,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async defaultValuePropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, DefaultValuePropertiesNodeShape>> {
     return (
       await this.defaultValuePropertiesNodeShapesByIdentifiers([identifier])
@@ -23086,7 +22912,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async defaultValuePropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, DefaultValuePropertiesNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -23145,7 +22971,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async explicitFromToRdfTypesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ExplicitFromToRdfTypesNodeShape>> {
     return (
       await this.explicitFromToRdfTypesNodeShapesByIdentifiers([identifier])
@@ -23155,67 +22981,13 @@ export class $SparqlObjectSet implements $ObjectSet {
   async explicitFromToRdfTypesNodeShapeCount(): Promise<
     purify.Either<Error, number>
   > {
-    return purify.EitherAsync(async ({ liftEither }) =>
-      liftEither(
-        this.mapBindingsToCount(
-          await this.sparqlClient.queryBindings(
-            this.sparqlGenerator.stringify({
-              distinct: true,
-              prefixes: {},
-              queryType: "SELECT",
-              type: "query",
-              variables: [
-                {
-                  expression: {
-                    aggregation: "COUNT",
-                    distinct: true,
-                    expression: dataFactory.variable!("object"),
-                    type: "aggregate",
-                  },
-                  variable: dataFactory.variable!("count"),
-                },
-              ],
-              where: [
-                {
-                  triples: [
-                    {
-                      object: dataFactory.namedNode(
-                        "http://example.com/FromRdfType",
-                      ),
-                      subject: dataFactory.variable!("object"),
-                      predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                          ),
-                          {
-                            items: [
-                              dataFactory.namedNode(
-                                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                              ),
-                            ],
-                            pathType: "*",
-                            type: "path",
-                          },
-                        ],
-                        pathType: "/",
-                        type: "path",
-                      },
-                    },
-                  ],
-                  type: "bgp",
-                },
-              ],
-            }),
-          ),
-          "count",
-        ),
-      ),
+    return this.objectCount(
+      dataFactory.namedNode("http://example.com/FromRdfType"),
     );
   }
 
   async explicitFromToRdfTypesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ExplicitFromToRdfTypesNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -23274,73 +23046,19 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async explicitRdfTypeNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ExplicitRdfTypeNodeShape>> {
     return (await this.explicitRdfTypeNodeShapesByIdentifiers([identifier]))[0];
   }
 
   async explicitRdfTypeNodeShapeCount(): Promise<purify.Either<Error, number>> {
-    return purify.EitherAsync(async ({ liftEither }) =>
-      liftEither(
-        this.mapBindingsToCount(
-          await this.sparqlClient.queryBindings(
-            this.sparqlGenerator.stringify({
-              distinct: true,
-              prefixes: {},
-              queryType: "SELECT",
-              type: "query",
-              variables: [
-                {
-                  expression: {
-                    aggregation: "COUNT",
-                    distinct: true,
-                    expression: dataFactory.variable!("object"),
-                    type: "aggregate",
-                  },
-                  variable: dataFactory.variable!("count"),
-                },
-              ],
-              where: [
-                {
-                  triples: [
-                    {
-                      object: dataFactory.namedNode(
-                        "http://example.com/RdfType",
-                      ),
-                      subject: dataFactory.variable!("object"),
-                      predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                          ),
-                          {
-                            items: [
-                              dataFactory.namedNode(
-                                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                              ),
-                            ],
-                            pathType: "*",
-                            type: "path",
-                          },
-                        ],
-                        pathType: "/",
-                        type: "path",
-                      },
-                    },
-                  ],
-                  type: "bgp",
-                },
-              ],
-            }),
-          ),
-          "count",
-        ),
-      ),
+    return this.objectCount(
+      dataFactory.namedNode("http://example.com/RdfType"),
     );
   }
 
   async explicitRdfTypeNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ExplicitRdfTypeNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -23397,7 +23115,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async externNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ExternNodeShape>> {
     return (await this.externNodeShapesByIdentifiers([identifier]))[0];
   }
@@ -23407,7 +23125,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async externNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ExternNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -23463,7 +23181,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async externObjectTypeByIdentifier(
-    _identifier: $ObjectSet.ObjectIdentifier,
+    _identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ExternObjectType>> {
     return purify.Left(new Error("objectByIdentifier: not supported"));
   }
@@ -23475,12 +23193,14 @@ export class $SparqlObjectSet implements $ObjectSet {
   async externObjectTypeIdentifiers(_options?: {
     limit?: number;
     offset?: number;
-  }): Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>> {
+  }): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
     return purify.Left(new Error("objectIdentifiers: not supported"));
   }
 
   async externObjectTypesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ExternObjectType>[]> {
     return identifiers.map(() =>
       purify.Left(new Error("objectsByIdentifiers: not supported")),
@@ -23488,7 +23208,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async externPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ExternPropertiesNodeShape>> {
     return (
       await this.externPropertiesNodeShapesByIdentifiers([identifier])
@@ -23504,7 +23224,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async externPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ExternPropertiesNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -23561,7 +23281,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async hasValuePropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, HasValuePropertiesNodeShape>> {
     return (
       await this.hasValuePropertiesNodeShapesByIdentifiers([identifier])
@@ -23577,7 +23297,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async hasValuePropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, HasValuePropertiesNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -23634,7 +23354,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async inIdentifierNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.NamedNode<
+      | "http://example.com/InIdentifierNodeShapeInstance1"
+      | "http://example.com/InIdentifierNodeShapeInstance2"
+    >,
   ): Promise<purify.Either<Error, InIdentifierNodeShape>> {
     return (await this.inIdentifierNodeShapesByIdentifiers([identifier]))[0];
   }
@@ -23644,24 +23367,13 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async inIdentifierNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly rdfjs.NamedNode<
+      | "http://example.com/InIdentifierNodeShapeInstance1"
+      | "http://example.com/InIdentifierNodeShapeInstance2"
+    >[],
   ): Promise<readonly purify.Either<Error, InIdentifierNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
     }
 
     const objectVariable = dataFactory.variable!("object");
@@ -23701,7 +23413,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async inlineNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, InlineNodeShape>> {
     return (await this.inlineNodeShapesByIdentifiers([identifier]))[0];
   }
@@ -23711,7 +23423,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async inlineNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InlineNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -23767,7 +23479,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async inPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, InPropertiesNodeShape>> {
     return (await this.inPropertiesNodeShapesByIdentifiers([identifier]))[0];
   }
@@ -23777,7 +23489,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async inPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InPropertiesNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -23834,7 +23546,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async interfaceNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, InterfaceNodeShape>> {
     return (await this.interfaceNodeShapesByIdentifiers([identifier]))[0];
   }
@@ -23844,7 +23556,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async interfaceNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InterfaceNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -23900,7 +23612,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async interfaceUnionNodeShapeMember1ByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember1>> {
     return (
       await this.interfaceUnionNodeShapeMember1sByIdentifiers([identifier])
@@ -23916,7 +23628,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async interfaceUnionNodeShapeMember1sByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember1>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -23975,7 +23687,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async interfaceUnionNodeShapeMember2aByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember2a>> {
     return (
       await this.interfaceUnionNodeShapeMember2asByIdentifiers([identifier])
@@ -23991,7 +23703,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async interfaceUnionNodeShapeMember2asByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember2a>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -24050,7 +23762,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async interfaceUnionNodeShapeMember2bByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember2b>> {
     return (
       await this.interfaceUnionNodeShapeMember2bsByIdentifiers([identifier])
@@ -24066,7 +23778,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async interfaceUnionNodeShapeMember2bsByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember2b>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -24125,7 +23837,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async iriNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.NamedNode,
   ): Promise<purify.Either<Error, IriNodeShape>> {
     return (await this.iriNodeShapesByIdentifiers([identifier]))[0];
   }
@@ -24135,24 +23847,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async iriNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly rdfjs.NamedNode[],
   ): Promise<readonly purify.Either<Error, IriNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
     }
 
     const objectVariable = dataFactory.variable!("object");
@@ -24191,7 +23889,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async languageInPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, LanguageInPropertiesNodeShape>> {
     return (
       await this.languageInPropertiesNodeShapesByIdentifiers([identifier])
@@ -24207,7 +23905,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async languageInPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, LanguageInPropertiesNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -24266,7 +23964,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async listPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, ListPropertiesNodeShape>> {
     return (await this.listPropertiesNodeShapesByIdentifiers([identifier]))[0];
   }
@@ -24276,7 +23974,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async listPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, ListPropertiesNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -24333,7 +24031,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async mutablePropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, MutablePropertiesNodeShape>> {
     return (
       await this.mutablePropertiesNodeShapesByIdentifiers([identifier])
@@ -24349,7 +24047,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async mutablePropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, MutablePropertiesNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -24406,7 +24104,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async nonClassNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, NonClassNodeShape>> {
     return (await this.nonClassNodeShapesByIdentifiers([identifier]))[0];
   }
@@ -24416,7 +24114,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async nonClassNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, NonClassNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -24472,7 +24170,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async orderedPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, OrderedPropertiesNodeShape>> {
     return (
       await this.orderedPropertiesNodeShapesByIdentifiers([identifier])
@@ -24488,7 +24186,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async orderedPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, OrderedPropertiesNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -24545,7 +24243,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async propertyCardinalitiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, PropertyCardinalitiesNodeShape>> {
     return (
       await this.propertyCardinalitiesNodeShapesByIdentifiers([identifier])
@@ -24561,7 +24259,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async propertyCardinalitiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, PropertyCardinalitiesNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -24620,7 +24318,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async propertyVisibilitiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, PropertyVisibilitiesNodeShape>> {
     return (
       await this.propertyVisibilitiesNodeShapesByIdentifiers([identifier])
@@ -24636,7 +24334,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async propertyVisibilitiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, PropertyVisibilitiesNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -24695,7 +24393,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async sha256IriNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.NamedNode,
   ): Promise<purify.Either<Error, Sha256IriNodeShape>> {
     return (await this.sha256IriNodeShapesByIdentifiers([identifier]))[0];
   }
@@ -24705,24 +24403,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async sha256IriNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly rdfjs.NamedNode[],
   ): Promise<readonly purify.Either<Error, Sha256IriNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
     }
 
     const objectVariable = dataFactory.variable!("object");
@@ -24761,7 +24445,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async termPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, TermPropertiesNodeShape>> {
     return (await this.termPropertiesNodeShapesByIdentifiers([identifier]))[0];
   }
@@ -24771,7 +24455,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async termPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, TermPropertiesNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -24828,7 +24512,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async unionNodeShapeMember1ByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, UnionNodeShapeMember1>> {
     return (await this.unionNodeShapeMember1sByIdentifiers([identifier]))[0];
   }
@@ -24838,7 +24522,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async unionNodeShapeMember1sByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, UnionNodeShapeMember1>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -24895,7 +24579,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async unionNodeShapeMember2ByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, UnionNodeShapeMember2>> {
     return (await this.unionNodeShapeMember2sByIdentifiers([identifier]))[0];
   }
@@ -24905,7 +24589,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async unionNodeShapeMember2sByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, UnionNodeShapeMember2>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -24962,7 +24646,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async unionPropertiesNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
   ): Promise<purify.Either<Error, UnionPropertiesNodeShape>> {
     return (await this.unionPropertiesNodeShapesByIdentifiers([identifier]))[0];
   }
@@ -24974,7 +24658,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async unionPropertiesNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[],
   ): Promise<readonly purify.Either<Error, UnionPropertiesNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
@@ -25031,7 +24715,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async uuidV4IriNodeShapeByIdentifier(
-    identifier: $ObjectSet.ObjectIdentifier,
+    identifier: rdfjs.NamedNode,
   ): Promise<purify.Either<Error, UuidV4IriNodeShape>> {
     return (await this.uuidV4IriNodeShapesByIdentifiers([identifier]))[0];
   }
@@ -25041,24 +24725,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async uuidV4IriNodeShapesByIdentifiers(
-    identifiers: readonly $ObjectSet.ObjectIdentifier[],
+    identifiers: readonly rdfjs.NamedNode[],
   ): Promise<readonly purify.Either<Error, UuidV4IriNodeShape>[]> {
     if (identifiers.length === 0) {
       return [];
-    }
-
-    if (identifiers.some((identifier) => identifier.termType === "BlankNode")) {
-      return identifiers.map((identifier) =>
-        identifier.termType === "BlankNode"
-          ? purify.Left(
-              new Error("can't use blank node object identifiers with SPARQL"),
-            )
-          : purify.Left(
-              new Error(
-                "one of the supplied object identifiers is a blank node, which can't be used with SPARQL",
-              ),
-            ),
-      );
     }
 
     const objectVariable = dataFactory.variable!("object");
@@ -25093,6 +24763,66 @@ export class $SparqlObjectSet implements $ObjectSet {
           identifier: identifier as rdfjs.NamedNode,
         }),
       }),
+    );
+  }
+
+  protected async objectCount(
+    rdfType: rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, number>> {
+    return purify.EitherAsync(async ({ liftEither }) =>
+      liftEither(
+        this.mapBindingsToCount(
+          await this.sparqlClient.queryBindings(
+            this.sparqlGenerator.stringify({
+              distinct: true,
+              prefixes: {},
+              queryType: "SELECT",
+              type: "query",
+              variables: [
+                {
+                  expression: {
+                    aggregation: "COUNT",
+                    distinct: true,
+                    expression: dataFactory.variable!("object"),
+                    type: "aggregate",
+                  },
+                  variable: dataFactory.variable!("count"),
+                },
+              ],
+              where: [
+                {
+                  triples: [
+                    {
+                      object: rdfType,
+                      subject: dataFactory.variable!("object"),
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                          ),
+                          {
+                            items: [
+                              dataFactory.namedNode(
+                                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                              ),
+                            ],
+                            pathType: "*",
+                            type: "path",
+                          },
+                        ],
+                        pathType: "/",
+                        type: "path",
+                      },
+                    },
+                  ],
+                  type: "bgp",
+                },
+              ],
+            }),
+          ),
+          "count",
+        ),
+      ),
     );
   }
 

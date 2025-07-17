@@ -34,27 +34,6 @@ function objectSetInterfaceDeclaration({
   };
 }
 
-function objectSetModuleDeclaration({
-  objectTypeIdentifierNodeKinds,
-}: {
-  objectTypeIdentifierNodeKinds: readonly ("BlankNode" | "NamedNode")[];
-}): ModuleDeclarationStructure {
-  return {
-    kind: StructureKind.Module,
-    name: "$ObjectSet",
-    statements: [
-      {
-        kind: StructureKind.TypeAlias,
-        name: "ObjectIdentifier",
-        isExported: true,
-        type: objectTypeIdentifierNodeKinds
-          .map((nodeKind) => `rdfjs.${nodeKind}`)
-          .join(" | "),
-      },
-    ],
-  };
-}
-
 export function objectSetDeclarations({
   dataFactoryVariable,
   objectTypes: objectTypesUnsorted,
@@ -71,7 +50,6 @@ export function objectSetDeclarations({
   );
   let objectTypesWithRdfFeatureCount = 0;
   let objectTypesWithSparqlFeatureCount = 0;
-  const objectTypeIdentifierNodeKindsSet = new Set<"BlankNode" | "NamedNode">();
   for (const objectType of objectTypes) {
     if (objectType.abstract) {
       continue;
@@ -89,10 +67,6 @@ export function objectSetDeclarations({
     if (objectTypeHasSparqlFeature) {
       objectTypesWithSparqlFeatureCount++;
     }
-
-    for (const nodeKind of objectType.identifierType.nodeKinds) {
-      objectTypeIdentifierNodeKindsSet.add(nodeKind);
-    }
   }
 
   if (
@@ -101,10 +75,6 @@ export function objectSetDeclarations({
   ) {
     return [];
   }
-
-  const objectTypeIdentifierNodeKinds = [
-    ...objectTypeIdentifierNodeKindsSet,
-  ].toSorted();
 
   const objectSetInterfaceMethodSignaturesByObjectTypeName = objectTypes.reduce(
     (result, objectType) => {
@@ -115,7 +85,7 @@ export function objectSetDeclarations({
           parameters: [
             {
               name: "identifier",
-              type: "$ObjectSet.ObjectIdentifier",
+              type: objectType.identifierType.name,
             },
           ],
           returnType: `Promise<purify.Either<Error, ${objectType.name}>>`,
@@ -133,15 +103,14 @@ export function objectSetDeclarations({
               type: "{ limit?: number; offset?: number }",
             },
           ],
-          returnType:
-            "Promise<purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>>",
+          returnType: `Promise<purify.Either<Error, readonly ${objectType.identifierType.name}[]>>`,
         },
         objectsByIdentifiers: {
           name: methodNames.objectsByIdentifiers,
           parameters: [
             {
               name: "identifiers",
-              type: "readonly $ObjectSet.ObjectIdentifier[]",
+              type: `readonly ${objectType.identifierType.name}[]`,
             },
           ],
           returnType: `Promise<readonly purify.Either<Error, ${objectType.name}>[]>`,
@@ -160,16 +129,12 @@ export function objectSetDeclarations({
     objectSetInterfaceDeclaration({
       objectSetInterfaceMethodSignaturesByObjectTypeName,
     }),
-    objectSetModuleDeclaration({
-      objectTypeIdentifierNodeKinds,
-    }),
   ];
 
   if (objectTypesWithRdfFeatureCount > 0) {
     statements.push(
       rdfjsDatasetObjectSetClassDeclaration({
         objectSetInterfaceMethodSignaturesByObjectTypeName,
-        objectTypeIdentifierNodeKinds,
         objectTypes,
       }),
     );
@@ -180,7 +145,6 @@ export function objectSetDeclarations({
       sparqlObjectSetClassDeclaration({
         dataFactoryVariable,
         objectSetInterfaceMethodSignaturesByObjectTypeName,
-        objectTypeIdentifierNodeKinds,
         objectTypes,
       }),
     );
@@ -191,11 +155,9 @@ export function objectSetDeclarations({
 
 function rdfjsDatasetObjectSetClassDeclaration({
   objectSetInterfaceMethodSignaturesByObjectTypeName,
-  objectTypeIdentifierNodeKinds,
   objectTypes,
 }: {
   objectSetInterfaceMethodSignaturesByObjectTypeName: ObjectSetInterfaceMethodSignaturesByObjectTypeName;
-  objectTypeIdentifierNodeKinds: readonly ("BlankNode" | "NamedNode")[];
   objectTypes: readonly ObjectType[];
 }): ClassDeclarationStructure {
   return {
@@ -288,8 +250,7 @@ function rdfjsDatasetObjectSetClassDeclaration({
             : objectSetInterfaceMethodSignatures.objectIdentifiers.parameters!.map(
                 (parameter) => ({ ...parameter, name: `_${parameter.name}` }),
               ),
-          returnType:
-            "purify.Either<Error, readonly $ObjectSet.ObjectIdentifier[]>",
+          returnType: `purify.Either<Error, readonly ${objectType.identifierType.name}[]>`,
           statements: objectType.fromRdfType.isJust()
             ? [
                 "const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;",
@@ -297,15 +258,17 @@ function rdfjsDatasetObjectSetClassDeclaration({
                 "let offset = options?.offset ?? 0;",
                 "if (offset < 0) { offset = 0; }",
                 "let identifierI = 0;",
-                "const result: $ObjectSet.ObjectIdentifier[] = []",
+                `const result: ${objectType.identifierType.name}[] = []`,
                 `for (const resource of this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedInstancesOf" : "instancesOf"}(${objectType.staticModuleName}.fromRdfType)) {
-              if (${objectType.staticModuleName}.fromRdf({ resource }).isRight() && identifierI++ >= offset) {
-                result.push(resource.identifier);
-                if (result.length === limit) {
-                  break;
-                }
-              }
-            }`,
+                  ${objectType.staticModuleName}.fromRdf({ resource }).ifRight((object) => {
+                    if (identifierI++ >= offset) {
+                      result.push(object.identifier);
+                    }
+                  });
+                  if (result.length === limit) {
+                    break;
+                  }
+                }`,
                 "return purify.Either.of(result);",
               ]
             : [
@@ -326,28 +289,8 @@ function rdfjsDatasetObjectSetClassDeclaration({
           name: `${objectSetInterfaceMethodSignatures.objectsByIdentifiers.name}Sync`,
           returnType: `readonly purify.Either<Error, ${objectType.name}>[]`,
           statements: [
-            `${objectType.staticModuleName}.fromRdf({ resource: this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedResource" : "resource"}(identifier) })`,
-          ].map((fromRdfExpression) =>
-            objectTypeIdentifierNodeKinds.some(
-              (objectTypeIdentifierNodeKind) =>
-                !objectType.identifierType.nodeKinds.has(
-                  objectTypeIdentifierNodeKind,
-                ),
-            )
-              ? `return identifiers.map(identifier => { ${objectTypeIdentifierNodeKinds
-                  .filter(
-                    (identifierNodeKind) =>
-                      !objectType.identifierType.nodeKinds.has(
-                        identifierNodeKind,
-                      ),
-                  )
-                  .map(
-                    (identifierNodeKind) =>
-                      `if (identifier.termType === "${identifierNodeKind}") { return purify.Left(new Error(\`${objectSetInterfaceMethodSignatures.objectsByIdentifiers.name} does not accept ${identifierNodeKind} identifiers\`)); }`,
-                  )
-                  .join("\n")} return ${fromRdfExpression}; });`
-              : `return identifiers.map(identifier => ${fromRdfExpression});`,
-          ),
+            `return identifiers.map(identifier => ${objectType.staticModuleName}.fromRdf({ resource: this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedResource" : "resource"}(identifier) }));`,
+          ],
         },
       ];
     }),
@@ -364,12 +307,10 @@ function rdfjsDatasetObjectSetClassDeclaration({
 function sparqlObjectSetClassDeclaration({
   dataFactoryVariable,
   objectSetInterfaceMethodSignaturesByObjectTypeName,
-  objectTypeIdentifierNodeKinds,
   objectTypes,
 }: {
   dataFactoryVariable: string;
   objectSetInterfaceMethodSignaturesByObjectTypeName: ObjectSetInterfaceMethodSignaturesByObjectTypeName;
-  objectTypeIdentifierNodeKinds: readonly ("BlankNode" | "NamedNode")[];
   objectTypes: readonly ObjectType[];
 }): ClassDeclarationStructure {
   return {
@@ -415,56 +356,7 @@ function sparqlObjectSetClassDeclaration({
             kind: StructureKind.Method,
             statements: objectType.fromRdfType.isJust()
               ? [
-                  `\
-return purify.EitherAsync(async ({ liftEither }) =>
-  liftEither(
-    this.mapBindingsToCount(
-      await this.sparqlClient.queryBindings(
-        this.sparqlGenerator.stringify({
-          distinct: true,
-          prefixes: {},
-          queryType: "SELECT",
-          type: "query",
-          variables: [
-            {
-              expression: {
-                aggregation: "COUNT",
-                distinct: true,
-                expression: ${dataFactoryVariable}.variable!("object"),
-                type: "aggregate",
-              },
-              variable: ${dataFactoryVariable}.variable!("count"),
-            },
-          ],
-          where: [
-            {
-              triples: [
-                {
-                  object: ${dataFactoryVariable}.namedNode("${objectType.fromRdfType.unsafeCoerce().value}"),
-                  subject: ${dataFactoryVariable}.variable!("object"),
-                  predicate: {
-                    items: [
-                      ${dataFactoryVariable}.namedNode("${rdf.type.value}"),
-                      {
-                        items: [${dataFactoryVariable}.namedNode("${rdfs.subClassOf.value}")],
-                        pathType: "*",
-                        type: "path",
-                      },
-                    ],
-                    pathType: "/",
-                    type: "path",
-                  },
-                },
-              ],
-              type: "bgp",
-            }
-          ],
-        }),
-      ),
-      "count",
-    ),
-  ),
-);`,
+                  `return this.objectCount(${dataFactoryVariable}.namedNode("${objectType.fromRdfType.unsafeCoerce().value}"));`,
                 ]
               : [
                   `return purify.Left(new Error("${objectType.name} has no fromRdfType"));`,
@@ -476,9 +368,7 @@ return purify.EitherAsync(async ({ liftEither }) =>
             isAsync: true,
             statements: [
               "if (identifiers.length === 0) { return []; }",
-              ...(objectTypeIdentifierNodeKinds.some(
-                (value) => value === "BlankNode",
-              )
+              ...(objectType.identifierType.nodeKinds.has("BlankNode")
                 ? [
                     'if (identifiers.some(identifier => identifier.termType === "BlankNode")) { return identifiers.map(identifier => identifier.termType === "BlankNode" ? purify.Left(new Error("can\'t use blank node object identifiers with SPARQL")) : purify.Left(new Error("one of the supplied object identifiers is a blank node, which can\'t be used with SPARQL"))); }',
                   ]
@@ -515,23 +405,89 @@ return purify.EitherAsync(async ({ liftEither }) =>
           },
         ];
       }) satisfies MethodDeclarationStructure[]
-    ).concat({
-      kind: StructureKind.Method,
-      name: "mapBindingsToCount",
-      parameters: [
-        {
-          name: "bindings",
-          type: "readonly Record<string, rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>[]",
-        },
-        {
-          name: "variable",
-          type: "string",
-        },
-      ],
-      returnType: "purify.Either<Error, number>",
-      scope: Scope.Protected,
-      statements: [
-        `\
+    ).concat(
+      {
+        kind: StructureKind.Method,
+        isAsync: true,
+        name: "objectCount",
+        parameters: [
+          {
+            name: "rdfType",
+            type: "rdfjs.NamedNode",
+          },
+        ],
+        returnType: "Promise<purify.Either<Error, number>>",
+        scope: Scope.Protected,
+        statements: [
+          `\
+return purify.EitherAsync(async ({ liftEither }) =>
+  liftEither(
+    this.mapBindingsToCount(
+      await this.sparqlClient.queryBindings(
+        this.sparqlGenerator.stringify({
+          distinct: true,
+          prefixes: {},
+          queryType: "SELECT",
+          type: "query",
+          variables: [
+            {
+              expression: {
+                aggregation: "COUNT",
+                distinct: true,
+                expression: ${dataFactoryVariable}.variable!("object"),
+                type: "aggregate",
+              },
+              variable: ${dataFactoryVariable}.variable!("count"),
+            },
+          ],
+          where: [
+            {
+              triples: [
+                {
+                  object: rdfType,
+                  subject: ${dataFactoryVariable}.variable!("object"),
+                  predicate: {
+                    items: [
+                      ${dataFactoryVariable}.namedNode("${rdf.type.value}"),
+                      {
+                        items: [${dataFactoryVariable}.namedNode("${rdfs.subClassOf.value}")],
+                        pathType: "*",
+                        type: "path",
+                      },
+                    ],
+                    pathType: "/",
+                    type: "path",
+                  },
+                },
+              ],
+              type: "bgp",
+            }
+          ],
+        }),
+      ),
+      "count",
+    ),
+  ),
+);`,
+        ],
+      },
+      {
+        kind: StructureKind.Method,
+        name: "mapBindingsToCount",
+        parameters: [
+          {
+            name: "bindings",
+            type: "readonly Record<string, rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>[]",
+          },
+          {
+            name: "variable",
+            type: "string",
+          },
+        ],
+        returnType: "purify.Either<Error, number>",
+        scope: Scope.Protected,
+        statements: [
+          `\
 if (bindings.length === 0) {
   return purify.Left(new Error("empty result rows"));
 }
@@ -550,8 +506,9 @@ if (Number.isNaN(parsedCount)) {
   return purify.Left(new Error("'count' variable is NaN"));
 }
 return purify.Either.of(parsedCount);`,
-      ],
-    }),
+        ],
+      },
+    ),
     properties: [
       {
         isReadonly: true,
