@@ -306,6 +306,44 @@
               "value": "n3-146"
             },
             "propertyPath": {
+              "curie": ":falseBooleanProperty",
+              "uniqueLocalPart": "falseBooleanProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/falseBooleanProperty"
+            }
+          },
+          "path": "http://example.com/falseBooleanProperty",
+          "type": {
+            "hasValue": [],
+            "kind": "LiteralType"
+          }
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-147"
+            },
+            "propertyPath": {
+              "curie": ":dateProperty",
+              "uniqueLocalPart": "dateProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/dateProperty"
+            }
+          },
+          "path": "http://example.com/dateProperty",
+          "type": {
+            "hasValue": [],
+            "kind": "LiteralType"
+          }
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-148"
+            },
+            "propertyPath": {
               "curie": ":dateTimeProperty",
               "uniqueLocalPart": "dateTimeProperty",
               "termType": "NamedNode",
@@ -322,7 +360,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-147"
+              "value": "n3-149"
             },
             "propertyPath": {
               "curie": ":numberProperty",
@@ -341,7 +379,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-148"
+              "value": "n3-150"
             },
             "propertyPath": {
               "curie": ":stringProperty",
@@ -360,7 +398,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-149"
+              "value": "n3-151"
             },
             "propertyPath": {
               "curie": ":trueBooleanProperty",
@@ -370,44 +408,6 @@
             }
           },
           "path": "http://example.com/trueBooleanProperty",
-          "type": {
-            "hasValue": [],
-            "kind": "LiteralType"
-          }
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-150"
-            },
-            "propertyPath": {
-              "curie": ":falseBooleanProperty",
-              "uniqueLocalPart": "falseBooleanProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/falseBooleanProperty"
-            }
-          },
-          "path": "http://example.com/falseBooleanProperty",
-          "type": {
-            "hasValue": [],
-            "kind": "LiteralType"
-          }
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-151"
-            },
-            "propertyPath": {
-              "curie": ":dateProperty",
-              "uniqueLocalPart": "dateProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/dateProperty"
-            }
-          },
-          "path": "http://example.com/dateProperty",
           "type": {
             "hasValue": [],
             "kind": "LiteralType"
@@ -1958,53 +1958,6 @@
               "value": "n3-231"
             },
             "propertyPath": {
-              "curie": ":unrelatedTypesProperty",
-              "uniqueLocalPart": "unrelatedTypesProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/unrelatedTypesProperty"
-            }
-          },
-          "path": "http://example.com/unrelatedTypesProperty",
-          "type": {
-            "itemType": {
-              "kind": "UnionType",
-              "types": [
-                {
-                  "datatype": {
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#integer"
-                  },
-                  "hasValue": [],
-                  "kind": "LiteralType"
-                },
-                {
-                  "kind": "ObjectType",
-                  "name": {
-                    "identifier": {
-                      "curie": ":NonClassNodeShape",
-                      "termType": "NamedNode",
-                      "uniqueLocalPart": "NonClassNodeShape",
-                      "value": "http://example.com/NonClassNodeShape"
-                    }
-                  },
-                  "identifierKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ],
-                  "identifierMintingStrategy": "blankNode"
-                }
-              ]
-            },
-            "kind": "OptionType"
-          }
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-236"
-            },
-            "propertyPath": {
               "curie": ":narrowLiteralsProperty",
               "uniqueLocalPart": "narrowLiteralsProperty",
               "termType": "NamedNode",
@@ -2041,7 +1994,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-241"
+              "value": "n3-236"
             },
             "propertyPath": {
               "curie": ":widenedLiteralsProperty",
@@ -2063,7 +2016,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-246"
+              "value": "n3-241"
             },
             "propertyPath": {
               "curie": ":widenedTermsProperty",
@@ -2076,6 +2029,53 @@
           "type": {
             "itemType": {
               "kind": "TermType"
+            },
+            "kind": "OptionType"
+          }
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-246"
+            },
+            "propertyPath": {
+              "curie": ":unrelatedTypesProperty",
+              "uniqueLocalPart": "unrelatedTypesProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/unrelatedTypesProperty"
+            }
+          },
+          "path": "http://example.com/unrelatedTypesProperty",
+          "type": {
+            "itemType": {
+              "kind": "UnionType",
+              "types": [
+                {
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#integer"
+                  },
+                  "hasValue": [],
+                  "kind": "LiteralType"
+                },
+                {
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":NonClassNodeShape",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "NonClassNodeShape",
+                      "value": "http://example.com/NonClassNodeShape"
+                    }
+                  },
+                  "identifierKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode"
+                }
+              ]
             },
             "kind": "OptionType"
           }

@@ -352,7 +352,24 @@ function sparqlObjectSetClassDeclaration({
             kind: StructureKind.Method,
             statements: objectType.fromRdfType.isJust()
               ? [
-                  `return this.objectCount(${dataFactoryVariable}.namedNode("${objectType.fromRdfType.unsafeCoerce().value}"));`,
+                  `return this.$objectCount(${dataFactoryVariable}.namedNode("${objectType.fromRdfType.unsafeCoerce().value}"));`,
+                ]
+              : [
+                  `return purify.Left(new Error("${objectType.name} has no fromRdfType"));`,
+                ],
+          },
+          {
+            ...objectSetInterfaceMethodSignatures.objectIdentifiers,
+            kind: StructureKind.Method,
+            isAsync: true,
+            parameters: objectType.fromRdfType.isJust()
+              ? objectSetInterfaceMethodSignatures.objectIdentifiers.parameters
+              : objectSetInterfaceMethodSignatures.objectIdentifiers.parameters!.map(
+                  (parameter) => ({ ...parameter, name: `_${parameter.name}` }),
+                ),
+            statements: objectType.fromRdfType.isJust()
+              ? [
+                  `return this.$objectIdentifiers(${dataFactoryVariable}.namedNode("${objectType.fromRdfType.unsafeCoerce().value}"), options);`,
                 ]
               : [
                   `return purify.Left(new Error("${objectType.name} has no fromRdfType"));`,
@@ -363,7 +380,7 @@ function sparqlObjectSetClassDeclaration({
             kind: StructureKind.Method,
             isAsync: true,
             statements: [
-              `return this.objectsByIdentifiers<${objectType.identifierType.name}, ${objectType.name}>(identifiers, ${objectType.staticModuleName});`,
+              `return this.$objectsByIdentifiers<${objectType.identifierType.name}, ${objectType.name}>(identifiers, ${objectType.staticModuleName});`,
             ],
           },
         ];
@@ -371,7 +388,7 @@ function sparqlObjectSetClassDeclaration({
     ).concat(
       {
         kind: StructureKind.Method,
-        name: "mapBindingsToCount",
+        name: "$mapBindingsToCount",
         parameters: [
           {
             name: "bindings",
@@ -408,8 +425,38 @@ return purify.Either.of(parsedCount);`,
       },
       {
         kind: StructureKind.Method,
+        name: "$mapBindingsToIdentifiers",
+        parameters: [
+          {
+            name: "bindings",
+            type: "readonly Record<string, rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>[]",
+          },
+          {
+            name: "variable",
+            type: "string",
+          },
+        ],
+        returnType: "readonly rdfjs.NamedNode[]",
+        scope: Scope.Protected,
+        statements: [
+          `\
+const identifiers: rdfjs.NamedNode[] = [];
+for (const bindings_ of bindings) {
+  const identifier = bindings_[variable];
+  if (
+    typeof identifier !== "undefined" &&
+    identifier.termType === "NamedNode"
+  ) {
+    identifiers.push(identifier);
+  }
+}
+return identifiers;`,
+        ],
+      },
+      {
+        kind: StructureKind.Method,
         isAsync: true,
-        name: "objectCount",
+        name: "$objectCount",
         parameters: [
           {
             name: "rdfType",
@@ -422,7 +469,7 @@ return purify.Either.of(parsedCount);`,
           `\
 return purify.EitherAsync(async ({ liftEither }) =>
   liftEither(
-    this.mapBindingsToCount(
+    this.$mapBindingsToCount(
       await this.sparqlClient.queryBindings(
         this.sparqlGenerator.stringify({
           distinct: true,
@@ -472,9 +519,82 @@ return purify.EitherAsync(async ({ liftEither }) =>
         ],
       },
       {
+        kind: StructureKind.Method,
+        isAsync: true,
+        name: "$objectIdentifiers",
+        parameters: [
+          {
+            name: "rdfType",
+            type: "rdfjs.NamedNode",
+          },
+          {
+            hasQuestionToken: true,
+            name: "options",
+            type: "{ limit?: number; offset?: number; }",
+          },
+        ],
+        returnType: "Promise<purify.Either<Error, readonly rdfjs.NamedNode[]>>",
+        scope: Scope.Protected,
+        statements: [
+          `\
+const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
+if (limit <= 0) {
+  return purify.Either.of([]);
+}
+
+let offset = options?.offset ?? 0;
+if (offset < 0) {
+  offset = 0;
+}
+
+const objectVariable = ${dataFactoryVariable}.variable!("object");
+
+return purify.EitherAsync(async () =>
+  this.$mapBindingsToIdentifiers(
+    await this.sparqlClient.queryBindings(
+      this.sparqlGenerator.stringify({
+        distinct: true,
+        limit: limit < Number.MAX_SAFE_INTEGER ? limit : undefined,
+        offset,
+        order: [{ expression: objectVariable }],
+        prefixes: {},
+        queryType: "SELECT",
+        type: "query",
+        variables: [objectVariable],
+        where: [
+          {
+            triples: [
+              {
+                object: rdfType,
+                subject: objectVariable,
+                predicate: {
+                  items: [
+                    ${dataFactoryVariable}.namedNode("${rdf.type.value}"),
+                    {
+                      items: [${dataFactoryVariable}.namedNode("${rdfs.subClassOf.value}")],
+                      pathType: "*",
+                      type: "path",
+                    },
+                  ],
+                  pathType: "/",
+                  type: "path",
+                },
+              },
+            ],
+            type: "bgp",
+          }
+        ],
+      }),
+    ),
+    objectVariable.value,
+  ),
+);`,
+        ],
+      },
+      {
         isAsync: true,
         kind: StructureKind.Method,
-        name: "objectsByIdentifiers",
+        name: "$objectsByIdentifiers",
         parameters: [
           {
             name: "identifiers",
@@ -484,7 +604,7 @@ return purify.EitherAsync(async ({ liftEither }) =>
             name: "objectType",
             type: `{
 fromRdf: (parameters: { resource: rdfjsResource.Resource<rdfjs.NamedNode> }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
-sparqlConstructQueryString: (parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"]; variablePrefix?: string; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> & sparqljs.GeneratorOptions) => string;
+sparqlConstructQueryString: (parameters?: { subject: sparqljs.Triple["subject"]; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> & sparqljs.GeneratorOptions) => string;
             }`,
           },
         ],
