@@ -174,122 +174,185 @@ function rdfjsDatasetObjectSetClassDeclaration({
     isExported: true,
     kind: StructureKind.Class,
     name: "$RdfjsDatasetObjectSet",
-    methods: objectTypes.flatMap((objectType) => {
-      const objectSetInterfaceMethodSignatures =
-        objectSetInterfaceMethodSignaturesByObjectTypeName[objectType.name];
+    methods: objectTypes
+      .flatMap((objectType) => {
+        const objectSetInterfaceMethodSignatures =
+          objectSetInterfaceMethodSignaturesByObjectTypeName[objectType.name];
 
-      if (!objectType.features.has("rdf")) {
-        return unsupportedObjectSetMethodDeclarations({
-          objectSetInterfaceMethodSignatures,
-        });
-      }
+        if (!objectType.features.has("rdf")) {
+          return unsupportedObjectSetMethodDeclarations({
+            objectSetInterfaceMethodSignatures,
+          });
+        }
 
-      return [
-        {
-          ...objectSetInterfaceMethodSignatures.object,
-          isAsync: true,
-          kind: StructureKind.Method,
-          statements: [
-            `return this.${objectSetInterfaceMethodSignatures.object.name}Sync(identifier);`,
-          ],
-        },
-        {
-          ...objectSetInterfaceMethodSignatures.object,
-          kind: StructureKind.Method,
-          name: `${objectSetInterfaceMethodSignatures.object.name}Sync`,
-          returnType: `purify.Either<Error, ${objectType.name}>`,
-          statements: [
-            `return this.${objectSetInterfaceMethodSignatures.objects.name}Sync([identifier])[0];`,
-          ],
-        },
-        {
-          ...objectSetInterfaceMethodSignatures.objectIdentifiers,
-          isAsync: true,
-          kind: StructureKind.Method,
-          statements: [
-            `return this.${objectSetInterfaceMethodSignatures.objectIdentifiers.name}Sync(options);`,
-          ],
-        },
-        {
-          ...objectSetInterfaceMethodSignatures.objectIdentifiers,
-          kind: StructureKind.Method,
-          name: `${objectSetInterfaceMethodSignatures.objectIdentifiers.name}Sync`,
-          parameters: objectType.fromRdfType.isJust()
-            ? objectSetInterfaceMethodSignatures.objectIdentifiers.parameters
-            : objectSetInterfaceMethodSignatures.objectIdentifiers.parameters!.map(
-                (parameter) => ({ ...parameter, name: `_${parameter.name}` }),
-              ),
-          returnType: `purify.Either<Error, readonly ${objectType.identifierType.name}[]>`,
-          statements: objectType.fromRdfType.isJust()
+        return [
+          {
+            ...objectSetInterfaceMethodSignatures.object,
+            isAsync: true,
+            kind: StructureKind.Method,
+            statements: [
+              `return this.${objectSetInterfaceMethodSignatures.object.name}Sync(identifier);`,
+            ],
+          },
+          {
+            ...objectSetInterfaceMethodSignatures.object,
+            kind: StructureKind.Method,
+            name: `${objectSetInterfaceMethodSignatures.object.name}Sync`,
+            returnType: `purify.Either<Error, ${objectType.name}>`,
+            statements: [
+              `return this.${objectSetInterfaceMethodSignatures.objects.name}Sync([identifier])[0];`,
+            ],
+          },
+          {
+            ...objectSetInterfaceMethodSignatures.objectIdentifiers,
+            isAsync: true,
+            kind: StructureKind.Method,
+            statements: [
+              `return this.${objectSetInterfaceMethodSignatures.objectIdentifiers.name}Sync(options);`,
+            ],
+          },
+          {
+            ...objectSetInterfaceMethodSignatures.objectIdentifiers,
+            kind: StructureKind.Method,
+            name: `${objectSetInterfaceMethodSignatures.objectIdentifiers.name}Sync`,
+            parameters: objectType.fromRdfType.isJust()
+              ? objectSetInterfaceMethodSignatures.objectIdentifiers.parameters
+              : objectSetInterfaceMethodSignatures.objectIdentifiers.parameters!.map(
+                  (parameter) => ({ ...parameter, name: `_${parameter.name}` }),
+                ),
+            returnType: `purify.Either<Error, readonly ${objectType.identifierType.name}[]>`,
+            statements: objectType.fromRdfType.isJust()
+              ? [
+                  `return this.$objectIdentifiersSync<${objectType.identifierType.name}, ${objectType.name}>(this.${objectType.objectSetMethodNames.objects}GeneratorSync(), options);`,
+                ]
+              : [
+                  `return purify.Left(new Error("${objectType.name} has no fromRdfType"));`,
+                ],
+          },
+          {
+            ...objectSetInterfaceMethodSignatures.objects,
+            isAsync: true,
+            kind: StructureKind.Method,
+            statements: [
+              `return this.${objectSetInterfaceMethodSignatures.objects.name}Sync(identifiers);`,
+            ],
+          },
+          {
+            ...objectSetInterfaceMethodSignatures.objects,
+            kind: StructureKind.Method,
+            name: `${objectSetInterfaceMethodSignatures.objects.name}Sync`,
+            returnType: `readonly purify.Either<Error, ${objectType.name}>[]`,
+            statements: [
+              `return identifiers.map(identifier => ${objectType.staticModuleName}.fromRdf({ resource: this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedResource" : "resource"}(identifier) }));`,
+            ],
+          },
+          {
+            ...objectSetInterfaceMethodSignatures.objectsCount,
+            isAsync: true,
+            kind: StructureKind.Method,
+            statements: [
+              `return this.${objectSetInterfaceMethodSignatures.objectsCount.name}Sync();`,
+            ],
+          },
+          {
+            ...objectSetInterfaceMethodSignatures.objectsCount,
+            kind: StructureKind.Method,
+            name: `${objectSetInterfaceMethodSignatures.objectsCount.name}Sync`,
+            returnType: "purify.Either<Error, number>",
+            statements: objectType.fromRdfType.isJust()
+              ? [
+                  `return this.$objectsCountSync(this.${objectType.objectSetMethodNames.objects}GeneratorSync());`,
+                ]
+              : [
+                  `return purify.Left(new Error("${objectType.name} has no fromRdfType"));`,
+                ],
+          },
+          ...(objectType.fromRdfType.isJust()
             ? [
-                "const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;",
-                "if (limit <= 0) { return purify.Either.of([]); }",
-                "let offset = options?.offset ?? 0;",
-                "if (offset < 0) { offset = 0; }",
-                "let identifierI = 0;",
-                `const result: ${objectType.identifierType.name}[] = []`,
-                `for (const resource of this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedInstancesOf" : "instancesOf"}(${objectType.staticModuleName}.fromRdfType)) {
-                  ${objectType.staticModuleName}.fromRdf({ resource }).ifRight((object) => {
-                    if (identifierI++ >= offset) {
-                      result.push(object.identifier);
-                    }
-                  });
-                  if (result.length === limit) {
-                    break;
-                  }
-                }`,
-                "return purify.Either.of(result);",
+                {
+                  isGenerator: true,
+                  kind: StructureKind.Method,
+                  name: `${objectSetInterfaceMethodSignatures.objects.name}GeneratorSync`,
+                  returnType: `Generator<${objectType.name}>`,
+                  scope: Scope.Protected,
+                  statements: [
+                    `for (const resource of this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedInstancesOf" : "instancesOf"}(${objectType.staticModuleName}.fromRdfType)) {
+                     const object = ${objectType.staticModuleName}.fromRdf({ resource });
+                     if (object.isRight()) {
+                       yield object.unsafeCoerce();
+                     }
+                   }`,
+                  ],
+                } satisfies MethodDeclarationStructure,
               ]
-            : [
-                `return purify.Left(new Error("${objectType.name} has no fromRdfType"));`,
-              ],
-        },
+            : []),
+        ] satisfies MethodDeclarationStructure[];
+      })
+      .concat(
         {
-          ...objectSetInterfaceMethodSignatures.objects,
-          isAsync: true,
           kind: StructureKind.Method,
-          statements: [
-            `return this.${objectSetInterfaceMethodSignatures.objects.name}Sync(identifiers);`,
+          name: "$objectIdentifiersSync",
+          parameters: [
+            {
+              name: "objects",
+              type: "Iterable<ObjectT>",
+            },
+            {
+              hasQuestionToken: true,
+              name: "options",
+              type: "{ limit?: number; offset?: number; }",
+            },
           ],
-        },
-        {
-          ...objectSetInterfaceMethodSignatures.objects,
-          kind: StructureKind.Method,
-          name: `${objectSetInterfaceMethodSignatures.objects.name}Sync`,
-          returnType: `readonly purify.Either<Error, ${objectType.name}>[]`,
+          returnType: "purify.Either<Error, readonly IdentifierT[]>",
           statements: [
-            `return identifiers.map(identifier => ${objectType.staticModuleName}.fromRdf({ resource: this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedResource" : "resource"}(identifier) }));`,
-          ],
-        },
-        {
-          ...objectSetInterfaceMethodSignatures.objectsCount,
-          isAsync: true,
-          kind: StructureKind.Method,
-          statements: [
-            `return this.${objectSetInterfaceMethodSignatures.objectsCount.name}Sync();`,
-          ],
-        },
-        {
-          ...objectSetInterfaceMethodSignatures.objectsCount,
-          kind: StructureKind.Method,
-          name: `${objectSetInterfaceMethodSignatures.objectsCount.name}Sync`,
-          returnType: "purify.Either<Error, number>",
-          statements: objectType.fromRdfType.isJust()
-            ? [
-                "let count = 0",
-                `for (const resource of this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedInstancesOf" : "instancesOf"}(${objectType.staticModuleName}.fromRdfType)) {
-              if (${objectType.staticModuleName}.fromRdf({ resource }).isRight()) {
-                count++;
+            "const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;",
+            "if (limit <= 0) { return purify.Either.of([]); }",
+            "let offset = options?.offset ?? 0;",
+            "if (offset < 0) { offset = 0; }",
+            "let identifierI = 0;",
+            "const result: IdentifierT[] = []",
+            `for (const object of objects) {
+              if (identifierI++ >= offset) {
+                result.push(object.identifier);
               }
-            }`,
-                "return purify.Either.of(count);",
-              ]
-            : [
-                `return purify.Left(new Error("${objectType.name} has no fromRdfType"));`,
-              ],
-        },
-      ];
-    }),
+              if (result.length === limit) { break; }
+             }`,
+            "return purify.Either.of(result);",
+          ],
+          typeParameters: [
+            {
+              constraint: "rdfjs.BlankNode | rdfjs.NamedNode",
+              name: "IdentifierT",
+            },
+            {
+              constraint: "{ readonly identifier: IdentifierT }",
+              name: "ObjectT",
+            },
+          ],
+        } satisfies MethodDeclarationStructure,
+        {
+          kind: StructureKind.Method,
+          name: "$objectsCountSync",
+          parameters: [
+            {
+              name: "objects",
+              type: "Iterable<ObjectT>",
+            },
+          ],
+          returnType: "purify.Either<Error, number>",
+          statements: [
+            "let count = 0;",
+            "for (const _object of objects) { count++; }",
+            "return purify.Either.of(count);",
+          ],
+          typeParameters: [
+            {
+              name: "ObjectT",
+            },
+          ],
+          scope: Scope.Protected,
+        } satisfies MethodDeclarationStructure,
+      ),
     properties: [
       {
         isReadonly: true,
@@ -368,7 +431,7 @@ function sparqlObjectSetClassDeclaration({
             kind: StructureKind.Method,
             isAsync: true,
             statements: [
-              `return this.$objectsByIdentifiers<${objectType.identifierType.name}, ${objectType.name}>(identifiers, ${objectType.staticModuleName});`,
+              `return this.$objects<${objectType.identifierType.name}, ${objectType.name}>(identifiers, ${objectType.staticModuleName});`,
             ],
           },
           {
@@ -377,7 +440,7 @@ function sparqlObjectSetClassDeclaration({
             kind: StructureKind.Method,
             statements: objectType.fromRdfType.isJust()
               ? [
-                  `return this.$objectCount(${dataFactoryVariable}.namedNode("${objectType.fromRdfType.unsafeCoerce().value}"));`,
+                  `return this.$objectsCount(${dataFactoryVariable}.namedNode("${objectType.fromRdfType.unsafeCoerce().value}"));`,
                 ]
               : [
                   `return purify.Left(new Error("${objectType.name} has no fromRdfType"));`,
@@ -456,71 +519,6 @@ return identifiers;`,
       {
         kind: StructureKind.Method,
         isAsync: true,
-        name: "$objectCount",
-        parameters: [
-          {
-            name: "rdfType",
-            type: "rdfjs.NamedNode",
-          },
-        ],
-        returnType: "Promise<purify.Either<Error, number>>",
-        scope: Scope.Protected,
-        statements: [
-          `\
-return purify.EitherAsync(async ({ liftEither }) =>
-  liftEither(
-    this.$mapBindingsToCount(
-      await this.sparqlClient.queryBindings(
-        this.sparqlGenerator.stringify({
-          distinct: true,
-          prefixes: {},
-          queryType: "SELECT",
-          type: "query",
-          variables: [
-            {
-              expression: {
-                aggregation: "COUNT",
-                distinct: true,
-                expression: ${dataFactoryVariable}.variable!("object"),
-                type: "aggregate",
-              },
-              variable: ${dataFactoryVariable}.variable!("count"),
-            },
-          ],
-          where: [
-            {
-              triples: [
-                {
-                  object: rdfType,
-                  subject: ${dataFactoryVariable}.variable!("object"),
-                  predicate: {
-                    items: [
-                      ${dataFactoryVariable}.namedNode("${rdf.type.value}"),
-                      {
-                        items: [${dataFactoryVariable}.namedNode("${rdfs.subClassOf.value}")],
-                        pathType: "*",
-                        type: "path",
-                      },
-                    ],
-                    pathType: "/",
-                    type: "path",
-                  },
-                },
-              ],
-              type: "bgp",
-            }
-          ],
-        }),
-      ),
-      "count",
-    ),
-  ),
-);`,
-        ],
-      },
-      {
-        kind: StructureKind.Method,
-        isAsync: true,
         name: "$objectIdentifiers",
         parameters: [
           {
@@ -594,7 +592,7 @@ return purify.EitherAsync(async () =>
       {
         isAsync: true,
         kind: StructureKind.Method,
-        name: "$objectsByIdentifiers",
+        name: "$objects",
         parameters: [
           {
             name: "identifiers",
@@ -650,6 +648,71 @@ sparqlConstructQueryString: (parameters?: { subject: sparqljs.Triple["subject"];
             constraint: "{ readonly identifier: IdentifierT }",
             name: "ObjectT",
           },
+        ],
+      },
+      {
+        kind: StructureKind.Method,
+        isAsync: true,
+        name: "$objectsCount",
+        parameters: [
+          {
+            name: "rdfType",
+            type: "rdfjs.NamedNode",
+          },
+        ],
+        returnType: "Promise<purify.Either<Error, number>>",
+        scope: Scope.Protected,
+        statements: [
+          `\
+return purify.EitherAsync(async ({ liftEither }) =>
+  liftEither(
+    this.$mapBindingsToCount(
+      await this.sparqlClient.queryBindings(
+        this.sparqlGenerator.stringify({
+          distinct: true,
+          prefixes: {},
+          queryType: "SELECT",
+          type: "query",
+          variables: [
+            {
+              expression: {
+                aggregation: "COUNT",
+                distinct: true,
+                expression: ${dataFactoryVariable}.variable!("object"),
+                type: "aggregate",
+              },
+              variable: ${dataFactoryVariable}.variable!("count"),
+            },
+          ],
+          where: [
+            {
+              triples: [
+                {
+                  object: rdfType,
+                  subject: ${dataFactoryVariable}.variable!("object"),
+                  predicate: {
+                    items: [
+                      ${dataFactoryVariable}.namedNode("${rdf.type.value}"),
+                      {
+                        items: [${dataFactoryVariable}.namedNode("${rdfs.subClassOf.value}")],
+                        pathType: "*",
+                        type: "path",
+                      },
+                    ],
+                    pathType: "/",
+                    type: "path",
+                  },
+                },
+              ],
+              type: "bgp",
+            }
+          ],
+        }),
+      ),
+      "count",
+    ),
+  ),
+);`,
         ],
       },
     ),
