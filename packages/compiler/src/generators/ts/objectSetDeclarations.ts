@@ -76,8 +76,8 @@ export function objectSetDeclarations({
     (result, objectType) => {
       const methodNames = objectType.objectSetMethodNames;
       result[objectType.name] = {
-        objectByIdentifier: {
-          name: methodNames.objectByIdentifier,
+        object: {
+          name: methodNames.object,
           parameters: [
             {
               name: "identifier",
@@ -85,10 +85,6 @@ export function objectSetDeclarations({
             },
           ],
           returnType: `Promise<purify.Either<Error, ${objectType.name}>>`,
-        },
-        objectCount: {
-          name: methodNames.objectCount,
-          returnType: "Promise<purify.Either<Error, number>>",
         },
         objectIdentifiers: {
           name: methodNames.objectIdentifiers,
@@ -101,8 +97,8 @@ export function objectSetDeclarations({
           ],
           returnType: `Promise<purify.Either<Error, readonly ${objectType.identifierType.name}[]>>`,
         },
-        objectsByIdentifiers: {
-          name: methodNames.objectsByIdentifiers,
+        objects: {
+          name: methodNames.objects,
           parameters: [
             {
               name: "identifiers",
@@ -110,6 +106,10 @@ export function objectSetDeclarations({
             },
           ],
           returnType: `Promise<readonly purify.Either<Error, ${objectType.name}>[]>`,
+        },
+        objectsCount: {
+          name: methodNames.objectsCount,
+          returnType: "Promise<purify.Either<Error, number>>",
         },
       };
       return result;
@@ -186,48 +186,21 @@ function rdfjsDatasetObjectSetClassDeclaration({
 
       return [
         {
-          ...objectSetInterfaceMethodSignatures.objectByIdentifier,
+          ...objectSetInterfaceMethodSignatures.object,
           isAsync: true,
           kind: StructureKind.Method,
           statements: [
-            `return this.${objectSetInterfaceMethodSignatures.objectByIdentifier.name}Sync(identifier);`,
+            `return this.${objectSetInterfaceMethodSignatures.object.name}Sync(identifier);`,
           ],
         },
         {
-          ...objectSetInterfaceMethodSignatures.objectByIdentifier,
+          ...objectSetInterfaceMethodSignatures.object,
           kind: StructureKind.Method,
-          name: `${objectSetInterfaceMethodSignatures.objectByIdentifier.name}Sync`,
+          name: `${objectSetInterfaceMethodSignatures.object.name}Sync`,
           returnType: `purify.Either<Error, ${objectType.name}>`,
           statements: [
-            `return this.${objectSetInterfaceMethodSignatures.objectsByIdentifiers.name}Sync([identifier])[0];`,
+            `return this.${objectSetInterfaceMethodSignatures.objects.name}Sync([identifier])[0];`,
           ],
-        },
-        {
-          ...objectSetInterfaceMethodSignatures.objectCount,
-          isAsync: true,
-          kind: StructureKind.Method,
-          statements: [
-            `return this.${objectSetInterfaceMethodSignatures.objectCount.name}Sync();`,
-          ],
-        },
-        {
-          ...objectSetInterfaceMethodSignatures.objectCount,
-          kind: StructureKind.Method,
-          name: `${objectSetInterfaceMethodSignatures.objectCount.name}Sync`,
-          returnType: "purify.Either<Error, number>",
-          statements: objectType.fromRdfType.isJust()
-            ? [
-                "let count = 0",
-                `for (const resource of this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedInstancesOf" : "instancesOf"}(${objectType.staticModuleName}.fromRdfType)) {
-              if (${objectType.staticModuleName}.fromRdf({ resource }).isRight()) {
-                count++;
-              }
-            }`,
-                "return purify.Either.of(count);",
-              ]
-            : [
-                `return purify.Left(new Error("${objectType.name} has no fromRdfType"));`,
-              ],
         },
         {
           ...objectSetInterfaceMethodSignatures.objectIdentifiers,
@@ -272,21 +245,48 @@ function rdfjsDatasetObjectSetClassDeclaration({
               ],
         },
         {
-          ...objectSetInterfaceMethodSignatures.objectsByIdentifiers,
+          ...objectSetInterfaceMethodSignatures.objects,
           isAsync: true,
           kind: StructureKind.Method,
           statements: [
-            `return this.${objectSetInterfaceMethodSignatures.objectsByIdentifiers.name}Sync(identifiers);`,
+            `return this.${objectSetInterfaceMethodSignatures.objects.name}Sync(identifiers);`,
           ],
         },
         {
-          ...objectSetInterfaceMethodSignatures.objectsByIdentifiers,
+          ...objectSetInterfaceMethodSignatures.objects,
           kind: StructureKind.Method,
-          name: `${objectSetInterfaceMethodSignatures.objectsByIdentifiers.name}Sync`,
+          name: `${objectSetInterfaceMethodSignatures.objects.name}Sync`,
           returnType: `readonly purify.Either<Error, ${objectType.name}>[]`,
           statements: [
             `return identifiers.map(identifier => ${objectType.staticModuleName}.fromRdf({ resource: this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedResource" : "resource"}(identifier) }));`,
           ],
+        },
+        {
+          ...objectSetInterfaceMethodSignatures.objectsCount,
+          isAsync: true,
+          kind: StructureKind.Method,
+          statements: [
+            `return this.${objectSetInterfaceMethodSignatures.objectsCount.name}Sync();`,
+          ],
+        },
+        {
+          ...objectSetInterfaceMethodSignatures.objectsCount,
+          kind: StructureKind.Method,
+          name: `${objectSetInterfaceMethodSignatures.objectsCount.name}Sync`,
+          returnType: "purify.Either<Error, number>",
+          statements: objectType.fromRdfType.isJust()
+            ? [
+                "let count = 0",
+                `for (const resource of this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedInstancesOf" : "instancesOf"}(${objectType.staticModuleName}.fromRdfType)) {
+              if (${objectType.staticModuleName}.fromRdf({ resource }).isRight()) {
+                count++;
+              }
+            }`,
+                "return purify.Either.of(count);",
+              ]
+            : [
+                `return purify.Left(new Error("${objectType.name} has no fromRdfType"));`,
+              ],
         },
       ];
     }),
@@ -339,24 +339,12 @@ function sparqlObjectSetClassDeclaration({
 
         return [
           {
-            ...objectSetInterfaceMethodSignatures.objectByIdentifier,
+            ...objectSetInterfaceMethodSignatures.object,
             kind: StructureKind.Method,
             isAsync: true,
             statements: [
-              `return (await this.${objectSetInterfaceMethodSignatures.objectsByIdentifiers.name}([identifier]))[0];`,
+              `return (await this.${objectSetInterfaceMethodSignatures.objects.name}([identifier]))[0];`,
             ],
-          },
-          {
-            ...objectSetInterfaceMethodSignatures.objectCount,
-            isAsync: true,
-            kind: StructureKind.Method,
-            statements: objectType.fromRdfType.isJust()
-              ? [
-                  `return this.$objectCount(${dataFactoryVariable}.namedNode("${objectType.fromRdfType.unsafeCoerce().value}"));`,
-                ]
-              : [
-                  `return purify.Left(new Error("${objectType.name} has no fromRdfType"));`,
-                ],
           },
           {
             ...objectSetInterfaceMethodSignatures.objectIdentifiers,
@@ -376,12 +364,24 @@ function sparqlObjectSetClassDeclaration({
                 ],
           },
           {
-            ...objectSetInterfaceMethodSignatures.objectsByIdentifiers,
+            ...objectSetInterfaceMethodSignatures.objects,
             kind: StructureKind.Method,
             isAsync: true,
             statements: [
               `return this.$objectsByIdentifiers<${objectType.identifierType.name}, ${objectType.name}>(identifiers, ${objectType.staticModuleName});`,
             ],
+          },
+          {
+            ...objectSetInterfaceMethodSignatures.objectsCount,
+            isAsync: true,
+            kind: StructureKind.Method,
+            statements: objectType.fromRdfType.isJust()
+              ? [
+                  `return this.$objectCount(${dataFactoryVariable}.namedNode("${objectType.fromRdfType.unsafeCoerce().value}"));`,
+                ]
+              : [
+                  `return purify.Left(new Error("${objectType.name} has no fromRdfType"));`,
+                ],
           },
         ];
       }) satisfies MethodDeclarationStructure[]
@@ -683,7 +683,7 @@ function unsupportedObjectSetMethodDeclarations({
       ...methodSignature,
       kind: StructureKind.Method,
       parameters:
-        methodName !== "objectsByIdentifiers" && methodSignature.parameters
+        methodName !== "objects" && methodSignature.parameters
           ? methodSignature.parameters!.map((parameter) => ({
               ...parameter,
               name: `_${parameter.name}`,
@@ -691,7 +691,7 @@ function unsupportedObjectSetMethodDeclarations({
           : methodSignature.parameters,
       isAsync: true,
       statements:
-        methodName === "objectsByIdentifiers"
+        methodName === "objects"
           ? [
               `return identifiers.map(() => purify.Left(new Error("${methodName}: not supported")));`,
             ]

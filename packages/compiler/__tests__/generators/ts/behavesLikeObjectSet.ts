@@ -39,7 +39,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
   it("objectByIdentifier", async ({ expect }) => {
     expect(
       (
-        await objectSet.concreteChildClassNodeShapeByIdentifier(
+        await objectSet.concreteChildClassNodeShape(
           expectedObjects[0].identifier,
         )
       )
@@ -47,12 +47,6 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
         .equals(expectedObjects[0])
         .unsafeCoerce(),
     ).toBe(true);
-  });
-
-  it("objectCount", async ({ expect }) => {
-    expect(
-      (await objectSet.concreteChildClassNodeShapeCount()).unsafeCoerce(),
-    ).toStrictEqual(expectedObjects.length);
   });
 
   it("objectIdentifiers (no options)", async ({ expect }) => {
@@ -102,9 +96,15 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     ]);
   });
 
-  it("objectsByIdentifiers (all)", async ({ expect }) => {
+  it("objectsCount", async ({ expect }) => {
+    expect(
+      (await objectSet.concreteChildClassNodeShapesCount()).unsafeCoerce(),
+    ).toStrictEqual(expectedObjects.length);
+  });
+
+  it("objects (all)", async ({ expect }) => {
     const actualObjects = (
-      await objectSet.concreteChildClassNodeShapesByIdentifiers(
+      await objectSet.concreteChildClassNodeShapes(
         expectedObjects.map((object) => object.identifier),
       )
     ).map((either) => either.unsafeCoerce());
@@ -118,10 +118,10 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     }
   });
 
-  it("objectsByIdentifiers (subset)", async ({ expect }) => {
+  it("objects (subset)", async ({ expect }) => {
     const sliceStart = 2;
     const actualObjects = (
-      await objectSet.concreteChildClassNodeShapesByIdentifiers(
+      await objectSet.concreteChildClassNodeShapes(
         expectedObjects.slice(sliceStart).map((object) => object.identifier),
       )
     ).map((either) => either.unsafeCoerce());

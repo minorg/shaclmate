@@ -12,8 +12,6 @@ import {
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 
-import * as _ObjectType from "./_ObjectType/index.js";
-
 import plur from "plur";
 import type {
   IdentifierMintingStrategy,
@@ -25,6 +23,7 @@ import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import type { Type } from "./Type.js";
+import * as _ObjectType from "./_ObjectType/index.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 export class ObjectType extends DeclaredType {
@@ -246,12 +245,13 @@ export class ObjectType extends DeclaredType {
 
   @Memoize()
   get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
-    const prefix = camelCase(this.name);
+    const prefixSingular = camelCase(this.name);
+    const prefixPlural = plur(prefixSingular);
     return {
-      objectByIdentifier: `${prefix}ByIdentifier`,
-      objectCount: `${prefix}Count`,
-      objectIdentifiers: `${prefix}Identifiers`,
-      objectsByIdentifiers: `${plur(prefix)}ByIdentifiers`,
+      object: prefixSingular,
+      objectIdentifiers: `${prefixSingular}Identifiers`,
+      objects: prefixPlural,
+      objectsCount: `${prefixPlural}Count`,
     };
   }
 
@@ -468,10 +468,10 @@ export namespace ObjectType {
   export const IdentifierProperty = _ObjectType.IdentifierProperty;
   export type IdentifierProperty = _ObjectType.IdentifierProperty;
   export type ObjectSetMethodNames = {
-    readonly objectByIdentifier: string;
-    readonly objectCount: string;
+    readonly object: string;
+    readonly objectsCount: string;
     readonly objectIdentifiers: string;
-    readonly objectsByIdentifiers: string;
+    readonly objects: string;
   };
   export const Property = _ObjectType.Property;
   export type Property = _ObjectType.Property<any>;
