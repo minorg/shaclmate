@@ -273,7 +273,17 @@ export class IdentifierProperty extends Property<IdentifierType> {
         `switch (${variables.resource}.identifier.value) { ${this.type.in_.map((iri) => `case "${iri.value}": ${this.name} = ${this.rdfjsTermExpression(iri)}; break;`).join(" ")} default: return purify.Left(new rdfjsResource.Resource.MistypedValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${this.rdfjsTermExpression(rdf.subject)} })); }`,
       ];
     }
-    return [`const ${this.name} = ${variables.resource}.identifier`];
+
+    const statements: string[] = [];
+    if (this.type.isNamedNodeKind) {
+      statements.push(
+        `if (${variables.resource}.identifier.termType !== "NamedNode") { return purify.Left(new rdfjsResource.Resource.MistypedValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${this.rdfjsTermExpression(rdf.subject)} })); }`,
+      );
+    }
+    statements.push(
+      `const ${this.name}: ${this.type.name} = ${variables.resource}.identifier;`,
+    );
+    return statements;
   }
 
   override hashStatements({

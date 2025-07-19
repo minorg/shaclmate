@@ -84,14 +84,12 @@ class MemberType {
     return this.delegate.staticModuleName;
   }
 
-  jsonZodSchema(parameters: Parameters<ObjectType["jsonZodSchema"]>[0]) {
-    return this.delegate.jsonZodSchema(parameters);
+  get toRdfjsResourceType() {
+    return this.delegate.toRdfjsResourceType;
   }
 
-  rdfjsResourceType(
-    parameters: Parameters<ObjectType["rdfjsResourceType"]>[0],
-  ) {
-    return this.delegate.rdfjsResourceType(parameters);
+  jsonZodSchema(parameters: Parameters<ObjectType["jsonZodSchema"]>[0]) {
+    return this.delegate.jsonZodSchema(parameters);
   }
 
   useImports(features: Set<TsFeature>) {
@@ -322,7 +320,7 @@ return $strictEquals(left.type, right.type).chain(() => {
       parameters: [
         {
           name: "{ ignoreRdfType, resource, ...context }",
-          type: `{ [_index: string]: any; ignoreRdfType?: boolean; resource: ${this.rdfjsResourceType().name}; }`,
+          type: "{ [_index: string]: any; ignoreRdfType?: boolean; resource: rdfjsResource.Resource; }",
         },
       ],
       returnType: `purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>`,
@@ -542,7 +540,20 @@ return $strictEquals(left.type, right.type).chain(() => {
           type: "{ mutateGraph: rdfjsResource.MutableResource.MutateGraph, resourceSet: rdfjsResource.MutableResourceSet }",
         },
       ],
-      returnType: this.rdfjsResourceType({ mutable: true }).name,
+      returnType: (() => {
+        let returnType: string | undefined;
+        for (const memberType of this.memberTypes) {
+          const memberRdfjsResourceType = memberType.toRdfjsResourceType;
+
+          if (typeof returnType === "undefined") {
+            returnType = memberRdfjsResourceType;
+          } else if (memberRdfjsResourceType !== returnType) {
+            return "rdfjsResource.Resource";
+          }
+        }
+        // The types agree
+        return returnType!;
+      })(),
       statements: `switch (${this.thisVariable}.${this._discriminatorProperty.name}) { ${caseBlocks.join(" ")} }`,
     });
   }
@@ -568,7 +579,7 @@ return $strictEquals(left.type, right.type).chain(() => {
     variables,
   }: Parameters<Type["fromRdfExpression"]>[0]): string {
     // Don't ignoreRdfType, we may need it to distinguish the union members
-    return `${variables.resourceValues}.head().chain(value => value.to${this.rdfjsResourceType().named ? "Named" : ""}Resource()).chain(_resource => ${this.staticModuleName}.fromRdf({ ...${variables.context}, languageIn: ${variables.languageIn}, resource: _resource }))`;
+    return `${variables.resourceValues}.head().chain(value => value.toResource()).chain(_resource => ${this.staticModuleName}.fromRdf({ ...${variables.context}, languageIn: ${variables.languageIn}, resource: _resource }))`;
   }
 
   override hashStatements({
@@ -652,36 +663,5 @@ return $strictEquals(left.type, right.type).chain(() => {
 
   override useImports(): readonly Import[] {
     return [];
-  }
-
-  private rdfjsResourceType(options?: { mutable?: boolean }): ReturnType<
-    ObjectType["rdfjsResourceType"]
-  > {
-    const memberRdfjsResourceTypes: ReturnType<
-      ObjectType["rdfjsResourceType"]
-    >[] = [];
-    for (const memberType of this.memberTypes) {
-      const memberRdfjsResourceType = memberType.rdfjsResourceType(options);
-
-      if (
-        memberRdfjsResourceTypes.some(
-          (existingMemberRdfjsResourceType) =>
-            existingMemberRdfjsResourceType.name !==
-            memberRdfjsResourceType.name,
-        )
-      ) {
-        // The types don't agree, return a generic type
-        return {
-          mutable: !!options?.mutable,
-          name: "rdfjsResource.Resource",
-          named: false,
-        };
-      }
-
-      memberRdfjsResourceTypes.push(memberRdfjsResourceType);
-    }
-
-    // The types agree
-    return memberRdfjsResourceTypes[0];
   }
 }

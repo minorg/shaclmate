@@ -66,7 +66,7 @@ function fromRdfFunctionDeclarations(
     parameters: [
       {
         name: `{ ignoreRdfType: ${variables.ignoreRdfType}, languageIn: ${variables.languageIn}, resource: ${variables.resource},\n// @ts-ignore\n...${variables.context} }`,
-        type: `{ [_index: string]: any; ignoreRdfType?: boolean; languageIn?: readonly string[]; resource: ${this.rdfjsResourceType().name}; }`,
+        type: "{ [_index: string]: any; ignoreRdfType?: boolean; languageIn?: readonly string[]; resource: rdfjsResource.Resource; }",
       },
     ],
     returnType: `purify.Either<rdfjsResource.Resource.ValueError, ${propertiesFromRdfReturnType.join(" & ")}>`,

@@ -5,10 +5,8 @@ import type {
   ModuleDeclarationStructure,
 } from "ts-morph";
 import type { ObjectType } from "./ObjectType.js";
-import {
-  type ObjectSetInterfaceMethodSignaturesByObjectTypeName,
-  objectSetInterfaceDeclaration,
-} from "./objectSetInterfaceDeclaration.js";
+import { objectSetInterfaceDeclaration } from "./objectSetInterfaceDeclaration.js";
+import { objectSetInterfaceMethodSignaturesByObjectTypeName as objectSetInterfaceMethodSignaturesByObjectTypeName_ } from "./objectSetInterfaceMethodSignaturesByObjectTypeName.js";
 import { rdfjsDatasetObjectSetClassDeclaration } from "./rdfjsDatasetObjectSetClassDeclaration.js";
 import { sparqlObjectSetClassDeclaration } from "./sparqlObjectSetClassDeclaration.js";
 
@@ -50,62 +48,20 @@ export function objectSetDeclarations({
     return [];
   }
 
-  const objectSetInterfaceMethodSignaturesByObjectTypeName = objectTypes.reduce(
-    (result, objectType) => {
-      const methodNames = objectType.objectSetMethodNames;
-      result[objectType.name] = {
-        object: {
-          name: methodNames.object,
-          parameters: [
-            {
-              name: "identifier",
-              type: objectType.identifierType.name,
-            },
-          ],
-          returnType: `Promise<purify.Either<Error, ${objectType.name}>>`,
-        },
-        objectIdentifiers: {
-          name: methodNames.objectIdentifiers,
-          parameters: [
-            {
-              hasQuestionToken: true,
-              name: "options",
-              type: "{ limit?: number; offset?: number }",
-            },
-          ],
-          returnType: `Promise<purify.Either<Error, readonly ${objectType.identifierType.name}[]>>`,
-        },
-        objects: {
-          name: methodNames.objects,
-          parameters: [
-            {
-              name: "identifiers",
-              type: `readonly ${objectType.identifierType.name}[]`,
-            },
-          ],
-          returnType: `Promise<readonly purify.Either<Error, ${objectType.name}>[]>`,
-        },
-        objectsCount: {
-          name: methodNames.objectsCount,
-          returnType: "Promise<purify.Either<Error, number>>",
-        },
-      };
-      return result;
-    },
-    {} as ObjectSetInterfaceMethodSignaturesByObjectTypeName,
-  );
+  const objectSetInterfaceMethodSignaturesByObjectTypeName =
+    objectSetInterfaceMethodSignaturesByObjectTypeName_({ objectTypes });
 
   const statements: (
     | ClassDeclarationStructure
     | InterfaceDeclarationStructure
     | ModuleDeclarationStructure
   )[] = [
-    objectSetInterfaceDeclaration({
+    ...objectSetInterfaceDeclaration({
       objectSetInterfaceMethodSignaturesByObjectTypeName,
     }),
   ];
 
-  if (objectTypesWithRdfFeatureCount > 0) {
+  if (objectTypesWithRdfFeatureCount < 0) {
     statements.push(
       rdfjsDatasetObjectSetClassDeclaration({
         objectSetInterfaceMethodSignaturesByObjectTypeName,
@@ -114,7 +70,7 @@ export function objectSetDeclarations({
     );
   }
 
-  if (objectTypesWithSparqlFeatureCount > 0) {
+  if (objectTypesWithSparqlFeatureCount < 0) {
     statements.push(
       sparqlObjectSetClassDeclaration({
         dataFactoryVariable,

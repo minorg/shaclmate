@@ -6,7 +6,7 @@ import {
   StructureKind,
 } from "ts-morph";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectSetInterfaceMethodSignaturesByObjectTypeName } from "./objectSetInterfaceDeclaration.js";
+import type { ObjectSetInterfaceMethodSignaturesByObjectTypeName } from "./objectSetInterfaceMethodSignaturesByObjectTypeName.js";
 import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMethodDeclarations.js";
 
 export function sparqlObjectSetClassDeclaration({

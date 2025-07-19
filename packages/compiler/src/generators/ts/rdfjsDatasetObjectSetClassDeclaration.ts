@@ -5,7 +5,7 @@ import {
   StructureKind,
 } from "ts-morph";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectSetInterfaceMethodSignaturesByObjectTypeName } from "./objectSetInterfaceDeclaration.js";
+import type { ObjectSetInterfaceMethodSignaturesByObjectTypeName } from "./objectSetInterfaceMethodSignaturesByObjectTypeName.js";
 import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMethodDeclarations.js";
 
 export function rdfjsDatasetObjectSetClassDeclaration({
@@ -59,7 +59,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             name: `${objectSetInterfaceMethodSignatures.object.name}Sync`,
             returnType: `purify.Either<Error, ${objectType.name}>`,
             statements: [
-              `return this.${objectSetInterfaceMethodSignatures.objects.name}Sync([identifier])[0];`,
+              `return this.${objectSetInterfaceMethodSignatures.objects.name}Sync({ where: { identifiers: [identifier], type: "identifiers" } })[0];`,
             ],
           },
           {
@@ -67,7 +67,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             isAsync: true,
             kind: StructureKind.Method,
             statements: [
-              `return this.${objectSetInterfaceMethodSignatures.objectIdentifiers.name}Sync(options);`,
+              `return this.${objectSetInterfaceMethodSignatures.objectIdentifiers.name}Sync(query);`,
             ],
           },
           {
@@ -82,7 +82,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             returnType: `purify.Either<Error, readonly ${objectType.identifierType.name}[]>`,
             statements: objectType.fromRdfType.isJust()
               ? [
-                  `return this.$objectIdentifiersSync<${objectType.identifierType.name}, ${objectType.name}>(this.${objectType.objectSetMethodNames.objects}GeneratorSync(), options);`,
+                  `return this.$objectIdentifiersSync<${objectType.name}, ${objectType.identifierType.name}>(this.${objectType.objectSetMethodNames.objects}GeneratorSync(), query);`,
                 ]
               : [
                   `return purify.Left(new Error("${objectType.name} has no fromRdfType"));`,
@@ -93,7 +93,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             isAsync: true,
             kind: StructureKind.Method,
             statements: [
-              `return this.${objectSetInterfaceMethodSignatures.objects.name}Sync(identifiers);`,
+              `return this.${objectSetInterfaceMethodSignatures.objects.name}Sync(query);`,
             ],
           },
           {
@@ -102,7 +102,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             name: `${objectSetInterfaceMethodSignatures.objects.name}Sync`,
             returnType: `readonly purify.Either<Error, ${objectType.name}>[]`,
             statements: [
-              `return identifiers.map(identifier => ${objectType.staticModuleName}.fromRdf({ resource: this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedResource" : "resource"}(identifier) }));`,
+              `return this.${objectSetInterfaceMethodSignatures.objectIdentifiers.name}Sync(query).map(identifiers => identifiers.map(identifier => ${objectType.staticModuleName}.fromRdf({ resource: this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedResource" : "resource"}(identifier) })));`,
             ],
           },
           {
@@ -110,7 +110,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             isAsync: true,
             kind: StructureKind.Method,
             statements: [
-              `return this.${objectSetInterfaceMethodSignatures.objectsCount.name}Sync();`,
+              `return this.${objectSetInterfaceMethodSignatures.objectsCount.name}Sync(query);`,
             ],
           },
           {
@@ -120,7 +120,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             returnType: "purify.Either<Error, number>",
             statements: objectType.fromRdfType.isJust()
               ? [
-                  `return this.$objectsCountSync(this.${objectType.objectSetMethodNames.objects}GeneratorSync());`,
+                  `return this.$objectsCountSync(this.${objectType.objectSetMethodNames.objects}GeneratorSync(), query);`,
                 ]
               : [
                   `return purify.Left(new Error("${objectType.name} has no fromRdfType"));`,
@@ -132,14 +132,14 @@ export function rdfjsDatasetObjectSetClassDeclaration({
                   isGenerator: true,
                   kind: StructureKind.Method,
                   name: `${objectSetInterfaceMethodSignatures.objects.name}GeneratorSync`,
-                  returnType: `Generator<${objectType.name}>`,
+                  returnType: `Generator<purify.Either<Error, ${objectType.name}>`,
                   scope: Scope.Protected,
                   statements: [
                     `for (const resource of this.resourceSet.${objectType.identifierType.isNamedNodeKind ? "namedInstancesOf" : "instancesOf"}(${objectType.staticModuleName}.fromRdfType)) {
-                     const object = ${objectType.staticModuleName}.fromRdf({ resource });
-                     if (object.isRight()) {
-                       yield object.unsafeCoerce();
-                     }
+                       const object = ${objectType.staticModuleName}.fromRdf({ resource });
+                       if (object.isRight()) {
+                         yield object.unsafeCoerce();
+                       }
                    }`,
                   ],
                 } satisfies MethodDeclarationStructure,
@@ -158,15 +158,15 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             },
             {
               hasQuestionToken: true,
-              name: "options",
-              type: "{ limit?: number; offset?: number; }",
+              name: "query",
+              type: "$ObjectSet.Query<ObjectIdentifierT>",
             },
           ],
-          returnType: "purify.Either<Error, readonly IdentifierT[]>",
+          returnType: "purify.Either<Error, readonly ObjectIdentifierT[]>",
           statements: [
-            "const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;",
+            "const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;",
             "if (limit <= 0) { return purify.Either.of([]); }",
-            "let offset = options?.offset ?? 0;",
+            "let offset = query?.offset ?? 0;",
             "if (offset < 0) { offset = 0; }",
             "let identifierI = 0;",
             "const result: IdentifierT[] = []",
@@ -180,15 +180,87 @@ export function rdfjsDatasetObjectSetClassDeclaration({
           ],
           typeParameters: [
             {
-              constraint: "rdfjs.BlankNode | rdfjs.NamedNode",
-              name: "IdentifierT",
+              constraint: "{ readonly identifier: ObjectIdentifierT }",
+              name: "ObjectT",
             },
             {
-              constraint: "{ readonly identifier: IdentifierT }",
-              name: "ObjectT",
+              constraint: "rdfjs.BlankNode | rdfjs.NamedNode",
+              name: "ObjectIdentifierT",
             },
           ],
         } satisfies MethodDeclarationStructure,
+        //         {
+        //           kind: StructureKind.Method,
+        //           name: "$objectsSync",
+        //           parameters: [
+        //             {
+        //               name: "objectType",
+        //               type: `{
+        // fromRdf: (parameters: { resource: rdfjsResource.Resource<ResourceIdentifierT> }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+        // fromRdfType?: rdfjs.NamedNode;
+        //             }`,
+        //             },
+        //             {
+        //               hasQuestionToken: true,
+        //               name: "query",
+        //               type: "$ObjectSet.Query<ObjectIdentifierT>",
+        //             },
+        //             {
+        //               name: "resourceIdentifierTypes",
+        //               type: `Set<"BlankNode" | "NamedNode">`,
+        //             },
+        //           ],
+        //           returnType: "Generator<purify.Either<Error, ObjectT>>",
+        //           statements: [
+        //             `function* allObjects() {
+        //               if (!fromRdfType) { return; }
+        //               if (resourceIdentifierTypes.has("BlankNode")) {
+        //                 for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+        //                   yield fromRdf({ resource });
+        //                 }
+        //               } else {
+        //                 for (const resource of this.resourceSet.namedInstancesOf(fromRdfType)) {
+        //                   yield fromRdf({ resource });
+        //                 }
+        //               }
+        //             }`,
+        //             `function* limitObjects(objects: Generator<purify.Either<Error, ObjectT>>) {
+        //                const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
+        //                if (limit <= 0) { return; }
+        //                let objectI = 0;
+        //                for (const object of objects) {
+        //                  yield object;
+        //                  if (++objectI === limit) { break; }
+        //                }
+        //             }`,
+        //             `function* offsetObjects(objects: Generator<purify.Either<Error, ObjectT>>) {
+        //                let offset = query?.offset ?? 0;
+        //                if (offset < 0) { offset = 0; }
+        //                let objectI = 0;
+        //                for (const object of objects) {
+        //                  if (objectI++ >= offset) {
+        //                    yield object;
+        //                  }
+        //                }
+        //             }`,
+        //             "if (!query.where) { yield* limitObjects(offsetObjects(allObjects())); return; }",
+        //             `if (resourceIdentifierTypes.has("BlankNode")) { return query.where.identifiers.map(identifier => fromRdf({ resource: this.resourceSet.resource(identifier) })); }`,
+        //           ],
+        //           typeParameters: [
+        //             {
+        //               constraint: "{ readonly identifier: ObjectIdentifierT }",
+        //               name: "ObjectT",
+        //             },
+        //             {
+        //               constraint: "rdfjs.BlankNode | rdfjs.NamedNode",
+        //               name: "ObjectIdentifierT",
+        //             },
+        //             {
+        //               constraint: "rdfjs.BlankNode | rdfjs.NamedNode",
+        //               name: "ResourceIdentifierT",
+        //             },
+        //           ],
+        //         },
         {
           kind: StructureKind.Method,
           name: "$objectsCountSync",

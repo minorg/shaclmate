@@ -78,7 +78,7 @@ export function toRdfFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
   return Maybe.of({
     name: "toRdf",
     parameters,
-    returnType: this.rdfjsResourceType({ mutable: true }).name,
+    returnType: this.toRdfjsResourceType,
     statements,
   });
 }

@@ -316,7 +316,7 @@ export class ObjectType extends DeclaredType {
   override fromRdfExpression({
     variables,
   }: Parameters<Type["fromRdfExpression"]>[0]): string {
-    return `${variables.resourceValues}.head().chain(value => value.to${this.rdfjsResourceType().named ? "Named" : ""}Resource()).chain(_resource => ${this.staticModuleName}.fromRdf({ ...${variables.context}, ${variables.ignoreRdfType ? "ignoreRdfType: true, " : ""}languageIn: ${variables.languageIn}, resource: _resource }))`;
+    return `${variables.resourceValues}.head().chain(value => value.toResource()).chain(_resource => ${this.staticModuleName}.fromRdf({ ...${variables.context}, ${variables.ignoreRdfType ? "ignoreRdfType: true, " : ""}languageIn: ${variables.languageIn}, resource: _resource }))`;
   }
 
   override hashStatements({
@@ -346,20 +346,12 @@ export class ObjectType extends DeclaredType {
     return `${this.staticModuleName}.jsonZodSchema()`;
   }
 
-  rdfjsResourceType(options?: { mutable?: boolean }): {
-    readonly mutable: boolean;
-    readonly name: string;
-    readonly named: boolean;
-  } {
+  get toRdfjsResourceType(): string {
     if (this.parentObjectTypes.length > 0) {
-      return this.parentObjectTypes[0].rdfjsResourceType(options);
+      return this.parentObjectTypes[0].toRdfjsResourceType;
     }
 
-    return {
-      mutable: !!options?.mutable,
-      name: `rdfjsResource.${options?.mutable ? "Mutable" : ""}Resource${this.identifierType.isNamedNodeKind ? "<rdfjs.NamedNode>" : ""}`,
-      named: this.identifierType.isNamedNodeKind,
-    };
+    return `rdfjsResource.MutableResource${this.identifierType.isNamedNodeKind ? "<rdfjs.NamedNode>" : ""}`;
   }
 
   override snippetDeclarations(): readonly string[] {
