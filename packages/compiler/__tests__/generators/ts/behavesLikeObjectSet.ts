@@ -36,7 +36,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     }
   });
 
-  it("objectByIdentifier", async ({ expect }) => {
+  it("object", async ({ expect }) => {
     expect(
       (
         await objectSet.concreteChildClassNodeShape(
@@ -96,17 +96,14 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     ]);
   });
 
-  it("objectsCount", async ({ expect }) => {
-    expect(
-      (await objectSet.concreteChildClassNodeShapesCount()).unsafeCoerce(),
-    ).toStrictEqual(expectedObjects.length);
-  });
-
-  it("objects (all)", async ({ expect }) => {
+  it("objects (all identifiers)", async ({ expect }) => {
     const actualObjects = (
-      await objectSet.concreteChildClassNodeShapes(
-        expectedObjects.map((object) => object.identifier),
-      )
+      await objectSet.concreteChildClassNodeShapes({
+        where: {
+          identifiers: expectedObjects.map((object) => object.identifier),
+          type: "identifiers",
+        },
+      })
     ).map((either) => either.unsafeCoerce());
     expect(actualObjects).toHaveLength(expectedObjects.length);
     for (const expectedObject of expectedObjects) {
@@ -118,12 +115,17 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     }
   });
 
-  it("objects (subset)", async ({ expect }) => {
+  it("objects (subset of identifiers)", async ({ expect }) => {
     const sliceStart = 2;
     const actualObjects = (
-      await objectSet.concreteChildClassNodeShapes(
-        expectedObjects.slice(sliceStart).map((object) => object.identifier),
-      )
+      await objectSet.concreteChildClassNodeShapes({
+        where: {
+          identifiers: expectedObjects
+            .slice(sliceStart)
+            .map((object) => object.identifier),
+          type: "identifiers",
+        },
+      })
     ).map((either) => either.unsafeCoerce());
     expect(actualObjects).toHaveLength(
       expectedObjects.slice(sliceStart).length,
@@ -135,5 +137,11 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
         ),
       );
     }
+  });
+
+  it("objectsCount", async ({ expect }) => {
+    expect(
+      (await objectSet.concreteChildClassNodeShapesCount()).unsafeCoerce(),
+    ).toStrictEqual(expectedObjects.length);
   });
 }

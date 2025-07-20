@@ -1958,88 +1958,6 @@
               "value": "n3-231"
             },
             "propertyPath": {
-              "curie": ":narrowLiteralsProperty",
-              "uniqueLocalPart": "narrowLiteralsProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/narrowLiteralsProperty"
-            }
-          },
-          "path": "http://example.com/narrowLiteralsProperty",
-          "type": {
-            "itemType": {
-              "kind": "UnionType",
-              "types": [
-                {
-                  "datatype": {
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#integer"
-                  },
-                  "hasValue": [],
-                  "kind": "LiteralType"
-                },
-                {
-                  "datatype": {
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#string"
-                  },
-                  "hasValue": [],
-                  "kind": "LiteralType"
-                }
-              ]
-            },
-            "kind": "OptionType"
-          }
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-236"
-            },
-            "propertyPath": {
-              "curie": ":widenedLiteralsProperty",
-              "uniqueLocalPart": "widenedLiteralsProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/widenedLiteralsProperty"
-            }
-          },
-          "path": "http://example.com/widenedLiteralsProperty",
-          "type": {
-            "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
-          }
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-241"
-            },
-            "propertyPath": {
-              "curie": ":widenedTermsProperty",
-              "uniqueLocalPart": "widenedTermsProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/widenedTermsProperty"
-            }
-          },
-          "path": "http://example.com/widenedTermsProperty",
-          "type": {
-            "itemType": {
-              "kind": "TermType"
-            },
-            "kind": "OptionType"
-          }
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-246"
-            },
-            "propertyPath": {
               "curie": ":unrelatedTypesProperty",
               "uniqueLocalPart": "unrelatedTypesProperty",
               "termType": "NamedNode",
@@ -2076,6 +1994,88 @@
                   "identifierMintingStrategy": "blankNode"
                 }
               ]
+            },
+            "kind": "OptionType"
+          }
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-236"
+            },
+            "propertyPath": {
+              "curie": ":narrowLiteralsProperty",
+              "uniqueLocalPart": "narrowLiteralsProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/narrowLiteralsProperty"
+            }
+          },
+          "path": "http://example.com/narrowLiteralsProperty",
+          "type": {
+            "itemType": {
+              "kind": "UnionType",
+              "types": [
+                {
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#integer"
+                  },
+                  "hasValue": [],
+                  "kind": "LiteralType"
+                },
+                {
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  },
+                  "hasValue": [],
+                  "kind": "LiteralType"
+                }
+              ]
+            },
+            "kind": "OptionType"
+          }
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-241"
+            },
+            "propertyPath": {
+              "curie": ":widenedLiteralsProperty",
+              "uniqueLocalPart": "widenedLiteralsProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/widenedLiteralsProperty"
+            }
+          },
+          "path": "http://example.com/widenedLiteralsProperty",
+          "type": {
+            "itemType": {
+              "hasValue": [],
+              "kind": "LiteralType"
+            },
+            "kind": "OptionType"
+          }
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-246"
+            },
+            "propertyPath": {
+              "curie": ":widenedTermsProperty",
+              "uniqueLocalPart": "widenedTermsProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/widenedTermsProperty"
+            }
+          },
+          "path": "http://example.com/widenedTermsProperty",
+          "type": {
+            "itemType": {
+              "kind": "TermType"
             },
             "kind": "OptionType"
           }

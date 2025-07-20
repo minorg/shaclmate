@@ -173,7 +173,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
                   yield objectType.fromRdf({ resource });
                 }
               }`,
-            `function* limitObjects(objects: Generator<purify.Either<Error, ObjectT>>) {
+            `function* limitObjects(objects: Iterable<purify.Either<Error, ObjectT>>) {
                 const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
                 if (limit <= 0) { return; }
                 let objectI = 0;
@@ -182,7 +182,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
                   if (++objectI === limit) { break; }
                 }
              }`,
-            `function* offsetObjects(objects: Generator<purify.Either<Error, ObjectT>>) {
+            `function* offsetObjects(objects: Iterable<purify.Either<Error, ObjectT>>) {
                 let offset = query?.offset ?? 0;
                 if (offset < 0) { offset = 0; }
                 let objectI = 0;
@@ -193,7 +193,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
                 }
               }`,
             "if (!query?.where) { yield* limitObjects(offsetObjects(allObjects())); return; }",
-            "return query.where.identifiers.map(identifier => objectType.fromRdf({ resource: this.resourceSet.resource(identifier) }));",
+            "yield* limitObjects(offsetObjects(query.where.identifiers.map(identifier => objectType.fromRdf({ resource: this.resourceSet.resource(identifier) }))));",
           ],
           typeParameters,
         },
