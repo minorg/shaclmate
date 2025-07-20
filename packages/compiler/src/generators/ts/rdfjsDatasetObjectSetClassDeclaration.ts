@@ -19,17 +19,17 @@ export function rdfjsDatasetObjectSetClassDeclaration({
   objectTypes: readonly ObjectType[];
 }): ClassDeclarationStructure {
   const parameters = {
-    query: {
-      hasQuestionToken: true,
-      name: "query",
-      type: "$ObjectSet.Query<ObjectIdentifierT>",
-    } satisfies OptionalKind<ParameterDeclarationStructure>,
     objectType: {
       name: "objectType",
       type: `{\
   fromRdf: (parameters: { resource: rdfjsResource.Resource }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
   fromRdfType?: rdfjs.NamedNode;
 }`,
+    } satisfies OptionalKind<ParameterDeclarationStructure>,
+    query: {
+      hasQuestionToken: true,
+      name: "query",
+      type: "$ObjectSet.Query<ObjectIdentifierT>",
     } satisfies OptionalKind<ParameterDeclarationStructure>,
   };
 

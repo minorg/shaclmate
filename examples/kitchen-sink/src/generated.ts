@@ -1,6 +1,6 @@
 import type * as rdfjs from "@rdfjs/types";
 import { sha256 } from "js-sha256";
-import { DataFactory as dataFactory } from "n3";
+import N3, { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
 import * as rdfLiteral from "rdf-literal";
 import * as rdfjsResource from "rdfjs-resource";
@@ -22042,5 +22042,1703 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     return purify.Either.of(count);
+  }
+}
+
+export class $SparqlObjectSet implements $ObjectSet {
+  protected readonly countVariable = dataFactory.variable!("count");
+  protected readonly objectVariable = dataFactory.variable!("object");
+  protected readonly sparqlClient: {
+    queryBindings: (
+      query: string,
+    ) => Promise<
+      readonly Record<
+        string,
+        rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
+      >[]
+    >;
+    queryQuads: (query: string) => Promise<readonly rdfjs.Quad[]>;
+  };
+  protected readonly sparqlGenerator = new sparqljs.Generator();
+
+  constructor({
+    sparqlClient,
+  }: { sparqlClient: $SparqlObjectSet["sparqlClient"] }) {
+    this.sparqlClient = sparqlClient;
+  }
+
+  async baseInterfaceWithoutPropertiesNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, BaseInterfaceWithoutPropertiesNodeShape>> {
+    return (
+      await this.baseInterfaceWithoutPropertiesNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async baseInterfaceWithoutPropertiesNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      BaseInterfaceWithoutPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(BaseInterfaceWithoutPropertiesNodeShapeStatic, query);
+  }
+
+  async baseInterfaceWithoutPropertiesNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    readonly purify.Either<Error, BaseInterfaceWithoutPropertiesNodeShape>[]
+  > {
+    return this.$objects<
+      BaseInterfaceWithoutPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(BaseInterfaceWithoutPropertiesNodeShapeStatic, query);
+  }
+
+  async baseInterfaceWithoutPropertiesNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      BaseInterfaceWithoutPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(BaseInterfaceWithoutPropertiesNodeShapeStatic, query);
+  }
+
+  async baseInterfaceWithPropertiesNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, BaseInterfaceWithPropertiesNodeShape>> {
+    return (
+      await this.baseInterfaceWithPropertiesNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async baseInterfaceWithPropertiesNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      BaseInterfaceWithPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(BaseInterfaceWithPropertiesNodeShapeStatic, query);
+  }
+
+  async baseInterfaceWithPropertiesNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    readonly purify.Either<Error, BaseInterfaceWithPropertiesNodeShape>[]
+  > {
+    return this.$objects<
+      BaseInterfaceWithPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(BaseInterfaceWithPropertiesNodeShapeStatic, query);
+  }
+
+  async baseInterfaceWithPropertiesNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      BaseInterfaceWithPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(BaseInterfaceWithPropertiesNodeShapeStatic, query);
+  }
+
+  async blankNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, BlankNodeShape>> {
+    return (
+      await this.blankNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async blankNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      BlankNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(BlankNodeShape, query);
+  }
+
+  async blankNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, BlankNodeShape>[]> {
+    return this.$objects<BlankNodeShape, rdfjs.BlankNode | rdfjs.NamedNode>(
+      BlankNodeShape,
+      query,
+    );
+  }
+
+  async blankNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      BlankNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(BlankNodeShape, query);
+  }
+
+  async concreteChildClassNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, ConcreteChildClassNodeShape>> {
+    return (
+      await this.concreteChildClassNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async concreteChildClassNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      ConcreteChildClassNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ConcreteChildClassNodeShape, query);
+  }
+
+  async concreteChildClassNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, ConcreteChildClassNodeShape>[]> {
+    return this.$objects<
+      ConcreteChildClassNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ConcreteChildClassNodeShape, query);
+  }
+
+  async concreteChildClassNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      ConcreteChildClassNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ConcreteChildClassNodeShape, query);
+  }
+
+  async concreteChildInterfaceNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, ConcreteChildInterfaceNodeShape>> {
+    return (
+      await this.concreteChildInterfaceNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async concreteChildInterfaceNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      ConcreteChildInterfaceNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ConcreteChildInterfaceNodeShape, query);
+  }
+
+  async concreteChildInterfaceNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, ConcreteChildInterfaceNodeShape>[]> {
+    return this.$objects<
+      ConcreteChildInterfaceNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ConcreteChildInterfaceNodeShape, query);
+  }
+
+  async concreteChildInterfaceNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      ConcreteChildInterfaceNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ConcreteChildInterfaceNodeShape, query);
+  }
+
+  async concreteParentClassNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, ConcreteParentClassNodeShape>> {
+    return (
+      await this.concreteParentClassNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async concreteParentClassNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      ConcreteParentClassNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ConcreteParentClassNodeShapeStatic, query);
+  }
+
+  async concreteParentClassNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, ConcreteParentClassNodeShape>[]> {
+    return this.$objects<
+      ConcreteParentClassNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ConcreteParentClassNodeShapeStatic, query);
+  }
+
+  async concreteParentClassNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      ConcreteParentClassNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ConcreteParentClassNodeShapeStatic, query);
+  }
+
+  async concreteParentInterfaceNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, ConcreteParentInterfaceNodeShape>> {
+    return (
+      await this.concreteParentInterfaceNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async concreteParentInterfaceNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      ConcreteParentInterfaceNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ConcreteParentInterfaceNodeShapeStatic, query);
+  }
+
+  async concreteParentInterfaceNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    readonly purify.Either<Error, ConcreteParentInterfaceNodeShape>[]
+  > {
+    return this.$objects<
+      ConcreteParentInterfaceNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ConcreteParentInterfaceNodeShapeStatic, query);
+  }
+
+  async concreteParentInterfaceNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      ConcreteParentInterfaceNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ConcreteParentInterfaceNodeShapeStatic, query);
+  }
+
+  async defaultValuePropertiesNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, DefaultValuePropertiesNodeShape>> {
+    return (
+      await this.defaultValuePropertiesNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async defaultValuePropertiesNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      DefaultValuePropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(DefaultValuePropertiesNodeShape, query);
+  }
+
+  async defaultValuePropertiesNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, DefaultValuePropertiesNodeShape>[]> {
+    return this.$objects<
+      DefaultValuePropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(DefaultValuePropertiesNodeShape, query);
+  }
+
+  async defaultValuePropertiesNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      DefaultValuePropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(DefaultValuePropertiesNodeShape, query);
+  }
+
+  async explicitFromToRdfTypesNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, ExplicitFromToRdfTypesNodeShape>> {
+    return (
+      await this.explicitFromToRdfTypesNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async explicitFromToRdfTypesNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      ExplicitFromToRdfTypesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ExplicitFromToRdfTypesNodeShape, query);
+  }
+
+  async explicitFromToRdfTypesNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, ExplicitFromToRdfTypesNodeShape>[]> {
+    return this.$objects<
+      ExplicitFromToRdfTypesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ExplicitFromToRdfTypesNodeShape, query);
+  }
+
+  async explicitFromToRdfTypesNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      ExplicitFromToRdfTypesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ExplicitFromToRdfTypesNodeShape, query);
+  }
+
+  async explicitRdfTypeNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, ExplicitRdfTypeNodeShape>> {
+    return (
+      await this.explicitRdfTypeNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async explicitRdfTypeNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      ExplicitRdfTypeNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ExplicitRdfTypeNodeShape, query);
+  }
+
+  async explicitRdfTypeNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, ExplicitRdfTypeNodeShape>[]> {
+    return this.$objects<
+      ExplicitRdfTypeNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ExplicitRdfTypeNodeShape, query);
+  }
+
+  async explicitRdfTypeNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      ExplicitRdfTypeNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ExplicitRdfTypeNodeShape, query);
+  }
+
+  async externNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, ExternNodeShape>> {
+    return (
+      await this.externNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async externNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      ExternNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ExternNodeShape, query);
+  }
+
+  async externNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, ExternNodeShape>[]> {
+    return this.$objects<ExternNodeShape, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ExternNodeShape,
+      query,
+    );
+  }
+
+  async externNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      ExternNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ExternNodeShape, query);
+  }
+
+  async externObjectType(
+    _identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, ExternObjectType>> {
+    return purify.Left(new Error("object: not supported"));
+  }
+
+  async externObjectTypeIdentifiers(
+    _query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return purify.Left(new Error("objectIdentifiers: not supported"));
+  }
+
+  async externObjectTypes(
+    _query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, ExternObjectType>[]> {
+    return [purify.Left(new Error("objects: not supported"))];
+  }
+
+  async externObjectTypesCount(
+    _query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return purify.Left(new Error("objectsCount: not supported"));
+  }
+
+  async externPropertiesNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, ExternPropertiesNodeShape>> {
+    return (
+      await this.externPropertiesNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async externPropertiesNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      ExternPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ExternPropertiesNodeShape, query);
+  }
+
+  async externPropertiesNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, ExternPropertiesNodeShape>[]> {
+    return this.$objects<
+      ExternPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ExternPropertiesNodeShape, query);
+  }
+
+  async externPropertiesNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      ExternPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ExternPropertiesNodeShape, query);
+  }
+
+  async hasValuePropertiesNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, HasValuePropertiesNodeShape>> {
+    return (
+      await this.hasValuePropertiesNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async hasValuePropertiesNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      HasValuePropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(HasValuePropertiesNodeShape, query);
+  }
+
+  async hasValuePropertiesNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, HasValuePropertiesNodeShape>[]> {
+    return this.$objects<
+      HasValuePropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(HasValuePropertiesNodeShape, query);
+  }
+
+  async hasValuePropertiesNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      HasValuePropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(HasValuePropertiesNodeShape, query);
+  }
+
+  async inIdentifierNodeShape(
+    identifier: rdfjs.NamedNode<
+      | "http://example.com/InIdentifierNodeShapeInstance1"
+      | "http://example.com/InIdentifierNodeShapeInstance2"
+    >,
+  ): Promise<purify.Either<Error, InIdentifierNodeShape>> {
+    return (
+      await this.inIdentifierNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async inIdentifierNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<
+      rdfjs.NamedNode<
+        | "http://example.com/InIdentifierNodeShapeInstance1"
+        | "http://example.com/InIdentifierNodeShapeInstance2"
+      >
+    >,
+  ): Promise<
+    purify.Either<
+      Error,
+      readonly rdfjs.NamedNode<
+        | "http://example.com/InIdentifierNodeShapeInstance1"
+        | "http://example.com/InIdentifierNodeShapeInstance2"
+      >[]
+    >
+  > {
+    return this.$objectIdentifiers<
+      InIdentifierNodeShape,
+      rdfjs.NamedNode<
+        | "http://example.com/InIdentifierNodeShapeInstance1"
+        | "http://example.com/InIdentifierNodeShapeInstance2"
+      >
+    >(InIdentifierNodeShape, query);
+  }
+
+  async inIdentifierNodeShapes(
+    query?: $ObjectSet.Query<
+      rdfjs.NamedNode<
+        | "http://example.com/InIdentifierNodeShapeInstance1"
+        | "http://example.com/InIdentifierNodeShapeInstance2"
+      >
+    >,
+  ): Promise<readonly purify.Either<Error, InIdentifierNodeShape>[]> {
+    return this.$objects<
+      InIdentifierNodeShape,
+      rdfjs.NamedNode<
+        | "http://example.com/InIdentifierNodeShapeInstance1"
+        | "http://example.com/InIdentifierNodeShapeInstance2"
+      >
+    >(InIdentifierNodeShape, query);
+  }
+
+  async inIdentifierNodeShapesCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        rdfjs.NamedNode<
+          | "http://example.com/InIdentifierNodeShapeInstance1"
+          | "http://example.com/InIdentifierNodeShapeInstance2"
+        >
+      >,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      InIdentifierNodeShape,
+      rdfjs.NamedNode<
+        | "http://example.com/InIdentifierNodeShapeInstance1"
+        | "http://example.com/InIdentifierNodeShapeInstance2"
+      >
+    >(InIdentifierNodeShape, query);
+  }
+
+  async inlineNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, InlineNodeShape>> {
+    return (
+      await this.inlineNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async inlineNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      InlineNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(InlineNodeShape, query);
+  }
+
+  async inlineNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, InlineNodeShape>[]> {
+    return this.$objects<InlineNodeShape, rdfjs.BlankNode | rdfjs.NamedNode>(
+      InlineNodeShape,
+      query,
+    );
+  }
+
+  async inlineNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      InlineNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(InlineNodeShape, query);
+  }
+
+  async inPropertiesNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, InPropertiesNodeShape>> {
+    return (
+      await this.inPropertiesNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async inPropertiesNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      InPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(InPropertiesNodeShape, query);
+  }
+
+  async inPropertiesNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, InPropertiesNodeShape>[]> {
+    return this.$objects<
+      InPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(InPropertiesNodeShape, query);
+  }
+
+  async inPropertiesNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      InPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(InPropertiesNodeShape, query);
+  }
+
+  async interfaceNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, InterfaceNodeShape>> {
+    return (
+      await this.interfaceNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async interfaceNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      InterfaceNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(InterfaceNodeShape, query);
+  }
+
+  async interfaceNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, InterfaceNodeShape>[]> {
+    return this.$objects<InterfaceNodeShape, rdfjs.BlankNode | rdfjs.NamedNode>(
+      InterfaceNodeShape,
+      query,
+    );
+  }
+
+  async interfaceNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      InterfaceNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(InterfaceNodeShape, query);
+  }
+
+  async interfaceUnionNodeShapeMember1(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember1>> {
+    return (
+      await this.interfaceUnionNodeShapeMember1s({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async interfaceUnionNodeShapeMember1Identifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      InterfaceUnionNodeShapeMember1,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(InterfaceUnionNodeShapeMember1, query);
+  }
+
+  async interfaceUnionNodeShapeMember1s(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember1>[]> {
+    return this.$objects<
+      InterfaceUnionNodeShapeMember1,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(InterfaceUnionNodeShapeMember1, query);
+  }
+
+  async interfaceUnionNodeShapeMember1sCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      InterfaceUnionNodeShapeMember1,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(InterfaceUnionNodeShapeMember1, query);
+  }
+
+  async interfaceUnionNodeShapeMember2a(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember2a>> {
+    return (
+      await this.interfaceUnionNodeShapeMember2as({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async interfaceUnionNodeShapeMember2aIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      InterfaceUnionNodeShapeMember2a,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(InterfaceUnionNodeShapeMember2a, query);
+  }
+
+  async interfaceUnionNodeShapeMember2as(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember2a>[]> {
+    return this.$objects<
+      InterfaceUnionNodeShapeMember2a,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(InterfaceUnionNodeShapeMember2a, query);
+  }
+
+  async interfaceUnionNodeShapeMember2asCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      InterfaceUnionNodeShapeMember2a,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(InterfaceUnionNodeShapeMember2a, query);
+  }
+
+  async interfaceUnionNodeShapeMember2b(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember2b>> {
+    return (
+      await this.interfaceUnionNodeShapeMember2bs({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async interfaceUnionNodeShapeMember2bIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      InterfaceUnionNodeShapeMember2b,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(InterfaceUnionNodeShapeMember2b, query);
+  }
+
+  async interfaceUnionNodeShapeMember2bs(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember2b>[]> {
+    return this.$objects<
+      InterfaceUnionNodeShapeMember2b,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(InterfaceUnionNodeShapeMember2b, query);
+  }
+
+  async interfaceUnionNodeShapeMember2bsCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      InterfaceUnionNodeShapeMember2b,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(InterfaceUnionNodeShapeMember2b, query);
+  }
+
+  async iriNodeShape(
+    identifier: rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, IriNodeShape>> {
+    return (
+      await this.iriNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async iriNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.NamedNode>,
+  ): Promise<purify.Either<Error, readonly rdfjs.NamedNode[]>> {
+    return this.$objectIdentifiers<IriNodeShape, rdfjs.NamedNode>(
+      IriNodeShape,
+      query,
+    );
+  }
+
+  async iriNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, IriNodeShape>[]> {
+    return this.$objects<IriNodeShape, rdfjs.NamedNode>(IriNodeShape, query);
+  }
+
+  async iriNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<IriNodeShape, rdfjs.NamedNode>(
+      IriNodeShape,
+      query,
+    );
+  }
+
+  async languageInPropertiesNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, LanguageInPropertiesNodeShape>> {
+    return (
+      await this.languageInPropertiesNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async languageInPropertiesNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      LanguageInPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(LanguageInPropertiesNodeShape, query);
+  }
+
+  async languageInPropertiesNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, LanguageInPropertiesNodeShape>[]> {
+    return this.$objects<
+      LanguageInPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(LanguageInPropertiesNodeShape, query);
+  }
+
+  async languageInPropertiesNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      LanguageInPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(LanguageInPropertiesNodeShape, query);
+  }
+
+  async listPropertiesNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, ListPropertiesNodeShape>> {
+    return (
+      await this.listPropertiesNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async listPropertiesNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      ListPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ListPropertiesNodeShape, query);
+  }
+
+  async listPropertiesNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, ListPropertiesNodeShape>[]> {
+    return this.$objects<
+      ListPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ListPropertiesNodeShape, query);
+  }
+
+  async listPropertiesNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      ListPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ListPropertiesNodeShape, query);
+  }
+
+  async mutablePropertiesNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, MutablePropertiesNodeShape>> {
+    return (
+      await this.mutablePropertiesNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async mutablePropertiesNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      MutablePropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(MutablePropertiesNodeShape, query);
+  }
+
+  async mutablePropertiesNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, MutablePropertiesNodeShape>[]> {
+    return this.$objects<
+      MutablePropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(MutablePropertiesNodeShape, query);
+  }
+
+  async mutablePropertiesNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      MutablePropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(MutablePropertiesNodeShape, query);
+  }
+
+  async nonClassNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, NonClassNodeShape>> {
+    return (
+      await this.nonClassNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async nonClassNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      NonClassNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(NonClassNodeShape, query);
+  }
+
+  async nonClassNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, NonClassNodeShape>[]> {
+    return this.$objects<NonClassNodeShape, rdfjs.BlankNode | rdfjs.NamedNode>(
+      NonClassNodeShape,
+      query,
+    );
+  }
+
+  async nonClassNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      NonClassNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(NonClassNodeShape, query);
+  }
+
+  async orderedPropertiesNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, OrderedPropertiesNodeShape>> {
+    return (
+      await this.orderedPropertiesNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async orderedPropertiesNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      OrderedPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(OrderedPropertiesNodeShape, query);
+  }
+
+  async orderedPropertiesNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, OrderedPropertiesNodeShape>[]> {
+    return this.$objects<
+      OrderedPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(OrderedPropertiesNodeShape, query);
+  }
+
+  async orderedPropertiesNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      OrderedPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(OrderedPropertiesNodeShape, query);
+  }
+
+  async propertyCardinalitiesNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, PropertyCardinalitiesNodeShape>> {
+    return (
+      await this.propertyCardinalitiesNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async propertyCardinalitiesNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      PropertyCardinalitiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(PropertyCardinalitiesNodeShape, query);
+  }
+
+  async propertyCardinalitiesNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, PropertyCardinalitiesNodeShape>[]> {
+    return this.$objects<
+      PropertyCardinalitiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(PropertyCardinalitiesNodeShape, query);
+  }
+
+  async propertyCardinalitiesNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      PropertyCardinalitiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(PropertyCardinalitiesNodeShape, query);
+  }
+
+  async propertyVisibilitiesNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, PropertyVisibilitiesNodeShape>> {
+    return (
+      await this.propertyVisibilitiesNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async propertyVisibilitiesNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      PropertyVisibilitiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(PropertyVisibilitiesNodeShape, query);
+  }
+
+  async propertyVisibilitiesNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, PropertyVisibilitiesNodeShape>[]> {
+    return this.$objects<
+      PropertyVisibilitiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(PropertyVisibilitiesNodeShape, query);
+  }
+
+  async propertyVisibilitiesNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      PropertyVisibilitiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(PropertyVisibilitiesNodeShape, query);
+  }
+
+  async sha256IriNodeShape(
+    identifier: rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, Sha256IriNodeShape>> {
+    return (
+      await this.sha256IriNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async sha256IriNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.NamedNode>,
+  ): Promise<purify.Either<Error, readonly rdfjs.NamedNode[]>> {
+    return this.$objectIdentifiers<Sha256IriNodeShape, rdfjs.NamedNode>(
+      Sha256IriNodeShape,
+      query,
+    );
+  }
+
+  async sha256IriNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, Sha256IriNodeShape>[]> {
+    return this.$objects<Sha256IriNodeShape, rdfjs.NamedNode>(
+      Sha256IriNodeShape,
+      query,
+    );
+  }
+
+  async sha256IriNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<Sha256IriNodeShape, rdfjs.NamedNode>(
+      Sha256IriNodeShape,
+      query,
+    );
+  }
+
+  async termPropertiesNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, TermPropertiesNodeShape>> {
+    return (
+      await this.termPropertiesNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async termPropertiesNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      TermPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(TermPropertiesNodeShape, query);
+  }
+
+  async termPropertiesNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, TermPropertiesNodeShape>[]> {
+    return this.$objects<
+      TermPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(TermPropertiesNodeShape, query);
+  }
+
+  async termPropertiesNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      TermPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(TermPropertiesNodeShape, query);
+  }
+
+  async unionNodeShapeMember1(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, UnionNodeShapeMember1>> {
+    return (
+      await this.unionNodeShapeMember1s({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async unionNodeShapeMember1Identifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      UnionNodeShapeMember1,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(UnionNodeShapeMember1, query);
+  }
+
+  async unionNodeShapeMember1s(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, UnionNodeShapeMember1>[]> {
+    return this.$objects<
+      UnionNodeShapeMember1,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(UnionNodeShapeMember1, query);
+  }
+
+  async unionNodeShapeMember1sCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      UnionNodeShapeMember1,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(UnionNodeShapeMember1, query);
+  }
+
+  async unionNodeShapeMember2(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, UnionNodeShapeMember2>> {
+    return (
+      await this.unionNodeShapeMember2s({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async unionNodeShapeMember2Identifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      UnionNodeShapeMember2,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(UnionNodeShapeMember2, query);
+  }
+
+  async unionNodeShapeMember2s(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, UnionNodeShapeMember2>[]> {
+    return this.$objects<
+      UnionNodeShapeMember2,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(UnionNodeShapeMember2, query);
+  }
+
+  async unionNodeShapeMember2sCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      UnionNodeShapeMember2,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(UnionNodeShapeMember2, query);
+  }
+
+  async unionPropertiesNodeShape(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, UnionPropertiesNodeShape>> {
+    return (
+      await this.unionPropertiesNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async unionPropertiesNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.$objectIdentifiers<
+      UnionPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(UnionPropertiesNodeShape, query);
+  }
+
+  async unionPropertiesNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, UnionPropertiesNodeShape>[]> {
+    return this.$objects<
+      UnionPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(UnionPropertiesNodeShape, query);
+  }
+
+  async unionPropertiesNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<
+      UnionPropertiesNodeShape,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(UnionPropertiesNodeShape, query);
+  }
+
+  async uuidV4IriNodeShape(
+    identifier: rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, UuidV4IriNodeShape>> {
+    return (
+      await this.uuidV4IriNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async uuidV4IriNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.NamedNode>,
+  ): Promise<purify.Either<Error, readonly rdfjs.NamedNode[]>> {
+    return this.$objectIdentifiers<UuidV4IriNodeShape, rdfjs.NamedNode>(
+      UuidV4IriNodeShape,
+      query,
+    );
+  }
+
+  async uuidV4IriNodeShapes(
+    query?: $ObjectSet.Query<rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, UuidV4IriNodeShape>[]> {
+    return this.$objects<UuidV4IriNodeShape, rdfjs.NamedNode>(
+      UuidV4IriNodeShape,
+      query,
+    );
+  }
+
+  async uuidV4IriNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<UuidV4IriNodeShape, rdfjs.NamedNode>(
+      UuidV4IriNodeShape,
+      query,
+    );
+  }
+
+  protected $mapBindingsToCount(
+    bindings: readonly Record<
+      string,
+      rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
+    >[],
+    variable: string,
+  ): purify.Either<Error, number> {
+    if (bindings.length === 0) {
+      return purify.Left(new Error("empty result rows"));
+    }
+    if (bindings.length > 1) {
+      return purify.Left(new Error("more than one result row"));
+    }
+    const count = bindings[0][variable];
+    if (typeof count === "undefined") {
+      return purify.Left(new Error("no 'count' variable in result row"));
+    }
+    if (count.termType !== "Literal") {
+      return purify.Left(new Error("'count' variable is not a Literal"));
+    }
+    const parsedCount = Number.parseInt(count.value);
+    if (Number.isNaN(parsedCount)) {
+      return purify.Left(new Error("'count' variable is NaN"));
+    }
+    return purify.Either.of(parsedCount);
+  }
+
+  protected $mapBindingsToIdentifiers(
+    bindings: readonly Record<
+      string,
+      rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
+    >[],
+    variable: string,
+  ): readonly rdfjs.NamedNode[] {
+    const identifiers: rdfjs.NamedNode[] = [];
+    for (const bindings_ of bindings) {
+      const identifier = bindings_[variable];
+      if (
+        typeof identifier !== "undefined" &&
+        identifier.termType === "NamedNode"
+      ) {
+        identifiers.push(identifier);
+      }
+    }
+    return identifiers;
+  }
+
+  protected async $objectIdentifiers<
+    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  >(
+    objectType: {
+      fromRdf: (parameters: {
+        resource: rdfjsResource.Resource;
+      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      fromRdfType?: rdfjs.NamedNode;
+      sparqlConstructQueryString: (
+        parameters?: { subject: sparqljs.Triple["subject"] } & Omit<
+          sparqljs.ConstructQuery,
+          "prefixes" | "queryType" | "type"
+        > &
+          sparqljs.GeneratorOptions,
+      ) => string;
+    },
+    query?: $ObjectSet.Query<ObjectIdentifierT>,
+  ): Promise<purify.Either<Error, readonly ObjectIdentifierT[]>> {
+    const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return purify.Either.of([]);
+    }
+
+    let offset = query?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    if (query?.where) {
+      const identifiers = query.where.identifiers;
+      if (
+        identifiers.some((identifier) => identifier.termType === "BlankNode")
+      ) {
+        return purify.Left(
+          new Error("can't use blank node object identifiers with SPARQL"),
+        );
+      }
+      return purify.Either.of(identifiers.slice(offset, offset + limit));
+    }
+
+    if (objectType.fromRdfType) {
+      return purify.EitherAsync(
+        async () =>
+          this.$mapBindingsToIdentifiers(
+            await this.sparqlClient.queryBindings(
+              this.sparqlGenerator.stringify({
+                distinct: true,
+                limit: limit < Number.MAX_SAFE_INTEGER ? limit : undefined,
+                offset,
+                order: [{ expression: this.objectVariable }],
+                prefixes: {},
+                queryType: "SELECT",
+                type: "query",
+                variables: [this.objectVariable],
+                where: [
+                  {
+                    triples: [
+                      {
+                        object: objectType.fromRdfType!,
+                        subject: this.objectVariable,
+                        predicate: {
+                          items: [
+                            dataFactory.namedNode(
+                              "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                            ),
+                            {
+                              items: [
+                                dataFactory.namedNode(
+                                  "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                                ),
+                              ],
+                              pathType: "*",
+                              type: "path",
+                            },
+                          ],
+                          pathType: "/",
+                          type: "path",
+                        },
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                ],
+              }),
+            ),
+            this.objectVariable.value,
+          ) as readonly ObjectIdentifierT[],
+      );
+    }
+
+    return purify.Either.of([]);
+  }
+
+  async $objects<
+    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  >(
+    objectType: {
+      fromRdf: (parameters: {
+        resource: rdfjsResource.Resource;
+      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      fromRdfType?: rdfjs.NamedNode;
+      sparqlConstructQueryString: (
+        parameters?: { subject: sparqljs.Triple["subject"] } & Omit<
+          sparqljs.ConstructQuery,
+          "prefixes" | "queryType" | "type"
+        > &
+          sparqljs.GeneratorOptions,
+      ) => string;
+    },
+    query?: $ObjectSet.Query<ObjectIdentifierT>,
+  ): Promise<readonly purify.Either<Error, ObjectT>[]> {
+    const identifiersEither = await this.$objectIdentifiers<
+      ObjectT,
+      ObjectIdentifierT
+    >(objectType, query);
+    if (identifiersEither.isLeft()) {
+      return [identifiersEither];
+    }
+    const identifiers = identifiersEither.unsafeCoerce();
+    if (identifiers.length === 0) {
+      return [];
+    }
+
+    const constructQueryString = objectType.sparqlConstructQueryString({
+      subject: this.objectVariable,
+      where: [
+        {
+          type: "values" as const,
+          values: identifiers.map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+      ],
+    });
+
+    let quads: readonly rdfjs.Quad[];
+    try {
+      quads = await this.sparqlClient.queryQuads(constructQueryString);
+    } catch (e) {
+      const left = purify.Left<Error, ObjectT>(e as Error);
+      return identifiers.map(() => left);
+    }
+
+    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+
+    return identifiers.map((identifier) =>
+      objectType.fromRdf({
+        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+          dataset,
+          identifier: identifier as rdfjs.NamedNode,
+        }),
+      }),
+    );
+  }
+
+  protected async $objectsCount<
+    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  >(
+    objectType: {
+      fromRdf: (parameters: {
+        resource: rdfjsResource.Resource;
+      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      fromRdfType?: rdfjs.NamedNode;
+      sparqlConstructQueryString: (
+        parameters?: { subject: sparqljs.Triple["subject"] } & Omit<
+          sparqljs.ConstructQuery,
+          "prefixes" | "queryType" | "type"
+        > &
+          sparqljs.GeneratorOptions,
+      ) => string;
+    },
+    query?: $ObjectSet.Query<ObjectIdentifierT>,
+  ): Promise<purify.Either<Error, number>> {
+    if (!objectType.fromRdfType) {
+      return purify.Either.of(0);
+    }
+
+    if (query) {
+      throw new Error("not implemented");
+    }
+
+    return purify.EitherAsync(async ({ liftEither }) =>
+      liftEither(
+        this.$mapBindingsToCount(
+          await this.sparqlClient.queryBindings(
+            this.sparqlGenerator.stringify({
+              distinct: true,
+              prefixes: {},
+              queryType: "SELECT",
+              type: "query",
+              variables: [
+                {
+                  expression: {
+                    aggregation: "COUNT",
+                    distinct: true,
+                    expression: this.objectVariable,
+                    type: "aggregate",
+                  },
+                  variable: this.countVariable,
+                },
+              ],
+              where: [
+                {
+                  triples: [
+                    {
+                      object: objectType.fromRdfType!,
+                      subject: this.objectVariable,
+                      predicate: {
+                        items: [
+                          dataFactory.namedNode(
+                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                          ),
+                          {
+                            items: [
+                              dataFactory.namedNode(
+                                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+                              ),
+                            ],
+                            pathType: "*",
+                            type: "path",
+                          },
+                        ],
+                        pathType: "/",
+                        type: "path",
+                      },
+                    },
+                  ],
+                  type: "bgp",
+                },
+              ],
+            }),
+          ),
+          this.countVariable.value,
+        ),
+      ),
+    );
   }
 }

@@ -70,7 +70,7 @@ export function objectSetDeclarations({
     );
   }
 
-  if (objectTypesWithSparqlFeatureCount < 0) {
+  if (objectTypesWithSparqlFeatureCount > 0) {
     statements.push(
       sparqlObjectSetClassDeclaration({
         dataFactoryVariable,
