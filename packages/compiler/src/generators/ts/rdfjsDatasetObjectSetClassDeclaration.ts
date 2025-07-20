@@ -104,7 +104,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             kind: StructureKind.Method,
             name: `${objectSetInterfaceMethodSignatures.objectIdentifiers.name}Sync`,
             returnType: `purify.Either<Error, readonly ${objectType.identifierType.name}[]>`,
-            statements: `return this.$objectIdentifiersSync<${objectType.name}, ${objectType.identifierType.name}>(${objectType.staticModuleName}, query);`,
+            statements: `return purify.Either.of([...this.$objectIdentifiersSync<${objectType.name}, ${objectType.identifierType.name}>(${objectType.staticModuleName}, query)]);`,
           },
           {
             ...objectSetInterfaceMethodSignatures.objects,
@@ -145,17 +145,38 @@ export function rdfjsDatasetObjectSetClassDeclaration({
       .concat(
         {
           kind: StructureKind.Method,
+          isGenerator: true,
           name: "$objectIdentifiersSync",
           parameters: [parameters.objectType, parameters.query],
-          returnType: "purify.Either<Error, readonly ObjectIdentifierT[]>",
+          returnType: "Generator<ObjectIdentifierT>",
           statements: [
-            "const result: ObjectIdentifierT[] = [];",
-            `for (const object of this.$objectsSync<ObjectT, ObjectIdentifierT>(objectType, query)) {
-              object.ifRight(object => {
-                result.push(object.identifier);
-              });
-             }`,
-            "return purify.Either.of(result);",
+            `\
+const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
+if (limit <= 0) { return; }
+
+let offset = query?.offset ?? 0;
+if (offset < 0) { offset = 0; }
+
+if (query?.where) {
+  yield* query.where.identifiers.slice(offset, offset + limit);
+  return;
+}
+
+if (!objectType.fromRdfType) {
+  return;
+}
+
+let identifierCount = 0;
+let identifierI = 0;
+for (const resource of this.resourceSet.instancesOf(objectType.fromRdfType)) {
+  if (identifierI++ >= offset) {
+     yield resource.identifier as ObjectIdentifierT;
+     if (++identifierCount === limit) {
+       break;
+     }
+  }
+}
+`,
           ],
           typeParameters,
         } satisfies MethodDeclarationStructure,
@@ -166,34 +187,11 @@ export function rdfjsDatasetObjectSetClassDeclaration({
           parameters: [parameters.objectType, parameters.query],
           returnType: "Generator<purify.Either<Error, ObjectT>>",
           statements: [
-            "const resourceSet = this.resourceSet",
-            `function* allObjects() {
-                if (!objectType.fromRdfType) { return; }
-                for (const resource of resourceSet.instancesOf(objectType.fromRdfType)) {
-                  yield objectType.fromRdf({ resource });
-                }
-              }`,
-            `function* limitObjects(objects: Iterable<purify.Either<Error, ObjectT>>) {
-                const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
-                if (limit <= 0) { return; }
-                let objectI = 0;
-                for (const object of objects) {
-                  yield object;
-                  if (++objectI === limit) { break; }
-                }
-             }`,
-            `function* offsetObjects(objects: Iterable<purify.Either<Error, ObjectT>>) {
-                let offset = query?.offset ?? 0;
-                if (offset < 0) { offset = 0; }
-                let objectI = 0;
-                for (const object of objects) {
-                  if (objectI++ >= offset) {
-                    yield object;
-                  }
-                }
-              }`,
-            "if (!query?.where) { yield* limitObjects(offsetObjects(allObjects())); return; }",
-            "yield* limitObjects(offsetObjects(query.where.identifiers.map(identifier => objectType.fromRdf({ resource: this.resourceSet.resource(identifier) }))));",
+            `\
+for (const identifier of this.$objectIdentifiersSync<ObjectT, ObjectIdentifierT>(objectType, query)) {
+  yield objectType.fromRdf({ resource: this.resourceSet.resource(identifier) });
+}
+`,
           ],
           typeParameters,
         },
@@ -204,7 +202,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
           returnType: "purify.Either<Error, number>",
           statements: [
             "let count = 0;",
-            "for (const _object of this.$objectsSync<ObjectT, ObjectIdentifierT>(objectType, query)) { count++; }",
+            "for (const _ of this.$objectIdentifiersSync<ObjectT, ObjectIdentifierT>(objectType, query)) { count++; }",
             "return purify.Either.of(count);",
           ],
           typeParameters,
