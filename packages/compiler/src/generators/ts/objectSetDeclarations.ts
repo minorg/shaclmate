@@ -61,7 +61,7 @@ export function objectSetDeclarations({
     }),
   ];
 
-  if (objectTypesWithRdfFeatureCount < 0) {
+  if (objectTypesWithRdfFeatureCount > 0) {
     statements.push(
       rdfjsDatasetObjectSetClassDeclaration({
         objectSetInterfaceMethodSignaturesByObjectTypeName,
