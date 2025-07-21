@@ -3,6 +3,7 @@ import * as graphql from "graphql";
 import { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
 import * as rdfjsResource from "rdfjs-resource";
+type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 /**
  * Nested
  */
@@ -12,11 +13,11 @@ export class Nested {
   /**
    * Optional number property
    */
-  readonly optionalNumberProperty: purify.NonEmptyList<number>;
+  readonly optionalNumberProperty: purify.Maybe<number>;
   /**
    * Optional string property
    */
-  readonly optionalStringProperty: purify.NonEmptyList<string>;
+  readonly optionalStringProperty: purify.Maybe<string>;
   /**
    * Required string property
    */
@@ -24,8 +25,8 @@ export class Nested {
 
   constructor(parameters: {
     readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly optionalNumberProperty: purify.NonEmptyList<number>;
-    readonly optionalStringProperty: purify.NonEmptyList<string>;
+    readonly optionalNumberProperty?: number | purify.Maybe<number>;
+    readonly optionalStringProperty?: purify.Maybe<string> | string;
     readonly requiredStringProperty: string;
   }) {
     if (typeof parameters.identifier === "object") {
@@ -37,8 +38,32 @@ export class Nested {
       this._identifier = parameters.identifier satisfies never;
     }
 
-    this.optionalNumberProperty = parameters.optionalNumberProperty;
-    this.optionalStringProperty = parameters.optionalStringProperty;
+    if (purify.Maybe.isMaybe(parameters.optionalNumberProperty)) {
+      this.optionalNumberProperty = parameters.optionalNumberProperty;
+    } else if (typeof parameters.optionalNumberProperty === "number") {
+      this.optionalNumberProperty = purify.Maybe.of(
+        parameters.optionalNumberProperty,
+      );
+    } else if (typeof parameters.optionalNumberProperty === "undefined") {
+      this.optionalNumberProperty = purify.Maybe.empty();
+    } else {
+      this.optionalNumberProperty =
+        parameters.optionalNumberProperty satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.optionalStringProperty)) {
+      this.optionalStringProperty = parameters.optionalStringProperty;
+    } else if (typeof parameters.optionalStringProperty === "string") {
+      this.optionalStringProperty = purify.Maybe.of(
+        parameters.optionalStringProperty,
+      );
+    } else if (typeof parameters.optionalStringProperty === "undefined") {
+      this.optionalStringProperty = purify.Maybe.empty();
+    } else {
+      this.optionalStringProperty =
+        parameters.optionalStringProperty satisfies never;
+    }
+
     this.requiredStringProperty = parameters.requiredStringProperty;
   }
 
@@ -72,11 +97,11 @@ export class Nested {
 
     _resource.add(
       dataFactory.namedNode("http://example.com/optionalNumberProperty"),
-      this.optionalNumberProperty.map((_item) => _item),
+      this.optionalNumberProperty,
     );
     _resource.add(
       dataFactory.namedNode("http://example.com/optionalStringProperty"),
-      this.optionalStringProperty.map((_item) => _item),
+      this.optionalStringProperty,
     );
     _resource.add(
       dataFactory.namedNode("http://example.com/requiredStringProperty"),
@@ -96,21 +121,13 @@ export namespace Nested {
       identifier: { type: graphql.GraphQLString },
       optionalNumberProperty: {
         description: "Optional number property",
-        resolve: (source) => source.optionalNumberProperty,
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(
-            new graphql.GraphQLNonNull(graphql.GraphQLFloat),
-          ),
-        ),
+        resolve: (source) => source.optionalNumberProperty.extractNullable(),
+        type: graphql.GraphQLFloat,
       },
       optionalStringProperty: {
         description: "Optional string property",
-        resolve: (source) => source.optionalStringProperty,
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(
-            new graphql.GraphQLNonNull(graphql.GraphQLString),
-          ),
-        ),
+        resolve: (source) => source.optionalStringProperty.extractNullable(),
+        type: graphql.GraphQLString,
       },
       requiredStringProperty: {
         description: "Required string property",
@@ -136,8 +153,8 @@ export namespace Nested {
     rdfjsResource.Resource.ValueError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      optionalNumberProperty: purify.NonEmptyList<number>;
-      optionalStringProperty: purify.NonEmptyList<string>;
+      optionalNumberProperty: purify.Maybe<number>;
+      optionalStringProperty: purify.Maybe<string>;
       requiredStringProperty: string;
     }
   > {
@@ -156,32 +173,19 @@ export namespace Nested {
       );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: rdfjs.BlankNode | rdfjs.NamedNode = _resource.identifier;
     const _optionalNumberPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      purify.NonEmptyList<number>
-    > = purify.NonEmptyList.fromArray([
-      ..._resource
+      purify.Maybe<number>
+    > = purify.Either.of(
+      _resource
         .values(
           dataFactory.namedNode("http://example.com/optionalNumberProperty"),
           { unique: true },
         )
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((_value) => _value.toNumber())
-            .toMaybe()
-            .toList(),
-        ),
-    ]).toEither(
-      new rdfjsResource.Resource.ValueError({
-        focusResource: _resource,
-        message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} is empty`,
-        predicate: dataFactory.namedNode(
-          "http://example.com/optionalNumberProperty",
-        ),
-      }),
+        .head()
+        .chain((_value) => _value.toNumber())
+        .toMaybe(),
     );
     if (_optionalNumberPropertyEither.isLeft()) {
       return _optionalNumberPropertyEither;
@@ -190,29 +194,16 @@ export namespace Nested {
     const optionalNumberProperty = _optionalNumberPropertyEither.unsafeCoerce();
     const _optionalStringPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      purify.NonEmptyList<string>
-    > = purify.NonEmptyList.fromArray([
-      ..._resource
+      purify.Maybe<string>
+    > = purify.Either.of(
+      _resource
         .values(
           dataFactory.namedNode("http://example.com/optionalStringProperty"),
           { unique: true },
         )
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((_value) => _value.toString())
-            .toMaybe()
-            .toList(),
-        ),
-    ]).toEither(
-      new rdfjsResource.Resource.ValueError({
-        focusResource: _resource,
-        message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} is empty`,
-        predicate: dataFactory.namedNode(
-          "http://example.com/optionalStringProperty",
-        ),
-      }),
+        .head()
+        .chain((_value) => _value.toString())
+        .toMaybe(),
     );
     if (_optionalStringPropertyEither.isLeft()) {
       return _optionalStringPropertyEither;
@@ -266,8 +257,8 @@ export namespace Nested {
  * Concrete parent
  */
 export class ConcreteParent {
-  private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
-  readonly type = "ConcreteParent";
+  protected _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
+  readonly type: "ConcreteParent" | "ConcreteChild" = "ConcreteParent";
   /**
    * Parent string property
    */
@@ -336,7 +327,7 @@ export class ConcreteParent {
   }
 }
 
-export namespace ConcreteParent {
+export namespace ConcreteParentStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/ConcreteParent",
   );
@@ -386,7 +377,7 @@ export namespace ConcreteParent {
       );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: rdfjs.BlankNode | rdfjs.NamedNode = _resource.identifier;
     const _parentStringPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -409,10 +400,18 @@ export namespace ConcreteParent {
   }
 
   export function fromRdf(
-    parameters: Parameters<typeof ConcreteParent.propertiesFromRdf>[0],
+    parameters: Parameters<typeof ConcreteParentStatic.propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, ConcreteParent> {
-    return ConcreteParent.propertiesFromRdf(parameters).map(
-      (properties) => new ConcreteParent(properties),
+    const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
+    return (
+      ConcreteChild.fromRdf(otherParameters) as purify.Either<
+        rdfjsResource.Resource.ValueError,
+        ConcreteParent
+      >
+    ).altLazy(() =>
+      ConcreteParentStatic.propertiesFromRdf(parameters).map(
+        (properties) => new ConcreteParent(properties),
+      ),
     );
   }
 
@@ -423,9 +422,8 @@ export namespace ConcreteParent {
 /**
  * Concrete child
  */
-export class ConcreteChild {
-  private _identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | undefined;
-  readonly type = "ConcreteChild";
+export class ConcreteChild extends ConcreteParent {
+  override readonly type = "ConcreteChild";
   /**
    * Child string property
    */
@@ -433,32 +431,26 @@ export class ConcreteChild {
   /**
    * Optional nested object property
    */
-  readonly optionalNestedObjectProperty: purify.NonEmptyList<Nested>;
+  readonly optionalNestedObjectProperty: purify.Maybe<Nested>;
   /**
    * Optional string property
    */
-  readonly optionalStringProperty: purify.NonEmptyList<string>;
+  readonly optionalStringProperty: purify.Maybe<string>;
   /**
    * Required string property
    */
   readonly requiredStringProperty: string;
 
-  constructor(parameters: {
-    readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly childStringProperty?: purify.Maybe<string> | string;
-    readonly optionalNestedObjectProperty: purify.NonEmptyList<Nested>;
-    readonly optionalStringProperty: purify.NonEmptyList<string>;
-    readonly requiredStringProperty: string;
-  }) {
-    if (typeof parameters.identifier === "object") {
-      this._identifier = parameters.identifier;
-    } else if (typeof parameters.identifier === "string") {
-      this._identifier = dataFactory.namedNode(parameters.identifier);
-    } else if (typeof parameters.identifier === "undefined") {
-    } else {
-      this._identifier = parameters.identifier satisfies never;
-    }
-
+  constructor(
+    parameters: {
+      readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+      readonly childStringProperty?: purify.Maybe<string> | string;
+      readonly optionalNestedObjectProperty?: Nested | purify.Maybe<Nested>;
+      readonly optionalStringProperty?: purify.Maybe<string> | string;
+      readonly requiredStringProperty: string;
+    } & ConstructorParameters<typeof ConcreteParent>[0],
+  ) {
+    super(parameters);
     if (purify.Maybe.isMaybe(parameters.childStringProperty)) {
       this.childStringProperty = parameters.childStringProperty;
     } else if (typeof parameters.childStringProperty === "string") {
@@ -471,19 +463,47 @@ export class ConcreteChild {
       this.childStringProperty = parameters.childStringProperty satisfies never;
     }
 
-    this.optionalNestedObjectProperty = parameters.optionalNestedObjectProperty;
-    this.optionalStringProperty = parameters.optionalStringProperty;
+    if (purify.Maybe.isMaybe(parameters.optionalNestedObjectProperty)) {
+      this.optionalNestedObjectProperty =
+        parameters.optionalNestedObjectProperty;
+    } else if (
+      typeof parameters.optionalNestedObjectProperty === "object" &&
+      parameters.optionalNestedObjectProperty instanceof Nested
+    ) {
+      this.optionalNestedObjectProperty = purify.Maybe.of(
+        parameters.optionalNestedObjectProperty,
+      );
+    } else if (typeof parameters.optionalNestedObjectProperty === "undefined") {
+      this.optionalNestedObjectProperty = purify.Maybe.empty();
+    } else {
+      this.optionalNestedObjectProperty =
+        parameters.optionalNestedObjectProperty satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.optionalStringProperty)) {
+      this.optionalStringProperty = parameters.optionalStringProperty;
+    } else if (typeof parameters.optionalStringProperty === "string") {
+      this.optionalStringProperty = purify.Maybe.of(
+        parameters.optionalStringProperty,
+      );
+    } else if (typeof parameters.optionalStringProperty === "undefined") {
+      this.optionalStringProperty = purify.Maybe.empty();
+    } else {
+      this.optionalStringProperty =
+        parameters.optionalStringProperty satisfies never;
+    }
+
     this.requiredStringProperty = parameters.requiredStringProperty;
   }
 
-  get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
+  override get identifier(): rdfjs.BlankNode | rdfjs.NamedNode {
     if (typeof this._identifier === "undefined") {
       this._identifier = dataFactory.blankNode();
     }
     return this._identifier;
   }
 
-  toRdf({
+  override toRdf({
     ignoreRdfType,
     mutateGraph,
     resourceSet,
@@ -492,8 +512,10 @@ export class ConcreteChild {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.identifier, {
+    const _resource = super.toRdf({
+      ignoreRdfType: true,
       mutateGraph,
+      resourceSet,
     });
     if (!ignoreRdfType) {
       _resource.add(
@@ -510,13 +532,13 @@ export class ConcreteChild {
     );
     _resource.add(
       dataFactory.namedNode("http://example.com/optionalNestedObjectProperty"),
-      this.optionalNestedObjectProperty.map((_item) =>
-        _item.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.optionalNestedObjectProperty.map((_value) =>
+        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
       dataFactory.namedNode("http://example.com/optionalStringProperty"),
-      this.optionalStringProperty.map((_item) => _item),
+      this.optionalStringProperty,
     );
     _resource.add(
       dataFactory.namedNode("http://example.com/requiredStringProperty"),
@@ -541,19 +563,14 @@ export namespace ConcreteChild {
       },
       optionalNestedObjectProperty: {
         description: "Optional nested object property",
-        resolve: (source) => source.optionalNestedObjectProperty,
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(new graphql.GraphQLNonNull(Nested.GraphQL)),
-        ),
+        resolve: (source) =>
+          source.optionalNestedObjectProperty.extractNullable(),
+        type: Nested.GraphQL,
       },
       optionalStringProperty: {
         description: "Optional string property",
-        resolve: (source) => source.optionalStringProperty,
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(
-            new graphql.GraphQLNonNull(graphql.GraphQLString),
-          ),
-        ),
+        resolve: (source) => source.optionalStringProperty.extractNullable(),
+        type: graphql.GraphQLString,
       },
       requiredStringProperty: {
         description: "Required string property",
@@ -580,11 +597,22 @@ export namespace ConcreteChild {
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       childStringProperty: purify.Maybe<string>;
-      optionalNestedObjectProperty: purify.NonEmptyList<Nested>;
-      optionalStringProperty: purify.NonEmptyList<string>;
+      optionalNestedObjectProperty: purify.Maybe<Nested>;
+      optionalStringProperty: purify.Maybe<string>;
       requiredStringProperty: string;
-    }
+    } & $UnwrapR<ReturnType<typeof ConcreteParentStatic.propertiesFromRdf>>
   > {
+    const _super0Either = ConcreteParentStatic.propertiesFromRdf({
+      ..._context,
+      ignoreRdfType: true,
+      languageIn: _languageIn,
+      resource: _resource,
+    });
+    if (_super0Either.isLeft()) {
+      return _super0Either;
+    }
+
+    const _super0 = _super0Either.unsafeCoerce();
     if (
       !_ignoreRdfType &&
       !_resource.isInstanceOf(
@@ -600,7 +628,7 @@ export namespace ConcreteChild {
       );
     }
 
-    const identifier = _resource.identifier;
+    const identifier: rdfjs.BlankNode | rdfjs.NamedNode = _resource.identifier;
     const _childStringPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -621,39 +649,26 @@ export namespace ConcreteChild {
     const childStringProperty = _childStringPropertyEither.unsafeCoerce();
     const _optionalNestedObjectPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      purify.NonEmptyList<Nested>
-    > = purify.NonEmptyList.fromArray([
-      ..._resource
+      purify.Maybe<Nested>
+    > = purify.Either.of(
+      _resource
         .values(
           dataFactory.namedNode(
             "http://example.com/optionalNestedObjectProperty",
           ),
           { unique: true },
         )
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((_resource) =>
-              Nested.fromRdf({
-                ..._context,
-                ignoreRdfType: true,
-                languageIn: _languageIn,
-                resource: _resource,
-              }),
-            )
-            .toMaybe()
-            .toList(),
-        ),
-    ]).toEither(
-      new rdfjsResource.Resource.ValueError({
-        focusResource: _resource,
-        message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} is empty`,
-        predicate: dataFactory.namedNode(
-          "http://example.com/optionalNestedObjectProperty",
-        ),
-      }),
+        .head()
+        .chain((value) => value.toResource())
+        .chain((_resource) =>
+          Nested.fromRdf({
+            ..._context,
+            ignoreRdfType: true,
+            languageIn: _languageIn,
+            resource: _resource,
+          }),
+        )
+        .toMaybe(),
     );
     if (_optionalNestedObjectPropertyEither.isLeft()) {
       return _optionalNestedObjectPropertyEither;
@@ -663,29 +678,16 @@ export namespace ConcreteChild {
       _optionalNestedObjectPropertyEither.unsafeCoerce();
     const _optionalStringPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
-      purify.NonEmptyList<string>
-    > = purify.NonEmptyList.fromArray([
-      ..._resource
+      purify.Maybe<string>
+    > = purify.Either.of(
+      _resource
         .values(
           dataFactory.namedNode("http://example.com/optionalStringProperty"),
           { unique: true },
         )
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((_value) => _value.toString())
-            .toMaybe()
-            .toList(),
-        ),
-    ]).toEither(
-      new rdfjsResource.Resource.ValueError({
-        focusResource: _resource,
-        message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} is empty`,
-        predicate: dataFactory.namedNode(
-          "http://example.com/optionalStringProperty",
-        ),
-      }),
+        .head()
+        .chain((_value) => _value.toString())
+        .toMaybe(),
     );
     if (_optionalStringPropertyEither.isLeft()) {
       return _optionalStringPropertyEither;
@@ -708,6 +710,7 @@ export namespace ConcreteChild {
 
     const requiredStringProperty = _requiredStringPropertyEither.unsafeCoerce();
     return purify.Either.of({
+      ..._super0,
       identifier,
       childStringProperty,
       optionalNestedObjectProperty,
@@ -725,6 +728,7 @@ export namespace ConcreteChild {
   }
 
   export const rdfProperties = [
+    ...ConcreteParentStatic.rdfProperties,
     { path: dataFactory.namedNode("http://example.com/childStringProperty") },
     {
       path: dataFactory.namedNode(
@@ -739,102 +743,379 @@ export namespace ConcreteChild {
     },
   ];
 }
-
-export const $ObjectTypes = { ConcreteChild, ConcreteParent, Nested },
-  $ObjectUnionTypes = {},
-  $Types = { ...$ObjectTypes, ...$ObjectUnionTypes };
-
 export interface $ObjectSet {
-  object<ObjectT extends { type: keyof typeof $ObjectTypes }>(
-    identifier: rdfjs.NamedNode,
-    type: ObjectT["type"],
-  ): Promise<purify.Either<Error, ObjectT>>;
+  concreteChild(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, ConcreteChild>>;
+  concreteChildIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
+  concreteChilds(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, ConcreteChild>[]>;
+  concreteChildsCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  concreteParent(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, ConcreteParent>>;
+  concreteParentIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
+  concreteParents(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, ConcreteParent>[]>;
+  concreteParentsCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  nested(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, Nested>>;
+  nestedIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  >;
+  nesteds(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, Nested>[]>;
+  nestedsCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+}
 
-  // objectCount(
-  //   type: keyof typeof $ObjectTypes,
-  // ): Promise<purify.Either<Error, number>>;
-
-  // objectIdentifiers(
-  //   type: keyof typeof $ObjectTypes,
-  //   options?: { limit?: number; offset?: number },
-  // ): Promise<purify.Either<Error, readonly rdfjs.NamedNode[]>>;
-
-  // objects<ObjectT>(
-  //   identifiers: readonly rdfjs.NamedNode[],
-  //   type: keyof typeof $ObjectTypes,
-  // ): Promise<readonly purify.Either<Error, ObjectT>[]>;
+export namespace $ObjectSet {
+  export type Query<
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  > = {
+    readonly limit?: number;
+    readonly offset?: number;
+    readonly where?: Where<ObjectIdentifierT>;
+  };
+  export type Where<
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  > = {
+    readonly identifiers: readonly ObjectIdentifierT[];
+    readonly type: "identifiers";
+  };
 }
 
 export class $RdfjsDatasetObjectSet implements $ObjectSet {
   readonly resourceSet: rdfjsResource.ResourceSet;
 
-  constructor({
-    dataset,
-  }: {
-    dataset: rdfjs.DatasetCore;
-  }) {
-    this.resourceSet = new rdfjsResource.ResourceSet({
-      dataset,
-    });
+  constructor({ dataset }: { dataset: rdfjs.DatasetCore }) {
+    this.resourceSet = new rdfjsResource.ResourceSet({ dataset });
   }
 
-  async object<ObjectT extends { type: keyof typeof $ObjectTypes }>(
-    identifier: rdfjs.NamedNode,
-    type: ObjectT["type"],
-  ): Promise<purify.Either<Error, ObjectT>> {
-    return this.objectSync<ObjectT>(identifier, type);
+  async concreteChild(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, ConcreteChild>> {
+    return this.concreteChildSync(identifier);
   }
 
-  objectSync<ObjectT extends { type: keyof typeof $ObjectTypes }>(
-    identifier: rdfjs.NamedNode,
-    type: ObjectT["type"],
-  ): purify.Either<Error, ObjectT> {
-    const fromRdf = $ObjectTypes[type].fromRdf;
-    const resource = this.resourceSet.resource(identifier);
-    return fromRdf({ resource }) as unknown as purify.Either<Error, ObjectT>;
+  concreteChildSync(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): purify.Either<Error, ConcreteChild> {
+    return this.concreteChildsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
   }
 
-  // async objects<ObjectT extends Object>(
-  //   type: ObjectT["type"],
-  // ): Promise<Either<Error, readonly ObjectT[]>> {
-  //   return this.objectsSync(type);
-  // }
+  async concreteChildIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.concreteChildIdentifiersSync(query);
+  }
 
-  // objectsSync<ObjectT extends Object>(
-  //   type: ObjectT["type"],
-  // ): Either<Error, readonly ObjectT[]> {
-  //   const fromRdf = $ObjectTypes[type].fromRdf;
-  //   const objects: ObjectT[] = [];
-  //   for (const resource of this.resourceSet.instancesOf(
-  //     $ObjectTypes[type].fromRdfType,
-  //   )) {
-  //     const objectEither = fromRdf({ resource }) as unknown as Either<
-  //       Error,
-  //       ObjectT
-  //     >;
-  //     if (objectEither.isLeft()) {
-  //       return objectEither;
-  //     }
-  //     objects.push(objectEither.unsafeCoerce());
-  //   }
-  //   return Either.of(objects);
-  // }
+  concreteChildIdentifiersSync(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        ConcreteChild,
+        rdfjs.BlankNode | rdfjs.NamedNode
+      >(ConcreteChild, query),
+    ]);
+  }
 
-  // async objectCount(type: Object["type"]): Promise<Either<Error, number>> {
-  //   return this.objectCountSync(type);
-  // }
+  async concreteChilds(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, ConcreteChild>[]> {
+    return this.concreteChildsSync(query);
+  }
 
-  // objectCountSync(type: Object["type"]): Either<Error, number> {
-  //   const fromRdf = $ObjectTypes[type].fromRdf;
-  //   let count = 0;
-  //   for (const resource of this.resourceSet.instancesOf(
-  //     $ObjectTypes[type].fromRdfType,
-  //   )) {
-  //     const objectEither = fromRdf({ resource });
-  //     if (objectEither.isRight()) {
-  //       count++;
-  //     }
-  //   }
-  //   return Either.of(count);
-  // }
+  concreteChildsSync(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): readonly purify.Either<Error, ConcreteChild>[] {
+    return [
+      ...this.$objectsSync<ConcreteChild, rdfjs.BlankNode | rdfjs.NamedNode>(
+        ConcreteChild,
+        query,
+      ),
+    ];
+  }
+
+  async concreteChildsCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.concreteChildsCountSync(query);
+  }
+
+  concreteChildsCountSync(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      ConcreteChild,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ConcreteChild, query);
+  }
+
+  async concreteParent(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, ConcreteParent>> {
+    return this.concreteParentSync(identifier);
+  }
+
+  concreteParentSync(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): purify.Either<Error, ConcreteParent> {
+    return this.concreteParentsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async concreteParentIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.concreteParentIdentifiersSync(query);
+  }
+
+  concreteParentIdentifiersSync(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        ConcreteParent,
+        rdfjs.BlankNode | rdfjs.NamedNode
+      >(ConcreteParentStatic, query),
+    ]);
+  }
+
+  async concreteParents(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, ConcreteParent>[]> {
+    return this.concreteParentsSync(query);
+  }
+
+  concreteParentsSync(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): readonly purify.Either<Error, ConcreteParent>[] {
+    return [
+      ...this.$objectsSync<ConcreteParent, rdfjs.BlankNode | rdfjs.NamedNode>(
+        ConcreteParentStatic,
+        query,
+      ),
+    ];
+  }
+
+  async concreteParentsCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.concreteParentsCountSync(query);
+  }
+
+  concreteParentsCountSync(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      ConcreteParent,
+      rdfjs.BlankNode | rdfjs.NamedNode
+    >(ConcreteParentStatic, query);
+  }
+
+  async nested(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): Promise<purify.Either<Error, Nested>> {
+    return this.nestedSync(identifier);
+  }
+
+  nestedSync(
+    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+  ): purify.Either<Error, Nested> {
+    return this.nestedsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async nestedIdentifiers(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<
+    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
+  > {
+    return this.nestedIdentifiersSync(query);
+  }
+
+  nestedIdentifiersSync(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<Nested, rdfjs.BlankNode | rdfjs.NamedNode>(
+        Nested,
+        query,
+      ),
+    ]);
+  }
+
+  async nesteds(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): Promise<readonly purify.Either<Error, Nested>[]> {
+    return this.nestedsSync(query);
+  }
+
+  nestedsSync(
+    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+  ): readonly purify.Either<Error, Nested>[] {
+    return [
+      ...this.$objectsSync<Nested, rdfjs.BlankNode | rdfjs.NamedNode>(
+        Nested,
+        query,
+      ),
+    ];
+  }
+
+  async nestedsCount(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.nestedsCountSync(query);
+  }
+
+  nestedsCountSync(
+    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<Nested, rdfjs.BlankNode | rdfjs.NamedNode>(
+      Nested,
+      query,
+    );
+  }
+
+  *$objectIdentifiersSync<
+    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  >(
+    objectType: {
+      fromRdf: (parameters: {
+        resource: rdfjsResource.Resource;
+      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      fromRdfType?: rdfjs.NamedNode;
+    },
+    query?: $ObjectSet.Query<ObjectIdentifierT>,
+  ): Generator<ObjectIdentifierT> {
+    const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return;
+    }
+
+    let offset = query?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    if (query?.where) {
+      yield* query.where.identifiers.slice(offset, offset + limit);
+      return;
+    }
+
+    if (!objectType.fromRdfType) {
+      return;
+    }
+
+    let identifierCount = 0;
+    let identifierI = 0;
+    for (const resource of this.resourceSet.instancesOf(
+      objectType.fromRdfType,
+    )) {
+      if (identifierI++ >= offset) {
+        yield resource.identifier as ObjectIdentifierT;
+        if (++identifierCount === limit) {
+          break;
+        }
+      }
+    }
+  }
+
+  *$objectsSync<
+    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  >(
+    objectType: {
+      fromRdf: (parameters: {
+        resource: rdfjsResource.Resource;
+      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      fromRdfType?: rdfjs.NamedNode;
+    },
+    query?: $ObjectSet.Query<ObjectIdentifierT>,
+  ): Generator<purify.Either<Error, ObjectT>> {
+    for (const identifier of this.$objectIdentifiersSync<
+      ObjectT,
+      ObjectIdentifierT
+    >(objectType, query)) {
+      yield objectType.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      });
+    }
+  }
+
+  protected $objectsCountSync<
+    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  >(
+    objectType: {
+      fromRdf: (parameters: {
+        resource: rdfjsResource.Resource;
+      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      fromRdfType?: rdfjs.NamedNode;
+    },
+    query?: $ObjectSet.Query<ObjectIdentifierT>,
+  ): purify.Either<Error, number> {
+    let count = 0;
+    for (const _ of this.$objectIdentifiersSync<ObjectT, ObjectIdentifierT>(
+      objectType,
+      query,
+    )) {
+      count++;
+    }
+
+    return purify.Either.of(count);
+  }
 }
+
+export const graphqlSchema = new graphql.GraphQLSchema({
+  query: new graphql.GraphQLObjectType<null, { objectSet: $ObjectSet }>({
+    name: "Query",
+    fields: {
+      concreteChild: {
+        args: { id: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) } },
+        resolve: (_, { id }, { objectSet }) => objectSet.concreteChild(id),
+        type: ConcreteChild.GraphQL,
+      },
+      concreteParent: {
+        args: { id: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) } },
+        resolve: (_, { id }, { objectSet }) => objectSet.concreteParent(id),
+        type: ConcreteParentStatic.GraphQL,
+      },
+      nested: {
+        args: { id: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) } },
+        resolve: (_, { id }, { objectSet }) => objectSet.nested(id),
+        type: Nested.GraphQL,
+      },
+    },
+  }),
+});

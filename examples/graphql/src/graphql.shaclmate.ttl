@@ -14,7 +14,7 @@
 :ConcreteChild
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Concrete child" ;
-    rdfs:subClassOf :ParentNodeShape ;
+    rdfs:subClassOf :ConcreteParent ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property :optionalNestedObjectProperty, :optionalStringProperty, :requiredStringProperty, [
         rdfs:comment "Child string property" ;
@@ -43,7 +43,7 @@
 :optionalNestedObjectProperty
     a sh:PropertyShape ;
     rdfs:comment "Optional nested object property" ;
-    sh:minCount 1 ;
+    sh:maxCount 1 ;
     sh:node :Nested ;
     sh:path :optionalNestedObjectProperty .
 
@@ -51,14 +51,14 @@
     a sh:PropertyShape ;
     rdfs:comment "Optional number property" ;
     sh:datatype xsd:decimal ;
-    sh:minCount 1 ;
+    sh:maxCount 1 ;
     sh:path :optionalNumberProperty .
 
 :optionalStringProperty
     a sh:PropertyShape ;
     rdfs:comment "Optional string property" ;
     sh:datatype xsd:string ;
-    sh:minCount 1 ;
+    sh:maxCount 1 ;
     sh:path :optionalStringProperty .
 
 :requiredStringProperty

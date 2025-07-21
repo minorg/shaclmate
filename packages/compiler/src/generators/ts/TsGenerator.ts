@@ -11,6 +11,7 @@ import type { Import } from "./Import.js";
 import { ObjectType } from "./ObjectType.js";
 import { ObjectUnionType } from "./ObjectUnionType.js";
 import { TypeFactory } from "./TypeFactory.js";
+import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
 
 export class TsGenerator implements Generator {
@@ -115,6 +116,9 @@ export class TsGenerator implements Generator {
 
     sourceFile.addStatements(
       objectSetDeclarations({ dataFactoryVariable, objectTypes }),
+    );
+    sourceFile.addVariableStatements(
+      graphqlSchemaVariableStatement({ objectTypes }).toList(),
     );
   }
 }

@@ -211,12 +211,18 @@ const packages: readonly Package[] = [
   {
     dependencies: {
       external: {
-        "@faker-js/faker": "^9.8.0",
         graphql: externalDependencyVersions.graphql,
         "graphql-scalars": externalDependencyVersions["graphql-scalars"],
         "graphql-yoga": "5.14.0",
+        n3: externalDependencyVersions.n3,
+        "rdfjs-resource": externalDependencyVersions["rdfjs-resource"],
       },
       internal: ["runtime"],
+    },
+    devDependencies: {
+      external: {
+        "@types/n3": externalDependencyVersions["@types/n3"],
+      },
     },
     directory: "examples",
     name: "graphql",
