@@ -122,7 +122,8 @@ export namespace Nested {
     description: "Nested",
     fields: () => ({
       identifier: {
-        resolve: (source) => source.identifier.value,
+        resolve: (source) =>
+          rdfjsResource.Resource.Identifier.toString(source.identifier),
         type: graphql.GraphQLString,
       },
       optionalNumberProperty: {
@@ -143,6 +144,17 @@ export namespace Nested {
     }),
     name: "Nested",
   });
+
+  export function identifierFromString(
+    identifier: string,
+  ): purify.Either<Error, rdfjs.BlankNode | rdfjs.NamedNode> {
+    return purify.Either.encase(() =>
+      rdfjsResource.Resource.Identifier.fromString({
+        dataFactory: dataFactory,
+        identifier,
+      }),
+    );
+  }
 
   export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
@@ -170,13 +182,24 @@ export namespace Nested {
         dataFactory.namedNode("http://example.com/Nested"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://example.com/Nested)`,
-          predicate: dataFactory.namedNode("http://example.com/Nested"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Nested)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
     const identifier: rdfjs.BlankNode | rdfjs.NamedNode = _resource.identifier;
@@ -344,7 +367,8 @@ export namespace ConcreteParentStatic {
     description: "Concrete parent",
     fields: () => ({
       identifier: {
-        resolve: (source) => source.identifier.value,
+        resolve: (source) =>
+          rdfjsResource.Resource.Identifier.toString(source.identifier),
         type: graphql.GraphQLString,
       },
       parentStringProperty: {
@@ -355,6 +379,17 @@ export namespace ConcreteParentStatic {
     }),
     name: "ConcreteParent",
   });
+
+  export function identifierFromString(
+    identifier: string,
+  ): purify.Either<Error, rdfjs.BlankNode | rdfjs.NamedNode> {
+    return purify.Either.encase(() =>
+      rdfjsResource.Resource.Identifier.fromString({
+        dataFactory: dataFactory,
+        identifier,
+      }),
+    );
+  }
 
   export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
@@ -380,13 +415,24 @@ export namespace ConcreteParentStatic {
         dataFactory.namedNode("http://example.com/ConcreteParent"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://example.com/ConcreteParent)`,
-          predicate: dataFactory.namedNode("http://example.com/ConcreteParent"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteParent)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
     const identifier: rdfjs.BlankNode | rdfjs.NamedNode = _resource.identifier;
@@ -571,7 +617,8 @@ export namespace ConcreteChild {
     description: "Concrete child",
     fields: () => ({
       identifier: {
-        resolve: (source) => source.identifier.value,
+        resolve: (source) =>
+          rdfjsResource.Resource.Identifier.toString(source.identifier),
         type: graphql.GraphQLString,
       },
       childStringProperty: {
@@ -598,6 +645,17 @@ export namespace ConcreteChild {
     }),
     name: "ConcreteChild",
   });
+
+  export function identifierFromString(
+    identifier: string,
+  ): purify.Either<Error, rdfjs.BlankNode | rdfjs.NamedNode> {
+    return purify.Either.encase(() =>
+      rdfjsResource.Resource.Identifier.fromString({
+        dataFactory: dataFactory,
+        identifier,
+      }),
+    );
+  }
 
   export function propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
@@ -637,13 +695,24 @@ export namespace ConcreteChild {
         dataFactory.namedNode("http://example.com/ConcreteChild"),
       )
     ) {
-      return purify.Left(
-        new rdfjsResource.Resource.ValueError({
-          focusResource: _resource,
-          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (expected http://example.com/ConcreteChild)`,
-          predicate: dataFactory.namedNode("http://example.com/ConcreteChild"),
-        }),
-      );
+      return _resource
+        .value(
+          dataFactory.namedNode(
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          ),
+        )
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new rdfjsResource.Resource.ValueError({
+              focusResource: _resource,
+              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteChild)`,
+              predicate: dataFactory.namedNode(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+              ),
+            }),
+          ),
+        );
     }
 
     const identifier: rdfjs.BlankNode | rdfjs.NamedNode = _resource.identifier;
@@ -1126,7 +1195,23 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           { id }: { id: string },
           { objectSet },
         ): Promise<ConcreteChild> =>
-          (await objectSet.concreteChild(id)).unsafeCoerce(),
+          (
+            await purify.EitherAsync<Error, ConcreteChild>(
+              async ({ liftEither }) =>
+                liftEither(
+                  await objectSet.concreteChild(
+                    await liftEither(ConcreteChild.identifierFromString(id)),
+                  ),
+                ),
+            )
+          )
+            .mapLeft(
+              (error) =>
+                new graphql.GraphQLError(error.message, {
+                  originalError: error,
+                }),
+            )
+            .unsafeCoerce(),
         type: ConcreteChild.GraphQL,
       },
       concreteParent: {
@@ -1136,7 +1221,25 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           { id }: { id: string },
           { objectSet },
         ): Promise<ConcreteParent> =>
-          (await objectSet.concreteParent(id)).unsafeCoerce(),
+          (
+            await purify.EitherAsync<Error, ConcreteParent>(
+              async ({ liftEither }) =>
+                liftEither(
+                  await objectSet.concreteParent(
+                    await liftEither(
+                      ConcreteParentStatic.identifierFromString(id),
+                    ),
+                  ),
+                ),
+            )
+          )
+            .mapLeft(
+              (error) =>
+                new graphql.GraphQLError(error.message, {
+                  originalError: error,
+                }),
+            )
+            .unsafeCoerce(),
         type: ConcreteParentStatic.GraphQL,
       },
       nested: {
@@ -1145,7 +1248,23 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           _,
           { id }: { id: string },
           { objectSet },
-        ): Promise<Nested> => (await objectSet.nested(id)).unsafeCoerce(),
+        ): Promise<Nested> =>
+          (
+            await purify.EitherAsync<Error, Nested>(async ({ liftEither }) =>
+              liftEither(
+                await objectSet.nested(
+                  await liftEither(Nested.identifierFromString(id)),
+                ),
+              ),
+            )
+          )
+            .mapLeft(
+              (error) =>
+                new graphql.GraphQLError(error.message, {
+                  originalError: error,
+                }),
+            )
+            .unsafeCoerce(),
         type: Nested.GraphQL,
       },
     },

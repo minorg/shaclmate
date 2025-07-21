@@ -4,10 +4,8 @@ import type { ObjectType } from "./ObjectType.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 function graphqlQueryObjectType({
-  dataFactoryVariable,
   objectTypes,
 }: {
-  dataFactoryVariable: string;
   objectTypes: readonly ObjectType[];
 }): string {
   return `new graphql.GraphQLObjectType<null, { objectSet: $ObjectSet }>({ name: "Query", fields: ${objectInitializer(
@@ -19,7 +17,8 @@ function graphqlQueryObjectType({
               type: "new graphql.GraphQLNonNull(graphql.GraphQLID)",
             }),
           }),
-          resolve: `async (_, { id }: { id: string }, { objectSet }): Promise<${objectType.name}> => (await objectSet.${objectType.objectSetMethodNames.object}(rdfjs.Resource.Identifier.fromString(id))).unsafeCoerce()`,
+          resolve: `\
+async (_, { id }: { id: string }, { objectSet }): Promise<${objectType.name}> => (await purify.EitherAsync<Error, ${objectType.name}>(async ({ liftEither }) => liftEither(await objectSet.${objectType.objectSetMethodNames.object}(await liftEither(${objectType.staticModuleName}.identifierFromString(id)))))).mapLeft((error) => new graphql.GraphQLError(error.message, { originalError: error })).unsafeCoerce()`,
           type: `${objectType.staticModuleName}.GraphQL`,
         });
         return fields;
@@ -30,9 +29,8 @@ function graphqlQueryObjectType({
 }
 
 export function graphqlSchemaVariableStatement({
-  dataFactoryVariable,
   objectTypes: objectTypesUnsorted,
-}: { dataFactoryVariable: string; objectTypes: readonly ObjectType[] }): Maybe<
+}: { objectTypes: readonly ObjectType[] }): Maybe<
   OptionalKind<VariableStatementStructure>
 > {
   const objectTypes = objectTypesUnsorted
@@ -48,7 +46,7 @@ export function graphqlSchemaVariableStatement({
     declarations: [
       {
         name: "graphqlSchema",
-        initializer: `new graphql.GraphQLSchema({ query: ${graphqlQueryObjectType({ dataFactoryVariable, objectTypes })} })`,
+        initializer: `new graphql.GraphQLSchema({ query: ${graphqlQueryObjectType({ objectTypes })} })`,
       },
     ],
   });
