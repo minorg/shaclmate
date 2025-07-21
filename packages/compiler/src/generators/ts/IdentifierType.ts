@@ -30,6 +30,12 @@ export class IdentifierType extends TermType<BlankNode | NamedNode> {
     return "graphql.GraphQLString";
   }
 
+  override graphqlResolveExpression({
+    variables: { value },
+  }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
+    return `rdfjsResource.Resource.Identifier.toString(${value})`;
+  }
+
   override get jsonName(): string {
     if (this.in_.length > 0 && this.isNamedNodeKind) {
       // Treat sh:in as a union of the IRIs

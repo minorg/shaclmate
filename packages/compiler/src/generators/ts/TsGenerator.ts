@@ -118,7 +118,10 @@ export class TsGenerator implements Generator {
       objectSetDeclarations({ dataFactoryVariable, objectTypes }),
     );
     sourceFile.addVariableStatements(
-      graphqlSchemaVariableStatement({ objectTypes }).toList(),
+      graphqlSchemaVariableStatement({
+        dataFactoryVariable,
+        objectTypes,
+      }).toList(),
     );
   }
 }

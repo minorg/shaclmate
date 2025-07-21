@@ -27,7 +27,7 @@ export function graphqlTypeVariableStatement(
     declarations: [
       {
         name: "GraphQL",
-        initializer: `new graphql.GraphQLObjectType<${this.name}>(${objectInitializer(
+        initializer: `new graphql.GraphQLObjectType<${this.name}, { objectSet: $ObjectSet }>(${objectInitializer(
           {
             description: this.comment.map(JSON.stringify).extract(),
             fields: `() => (${objectInitializer(

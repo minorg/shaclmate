@@ -229,7 +229,7 @@ const packages: readonly Package[] = [
     scripts: {
       build: "tsc",
       clean: "rimraf dist",
-      dev: "tsx src/server.ts",
+      dev: "tsc -w --preserveWatchOutput",
       rebuild: "run-s clean build",
       start: "tsx src/server.ts",
     },

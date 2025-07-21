@@ -178,6 +178,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
 
   override get graphqlField(): Property<IdentifierType>["graphqlField"] {
     return Maybe.of({
+      resolve: `(source) => ${this.type.graphqlResolveExpression({ variables: { value: `source.${this.name}` } })}`,
       type: this.type.graphqlName,
     });
   }

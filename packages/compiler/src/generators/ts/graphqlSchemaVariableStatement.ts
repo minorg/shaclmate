@@ -4,8 +4,12 @@ import type { ObjectType } from "./ObjectType.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 function graphqlQueryObjectType({
+  dataFactoryVariable,
   objectTypes,
-}: { objectTypes: readonly ObjectType[] }): string {
+}: {
+  dataFactoryVariable: string;
+  objectTypes: readonly ObjectType[];
+}): string {
   return `new graphql.GraphQLObjectType<null, { objectSet: $ObjectSet }>({ name: "Query", fields: ${objectInitializer(
     objectTypes.reduce(
       (fields, objectType) => {
@@ -15,7 +19,7 @@ function graphqlQueryObjectType({
               type: "new graphql.GraphQLNonNull(graphql.GraphQLID)",
             }),
           }),
-          resolve: `(_, { id }, { objectSet }) => objectSet.${objectType.objectSetMethodNames.object}(id)`,
+          resolve: `async (_, { id }: { id: string }, { objectSet }): Promise<${objectType.name}> => (await objectSet.${objectType.objectSetMethodNames.object}(rdfjs.Resource.Identifier.fromString(id))).unsafeCoerce()`,
           type: `${objectType.staticModuleName}.GraphQL`,
         });
         return fields;
@@ -26,8 +30,9 @@ function graphqlQueryObjectType({
 }
 
 export function graphqlSchemaVariableStatement({
+  dataFactoryVariable,
   objectTypes: objectTypesUnsorted,
-}: { objectTypes: readonly ObjectType[] }): Maybe<
+}: { dataFactoryVariable: string; objectTypes: readonly ObjectType[] }): Maybe<
   OptionalKind<VariableStatementStructure>
 > {
   const objectTypes = objectTypesUnsorted
@@ -43,7 +48,7 @@ export function graphqlSchemaVariableStatement({
     declarations: [
       {
         name: "graphqlSchema",
-        initializer: `new graphql.GraphQLSchema({ query: ${graphqlQueryObjectType({ objectTypes })} })`,
+        initializer: `new graphql.GraphQLSchema({ query: ${graphqlQueryObjectType({ dataFactoryVariable, objectTypes })} })`,
       },
     ],
   });

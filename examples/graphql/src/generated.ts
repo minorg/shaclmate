@@ -115,10 +115,16 @@ export namespace Nested {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/Nested",
   );
-  export const GraphQL = new graphql.GraphQLObjectType<Nested>({
+  export const GraphQL = new graphql.GraphQLObjectType<
+    Nested,
+    { objectSet: $ObjectSet }
+  >({
     description: "Nested",
     fields: () => ({
-      identifier: { type: graphql.GraphQLString },
+      identifier: {
+        resolve: (source) => source.identifier.value,
+        type: graphql.GraphQLString,
+      },
       optionalNumberProperty: {
         description: "Optional number property",
         resolve: (source) => source.optionalNumberProperty.extractNullable(),
@@ -331,10 +337,16 @@ export namespace ConcreteParentStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/ConcreteParent",
   );
-  export const GraphQL = new graphql.GraphQLObjectType<ConcreteParent>({
+  export const GraphQL = new graphql.GraphQLObjectType<
+    ConcreteParent,
+    { objectSet: $ObjectSet }
+  >({
     description: "Concrete parent",
     fields: () => ({
-      identifier: { type: graphql.GraphQLString },
+      identifier: {
+        resolve: (source) => source.identifier.value,
+        type: graphql.GraphQLString,
+      },
       parentStringProperty: {
         description: "Parent string property",
         resolve: (source) => source.parentStringProperty.extractNullable(),
@@ -552,10 +564,16 @@ export namespace ConcreteChild {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/ConcreteChild",
   );
-  export const GraphQL = new graphql.GraphQLObjectType<ConcreteChild>({
+  export const GraphQL = new graphql.GraphQLObjectType<
+    ConcreteChild,
+    { objectSet: $ObjectSet }
+  >({
     description: "Concrete child",
     fields: () => ({
-      identifier: { type: graphql.GraphQLString },
+      identifier: {
+        resolve: (source) => source.identifier.value,
+        type: graphql.GraphQLString,
+      },
       childStringProperty: {
         description: "Child string property",
         resolve: (source) => source.childStringProperty.extractNullable(),
@@ -1103,17 +1121,31 @@ export const graphqlSchema = new graphql.GraphQLSchema({
     fields: {
       concreteChild: {
         args: { id: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) } },
-        resolve: (_, { id }, { objectSet }) => objectSet.concreteChild(id),
+        resolve: async (
+          _,
+          { id }: { id: string },
+          { objectSet },
+        ): Promise<ConcreteChild> =>
+          (await objectSet.concreteChild(id)).unsafeCoerce(),
         type: ConcreteChild.GraphQL,
       },
       concreteParent: {
         args: { id: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) } },
-        resolve: (_, { id }, { objectSet }) => objectSet.concreteParent(id),
+        resolve: async (
+          _,
+          { id }: { id: string },
+          { objectSet },
+        ): Promise<ConcreteParent> =>
+          (await objectSet.concreteParent(id)).unsafeCoerce(),
         type: ConcreteParentStatic.GraphQL,
       },
       nested: {
         args: { id: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) } },
-        resolve: (_, { id }, { objectSet }) => objectSet.nested(id),
+        resolve: async (
+          _,
+          { id }: { id: string },
+          { objectSet },
+        ): Promise<Nested> => (await objectSet.nested(id)).unsafeCoerce(),
         type: Nested.GraphQL,
       },
     },
