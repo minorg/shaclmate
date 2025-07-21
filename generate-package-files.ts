@@ -231,7 +231,7 @@ const packages: readonly Package[] = [
       clean: "rimraf dist",
       dev: "tsc -w --preserveWatchOutput",
       rebuild: "run-s clean build",
-      start: "tsx src/server.ts",
+      start: "NODE_ENV=development tsx src/server.ts",
     },
   },
 ];
