@@ -122,8 +122,7 @@ export namespace Nested {
     description: "Nested",
     fields: () => ({
       identifier: {
-        resolve: (source) =>
-          rdfjsResource.Resource.Identifier.toString(source.identifier),
+        resolve: (source) => Nested.Identifier.toString(source.identifier),
         type: graphql.GraphQLString,
       },
       optionalNumberProperty: {
@@ -366,7 +365,7 @@ export namespace ConcreteParentStatic {
     fields: () => ({
       identifier: {
         resolve: (source) =>
-          rdfjsResource.Resource.Identifier.toString(source.identifier),
+          ConcreteParentStatic.Identifier.toString(source.identifier),
         type: graphql.GraphQLString,
       },
       parentStringProperty: {
@@ -394,6 +393,9 @@ export namespace ConcreteParentStatic {
           : purify.Left(new Error("expected identifier to be NamedNode")),
       );
     }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
   }
 
   export function propertiesFromRdf({
@@ -626,7 +628,7 @@ export namespace ConcreteChild {
     fields: () => ({
       identifier: {
         resolve: (source) =>
-          rdfjsResource.Resource.Identifier.toString(source.identifier),
+          ConcreteChild.Identifier.toString(source.identifier),
         type: graphql.GraphQLString,
       },
       childStringProperty: {

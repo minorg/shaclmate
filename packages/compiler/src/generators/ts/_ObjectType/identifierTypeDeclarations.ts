@@ -51,6 +51,24 @@ function identifierFromStringFunctionDeclaration(
   };
 }
 
+function identifierToStringFunctionDeclaration(
+  this: ObjectType,
+): VariableStatementStructure {
+  return {
+    declarationKind: VariableDeclarationKind.Const,
+    isExported: true,
+    kind: StructureKind.VariableStatement,
+    declarations: [
+      {
+        initializer: "rdfjsResource.Resource.Identifier.toString",
+        leadingTrivia:
+          "// biome-ignore lint/suspicious/noShadowRestrictedNames:",
+        name: "toString",
+      },
+    ],
+  };
+}
+
 export function identifierTypeDeclarations(
   this: ObjectType,
 ): IdentifierTypeDeclarations {
@@ -86,7 +104,10 @@ export function identifierTypeDeclarations(
       isExported: true,
       kind: StructureKind.Module,
       name: "Identifier",
-      statements: [identifierFromStringFunctionDeclaration.bind(this)()],
+      statements: [
+        identifierFromStringFunctionDeclaration.bind(this)(),
+        identifierToStringFunctionDeclaration.bind(this)(),
+      ],
     },
   ];
 }
