@@ -15,7 +15,7 @@
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Concrete child" ;
     rdfs:subClassOf :ConcreteParent ;
-    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:nodeKind sh:IRI ;
     sh:property :optionalNestedObjectProperty, :optionalStringProperty, :requiredStringProperty, [
         rdfs:comment "Child string property" ;
         sh:datatype xsd:string ;
@@ -26,7 +26,7 @@
 :ConcreteParent
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Concrete parent" ;
-    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:nodeKind sh:IRI ;
     sh:property [
         rdfs:comment "Parent string property" ;
         sh:datatype xsd:string ;

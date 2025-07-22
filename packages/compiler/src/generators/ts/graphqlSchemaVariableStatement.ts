@@ -18,7 +18,7 @@ function graphqlQueryObjectType({
             }),
           }),
           resolve: `\
-async (_, { id }: { id: string }, { objectSet }): Promise<${objectType.name}> => (await purify.EitherAsync<Error, ${objectType.name}>(async ({ liftEither }) => liftEither(await objectSet.${objectType.objectSetMethodNames.object}(await liftEither(${objectType.staticModuleName}.identifierFromString(id)))))).mapLeft((error) => new graphql.GraphQLError(error.message, { originalError: error })).unsafeCoerce()`,
+async (_, { id }: { id: string }, { objectSet }): Promise<${objectType.name}> => (await purify.EitherAsync<Error, ${objectType.name}>(async ({ liftEither }) => liftEither(await objectSet.${objectType.objectSetMethodNames.object}(await liftEither(${objectType.staticModuleName}.Identifier.fromString(id)))))).mapLeft((error) => new graphql.GraphQLError(error.message, { originalError: error })).unsafeCoerce()`,
           type: `${objectType.staticModuleName}.GraphQL`,
         });
         return fields;

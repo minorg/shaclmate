@@ -10,7 +10,7 @@ export * from "./graphqlTypeVariableStatement.js";
 
 export * from "./hashFunctionDeclarations.js";
 
-export * from "./identifierFromStringFunctionDeclaration.js";
+export * from "./identifierTypeDeclarations.js";
 
 export * from "./IdentifierPrefixProperty.js";
 
