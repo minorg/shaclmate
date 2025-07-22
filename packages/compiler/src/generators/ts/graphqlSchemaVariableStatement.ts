@@ -13,12 +13,12 @@ function graphqlQueryObjectType({
       (fields, objectType) => {
         fields[objectType.objectSetMethodNames.object] = objectInitializer({
           args: objectInitializer({
-            id: objectInitializer({
+            identifier: objectInitializer({
               type: "new graphql.GraphQLNonNull(graphql.GraphQLID)",
             }),
           }),
           resolve: `\
-async (_, { id }: { id: string }, { objectSet }): Promise<${objectType.name}> => (await purify.EitherAsync<Error, ${objectType.name}>(async ({ liftEither }) => liftEither(await objectSet.${objectType.objectSetMethodNames.object}(await liftEither(${objectType.staticModuleName}.Identifier.fromString(id)))))).mapLeft((error) => new graphql.GraphQLError(error.message, { originalError: error })).unsafeCoerce()`,
+async (_, { identifier }: { identifier: string }, { objectSet }): Promise<${objectType.name}> => (await purify.EitherAsync<Error, ${objectType.name}>(async ({ liftEither }) => liftEither(await objectSet.${objectType.objectSetMethodNames.object}(await liftEither(${objectType.staticModuleName}.Identifier.fromString(identifier)))))).mapLeft((error) => new graphql.GraphQLError(error.message, { originalError: error })).unsafeCoerce()`,
           type: `${objectType.staticModuleName}.GraphQL`,
         });
         return fields;
