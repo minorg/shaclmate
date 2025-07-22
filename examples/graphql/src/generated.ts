@@ -846,42 +846,38 @@ export namespace ConcreteChild {
 }
 export interface $ObjectSet {
   concreteChild(
-    identifier: rdfjs.NamedNode,
+    identifier: ConcreteChild.Identifier,
   ): Promise<purify.Either<Error, ConcreteChild>>;
   concreteChildIdentifiers(
-    query?: $ObjectSet.Query<rdfjs.NamedNode>,
-  ): Promise<purify.Either<Error, readonly rdfjs.NamedNode[]>>;
+    query?: $ObjectSet.Query<ConcreteChild.Identifier>,
+  ): Promise<purify.Either<Error, readonly ConcreteChild.Identifier[]>>;
   concreteChilds(
-    query?: $ObjectSet.Query<rdfjs.NamedNode>,
+    query?: $ObjectSet.Query<ConcreteChild.Identifier>,
   ): Promise<readonly purify.Either<Error, ConcreteChild>[]>;
   concreteChildsCount(
-    query?: Pick<$ObjectSet.Query<rdfjs.NamedNode>, "where">,
+    query?: Pick<$ObjectSet.Query<ConcreteChild.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
   concreteParent(
-    identifier: rdfjs.NamedNode,
+    identifier: ConcreteParentStatic.Identifier,
   ): Promise<purify.Either<Error, ConcreteParent>>;
   concreteParentIdentifiers(
-    query?: $ObjectSet.Query<rdfjs.NamedNode>,
-  ): Promise<purify.Either<Error, readonly rdfjs.NamedNode[]>>;
+    query?: $ObjectSet.Query<ConcreteParentStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ConcreteParentStatic.Identifier[]>>;
   concreteParents(
-    query?: $ObjectSet.Query<rdfjs.NamedNode>,
+    query?: $ObjectSet.Query<ConcreteParentStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, ConcreteParent>[]>;
   concreteParentsCount(
-    query?: Pick<$ObjectSet.Query<rdfjs.NamedNode>, "where">,
+    query?: Pick<$ObjectSet.Query<ConcreteParentStatic.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
-  nested(
-    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
-  ): Promise<purify.Either<Error, Nested>>;
+  nested(identifier: Nested.Identifier): Promise<purify.Either<Error, Nested>>;
   nestedIdentifiers(
-    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
-  ): Promise<
-    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
-  >;
+    query?: $ObjectSet.Query<Nested.Identifier>,
+  ): Promise<purify.Either<Error, readonly Nested.Identifier[]>>;
   nesteds(
-    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+    query?: $ObjectSet.Query<Nested.Identifier>,
   ): Promise<readonly purify.Either<Error, Nested>[]>;
   nestedsCount(
-    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+    query?: Pick<$ObjectSet.Query<Nested.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
 }
 
@@ -909,13 +905,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteChild(
-    identifier: rdfjs.NamedNode,
+    identifier: ConcreteChild.Identifier,
   ): Promise<purify.Either<Error, ConcreteChild>> {
     return this.concreteChildSync(identifier);
   }
 
   concreteChildSync(
-    identifier: rdfjs.NamedNode,
+    identifier: ConcreteChild.Identifier,
   ): purify.Either<Error, ConcreteChild> {
     return this.concreteChildsSync({
       where: { identifiers: [identifier], type: "identifiers" },
@@ -923,13 +919,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteChildIdentifiers(
-    query?: $ObjectSet.Query<rdfjs.NamedNode>,
-  ): Promise<purify.Either<Error, readonly rdfjs.NamedNode[]>> {
+    query?: $ObjectSet.Query<ConcreteChild.Identifier>,
+  ): Promise<purify.Either<Error, readonly ConcreteChild.Identifier[]>> {
     return this.concreteChildIdentifiersSync(query);
   }
 
   concreteChildIdentifiersSync(
-    query?: $ObjectSet.Query<rdfjs.NamedNode>,
+    query?: $ObjectSet.Query<ConcreteChild.Identifier>,
   ): purify.Either<Error, readonly rdfjs.NamedNode[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<ConcreteChild, rdfjs.NamedNode>(
@@ -940,13 +936,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteChilds(
-    query?: $ObjectSet.Query<rdfjs.NamedNode>,
+    query?: $ObjectSet.Query<ConcreteChild.Identifier>,
   ): Promise<readonly purify.Either<Error, ConcreteChild>[]> {
     return this.concreteChildsSync(query);
   }
 
   concreteChildsSync(
-    query?: $ObjectSet.Query<rdfjs.NamedNode>,
+    query?: $ObjectSet.Query<ConcreteChild.Identifier>,
   ): readonly purify.Either<Error, ConcreteChild>[] {
     return [
       ...this.$objectsSync<ConcreteChild, rdfjs.NamedNode>(
@@ -957,13 +953,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteChildsCount(
-    query?: Pick<$ObjectSet.Query<rdfjs.NamedNode>, "where">,
+    query?: Pick<$ObjectSet.Query<ConcreteChild.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.concreteChildsCountSync(query);
   }
 
   concreteChildsCountSync(
-    query?: Pick<$ObjectSet.Query<rdfjs.NamedNode>, "where">,
+    query?: Pick<$ObjectSet.Query<ConcreteChild.Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<ConcreteChild, rdfjs.NamedNode>(
       ConcreteChild,
@@ -972,13 +968,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteParent(
-    identifier: rdfjs.NamedNode,
+    identifier: ConcreteParentStatic.Identifier,
   ): Promise<purify.Either<Error, ConcreteParent>> {
     return this.concreteParentSync(identifier);
   }
 
   concreteParentSync(
-    identifier: rdfjs.NamedNode,
+    identifier: ConcreteParentStatic.Identifier,
   ): purify.Either<Error, ConcreteParent> {
     return this.concreteParentsSync({
       where: { identifiers: [identifier], type: "identifiers" },
@@ -986,13 +982,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteParentIdentifiers(
-    query?: $ObjectSet.Query<rdfjs.NamedNode>,
-  ): Promise<purify.Either<Error, readonly rdfjs.NamedNode[]>> {
+    query?: $ObjectSet.Query<ConcreteParentStatic.Identifier>,
+  ): Promise<purify.Either<Error, readonly ConcreteParentStatic.Identifier[]>> {
     return this.concreteParentIdentifiersSync(query);
   }
 
   concreteParentIdentifiersSync(
-    query?: $ObjectSet.Query<rdfjs.NamedNode>,
+    query?: $ObjectSet.Query<ConcreteParentStatic.Identifier>,
   ): purify.Either<Error, readonly rdfjs.NamedNode[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<ConcreteParent, rdfjs.NamedNode>(
@@ -1003,13 +999,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteParents(
-    query?: $ObjectSet.Query<rdfjs.NamedNode>,
+    query?: $ObjectSet.Query<ConcreteParentStatic.Identifier>,
   ): Promise<readonly purify.Either<Error, ConcreteParent>[]> {
     return this.concreteParentsSync(query);
   }
 
   concreteParentsSync(
-    query?: $ObjectSet.Query<rdfjs.NamedNode>,
+    query?: $ObjectSet.Query<ConcreteParentStatic.Identifier>,
   ): readonly purify.Either<Error, ConcreteParent>[] {
     return [
       ...this.$objectsSync<ConcreteParent, rdfjs.NamedNode>(
@@ -1020,13 +1016,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteParentsCount(
-    query?: Pick<$ObjectSet.Query<rdfjs.NamedNode>, "where">,
+    query?: Pick<$ObjectSet.Query<ConcreteParentStatic.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.concreteParentsCountSync(query);
   }
 
   concreteParentsCountSync(
-    query?: Pick<$ObjectSet.Query<rdfjs.NamedNode>, "where">,
+    query?: Pick<$ObjectSet.Query<ConcreteParentStatic.Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<ConcreteParent, rdfjs.NamedNode>(
       ConcreteParentStatic,
@@ -1035,29 +1031,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async nested(
-    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
+    identifier: Nested.Identifier,
   ): Promise<purify.Either<Error, Nested>> {
     return this.nestedSync(identifier);
   }
 
-  nestedSync(
-    identifier: rdfjs.BlankNode | rdfjs.NamedNode,
-  ): purify.Either<Error, Nested> {
+  nestedSync(identifier: Nested.Identifier): purify.Either<Error, Nested> {
     return this.nestedsSync({
       where: { identifiers: [identifier], type: "identifiers" },
     })[0];
   }
 
   async nestedIdentifiers(
-    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
-  ): Promise<
-    purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]>
-  > {
+    query?: $ObjectSet.Query<Nested.Identifier>,
+  ): Promise<purify.Either<Error, readonly Nested.Identifier[]>> {
     return this.nestedIdentifiersSync(query);
   }
 
   nestedIdentifiersSync(
-    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+    query?: $ObjectSet.Query<Nested.Identifier>,
   ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<Nested, rdfjs.BlankNode | rdfjs.NamedNode>(
@@ -1068,13 +1060,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async nesteds(
-    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+    query?: $ObjectSet.Query<Nested.Identifier>,
   ): Promise<readonly purify.Either<Error, Nested>[]> {
     return this.nestedsSync(query);
   }
 
   nestedsSync(
-    query?: $ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>,
+    query?: $ObjectSet.Query<Nested.Identifier>,
   ): readonly purify.Either<Error, Nested>[] {
     return [
       ...this.$objectsSync<Nested, rdfjs.BlankNode | rdfjs.NamedNode>(
@@ -1085,13 +1077,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async nestedsCount(
-    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+    query?: Pick<$ObjectSet.Query<Nested.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.nestedsCountSync(query);
   }
 
   nestedsCountSync(
-    query?: Pick<$ObjectSet.Query<rdfjs.BlankNode | rdfjs.NamedNode>, "where">,
+    query?: Pick<$ObjectSet.Query<Nested.Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<Nested, rdfjs.BlankNode | rdfjs.NamedNode>(
       Nested,
