@@ -1187,10 +1187,12 @@ export const graphqlSchema = new graphql.GraphQLSchema({
     name: "Query",
     fields: {
       concreteChild: {
-        args: { id: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) } },
+        args: {
+          identifier: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
+        },
         resolve: async (
           _,
-          { id }: { id: string },
+          args: { identifier: string },
           { objectSet },
         ): Promise<ConcreteChild> =>
           (
@@ -1198,25 +1200,76 @@ export const graphqlSchema = new graphql.GraphQLSchema({
               async ({ liftEither }) =>
                 liftEither(
                   await objectSet.concreteChild(
-                    await liftEither(ConcreteChild.Identifier.fromString(id)),
+                    await liftEither(
+                      ConcreteChild.Identifier.fromString(args.identifier),
+                    ),
                   ),
                 ),
             )
-          )
-            .mapLeft(
-              (error) =>
-                new graphql.GraphQLError(error.message, {
-                  originalError: error,
-                }),
-            )
-            .unsafeCoerce(),
+          ).unsafeCoerce(),
         type: ConcreteChild.GraphQL,
       },
-      concreteParent: {
-        args: { id: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) } },
+      concreteChilds: {
+        args: {
+          identifiers: {
+            type: new graphql.GraphQLList(
+              new graphql.GraphQLNonNull(graphql.GraphQLID),
+            ),
+          },
+          limit: { type: graphql.GraphQLInt },
+          offset: { type: graphql.GraphQLInt },
+        },
         resolve: async (
           _,
-          { id }: { id: string },
+          args: {
+            identifiers: readonly string[] | null;
+            limit: number | null;
+            offset: number | null;
+          },
+          { objectSet },
+        ): Promise<readonly ConcreteChild[]> =>
+          (
+            await purify.EitherAsync<Error, readonly ConcreteChild[]>(
+              async ({ liftEither }) => {
+                let where:
+                  | $ObjectSet.Where<ConcreteChild.Identifier>
+                  | undefined;
+                if (args.identifiers) {
+                  const identifiers: ConcreteChild.Identifier[] = [];
+                  for (const identifierArg of args.identifiers) {
+                    identifiers.push(
+                      await liftEither(
+                        ConcreteChild.Identifier.fromString(identifierArg),
+                      ),
+                    );
+                  }
+                  where = { identifiers, type: "identifiers" };
+                }
+                const objects: ConcreteChild[] = [];
+                for (const objectEither of await objectSet.concreteChilds({
+                  limit: args.limit !== null ? args.limit : undefined,
+                  offset: args.offset !== null ? args.offset : undefined,
+                  where,
+                })) {
+                  objects.push(await liftEither(objectEither));
+                }
+                return objects;
+              },
+            )
+          ).unsafeCoerce(),
+        type: new graphql.GraphQLNonNull(
+          new graphql.GraphQLList(
+            new graphql.GraphQLNonNull(ConcreteChild.GraphQL),
+          ),
+        ),
+      },
+      concreteParent: {
+        args: {
+          identifier: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
+        },
+        resolve: async (
+          _,
+          args: { identifier: string },
           { objectSet },
         ): Promise<ConcreteParent> =>
           (
@@ -1225,45 +1278,143 @@ export const graphqlSchema = new graphql.GraphQLSchema({
                 liftEither(
                   await objectSet.concreteParent(
                     await liftEither(
-                      ConcreteParentStatic.Identifier.fromString(id),
+                      ConcreteParentStatic.Identifier.fromString(
+                        args.identifier,
+                      ),
                     ),
                   ),
                 ),
             )
-          )
-            .mapLeft(
-              (error) =>
-                new graphql.GraphQLError(error.message, {
-                  originalError: error,
-                }),
-            )
-            .unsafeCoerce(),
+          ).unsafeCoerce(),
         type: ConcreteParentStatic.GraphQL,
       },
-      nested: {
-        args: { id: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) } },
+      concreteParents: {
+        args: {
+          identifiers: {
+            type: new graphql.GraphQLList(
+              new graphql.GraphQLNonNull(graphql.GraphQLID),
+            ),
+          },
+          limit: { type: graphql.GraphQLInt },
+          offset: { type: graphql.GraphQLInt },
+        },
         resolve: async (
           _,
-          { id }: { id: string },
+          args: {
+            identifiers: readonly string[] | null;
+            limit: number | null;
+            offset: number | null;
+          },
+          { objectSet },
+        ): Promise<readonly ConcreteParent[]> =>
+          (
+            await purify.EitherAsync<Error, readonly ConcreteParent[]>(
+              async ({ liftEither }) => {
+                let where:
+                  | $ObjectSet.Where<ConcreteParentStatic.Identifier>
+                  | undefined;
+                if (args.identifiers) {
+                  const identifiers: ConcreteParentStatic.Identifier[] = [];
+                  for (const identifierArg of args.identifiers) {
+                    identifiers.push(
+                      await liftEither(
+                        ConcreteParentStatic.Identifier.fromString(
+                          identifierArg,
+                        ),
+                      ),
+                    );
+                  }
+                  where = { identifiers, type: "identifiers" };
+                }
+                const objects: ConcreteParent[] = [];
+                for (const objectEither of await objectSet.concreteParents({
+                  limit: args.limit !== null ? args.limit : undefined,
+                  offset: args.offset !== null ? args.offset : undefined,
+                  where,
+                })) {
+                  objects.push(await liftEither(objectEither));
+                }
+                return objects;
+              },
+            )
+          ).unsafeCoerce(),
+        type: new graphql.GraphQLNonNull(
+          new graphql.GraphQLList(
+            new graphql.GraphQLNonNull(ConcreteParentStatic.GraphQL),
+          ),
+        ),
+      },
+      nested: {
+        args: {
+          identifier: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
+        },
+        resolve: async (
+          _,
+          args: { identifier: string },
           { objectSet },
         ): Promise<Nested> =>
           (
             await purify.EitherAsync<Error, Nested>(async ({ liftEither }) =>
               liftEither(
                 await objectSet.nested(
-                  await liftEither(Nested.Identifier.fromString(id)),
+                  await liftEither(
+                    Nested.Identifier.fromString(args.identifier),
+                  ),
                 ),
               ),
             )
-          )
-            .mapLeft(
-              (error) =>
-                new graphql.GraphQLError(error.message, {
-                  originalError: error,
-                }),
-            )
-            .unsafeCoerce(),
+          ).unsafeCoerce(),
         type: Nested.GraphQL,
+      },
+      nesteds: {
+        args: {
+          identifiers: {
+            type: new graphql.GraphQLList(
+              new graphql.GraphQLNonNull(graphql.GraphQLID),
+            ),
+          },
+          limit: { type: graphql.GraphQLInt },
+          offset: { type: graphql.GraphQLInt },
+        },
+        resolve: async (
+          _,
+          args: {
+            identifiers: readonly string[] | null;
+            limit: number | null;
+            offset: number | null;
+          },
+          { objectSet },
+        ): Promise<readonly Nested[]> =>
+          (
+            await purify.EitherAsync<Error, readonly Nested[]>(
+              async ({ liftEither }) => {
+                let where: $ObjectSet.Where<Nested.Identifier> | undefined;
+                if (args.identifiers) {
+                  const identifiers: Nested.Identifier[] = [];
+                  for (const identifierArg of args.identifiers) {
+                    identifiers.push(
+                      await liftEither(
+                        Nested.Identifier.fromString(identifierArg),
+                      ),
+                    );
+                  }
+                  where = { identifiers, type: "identifiers" };
+                }
+                const objects: Nested[] = [];
+                for (const objectEither of await objectSet.nesteds({
+                  limit: args.limit !== null ? args.limit : undefined,
+                  offset: args.offset !== null ? args.offset : undefined,
+                  where,
+                })) {
+                  objects.push(await liftEither(objectEither));
+                }
+                return objects;
+              },
+            )
+          ).unsafeCoerce(),
+        type: new graphql.GraphQLNonNull(
+          new graphql.GraphQLList(new graphql.GraphQLNonNull(Nested.GraphQL)),
+        ),
       },
     },
   }),
