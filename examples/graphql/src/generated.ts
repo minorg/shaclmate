@@ -1191,7 +1191,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           identifier: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
         },
         resolve: async (
-          _,
+          _source,
           args: { identifier: string },
           { objectSet },
         ): Promise<ConcreteChild> =>
@@ -1220,7 +1220,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           offset: { type: graphql.GraphQLInt },
         },
         resolve: async (
-          _,
+          _source,
           args: {
             identifiers: readonly string[] | null;
             limit: number | null;
@@ -1263,12 +1263,17 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           ),
         ),
       },
+      concreteChildsCount: {
+        resolve: async (_source, _args, { objectSet }): Promise<number> =>
+          (await objectSet.concreteChildsCount()).unsafeCoerce(),
+        type: new graphql.GraphQLNonNull(graphql.GraphQLInt),
+      },
       concreteParent: {
         args: {
           identifier: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
         },
         resolve: async (
-          _,
+          _source,
           args: { identifier: string },
           { objectSet },
         ): Promise<ConcreteParent> =>
@@ -1299,7 +1304,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           offset: { type: graphql.GraphQLInt },
         },
         resolve: async (
-          _,
+          _source,
           args: {
             identifiers: readonly string[] | null;
             limit: number | null;
@@ -1344,12 +1349,17 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           ),
         ),
       },
+      concreteParentsCount: {
+        resolve: async (_source, _args, { objectSet }): Promise<number> =>
+          (await objectSet.concreteParentsCount()).unsafeCoerce(),
+        type: new graphql.GraphQLNonNull(graphql.GraphQLInt),
+      },
       nested: {
         args: {
           identifier: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
         },
         resolve: async (
-          _,
+          _source,
           args: { identifier: string },
           { objectSet },
         ): Promise<Nested> =>
@@ -1377,7 +1387,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           offset: { type: graphql.GraphQLInt },
         },
         resolve: async (
-          _,
+          _source,
           args: {
             identifiers: readonly string[] | null;
             limit: number | null;
@@ -1415,6 +1425,11 @@ export const graphqlSchema = new graphql.GraphQLSchema({
         type: new graphql.GraphQLNonNull(
           new graphql.GraphQLList(new graphql.GraphQLNonNull(Nested.GraphQL)),
         ),
+      },
+      nestedsCount: {
+        resolve: async (_source, _args, { objectSet }): Promise<number> =>
+          (await objectSet.nestedsCount()).unsafeCoerce(),
+        type: new graphql.GraphQLNonNull(graphql.GraphQLInt),
       },
     },
   }),

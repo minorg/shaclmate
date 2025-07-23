@@ -18,7 +18,7 @@ function graphqlQueryObjectType({
             }),
           }),
           resolve: `\
-async (_, args: { identifier: string }, { objectSet }): Promise<${objectType.name}> => 
+async (_source, args: { identifier: string }, { objectSet }): Promise<${objectType.name}> => 
   (await purify.EitherAsync<Error, ${objectType.name}>(async ({ liftEither }) => 
     liftEither(await objectSet.${objectType.objectSetMethodNames.object}(await liftEither(${objectType.staticModuleName}.Identifier.fromString(args.identifier))))
   )).unsafeCoerce()`,
@@ -38,7 +38,7 @@ async (_, args: { identifier: string }, { objectSet }): Promise<${objectType.nam
             }),
           }),
           resolve: `\
-async (_, args: { identifiers: readonly string[] | null; limit: number | null; offset: number | null; }, { objectSet }): Promise<readonly ${objectType.name}[]> =>
+async (_source, args: { identifiers: readonly string[] | null; limit: number | null; offset: number | null; }, { objectSet }): Promise<readonly ${objectType.name}[]> =>
 (await purify.EitherAsync<Error, readonly ${objectType.name}[]>(async ({ liftEither }) => {
   let where: $ObjectSet.Where<${objectType.staticModuleName}.Identifier> | undefined;
   if (args.identifiers) {
@@ -56,6 +56,13 @@ async (_, args: { identifiers: readonly string[] | null; limit: number | null; o
 })).unsafeCoerce()`,
           type: `new graphql.GraphQLNonNull(new graphql.GraphQLList(new graphql.GraphQLNonNull(${objectType.staticModuleName}.GraphQL)))`,
         });
+
+        fields[objectType.objectSetMethodNames.objectsCount] =
+          objectInitializer({
+            resolve: `\
+async (_source, _args, { objectSet }): Promise<number> => (await objectSet.${objectType.objectSetMethodNames.objectsCount}()).unsafeCoerce()`,
+            type: "new graphql.GraphQLNonNull(graphql.GraphQLInt)",
+          });
 
         return fields;
       },
