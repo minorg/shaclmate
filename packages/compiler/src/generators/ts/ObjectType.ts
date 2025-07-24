@@ -1,6 +1,6 @@
 import type { NamedNode } from "@rdfjs/types";
 
-import { camelCase } from "change-case";
+import { camelCase, trainCase } from "change-case";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import {
@@ -247,7 +247,10 @@ export class ObjectType extends DeclaredType {
   @Memoize()
   get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
     const prefixSingular = camelCase(this.name);
-    const prefixPlural = plur(prefixSingular);
+    const thisNameParts = trainCase(this.name).split("-");
+    const prefixPlural = camelCase(
+      `${thisNameParts.slice(0, thisNameParts.length - 1).join("")}${plur(thisNameParts[thisNameParts.length - 1])}`,
+    );
     return {
       object: prefixSingular,
       objectIdentifiers: `${prefixSingular}Identifiers`,
