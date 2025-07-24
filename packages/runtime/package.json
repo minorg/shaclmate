@@ -53,7 +53,7 @@
     "lint:write:unsafe": "biome lint --write --unsafe",
     "test": "biome check && vitest run",
     "test:coverage": "biome check && vitest run --coverage",
-    "test:watch": "vitest watch",
+    "test:watch": "biome check && vitest watch",
     "unlink": "npm unlink -g @shaclmate/runtime"
   },
   "type": "module",

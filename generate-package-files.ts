@@ -36,19 +36,19 @@ interface Package {
 }
 
 const externalDependencyVersions = {
-  "@rdfjs/term-map": "^2.0.2",
-  "@rdfjs/term-set": "^2.0.3",
-  "@rdfjs/types": "^1.1.0",
-  "@tpluscode/rdf-ns-builders": "^4.3.0",
-  "@types/n3": "^1.21.1",
-  "@types/rdfjs__term-map": "^2.0.10",
-  "@types/rdfjs__term-set": "^2.0.9",
-  graphql: "16.11.0",
-  "graphql-scalars": "1.24.2",
-  n3: "^1.21.3",
-  pino: "^9.1.0",
-  "purify-ts": "^2.1.0",
-  "rdfjs-resource": "1.0.19",
+  "@rdfjs/term-map": { "@rdfjs/term-map": "^2.0.2" },
+  "@rdfjs/term-set": { "@rdfjs/term-set": "^2.0.3" },
+  "@rdfjs/types": { "@rdfjs/types": "^1.1.0" },
+  "@tpluscode/rdf-ns-builders": { "@tpluscode/rdf-ns-builders": "^4.3.0" },
+  "@types/n3": { "@types/n3": "^1.21.1" },
+  "@types/rdfjs__term-map": { "@types/rdfjs__term-map": "^2.0.10" },
+  "@types/rdfjs__term-set": { "@types/rdfjs__term-set": "^2.0.9" },
+  graphql: { graphql: "16.11.0" },
+  "graphql-scalars": { "graphql-scalars": "1.24.2" },
+  n3: { n3: "^1.21.3" },
+  pino: { pino: "^9.1.0" },
+  "purify-ts": { "purify-ts": "^2.1.0" },
+  "rdfjs-resource": { "rdfjs-resource": "1.0.19" },
 };
 
 // Packages should be topologically sorted
@@ -64,23 +64,20 @@ const packages: readonly Package[] = [
   {
     dependencies: {
       external: {
-        "@rdfjs/term-map": externalDependencyVersions["@rdfjs/term-map"],
-        "@rdfjs/term-set": externalDependencyVersions["@rdfjs/term-set"],
-        "@rdfjs/types": externalDependencyVersions["@rdfjs/types"],
-        "@tpluscode/rdf-ns-builders":
-          externalDependencyVersions["@tpluscode/rdf-ns-builders"],
-        "@types/rdfjs__term-map":
-          externalDependencyVersions["@types/rdfjs__term-map"],
-        "@types/rdfjs__term-set":
-          externalDependencyVersions["@types/rdfjs__term-set"],
-        "purify-ts": externalDependencyVersions["purify-ts"],
-        "rdfjs-resource": externalDependencyVersions["rdfjs-resource"],
+        ...externalDependencyVersions["@rdfjs/term-map"],
+        ...externalDependencyVersions["@rdfjs/term-set"],
+        ...externalDependencyVersions["@rdfjs/types"],
+        ...externalDependencyVersions["@tpluscode/rdf-ns-builders"],
+        ...externalDependencyVersions["@types/rdfjs__term-map"],
+        ...externalDependencyVersions["@types/rdfjs__term-set"],
+        ...externalDependencyVersions["purify-ts"],
+        ...externalDependencyVersions["rdfjs-resource"],
       },
     },
     devDependencies: {
       external: {
-        "@types/n3": externalDependencyVersions["@types/n3"],
-        n3: externalDependencyVersions["n3"],
+        ...externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["n3"],
       },
     },
     directory: "packages",
@@ -91,22 +88,19 @@ const packages: readonly Package[] = [
     dependencies: {
       external: {
         "@rdfjs/prefix-map": "^0.1.2",
-        "@rdfjs/term-map": externalDependencyVersions["@rdfjs/term-map"],
-        "@rdfjs/term-set": externalDependencyVersions["@rdfjs/term-set"],
-        "@rdfjs/types": externalDependencyVersions["@rdfjs/types"],
+        ...externalDependencyVersions["@rdfjs/term-map"],
+        ...externalDependencyVersions["@rdfjs/term-set"],
+        ...externalDependencyVersions["@rdfjs/types"],
         "@sindresorhus/base62": "^0.1.0",
-        "@tpluscode/rdf-ns-builders":
-          externalDependencyVersions["@tpluscode/rdf-ns-builders"],
+        ...externalDependencyVersions["@tpluscode/rdf-ns-builders"],
         "@types/rdfjs__prefix-map": "^0.1.5",
-        "@types/rdfjs__term-map":
-          externalDependencyVersions["@types/rdfjs__term-map"],
-        "@types/rdfjs__term-set":
-          externalDependencyVersions["@types/rdfjs__term-set"],
+        ...externalDependencyVersions["@types/rdfjs__term-map"],
+        ...externalDependencyVersions["@types/rdfjs__term-set"],
         "@types/toposort": "2.0.7",
         "change-case": "^5.4.4",
-        pino: externalDependencyVersions["pino"],
+        ...externalDependencyVersions["pino"],
         plur: "^5.1.0",
-        "purify-ts": externalDependencyVersions["purify-ts"],
+        ...externalDependencyVersions["purify-ts"],
         "reserved-identifiers": "^1.0.0",
         toposort: "2.0.2",
         "ts-invariant": "^0.10.3",
@@ -118,10 +112,10 @@ const packages: readonly Package[] = [
     devDependencies: {
       external: {
         "@kos-kit/sparql-client": "2.0.115",
-        "@types/n3": externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["@types/n3"],
         oxigraph: "^0.4.0",
-        n3: externalDependencyVersions.n3,
-        "rdfjs-resource": externalDependencyVersions["rdfjs-resource"],
+        ...externalDependencyVersions.n3,
+        ...externalDependencyVersions["rdfjs-resource"],
       },
       internal: ["kitchen-sink-example", "runtime"],
     },
@@ -132,15 +126,15 @@ const packages: readonly Package[] = [
   {
     dependencies: {
       external: {
-        "@rdfjs/types": externalDependencyVersions["@rdfjs/types"],
-        "@types/n3": externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["@rdfjs/types"],
+        ...externalDependencyVersions["@types/n3"],
         "@types/sparqljs": "3.1.12",
         "@types/uuid": "^9.0.1",
         "js-sha256": "^0.11.0",
-        n3: externalDependencyVersions["n3"],
-        "purify-ts": externalDependencyVersions["purify-ts"],
+        ...externalDependencyVersions["n3"],
+        ...externalDependencyVersions["purify-ts"],
         "rdf-literal": "^1.3.2",
-        "rdfjs-resource": externalDependencyVersions["rdfjs-resource"],
+        ...externalDependencyVersions["rdfjs-resource"],
         sparqljs: "3.7.3",
         uuid: "^9.0.1",
         zod: "3.24.1",
@@ -151,8 +145,8 @@ const packages: readonly Package[] = [
     linkableDependencies: ["rdfjs-resource"],
     peerDependencies: {
       external: {
-        graphql: externalDependencyVersions.graphql,
-        "graphql-scalars": externalDependencyVersions["graphql-scalars"],
+        ...externalDependencyVersions.graphql,
+        ...externalDependencyVersions["graphql-scalars"],
       },
     },
     name: "runtime",
@@ -163,11 +157,11 @@ const packages: readonly Package[] = [
     },
     dependencies: {
       external: {
-        "@types/n3": externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["@types/n3"],
         "@types/rdf-validate-shacl": "^0.4.7",
         "cmd-ts": "^0.13.0",
-        n3: externalDependencyVersions["n3"],
-        pino: externalDependencyVersions["pino"],
+        ...externalDependencyVersions["n3"],
+        ...externalDependencyVersions["pino"],
         "rdf-validate-shacl": "^0.5.6",
       },
       internal: ["compiler"],
@@ -211,17 +205,17 @@ const packages: readonly Package[] = [
   {
     dependencies: {
       external: {
-        graphql: externalDependencyVersions.graphql,
-        "graphql-scalars": externalDependencyVersions["graphql-scalars"],
+        ...externalDependencyVersions.graphql,
+        ...externalDependencyVersions["graphql-scalars"],
         "graphql-yoga": "5.14.0",
-        n3: externalDependencyVersions.n3,
-        "rdfjs-resource": externalDependencyVersions["rdfjs-resource"],
+        ...externalDependencyVersions.n3,
+        ...externalDependencyVersions["rdfjs-resource"],
       },
       internal: ["runtime"],
     },
     devDependencies: {
       external: {
-        "@types/n3": externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["@types/n3"],
       },
     },
     directory: "examples",
@@ -232,6 +226,9 @@ const packages: readonly Package[] = [
       dev: "tsc -w --preserveWatchOutput",
       rebuild: "run-s clean build",
       start: "NODE_ENV=development tsx src/server.ts",
+      test: "biome check && vitest run",
+      "test:coverage": "biome check && vitest run --coverage",
+      "test:watch": "biome check && vitest watch",
     },
   },
 ];
@@ -335,7 +332,7 @@ for (const package_ of packages) {
           "lint:write:unsafe": "biome lint --write --unsafe",
           test: "biome check && vitest run",
           "test:coverage": "biome check && vitest run --coverage",
-          "test:watch": "vitest watch",
+          "test:watch": "biome check && vitest watch",
           unlink: `npm unlink -g @shaclmate/${package_.name}`,
         },
         type: "module",
