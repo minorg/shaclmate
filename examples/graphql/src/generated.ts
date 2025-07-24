@@ -851,10 +851,10 @@ export interface $ObjectSet {
   concreteChildIdentifiers(
     query?: $ObjectSet.Query<ConcreteChild.Identifier>,
   ): Promise<purify.Either<Error, readonly ConcreteChild.Identifier[]>>;
-  concreteChilds(
+  concreteChildren(
     query?: $ObjectSet.Query<ConcreteChild.Identifier>,
   ): Promise<readonly purify.Either<Error, ConcreteChild>[]>;
-  concreteChildsCount(
+  concreteChildrenCount(
     query?: Pick<$ObjectSet.Query<ConcreteChild.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
   concreteParent(
@@ -913,7 +913,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   concreteChildSync(
     identifier: ConcreteChild.Identifier,
   ): purify.Either<Error, ConcreteChild> {
-    return this.concreteChildsSync({
+    return this.concreteChildrenSync({
       where: { identifiers: [identifier], type: "identifiers" },
     })[0];
   }
@@ -935,13 +935,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ]);
   }
 
-  async concreteChilds(
+  async concreteChildren(
     query?: $ObjectSet.Query<ConcreteChild.Identifier>,
   ): Promise<readonly purify.Either<Error, ConcreteChild>[]> {
-    return this.concreteChildsSync(query);
+    return this.concreteChildrenSync(query);
   }
 
-  concreteChildsSync(
+  concreteChildrenSync(
     query?: $ObjectSet.Query<ConcreteChild.Identifier>,
   ): readonly purify.Either<Error, ConcreteChild>[] {
     return [
@@ -952,13 +952,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ];
   }
 
-  async concreteChildsCount(
+  async concreteChildrenCount(
     query?: Pick<$ObjectSet.Query<ConcreteChild.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
-    return this.concreteChildsCountSync(query);
+    return this.concreteChildrenCountSync(query);
   }
 
-  concreteChildsCountSync(
+  concreteChildrenCountSync(
     query?: Pick<$ObjectSet.Query<ConcreteChild.Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<ConcreteChild, rdfjs.NamedNode>(
@@ -1231,7 +1231,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           new graphql.GraphQLList(graphql.GraphQLString),
         ),
       },
-      concreteChilds: {
+      concreteChildren: {
         args: {
           identifiers: {
             type: new graphql.GraphQLList(
@@ -1268,7 +1268,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
                   where = { identifiers, type: "identifiers" };
                 }
                 const objects: ConcreteChild[] = [];
-                for (const objectEither of await objectSet.concreteChilds({
+                for (const objectEither of await objectSet.concreteChildren({
                   limit: args.limit !== null ? args.limit : undefined,
                   offset: args.offset !== null ? args.offset : undefined,
                   where,
@@ -1285,9 +1285,9 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           ),
         ),
       },
-      concreteChildsCount: {
+      concreteChildrenCount: {
         resolve: async (_source, _args, { objectSet }): Promise<number> =>
-          (await objectSet.concreteChildsCount()).unsafeCoerce(),
+          (await objectSet.concreteChildrenCount()).unsafeCoerce(),
         type: new graphql.GraphQLNonNull(graphql.GraphQLInt),
       },
       concreteParent: {

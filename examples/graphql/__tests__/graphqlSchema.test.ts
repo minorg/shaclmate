@@ -61,11 +61,11 @@ describe("graphqlSchema", () => {
 
   it("concreteChild objects (all)", async ({ expect }) => {
     const result = await execute(
-      "query { concreteChilds { identifier, childStringProperty } }",
+      "query { concreteChildren { identifier, childStringProperty } }",
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      concreteChilds: [...new Array(4)].map((_, i) => ({
+      concreteChildren: [...new Array(4)].map((_, i) => ({
         identifier: `<http://example.com/concreteChild${i}>`,
         childStringProperty: "child string property",
       })),
@@ -74,11 +74,11 @@ describe("graphqlSchema", () => {
 
   it("concreteChild objects (identifiers)", async ({ expect }) => {
     const result = await execute(
-      `query { concreteChilds(identifiers: [${[...new Array(2)].map((_, i) => `"<http://example.com/concreteChild${i + 1}>"`).join(", ")}]) { identifier, childStringProperty } }`,
+      `query { concreteChildren(identifiers: [${[...new Array(2)].map((_, i) => `"<http://example.com/concreteChild${i + 1}>"`).join(", ")}]) { identifier, childStringProperty } }`,
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      concreteChilds: [...new Array(2)].map((_, i) => ({
+      concreteChildren: [...new Array(2)].map((_, i) => ({
         identifier: `<http://example.com/concreteChild${i + 1}>`,
         childStringProperty: "child string property",
       })),
@@ -87,11 +87,11 @@ describe("graphqlSchema", () => {
 
   it("concreteChild objects (limit)", async ({ expect }) => {
     const result = await execute(
-      "query { concreteChilds(limit: 2) { identifier, childStringProperty } }",
+      "query { concreteChildren(limit: 2) { identifier, childStringProperty } }",
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      concreteChilds: [...new Array(2)].map((_, i) => ({
+      concreteChildren: [...new Array(2)].map((_, i) => ({
         identifier: `<http://example.com/concreteChild${i}>`,
         childStringProperty: "child string property",
       })),
@@ -100,11 +100,11 @@ describe("graphqlSchema", () => {
 
   it("concreteChild objects (offset)", async ({ expect }) => {
     const result = await execute(
-      "query { concreteChilds(offset: 1) { identifier, childStringProperty } }",
+      "query { concreteChildren(offset: 1) { identifier, childStringProperty } }",
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      concreteChilds: [...new Array(3)].map((_, i) => ({
+      concreteChildren: [...new Array(3)].map((_, i) => ({
         identifier: `<http://example.com/concreteChild${i + 1}>`,
         childStringProperty: "child string property",
       })),
@@ -112,10 +112,10 @@ describe("graphqlSchema", () => {
   });
 
   it("concreteChild objectsCount", async ({ expect }) => {
-    const result = await execute("query { concreteChildsCount }");
+    const result = await execute("query { concreteChildrenCount }");
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      concreteChildsCount: 4,
+      concreteChildrenCount: 4,
     });
   });
 });
