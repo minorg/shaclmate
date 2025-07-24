@@ -25,42 +25,58 @@ export abstract class Property<
   abstract readonly classGetAccessorDeclaration: Maybe<
     OptionalKind<GetAccessorDeclarationStructure>
   >;
+
   /**
    * Optional property declaration to include in a class declaration of the object type.
    */
   abstract readonly classPropertyDeclaration: Maybe<
     OptionalKind<PropertyDeclarationStructure>
   >;
+
   /**
    * Optional property to include in the parameters object of a class constructor.
    */
   abstract readonly constructorParametersPropertySignature: Maybe<
     OptionalKind<PropertySignatureStructure>
   >;
+
   /**
    * Function declaration that takes two values of the property and compares them, returning an $EqualsResult.
    */
   abstract readonly equalsFunction: string;
+
+  /**
+   * GraphQL.js field definition.
+   */
+  abstract readonly graphqlField: Maybe<{
+    description?: string;
+    type: string;
+  }>;
+
   /**
    * Signature of the property in an interface version of the object.
    */
   abstract readonly interfacePropertySignature: Maybe<
     OptionalKind<PropertySignatureStructure>
   >;
+
   /**
    * Signature of the property when serialized to JSON (the type of toJsonObjectMember).
    */
   abstract readonly jsonPropertySignature: Maybe<
     OptionalKind<PropertySignatureStructure>
   >;
+
   /**
    * Is the property reassignable?
    */
   abstract readonly mutable: boolean;
+
   /**
    * TypeScript identifier-safe name of the property.
    */
   readonly name: string;
+
   /**
    * Reusable function, type, and other declarations that are not particular to this property but that property-specific code
    * relies on. For example, the equals function/method of ObjectType has a custom return type that's the same across all
@@ -70,14 +86,18 @@ export abstract class Property<
    * The generator deduplicates snippet declarations across all types before adding them to the source.
    */
   abstract readonly snippetDeclarations: readonly string[];
+
   /**
    * Property type
 .   */
   readonly type: TypeT;
+
   /**
    * Property visibility: private, protected, public.
    */
+
   readonly visibility: PropertyVisibility;
+
   protected readonly dataFactoryVariable: string;
   protected readonly objectType: {
     readonly declarationType: TsObjectDeclarationType;

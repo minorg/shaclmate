@@ -38,6 +38,12 @@ export abstract class PrimitiveType<
     return variables.value;
   }
 
+  override graphqlResolveExpression({
+    variables,
+  }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
+    return variables.value;
+  }
+
   override hashStatements({
     variables,
   }: Parameters<Type["hashStatements"]>[0]): readonly string[] {

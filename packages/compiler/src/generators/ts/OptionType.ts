@@ -50,6 +50,10 @@ export class OptionType extends Type {
     return `((left, right) => $maybeEquals(left, right, ${this.itemType.equalsFunction}))`;
   }
 
+  override get graphqlName(): string {
+    return this.itemType.graphqlName; // Which is nullable by default
+  }
+
   override get jsonName(): string {
     return `(${this.itemType.jsonName}) | undefined`;
   }
@@ -79,6 +83,12 @@ export class OptionType extends Type {
     parameters: Parameters<Type["fromRdfExpression"]>[0],
   ): string {
     return `purify.Either.of(${this.itemType.fromRdfExpression(parameters)}.toMaybe())`;
+  }
+
+  override graphqlResolveExpression(
+    parameters: Parameters<Type["graphqlResolveExpression"]>[0],
+  ): string {
+    return `${this.itemType.graphqlResolveExpression(parameters)}.extractNullable()`;
   }
 
   override hashStatements({

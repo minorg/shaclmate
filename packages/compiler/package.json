@@ -13,6 +13,7 @@
     "@types/toposort": "2.0.7",
     "change-case": "^5.4.4",
     "pino": "^9.1.0",
+    "plur": "^5.1.0",
     "purify-ts": "^2.1.0",
     "reserved-identifiers": "^1.0.0",
     "toposort": "2.0.2",
@@ -21,8 +22,13 @@
     "typescript-memoize": "^1.1.1"
   },
   "devDependencies": {
+    "@shaclmate/kitchen-sink-example": "2.0.22",
     "@shaclmate/runtime": "2.0.22",
-    "oxigraph": "^0.4.0"
+    "@kos-kit/sparql-client": "2.0.115",
+    "@types/n3": "^1.21.1",
+    "oxigraph": "0.4.11",
+    "n3": "^1.21.3",
+    "rdfjs-resource": "1.0.19"
   },
   "exports": {
     ".": {
@@ -74,7 +80,7 @@
     "lint:write:unsafe": "biome lint --write --unsafe",
     "test": "biome check && vitest run",
     "test:coverage": "biome check && vitest run --coverage",
-    "test:watch": "vitest watch",
+    "test:watch": "biome check && vitest watch",
     "unlink": "npm unlink -g @shaclmate/compiler"
   },
   "type": "module",

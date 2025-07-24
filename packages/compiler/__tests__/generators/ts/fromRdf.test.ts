@@ -290,4 +290,66 @@ describe("fromRdf", () => {
       "envalue",
     );
   });
+
+  it("accept right identifier type (NamedNode)", ({ expect }) => {
+    expect(
+      kitchenSink.IriNodeShape.fromRdf({
+        resource: new MutableResourceSet({
+          dataFactory,
+          dataset: new N3.Store(),
+        })
+          .mutableResource(
+            dataFactory.namedNode("http://example.com/identifier"),
+          )
+          .add(rdf.type, dataFactory.namedNode("http://example.com/type")),
+      }).isRight(),
+    ).toBe(true);
+  });
+
+  it("accept right identifier type (sh:in identifier)", ({ expect }) => {
+    expect(
+      kitchenSink.InIdentifierNodeShape.fromRdf({
+        resource: new MutableResourceSet({
+          dataFactory,
+          dataset: new N3.Store(),
+        })
+          .mutableResource(
+            dataFactory.namedNode(
+              "http://example.com/InIdentifierNodeShapeInstance1",
+            ),
+          )
+          .add(rdf.type, dataFactory.namedNode("http://example.com/type")),
+      }).isRight(),
+    ).toBe(true);
+  });
+
+  it("reject wrong identifier type (BlankNode)", ({ expect }) => {
+    expect(
+      kitchenSink.IriNodeShape.fromRdf({
+        resource: new MutableResourceSet({
+          dataFactory,
+          dataset: new N3.Store(),
+        })
+          .mutableResource(dataFactory.blankNode())
+          .add(rdf.type, dataFactory.namedNode("http://example.com/type")),
+      }).isLeft(),
+    ).toBe(true);
+  });
+
+  it("reject wrong identifier type (sh:in identifier)", ({ expect }) => {
+    expect(
+      kitchenSink.InIdentifierNodeShape.fromRdf({
+        resource: new MutableResourceSet({
+          dataFactory,
+          dataset: new N3.Store(),
+        })
+          .mutableResource(
+            dataFactory.namedNode(
+              "http://example.com/InIdentifierNodeShapeInstance3",
+            ),
+          )
+          .add(rdf.type, dataFactory.namedNode("http://example.com/type")),
+      }).isLeft(),
+    ).toBe(true);
+  });
 });

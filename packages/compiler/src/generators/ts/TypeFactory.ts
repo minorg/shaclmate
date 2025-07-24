@@ -12,10 +12,11 @@ import { logger } from "../../logger.js";
 import { BooleanType } from "./BooleanType.js";
 import { DateTimeType } from "./DateTimeType.js";
 import { DateType } from "./DateType.js";
+import { FloatType } from "./FloatType.js";
 import { IdentifierType } from "./IdentifierType.js";
+import { IntType } from "./IntType.js";
 import { ListType } from "./ListType.js";
 import { LiteralType } from "./LiteralType.js";
-import { NumberType } from "./NumberType.js";
 import { ObjectType } from "./ObjectType.js";
 import { ObjectUnionType } from "./ObjectUnionType.js";
 import { OptionType } from "./OptionType.js";
@@ -25,6 +26,25 @@ import { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import { UnionType } from "./UnionType.js";
 import { tsName } from "./tsName.js";
+
+const numberDatatypes = {
+  float: [xsd.decimal, xsd.double, xsd.float],
+  int: [
+    xsd.byte,
+    xsd.int,
+    xsd.integer,
+    xsd.long,
+    xsd.negativeInteger,
+    xsd.nonNegativeInteger,
+    xsd.nonPositiveInteger,
+    xsd.positiveInteger,
+    xsd.short,
+    xsd.unsignedByte,
+    xsd.unsignedInt,
+    xsd.unsignedLong,
+    xsd.unsignedShort,
+  ],
+};
 
 export class TypeFactory {
   private readonly dataFactoryVariable: string;
@@ -119,40 +139,25 @@ export class TypeFactory {
             });
           }
 
-          for (const numberDatatype of [
-            // Integers
-            xsd.byte,
-            xsd.int,
-            xsd.integer,
-            xsd.long,
-            xsd.negativeInteger,
-            xsd.nonNegativeInteger,
-            xsd.nonPositiveInteger,
-            xsd.positiveInteger,
-            xsd.short,
-            xsd.unsignedByte,
-            xsd.unsignedInt,
-            xsd.unsignedLong,
-            xsd.unsignedShort,
-            // Floating point
-            xsd.decimal,
-            xsd.double,
-            xsd.float,
-          ]) {
-            if (datatype.equals(numberDatatype)) {
-              return new NumberType({
-                dataFactoryVariable: this.dataFactoryVariable,
-                defaultValue: astType.defaultValue,
-                hasValues: astType.hasValues,
-                in_: astType.in_,
-                languageIn: [],
-                primitiveDefaultValue: astType.defaultValue
-                  .map((value) => fromRdf(value, true))
-                  .filter((value) => typeof value === "number"),
-                primitiveIn: astType.in_
-                  .map((value) => fromRdf(value, true))
-                  .filter((value) => typeof value === "number"),
-              });
+          for (const [floatOrInt, numberDatatypes_] of Object.entries(
+            numberDatatypes,
+          )) {
+            for (const numberDatatype of numberDatatypes_) {
+              if (datatype.equals(numberDatatype)) {
+                return new (floatOrInt === "float" ? FloatType : IntType)({
+                  dataFactoryVariable: this.dataFactoryVariable,
+                  defaultValue: astType.defaultValue,
+                  hasValues: astType.hasValues,
+                  in_: astType.in_,
+                  languageIn: [],
+                  primitiveDefaultValue: astType.defaultValue
+                    .map((value) => fromRdf(value, true))
+                    .filter((value) => typeof value === "number"),
+                  primitiveIn: astType.in_
+                    .map((value) => fromRdf(value, true))
+                    .filter((value) => typeof value === "number"),
+                });
+              }
             }
           }
 
@@ -419,6 +424,7 @@ export class TypeFactory {
             },
             override: astType.parentObjectTypes.length > 0,
             type: identifierType,
+            typeAlias: `${astType.childObjectTypes.length > 0 ? `${tsName(astType.name)}Static` : tsName(astType.name)}.Identifier`,
             visibility: "public",
           }),
         );

@@ -27,6 +27,10 @@
   ],
   "license": "Apache-2.0",
   "name": "@shaclmate/runtime",
+  "peerDependencies": {
+    "graphql": "16.11.0",
+    "graphql-scalars": "1.24.2"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/minorg/shaclmate"
@@ -49,7 +53,7 @@
     "lint:write:unsafe": "biome lint --write --unsafe",
     "test": "biome check && vitest run",
     "test:coverage": "biome check && vitest run --coverage",
-    "test:watch": "vitest watch",
+    "test:watch": "biome check && vitest watch",
     "unlink": "npm unlink -g @shaclmate/runtime"
   },
   "type": "module",

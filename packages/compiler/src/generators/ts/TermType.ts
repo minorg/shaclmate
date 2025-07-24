@@ -104,6 +104,10 @@ export class TermType<
     });
   }
 
+  override get graphqlName(): string {
+    throw new Error("not implemented");
+  }
+
   get jsonName(): string {
     invariant(
       this.nodeKinds.has("Literal") &&
@@ -186,6 +190,12 @@ export class TermType<
       })})`,
     );
     return chain.join(".");
+  }
+
+  override graphqlResolveExpression(
+    _parameters: Parameters<Type["graphqlResolveExpression"]>[0],
+  ): string {
+    throw new Error("not implemented");
   }
 
   override hashStatements({

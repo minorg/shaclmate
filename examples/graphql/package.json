@@ -1,0 +1,42 @@
+{
+  "dependencies": {
+    "@shaclmate/runtime": "2.0.22",
+    "graphql": "16.11.0",
+    "graphql-scalars": "1.24.2",
+    "graphql-yoga": "5.14.0",
+    "n3": "^1.21.3",
+    "rdfjs-resource": "1.0.19"
+  },
+  "devDependencies": {
+    "@types/n3": "^1.21.1"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/*.d.ts",
+    "dist/*.js"
+  ],
+  "license": "Apache-2.0",
+  "name": "@shaclmate/graphql-example",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minorg/shaclmate"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf dist",
+    "dev": "tsc -w --preserveWatchOutput",
+    "rebuild": "run-s clean build",
+    "start": "NODE_ENV=development tsx src/server.ts",
+    "test": "biome check && vitest run",
+    "test:coverage": "biome check && vitest run --coverage",
+    "test:watch": "biome check && vitest watch"
+  },
+  "type": "module",
+  "version": "2.0.22"
+}

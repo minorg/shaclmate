@@ -68,6 +68,10 @@ export class ListType extends Type {
     return `((left, right) => $arrayEquals(left, right, ${this.itemType.equalsFunction}))`;
   }
 
+  override get graphqlName(): string {
+    return `new graphql.GraphQLList(new graphql.GraphQLNonNull(${this.itemType.graphqlName}))`;
+  }
+
   override get jsonName(): string {
     return `readonly (${this.itemType.jsonName})[]`;
   }

@@ -2156,22 +2156,26 @@ export interface ShaclmateOntology extends OwlOntology {
   readonly type: "ShaclmateOntology";
   readonly tsDataFactoryVariable: purify.Maybe<string>;
   readonly tsFeatureExcludes: readonly rdfjs.NamedNode<
-    | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+    | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+    | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+    | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+    | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
   >[];
   readonly tsFeatureIncludes: readonly rdfjs.NamedNode<
-    | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+    | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+    | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+    | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+    | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
   >[];
@@ -2210,22 +2214,26 @@ export namespace ShaclmateOntology {
       type: "ShaclmateOntology";
       tsDataFactoryVariable: purify.Maybe<string>;
       tsFeatureExcludes: readonly rdfjs.NamedNode<
-        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
       >[];
       tsFeatureIncludes: readonly rdfjs.NamedNode<
-        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
       >[];
@@ -2294,12 +2302,14 @@ export namespace ShaclmateOntology {
     const _tsFeatureExcludesEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly rdfjs.NamedNode<
-        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
       >[]
@@ -2318,64 +2328,108 @@ export namespace ShaclmateOntology {
             .chain((_value) =>
               _value.toIri().chain((iri) => {
                 switch (iri.value) {
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_All":
+                  case "http://purl.org/shaclmate/ontology#_TsFeatures_All":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
                     >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_All">,
+                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_All">,
                     );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_Create":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Create">,
                     );
+                  case "http://purl.org/shaclmate/ontology#_TsFeatures_Default":
+                    return purify.Either.of<
+                      rdfjsResource.Resource.ValueError,
+                      rdfjs.NamedNode<
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
+                      >
+                    >(
+                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_Default">,
+                    );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_Equals":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Equals">,
                     );
+                  case "http://purl.org/shaclmate/ontology#_TsFeature_Graphql":
+                    return purify.Either.of<
+                      rdfjsResource.Resource.ValueError,
+                      rdfjs.NamedNode<
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
+                      >
+                    >(
+                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Graphql">,
+                    );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_Hash":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
@@ -2386,44 +2440,50 @@ export namespace ShaclmateOntology {
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Json">,
                     );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_None":
+                  case "http://purl.org/shaclmate/ontology#_TsFeatures_None":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
                     >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_None">,
+                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_None">,
                     );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_Rdf":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
@@ -2434,12 +2494,14 @@ export namespace ShaclmateOntology {
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
@@ -2451,7 +2513,7 @@ export namespace ShaclmateOntology {
                       new rdfjsResource.Resource.MistypedValueError({
                         actualValue: iri,
                         expectedValueType:
-                          'rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_All" | "http://purl.org/shaclmate/ontology#_TsFeature_Create" | "http://purl.org/shaclmate/ontology#_TsFeature_Equals" | "http://purl.org/shaclmate/ontology#_TsFeature_Hash" | "http://purl.org/shaclmate/ontology#_TsFeature_Json" | "http://purl.org/shaclmate/ontology#_TsFeature_None" | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql">',
+                          'rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_All" | "http://purl.org/shaclmate/ontology#_TsFeature_Create" | "http://purl.org/shaclmate/ontology#_TsFeatures_Default" | "http://purl.org/shaclmate/ontology#_TsFeature_Equals" | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql" | "http://purl.org/shaclmate/ontology#_TsFeature_Hash" | "http://purl.org/shaclmate/ontology#_TsFeature_Json" | "http://purl.org/shaclmate/ontology#_TsFeatures_None" | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql">',
                         focusResource: _resource,
                         predicate: dataFactory.namedNode(
                           "http://purl.org/shaclmate/ontology#tsFeatureExclude",
@@ -2473,12 +2535,14 @@ export namespace ShaclmateOntology {
     const _tsFeatureIncludesEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly rdfjs.NamedNode<
-        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
       >[]
@@ -2497,64 +2561,108 @@ export namespace ShaclmateOntology {
             .chain((_value) =>
               _value.toIri().chain((iri) => {
                 switch (iri.value) {
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_All":
+                  case "http://purl.org/shaclmate/ontology#_TsFeatures_All":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
                     >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_All">,
+                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_All">,
                     );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_Create":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Create">,
                     );
+                  case "http://purl.org/shaclmate/ontology#_TsFeatures_Default":
+                    return purify.Either.of<
+                      rdfjsResource.Resource.ValueError,
+                      rdfjs.NamedNode<
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
+                      >
+                    >(
+                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_Default">,
+                    );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_Equals":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Equals">,
                     );
+                  case "http://purl.org/shaclmate/ontology#_TsFeature_Graphql":
+                    return purify.Either.of<
+                      rdfjsResource.Resource.ValueError,
+                      rdfjs.NamedNode<
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
+                      >
+                    >(
+                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Graphql">,
+                    );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_Hash":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
@@ -2565,44 +2673,50 @@ export namespace ShaclmateOntology {
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Json">,
                     );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_None":
+                  case "http://purl.org/shaclmate/ontology#_TsFeatures_None":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
                     >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_None">,
+                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_None">,
                     );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_Rdf":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
@@ -2613,12 +2727,14 @@ export namespace ShaclmateOntology {
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
@@ -2630,7 +2746,7 @@ export namespace ShaclmateOntology {
                       new rdfjsResource.Resource.MistypedValueError({
                         actualValue: iri,
                         expectedValueType:
-                          'rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_All" | "http://purl.org/shaclmate/ontology#_TsFeature_Create" | "http://purl.org/shaclmate/ontology#_TsFeature_Equals" | "http://purl.org/shaclmate/ontology#_TsFeature_Hash" | "http://purl.org/shaclmate/ontology#_TsFeature_Json" | "http://purl.org/shaclmate/ontology#_TsFeature_None" | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql">',
+                          'rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_All" | "http://purl.org/shaclmate/ontology#_TsFeature_Create" | "http://purl.org/shaclmate/ontology#_TsFeatures_Default" | "http://purl.org/shaclmate/ontology#_TsFeature_Equals" | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql" | "http://purl.org/shaclmate/ontology#_TsFeature_Hash" | "http://purl.org/shaclmate/ontology#_TsFeature_Json" | "http://purl.org/shaclmate/ontology#_TsFeatures_None" | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql">',
                         focusResource: _resource,
                         predicate: dataFactory.namedNode(
                           "http://purl.org/shaclmate/ontology#tsFeatureInclude",
@@ -3233,22 +3349,26 @@ export interface ShaclmateNodeShape extends ShaclCoreNodeShape {
   readonly rdfType: purify.Maybe<rdfjs.NamedNode>;
   readonly toRdfTypes: readonly rdfjs.NamedNode[];
   readonly tsFeatureExcludes: readonly rdfjs.NamedNode<
-    | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+    | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+    | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+    | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+    | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
   >[];
   readonly tsFeatureIncludes: readonly rdfjs.NamedNode<
-    | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+    | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+    | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+    | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+    | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
   >[];
@@ -3301,22 +3421,26 @@ export namespace ShaclmateNodeShape {
       rdfType: purify.Maybe<rdfjs.NamedNode>;
       toRdfTypes: readonly rdfjs.NamedNode[];
       tsFeatureExcludes: readonly rdfjs.NamedNode<
-        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
       >[];
       tsFeatureIncludes: readonly rdfjs.NamedNode<
-        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
       >[];
@@ -3593,12 +3717,14 @@ export namespace ShaclmateNodeShape {
     const _tsFeatureExcludesEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly rdfjs.NamedNode<
-        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
       >[]
@@ -3617,64 +3743,108 @@ export namespace ShaclmateNodeShape {
             .chain((_value) =>
               _value.toIri().chain((iri) => {
                 switch (iri.value) {
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_All":
+                  case "http://purl.org/shaclmate/ontology#_TsFeatures_All":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
                     >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_All">,
+                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_All">,
                     );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_Create":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Create">,
                     );
+                  case "http://purl.org/shaclmate/ontology#_TsFeatures_Default":
+                    return purify.Either.of<
+                      rdfjsResource.Resource.ValueError,
+                      rdfjs.NamedNode<
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
+                      >
+                    >(
+                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_Default">,
+                    );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_Equals":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Equals">,
                     );
+                  case "http://purl.org/shaclmate/ontology#_TsFeature_Graphql":
+                    return purify.Either.of<
+                      rdfjsResource.Resource.ValueError,
+                      rdfjs.NamedNode<
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
+                      >
+                    >(
+                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Graphql">,
+                    );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_Hash":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
@@ -3685,44 +3855,50 @@ export namespace ShaclmateNodeShape {
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Json">,
                     );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_None":
+                  case "http://purl.org/shaclmate/ontology#_TsFeatures_None":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
                     >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_None">,
+                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_None">,
                     );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_Rdf":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
@@ -3733,12 +3909,14 @@ export namespace ShaclmateNodeShape {
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
@@ -3750,7 +3928,7 @@ export namespace ShaclmateNodeShape {
                       new rdfjsResource.Resource.MistypedValueError({
                         actualValue: iri,
                         expectedValueType:
-                          'rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_All" | "http://purl.org/shaclmate/ontology#_TsFeature_Create" | "http://purl.org/shaclmate/ontology#_TsFeature_Equals" | "http://purl.org/shaclmate/ontology#_TsFeature_Hash" | "http://purl.org/shaclmate/ontology#_TsFeature_Json" | "http://purl.org/shaclmate/ontology#_TsFeature_None" | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql">',
+                          'rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_All" | "http://purl.org/shaclmate/ontology#_TsFeature_Create" | "http://purl.org/shaclmate/ontology#_TsFeatures_Default" | "http://purl.org/shaclmate/ontology#_TsFeature_Equals" | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql" | "http://purl.org/shaclmate/ontology#_TsFeature_Hash" | "http://purl.org/shaclmate/ontology#_TsFeature_Json" | "http://purl.org/shaclmate/ontology#_TsFeatures_None" | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql">',
                         focusResource: _resource,
                         predicate: dataFactory.namedNode(
                           "http://purl.org/shaclmate/ontology#tsFeatureExclude",
@@ -3772,12 +3950,14 @@ export namespace ShaclmateNodeShape {
     const _tsFeatureIncludesEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly rdfjs.NamedNode<
-        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
       >[]
@@ -3796,64 +3976,108 @@ export namespace ShaclmateNodeShape {
             .chain((_value) =>
               _value.toIri().chain((iri) => {
                 switch (iri.value) {
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_All":
+                  case "http://purl.org/shaclmate/ontology#_TsFeatures_All":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
                     >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_All">,
+                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_All">,
                     );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_Create":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Create">,
                     );
+                  case "http://purl.org/shaclmate/ontology#_TsFeatures_Default":
+                    return purify.Either.of<
+                      rdfjsResource.Resource.ValueError,
+                      rdfjs.NamedNode<
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
+                      >
+                    >(
+                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_Default">,
+                    );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_Equals":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Equals">,
                     );
+                  case "http://purl.org/shaclmate/ontology#_TsFeature_Graphql":
+                    return purify.Either.of<
+                      rdfjsResource.Resource.ValueError,
+                      rdfjs.NamedNode<
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
+                      >
+                    >(
+                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Graphql">,
+                    );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_Hash":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
@@ -3864,44 +4088,50 @@ export namespace ShaclmateNodeShape {
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
                     >(
                       iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_Json">,
                     );
-                  case "http://purl.org/shaclmate/ontology#_TsFeature_None":
+                  case "http://purl.org/shaclmate/ontology#_TsFeatures_None":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
                     >(
-                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_None">,
+                      iri as rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_None">,
                     );
                   case "http://purl.org/shaclmate/ontology#_TsFeature_Rdf":
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
@@ -3912,12 +4142,14 @@ export namespace ShaclmateNodeShape {
                     return purify.Either.of<
                       rdfjsResource.Resource.ValueError,
                       rdfjs.NamedNode<
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_All"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
+                        | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-                        | "http://purl.org/shaclmate/ontology#_TsFeature_None"
+                        | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
                         | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
                       >
@@ -3929,7 +4161,7 @@ export namespace ShaclmateNodeShape {
                       new rdfjsResource.Resource.MistypedValueError({
                         actualValue: iri,
                         expectedValueType:
-                          'rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeature_All" | "http://purl.org/shaclmate/ontology#_TsFeature_Create" | "http://purl.org/shaclmate/ontology#_TsFeature_Equals" | "http://purl.org/shaclmate/ontology#_TsFeature_Hash" | "http://purl.org/shaclmate/ontology#_TsFeature_Json" | "http://purl.org/shaclmate/ontology#_TsFeature_None" | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql">',
+                          'rdfjs.NamedNode<"http://purl.org/shaclmate/ontology#_TsFeatures_All" | "http://purl.org/shaclmate/ontology#_TsFeature_Create" | "http://purl.org/shaclmate/ontology#_TsFeatures_Default" | "http://purl.org/shaclmate/ontology#_TsFeature_Equals" | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql" | "http://purl.org/shaclmate/ontology#_TsFeature_Hash" | "http://purl.org/shaclmate/ontology#_TsFeature_Json" | "http://purl.org/shaclmate/ontology#_TsFeatures_None" | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf" | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql">',
                         focusResource: _resource,
                         predicate: dataFactory.namedNode(
                           "http://purl.org/shaclmate/ontology#tsFeatureInclude",

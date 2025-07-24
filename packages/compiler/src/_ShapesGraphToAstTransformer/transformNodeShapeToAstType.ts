@@ -7,7 +7,7 @@ import type * as ast from "../ast/index.js";
 import * as input from "../input/index.js";
 
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
-import { TsFeature } from "../enums/index.js";
+import { tsFeaturesDefault } from "../input/tsFeatures.js";
 import { logger } from "../logger.js";
 import type { NodeShapeAstType } from "./NodeShapeAstType.js";
 import { pickLiteral } from "./pickLiteral.js";
@@ -168,7 +168,7 @@ export function transformNodeShapeToAstType(
       label: pickLiteral(nodeShape.labels).map((literal) => literal.value),
       memberTypes: [] as ast.ObjectType[],
       name: this.shapeAstName(nodeShape),
-      tsFeatures: nodeShape.tsFeatures.orDefault(new Set(TsFeature.MEMBERS)),
+      tsFeatures: nodeShape.tsFeatures.orDefault(new Set(tsFeaturesDefault)),
     };
 
     this.nodeShapeAstTypesByIdentifier.set(nodeShape.identifier, compositeType);
@@ -239,7 +239,7 @@ export function transformNodeShapeToAstType(
     properties: [], // This is mutable, we'll populate it below.
     parentObjectTypes: [], // This is mutable, we'll populate it below
     toRdfTypes,
-    tsFeatures: nodeShape.tsFeatures.orDefault(new Set(TsFeature.MEMBERS)),
+    tsFeatures: nodeShape.tsFeatures.orDefault(new Set(tsFeaturesDefault)),
     tsIdentifierPrefixPropertyName:
       nodeShape.tsObjectIdentifierPrefixPropertyName.orDefault(
         "identifierPrefix",

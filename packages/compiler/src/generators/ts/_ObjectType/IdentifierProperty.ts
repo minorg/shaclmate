@@ -23,12 +23,14 @@ export class IdentifierProperty extends Property<IdentifierType> {
   private readonly classDeclarationVisibility: Maybe<PropertyVisibility>;
   private readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
   private readonly override: boolean;
+  private readonly typeAlias: string;
 
   constructor({
     abstract,
     classDeclarationVisibility,
     identifierMintingStrategy,
     override,
+    typeAlias,
     ...superParameters
   }: {
     abstract: boolean;
@@ -36,6 +38,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     override: boolean;
     type: IdentifierType;
+    typeAlias: string;
   } & ConstructorParameters<typeof Property>[0]) {
     super(superParameters);
     invariant(this.visibility === "public");
@@ -43,6 +46,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
     this.classDeclarationVisibility = classDeclarationVisibility;
     this.identifierMintingStrategy = identifierMintingStrategy;
     this.override = override;
+    this.typeAlias = typeAlias;
   }
 
   override get classGetAccessorDeclaration(): Maybe<
@@ -79,7 +83,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
     return Maybe.of({
       leadingTrivia: this.override ? "override " : undefined,
       name: this.name,
-      returnType: this.type.name,
+      returnType: this.typeAlias,
       statements: [
         memoizeMintedIdentifier
           ? `if (typeof this._${this.name} === "undefined") { this._${this.name} = ${mintIdentifier}; } return this._${this.name};`
@@ -102,7 +106,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
         leadingTrivia:
           this.abstract && this.override ? "abstract override " : undefined,
         name: this.name,
-        type: this.type.name,
+        type: this.typeAlias,
       });
     }
 
@@ -118,7 +122,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
         scope: this.classDeclarationVisibility
           .map(Property.visibilityToScope)
           .unsafeCoerce(),
-        type: `${this.type.name} | undefined`,
+        type: `${this.typeAlias} | undefined`,
       });
     }
 
@@ -126,7 +130,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
     return Maybe.of({
       isReadonly: true,
       name: this.name,
-      type: this.type.name,
+      type: this.typeAlias,
     });
   }
 
@@ -176,13 +180,20 @@ export class IdentifierProperty extends Property<IdentifierType> {
     return imports;
   }
 
+  override get graphqlField(): Property<IdentifierType>["graphqlField"] {
+    return Maybe.of({
+      resolve: `(source) => ${this.typeAlias}.toString(source.${this.name})`,
+      type: this.type.graphqlName,
+    });
+  }
+
   override get interfacePropertySignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {
     return Maybe.of({
       isReadonly: true,
       name: this.name,
-      type: this.type.name,
+      type: this.typeAlias,
     });
   }
 
@@ -263,11 +274,21 @@ export class IdentifierProperty extends Property<IdentifierType> {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
       return [
-        `let ${this.name}: ${this.type.name};`,
+        `let ${this.name}: ${this.typeAlias};`,
         `switch (${variables.resource}.identifier.value) { ${this.type.in_.map((iri) => `case "${iri.value}": ${this.name} = ${this.rdfjsTermExpression(iri)}; break;`).join(" ")} default: return purify.Left(new rdfjsResource.Resource.MistypedValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${this.rdfjsTermExpression(rdf.subject)} })); }`,
       ];
     }
-    return [`const ${this.name} = ${variables.resource}.identifier`];
+
+    const statements: string[] = [];
+    if (this.type.isNamedNodeKind) {
+      statements.push(
+        `if (${variables.resource}.identifier.termType !== "NamedNode") { return purify.Left(new rdfjsResource.Resource.MistypedValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${this.rdfjsTermExpression(rdf.subject)} })); }`,
+      );
+    }
+    statements.push(
+      `const ${this.name}: ${this.typeAlias} = ${variables.resource}.identifier;`,
+    );
+    return statements;
   }
 
   override hashStatements({
@@ -287,7 +308,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
     if (typeConversions.length === 1) {
       return [`const ${this.name} = ${variables.parameter};`];
     }
-    const statements: string[] = [`let ${this.name}: ${this.type.name};`];
+    const statements: string[] = [`let ${this.name}: ${this.typeAlias};`];
     const conversionBranches: string[] = [];
     for (const conversion of this.type.conversions) {
       conversionBranches.push(

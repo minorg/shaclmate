@@ -25,9 +25,9 @@
     "url": "git+https://github.com/minorg/shaclmate"
   },
   "scripts": {
+    "build": "tsc && vite build",
     "clean": "rimraf dist",
     "dev": "vite --port 3000",
-    "build": "tsc && vite build",
     "rebuild": "run-s clean build",
     "start": "vite preview --port 3000"
   },

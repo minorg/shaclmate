@@ -6,7 +6,11 @@ export * from "./equalsFunctionDeclaration.js";
 
 export * from "./fromRdfTypeVariableStatement.js";
 
+export * from "./graphqlTypeVariableStatement.js";
+
 export * from "./hashFunctionDeclarations.js";
+
+export * from "./identifierTypeDeclarations.js";
 
 export * from "./IdentifierPrefixProperty.js";
 

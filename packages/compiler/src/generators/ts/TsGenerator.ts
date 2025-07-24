@@ -2,8 +2,6 @@ import {
   type ImportDeclarationStructure,
   Project,
   type SourceFile,
-  StructureKind,
-  VariableDeclarationKind,
 } from "ts-morph";
 
 import * as ast from "../../ast/index.js";
@@ -13,7 +11,8 @@ import type { Import } from "./Import.js";
 import { ObjectType } from "./ObjectType.js";
 import { ObjectUnionType } from "./ObjectUnionType.js";
 import { TypeFactory } from "./TypeFactory.js";
-import { objectInitializer } from "./objectInitializer.js";
+import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
+import { objectSetDeclarations } from "./objectSetDeclarations.js";
 
 export class TsGenerator implements Generator {
   generate(ast_: ast.Ast): string {
@@ -26,7 +25,8 @@ export class TsGenerator implements Generator {
       dataFactoryVariable: ast_.tsDataFactoryVariable,
     });
 
-    this.addDeclarations({
+    this.addStatements({
+      dataFactoryVariable: ast_.tsDataFactoryVariable,
       objectTypes: ast.ObjectType.toposort(ast_.objectTypes).flatMap(
         (astObjectType) => {
           const type = typeFactory.createTypeFromAstType(astObjectType);
@@ -45,17 +45,21 @@ export class TsGenerator implements Generator {
     return project.getFileSystem().readFileSync(sourceFile.getFilePath());
   }
 
-  private addDeclarations({
+  private addStatements({
+    dataFactoryVariable,
     objectTypes,
     objectUnionTypes,
     sourceFile,
   }: {
+    dataFactoryVariable: string;
     objectTypes: readonly ObjectType[];
     objectUnionTypes: readonly ObjectUnionType[];
     sourceFile: SourceFile;
   }): void {
     // sourceFile.addStatements(this.configuration.dataFactoryImport);
-    sourceFile.addStatements('import { DataFactory as dataFactory } from "n3"');
+    sourceFile.addStatements(
+      'import N3, { DataFactory as dataFactory } from "n3"',
+    );
 
     const declaredTypes: (ObjectType | ObjectUnionType)[] = [
       ...objectTypes,
@@ -103,7 +107,6 @@ export class TsGenerator implements Generator {
       }
     }
 
-    // Add declarations
     for (const objectType of objectTypes) {
       sourceFile.addStatements(objectType.declarations);
     }
@@ -111,49 +114,13 @@ export class TsGenerator implements Generator {
       sourceFile.addStatements(objectUnionType.declarations);
     }
 
-    sourceFile.addVariableStatements([
-      {
-        declarationKind: VariableDeclarationKind.Const,
-        declarations: [
-          {
-            kind: StructureKind.VariableDeclaration,
-            name: "$ObjectTypes",
-            initializer: objectInitializer(
-              objectTypes
-                .toSorted((left, right) => left.name.localeCompare(right.name))
-                .reduce(
-                  (pointers, objectType) => {
-                    pointers[objectType.name!] = objectType.staticModuleName;
-                    return pointers;
-                  },
-                  {} as Record<string, string>,
-                ),
-            ),
-          },
-          {
-            kind: StructureKind.VariableDeclaration,
-            name: "$ObjectUnionTypes",
-            initializer: objectInitializer(
-              objectUnionTypes
-                .toSorted((left, right) => left.name.localeCompare(right.name))
-                .reduce(
-                  (pointers, objectUnionType) => {
-                    pointers[objectUnionType.name!] =
-                      objectUnionType.staticModuleName;
-                    return pointers;
-                  },
-                  {} as Record<string, string>,
-                ),
-            ),
-          },
-          {
-            kind: StructureKind.VariableDeclaration,
-            name: "$Types",
-            initializer: "{ ...$ObjectTypes, ...$ObjectUnionTypes }",
-          },
-        ],
-        isExported: true,
-      },
-    ]);
+    sourceFile.addStatements(
+      objectSetDeclarations({ dataFactoryVariable, objectTypes }),
+    );
+    sourceFile.addVariableStatements(
+      graphqlSchemaVariableStatement({
+        objectTypes,
+      }).toList(),
+    );
   }
 }

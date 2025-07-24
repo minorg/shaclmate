@@ -4,7 +4,12 @@ import type { Generator } from "../Generator.js";
 
 namespace AstJson {
   export interface Name {
-    identifier: Term;
+    identifier:
+      | { termType: "BlankNode"; value: string }
+      | ({ termType: "NamedNode"; value: string } & {
+          curie?: string;
+          uniqueLocalPart?: string;
+        });
 
     [index: string]: boolean | number | object | string | undefined;
   }
@@ -25,8 +30,25 @@ namespace AstJson {
 
 function nameToJson(name: ast.Name): AstJson.Name {
   return {
-    curie: name.curie.extract(),
-    identifier: termToJson(name.identifier),
+    identifier: {
+      curie:
+        name.identifier.termType === "NamedNode"
+          ? name.identifier.curie.map((curie) => curie.toString()).extract()
+          : undefined,
+      termType: name.identifier.termType,
+      uniqueLocalPart:
+        name.identifier.termType === "NamedNode"
+          ? name.identifier.uniqueLocalPart().extract()
+          : undefined,
+      value: name.identifier.value,
+    },
+    label: name.label.extract(),
+    propertyPath: name.propertyPath.map((propertyPath) => ({
+      curie: propertyPath.curie.map((curie) => curie.toString()).extract(),
+      uniqueLocalPart: propertyPath.uniqueLocalPart().extract(),
+      termType: propertyPath.termType,
+      value: propertyPath.value,
+    })),
     shName: name.shName.extract(),
     shaclmateName: name.shaclmateName.extract(),
   };

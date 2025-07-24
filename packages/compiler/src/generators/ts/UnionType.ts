@@ -255,6 +255,10 @@ ${this.memberTypes
 }`;
   }
 
+  override get graphqlName(): string {
+    throw new Error("not implemented");
+  }
+
   override get jsonName(): string {
     switch (this._discriminator.kind) {
       case "sharedProperty":
@@ -328,6 +332,12 @@ ${this.memberTypes
         ? `${expression}.altLazy(() => ${typeExpression})`
         : typeExpression;
     }, "");
+  }
+
+  override graphqlResolveExpression(
+    _parameters: Parameters<Type["graphqlResolveExpression"]>[0],
+  ): string {
+    throw new Error("not implemented");
   }
 
   override hashStatements({

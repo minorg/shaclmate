@@ -8,26 +8,25 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <http://example.com/>
+    shaclmate:tsFeatureExclude shaclmate:_TsFeature_Graphql ;
+    shaclmate:tsFeatureInclude shaclmate:_TsFeatures_All ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Class ;
     a owl:Ontology .
 
 :AbstractBaseClassForExternObjectType
     shaclmate:abstract true ;
-    shaclmate:name "AbstractBaseClassForExternObjectType" ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "An abstract base class that will be inherited by the extern object type, showing how to mix generated and hand-written code." ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "abcStringProperty" ;
         sh:path :abcStringProperty
     ] .
 
 :AbstractBaseClassWithPropertiesNodeShape
     shaclmate:abstract true ;
     shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
-    shaclmate:name "AbstractBaseClassWithPropertiesNodeShape" ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment """Node shape that serves as an abstract base class for child node shapes.
 
@@ -40,19 +39,16 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "abcStringProperty" ;
         sh:path :abcStringProperty
     ] .
 
 :AbstractBaseClassWithoutPropertiesNodeShape
     shaclmate:abstract true ;
-    shaclmate:name "AbstractBaseClassWithoutPropertiesNodeShape" ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Abstract base for other node shapes. Put the ABC with properties above the ABC without." ;
     rdfs:subClassOf :AbstractBaseClassWithPropertiesNodeShape .
 
 :BaseInterfaceWithPropertiesNodeShape
-    shaclmate:name "BaseInterfaceWithPropertiesNodeShape" ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Base interface for other node shapes." ;
@@ -61,24 +57,20 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "baseStringProperty" ;
         sh:path :baseStringProperty
     ] .
 
 :BaseInterfaceWithoutPropertiesNodeShape
-    shaclmate:name "BaseInterfaceWithoutPropertiesNodeShape" ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Base interface for other node shapes. Put the base interface with properties above the base interface without." ;
     rdfs:subClassOf :BaseInterfaceWithPropertiesNodeShape .
 
 :BlankNodeShape
-    shaclmate:name "BlankNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape that can have a blank node or IRI as an identifier" .
 
 :ConcreteChildClassNodeShape
-    shaclmate:name "ConcreteChildClassNodeShape" ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Child (class) of ConcreteParentClassNodeShape. Should inherit properties, node kinds, and minting strategy." ;
     rdfs:subClassOf :ConcreteParentClassNodeShape ;
@@ -86,12 +78,10 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "childStringProperty" ;
         sh:path :childStringProperty
     ] .
 
 :ConcreteChildInterfaceNodeShape
-    shaclmate:name "ConcreteChildInterfaceNodeShape" ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Child interface of ConcreteParentInterfaceNodeShape. Should inherit properties and node kinds." ;
@@ -100,12 +90,10 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "childStringProperty" ;
         sh:path :childStringProperty
     ] .
 
 :ConcreteParentClassNodeShape
-    shaclmate:name "ConcreteParentClassNodeShape" ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Class node shape that inherits the abstract base class and is the parent of the ConcreteChildClassNodeShape." ;
     rdfs:subClassOf :AbstractBaseClassWithoutPropertiesNodeShape ;
@@ -113,12 +101,10 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "parentStringProperty" ;
         sh:path :parentStringProperty
     ] .
 
 :ConcreteParentInterfaceNodeShape
-    shaclmate:name "ConcreteParentInterfaceNodeShape" ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Interface node shape that inherits the base interface and is the parent of the ConcreteChildInterfaceNodeShape." ;
@@ -127,56 +113,47 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "parentStringProperty" ;
         sh:path :parentStringProperty
     ] .
 
 :DefaultValuePropertiesNodeShape
     shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
-    shaclmate:name "DefaultValuePropertiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:defaultValue properties." ;
     sh:property [
         sh:defaultValue false ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "falseBooleanProperty" ;
         sh:path :falseBooleanProperty
     ], [
         sh:defaultValue "2018-04-09"^^xsd:date ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "dateProperty" ;
         sh:path :dateProperty
     ], [
         sh:defaultValue "2018-04-09T10:00:00Z"^^xsd:dateTime ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "dateTimeProperty" ;
         sh:path :dateTimeProperty
     ], [
         sh:defaultValue 0 ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "numberProperty" ;
         sh:path :numberProperty
     ], [
         sh:defaultValue "" ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "stringProperty" ;
         sh:path :stringProperty
     ], [
         sh:defaultValue true ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "trueBooleanProperty" ;
         sh:path :trueBooleanProperty
     ] .
 
 :ExplicitFromToRdfTypesNodeShape
     shaclmate:fromRdfType :FromRdfType ;
-    shaclmate:name "ExplicitFromToRdfTypesNodeShape" ;
     shaclmate:toRdfType :ToRdfType ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment """Shape with custom rdf:type's.
@@ -187,12 +164,10 @@ shaclmate:toRdfType's are added an serialization.""" ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "stringProperty" ;
         sh:path :stringProperty
     ] .
 
 :ExplicitRdfTypeNodeShape
-    shaclmate:name "ExplicitRdfTypeNodeShape" ;
     shaclmate:rdfType :RdfType ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment """Shape with custom rdf:type's.
@@ -202,40 +177,35 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "stringProperty" ;
         sh:path :stringProperty
     ] .
 
 :ExternObjectType
     shaclmate:extern true ;
-    shaclmate:name "ExternObjectType" ;
+    shaclmate:tsFeatureExclude shaclmate:_TsFeature_Sparql ;
     shaclmate:tsImport "import { ExternObjectType } from \"./ExternObjectType.js\";" ;
     a sh:NodeShape ;
     rdfs:comment "An extern object type in TypeScript" ;
     rdfs:subClassOf :AbstractBaseClassForExternObjectType .
 
 :ExternPropertiesNodeShape
-    shaclmate:name "ExternPropertiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Node shape that inlines/nests another node shape and externs/references another." ;
     sh:property [
         sh:maxCount 1 ;
         sh:minCount 0 ;
-        sh:name "externObjectTypeProperty" ;
         sh:node :ExternObjectType ;
         sh:path :externObjectTypeProperty
     ], [
         shaclmate:extern true ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
-        sh:name "externProperty" ;
         sh:node :ExternPropertiesNodeShape-ExternNodeShape ;
         sh:path :externProperty
     ], [
         shaclmate:extern false ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
-        sh:name "inlineProperty" ;
         sh:node :ExternPropertiesNodeShape-InlineNodeShape ;
         sh:path :inlineProperty
     ] .
@@ -247,7 +217,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "stringProperty" ;
         sh:path :stringProperty
     ] .
 
@@ -258,28 +227,23 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "stringProperty" ;
         sh:path :stringProperty
     ] .
 
 :HasValuePropertiesNodeShape
-    shaclmate:name "HasValuePropertiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:hasValue properties." ;
     sh:property [
         sh:hasValue :HasValuePropertiesNodeShapeIri1 ;
         sh:maxCount 1 ;
-        sh:name "hasIriProperty" ;
         sh:path :hasIriProperty
     ], [
         sh:hasValue "test" ;
         sh:maxCount 1 ;
-        sh:name "hasLiteralProperty" ;
         sh:path :hasLiteralProperty
     ] .
 
 :InIdentifierNodeShape
-    shaclmate:name "InIdentifierNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:in constraining its identifier." ;
     sh:in (:InIdentifierNodeShapeInstance1
@@ -288,51 +252,43 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
-        sh:name "stringProperty" ;
         sh:path :stringProperty
     ] .
 
 :InPropertiesNodeShape
-    shaclmate:name "InPropertiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:in properties." ;
     sh:property [
         sh:in (true
         ) ;
         sh:maxCount 1 ;
-        sh:name "inBooleansProperty" ;
         sh:path :inBooleansProperty
     ], [
         sh:in ("2018-04-09T10:00:00Z"^^xsd:dateTime
         ) ;
         sh:maxCount 1 ;
-        sh:name "inDateTimesProperty" ;
         sh:path :inDateTimesProperty
     ], [
         sh:in (:InPropertiesNodeShapeIri1
             :InPropertiesNodeShapeIri2
         ) ;
         sh:maxCount 1 ;
-        sh:name "inIrisProperty" ;
         sh:path :inIrisProperty
     ], [
         sh:in (1
             2
         ) ;
         sh:maxCount 1 ;
-        sh:name "inNumbersProperty" ;
         sh:path :inNumbersProperty
     ], [
         sh:in ("text"
             "html"
         ) ;
         sh:maxCount 1 ;
-        sh:name "inStringsProperty" ;
         sh:path :inStringsProperty
     ] .
 
 :InterfaceNodeShape
-    shaclmate:name "InterfaceNodeShape" ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a sh:NodeShape ;
     rdfs:comment "A node shape that's generated as a TypeScript interface instead of a class." ;
@@ -340,12 +296,10 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "stringProperty" ;
         sh:path :stringProperty
     ] .
 
 :InterfaceUnionNodeShape
-    shaclmate:name "InterfaceUnionNodeShape" ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a sh:NodeShape ;
     rdfs:comment "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
@@ -354,19 +308,16 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ) .
 
 :InterfaceUnionNodeShapeMember1
-    shaclmate:name "InterfaceUnionNodeShapeMember1" ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "stringProperty1" ;
         sh:path :stringProperty1
     ] .
 
 :InterfaceUnionNodeShapeMember2
-    shaclmate:name "InterfaceUnionNodeShapeMember2" ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a sh:NodeShape ;
     rdfs:comment "A union node shape that is part of another union shape, to test composition of unions." ;
@@ -375,37 +326,31 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ) .
 
 :InterfaceUnionNodeShapeMember2a
-    shaclmate:name "InterfaceUnionNodeShapeMember2a" ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "stringProperty2a" ;
         sh:path :stringProperty2a
     ] .
 
 :InterfaceUnionNodeShapeMember2b
-    shaclmate:name "InterfaceUnionNodeShapeMember2b" ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "stringProperty2b" ;
         sh:path :stringProperty2b
     ] .
 
 :IriNodeShape
-    shaclmate:name "IriNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "A node shape that only allows IRI identifiers." ;
     sh:nodeKind sh:IRI .
 
 :LanguageInPropertiesNodeShape
-    shaclmate:name "LanguageInPropertiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape that uses the StringListShape in a property." ;
     sh:property [
@@ -413,35 +358,29 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             "fr"
         ) ;
         sh:maxCount 1 ;
-        sh:name "languageInProperty" ;
         sh:path :languageInProperty
     ], [
         rdfs:comment "literal property for testing runtime languageIn" ;
         sh:maxCount 1 ;
-        sh:name "literalProperty" ;
         sh:nodeKind sh:Literal ;
         sh:path :literalProperty
     ] .
 
 :ListPropertiesNodeShape
-    shaclmate:name "ListPropertiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape that uses the list shapes in properties." ;
     sh:property [
         sh:maxCount 1 ;
-        sh:name "objectListProperty" ;
         sh:node :ObjectListShape ;
         sh:path :objectListProperty
     ], [
         sh:maxCount 1 ;
-        sh:name "stringListProperty" ;
         sh:node :StringListShape ;
         sh:path :stringListProperty
     ] .
 
 :MutablePropertiesNodeShape
     shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
-    shaclmate:name "MutablePropertiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape with shaclmate:mutable properties." ;
     sh:property [
@@ -449,25 +388,21 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:description "String-valued property that can be re-assigned" ;
         sh:maxCount 1 ;
-        sh:name "mutableStringProperty" ;
         sh:path :mutableStringProperty
     ], [
         sh:description "List-valued property that can't be reassigned but whose value can be mutated" ;
         sh:maxCount 1 ;
-        sh:name "mutableListProperty" ;
         sh:node :MutableStringListShape ;
         sh:path :mutableListProperty
     ], [
         shaclmate:mutable true ;
         sh:datatype xsd:string ;
         sh:description "Set-valued property that can't be reassigned but whose value can be mutated" ;
-        sh:name "mutableSetProperty" ;
         sh:path :mutableSetProperty
     ] .
 
 :MutableStringListShape
     shaclmate:mutable true ;
-    shaclmate:name "MutableStringListShape" ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf rdf:List ;
     sh:nodeKind sh:BlankNodeOrIRI ;
@@ -478,14 +413,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
     sh:minCount 1 ;
-    sh:name "first" ;
     sh:path rdf:first .
 
 :MutableStringListShape-rest
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:minCount 1 ;
-    sh:name "rest" ;
     sh:path rdf:rest ;
     sh:xone ([
             sh:class :MutableStringListShape
@@ -496,19 +429,16 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ) .
 
 :NonClassNodeShape
-    shaclmate:name "NonClassNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Node shape that isn't an rdfs:Class." ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "stringProperty" ;
         sh:path :stringProperty
     ] .
 
 :ObjectListShape
-    shaclmate:name "ObjectListShape" ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "A node shape that models an RDF list. Should be transformed into a list data structure when used as a property instead of surfacing the RDF list structure in code." ;
     rdfs:subClassOf rdf:List ;
@@ -519,7 +449,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:minCount 1 ;
-    sh:name "first" ;
     sh:node :NonClassNodeShape ;
     sh:path rdf:first .
 
@@ -527,7 +456,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:minCount 1 ;
-    sh:name "rest" ;
     sh:path rdf:rest ;
     sh:xone ([
             sh:class :ObjectListShape
@@ -538,34 +466,29 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ) .
 
 :OrderedPropertiesNodeShape
-    shaclmate:name "OrderedPropertiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders." ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "propertyA" ;
         sh:order 3 ;
         sh:path :propertyA
     ], [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "propertyB" ;
         sh:order 2 ;
         sh:path :propertyB
     ], [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "propertyC" ;
         sh:order 1 ;
         sh:path :propertyC
     ] .
 
 :PropertyCardinalitiesNodeShape
-    shaclmate:name "PropertyCardinalitiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape that has properties with different cardinalities" ;
     sh:property [
@@ -573,30 +496,25 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "requiredStringProperty" ;
         sh:path :requiredStringProperty
     ], [
         rdfs:comment "Option: maxCount=1 minCount=0" ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
-        sh:name "optionalStringProperty" ;
         sh:path :optionalStringProperty
     ], [
         rdfs:comment "Set: minCount implicitly=0, no maxCount or maxCount > 1" ;
         sh:datatype xsd:string ;
-        sh:name "emptyStringSetProperty" ;
         sh:path :emptyStringSetProperty
     ], [
         rdfs:comment "Set: minCount implicitly=1, no maxCount or maxCount > 1" ;
         sh:datatype xsd:string ;
         sh:minCount 1 ;
-        sh:name "nonEmptyStringSetProperty" ;
         sh:path :nonEmptyStringSetProperty
     ] .
 
 :PropertyVisibilitiesNodeShape
-    shaclmate:name "PropertyVisibilitiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape with properties that have visibility modifiers (private, protected, public)" ;
     sh:property [
@@ -604,27 +522,23 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "protectedProperty" ;
         sh:path :protectedProperty
     ], [
         shaclmate:visibility shaclmate:_Visibility_Private ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "privateProperty" ;
         sh:path :privateProperty
     ], [
         shaclmate:visibility shaclmate:_Visibility_Public ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "publicProperty" ;
         sh:path :publicProperty
     ] .
 
 :Sha256IriNodeShape
     shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
-    shaclmate:name "Sha256IriNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied." ;
     sh:nodeKind sh:IRI ;
@@ -632,12 +546,10 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "stringProperty" ;
         sh:path :stringProperty
     ] .
 
 :StringListShape
-    shaclmate:name "StringListShape" ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "A node shape that models an RDF list. Should be transformed into a list data structure when used as a property instead of surfacing the RDF list structure in code." ;
     rdfs:subClassOf rdf:List ;
@@ -649,14 +561,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
     sh:minCount 1 ;
-    sh:name "first" ;
     sh:path rdf:first .
 
 :StringListShape-rest
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:minCount 1 ;
-    sh:name "rest" ;
     sh:path rdf:rest ;
     sh:xone ([
             sh:class :StringListShape
@@ -667,52 +577,42 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ) .
 
 :TermPropertiesNodeShape
-    shaclmate:name "TermPropertiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape with properties that are not nested objects" ;
     sh:property [
         sh:datatype xsd:boolean ;
         sh:maxCount 1 ;
-        sh:name "booleanProperty" ;
         sh:path :booleanProperty
     ], [
         sh:datatype xsd:date ;
         sh:maxCount 1 ;
-        sh:name "dateProperty" ;
         sh:path :dateProperty
     ], [
         sh:datatype xsd:dateTime ;
         sh:maxCount 1 ;
-        sh:name "dateTimeProperty" ;
         sh:path :dateTimeProperty
     ], [
         sh:maxCount 1 ;
-        sh:name "iriProperty" ;
         sh:nodeKind sh:IRI ;
         sh:path :iriProperty
     ], [
         sh:maxCount 1 ;
-        sh:name "literalProperty" ;
         sh:nodeKind sh:Literal ;
         sh:path :literalProperty
     ], [
         sh:datatype xsd:decimal ;
         sh:maxCount 1 ;
-        sh:name "numberProperty" ;
         sh:path :numberProperty
     ], [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
-        sh:name "stringProperty" ;
         sh:path :stringProperty
     ], [
         sh:maxCount 1 ;
-        sh:name "termProperty" ;
         sh:path :termProperty
     ] .
 
 :UnionNodeShape
-    shaclmate:name "UnionNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
     sh:xone (:UnionNodeShapeMember1
@@ -721,35 +621,39 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ) .
 
 :UnionNodeShapeMember1
-    shaclmate:name "UnionNodeShapeMember1" ;
     a sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "stringProperty1" ;
         sh:path :stringProperty1
     ] .
 
 :UnionNodeShapeMember2
-    shaclmate:name "UnionNodeShapeMember2" ;
     a sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "stringProperty2" ;
         sh:path :stringProperty2
     ] .
 
 :UnionPropertiesNodeShape
-    shaclmate:name "UnionPropertiesNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:xone properties." ;
     sh:property [
+        sh:maxCount 1 ;
+        sh:path :unrelatedTypesProperty ;
+        sh:xone ([
+                sh:datatype xsd:integer
+            ]
+            [
+                sh:node :NonClassNodeShape
+            ]
+        )
+    ], [
         shaclmate:widen false ;
         sh:maxCount 1 ;
-        sh:name "narrowLiteralsProperty" ;
         sh:path :narrowLiteralsProperty ;
         sh:xone ([
                 sh:datatype xsd:integer
@@ -760,7 +664,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         )
     ], [
         sh:maxCount 1 ;
-        sh:name "widenedLiteralsProperty" ;
         sh:path :widenedLiteralsProperty ;
         sh:xone ([
                 sh:datatype xsd:integer
@@ -771,7 +674,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         )
     ], [
         sh:maxCount 1 ;
-        sh:name "widenedTermsProperty" ;
         sh:path :widenedTermsProperty ;
         sh:xone ([
                 sh:nodeKind sh:Literal
@@ -780,22 +682,10 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
                 sh:nodeKind sh:IRI
             ]
         )
-    ], [
-        sh:maxCount 1 ;
-        sh:name "unrelatedTypesProperty" ;
-        sh:path :unrelatedTypesProperty ;
-        sh:xone ([
-                sh:datatype xsd:integer
-            ]
-            [
-                sh:node :NonClassNodeShape
-            ]
-        )
     ] .
 
 :UuidV4IriNodeShape
     shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_UUIDv4 ;
-    shaclmate:name "UuidV4IriNodeShape" ;
     a sh:NodeShape ;
     rdfs:comment "A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied." ;
     sh:nodeKind sh:IRI ;
@@ -803,7 +693,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "stringProperty" ;
         sh:path :stringProperty
     ] .
 

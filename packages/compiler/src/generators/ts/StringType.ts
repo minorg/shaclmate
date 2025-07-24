@@ -26,6 +26,10 @@ export class StringType extends PrimitiveType<string> {
     return conversions;
   }
 
+  override get graphqlName(): string {
+    return "graphql.GraphQLString";
+  }
+
   @Memoize()
   override get name(): string {
     if (this.primitiveIn.length > 0) {

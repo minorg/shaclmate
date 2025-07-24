@@ -7,8 +7,7 @@ import type {
   PropertySignatureStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
-
-import type { Import } from "generators/ts/Import.js";
+import type { Import } from "../Import.js";
 import { SnippetDeclarations } from "../SnippetDeclarations.js";
 import { Property } from "./Property.js";
 
@@ -16,6 +15,15 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
   private readonly abstract: boolean;
   private readonly override: boolean;
 
+  override readonly classGetAccessorDeclaration: Maybe<
+    OptionalKind<GetAccessorDeclarationStructure>
+  > = Maybe.empty();
+  override readonly constructorParametersPropertySignature: Maybe<
+    OptionalKind<PropertySignatureStructure>
+  > = Maybe.empty();
+  override readonly graphqlField: Property<TypeDiscriminatorProperty.Type>["graphqlField"] =
+    Maybe.empty();
+  override readonly declarationImports: readonly Import[] = [];
   override readonly equalsFunction = "$strictEquals";
   readonly initializer: string;
   override readonly mutable = false;
@@ -39,12 +47,6 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
     this.override = override;
   }
 
-  override get classGetAccessorDeclaration(): Maybe<
-    OptionalKind<GetAccessorDeclarationStructure>
-  > {
-    return Maybe.empty();
-  }
-
   override get classPropertyDeclaration(): Maybe<
     OptionalKind<PropertyDeclarationStructure>
   > {
@@ -63,16 +65,6 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
           ? undefined
           : this.type.name,
     });
-  }
-
-  override get constructorParametersPropertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    return Maybe.empty();
-  }
-
-  override get declarationImports(): readonly Import[] {
-    return [];
   }
 
   override get interfacePropertySignature(): Maybe<

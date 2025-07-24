@@ -26,6 +26,10 @@ export class BooleanType extends PrimitiveType<boolean> {
     return conversions;
   }
 
+  override get graphqlName(): string {
+    return "graphql.GraphQLBoolean";
+  }
+
   @Memoize()
   override get name(): string {
     if (this.primitiveIn.length > 0) {

@@ -9,6 +9,10 @@ export class DateType extends DateTimeType {
 
   override readonly kind = "DateType";
 
+  override get graphqlName(): string {
+    return "graphqlScalars.Date";
+  }
+
   override toJsonExpression({
     variables,
   }: Parameters<PrimitiveType<Date>["toJsonExpression"]>[0]): string {

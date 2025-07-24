@@ -12,8 +12,7 @@ import {
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 
-import * as _ObjectType from "./_ObjectType/index.js";
-
+import plur from "plur";
 import type {
   IdentifierMintingStrategy,
   TsFeature,
@@ -24,13 +23,13 @@ import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import type { Type } from "./Type.js";
+import * as _ObjectType from "./_ObjectType/index.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 export class ObjectType extends DeclaredType {
   private readonly imports: readonly string[];
 
   protected readonly comment: Maybe<string>;
-  protected readonly fromRdfType: Maybe<NamedNode>;
   protected readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
   protected readonly label: Maybe<string>;
   protected readonly toRdfTypes: readonly NamedNode[];
@@ -38,6 +37,7 @@ export class ObjectType extends DeclaredType {
   readonly abstract: boolean;
   readonly declarationType: TsObjectDeclarationType;
   readonly extern: boolean;
+  readonly fromRdfType: Maybe<NamedNode>;
   readonly kind = "ObjectType";
   readonly typeof = "object";
 
@@ -134,6 +134,10 @@ export class ObjectType extends DeclaredType {
     const imports: Import[] = this.properties.flatMap(
       (property) => property.declarationImports,
     );
+    if (this.features.has("graphql")) {
+      imports.push(Import.GRAPHQL);
+      imports.push(Import.GRAPHQL_SCALARS);
+    }
     if (this.features.has("json")) {
       imports.push(Import.ZOD);
       imports.push(Import.ZOD_TO_JSON_SCHEMA);
@@ -158,10 +162,12 @@ export class ObjectType extends DeclaredType {
       ..._ObjectType.interfaceDeclaration.bind(this)().toList(),
     ];
 
-    const staticModuleStatements: StatementStructures[] = [
+    const staticModuleStatements: (StatementStructures | string)[] = [
       ..._ObjectType.createFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.equalsFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
+      ..._ObjectType.graphqlTypeVariableStatement.bind(this)().toList(),
+      ..._ObjectType.identifierTypeDeclarations.bind(this)(),
       ..._ObjectType.jsonTypeAliasDeclaration.bind(this)().toList(),
       ..._ObjectType.jsonFunctionDeclarations.bind(this)(),
       ..._ObjectType.hashFunctionDeclarations.bind(this)(),
@@ -224,13 +230,30 @@ export class ObjectType extends DeclaredType {
   }
 
   @Memoize()
-  get jsonName(): string {
+  get graphqlName(): string {
+    return `${this.staticModuleName}.GraphQL`;
+  }
+
+  @Memoize()
+  override get jsonName(): string {
     return `${this.staticModuleName}.Json`;
   }
 
   @Memoize()
-  get mutable(): boolean {
+  override get mutable(): boolean {
     return this.properties.some((property) => property.mutable);
+  }
+
+  @Memoize()
+  get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
+    const prefixSingular = camelCase(this.name);
+    const prefixPlural = plur(prefixSingular);
+    return {
+      object: prefixSingular,
+      objectIdentifiers: `${prefixSingular}Identifiers`,
+      objects: prefixPlural,
+      objectsCount: `${prefixPlural}Count`,
+    };
   }
 
   @Memoize()
@@ -294,7 +317,7 @@ export class ObjectType extends DeclaredType {
   override fromRdfExpression({
     variables,
   }: Parameters<Type["fromRdfExpression"]>[0]): string {
-    return `${variables.resourceValues}.head().chain(value => value.to${this.rdfjsResourceType().named ? "Named" : ""}Resource()).chain(_resource => ${this.staticModuleName}.fromRdf({ ...${variables.context}, ${variables.ignoreRdfType ? "ignoreRdfType: true, " : ""}languageIn: ${variables.languageIn}, resource: _resource }))`;
+    return `${variables.resourceValues}.head().chain(value => value.toResource()).chain(_resource => ${this.staticModuleName}.fromRdf({ ...${variables.context}, ${variables.ignoreRdfType ? "ignoreRdfType: true, " : ""}languageIn: ${variables.languageIn}, resource: _resource }))`;
   }
 
   override hashStatements({
@@ -324,20 +347,12 @@ export class ObjectType extends DeclaredType {
     return `${this.staticModuleName}.jsonZodSchema()`;
   }
 
-  rdfjsResourceType(options?: { mutable?: boolean }): {
-    readonly mutable: boolean;
-    readonly name: string;
-    readonly named: boolean;
-  } {
+  get toRdfjsResourceType(): string {
     if (this.parentObjectTypes.length > 0) {
-      return this.parentObjectTypes[0].rdfjsResourceType(options);
+      return this.parentObjectTypes[0].toRdfjsResourceType;
     }
 
-    return {
-      mutable: !!options?.mutable,
-      name: `rdfjsResource.${options?.mutable ? "Mutable" : ""}Resource${this.identifierType.isNamedNodeKind ? "<rdfjs.NamedNode>" : ""}`,
-      named: this.identifierType.isNamedNodeKind,
-    };
+    return `rdfjsResource.MutableResource${this.identifierType.isNamedNodeKind ? "<rdfjs.NamedNode>" : ""}`;
   }
 
   override snippetDeclarations(): readonly string[] {
@@ -445,6 +460,12 @@ export namespace ObjectType {
   export type IdentifierPrefixProperty = _ObjectType.IdentifierPrefixProperty;
   export const IdentifierProperty = _ObjectType.IdentifierProperty;
   export type IdentifierProperty = _ObjectType.IdentifierProperty;
+  export type ObjectSetMethodNames = {
+    readonly object: string;
+    readonly objectsCount: string;
+    readonly objectIdentifiers: string;
+    readonly objects: string;
+  };
   export const Property = _ObjectType.Property;
   export type Property = _ObjectType.Property<any>;
   export const ShaclProperty = _ObjectType.ShaclProperty;

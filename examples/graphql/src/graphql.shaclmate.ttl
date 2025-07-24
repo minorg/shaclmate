@@ -1,0 +1,71 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix : <http://example.com/> .
+@prefix dash: <http://datashapes.org/dash#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.com/>
+    shaclmate:tsFeatureInclude shaclmate:_TsFeature_Graphql ;
+    a owl:Ontology .
+
+:ConcreteChild
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Concrete child" ;
+    rdfs:subClassOf :ConcreteParent ;
+    sh:nodeKind sh:IRI ;
+    sh:property :optionalNestedObjectProperty, :optionalStringProperty, :requiredStringProperty, [
+        rdfs:comment "Child string property" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :childStringProperty
+    ] .
+
+:ConcreteParent
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Concrete parent" ;
+    sh:nodeKind sh:IRI ;
+    sh:property [
+        rdfs:comment "Parent string property" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :parentStringProperty
+    ] .
+
+:Nested
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Nested" ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property :optionalNumberProperty, :optionalStringProperty, :requiredStringProperty .
+
+:optionalNestedObjectProperty
+    a sh:PropertyShape ;
+    rdfs:comment "Optional nested object property" ;
+    sh:maxCount 1 ;
+    sh:node :Nested ;
+    sh:path :optionalNestedObjectProperty .
+
+:optionalNumberProperty
+    a sh:PropertyShape ;
+    rdfs:comment "Optional number property" ;
+    sh:datatype xsd:decimal ;
+    sh:maxCount 1 ;
+    sh:path :optionalNumberProperty .
+
+:optionalStringProperty
+    a sh:PropertyShape ;
+    rdfs:comment "Optional string property" ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:path :optionalStringProperty .
+
+:requiredStringProperty
+    a sh:PropertyShape ;
+    rdfs:comment "Required string property" ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:path :requiredStringProperty .
+

@@ -4,7 +4,7 @@ import { PrimitiveType } from "./PrimitiveType.js";
 import type { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
-export class NumberType extends PrimitiveType<number> {
+export abstract class NumberType extends PrimitiveType<number> {
   readonly kind = "NumberType";
   override readonly typeof = "number";
 
