@@ -1209,6 +1209,28 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           ).unsafeCoerce(),
         type: ConcreteChild.GraphQL,
       },
+      concreteChildIdentifiers: {
+        args: {
+          limit: { type: graphql.GraphQLInt },
+          offset: { type: graphql.GraphQLInt },
+        },
+        resolve: async (
+          _source,
+          args: { limit: number | null; offset: number | null },
+          { objectSet },
+        ): Promise<readonly string[]> =>
+          (
+            await objectSet.concreteChildIdentifiers({
+              limit: args.limit !== null ? args.limit : undefined,
+              offset: args.offset !== null ? args.offset : undefined,
+            })
+          )
+            .unsafeCoerce()
+            .map(ConcreteChild.Identifier.toString),
+        type: new graphql.GraphQLNonNull(
+          new graphql.GraphQLList(graphql.GraphQLString),
+        ),
+      },
       concreteChilds: {
         args: {
           identifiers: {
@@ -1293,6 +1315,28 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           ).unsafeCoerce(),
         type: ConcreteParentStatic.GraphQL,
       },
+      concreteParentIdentifiers: {
+        args: {
+          limit: { type: graphql.GraphQLInt },
+          offset: { type: graphql.GraphQLInt },
+        },
+        resolve: async (
+          _source,
+          args: { limit: number | null; offset: number | null },
+          { objectSet },
+        ): Promise<readonly string[]> =>
+          (
+            await objectSet.concreteParentIdentifiers({
+              limit: args.limit !== null ? args.limit : undefined,
+              offset: args.offset !== null ? args.offset : undefined,
+            })
+          )
+            .unsafeCoerce()
+            .map(ConcreteParentStatic.Identifier.toString),
+        type: new graphql.GraphQLNonNull(
+          new graphql.GraphQLList(graphql.GraphQLString),
+        ),
+      },
       concreteParents: {
         args: {
           identifiers: {
@@ -1375,6 +1419,28 @@ export const graphqlSchema = new graphql.GraphQLSchema({
             )
           ).unsafeCoerce(),
         type: Nested.GraphQL,
+      },
+      nestedIdentifiers: {
+        args: {
+          limit: { type: graphql.GraphQLInt },
+          offset: { type: graphql.GraphQLInt },
+        },
+        resolve: async (
+          _source,
+          args: { limit: number | null; offset: number | null },
+          { objectSet },
+        ): Promise<readonly string[]> =>
+          (
+            await objectSet.nestedIdentifiers({
+              limit: args.limit !== null ? args.limit : undefined,
+              offset: args.offset !== null ? args.offset : undefined,
+            })
+          )
+            .unsafeCoerce()
+            .map(Nested.Identifier.toString),
+        type: new graphql.GraphQLNonNull(
+          new graphql.GraphQLList(graphql.GraphQLString),
+        ),
       },
       nesteds: {
         args: {

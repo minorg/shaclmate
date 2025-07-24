@@ -25,6 +25,40 @@ describe("graphqlSchema", () => {
     });
   });
 
+  it("concreteChild object identifiers (all)", async ({ expect }) => {
+    const result = await execute("query { concreteChildIdentifiers }");
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      concreteChildIdentifiers: [...new Array(4)].map(
+        (_, i) => `<http://example.com/concreteChild${i}>`,
+      ),
+    });
+  });
+
+  it("concreteChild object identifiers (limit)", async ({ expect }) => {
+    const result = await execute(
+      "query { concreteChildIdentifiers(limit: 2) }",
+    );
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      concreteChildIdentifiers: [...new Array(2)].map(
+        (_, i) => `<http://example.com/concreteChild${i}>`,
+      ),
+    });
+  });
+
+  it("concreteChild object identifiers (offset)", async ({ expect }) => {
+    const result = await execute(
+      "query { concreteChildIdentifiers(offset: 1) }",
+    );
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      concreteChildIdentifiers: [...new Array(3)].map(
+        (_, i) => `<http://example.com/concreteChild${i + 1}>`,
+      ),
+    });
+  });
+
   it("concreteChild objects (all)", async ({ expect }) => {
     const result = await execute(
       "query { concreteChilds { identifier, childStringProperty } }",

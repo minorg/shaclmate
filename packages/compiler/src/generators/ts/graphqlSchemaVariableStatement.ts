@@ -25,6 +25,22 @@ async (_source, args: { identifier: string }, { objectSet }): Promise<${objectTy
           type: `${objectType.staticModuleName}.GraphQL`,
         });
 
+        fields[objectType.objectSetMethodNames.objectIdentifiers] =
+          objectInitializer({
+            args: objectInitializer({
+              limit: objectInitializer({
+                type: "graphql.GraphQLInt",
+              }),
+              offset: objectInitializer({
+                type: "graphql.GraphQLInt",
+              }),
+            }),
+            resolve: `\
+ async (_source, args: { limit: number | null; offset: number | null; }, { objectSet }): Promise<readonly string[]> =>
+  (await objectSet.${objectType.objectSetMethodNames.objectIdentifiers}({ limit: args.limit !== null ? args.limit : undefined, offset: args.offset !== null ? args.offset : undefined })).unsafeCoerce().map(${objectType.staticModuleName}.Identifier.toString)`,
+            type: "new graphql.GraphQLNonNull(new graphql.GraphQLList(graphql.GraphQLString))",
+          });
+
         fields[objectType.objectSetMethodNames.objects] = objectInitializer({
           args: objectInitializer({
             identifiers: objectInitializer({
