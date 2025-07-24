@@ -45,6 +45,7 @@ Note that the `@shaclmate/runtime` package does not include any code itself, onl
 * Instance identifier minting by deep hashing or UUID generation
 * [Zod schema](https://zod.dev/) generation. Zod schemas can be converted to [JSON schemas](https://json-schema.org/) using [zod-to-json-schema](https://github.com/StefanTerdell/zod-to-json-schema).
 * [JSON Forms](https://jsonforms.io/) schema generation
+* GraphQL schema+resolver generation (for [GraphQL.js](https://www.graphql-js.org)-compatible servers)
 * [purify-ts](https://gigobyte.github.io/purify/) [`Maybe`](https://gigobyte.github.io/purify/adts/Maybe) types instead of `null`/`undefined`
 * Support for using handwritten "extern" types from generated code
 * Built on [RDF/JS](https://rdf.js.org/) standards
