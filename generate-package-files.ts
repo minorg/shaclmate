@@ -113,7 +113,7 @@ const packages: readonly Package[] = [
       external: {
         "@kos-kit/sparql-client": "2.0.115",
         ...externalDependencyVersions["@types/n3"],
-        oxigraph: "^0.4.0",
+        oxigraph: "0.4.11",
         ...externalDependencyVersions.n3,
         ...externalDependencyVersions["rdfjs-resource"],
       },
