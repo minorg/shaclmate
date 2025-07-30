@@ -248,9 +248,14 @@ export class ObjectType extends DeclaredType {
   get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
     const prefixSingular = camelCase(this.name);
     const thisNameParts = trainCase(this.name).split("-");
-    const prefixPlural = camelCase(
+    let prefixPlural = camelCase(
       `${thisNameParts.slice(0, thisNameParts.length - 1).join("")}${plur(thisNameParts[thisNameParts.length - 1])}`,
     );
+    if (prefixPlural === prefixSingular) {
+      // Happens with singular-s nouns like "series"
+      prefixPlural = `${prefixPlural}s`;
+    }
+
     return {
       object: prefixSingular,
       objectIdentifiers: `${prefixSingular}Identifiers`,
