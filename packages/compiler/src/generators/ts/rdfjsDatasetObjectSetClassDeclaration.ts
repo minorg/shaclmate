@@ -103,8 +103,8 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             ...objectSetInterfaceMethodSignatures.objectIdentifiers,
             kind: StructureKind.Method,
             name: `${objectSetInterfaceMethodSignatures.objectIdentifiers.name}Sync`,
-            returnType: `purify.Either<Error, readonly ${objectType.staticModuleName}.Identifier[]>`,
-            statements: `return purify.Either.of([...this.$objectIdentifiersSync<${objectType.name}, ${objectType.staticModuleName}.Identifier>(${objectType.staticModuleName}, query)]);`,
+            returnType: `purify.Either<Error, readonly ${objectType.identifierTypeAlias}[]>`,
+            statements: `return purify.Either.of([...this.$objectIdentifiersSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${objectType.staticModuleName}, query)]);`,
           },
           {
             ...objectSetInterfaceMethodSignatures.objects,
@@ -120,7 +120,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             name: `${objectSetInterfaceMethodSignatures.objects.name}Sync`,
             returnType: `readonly purify.Either<Error, ${objectType.name}>[]`,
             statements: [
-              `return [...this.$objectsSync<${objectType.name}, ${objectType.staticModuleName}.Identifier>(${objectType.staticModuleName}, query)];`,
+              `return [...this.$objectsSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${objectType.staticModuleName}, query)];`,
             ],
           },
           {
@@ -137,7 +137,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             name: `${objectSetInterfaceMethodSignatures.objectsCount.name}Sync`,
             returnType: "purify.Either<Error, number>",
             statements: [
-              `return this.$objectsCountSync<${objectType.name}, ${objectType.staticModuleName}.Identifier>(${objectType.staticModuleName}, query);`,
+              `return this.$objectsCountSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${objectType.staticModuleName}, query);`,
             ],
           },
         ] satisfies MethodDeclarationStructure[];

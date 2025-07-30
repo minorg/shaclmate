@@ -230,6 +230,11 @@ export class ObjectType extends DeclaredType {
   }
 
   @Memoize()
+  get identifierTypeAlias(): string {
+    return `${this.staticModuleName}.Identifier`;
+  }
+
+  @Memoize()
   get graphqlName(): string {
     return `${this.staticModuleName}.GraphQL`;
   }

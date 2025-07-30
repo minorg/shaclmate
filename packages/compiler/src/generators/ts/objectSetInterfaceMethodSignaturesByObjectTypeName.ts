@@ -22,7 +22,7 @@ export function objectSetInterfaceMethodSignaturesByObjectTypeName({
         parameters: [
           {
             name: "identifier",
-            type: `${objectType.staticModuleName}.Identifier`,
+            type: objectType.identifierTypeAlias,
           },
         ],
         returnType: `Promise<purify.Either<Error, ${objectType.name}>>`,
@@ -33,10 +33,10 @@ export function objectSetInterfaceMethodSignaturesByObjectTypeName({
           {
             hasQuestionToken: true,
             name: "query",
-            type: `$ObjectSet.Query<${objectType.staticModuleName}.Identifier>`,
+            type: `$ObjectSet.Query<${objectType.identifierTypeAlias}>`,
           },
         ],
-        returnType: `Promise<purify.Either<Error, readonly ${objectType.staticModuleName}.Identifier[]>>`,
+        returnType: `Promise<purify.Either<Error, readonly ${objectType.identifierTypeAlias}[]>>`,
       },
       objects: {
         name: methodNames.objects,
@@ -44,7 +44,7 @@ export function objectSetInterfaceMethodSignaturesByObjectTypeName({
           {
             hasQuestionToken: true,
             name: "query",
-            type: `$ObjectSet.Query<${objectType.staticModuleName}.Identifier>`,
+            type: `$ObjectSet.Query<${objectType.identifierTypeAlias}>`,
           },
         ],
         returnType: `Promise<readonly purify.Either<Error, ${objectType.name}>[]>`,
@@ -55,7 +55,7 @@ export function objectSetInterfaceMethodSignaturesByObjectTypeName({
           {
             hasQuestionToken: true,
             name: "query",
-            type: `Pick<$ObjectSet.Query<${objectType.staticModuleName}.Identifier>, "where">`,
+            type: `Pick<$ObjectSet.Query<${objectType.identifierTypeAlias}>, "where">`,
           },
         ],
         returnType: "Promise<purify.Either<Error, number>>",

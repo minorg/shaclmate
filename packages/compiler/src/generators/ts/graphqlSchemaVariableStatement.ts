@@ -20,7 +20,7 @@ function graphqlQueryObjectType({
           resolve: `\
 async (_source, args: { identifier: string }, { objectSet }): Promise<${objectType.name}> => 
   (await purify.EitherAsync<Error, ${objectType.name}>(async ({ liftEither }) => 
-    liftEither(await objectSet.${objectType.objectSetMethodNames.object}(await liftEither(${objectType.staticModuleName}.Identifier.fromString(args.identifier))))
+    liftEither(await objectSet.${objectType.objectSetMethodNames.object}(await liftEither(${objectType.identifierTypeAlias}.fromString(args.identifier))))
   )).unsafeCoerce()`,
           type: `${objectType.staticModuleName}.GraphQL`,
         });
@@ -37,7 +37,7 @@ async (_source, args: { identifier: string }, { objectSet }): Promise<${objectTy
             }),
             resolve: `\
  async (_source, args: { limit: number | null; offset: number | null; }, { objectSet }): Promise<readonly string[]> =>
-  (await objectSet.${objectType.objectSetMethodNames.objectIdentifiers}({ limit: args.limit !== null ? args.limit : undefined, offset: args.offset !== null ? args.offset : undefined })).unsafeCoerce().map(${objectType.staticModuleName}.Identifier.toString)`,
+  (await objectSet.${objectType.objectSetMethodNames.objectIdentifiers}({ limit: args.limit !== null ? args.limit : undefined, offset: args.offset !== null ? args.offset : undefined })).unsafeCoerce().map(${objectType.identifierTypeAlias}.toString)`,
             type: "new graphql.GraphQLNonNull(new graphql.GraphQLList(graphql.GraphQLString))",
           });
 
@@ -56,11 +56,11 @@ async (_source, args: { identifier: string }, { objectSet }): Promise<${objectTy
           resolve: `\
 async (_source, args: { identifiers: readonly string[] | null; limit: number | null; offset: number | null; }, { objectSet }): Promise<readonly ${objectType.name}[]> =>
 (await purify.EitherAsync<Error, readonly ${objectType.name}[]>(async ({ liftEither }) => {
-  let where: $ObjectSet.Where<${objectType.staticModuleName}.Identifier> | undefined;
+  let where: $ObjectSet.Where<${objectType.identifierTypeAlias}> | undefined;
   if (args.identifiers) {
-    const identifiers: ${objectType.staticModuleName}.Identifier[] = [];
+    const identifiers: ${objectType.identifierTypeAlias}[] = [];
     for (const identifierArg of args.identifiers) {
-      identifiers.push(await liftEither(${objectType.staticModuleName}.Identifier.fromString(identifierArg)));
+      identifiers.push(await liftEither(${objectType.identifierTypeAlias}.fromString(identifierArg)));
     }
     where = { identifiers, type: "identifiers" };
   }

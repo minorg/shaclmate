@@ -128,7 +128,7 @@ function reExportAncestorIdentifierTypeDeclarations(
       isExported: true,
       kind: StructureKind.TypeAlias,
       name: "Identifier",
-      type: `${ancestorObjectType.staticModuleName}.Identifier`,
+      type: ancestorObjectType.identifierTypeAlias,
     },
     {
       isExported: true,
@@ -136,7 +136,7 @@ function reExportAncestorIdentifierTypeDeclarations(
       declarationKind: VariableDeclarationKind.Const,
       declarations: [
         {
-          initializer: `${ancestorObjectType.staticModuleName}.Identifier`,
+          initializer: ancestorObjectType.identifierTypeAlias,
           name: "Identifier",
         },
       ],

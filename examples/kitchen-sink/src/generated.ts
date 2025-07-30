@@ -1038,9 +1038,7 @@ export namespace UnionPropertiesNodeShape {
       | undefined;
   };
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2817,9 +2815,7 @@ export namespace TermPropertiesNodeShape {
       | undefined;
   };
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4017,9 +4013,7 @@ export namespace PropertyVisibilitiesNodeShape {
     readonly publicProperty: string;
   };
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4580,9 +4574,7 @@ export namespace PropertyCardinalitiesNodeShape {
     readonly requiredStringProperty: string;
   };
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5212,9 +5204,7 @@ export namespace OrderedPropertiesNodeShape {
     readonly propertyA: string;
   };
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6159,9 +6149,7 @@ export namespace MutablePropertiesNodeShape {
     readonly mutableStringProperty: string | undefined;
   };
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -7003,9 +6991,7 @@ export namespace ListPropertiesNodeShape {
     readonly stringListProperty: readonly string[] | undefined;
   };
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -7896,9 +7882,7 @@ export namespace LanguageInPropertiesNodeShape {
       | undefined;
   };
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8592,9 +8576,7 @@ export namespace InterfaceUnionNodeShapeMember2b {
     readonly stringProperty2b: string;
   };
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8962,9 +8944,7 @@ export namespace InterfaceUnionNodeShapeMember2a {
     readonly stringProperty2a: string;
   };
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9332,9 +9312,7 @@ export namespace InterfaceUnionNodeShapeMember1 {
     readonly stringProperty1: string;
   };
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9702,9 +9680,7 @@ export namespace InterfaceNodeShape {
     readonly stringProperty: string;
   };
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -10301,9 +10277,7 @@ export namespace InPropertiesNodeShape {
     readonly inStringsProperty: ("text" | "html") | undefined;
   };
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -10466,22 +10440,20 @@ export namespace InPropertiesNodeShape {
         )
         .head()
         .chain((_value) =>
-          _value
-            .toBoolean()
-            .chain((value) =>
-              value === true
-                ? purify.Either.of(value)
-                : purify.Left(
-                    new rdfjsResource.Resource.MistypedValueError({
-                      actualValue: rdfLiteral.toRdf(value),
-                      expectedValueType: "true",
-                      focusResource: _resource,
-                      predicate: dataFactory.namedNode(
-                        "http://example.com/inBooleansProperty",
-                      ),
-                    }),
-                  ),
-            ),
+          _value.toBoolean().chain((value) =>
+            value === true
+              ? purify.Either.of(value)
+              : purify.Left(
+                  new rdfjsResource.Resource.MistypedValueError({
+                    actualValue: rdfLiteral.toRdf(value),
+                    expectedValueType: "true",
+                    focusResource: _resource,
+                    predicate: dataFactory.namedNode(
+                      "http://example.com/inBooleansProperty",
+                    ),
+                  }),
+                ),
+          ),
         )
         .toMaybe(),
     );
@@ -11062,9 +11034,7 @@ export namespace InIdentifierNodeShape {
     readonly stringProperty: string | undefined;
   };
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.NamedNode<
@@ -11512,9 +11482,7 @@ export namespace HasValuePropertiesNodeShape {
     readonly hasLiteralProperty: string | undefined;
   };
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12736,9 +12704,7 @@ export namespace ExternPropertiesNodeShape {
     readonly inlineProperty: InlineNodeShape.Json | undefined;
   };
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14340,9 +14306,7 @@ export namespace DefaultValuePropertiesNodeShape {
     readonly trueBooleanProperty: boolean;
   };
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14992,9 +14956,7 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     readonly baseStringProperty: string;
   };
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15443,9 +15405,7 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
     BaseInterfaceWithPropertiesNodeShapeStatic.Identifier;
   export type Json = BaseInterfaceWithPropertiesNodeShapeStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15890,9 +15850,7 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     readonly parentStringProperty: string;
   } & BaseInterfaceWithoutPropertiesNodeShapeStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16383,9 +16341,7 @@ export namespace ConcreteChildInterfaceNodeShape {
     readonly childStringProperty: string;
   } & ConcreteParentInterfaceNodeShapeStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17481,20 +17437,18 @@ export class ConcreteParentClassNodeShape extends AbstractBaseClassWithoutProper
   }
 
   override equals(other: ConcreteParentClassNodeShape): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        $strictEquals(
-          this.parentStringProperty,
-          other.parentStringProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "parentStringProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      $strictEquals(
+        this.parentStringProperty,
+        other.parentStringProperty,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "parentStringProperty",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -17574,9 +17528,7 @@ export namespace ConcreteParentClassNodeShapeStatic {
     readonly parentStringProperty: string;
   } & AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17946,20 +17898,18 @@ export class ConcreteChildClassNodeShape extends ConcreteParentClassNodeShape {
   }
 
   override equals(other: ConcreteChildClassNodeShape): $EqualsResult {
-    return super
-      .equals(other)
-      .chain(() =>
-        $strictEquals(
-          this.childStringProperty,
-          other.childStringProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "childStringProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.equals(other).chain(() =>
+      $strictEquals(
+        this.childStringProperty,
+        other.childStringProperty,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "childStringProperty",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override hash<
@@ -18037,9 +17987,7 @@ export namespace ConcreteChildClassNodeShape {
     readonly childStringProperty: string;
   } & ConcreteParentClassNodeShapeStatic.Json;
 
-  export function propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -20429,11 +20377,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   baseInterfaceWithoutPropertiesNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<BaseInterfaceWithoutPropertiesNodeShapeStatic.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<
+    Error,
+    readonly BaseInterfaceWithoutPropertiesNodeShapeStatic.Identifier[]
+  > {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         BaseInterfaceWithoutPropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        BaseInterfaceWithoutPropertiesNodeShapeStatic.Identifier
       >(BaseInterfaceWithoutPropertiesNodeShapeStatic, query),
     ]);
   }
@@ -20452,7 +20403,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         BaseInterfaceWithoutPropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        BaseInterfaceWithoutPropertiesNodeShapeStatic.Identifier
       >(BaseInterfaceWithoutPropertiesNodeShapeStatic, query),
     ];
   }
@@ -20474,7 +20425,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       BaseInterfaceWithoutPropertiesNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      BaseInterfaceWithoutPropertiesNodeShapeStatic.Identifier
     >(BaseInterfaceWithoutPropertiesNodeShapeStatic, query);
   }
 
@@ -20505,11 +20456,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   baseInterfaceWithPropertiesNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<BaseInterfaceWithPropertiesNodeShapeStatic.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<
+    Error,
+    readonly BaseInterfaceWithPropertiesNodeShapeStatic.Identifier[]
+  > {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         BaseInterfaceWithPropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        BaseInterfaceWithPropertiesNodeShapeStatic.Identifier
       >(BaseInterfaceWithPropertiesNodeShapeStatic, query),
     ]);
   }
@@ -20528,7 +20482,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         BaseInterfaceWithPropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        BaseInterfaceWithPropertiesNodeShapeStatic.Identifier
       >(BaseInterfaceWithPropertiesNodeShapeStatic, query),
     ];
   }
@@ -20550,7 +20504,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       BaseInterfaceWithPropertiesNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      BaseInterfaceWithPropertiesNodeShapeStatic.Identifier
     >(BaseInterfaceWithPropertiesNodeShapeStatic, query);
   }
 
@@ -20576,12 +20530,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   blankNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<BlankNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<Error, readonly BlankNodeShape.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<
+      ...this.$objectIdentifiersSync<BlankNodeShape, BlankNodeShape.Identifier>(
         BlankNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
-      >(BlankNodeShape, query),
+        query,
+      ),
     ]);
   }
 
@@ -20595,7 +20549,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<BlankNodeShape.Identifier>,
   ): readonly purify.Either<Error, BlankNodeShape>[] {
     return [
-      ...this.$objectsSync<BlankNodeShape, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ...this.$objectsSync<BlankNodeShape, BlankNodeShape.Identifier>(
         BlankNodeShape,
         query,
       ),
@@ -20611,10 +20565,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   blankNodeShapesCountSync(
     query?: Pick<$ObjectSet.Query<BlankNodeShape.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.$objectsCountSync<BlankNodeShape, BlankNodeShape.Identifier>(
       BlankNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
-    >(BlankNodeShape, query);
+      query,
+    );
   }
 
   async concreteChildClassNodeShape(
@@ -20641,11 +20595,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   concreteChildClassNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<ConcreteChildClassNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<Error, readonly ConcreteChildClassNodeShape.Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         ConcreteChildClassNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        ConcreteChildClassNodeShape.Identifier
       >(ConcreteChildClassNodeShape, query),
     ]);
   }
@@ -20662,7 +20616,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         ConcreteChildClassNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        ConcreteChildClassNodeShape.Identifier
       >(ConcreteChildClassNodeShape, query),
     ];
   }
@@ -20684,7 +20638,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       ConcreteChildClassNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      ConcreteChildClassNodeShape.Identifier
     >(ConcreteChildClassNodeShape, query);
   }
 
@@ -20712,11 +20666,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   concreteChildInterfaceNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<ConcreteChildInterfaceNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<
+    Error,
+    readonly ConcreteChildInterfaceNodeShape.Identifier[]
+  > {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         ConcreteChildInterfaceNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        ConcreteChildInterfaceNodeShape.Identifier
       >(ConcreteChildInterfaceNodeShape, query),
     ]);
   }
@@ -20733,7 +20690,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         ConcreteChildInterfaceNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        ConcreteChildInterfaceNodeShape.Identifier
       >(ConcreteChildInterfaceNodeShape, query),
     ];
   }
@@ -20755,7 +20712,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       ConcreteChildInterfaceNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      ConcreteChildInterfaceNodeShape.Identifier
     >(ConcreteChildInterfaceNodeShape, query);
   }
 
@@ -20786,11 +20743,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   concreteParentClassNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<ConcreteParentClassNodeShapeStatic.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<
+    Error,
+    readonly ConcreteParentClassNodeShapeStatic.Identifier[]
+  > {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         ConcreteParentClassNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        ConcreteParentClassNodeShapeStatic.Identifier
       >(ConcreteParentClassNodeShapeStatic, query),
     ]);
   }
@@ -20807,7 +20767,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         ConcreteParentClassNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        ConcreteParentClassNodeShapeStatic.Identifier
       >(ConcreteParentClassNodeShapeStatic, query),
     ];
   }
@@ -20829,7 +20789,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       ConcreteParentClassNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      ConcreteParentClassNodeShapeStatic.Identifier
     >(ConcreteParentClassNodeShapeStatic, query);
   }
 
@@ -20860,11 +20820,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   concreteParentInterfaceNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<ConcreteParentInterfaceNodeShapeStatic.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<
+    Error,
+    readonly ConcreteParentInterfaceNodeShapeStatic.Identifier[]
+  > {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         ConcreteParentInterfaceNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        ConcreteParentInterfaceNodeShapeStatic.Identifier
       >(ConcreteParentInterfaceNodeShapeStatic, query),
     ]);
   }
@@ -20883,7 +20846,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         ConcreteParentInterfaceNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        ConcreteParentInterfaceNodeShapeStatic.Identifier
       >(ConcreteParentInterfaceNodeShapeStatic, query),
     ];
   }
@@ -20905,7 +20868,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       ConcreteParentInterfaceNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      ConcreteParentInterfaceNodeShapeStatic.Identifier
     >(ConcreteParentInterfaceNodeShapeStatic, query);
   }
 
@@ -20933,11 +20896,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   defaultValuePropertiesNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<DefaultValuePropertiesNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<
+    Error,
+    readonly DefaultValuePropertiesNodeShape.Identifier[]
+  > {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         DefaultValuePropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        DefaultValuePropertiesNodeShape.Identifier
       >(DefaultValuePropertiesNodeShape, query),
     ]);
   }
@@ -20954,7 +20920,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         DefaultValuePropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        DefaultValuePropertiesNodeShape.Identifier
       >(DefaultValuePropertiesNodeShape, query),
     ];
   }
@@ -20976,7 +20942,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       DefaultValuePropertiesNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      DefaultValuePropertiesNodeShape.Identifier
     >(DefaultValuePropertiesNodeShape, query);
   }
 
@@ -21004,11 +20970,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   explicitFromToRdfTypesNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<ExplicitFromToRdfTypesNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<
+    Error,
+    readonly ExplicitFromToRdfTypesNodeShape.Identifier[]
+  > {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         ExplicitFromToRdfTypesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        ExplicitFromToRdfTypesNodeShape.Identifier
       >(ExplicitFromToRdfTypesNodeShape, query),
     ]);
   }
@@ -21025,7 +20994,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         ExplicitFromToRdfTypesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        ExplicitFromToRdfTypesNodeShape.Identifier
       >(ExplicitFromToRdfTypesNodeShape, query),
     ];
   }
@@ -21047,7 +21016,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       ExplicitFromToRdfTypesNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      ExplicitFromToRdfTypesNodeShape.Identifier
     >(ExplicitFromToRdfTypesNodeShape, query);
   }
 
@@ -21075,11 +21044,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   explicitRdfTypeNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<ExplicitRdfTypeNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<Error, readonly ExplicitRdfTypeNodeShape.Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         ExplicitRdfTypeNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        ExplicitRdfTypeNodeShape.Identifier
       >(ExplicitRdfTypeNodeShape, query),
     ]);
   }
@@ -21096,7 +21065,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         ExplicitRdfTypeNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        ExplicitRdfTypeNodeShape.Identifier
       >(ExplicitRdfTypeNodeShape, query),
     ];
   }
@@ -21118,7 +21087,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       ExplicitRdfTypeNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      ExplicitRdfTypeNodeShape.Identifier
     >(ExplicitRdfTypeNodeShape, query);
   }
 
@@ -21144,11 +21113,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   externNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<ExternNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<Error, readonly ExternNodeShape.Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         ExternNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        ExternNodeShape.Identifier
       >(ExternNodeShape, query),
     ]);
   }
@@ -21163,7 +21132,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ExternNodeShape.Identifier>,
   ): readonly purify.Either<Error, ExternNodeShape>[] {
     return [
-      ...this.$objectsSync<ExternNodeShape, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ...this.$objectsSync<ExternNodeShape, ExternNodeShape.Identifier>(
         ExternNodeShape,
         query,
       ),
@@ -21179,10 +21148,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   externNodeShapesCountSync(
     query?: Pick<$ObjectSet.Query<ExternNodeShape.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.$objectsCountSync<ExternNodeShape, ExternNodeShape.Identifier>(
       ExternNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
-    >(ExternNodeShape, query);
+      query,
+    );
   }
 
   async externObjectType(
@@ -21207,11 +21176,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   externObjectTypeIdentifiersSync(
     query?: $ObjectSet.Query<ExternObjectType.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<Error, readonly ExternObjectType.Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         ExternObjectType,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        ExternObjectType.Identifier
       >(ExternObjectType, query),
     ]);
   }
@@ -21226,7 +21195,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ExternObjectType.Identifier>,
   ): readonly purify.Either<Error, ExternObjectType>[] {
     return [
-      ...this.$objectsSync<ExternObjectType, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ...this.$objectsSync<ExternObjectType, ExternObjectType.Identifier>(
         ExternObjectType,
         query,
       ),
@@ -21244,7 +21213,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       ExternObjectType,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      ExternObjectType.Identifier
     >(ExternObjectType, query);
   }
 
@@ -21272,11 +21241,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   externPropertiesNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<ExternPropertiesNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<Error, readonly ExternPropertiesNodeShape.Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         ExternPropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        ExternPropertiesNodeShape.Identifier
       >(ExternPropertiesNodeShape, query),
     ]);
   }
@@ -21293,7 +21262,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         ExternPropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        ExternPropertiesNodeShape.Identifier
       >(ExternPropertiesNodeShape, query),
     ];
   }
@@ -21315,7 +21284,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       ExternPropertiesNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      ExternPropertiesNodeShape.Identifier
     >(ExternPropertiesNodeShape, query);
   }
 
@@ -21343,11 +21312,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   hasValuePropertiesNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<HasValuePropertiesNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<Error, readonly HasValuePropertiesNodeShape.Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         HasValuePropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        HasValuePropertiesNodeShape.Identifier
       >(HasValuePropertiesNodeShape, query),
     ]);
   }
@@ -21364,7 +21333,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         HasValuePropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        HasValuePropertiesNodeShape.Identifier
       >(HasValuePropertiesNodeShape, query),
     ];
   }
@@ -21386,7 +21355,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       HasValuePropertiesNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      HasValuePropertiesNodeShape.Identifier
     >(HasValuePropertiesNodeShape, query);
   }
 
@@ -21414,20 +21383,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   inIdentifierNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<InIdentifierNodeShape.Identifier>,
-  ): purify.Either<
-    Error,
-    readonly rdfjs.NamedNode<
-      | "http://example.com/InIdentifierNodeShapeInstance1"
-      | "http://example.com/InIdentifierNodeShapeInstance2"
-    >[]
-  > {
+  ): purify.Either<Error, readonly InIdentifierNodeShape.Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         InIdentifierNodeShape,
-        rdfjs.NamedNode<
-          | "http://example.com/InIdentifierNodeShapeInstance1"
-          | "http://example.com/InIdentifierNodeShapeInstance2"
-        >
+        InIdentifierNodeShape.Identifier
       >(InIdentifierNodeShape, query),
     ]);
   }
@@ -21444,10 +21404,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         InIdentifierNodeShape,
-        rdfjs.NamedNode<
-          | "http://example.com/InIdentifierNodeShapeInstance1"
-          | "http://example.com/InIdentifierNodeShapeInstance2"
-        >
+        InIdentifierNodeShape.Identifier
       >(InIdentifierNodeShape, query),
     ];
   }
@@ -21463,10 +21420,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       InIdentifierNodeShape,
-      rdfjs.NamedNode<
-        | "http://example.com/InIdentifierNodeShapeInstance1"
-        | "http://example.com/InIdentifierNodeShapeInstance2"
-      >
+      InIdentifierNodeShape.Identifier
     >(InIdentifierNodeShape, query);
   }
 
@@ -21492,11 +21446,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   inlineNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<InlineNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<Error, readonly InlineNodeShape.Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         InlineNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        InlineNodeShape.Identifier
       >(InlineNodeShape, query),
     ]);
   }
@@ -21511,7 +21465,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<InlineNodeShape.Identifier>,
   ): readonly purify.Either<Error, InlineNodeShape>[] {
     return [
-      ...this.$objectsSync<InlineNodeShape, rdfjs.BlankNode | rdfjs.NamedNode>(
+      ...this.$objectsSync<InlineNodeShape, InlineNodeShape.Identifier>(
         InlineNodeShape,
         query,
       ),
@@ -21527,10 +21481,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   inlineNodeShapesCountSync(
     query?: Pick<$ObjectSet.Query<InlineNodeShape.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.$objectsCountSync<InlineNodeShape, InlineNodeShape.Identifier>(
       InlineNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
-    >(InlineNodeShape, query);
+      query,
+    );
   }
 
   async inPropertiesNodeShape(
@@ -21557,11 +21511,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   inPropertiesNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<InPropertiesNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<Error, readonly InPropertiesNodeShape.Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         InPropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        InPropertiesNodeShape.Identifier
       >(InPropertiesNodeShape, query),
     ]);
   }
@@ -21578,7 +21532,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         InPropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        InPropertiesNodeShape.Identifier
       >(InPropertiesNodeShape, query),
     ];
   }
@@ -21594,7 +21548,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       InPropertiesNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      InPropertiesNodeShape.Identifier
     >(InPropertiesNodeShape, query);
   }
 
@@ -21620,11 +21574,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   interfaceNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<InterfaceNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<Error, readonly InterfaceNodeShape.Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         InterfaceNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        InterfaceNodeShape.Identifier
       >(InterfaceNodeShape, query),
     ]);
   }
@@ -21639,10 +21593,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<InterfaceNodeShape.Identifier>,
   ): readonly purify.Either<Error, InterfaceNodeShape>[] {
     return [
-      ...this.$objectsSync<
+      ...this.$objectsSync<InterfaceNodeShape, InterfaceNodeShape.Identifier>(
         InterfaceNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
-      >(InterfaceNodeShape, query),
+        query,
+      ),
     ];
   }
 
@@ -21657,7 +21611,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       InterfaceNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      InterfaceNodeShape.Identifier
     >(InterfaceNodeShape, query);
   }
 
@@ -21685,11 +21639,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   interfaceUnionNodeShapeMember1IdentifiersSync(
     query?: $ObjectSet.Query<InterfaceUnionNodeShapeMember1.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<
+    Error,
+    readonly InterfaceUnionNodeShapeMember1.Identifier[]
+  > {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         InterfaceUnionNodeShapeMember1,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        InterfaceUnionNodeShapeMember1.Identifier
       >(InterfaceUnionNodeShapeMember1, query),
     ]);
   }
@@ -21706,7 +21663,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         InterfaceUnionNodeShapeMember1,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        InterfaceUnionNodeShapeMember1.Identifier
       >(InterfaceUnionNodeShapeMember1, query),
     ];
   }
@@ -21728,7 +21685,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       InterfaceUnionNodeShapeMember1,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      InterfaceUnionNodeShapeMember1.Identifier
     >(InterfaceUnionNodeShapeMember1, query);
   }
 
@@ -21756,11 +21713,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   interfaceUnionNodeShapeMember2aIdentifiersSync(
     query?: $ObjectSet.Query<InterfaceUnionNodeShapeMember2a.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<
+    Error,
+    readonly InterfaceUnionNodeShapeMember2a.Identifier[]
+  > {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         InterfaceUnionNodeShapeMember2a,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        InterfaceUnionNodeShapeMember2a.Identifier
       >(InterfaceUnionNodeShapeMember2a, query),
     ]);
   }
@@ -21777,7 +21737,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         InterfaceUnionNodeShapeMember2a,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        InterfaceUnionNodeShapeMember2a.Identifier
       >(InterfaceUnionNodeShapeMember2a, query),
     ];
   }
@@ -21799,7 +21759,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       InterfaceUnionNodeShapeMember2a,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      InterfaceUnionNodeShapeMember2a.Identifier
     >(InterfaceUnionNodeShapeMember2a, query);
   }
 
@@ -21827,11 +21787,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   interfaceUnionNodeShapeMember2bIdentifiersSync(
     query?: $ObjectSet.Query<InterfaceUnionNodeShapeMember2b.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<
+    Error,
+    readonly InterfaceUnionNodeShapeMember2b.Identifier[]
+  > {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         InterfaceUnionNodeShapeMember2b,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        InterfaceUnionNodeShapeMember2b.Identifier
       >(InterfaceUnionNodeShapeMember2b, query),
     ]);
   }
@@ -21848,7 +21811,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         InterfaceUnionNodeShapeMember2b,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        InterfaceUnionNodeShapeMember2b.Identifier
       >(InterfaceUnionNodeShapeMember2b, query),
     ];
   }
@@ -21870,7 +21833,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       InterfaceUnionNodeShapeMember2b,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      InterfaceUnionNodeShapeMember2b.Identifier
     >(InterfaceUnionNodeShapeMember2b, query);
   }
 
@@ -21896,9 +21859,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   iriNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<IriNodeShape.Identifier>,
-  ): purify.Either<Error, readonly rdfjs.NamedNode[]> {
+  ): purify.Either<Error, readonly IriNodeShape.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<IriNodeShape, rdfjs.NamedNode>(
+      ...this.$objectIdentifiersSync<IriNodeShape, IriNodeShape.Identifier>(
         IriNodeShape,
         query,
       ),
@@ -21915,7 +21878,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<IriNodeShape.Identifier>,
   ): readonly purify.Either<Error, IriNodeShape>[] {
     return [
-      ...this.$objectsSync<IriNodeShape, rdfjs.NamedNode>(IriNodeShape, query),
+      ...this.$objectsSync<IriNodeShape, IriNodeShape.Identifier>(
+        IriNodeShape,
+        query,
+      ),
     ];
   }
 
@@ -21928,7 +21894,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   iriNodeShapesCountSync(
     query?: Pick<$ObjectSet.Query<IriNodeShape.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<IriNodeShape, rdfjs.NamedNode>(
+    return this.$objectsCountSync<IriNodeShape, IriNodeShape.Identifier>(
       IriNodeShape,
       query,
     );
@@ -21958,11 +21924,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   languageInPropertiesNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<LanguageInPropertiesNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<Error, readonly LanguageInPropertiesNodeShape.Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         LanguageInPropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        LanguageInPropertiesNodeShape.Identifier
       >(LanguageInPropertiesNodeShape, query),
     ]);
   }
@@ -21979,7 +21945,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         LanguageInPropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        LanguageInPropertiesNodeShape.Identifier
       >(LanguageInPropertiesNodeShape, query),
     ];
   }
@@ -22001,7 +21967,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       LanguageInPropertiesNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      LanguageInPropertiesNodeShape.Identifier
     >(LanguageInPropertiesNodeShape, query);
   }
 
@@ -22029,11 +21995,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   listPropertiesNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<ListPropertiesNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<Error, readonly ListPropertiesNodeShape.Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         ListPropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        ListPropertiesNodeShape.Identifier
       >(ListPropertiesNodeShape, query),
     ]);
   }
@@ -22050,7 +22016,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         ListPropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        ListPropertiesNodeShape.Identifier
       >(ListPropertiesNodeShape, query),
     ];
   }
@@ -22066,7 +22032,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       ListPropertiesNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      ListPropertiesNodeShape.Identifier
     >(ListPropertiesNodeShape, query);
   }
 
@@ -22094,11 +22060,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   mutablePropertiesNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<MutablePropertiesNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<Error, readonly MutablePropertiesNodeShape.Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         MutablePropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        MutablePropertiesNodeShape.Identifier
       >(MutablePropertiesNodeShape, query),
     ]);
   }
@@ -22115,7 +22081,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         MutablePropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        MutablePropertiesNodeShape.Identifier
       >(MutablePropertiesNodeShape, query),
     ];
   }
@@ -22137,7 +22103,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       MutablePropertiesNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      MutablePropertiesNodeShape.Identifier
     >(MutablePropertiesNodeShape, query);
   }
 
@@ -22163,11 +22129,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   nonClassNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<NonClassNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<Error, readonly NonClassNodeShape.Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         NonClassNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        NonClassNodeShape.Identifier
       >(NonClassNodeShape, query),
     ]);
   }
@@ -22182,10 +22148,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<NonClassNodeShape.Identifier>,
   ): readonly purify.Either<Error, NonClassNodeShape>[] {
     return [
-      ...this.$objectsSync<
+      ...this.$objectsSync<NonClassNodeShape, NonClassNodeShape.Identifier>(
         NonClassNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
-      >(NonClassNodeShape, query),
+        query,
+      ),
     ];
   }
 
@@ -22200,7 +22166,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       NonClassNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      NonClassNodeShape.Identifier
     >(NonClassNodeShape, query);
   }
 
@@ -22228,11 +22194,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   orderedPropertiesNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<OrderedPropertiesNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<Error, readonly OrderedPropertiesNodeShape.Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         OrderedPropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        OrderedPropertiesNodeShape.Identifier
       >(OrderedPropertiesNodeShape, query),
     ]);
   }
@@ -22249,7 +22215,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         OrderedPropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        OrderedPropertiesNodeShape.Identifier
       >(OrderedPropertiesNodeShape, query),
     ];
   }
@@ -22271,7 +22237,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       OrderedPropertiesNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      OrderedPropertiesNodeShape.Identifier
     >(OrderedPropertiesNodeShape, query);
   }
 
@@ -22299,11 +22265,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   propertyCardinalitiesNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<PropertyCardinalitiesNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<
+    Error,
+    readonly PropertyCardinalitiesNodeShape.Identifier[]
+  > {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         PropertyCardinalitiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        PropertyCardinalitiesNodeShape.Identifier
       >(PropertyCardinalitiesNodeShape, query),
     ]);
   }
@@ -22320,7 +22289,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         PropertyCardinalitiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        PropertyCardinalitiesNodeShape.Identifier
       >(PropertyCardinalitiesNodeShape, query),
     ];
   }
@@ -22342,7 +22311,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       PropertyCardinalitiesNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      PropertyCardinalitiesNodeShape.Identifier
     >(PropertyCardinalitiesNodeShape, query);
   }
 
@@ -22370,11 +22339,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   propertyVisibilitiesNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<PropertyVisibilitiesNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<Error, readonly PropertyVisibilitiesNodeShape.Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         PropertyVisibilitiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        PropertyVisibilitiesNodeShape.Identifier
       >(PropertyVisibilitiesNodeShape, query),
     ]);
   }
@@ -22391,7 +22360,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         PropertyVisibilitiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        PropertyVisibilitiesNodeShape.Identifier
       >(PropertyVisibilitiesNodeShape, query),
     ];
   }
@@ -22413,7 +22382,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       PropertyVisibilitiesNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      PropertyVisibilitiesNodeShape.Identifier
     >(PropertyVisibilitiesNodeShape, query);
   }
 
@@ -22439,12 +22408,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   sha256IriNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<Sha256IriNodeShape.Identifier>,
-  ): purify.Either<Error, readonly rdfjs.NamedNode[]> {
+  ): purify.Either<Error, readonly Sha256IriNodeShape.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<Sha256IriNodeShape, rdfjs.NamedNode>(
+      ...this.$objectIdentifiersSync<
         Sha256IriNodeShape,
-        query,
-      ),
+        Sha256IriNodeShape.Identifier
+      >(Sha256IriNodeShape, query),
     ]);
   }
 
@@ -22458,7 +22427,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Sha256IriNodeShape.Identifier>,
   ): readonly purify.Either<Error, Sha256IriNodeShape>[] {
     return [
-      ...this.$objectsSync<Sha256IriNodeShape, rdfjs.NamedNode>(
+      ...this.$objectsSync<Sha256IriNodeShape, Sha256IriNodeShape.Identifier>(
         Sha256IriNodeShape,
         query,
       ),
@@ -22474,10 +22443,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   sha256IriNodeShapesCountSync(
     query?: Pick<$ObjectSet.Query<Sha256IriNodeShape.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Sha256IriNodeShape, rdfjs.NamedNode>(
+    return this.$objectsCountSync<
       Sha256IriNodeShape,
-      query,
-    );
+      Sha256IriNodeShape.Identifier
+    >(Sha256IriNodeShape, query);
   }
 
   async termPropertiesNodeShape(
@@ -22504,11 +22473,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   termPropertiesNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<TermPropertiesNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<Error, readonly TermPropertiesNodeShape.Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         TermPropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        TermPropertiesNodeShape.Identifier
       >(TermPropertiesNodeShape, query),
     ]);
   }
@@ -22525,7 +22494,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         TermPropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        TermPropertiesNodeShape.Identifier
       >(TermPropertiesNodeShape, query),
     ];
   }
@@ -22541,7 +22510,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       TermPropertiesNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      TermPropertiesNodeShape.Identifier
     >(TermPropertiesNodeShape, query);
   }
 
@@ -22569,11 +22538,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   unionNodeShapeMember1IdentifiersSync(
     query?: $ObjectSet.Query<UnionNodeShapeMember1.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<Error, readonly UnionNodeShapeMember1.Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         UnionNodeShapeMember1,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        UnionNodeShapeMember1.Identifier
       >(UnionNodeShapeMember1, query),
     ]);
   }
@@ -22590,7 +22559,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         UnionNodeShapeMember1,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        UnionNodeShapeMember1.Identifier
       >(UnionNodeShapeMember1, query),
     ];
   }
@@ -22606,7 +22575,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       UnionNodeShapeMember1,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      UnionNodeShapeMember1.Identifier
     >(UnionNodeShapeMember1, query);
   }
 
@@ -22634,11 +22603,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   unionNodeShapeMember2IdentifiersSync(
     query?: $ObjectSet.Query<UnionNodeShapeMember2.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<Error, readonly UnionNodeShapeMember2.Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         UnionNodeShapeMember2,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        UnionNodeShapeMember2.Identifier
       >(UnionNodeShapeMember2, query),
     ]);
   }
@@ -22655,7 +22624,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         UnionNodeShapeMember2,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        UnionNodeShapeMember2.Identifier
       >(UnionNodeShapeMember2, query),
     ];
   }
@@ -22671,7 +22640,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       UnionNodeShapeMember2,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      UnionNodeShapeMember2.Identifier
     >(UnionNodeShapeMember2, query);
   }
 
@@ -22699,11 +22668,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   unionPropertiesNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<UnionPropertiesNodeShape.Identifier>,
-  ): purify.Either<Error, readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]> {
+  ): purify.Either<Error, readonly UnionPropertiesNodeShape.Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         UnionPropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        UnionPropertiesNodeShape.Identifier
       >(UnionPropertiesNodeShape, query),
     ]);
   }
@@ -22720,7 +22689,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return [
       ...this.$objectsSync<
         UnionPropertiesNodeShape,
-        rdfjs.BlankNode | rdfjs.NamedNode
+        UnionPropertiesNodeShape.Identifier
       >(UnionPropertiesNodeShape, query),
     ];
   }
@@ -22742,7 +22711,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       UnionPropertiesNodeShape,
-      rdfjs.BlankNode | rdfjs.NamedNode
+      UnionPropertiesNodeShape.Identifier
     >(UnionPropertiesNodeShape, query);
   }
 
@@ -22768,12 +22737,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   uuidV4IriNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<UuidV4IriNodeShape.Identifier>,
-  ): purify.Either<Error, readonly rdfjs.NamedNode[]> {
+  ): purify.Either<Error, readonly UuidV4IriNodeShape.Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<UuidV4IriNodeShape, rdfjs.NamedNode>(
+      ...this.$objectIdentifiersSync<
         UuidV4IriNodeShape,
-        query,
-      ),
+        UuidV4IriNodeShape.Identifier
+      >(UuidV4IriNodeShape, query),
     ]);
   }
 
@@ -22787,7 +22756,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<UuidV4IriNodeShape.Identifier>,
   ): readonly purify.Either<Error, UuidV4IriNodeShape>[] {
     return [
-      ...this.$objectsSync<UuidV4IriNodeShape, rdfjs.NamedNode>(
+      ...this.$objectsSync<UuidV4IriNodeShape, UuidV4IriNodeShape.Identifier>(
         UuidV4IriNodeShape,
         query,
       ),
@@ -22803,10 +22772,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   uuidV4IriNodeShapesCountSync(
     query?: Pick<$ObjectSet.Query<UuidV4IriNodeShape.Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<UuidV4IriNodeShape, rdfjs.NamedNode>(
+    return this.$objectsCountSync<
       UuidV4IriNodeShape,
-      query,
-    );
+      UuidV4IriNodeShape.Identifier
+    >(UuidV4IriNodeShape, query);
   }
 
   *$objectIdentifiersSync<
