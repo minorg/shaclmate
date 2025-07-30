@@ -31,7 +31,7 @@ function identifierFromStringFunctionDeclaration(
 
     if (this.identifierType.in_.length > 0) {
       expressions.push(
-        `chain((identifier) => { switch (identifier.value) { ${this.identifierType.in_.map((iri) => `case "${iri.value}": return purify.Either.of(identifier);`).join(" ")} default: return purify.Left(new Error("expected NamedNode identifier to be one of ${this.identifierType.in_.map((iri) => iri.value).join(" ")}))); }`,
+        `chain((identifier) => { switch (identifier.value) { ${this.identifierType.in_.map((iri) => `case "${iri.value}": return purify.Either.of(identifier as rdfjs.NamedNode<"${iri.value}">);`).join(" ")} default: return purify.Left(new Error("expected NamedNode identifier to be one of ${this.identifierType.in_.map((iri) => iri.value).join(" ")}")); } })`,
       );
     }
   }
@@ -47,7 +47,9 @@ function identifierFromStringFunctionDeclaration(
       },
     ],
     returnType: "purify.Either<Error, Identifier>",
-    statements: [`return ${expressions.join(".")};`],
+    statements: [
+      `return ${expressions.join(".")} as purify.Either<Error, Identifier>;`,
+    ],
   };
 }
 
@@ -72,6 +74,10 @@ function identifierToStringFunctionDeclaration(
 export function identifierTypeDeclarations(
   this: ObjectType,
 ): IdentifierTypeDeclarations {
+  if (this.extern) {
+    return [];
+  }
+
   const ancestorObjectTypeWithSameIdentifierType =
     this.ancestorObjectTypes.find(
       (ancestorObjectType) =>
