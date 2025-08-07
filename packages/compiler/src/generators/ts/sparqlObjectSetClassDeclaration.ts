@@ -49,7 +49,12 @@ export function sparqlObjectSetClassDeclaration({
     query: {
       hasQuestionToken: true,
       name: "query",
-      type: `$ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>`,
+      type: `$SparqlObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>`,
+    } satisfies OptionalKind<ParameterDeclarationStructure>,
+    where: {
+      hasQuestionToken: true,
+      name: "where",
+      type: `$SparqlObjectSet.Where<${typeParameters.ObjectIdentifierT.name}>`,
     } satisfies OptionalKind<ParameterDeclarationStructure>,
   };
 
@@ -206,59 +211,29 @@ if (offset < 0) {
   offset = 0;
 }
 
-if (query?.where) {
-  const identifiers = query.where.identifiers;
-  if (identifiers.some(identifier => identifier.termType === "BlankNode")) {
-    return purify.Left(new Error("can\'t use blank node object identifiers with SPARQL"));
-  }
-  return purify.Either.of(identifiers.slice(offset, offset + limit));
+const wherePatterns = this.$wherePatterns(objectType, query?.where);
+if (wherePatterns.length === 0) {
+  return purify.Left(new Error("no SPARQL WHERE patterns for identifiers"));
 }
   
-if (objectType.fromRdfType) {
-  return purify.EitherAsync(async () =>
-    this.$mapBindingsToIdentifiers(
-      await this.sparqlClient.queryBindings(
-        this.sparqlGenerator.stringify({
-          distinct: true,
-          limit: limit < Number.MAX_SAFE_INTEGER ? limit : undefined,
-          offset,
-          order: [{ expression: this.objectVariable }],
-          prefixes: {},
-          queryType: "SELECT",
-          type: "query",
-          variables: [this.objectVariable],
-          where: [
-            {
-              triples: [
-                {
-                  object: objectType.fromRdfType!,
-                  subject: this.objectVariable,
-                  predicate: {
-                    items: [
-                      ${dataFactoryVariable}.namedNode("${rdf.type.value}"),
-                      {
-                        items: [${dataFactoryVariable}.namedNode("${rdfs.subClassOf.value}")],
-                        pathType: "*",
-                        type: "path",
-                      },
-                    ],
-                    pathType: "/",
-                    type: "path",
-                  },
-                },
-              ],
-              type: "bgp",
-            }
-          ],
-        }),
-      ),
-      this.objectVariable.value,
-    ) as readonly ${typeParameters.ObjectIdentifierT.name}[],
-  );
-} else {
-  return purify.Left(new Error("object type has no fromRdfType"));
-}
-`,
+return purify.EitherAsync(async () =>
+  this.$mapBindingsToIdentifiers(
+    await this.sparqlClient.queryBindings(
+      this.sparqlGenerator.stringify({
+        distinct: true,
+        limit: limit < Number.MAX_SAFE_INTEGER ? limit : undefined,
+        offset,
+        order: [{ expression: this.objectVariable }],
+        prefixes: {},
+        queryType: "SELECT",
+        type: "query",
+        variables: [this.objectVariable],
+        where: wherePatterns
+      }),
+    ),
+    this.objectVariable.value,
+  ) as readonly ${typeParameters.ObjectIdentifierT.name}[],
+);`,
           ],
           typeParameters: [typeParameters.ObjectIdentifierT],
         },
@@ -325,12 +300,9 @@ return identifiers.map((identifier) =>
           scope: Scope.Protected,
           statements: [
             `\
-if (!objectType.fromRdfType) {
-  return purify.Left(new Error("object type has no fromRdfType"));
-}
-
-if (query) {
-  throw new Error("not implemented");
+const wherePatterns = this.$wherePatterns(objectType, query?.where);
+if (wherePatterns.length === 0) {
+  return purify.Left(new Error("no SPARQL WHERE patterns for count"));
 }
 
 return purify.EitherAsync(async ({ liftEither }) =>
@@ -353,35 +325,71 @@ return purify.EitherAsync(async ({ liftEither }) =>
               variable: this.countVariable,
             },
           ],
-          where: [
-            {
-              triples: [
-                {
-                  object: objectType.fromRdfType!,
-                  subject: this.objectVariable,
-                  predicate: {
-                    items: [
-                      ${dataFactoryVariable}.namedNode("${rdf.type.value}"),
-                      {
-                        items: [${dataFactoryVariable}.namedNode("${rdfs.subClassOf.value}")],
-                        pathType: "*",
-                        type: "path",
-                      },
-                    ],
-                    pathType: "/",
-                    type: "path",
-                  },
-                },
-              ],
-              type: "bgp",
-            }
-          ],
+          where: wherePatterns
         }),
       ),
       this.countVariable.value,
     ),
   ),
 );`,
+          ],
+          typeParameters: [typeParameters.ObjectIdentifierT],
+        },
+        {
+          kind: StructureKind.Method,
+          name: "$wherePatterns",
+          parameters: [parameters.objectTypeWithFromRdfType, parameters.where],
+          returnType: "sparqljs.Pattern[]",
+          scope: Scope.Protected,
+          statements: [
+            `\
+const patterns: sparqljs.Pattern[] = [];
+
+// Pattern should be most to least specific.
+
+if (where) {
+  switch (where.type) {
+    case "identifiers":
+      patterns.push({
+        type: "values" as const,
+        values: where.identifiers.map((identifier) => {
+          const valuePatternRow: sparqljs.ValuePatternRow = {};
+          valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
+          return valuePatternRow;
+        }),
+      });
+      break;
+    case "patterns":
+      patterns.push(...where.patterns(this.objectVariable));
+      break;
+  }
+}
+
+if (objectType.fromRdfType) {
+  patterns.push({
+    triples: [
+      {
+        object: objectType.fromRdfType!,
+        subject: this.objectVariable,
+        predicate: {
+          items: [
+            ${dataFactoryVariable}.namedNode("${rdf.type.value}"),
+            {
+              items: [${dataFactoryVariable}.namedNode("${rdfs.subClassOf.value}")],
+              pathType: "*",
+              type: "path",
+            },
+          ],
+          pathType: "/",
+          type: "path",
+        },
+      },
+    ],
+    type: "bgp",
+  });
+}
+
+return patterns;`,
           ],
           typeParameters: [typeParameters.ObjectIdentifierT],
         },
@@ -429,7 +437,7 @@ return purify.EitherAsync(async ({ liftEither }) =>
           kind: StructureKind.TypeAlias,
           isExported: true,
           name: "Where",
-          type: `$ObjectSet.Where<${typeParameters.ObjectIdentifierT.name}> & { readonly identifiers: readonly ${typeParameters.ObjectIdentifierT.name}[]; readonly type: "identifiers" }`,
+          type: `$ObjectSet.Where<${typeParameters.ObjectIdentifierT.name}> | { readonly patterns: (objectVariable: rdfjs.Variable) => readonly sparqljs.Pattern[]; readonly type: "patterns" }`,
           typeParameters: [typeParameters.ObjectIdentifierT],
         },
       ],
