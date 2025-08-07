@@ -1,7 +1,9 @@
 import {
   type InterfaceDeclarationStructure,
   type ModuleDeclarationStructure,
+  type OptionalKind,
   StructureKind,
+  type TypeParameterDeclarationStructure,
 } from "ts-morph";
 import type { ObjectType } from "./ObjectType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
@@ -11,6 +13,13 @@ export function objectSetInterfaceDeclaration({
 }: {
   objectTypes: readonly ObjectType[];
 }): readonly (InterfaceDeclarationStructure | ModuleDeclarationStructure)[] {
+  const typeParameters = {
+    ObjectIdentifierT: {
+      constraint: "rdfjs.BlankNode | rdfjs.NamedNode",
+      name: "ObjectIdentifierT",
+    } satisfies OptionalKind<TypeParameterDeclarationStructure>,
+  };
+
   return [
     {
       isExported: true,
@@ -29,25 +38,15 @@ export function objectSetInterfaceDeclaration({
           kind: StructureKind.TypeAlias,
           isExported: true,
           name: "Query",
-          type: "{ readonly limit?: number; readonly offset?: number; readonly where?: Where<ObjectIdentifierT> }",
-          typeParameters: [
-            {
-              constraint: "rdfjs.BlankNode | rdfjs.NamedNode",
-              name: "ObjectIdentifierT",
-            },
-          ],
+          type: `{ readonly limit?: number; readonly offset?: number; readonly where?: Where<${typeParameters.ObjectIdentifierT.name}> }`,
+          typeParameters: [typeParameters.ObjectIdentifierT],
         },
         {
           kind: StructureKind.TypeAlias,
           isExported: true,
           name: "Where",
-          type: `{ readonly identifiers: readonly ObjectIdentifierT[]; readonly type: "identifiers" }`,
-          typeParameters: [
-            {
-              constraint: "rdfjs.BlankNode | rdfjs.NamedNode",
-              name: "ObjectIdentifierT",
-            },
-          ],
+          type: `{ readonly identifiers: readonly ${typeParameters.ObjectIdentifierT.name}[]; readonly type: "identifiers" }`,
+          typeParameters: [typeParameters.ObjectIdentifierT],
         },
       ],
     },

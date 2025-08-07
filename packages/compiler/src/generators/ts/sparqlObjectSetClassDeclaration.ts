@@ -1,5 +1,4 @@
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
-import { objectSetMethodSignatures } from "generators/ts/objectSetMethodSignatures.js";
 import {
   type ClassDeclarationStructure,
   type MethodDeclarationStructure,
@@ -11,6 +10,7 @@ import {
   type TypeParameterDeclarationStructure,
 } from "ts-morph";
 import type { ObjectType } from "./ObjectType.js";
+import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMethodDeclarations.js";
 
 export function sparqlObjectSetClassDeclaration({
@@ -20,11 +20,22 @@ export function sparqlObjectSetClassDeclaration({
   dataFactoryVariable: string;
   objectTypes: readonly ObjectType[];
 }): readonly (ClassDeclarationStructure | ModuleDeclarationStructure)[] {
+  const typeParameters = {
+    ObjectT: {
+      constraint: "{ readonly identifier: ObjectIdentifierT }",
+      name: "ObjectT",
+    } satisfies OptionalKind<TypeParameterDeclarationStructure>,
+    ObjectIdentifierT: {
+      constraint: "rdfjs.BlankNode | rdfjs.NamedNode",
+      name: "ObjectIdentifierT",
+    } satisfies OptionalKind<TypeParameterDeclarationStructure>,
+  };
+
   const parameters = {
     objectTypeWithFromRdfFromRdfTypeSparqlConstructQueryString: {
       name: "objectType",
       type: `{\
-  fromRdf: (parameters: { resource: rdfjsResource.Resource }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+  fromRdf: (parameters: { resource: rdfjsResource.Resource }) => purify.Either<rdfjsResource.Resource.ValueError, ${typeParameters.ObjectT.name}>;
   fromRdfType?: rdfjs.NamedNode;
   sparqlConstructQueryString: (parameters?: { subject: sparqljs.Triple["subject"]; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> & sparqljs.GeneratorOptions) => string;
 }`,
@@ -38,19 +49,8 @@ export function sparqlObjectSetClassDeclaration({
     query: {
       hasQuestionToken: true,
       name: "query",
-      type: "$ObjectSet.Query<ObjectIdentifierT>",
+      type: `$ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>`,
     } satisfies OptionalKind<ParameterDeclarationStructure>,
-  };
-
-  const typeParameters = {
-    ObjectT: {
-      constraint: "{ readonly identifier: ObjectIdentifierT }",
-      name: "ObjectT",
-    } satisfies OptionalKind<TypeParameterDeclarationStructure>,
-    ObjectIdentifierT: {
-      constraint: "rdfjs.BlankNode | rdfjs.NamedNode",
-      name: "ObjectIdentifierT",
-    } satisfies OptionalKind<TypeParameterDeclarationStructure>,
   };
 
   return [
@@ -73,13 +73,16 @@ export function sparqlObjectSetClassDeclaration({
       // methods: [
       methods: (
         objectTypes.flatMap((objectType) => {
-          const methodSignatures = objectSetMethodSignatures({ objectType });
-
           if (!objectType.features.has("sparql")) {
             return unsupportedObjectSetMethodDeclarations({
-              objectSetMethodSignatures: methodSignatures,
+              objectType,
             });
           }
+
+          const methodSignatures = objectSetMethodSignatures({
+            objectType,
+            queryT: "$SparqlObjectSet.Query",
+          });
 
           return [
             {
@@ -189,8 +192,7 @@ return identifiers;`,
           isAsync: true,
           name: "$objectIdentifiers",
           parameters: [parameters.objectTypeWithFromRdfType, parameters.query],
-          returnType:
-            "Promise<purify.Either<Error, readonly ObjectIdentifierT[]>>",
+          returnType: `Promise<purify.Either<Error, readonly ${typeParameters.ObjectIdentifierT.name}[]>>`,
           scope: Scope.Protected,
           statements: [
             `\
@@ -251,7 +253,7 @@ if (objectType.fromRdfType) {
         }),
       ),
       this.objectVariable.value,
-    ) as readonly ObjectIdentifierT[],
+    ) as readonly ${typeParameters.ObjectIdentifierT.name}[],
   );
 } else {
   return purify.Left(new Error("object type has no fromRdfType"));
@@ -268,10 +270,10 @@ if (objectType.fromRdfType) {
             parameters.objectTypeWithFromRdfFromRdfTypeSparqlConstructQueryString,
             parameters.query,
           ],
-          returnType: "Promise<readonly purify.Either<Error, ObjectT>[]>",
+          returnType: `Promise<readonly purify.Either<Error, ${typeParameters.ObjectT.name}>[]>`,
           statements: [
             `\
-const identifiersEither = await this.$objectIdentifiers<ObjectIdentifierT>(objectType, query);
+const identifiersEither = await this.$objectIdentifiers<${typeParameters.ObjectIdentifierT.name}>(objectType, query);
 if (identifiersEither.isLeft()) {
   return [identifiersEither];
 }
@@ -296,7 +298,7 @@ let quads: readonly rdfjs.Quad[];
 try {
   quads = await this.sparqlClient.queryQuads(constructQueryString);
 } catch (e) {
-  const left = purify.Left<Error, ObjectT>(e as Error);
+  const left = purify.Left<Error, ${typeParameters.ObjectT.name}>(e as Error);
   return identifiers.map(() => left);
 }
 
@@ -412,8 +414,25 @@ return purify.EitherAsync(async ({ liftEither }) =>
       ],
     },
     {
+      isExported: true,
       kind: StructureKind.Module,
       name: "$SparqlObjectSet",
+      statements: [
+        {
+          isExported: true,
+          kind: StructureKind.TypeAlias,
+          name: "Query",
+          type: `Omit<$ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>, "where"> & { readonly where?: Where<${typeParameters.ObjectIdentifierT.name}> }`,
+          typeParameters: [typeParameters.ObjectIdentifierT],
+        },
+        {
+          kind: StructureKind.TypeAlias,
+          isExported: true,
+          name: "Where",
+          type: `$ObjectSet.Where<${typeParameters.ObjectIdentifierT.name}> & { readonly identifiers: readonly ${typeParameters.ObjectIdentifierT.name}[]; readonly type: "identifiers" }`,
+          typeParameters: [typeParameters.ObjectIdentifierT],
+        },
+      ],
     },
   ];
 }
