@@ -1,4 +1,4 @@
-import { rdf } from "@tpluscode/rdf-ns-builders";
+import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 
 import { camelCase } from "change-case";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
@@ -19,6 +19,7 @@ export function sparqlFunctionDeclarations(
   }
 
   const variables = { subject: "subject", variablePrefix: "variablePrefix" };
+  const rdfClassVariable = `${this.dataFactoryVariable}.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
   const rdfTypeVariable = `${this.dataFactoryVariable}.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
 
   const subjectDefault = camelCase(this.name);
@@ -34,7 +35,12 @@ export function sparqlFunctionDeclarations(
     ),
     ...(this.fromRdfType.isJust()
       ? [
-          `...(parameters?.ignoreRdfType ? [] : [{ subject, predicate: ${this.rdfjsTermExpression(rdf.type)}, object: ${rdfTypeVariable} }])`,
+          `...(parameters?.ignoreRdfType ? [] :
+            [
+              { subject, predicate: ${this.rdfjsTermExpression(rdf.type)}, object: ${rdfTypeVariable} },
+              { subject: ${rdfTypeVariable}, predicate: ${this.rdfjsTermExpression(rdfs.subClassOf)}, object: ${rdfClassVariable} },
+            ]
+          )`,
         ]
       : []),
     ...this.ownProperties.flatMap((property) =>
@@ -49,7 +55,60 @@ export function sparqlFunctionDeclarations(
     ),
     ...(this.fromRdfType.isJust()
       ? [
-          `...(parameters?.ignoreRdfType ? [] : [{ triples: [{ subject, predicate: ${this.rdfjsTermExpression(rdf.type)}, object: ${this.rdfjsTermExpression(this.fromRdfType.unsafeCoerce())} }], type: "bgp" as const }, { triples: [{ subject, predicate: ${this.rdfjsTermExpression(rdf.type)}, object: ${rdfTypeVariable} }], type: "bgp" as const }])`,
+          `...(parameters?.ignoreRdfType ? [] : 
+            [
+              {
+                triples: [
+                  {
+                    subject,
+                    predicate: {
+                      items: [
+                        ${this.rdfjsTermExpression(rdf.type)},
+                        {
+                          items: [${this.rdfjsTermExpression(rdfs.subClassOf)}],
+                          pathType: "*" as const,
+                          type: "path" as const
+                        },
+                      ],
+                      pathType: "/" as const,
+                      type: "path" as const
+                    },
+                    object: ${this.rdfjsTermExpression(this.fromRdfType.unsafeCoerce())}
+                  }
+                ],
+                type: "bgp" as const
+              },
+              {
+                triples: [
+                  {
+                    subject,
+                    predicate: ${this.rdfjsTermExpression(rdf.type)},
+                    object: ${rdfTypeVariable}
+                  }
+                ],
+                type: "bgp" as const
+              },
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        subject: ${rdfTypeVariable},
+                        predicate: {
+                          items: [${this.rdfjsTermExpression(rdfs.subClassOf)}],
+                          pathType: "+" as const,
+                          type: "path" as const
+                        },
+                        object: ${rdfClassVariable}
+                      }
+                    ],
+                    type: "bgp" as const
+                  }
+                ],
+                type: "optional" as const
+              }
+            ]
+          )`,
         ]
       : []),
     ...this.ownProperties.flatMap((property) =>
