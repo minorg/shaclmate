@@ -7,14 +7,14 @@ import {
 import type { ObjectType } from "./ObjectType.js";
 
 export function unsupportedObjectSetMethodDeclarations({
-  objectSetInterfaceMethodSignatures,
+  objectSetMethodSignatures,
 }: {
-  objectSetInterfaceMethodSignatures: Record<
+  objectSetMethodSignatures: Record<
     keyof ObjectType.ObjectSetMethodNames,
     OptionalKind<MethodSignatureStructure>
   >;
 }): readonly MethodDeclarationStructure[] {
-  return Object.entries(objectSetInterfaceMethodSignatures).map(
+  return Object.entries(objectSetMethodSignatures).map(
     ([methodName, methodSignature]) => ({
       ...methodSignature,
       kind: StructureKind.Method,

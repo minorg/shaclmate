@@ -3,20 +3,21 @@ import {
   type ModuleDeclarationStructure,
   StructureKind,
 } from "ts-morph";
-import type { ObjectSetInterfaceMethodSignaturesByObjectTypeName } from "./objectSetInterfaceMethodSignaturesByObjectTypeName.js";
+import type { ObjectType } from "./ObjectType.js";
+import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 
 export function objectSetInterfaceDeclaration({
-  objectSetInterfaceMethodSignaturesByObjectTypeName,
+  objectTypes,
 }: {
-  objectSetInterfaceMethodSignaturesByObjectTypeName: ObjectSetInterfaceMethodSignaturesByObjectTypeName;
+  objectTypes: readonly ObjectType[];
 }): readonly (InterfaceDeclarationStructure | ModuleDeclarationStructure)[] {
   return [
     {
       isExported: true,
       kind: StructureKind.Interface,
-      methods: Object.values(
-        objectSetInterfaceMethodSignaturesByObjectTypeName,
-      ).flatMap(Object.values),
+      methods: objectTypes.flatMap((objectType) =>
+        Object.values(objectSetMethodSignatures({ objectType })),
+      ),
       name: "$ObjectSet",
     },
     {

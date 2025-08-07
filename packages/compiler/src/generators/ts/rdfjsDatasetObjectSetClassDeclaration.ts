@@ -8,14 +8,12 @@ import {
   type TypeParameterDeclarationStructure,
 } from "ts-morph";
 import type { ObjectType } from "./ObjectType.js";
-import type { ObjectSetInterfaceMethodSignaturesByObjectTypeName } from "./objectSetInterfaceMethodSignaturesByObjectTypeName.js";
+import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMethodDeclarations.js";
 
 export function rdfjsDatasetObjectSetClassDeclaration({
-  objectSetInterfaceMethodSignaturesByObjectTypeName,
   objectTypes,
 }: {
-  objectSetInterfaceMethodSignaturesByObjectTypeName: ObjectSetInterfaceMethodSignaturesByObjectTypeName;
   objectTypes: readonly ObjectType[];
 }): ClassDeclarationStructure {
   const parameters = {
@@ -64,77 +62,76 @@ export function rdfjsDatasetObjectSetClassDeclaration({
     name: "$RdfjsDatasetObjectSet",
     methods: objectTypes
       .flatMap((objectType) => {
-        const objectSetInterfaceMethodSignatures =
-          objectSetInterfaceMethodSignaturesByObjectTypeName[objectType.name];
+        const methodSignatures = objectSetMethodSignatures({ objectType });
 
         if (!objectType.features.has("rdf")) {
           return unsupportedObjectSetMethodDeclarations({
-            objectSetInterfaceMethodSignatures,
+            objectSetMethodSignatures: methodSignatures,
           });
         }
 
         return [
           {
-            ...objectSetInterfaceMethodSignatures.object,
+            ...methodSignatures.object,
             isAsync: true,
             kind: StructureKind.Method,
             statements: [
-              `return this.${objectSetInterfaceMethodSignatures.object.name}Sync(identifier);`,
+              `return this.${methodSignatures.object.name}Sync(identifier);`,
             ],
           },
           {
-            ...objectSetInterfaceMethodSignatures.object,
+            ...methodSignatures.object,
             kind: StructureKind.Method,
-            name: `${objectSetInterfaceMethodSignatures.object.name}Sync`,
+            name: `${methodSignatures.object.name}Sync`,
             returnType: `purify.Either<Error, ${objectType.name}>`,
             statements: [
-              `return this.${objectSetInterfaceMethodSignatures.objects.name}Sync({ where: { identifiers: [identifier], type: "identifiers" } })[0];`,
+              `return this.${methodSignatures.objects.name}Sync({ where: { identifiers: [identifier], type: "identifiers" } })[0];`,
             ],
           },
           {
-            ...objectSetInterfaceMethodSignatures.objectIdentifiers,
+            ...methodSignatures.objectIdentifiers,
             isAsync: true,
             kind: StructureKind.Method,
             statements: [
-              `return this.${objectSetInterfaceMethodSignatures.objectIdentifiers.name}Sync(query);`,
+              `return this.${methodSignatures.objectIdentifiers.name}Sync(query);`,
             ],
           },
           {
-            ...objectSetInterfaceMethodSignatures.objectIdentifiers,
+            ...methodSignatures.objectIdentifiers,
             kind: StructureKind.Method,
-            name: `${objectSetInterfaceMethodSignatures.objectIdentifiers.name}Sync`,
+            name: `${methodSignatures.objectIdentifiers.name}Sync`,
             returnType: `purify.Either<Error, readonly ${objectType.identifierTypeAlias}[]>`,
             statements: `return purify.Either.of([...this.$objectIdentifiersSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${objectType.staticModuleName}, query)]);`,
           },
           {
-            ...objectSetInterfaceMethodSignatures.objects,
+            ...methodSignatures.objects,
             isAsync: true,
             kind: StructureKind.Method,
             statements: [
-              `return this.${objectSetInterfaceMethodSignatures.objects.name}Sync(query);`,
+              `return this.${methodSignatures.objects.name}Sync(query);`,
             ],
           },
           {
-            ...objectSetInterfaceMethodSignatures.objects,
+            ...methodSignatures.objects,
             kind: StructureKind.Method,
-            name: `${objectSetInterfaceMethodSignatures.objects.name}Sync`,
+            name: `${methodSignatures.objects.name}Sync`,
             returnType: `readonly purify.Either<Error, ${objectType.name}>[]`,
             statements: [
               `return [...this.$objectsSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${objectType.staticModuleName}, query)];`,
             ],
           },
           {
-            ...objectSetInterfaceMethodSignatures.objectsCount,
+            ...methodSignatures.objectsCount,
             isAsync: true,
             kind: StructureKind.Method,
             statements: [
-              `return this.${objectSetInterfaceMethodSignatures.objectsCount.name}Sync(query);`,
+              `return this.${methodSignatures.objectsCount.name}Sync(query);`,
             ],
           },
           {
-            ...objectSetInterfaceMethodSignatures.objectsCount,
+            ...methodSignatures.objectsCount,
             kind: StructureKind.Method,
-            name: `${objectSetInterfaceMethodSignatures.objectsCount.name}Sync`,
+            name: `${methodSignatures.objectsCount.name}Sync`,
             returnType: "purify.Either<Error, number>",
             statements: [
               `return this.$objectsCountSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${objectType.staticModuleName}, query);`,
