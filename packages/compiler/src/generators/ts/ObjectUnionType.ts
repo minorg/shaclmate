@@ -9,8 +9,7 @@ import {
   type TypeAliasDeclarationStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
-
-import type { TsFeature } from "enums/TsFeature.js";
+import type { TsFeature } from "../../enums/TsFeature.js";
 import { DeclaredType } from "./DeclaredType.js";
 import type { Import } from "./Import.js";
 import type { ObjectType } from "./ObjectType.js";
@@ -65,6 +64,18 @@ class MemberType {
     );
   }
 
+  get features() {
+    return this.delegate.features;
+  }
+
+  get fromRdfType() {
+    return this.delegate.fromRdfType;
+  }
+
+  get fromRdfTypeVariable() {
+    return this.delegate.fromRdfTypeVariable;
+  }
+
   get graphqlName() {
     return this.delegate.graphqlName;
   }
@@ -116,7 +127,7 @@ export class ObjectUnionType extends DeclaredType {
   private readonly _discriminatorProperty: Type.DiscriminatorProperty;
   private readonly comment: Maybe<string>;
   private readonly label: Maybe<string>;
-  private readonly memberTypes: readonly MemberType[];
+  readonly memberTypes: readonly MemberType[];
 
   readonly kind = "ObjectUnionType";
   readonly typeof = "object";

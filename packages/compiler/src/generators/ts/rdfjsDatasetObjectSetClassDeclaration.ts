@@ -8,13 +8,16 @@ import {
   type TypeParameterDeclarationStructure,
 } from "ts-morph";
 import type { ObjectType } from "./ObjectType.js";
+import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMethodDeclarations.js";
 
 export function rdfjsDatasetObjectSetClassDeclaration({
   objectTypes,
+  objectUnionTypes,
 }: {
   objectTypes: readonly ObjectType[];
+  objectUnionTypes: readonly ObjectUnionType[];
 }): ClassDeclarationStructure {
   const typeParameters = {
     ObjectT: {
@@ -27,26 +30,213 @@ export function rdfjsDatasetObjectSetClassDeclaration({
     } satisfies OptionalKind<TypeParameterDeclarationStructure>,
   };
 
-  const parameters = {
-    objectTypeWithFromRdf: {
-      name: "objectType",
-      type: `{\
-  fromRdf: (parameters: { resource: rdfjsResource.Resource }) => purify.Either<rdfjsResource.Resource.ValueError, ${typeParameters.ObjectT.name}>;
-  fromRdfType?: rdfjs.NamedNode;
+  const fromRdfFunctionType = `(parameters: { resource: rdfjsResource.Resource }) => purify.Either<rdfjsResource.Resource.ValueError, ${typeParameters.ObjectT.name}>`;
+
+  const reusableMethodDeclarations: MethodDeclarationStructure[] = [];
+  if (objectTypes.length > 0) {
+    const parameters = {
+      objectTypeWithFromRdf: {
+        name: "objectType",
+        type: `{ fromRdf: ${fromRdfFunctionType}; fromRdfType?: rdfjs.NamedNode }`,
+      } satisfies OptionalKind<ParameterDeclarationStructure>,
+      objectTypeWithFromRdfType: {
+        name: "objectType",
+        type: "{ fromRdfType?: rdfjs.NamedNode }",
+      } satisfies OptionalKind<ParameterDeclarationStructure>,
+      query: {
+        hasQuestionToken: true,
+        name: "query",
+        type: `$ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>`,
+      } satisfies OptionalKind<ParameterDeclarationStructure>,
+    };
+
+    reusableMethodDeclarations.push(
+      {
+        kind: StructureKind.Method,
+        isGenerator: true,
+        name: "$objectIdentifiersSync",
+        parameters: [parameters.objectTypeWithFromRdfType, parameters.query],
+        returnType: `Generator<${typeParameters.ObjectIdentifierT.name}>`,
+        statements: [
+          `\
+const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
+if (limit <= 0) { return; }
+
+let offset = query?.offset ?? 0;
+if (offset < 0) { offset = 0; }
+
+if (query?.where) {
+  yield* query.where.identifiers.slice(offset, offset + limit);
+  return;
+}
+
+if (!objectType.fromRdfType) {
+  return;
+}
+
+let identifierCount = 0;
+let identifierI = 0;
+for (const resource of this.resourceSet.instancesOf(objectType.fromRdfType)) {
+  if (identifierI++ >= offset) {
+     yield resource.identifier as ${typeParameters.ObjectIdentifierT.name};
+     if (++identifierCount === limit) {
+       break;
+     }
+  }
+}
+`,
+        ],
+        typeParameters: [typeParameters.ObjectIdentifierT],
+      },
+      {
+        isGenerator: true,
+        kind: StructureKind.Method,
+        name: "$objectsSync",
+        parameters: [parameters.objectTypeWithFromRdf, parameters.query],
+        returnType: `Generator<purify.Either<Error, ${typeParameters.ObjectT.name}>>`,
+        statements: [
+          `\
+for (const identifier of this.$objectIdentifiersSync<${typeParameters.ObjectIdentifierT.name}>(objectType, query)) {
+  yield objectType.fromRdf({ resource: this.resourceSet.resource(identifier) });
+}
+`,
+        ],
+        typeParameters: [
+          typeParameters.ObjectT,
+          typeParameters.ObjectIdentifierT,
+        ],
+      },
+      {
+        kind: StructureKind.Method,
+        name: "$objectsCountSync",
+        parameters: [parameters.objectTypeWithFromRdfType, parameters.query],
+        returnType: "purify.Either<Error, number>",
+        statements: [
+          "let count = 0;",
+          `for (const _ of this.$objectIdentifiersSync<${typeParameters.ObjectIdentifierT.name}>(objectType, query)) { count++; }`,
+          "return purify.Either.of(count);",
+        ],
+        typeParameters: [typeParameters.ObjectIdentifierT],
+        scope: Scope.Protected,
+      },
+    );
+  }
+
+  if (objectUnionTypes.length > 0) {
+    const objectTypeType = `{ fromRdf: ${fromRdfFunctionType}; fromRdfType?: rdfjs.NamedNode }`;
+
+    const parameters = {
+      objectTypes: {
+        name: "objectTypes",
+        type: `readonly ${objectTypeType}[]`,
+      } satisfies OptionalKind<ParameterDeclarationStructure>,
+      query: {
+        hasQuestionToken: true,
+        name: "query",
+        type: `$ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>`,
+      } satisfies OptionalKind<ParameterDeclarationStructure>,
+    };
+
+    reusableMethodDeclarations.push(
+      {
+        kind: StructureKind.Method,
+        isGenerator: true,
+        name: "$objectUnionIdentifiersSync",
+        parameters: [parameters.objectTypes, parameters.query],
+        returnType: `Generator<{ identifier: ${typeParameters.ObjectIdentifierT.name}; objectType: ${objectTypeType} }>`,
+        statements: [
+          `\
+const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
+if (limit <= 0) { return; }
+
+let offset = query?.offset ?? 0;
+if (offset < 0) { offset = 0; }
+
+if (query?.where) {
+  // Figure out which object type the identifiers belong to
+  for (const identifier of query.where.identifiers.slice(offset, offset + limit)) {
+    const resource = this.resourceSet.resource(identifier);
+    let yieldedIdentifier = false;
+    for (const objectType of objectTypes) {
+      if (objectType.fromRdfType) {
+        if (resource.isInstanceOf(objectType.fromRdfType)) {
+          yield { identifier, objectType };
+          yieldedIdentifier = true;
+          break;
+        }
+      } else if (objectType.fromRdf({ resource }).isRight()) {
+         yield { identifier, objectType };
+         yieldedIdentifier = true;
+         break;
+      }
+    }
+    // Doesn't appear to belong to any of the known object types, just assume the first
+    if (!yieldedIdentifier) {
+      yield { identifier, objectType: objectTypes[0] };
+    }
+  }
+
+  return;
+}
+
+let identifierCount = 0;
+let identifierI = 0;
+for (const objectType of objectTypes) {
+  if (!objectType.fromRdfType) {
+    continue;
+  }
+
+  for (const resource of this.resourceSet.instancesOf(objectType.fromRdfType)) {
+    if (identifierI++ >= offset) {
+      yield { identifier: resource.identifier as ${typeParameters.ObjectIdentifierT.name}, objectType };
+      if (++identifierCount === limit) {
+        break;
+      }
+    }
+  }
 }`,
-    } satisfies OptionalKind<ParameterDeclarationStructure>,
-    objectTypeWithFromRdfType: {
-      name: "objectType",
-      type: `{\
-  fromRdfType?: rdfjs.NamedNode;
-}`,
-    } satisfies OptionalKind<ParameterDeclarationStructure>,
-    query: {
-      hasQuestionToken: true,
-      name: "query",
-      type: `$ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>`,
-    } satisfies OptionalKind<ParameterDeclarationStructure>,
-  };
+        ],
+        typeParameters: [
+          typeParameters.ObjectT,
+          typeParameters.ObjectIdentifierT,
+        ],
+      },
+      {
+        isGenerator: true,
+        kind: StructureKind.Method,
+        name: "$objectUnionsSync",
+        parameters: [parameters.objectTypes, parameters.query],
+        returnType: `Generator<purify.Either<Error, ${typeParameters.ObjectT.name}>>`,
+        statements: [
+          `\
+for (const { identifier, objectType } of this.$objectUnionIdentifiersSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(objectTypes, query)) {
+  yield objectType.fromRdf({ resource: this.resourceSet.resource(identifier) });
+}
+`,
+        ],
+        typeParameters: [
+          typeParameters.ObjectT,
+          typeParameters.ObjectIdentifierT,
+        ],
+      },
+      {
+        kind: StructureKind.Method,
+        name: "$objectUnionsCountSync",
+        parameters: [parameters.objectTypes, parameters.query],
+        returnType: "purify.Either<Error, number>",
+        statements: [
+          "let count = 0;",
+          `for (const _ of this.$objectUnionIdentifiersSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(objectTypes, query)) { count++; }`,
+          "return purify.Either.of(count);",
+        ],
+        typeParameters: [
+          typeParameters.ObjectT,
+          typeParameters.ObjectIdentifierT,
+        ],
+        scope: Scope.Protected,
+      },
+    );
+  }
 
   return {
     ctors: [
@@ -66,8 +256,8 @@ export function rdfjsDatasetObjectSetClassDeclaration({
     isExported: true,
     kind: StructureKind.Class,
     name: "$RdfjsDatasetObjectSet",
-    methods: objectTypes
-      .flatMap((objectType) => {
+    methods: (
+      [...objectTypes, ...objectUnionTypes].flatMap((objectType) => {
         if (!objectType.features.has("rdf")) {
           return unsupportedObjectSetMethodDeclarations({
             objectType,
@@ -76,9 +266,21 @@ export function rdfjsDatasetObjectSetClassDeclaration({
 
         const methodSignatures = objectSetMethodSignatures({ objectType });
 
-        const runtimeObjectType = objectType.fromRdfType.isJust()
-          ? `${objectType.staticModuleName}`
-          : `{ ...${objectType.staticModuleName}, fromRdfType: undefined }`;
+        let runtimeObjectType: string;
+        switch (objectType.kind) {
+          case "ObjectType":
+            runtimeObjectType = objectType.fromRdfType.isJust()
+              ? `${objectType.staticModuleName}`
+              : `{ ...${objectType.staticModuleName}, fromRdfType: undefined }`;
+            break;
+          case "ObjectUnionType":
+            runtimeObjectType = `[${objectType.memberTypes.map((memberType) =>
+              memberType.fromRdfType.isJust()
+                ? `${memberType.staticModuleName}`
+                : `{ ...${memberType.staticModuleName}, fromRdfType: undefined }`,
+            )}]`;
+            break;
+        }
 
         return [
           {
@@ -111,7 +313,11 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             kind: StructureKind.Method,
             name: `${methodSignatures.objectIdentifiers.name}Sync`,
             returnType: `purify.Either<Error, readonly ${objectType.identifierTypeAlias}[]>`,
-            statements: `return purify.Either.of([...this.$objectIdentifiersSync<${objectType.identifierTypeAlias}>(${runtimeObjectType}, query)]);`,
+
+            statements:
+              objectType.kind === "ObjectUnionType"
+                ? `return purify.Either.of([...this.$objectUnionIdentifiersSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query)].map(_ => _.identifier));`
+                : `return purify.Either.of([...this.$objectIdentifiersSync<${objectType.identifierTypeAlias}>(${runtimeObjectType}, query)]);`,
           },
           {
             ...methodSignatures.objects,
@@ -127,7 +333,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             name: `${methodSignatures.objects.name}Sync`,
             returnType: `readonly purify.Either<Error, ${objectType.name}>[]`,
             statements: [
-              `return [...this.$objectsSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query)];`,
+              `return [...this.$object${objectType.kind === "ObjectUnionType" ? "Union" : ""}sSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query)];`,
             ],
           },
           {
@@ -144,81 +350,14 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             name: `${methodSignatures.objectsCount.name}Sync`,
             returnType: "purify.Either<Error, number>",
             statements: [
-              `return this.$objectsCountSync<${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
+              objectType.kind === "ObjectUnionType"
+                ? `return this.$objectUnionsCountSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`
+                : `return this.$objectsCountSync<${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
             ],
           },
-        ] satisfies MethodDeclarationStructure[];
-      })
-      .concat(
-        {
-          kind: StructureKind.Method,
-          isGenerator: true,
-          name: "$objectIdentifiersSync",
-          parameters: [parameters.objectTypeWithFromRdfType, parameters.query],
-          returnType: `Generator<${typeParameters.ObjectIdentifierT.name}>`,
-          statements: [
-            `\
-const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
-if (limit <= 0) { return; }
-
-let offset = query?.offset ?? 0;
-if (offset < 0) { offset = 0; }
-
-if (query?.where) {
-  yield* query.where.identifiers.slice(offset, offset + limit);
-  return;
-}
-
-if (!objectType.fromRdfType) {
-  return;
-}
-
-let identifierCount = 0;
-let identifierI = 0;
-for (const resource of this.resourceSet.instancesOf(objectType.fromRdfType)) {
-  if (identifierI++ >= offset) {
-     yield resource.identifier as ${typeParameters.ObjectIdentifierT.name};
-     if (++identifierCount === limit) {
-       break;
-     }
-  }
-}
-`,
-          ],
-          typeParameters: [typeParameters.ObjectIdentifierT],
-        } satisfies MethodDeclarationStructure,
-        {
-          isGenerator: true,
-          kind: StructureKind.Method,
-          name: "$objectsSync",
-          parameters: [parameters.objectTypeWithFromRdf, parameters.query],
-          returnType: `Generator<purify.Either<Error, ${typeParameters.ObjectT.name}>>`,
-          statements: [
-            `\
-for (const identifier of this.$objectIdentifiersSync<${typeParameters.ObjectIdentifierT.name}>(objectType, query)) {
-  yield objectType.fromRdf({ resource: this.resourceSet.resource(identifier) });
-}
-`,
-          ],
-          typeParameters: [
-            typeParameters.ObjectT,
-            typeParameters.ObjectIdentifierT,
-          ],
-        },
-        {
-          kind: StructureKind.Method,
-          name: "$objectsCountSync",
-          parameters: [parameters.objectTypeWithFromRdfType, parameters.query],
-          returnType: "purify.Either<Error, number>",
-          statements: [
-            "let count = 0;",
-            `for (const _ of this.$objectIdentifiersSync<${typeParameters.ObjectIdentifierT.name}>(objectType, query)) { count++; }`,
-            "return purify.Either.of(count);",
-          ],
-          typeParameters: [typeParameters.ObjectIdentifierT],
-          scope: Scope.Protected,
-        } satisfies MethodDeclarationStructure,
-      ),
+        ];
+      }) satisfies MethodDeclarationStructure[]
+    ).concat(reusableMethodDeclarations),
     properties: [
       {
         isReadonly: true,

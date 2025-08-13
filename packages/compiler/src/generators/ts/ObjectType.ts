@@ -213,6 +213,11 @@ export class ObjectType extends DeclaredType {
   }
 
   @Memoize()
+  get fromRdfTypeVariable(): Maybe<string> {
+    return this.fromRdfType.map(() => `${this.staticModuleName}.fromRdfType`);
+  }
+
+  @Memoize()
   get identifierProperty(): ObjectType.IdentifierProperty {
     const identifierProperty = this.properties.find(
       (property) => property instanceof ObjectType.IdentifierProperty,

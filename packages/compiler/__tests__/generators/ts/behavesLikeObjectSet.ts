@@ -9,17 +9,40 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
   addQuad,
   objectSet,
 }: { addQuad: (quad: Quad) => void; objectSet: ObjectSetT }) {
-  const expectedObjects = [1, 2, 3, 4].map(
-    (objectI) =>
+  const expectConcreteChildClassNodeShapes = new Array(4).map(
+    (_, i) =>
       new kitchenSink.ConcreteChildClassNodeShape({
-        abcStringProperty: `ABC string ${objectI}`,
-        childStringProperty: `child string ${objectI}`,
-        identifier: N3.DataFactory.namedNode(
-          `http://example.com/object${objectI}`,
-        ),
-        parentStringProperty: `parent string ${objectI}`,
+        abcStringProperty: `ABC string ${i}`,
+        childStringProperty: `child string ${i}`,
+        identifier: N3.DataFactory.namedNode(`http://example.com/object${i}`),
+        parentStringProperty: `parent string ${i}`,
       }),
   );
+
+  const expectedInterfaceUnionNodeShapes = new Array(4).map((i) => {
+    switch (i % 3) {
+      case 0:
+        return {
+          identifier: N3.DataFactory.namedNode(`http://example.com/object${i}`),
+          stringProperty1: `string ${i}`,
+          type: "InterfaceUnionNodeShapeMember1",
+        } satisfies kitchenSink.InterfaceUnionNodeShapeMember1;
+      case 1:
+        return {
+          identifier: N3.DataFactory.namedNode(`http://example.com/object${i}`),
+          stringProperty2a: `string ${i}`,
+          type: "InterfaceUnionNodeShapeMember2a",
+        } satisfies kitchenSink.InterfaceUnionNodeShapeMember2a;
+      case 2:
+        return {
+          identifier: N3.DataFactory.namedNode(`http://example.com/object${i}`),
+          stringProperty2b: `string ${i}`,
+          type: "InterfaceUnionNodeShapeMember2b",
+        } satisfies kitchenSink.InterfaceUnionNodeShapeMember2b;
+      default:
+        throw new RangeError();
+    }
+  });
 
   beforeAll(() => {
     const dataset = new N3.Store();
@@ -28,7 +51,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
       dataFactory: N3.DataFactory,
       dataset,
     });
-    for (const expectedObject of expectedObjects) {
+    for (const expectedObject of expectConcreteChildClassNodeShapes) {
       expectedObject.toRdf({ resourceSet, mutateGraph });
     }
     for (const quad of dataset) {
@@ -40,11 +63,11 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     expect(
       (
         await objectSet.concreteChildClassNodeShape(
-          expectedObjects[0].identifier,
+          expectConcreteChildClassNodeShapes[0].identifier,
         )
       )
         .unsafeCoerce()
-        .equals(expectedObjects[0])
+        .equals(expectConcreteChildClassNodeShapes[0])
         .unsafeCoerce(),
     ).toBe(true);
   });
@@ -54,7 +77,11 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
       (await objectSet.concreteChildClassNodeShapeIdentifiers())
         .unsafeCoerce()
         .map((identifier) => identifier.value),
-    ).toStrictEqual(expectedObjects.map((object) => object.identifier.value));
+    ).toStrictEqual(
+      expectConcreteChildClassNodeShapes.map(
+        (object) => object.identifier.value,
+      ),
+    );
   });
 
   it("objectIdentifiers (limit 1)", async ({ expect }) => {
@@ -62,7 +89,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
       (await objectSet.concreteChildClassNodeShapeIdentifiers({ limit: 1 }))
         .unsafeCoerce()
         .map((identifier) => identifier.value),
-    ).toStrictEqual([expectedObjects[0].identifier.value]);
+    ).toStrictEqual([expectConcreteChildClassNodeShapes[0].identifier.value]);
   });
 
   it("objectIdentifiers (offset 1)", async ({ expect }) => {
@@ -75,7 +102,9 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
         .unsafeCoerce()
         .map((identifier) => identifier.value),
     ).toStrictEqual(
-      expectedObjects.slice(1).map((object) => object.identifier.value),
+      expectConcreteChildClassNodeShapes
+        .slice(1)
+        .map((object) => object.identifier.value),
     );
   });
 
@@ -91,8 +120,8 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
         .map((identifier) => identifier.value)
         .sort(),
     ).toStrictEqual([
-      expectedObjects[1].identifier.value,
-      expectedObjects[2].identifier.value,
+      expectConcreteChildClassNodeShapes[1].identifier.value,
+      expectConcreteChildClassNodeShapes[2].identifier.value,
     ]);
   });
 
@@ -100,13 +129,17 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     const actualObjects = (
       await objectSet.concreteChildClassNodeShapes({
         where: {
-          identifiers: expectedObjects.map((object) => object.identifier),
+          identifiers: expectConcreteChildClassNodeShapes.map(
+            (object) => object.identifier,
+          ),
           type: "identifiers",
         },
       })
     ).map((either) => either.unsafeCoerce());
-    expect(actualObjects).toHaveLength(expectedObjects.length);
-    for (const expectedObject of expectedObjects) {
+    expect(actualObjects).toHaveLength(
+      expectConcreteChildClassNodeShapes.length,
+    );
+    for (const expectedObject of expectConcreteChildClassNodeShapes) {
       expect(
         actualObjects.some((actualObject) =>
           actualObject.equals(expectedObject).isRight(),
@@ -120,7 +153,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     const actualObjects = (
       await objectSet.concreteChildClassNodeShapes({
         where: {
-          identifiers: expectedObjects
+          identifiers: expectConcreteChildClassNodeShapes
             .slice(sliceStart)
             .map((object) => object.identifier),
           type: "identifiers",
@@ -128,9 +161,11 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
       })
     ).map((either) => either.unsafeCoerce());
     expect(actualObjects).toHaveLength(
-      expectedObjects.slice(sliceStart).length,
+      expectConcreteChildClassNodeShapes.slice(sliceStart).length,
     );
-    for (const expectedObject of expectedObjects.slice(sliceStart)) {
+    for (const expectedObject of expectConcreteChildClassNodeShapes.slice(
+      sliceStart,
+    )) {
       expect(
         actualObjects.some((actualObject) =>
           actualObject.equals(expectedObject).isRight(),
@@ -142,6 +177,6 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
   it("objectsCount", async ({ expect }) => {
     expect(
       (await objectSet.concreteChildClassNodeShapesCount()).unsafeCoerce(),
-    ).toStrictEqual(expectedObjects.length);
+    ).toStrictEqual(expectConcreteChildClassNodeShapes.length);
   });
 }

@@ -4,7 +4,13 @@ import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 
 export function unsupportedObjectSetMethodDeclarations({
   objectType,
-}: { objectType: ObjectType }): readonly MethodDeclarationStructure[] {
+}: {
+  objectType: {
+    readonly identifierTypeAlias: string;
+    readonly objectSetMethodNames: ObjectType.ObjectSetMethodNames;
+    readonly name: string;
+  };
+}): readonly MethodDeclarationStructure[] {
   return Object.entries(objectSetMethodSignatures({ objectType })).map(
     ([methodName, methodSignature]) => ({
       ...methodSignature,

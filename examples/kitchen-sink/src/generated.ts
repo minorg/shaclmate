@@ -1038,7 +1038,9 @@ export namespace UnionPropertiesNodeShape {
       | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2815,7 +2817,9 @@ export namespace TermPropertiesNodeShape {
       | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4013,7 +4017,9 @@ export namespace PropertyVisibilitiesNodeShape {
     readonly publicProperty: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4574,7 +4580,9 @@ export namespace PropertyCardinalitiesNodeShape {
     readonly requiredStringProperty: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5204,7 +5212,9 @@ export namespace OrderedPropertiesNodeShape {
     readonly propertyA: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6149,7 +6159,9 @@ export namespace MutablePropertiesNodeShape {
     readonly mutableStringProperty: string | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6991,7 +7003,9 @@ export namespace ListPropertiesNodeShape {
     readonly stringListProperty: readonly string[] | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -7882,7 +7896,9 @@ export namespace LanguageInPropertiesNodeShape {
       | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8576,7 +8592,9 @@ export namespace InterfaceUnionNodeShapeMember2b {
     readonly stringProperty2b: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8944,7 +8962,9 @@ export namespace InterfaceUnionNodeShapeMember2a {
     readonly stringProperty2a: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9312,7 +9332,9 @@ export namespace InterfaceUnionNodeShapeMember1 {
     readonly stringProperty1: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9680,7 +9702,9 @@ export namespace InterfaceNodeShape {
     readonly stringProperty: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -10277,7 +10301,9 @@ export namespace InPropertiesNodeShape {
     readonly inStringsProperty: ("text" | "html") | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -10440,20 +10466,22 @@ export namespace InPropertiesNodeShape {
         )
         .head()
         .chain((_value) =>
-          _value.toBoolean().chain((value) =>
-            value === true
-              ? purify.Either.of(value)
-              : purify.Left(
-                  new rdfjsResource.Resource.MistypedValueError({
-                    actualValue: rdfLiteral.toRdf(value),
-                    expectedValueType: "true",
-                    focusResource: _resource,
-                    predicate: dataFactory.namedNode(
-                      "http://example.com/inBooleansProperty",
-                    ),
-                  }),
-                ),
-          ),
+          _value
+            .toBoolean()
+            .chain((value) =>
+              value === true
+                ? purify.Either.of(value)
+                : purify.Left(
+                    new rdfjsResource.Resource.MistypedValueError({
+                      actualValue: rdfLiteral.toRdf(value),
+                      expectedValueType: "true",
+                      focusResource: _resource,
+                      predicate: dataFactory.namedNode(
+                        "http://example.com/inBooleansProperty",
+                      ),
+                    }),
+                  ),
+            ),
         )
         .toMaybe(),
     );
@@ -11034,7 +11062,9 @@ export namespace InIdentifierNodeShape {
     readonly stringProperty: string | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.NamedNode<
@@ -11482,7 +11512,9 @@ export namespace HasValuePropertiesNodeShape {
     readonly hasLiteralProperty: string | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12704,7 +12736,9 @@ export namespace ExternPropertiesNodeShape {
     readonly inlineProperty: InlineNodeShape.Json | undefined;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14404,7 +14438,9 @@ export namespace DefaultValuePropertiesNodeShape {
     readonly trueBooleanProperty: boolean;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15054,7 +15090,9 @@ export namespace BaseInterfaceWithPropertiesNodeShapeStatic {
     readonly baseStringProperty: string;
   };
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15552,7 +15590,9 @@ export namespace BaseInterfaceWithoutPropertiesNodeShapeStatic {
     BaseInterfaceWithPropertiesNodeShapeStatic.Identifier;
   export type Json = BaseInterfaceWithPropertiesNodeShapeStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16046,7 +16086,9 @@ export namespace ConcreteParentInterfaceNodeShapeStatic {
     readonly parentStringProperty: string;
   } & BaseInterfaceWithoutPropertiesNodeShapeStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16586,7 +16628,9 @@ export namespace ConcreteChildInterfaceNodeShape {
     readonly childStringProperty: string;
   } & ConcreteParentInterfaceNodeShapeStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17731,18 +17775,20 @@ export class ConcreteParentClassNodeShape extends AbstractBaseClassWithoutProper
   }
 
   override equals(other: ConcreteParentClassNodeShape): $EqualsResult {
-    return super.equals(other).chain(() =>
-      $strictEquals(
-        this.parentStringProperty,
-        other.parentStringProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "parentStringProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.parentStringProperty,
+          other.parentStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "parentStringProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -17822,7 +17868,9 @@ export namespace ConcreteParentClassNodeShapeStatic {
     readonly parentStringProperty: string;
   } & AbstractBaseClassWithoutPropertiesNodeShapeStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18241,18 +18289,20 @@ export class ConcreteChildClassNodeShape extends ConcreteParentClassNodeShape {
   }
 
   override equals(other: ConcreteChildClassNodeShape): $EqualsResult {
-    return super.equals(other).chain(() =>
-      $strictEquals(
-        this.childStringProperty,
-        other.childStringProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "childStringProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.childStringProperty,
+          other.childStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "childStringProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override hash<
@@ -18330,7 +18380,9 @@ export namespace ConcreteChildClassNodeShape {
     readonly childStringProperty: string;
   } & ConcreteParentClassNodeShapeStatic.Json;
 
-  export function propertiesFromJson(_json: unknown): purify.Either<
+  export function propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -23227,6 +23279,271 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async interfaceUnionNodeShape(
+    identifier: InterfaceUnionNodeShape.Identifier,
+  ): Promise<purify.Either<Error, InterfaceUnionNodeShape>> {
+    return this.interfaceUnionNodeShapeSync(identifier);
+  }
+
+  interfaceUnionNodeShapeSync(
+    identifier: InterfaceUnionNodeShape.Identifier,
+  ): purify.Either<Error, InterfaceUnionNodeShape> {
+    return this.interfaceUnionNodeShapesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async interfaceUnionNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<InterfaceUnionNodeShape.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly InterfaceUnionNodeShape.Identifier[]>
+  > {
+    return this.interfaceUnionNodeShapeIdentifiersSync(query);
+  }
+
+  interfaceUnionNodeShapeIdentifiersSync(
+    query?: $ObjectSet.Query<InterfaceUnionNodeShape.Identifier>,
+  ): purify.Either<Error, readonly InterfaceUnionNodeShape.Identifier[]> {
+    return purify.Either.of(
+      [
+        ...this.$objectUnionIdentifiersSync<
+          InterfaceUnionNodeShape,
+          InterfaceUnionNodeShape.Identifier
+        >(
+          [
+            { ...InterfaceUnionNodeShapeMember1, fromRdfType: undefined },
+            { ...InterfaceUnionNodeShapeMember2a, fromRdfType: undefined },
+            { ...InterfaceUnionNodeShapeMember2b, fromRdfType: undefined },
+          ],
+          query,
+        ),
+      ].map((_) => _.identifier),
+    );
+  }
+
+  async interfaceUnionNodeShapes(
+    query?: $ObjectSet.Query<InterfaceUnionNodeShape.Identifier>,
+  ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShape>[]> {
+    return this.interfaceUnionNodeShapesSync(query);
+  }
+
+  interfaceUnionNodeShapesSync(
+    query?: $ObjectSet.Query<InterfaceUnionNodeShape.Identifier>,
+  ): readonly purify.Either<Error, InterfaceUnionNodeShape>[] {
+    return [
+      ...this.$objectUnionsSync<
+        InterfaceUnionNodeShape,
+        InterfaceUnionNodeShape.Identifier
+      >(
+        [
+          { ...InterfaceUnionNodeShapeMember1, fromRdfType: undefined },
+          { ...InterfaceUnionNodeShapeMember2a, fromRdfType: undefined },
+          { ...InterfaceUnionNodeShapeMember2b, fromRdfType: undefined },
+        ],
+        query,
+      ),
+    ];
+  }
+
+  async interfaceUnionNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<InterfaceUnionNodeShape.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.interfaceUnionNodeShapesCountSync(query);
+  }
+
+  interfaceUnionNodeShapesCountSync(
+    query?: Pick<$ObjectSet.Query<InterfaceUnionNodeShape.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectUnionsCountSync<
+      InterfaceUnionNodeShape,
+      InterfaceUnionNodeShape.Identifier
+    >(
+      [
+        { ...InterfaceUnionNodeShapeMember1, fromRdfType: undefined },
+        { ...InterfaceUnionNodeShapeMember2a, fromRdfType: undefined },
+        { ...InterfaceUnionNodeShapeMember2b, fromRdfType: undefined },
+      ],
+      query,
+    );
+  }
+
+  async interfaceUnionNodeShapeMember2(
+    identifier: InterfaceUnionNodeShapeMember2.Identifier,
+  ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember2>> {
+    return this.interfaceUnionNodeShapeMember2Sync(identifier);
+  }
+
+  interfaceUnionNodeShapeMember2Sync(
+    identifier: InterfaceUnionNodeShapeMember2.Identifier,
+  ): purify.Either<Error, InterfaceUnionNodeShapeMember2> {
+    return this.interfaceUnionNodeShapeMember2sSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async interfaceUnionNodeShapeMember2Identifiers(
+    query?: $ObjectSet.Query<InterfaceUnionNodeShapeMember2.Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly InterfaceUnionNodeShapeMember2.Identifier[]>
+  > {
+    return this.interfaceUnionNodeShapeMember2IdentifiersSync(query);
+  }
+
+  interfaceUnionNodeShapeMember2IdentifiersSync(
+    query?: $ObjectSet.Query<InterfaceUnionNodeShapeMember2.Identifier>,
+  ): purify.Either<
+    Error,
+    readonly InterfaceUnionNodeShapeMember2.Identifier[]
+  > {
+    return purify.Either.of(
+      [
+        ...this.$objectUnionIdentifiersSync<
+          InterfaceUnionNodeShapeMember2,
+          InterfaceUnionNodeShapeMember2.Identifier
+        >(
+          [
+            { ...InterfaceUnionNodeShapeMember2a, fromRdfType: undefined },
+            { ...InterfaceUnionNodeShapeMember2b, fromRdfType: undefined },
+          ],
+          query,
+        ),
+      ].map((_) => _.identifier),
+    );
+  }
+
+  async interfaceUnionNodeShapeMember2s(
+    query?: $ObjectSet.Query<InterfaceUnionNodeShapeMember2.Identifier>,
+  ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember2>[]> {
+    return this.interfaceUnionNodeShapeMember2sSync(query);
+  }
+
+  interfaceUnionNodeShapeMember2sSync(
+    query?: $ObjectSet.Query<InterfaceUnionNodeShapeMember2.Identifier>,
+  ): readonly purify.Either<Error, InterfaceUnionNodeShapeMember2>[] {
+    return [
+      ...this.$objectUnionsSync<
+        InterfaceUnionNodeShapeMember2,
+        InterfaceUnionNodeShapeMember2.Identifier
+      >(
+        [
+          { ...InterfaceUnionNodeShapeMember2a, fromRdfType: undefined },
+          { ...InterfaceUnionNodeShapeMember2b, fromRdfType: undefined },
+        ],
+        query,
+      ),
+    ];
+  }
+
+  async interfaceUnionNodeShapeMember2sCount(
+    query?: Pick<
+      $ObjectSet.Query<InterfaceUnionNodeShapeMember2.Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.interfaceUnionNodeShapeMember2sCountSync(query);
+  }
+
+  interfaceUnionNodeShapeMember2sCountSync(
+    query?: Pick<
+      $ObjectSet.Query<InterfaceUnionNodeShapeMember2.Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectUnionsCountSync<
+      InterfaceUnionNodeShapeMember2,
+      InterfaceUnionNodeShapeMember2.Identifier
+    >(
+      [
+        { ...InterfaceUnionNodeShapeMember2a, fromRdfType: undefined },
+        { ...InterfaceUnionNodeShapeMember2b, fromRdfType: undefined },
+      ],
+      query,
+    );
+  }
+
+  async unionNodeShape(
+    identifier: UnionNodeShape.Identifier,
+  ): Promise<purify.Either<Error, UnionNodeShape>> {
+    return this.unionNodeShapeSync(identifier);
+  }
+
+  unionNodeShapeSync(
+    identifier: UnionNodeShape.Identifier,
+  ): purify.Either<Error, UnionNodeShape> {
+    return this.unionNodeShapesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async unionNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<UnionNodeShape.Identifier>,
+  ): Promise<purify.Either<Error, readonly UnionNodeShape.Identifier[]>> {
+    return this.unionNodeShapeIdentifiersSync(query);
+  }
+
+  unionNodeShapeIdentifiersSync(
+    query?: $ObjectSet.Query<UnionNodeShape.Identifier>,
+  ): purify.Either<Error, readonly UnionNodeShape.Identifier[]> {
+    return purify.Either.of(
+      [
+        ...this.$objectUnionIdentifiersSync<
+          UnionNodeShape,
+          UnionNodeShape.Identifier
+        >(
+          [
+            { ...UnionNodeShapeMember1, fromRdfType: undefined },
+            { ...UnionNodeShapeMember2, fromRdfType: undefined },
+            { ...ExternObjectType, fromRdfType: undefined },
+          ],
+          query,
+        ),
+      ].map((_) => _.identifier),
+    );
+  }
+
+  async unionNodeShapes(
+    query?: $ObjectSet.Query<UnionNodeShape.Identifier>,
+  ): Promise<readonly purify.Either<Error, UnionNodeShape>[]> {
+    return this.unionNodeShapesSync(query);
+  }
+
+  unionNodeShapesSync(
+    query?: $ObjectSet.Query<UnionNodeShape.Identifier>,
+  ): readonly purify.Either<Error, UnionNodeShape>[] {
+    return [
+      ...this.$objectUnionsSync<UnionNodeShape, UnionNodeShape.Identifier>(
+        [
+          { ...UnionNodeShapeMember1, fromRdfType: undefined },
+          { ...UnionNodeShapeMember2, fromRdfType: undefined },
+          { ...ExternObjectType, fromRdfType: undefined },
+        ],
+        query,
+      ),
+    ];
+  }
+
+  async unionNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<UnionNodeShape.Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.unionNodeShapesCountSync(query);
+  }
+
+  unionNodeShapesCountSync(
+    query?: Pick<$ObjectSet.Query<UnionNodeShape.Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectUnionsCountSync<
+      UnionNodeShape,
+      UnionNodeShape.Identifier
+    >(
+      [
+        { ...UnionNodeShapeMember1, fromRdfType: undefined },
+        { ...UnionNodeShapeMember2, fromRdfType: undefined },
+        { ...ExternObjectType, fromRdfType: undefined },
+      ],
+      query,
+    );
+  }
+
   *$objectIdentifiersSync<
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
@@ -23299,6 +23616,134 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objectType,
       query,
     )) {
+      count++;
+    }
+
+    return purify.Either.of(count);
+  }
+
+  *$objectUnionIdentifiersSync<
+    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  >(
+    objectTypes: readonly {
+      fromRdf: (parameters: {
+        resource: rdfjsResource.Resource;
+      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      fromRdfType?: rdfjs.NamedNode;
+    }[],
+    query?: $ObjectSet.Query<ObjectIdentifierT>,
+  ): Generator<{
+    identifier: ObjectIdentifierT;
+    objectType: {
+      fromRdf: (parameters: {
+        resource: rdfjsResource.Resource;
+      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      fromRdfType?: rdfjs.NamedNode;
+    };
+  }> {
+    const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return;
+    }
+
+    let offset = query?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    if (query?.where) {
+      // Figure out which object type the identifiers belong to
+      for (const identifier of query.where.identifiers.slice(
+        offset,
+        offset + limit,
+      )) {
+        const resource = this.resourceSet.resource(identifier);
+        let yieldedIdentifier = false;
+        for (const objectType of objectTypes) {
+          if (objectType.fromRdfType) {
+            if (resource.isInstanceOf(objectType.fromRdfType)) {
+              yield { identifier, objectType };
+              yieldedIdentifier = true;
+              break;
+            }
+          } else if (objectType.fromRdf({ resource }).isRight()) {
+            yield { identifier, objectType };
+            yieldedIdentifier = true;
+            break;
+          }
+        }
+        // Doesn't appear to belong to any of the known object types, just assume the first
+        if (!yieldedIdentifier) {
+          yield { identifier, objectType: objectTypes[0] };
+        }
+      }
+
+      return;
+    }
+
+    let identifierCount = 0;
+    let identifierI = 0;
+    for (const objectType of objectTypes) {
+      if (!objectType.fromRdfType) {
+        continue;
+      }
+
+      for (const resource of this.resourceSet.instancesOf(
+        objectType.fromRdfType,
+      )) {
+        if (identifierI++ >= offset) {
+          yield {
+            identifier: resource.identifier as ObjectIdentifierT,
+            objectType,
+          };
+          if (++identifierCount === limit) {
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  *$objectUnionsSync<
+    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  >(
+    objectTypes: readonly {
+      fromRdf: (parameters: {
+        resource: rdfjsResource.Resource;
+      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      fromRdfType?: rdfjs.NamedNode;
+    }[],
+    query?: $ObjectSet.Query<ObjectIdentifierT>,
+  ): Generator<purify.Either<Error, ObjectT>> {
+    for (const { identifier, objectType } of this.$objectUnionIdentifiersSync<
+      ObjectT,
+      ObjectIdentifierT
+    >(objectTypes, query)) {
+      yield objectType.fromRdf({
+        resource: this.resourceSet.resource(identifier),
+      });
+    }
+  }
+
+  protected $objectUnionsCountSync<
+    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  >(
+    objectTypes: readonly {
+      fromRdf: (parameters: {
+        resource: rdfjsResource.Resource;
+      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      fromRdfType?: rdfjs.NamedNode;
+    }[],
+    query?: $ObjectSet.Query<ObjectIdentifierT>,
+  ): purify.Either<Error, number> {
+    let count = 0;
+    for (const _ of this.$objectUnionIdentifiersSync<
+      ObjectT,
+      ObjectIdentifierT
+    >(objectTypes, query)) {
       count++;
     }
 
