@@ -6,7 +6,6 @@ import type {
 } from "ts-morph";
 import type { ObjectType } from "./ObjectType.js";
 import { objectSetInterfaceDeclaration } from "./objectSetInterfaceDeclaration.js";
-import { objectSetInterfaceMethodSignaturesByObjectTypeName as objectSetInterfaceMethodSignaturesByObjectTypeName_ } from "./objectSetInterfaceMethodSignaturesByObjectTypeName.js";
 import { rdfjsDatasetObjectSetClassDeclaration } from "./rdfjsDatasetObjectSetClassDeclaration.js";
 import { sparqlObjectSetClassDeclaration } from "./sparqlObjectSetClassDeclaration.js";
 
@@ -48,23 +47,19 @@ export function objectSetDeclarations({
     return [];
   }
 
-  const objectSetInterfaceMethodSignaturesByObjectTypeName =
-    objectSetInterfaceMethodSignaturesByObjectTypeName_({ objectTypes });
-
   const statements: (
     | ClassDeclarationStructure
     | InterfaceDeclarationStructure
     | ModuleDeclarationStructure
   )[] = [
     ...objectSetInterfaceDeclaration({
-      objectSetInterfaceMethodSignaturesByObjectTypeName,
+      objectTypes,
     }),
   ];
 
   if (objectTypesWithRdfFeatureCount > 0) {
     statements.push(
       rdfjsDatasetObjectSetClassDeclaration({
-        objectSetInterfaceMethodSignaturesByObjectTypeName,
         objectTypes,
       }),
     );
@@ -72,9 +67,8 @@ export function objectSetDeclarations({
 
   if (objectTypesWithSparqlFeatureCount > 0) {
     statements.push(
-      sparqlObjectSetClassDeclaration({
+      ...sparqlObjectSetClassDeclaration({
         dataFactoryVariable,
-        objectSetInterfaceMethodSignaturesByObjectTypeName,
         objectTypes,
       }),
     );

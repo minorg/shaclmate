@@ -1,20 +1,11 @@
-import {
-  type MethodDeclarationStructure,
-  type MethodSignatureStructure,
-  type OptionalKind,
-  StructureKind,
-} from "ts-morph";
+import { type MethodDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectType } from "./ObjectType.js";
+import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 
 export function unsupportedObjectSetMethodDeclarations({
-  objectSetInterfaceMethodSignatures,
-}: {
-  objectSetInterfaceMethodSignatures: Record<
-    keyof ObjectType.ObjectSetMethodNames,
-    OptionalKind<MethodSignatureStructure>
-  >;
-}): readonly MethodDeclarationStructure[] {
-  return Object.entries(objectSetInterfaceMethodSignatures).map(
+  objectType,
+}: { objectType: ObjectType }): readonly MethodDeclarationStructure[] {
+  return Object.entries(objectSetMethodSignatures({ objectType })).map(
     ([methodName, methodSignature]) => ({
       ...methodSignature,
       kind: StructureKind.Method,

@@ -8,6 +8,7 @@ import { fromRdf } from "rdf-literal";
 
 import type * as ast from "../../ast/index.js";
 
+import { Scope } from "ts-morph";
 import { logger } from "../../logger.js";
 import { BooleanType } from "./BooleanType.js";
 import { DateTimeType } from "./DateTimeType.js";
@@ -388,7 +389,23 @@ export class TypeFactory {
           0,
           new ObjectType.IdentifierProperty({
             abstract: astType.abstract,
-            classDeclarationVisibility: (() => {
+            classGetAccessorScope: (() => {
+              if (astType.abstract) {
+                return Maybe.empty();
+              }
+
+              if (
+                astType.identifierMintingStrategy.isJust() ||
+                astType.ancestorObjectTypes.some((ancestorObjectType) =>
+                  ancestorObjectType.identifierMintingStrategy.isJust(),
+                )
+              ) {
+                return Maybe.of(Scope.Public);
+              }
+
+              return Maybe.empty();
+            })(),
+            classPropertyDeclarationVisibility: (() => {
               if (astType.abstract) {
                 // If the type is abstract, don't declare an identifier property.
                 return Maybe.empty();

@@ -94,6 +94,8 @@ export namespace ExternObjectType {
     return hasher;
   }
 
+  export type Identifier =
+    AbstractBaseClassForExternObjectTypeStatic.Identifier;
   export type Json = AbstractBaseClassForExternObjectTypeStatic.Json;
   export const jsonZodSchema =
     AbstractBaseClassForExternObjectTypeStatic.jsonZodSchema;

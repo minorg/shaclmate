@@ -1,5 +1,3 @@
-import type { IdentifierType } from "generators/ts/IdentifierType.js";
-import type { Import } from "generators/ts/Import.js";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import {
@@ -9,6 +7,8 @@ import {
   type PropertySignatureStructure,
   Scope,
 } from "ts-morph";
+import type { IdentifierType } from "../IdentifierType.js";
+import type { Import } from "../Import.js";
 import { SnippetDeclarations } from "../SnippetDeclarations.js";
 import type { StringType } from "../StringType.js";
 import { Property } from "./Property.js";

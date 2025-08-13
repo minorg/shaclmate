@@ -6,6 +6,7 @@ import type {
   OptionalKind,
   PropertyDeclarationStructure,
   PropertySignatureStructure,
+  Scope,
 } from "ts-morph";
 import type {
   IdentifierMintingStrategy,
@@ -20,21 +21,24 @@ export class IdentifierProperty extends Property<IdentifierType> {
   readonly abstract: boolean;
   readonly equalsFunction = "$booleanEquals";
   readonly mutable = false;
-  private readonly classDeclarationVisibility: Maybe<PropertyVisibility>;
+  private readonly classGetAccessorScope: Maybe<Scope>;
+  private readonly classPropertyDeclarationVisibility: Maybe<PropertyVisibility>;
   private readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
   private readonly override: boolean;
   private readonly typeAlias: string;
 
   constructor({
     abstract,
-    classDeclarationVisibility,
+    classGetAccessorScope,
+    classPropertyDeclarationVisibility,
     identifierMintingStrategy,
     override,
     typeAlias,
     ...superParameters
   }: {
     abstract: boolean;
-    classDeclarationVisibility: Maybe<PropertyVisibility>;
+    classGetAccessorScope: Maybe<Scope>;
+    classPropertyDeclarationVisibility: Maybe<PropertyVisibility>;
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     override: boolean;
     type: IdentifierType;
@@ -43,7 +47,9 @@ export class IdentifierProperty extends Property<IdentifierType> {
     super(superParameters);
     invariant(this.visibility === "public");
     this.abstract = abstract;
-    this.classDeclarationVisibility = classDeclarationVisibility;
+    this.classGetAccessorScope = classGetAccessorScope;
+    this.classPropertyDeclarationVisibility =
+      classPropertyDeclarationVisibility;
     this.identifierMintingStrategy = identifierMintingStrategy;
     this.override = override;
     this.typeAlias = typeAlias;
@@ -52,43 +58,51 @@ export class IdentifierProperty extends Property<IdentifierType> {
   override get classGetAccessorDeclaration(): Maybe<
     OptionalKind<GetAccessorDeclarationStructure>
   > {
-    if (this.abstract) {
+    if (this.classGetAccessorScope.isNothing()) {
       return Maybe.empty();
     }
 
-    if (this.identifierMintingStrategy.isNothing()) {
-      return Maybe.empty();
+    invariant(this.classGetAccessorScope.unsafeCoerce() === "public");
+
+    if (this.identifierMintingStrategy.isJust()) {
+      let memoizeMintedIdentifier: boolean;
+      let mintIdentifier: string;
+      switch (this.identifierMintingStrategy.unsafeCoerce()) {
+        case "blankNode":
+          memoizeMintedIdentifier = true;
+          mintIdentifier = "dataFactory.blankNode()";
+          break;
+        case "sha256":
+          // If the object is mutable don't memoize the minted identifier, since the hash will change if the object mutates.
+          memoizeMintedIdentifier = !this.objectType.mutable();
+          mintIdentifier =
+            "dataFactory.namedNode(`${this.identifierPrefix}${this.hashShaclProperties(sha256.create())}`)";
+          break;
+        case "uuidv4":
+          memoizeMintedIdentifier = true;
+          mintIdentifier =
+            "dataFactory.namedNode(`${this.identifierPrefix}${uuid.v4()}`)";
+          break;
+      }
+
+      return Maybe.of({
+        leadingTrivia: this.override ? "override " : undefined,
+        name: this.name,
+        returnType: this.typeAlias,
+        statements: [
+          memoizeMintedIdentifier
+            ? `if (typeof this._${this.name} === "undefined") { this._${this.name} = ${mintIdentifier}; } return this._${this.name};`
+            : `return (typeof this._${this.name} !== "undefined") ? this._${this.name} : ${mintIdentifier}`,
+        ],
+      } satisfies OptionalKind<GetAccessorDeclarationStructure>);
     }
 
-    let memoizeMintedIdentifier: boolean;
-    let mintIdentifier: string;
-    switch (this.identifierMintingStrategy.unsafeCoerce()) {
-      case "blankNode":
-        memoizeMintedIdentifier = true;
-        mintIdentifier = "dataFactory.blankNode()";
-        break;
-      case "sha256":
-        // If the object is mutable don't memoize the minted identifier, since the hash will change if the object mutates.
-        memoizeMintedIdentifier = !this.objectType.mutable();
-        mintIdentifier =
-          "dataFactory.namedNode(`${this.identifierPrefix}${this.hashShaclProperties(sha256.create())}`)";
-        break;
-      case "uuidv4":
-        memoizeMintedIdentifier = true;
-        mintIdentifier =
-          "dataFactory.namedNode(`${this.identifierPrefix}${uuid.v4()}`)";
-        break;
-    }
-
+    invariant(this.classPropertyDeclaration.isNothing());
     return Maybe.of({
       leadingTrivia: this.override ? "override " : undefined,
       name: this.name,
       returnType: this.typeAlias,
-      statements: [
-        memoizeMintedIdentifier
-          ? `if (typeof this._${this.name} === "undefined") { this._${this.name} = ${mintIdentifier}; } return this._${this.name};`
-          : `return (typeof this._${this.name} !== "undefined") ? this._${this.name} : ${mintIdentifier}`,
-      ],
+      statements: [`return super.${this.name} as ${this.typeAlias}`],
     } satisfies OptionalKind<GetAccessorDeclarationStructure>);
   }
 
@@ -111,7 +125,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
     }
 
     // See note in TypeFactory re: the logic of whether to declare the identifier in the class or not.
-    if (!this.classDeclarationVisibility.isJust()) {
+    if (!this.classPropertyDeclarationVisibility.isJust()) {
       return Maybe.empty();
     }
 
@@ -119,7 +133,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
       // Mutable _identifier property that will be lazily initialized by the getter to mint the identifier
       return Maybe.of({
         name: `_${this.name}`,
-        scope: this.classDeclarationVisibility
+        scope: this.classPropertyDeclarationVisibility
           .map(Property.visibilityToScope)
           .unsafeCoerce(),
         type: `${this.typeAlias} | undefined`,
