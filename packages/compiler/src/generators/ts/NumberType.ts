@@ -8,6 +8,7 @@ export abstract class NumberType extends PrimitiveType<number> {
   readonly kind = "NumberType";
   override readonly typeof = "number";
 
+  @Memoize()
   override get conversions(): readonly Type.Conversion[] {
     const conversions: Type.Conversion[] = [
       {

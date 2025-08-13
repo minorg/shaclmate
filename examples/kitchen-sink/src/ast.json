@@ -306,6 +306,44 @@
               "value": "n3-146"
             },
             "propertyPath": {
+              "curie": ":dateTimeProperty",
+              "uniqueLocalPart": "dateTimeProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/dateTimeProperty"
+            }
+          },
+          "path": "http://example.com/dateTimeProperty",
+          "type": {
+            "hasValue": [],
+            "kind": "LiteralType"
+          }
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-147"
+            },
+            "propertyPath": {
+              "curie": ":numberProperty",
+              "uniqueLocalPart": "numberProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/numberProperty"
+            }
+          },
+          "path": "http://example.com/numberProperty",
+          "type": {
+            "hasValue": [],
+            "kind": "LiteralType"
+          }
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-148"
+            },
+            "propertyPath": {
               "curie": ":stringProperty",
               "uniqueLocalPart": "stringProperty",
               "termType": "NamedNode",
@@ -322,7 +360,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-147"
+              "value": "n3-149"
             },
             "propertyPath": {
               "curie": ":trueBooleanProperty",
@@ -341,7 +379,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-148"
+              "value": "n3-150"
             },
             "propertyPath": {
               "curie": ":falseBooleanProperty",
@@ -360,7 +398,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-149"
+              "value": "n3-151"
             },
             "propertyPath": {
               "curie": ":dateProperty",
@@ -370,44 +408,6 @@
             }
           },
           "path": "http://example.com/dateProperty",
-          "type": {
-            "hasValue": [],
-            "kind": "LiteralType"
-          }
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-150"
-            },
-            "propertyPath": {
-              "curie": ":dateTimeProperty",
-              "uniqueLocalPart": "dateTimeProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/dateTimeProperty"
-            }
-          },
-          "path": "http://example.com/dateTimeProperty",
-          "type": {
-            "hasValue": [],
-            "kind": "LiteralType"
-          }
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-151"
-            },
-            "propertyPath": {
-              "curie": ":numberProperty",
-              "uniqueLocalPart": "numberProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/numberProperty"
-            }
-          },
-          "path": "http://example.com/numberProperty",
           "type": {
             "hasValue": [],
             "kind": "LiteralType"
@@ -1958,49 +1958,6 @@
               "value": "n3-231"
             },
             "propertyPath": {
-              "curie": ":widenedLiteralsProperty",
-              "uniqueLocalPart": "widenedLiteralsProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/widenedLiteralsProperty"
-            }
-          },
-          "path": "http://example.com/widenedLiteralsProperty",
-          "type": {
-            "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
-          }
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-236"
-            },
-            "propertyPath": {
-              "curie": ":widenedTermsProperty",
-              "uniqueLocalPart": "widenedTermsProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/widenedTermsProperty"
-            }
-          },
-          "path": "http://example.com/widenedTermsProperty",
-          "type": {
-            "itemType": {
-              "kind": "TermType"
-            },
-            "kind": "OptionType"
-          }
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-241"
-            },
-            "propertyPath": {
               "curie": ":unrelatedTypesProperty",
               "uniqueLocalPart": "unrelatedTypesProperty",
               "termType": "NamedNode",
@@ -2045,7 +2002,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-246"
+              "value": "n3-236"
             },
             "propertyPath": {
               "curie": ":narrowLiteralsProperty",
@@ -2076,6 +2033,49 @@
                   "kind": "LiteralType"
                 }
               ]
+            },
+            "kind": "OptionType"
+          }
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-241"
+            },
+            "propertyPath": {
+              "curie": ":widenedLiteralsProperty",
+              "uniqueLocalPart": "widenedLiteralsProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/widenedLiteralsProperty"
+            }
+          },
+          "path": "http://example.com/widenedLiteralsProperty",
+          "type": {
+            "itemType": {
+              "hasValue": [],
+              "kind": "LiteralType"
+            },
+            "kind": "OptionType"
+          }
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-246"
+            },
+            "propertyPath": {
+              "curie": ":widenedTermsProperty",
+              "uniqueLocalPart": "widenedTermsProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/widenedTermsProperty"
+            }
+          },
+          "path": "http://example.com/widenedTermsProperty",
+          "type": {
+            "itemType": {
+              "kind": "TermType"
             },
             "kind": "OptionType"
           }

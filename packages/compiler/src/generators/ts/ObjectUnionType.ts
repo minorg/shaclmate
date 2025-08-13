@@ -164,6 +164,7 @@ export class ObjectUnionType extends DeclaredType {
     );
   }
 
+  @Memoize()
   override get conversions(): readonly Type.Conversion[] {
     return [
       {
@@ -211,14 +212,17 @@ export class ObjectUnionType extends DeclaredType {
     return declarations;
   }
 
+  @Memoize()
   override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
     return Maybe.of(this._discriminatorProperty);
   }
 
+  @Memoize()
   override get equalsFunction(): string {
     return `${this.staticModuleName}.equals`;
   }
 
+  @Memoize()
   override get graphqlName(): string {
     return `${this.staticModuleName}.GraphQL`;
   }
@@ -228,12 +232,14 @@ export class ObjectUnionType extends DeclaredType {
     return `${this.staticModuleName}.Identifier`;
   }
 
+  @Memoize()
   override get jsonName(): string {
     return this.memberTypes
       .map((memberType) => memberType.jsonName)
       .join(" | ");
   }
 
+  @Memoize()
   override get mutable(): boolean {
     return this.memberTypes.some((memberType) => memberType.mutable);
   }

@@ -45,6 +45,7 @@ export class TermType<
     invariant(this.nodeKinds.size > 0);
   }
 
+  @Memoize()
   get conversions(): readonly Type.Conversion[] {
     const conversions: Type.Conversion[] = [];
 
@@ -95,6 +96,7 @@ export class TermType<
     return conversions;
   }
 
+  @Memoize()
   override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
     return Maybe.of({
       name: "termType",
@@ -108,6 +110,7 @@ export class TermType<
     throw new Error("not implemented");
   }
 
+  @Memoize()
   get jsonName(): string {
     invariant(
       this.nodeKinds.has("Literal") &&

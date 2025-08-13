@@ -199,6 +199,7 @@ export class UnionType extends Type {
     );
   }
 
+  @Memoize()
   override get conversions(): readonly Type.Conversion[] {
     switch (this._discriminator.kind) {
       case "sharedProperty":
@@ -236,6 +237,7 @@ export class UnionType extends Type {
     }
   }
 
+  @Memoize()
   override get equalsFunction(): string {
     return `
 (left: ${this.name}, right: ${this.name}) => {
@@ -259,6 +261,7 @@ ${this.memberTypes
     throw new Error("not implemented");
   }
 
+  @Memoize()
   override get jsonName(): string {
     switch (this._discriminator.kind) {
       case "sharedProperty":
@@ -273,10 +276,12 @@ ${this.memberTypes
     }
   }
 
+  @Memoize()
   override get mutable(): boolean {
     return this.memberTypes.some((memberType) => memberType.mutable);
   }
 
+  @Memoize()
   override get name(): string {
     if (typeof this._name === "undefined") {
       switch (this._discriminator.kind) {

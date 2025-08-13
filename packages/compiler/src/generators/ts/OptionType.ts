@@ -18,6 +18,7 @@ export class OptionType extends Type {
     this.itemType = itemType;
   }
 
+  @Memoize()
   override get conversions(): readonly Type.Conversion[] {
     const conversions: Type.Conversion[] = [];
     conversions.push({
@@ -46,6 +47,7 @@ export class OptionType extends Type {
     return conversions;
   }
 
+  @Memoize()
   override get equalsFunction(): string {
     return `((left, right) => $maybeEquals(left, right, ${this.itemType.equalsFunction}))`;
   }
@@ -54,6 +56,7 @@ export class OptionType extends Type {
     return this.itemType.graphqlName; // Which is nullable by default
   }
 
+  @Memoize()
   override get jsonName(): string {
     return `(${this.itemType.jsonName}) | undefined`;
   }

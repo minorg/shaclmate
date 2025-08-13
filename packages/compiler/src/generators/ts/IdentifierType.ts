@@ -8,6 +8,7 @@ import type { Type } from "./Type.js";
 export class IdentifierType extends TermType<BlankNode | NamedNode> {
   readonly kind = "IdentifierType";
 
+  @Memoize()
   override get conversions(): readonly Type.Conversion[] {
     return super.conversions.concat([
       {
@@ -22,6 +23,7 @@ export class IdentifierType extends TermType<BlankNode | NamedNode> {
     ]);
   }
 
+  @Memoize()
   get isNamedNodeKind(): boolean {
     return this.nodeKinds.size === 1 && this.nodeKinds.has("NamedNode");
   }
@@ -36,6 +38,7 @@ export class IdentifierType extends TermType<BlankNode | NamedNode> {
     return `rdfjsResource.Resource.Identifier.toString(${value})`;
   }
 
+  @Memoize()
   override get jsonName(): string {
     if (this.in_.length > 0 && this.isNamedNodeKind) {
       // Treat sh:in as a union of the IRIs

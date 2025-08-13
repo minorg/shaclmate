@@ -1,6 +1,7 @@
 import type { NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
+import { Memoize } from "typescript-memoize";
 import type { TsFeature } from "../../enums/index.js";
 import { PrimitiveType } from "./PrimitiveType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
@@ -16,6 +17,7 @@ export class DateTimeType extends PrimitiveType<Date> {
   override readonly mutable = true;
   override readonly typeof = "object";
 
+  @Memoize()
   override get conversions(): readonly Type.Conversion[] {
     const conversions: Type.Conversion[] = [
       {

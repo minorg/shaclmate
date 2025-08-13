@@ -124,7 +124,6 @@ export class ObjectType extends DeclaredType {
     ];
   }
 
-  @Memoize()
   get declarationImports(): readonly Import[] {
     if (this.extern) {
       return [];
@@ -287,6 +286,7 @@ export class ObjectType extends DeclaredType {
     return properties;
   }
 
+  @Memoize()
   get staticModuleName(): string {
     return this.childObjectTypes.length > 0 ? `${this.name}Static` : this.name;
   }
@@ -343,6 +343,7 @@ export class ObjectType extends DeclaredType {
     return `${this.staticModuleName}.jsonZodSchema()`;
   }
 
+  @Memoize()
   get toRdfjsResourceType(): string {
     if (this.parentObjectTypes.length > 0) {
       return this.parentObjectTypes[0].toRdfjsResourceType;
