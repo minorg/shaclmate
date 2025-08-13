@@ -16,6 +16,7 @@ import type { Import } from "./Import.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { Type } from "./Type.js";
 import { hasherTypeConstraint } from "./_ObjectType/hashFunctionOrMethodDeclarations.js";
+import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
 import { sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/sparqlConstructQueryStringFunctionDeclaration.js";
 import { objectInitializer } from "./objectInitializer.js";
@@ -66,6 +67,10 @@ class MemberType {
 
   get graphqlName() {
     return this.delegate.graphqlName;
+  }
+
+  get identifierTypeAlias() {
+    return this.delegate.identifierTypeAlias;
   }
 
   get jsonName() {
@@ -188,6 +193,7 @@ export class ObjectUnionType extends DeclaredType {
       ...this.hashFunctionDeclaration.toList(),
       ...this.jsonTypeAliasDeclaration.toList(),
       ...this.jsonZodSchemaFunctionDeclaration.toList(),
+      this.identifierTypeDeclaration,
       ...this.sparqlFunctionDeclarations,
       ...this.toJsonFunctionDeclaration.toList(),
       ...this.toRdfFunctionDeclaration.toList(),
@@ -217,6 +223,11 @@ export class ObjectUnionType extends DeclaredType {
     return `${this.staticModuleName}.GraphQL`;
   }
 
+  @Memoize()
+  get identifierTypeAlias(): string {
+    return `${this.staticModuleName}.Identifier`;
+  }
+
   override get jsonName(): string {
     return this.memberTypes
       .map((memberType) => memberType.jsonName)
@@ -225,6 +236,11 @@ export class ObjectUnionType extends DeclaredType {
 
   override get mutable(): boolean {
     return this.memberTypes.some((memberType) => memberType.mutable);
+  }
+
+  @Memoize()
+  get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
+    return objectSetMethodNames.bind(this)();
   }
 
   get staticModuleName() {
@@ -381,6 +397,17 @@ return $strictEquals(left.type, right.type).chain(() => {
         },
       ],
     });
+  }
+
+  private get identifierTypeDeclaration(): TypeAliasDeclarationStructure {
+    return {
+      kind: StructureKind.TypeAlias,
+      isExported: true,
+      name: "Identifier",
+      type: this.memberTypes
+        .map((memberType) => memberType.identifierTypeAlias)
+        .join(" | "),
+    };
   }
 
   private get jsonTypeAliasDeclaration(): Maybe<TypeAliasDeclarationStructure> {

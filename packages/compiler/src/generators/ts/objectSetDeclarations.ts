@@ -5,6 +5,7 @@ import type {
   ModuleDeclarationStructure,
 } from "ts-morph";
 import type { ObjectType } from "./ObjectType.js";
+import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetInterfaceDeclaration } from "./objectSetInterfaceDeclaration.js";
 import { rdfjsDatasetObjectSetClassDeclaration } from "./rdfjsDatasetObjectSetClassDeclaration.js";
 import { sparqlObjectSetClassDeclaration } from "./sparqlObjectSetClassDeclaration.js";
@@ -12,9 +13,11 @@ import { sparqlObjectSetClassDeclaration } from "./sparqlObjectSetClassDeclarati
 export function objectSetDeclarations({
   dataFactoryVariable,
   objectTypes: objectTypesUnsorted,
+  objectUnionTypes: objectUnionTypesUnsorted,
 }: {
   dataFactoryVariable: string;
   objectTypes: readonly ObjectType[];
+  objectUnionTypes: readonly ObjectUnionType[];
 }): readonly (
   | ClassDeclarationStructure
   | InterfaceDeclarationStructure
@@ -47,6 +50,10 @@ export function objectSetDeclarations({
     return [];
   }
 
+  const objectUnionTypes = objectUnionTypesUnsorted.toSorted((left, right) =>
+    left.name.localeCompare(right.name),
+  );
+
   const statements: (
     | ClassDeclarationStructure
     | InterfaceDeclarationStructure
@@ -54,6 +61,7 @@ export function objectSetDeclarations({
   )[] = [
     ...objectSetInterfaceDeclaration({
       objectTypes,
+      objectUnionTypes,
     }),
   ];
 

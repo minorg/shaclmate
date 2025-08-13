@@ -89,6 +89,10 @@ export function sparqlObjectSetClassDeclaration({
             queryT: "$SparqlObjectSet.Query",
           });
 
+          const runtimeObjectType = objectType.fromRdfType.isJust()
+            ? `${objectType.staticModuleName}`
+            : `{ ...${objectType.staticModuleName}, fromRdfType: undefined }`;
+
           return [
             {
               ...methodSignatures.object,
@@ -103,7 +107,7 @@ export function sparqlObjectSetClassDeclaration({
               kind: StructureKind.Method,
               isAsync: true,
               statements: [
-                `return this.$objectIdentifiers<${objectType.identifierType.name}>(${objectType.staticModuleName}, query);`,
+                `return this.$objectIdentifiers<${objectType.identifierType.name}>(${runtimeObjectType}, query);`,
               ],
             },
             {
@@ -111,7 +115,7 @@ export function sparqlObjectSetClassDeclaration({
               kind: StructureKind.Method,
               isAsync: true,
               statements: [
-                `return this.$objects<${objectType.name}, ${objectType.identifierType.name}>(${objectType.staticModuleName}, query);`,
+                `return this.$objects<${objectType.name}, ${objectType.identifierType.name}>(${runtimeObjectType}, query);`,
               ],
             },
             {
@@ -119,7 +123,7 @@ export function sparqlObjectSetClassDeclaration({
               isAsync: true,
               kind: StructureKind.Method,
               statements: [
-                `return this.$objectsCount<${objectType.identifierType.name}>(${objectType.staticModuleName}, query);`,
+                `return this.$objectsCount<${objectType.identifierType.name}>(${runtimeObjectType}, query);`,
               ],
             },
           ];

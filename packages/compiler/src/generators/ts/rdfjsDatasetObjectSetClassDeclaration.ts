@@ -76,6 +76,10 @@ export function rdfjsDatasetObjectSetClassDeclaration({
 
         const methodSignatures = objectSetMethodSignatures({ objectType });
 
+        const runtimeObjectType = objectType.fromRdfType.isJust()
+          ? `${objectType.staticModuleName}`
+          : `{ ...${objectType.staticModuleName}, fromRdfType: undefined }`;
+
         return [
           {
             ...methodSignatures.object,
@@ -107,7 +111,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             kind: StructureKind.Method,
             name: `${methodSignatures.objectIdentifiers.name}Sync`,
             returnType: `purify.Either<Error, readonly ${objectType.identifierTypeAlias}[]>`,
-            statements: `return purify.Either.of([...this.$objectIdentifiersSync<${objectType.identifierTypeAlias}>(${objectType.staticModuleName}, query)]);`,
+            statements: `return purify.Either.of([...this.$objectIdentifiersSync<${objectType.identifierTypeAlias}>(${runtimeObjectType}, query)]);`,
           },
           {
             ...methodSignatures.objects,
@@ -123,7 +127,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             name: `${methodSignatures.objects.name}Sync`,
             returnType: `readonly purify.Either<Error, ${objectType.name}>[]`,
             statements: [
-              `return [...this.$objectsSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${objectType.staticModuleName}, query)];`,
+              `return [...this.$objectsSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query)];`,
             ],
           },
           {
@@ -140,7 +144,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             name: `${methodSignatures.objectsCount.name}Sync`,
             returnType: "purify.Either<Error, number>",
             statements: [
-              `return this.$objectsCountSync<${objectType.identifierTypeAlias}>(${objectType.staticModuleName}, query);`,
+              `return this.$objectsCountSync<${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
             ],
           },
         ] satisfies MethodDeclarationStructure[];

@@ -1,6 +1,6 @@
 import type { NamedNode } from "@rdfjs/types";
 
-import { camelCase, trainCase } from "change-case";
+import { camelCase } from "change-case";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import {
@@ -11,8 +11,6 @@ import {
   StructureKind,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
-
-import plur from "plur";
 import type {
   IdentifierMintingStrategy,
   TsFeature,
@@ -251,22 +249,7 @@ export class ObjectType extends DeclaredType {
 
   @Memoize()
   get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
-    const prefixSingular = camelCase(this.name);
-    const thisNameParts = trainCase(this.name).split("-");
-    let prefixPlural = camelCase(
-      `${thisNameParts.slice(0, thisNameParts.length - 1).join("")}${plur(thisNameParts[thisNameParts.length - 1])}`,
-    );
-    if (prefixPlural === prefixSingular) {
-      // Happens with singular-s nouns like "series"
-      prefixPlural = `${prefixPlural}s`;
-    }
-
-    return {
-      object: prefixSingular,
-      objectIdentifiers: `${prefixSingular}Identifiers`,
-      objects: prefixPlural,
-      objectsCount: `${prefixPlural}Count`,
-    };
+    return _ObjectType.objectSetMethodNames.bind(this)();
   }
 
   @Memoize()
