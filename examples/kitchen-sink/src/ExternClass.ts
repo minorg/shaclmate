@@ -5,8 +5,8 @@ import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { Either } from "purify-ts";
 
 import {
-  AbstractBaseClassForExternObjectType,
-  AbstractBaseClassForExternObjectTypeStatic,
+  AbstractBaseClassForExternClass,
+  AbstractBaseClassForExternClassStatic,
 } from "./generated.js";
 
 /**
@@ -17,17 +17,17 @@ import {
  *
  * Normally you would only need one or the other.
  */
-export class ExternObjectType extends AbstractBaseClassForExternObjectType {
-  readonly type = "ExternObjectType";
+export class ExternClass extends AbstractBaseClassForExternClass {
+  readonly type = "ExternClass";
 
   constructor(readonly identifier: BlankNode | NamedNode<string>) {
-    super({ abcStringProperty: "test" });
+    super({ abstractBaseClassForExternClassProperty: "test" });
   }
 
   // Called by class methods
   override equals(
-    _other: ExternObjectType,
-  ): ReturnType<AbstractBaseClassForExternObjectType["equals"]> {
+    _other: ExternClass,
+  ): ReturnType<AbstractBaseClassForExternClass["equals"]> {
     return Either.of(true);
   }
 
@@ -57,16 +57,16 @@ export class ExternObjectType extends AbstractBaseClassForExternObjectType {
   }
 }
 
-export namespace ExternObjectType {
+export namespace ExternClass {
   // Called by interface functions
-  export function equals(left: ExternObjectType, right: ExternObjectType) {
+  export function equals(left: ExternClass, right: ExternClass) {
     return left.equals(right);
   }
 
   export function fromJson(json: unknown) {
-    return AbstractBaseClassForExternObjectTypeStatic.propertiesFromJson(
-      json,
-    ).map((properties) => new ExternObjectType(properties.identifier));
+    return AbstractBaseClassForExternClassStatic.propertiesFromJson(json).map(
+      (properties) => new ExternClass(properties.identifier),
+    );
   }
 
   export function fromRdf({
@@ -77,11 +77,11 @@ export namespace ExternObjectType {
     languageIn?: readonly string[];
     ignoreRdfType?: boolean;
     resource: rdfjsResource.Resource;
-  }): Either<rdfjsResource.Resource.ValueError, ExternObjectType> {
+  }): Either<rdfjsResource.Resource.ValueError, ExternClass> {
     if (extra !== 1) {
       throw new Error("extra didn't come through");
     }
-    return Either.of(new ExternObjectType(resource.identifier));
+    return Either.of(new ExternClass(resource.identifier));
   }
 
   // Called by interface functions
@@ -89,23 +89,22 @@ export namespace ExternObjectType {
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
-  >(instance: ExternObjectType, hasher: HasherT): HasherT {
+  >(instance: ExternClass, hasher: HasherT): HasherT {
     instance.hash(hasher);
     return hasher;
   }
 
-  export type Identifier =
-    AbstractBaseClassForExternObjectTypeStatic.Identifier;
-  export type Json = AbstractBaseClassForExternObjectTypeStatic.Json;
+  export type Identifier = AbstractBaseClassForExternClassStatic.Identifier;
+  export type Json = AbstractBaseClassForExternClassStatic.Json;
   export const jsonZodSchema =
-    AbstractBaseClassForExternObjectTypeStatic.jsonZodSchema;
+    AbstractBaseClassForExternClassStatic.jsonZodSchema;
   export const jsonUiSchema =
-    AbstractBaseClassForExternObjectTypeStatic.jsonUiSchema;
+    AbstractBaseClassForExternClassStatic.jsonUiSchema;
 
   export const Pointers = {};
 
   export const sparqlConstructTemplateTriples =
-    AbstractBaseClassForExternObjectTypeStatic.sparqlConstructTemplateTriples;
+    AbstractBaseClassForExternClassStatic.sparqlConstructTemplateTriples;
   export const sparqlWherePatterns =
-    AbstractBaseClassForExternObjectTypeStatic.sparqlWherePatterns;
+    AbstractBaseClassForExternClassStatic.sparqlWherePatterns;
 }

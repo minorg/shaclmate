@@ -18,21 +18,20 @@ describe("fromJson", () => {
 
   it("abstract base class fromJson", ({ expect }) => {
     const fromJsonInstance =
-      kitchenSink.AbstractBaseClassWithPropertiesNodeShapeStatic.fromJson(
-        harnesses.concreteChildClassNodeShape.toJson(),
+      kitchenSink.AbstractBaseClassWithPropertiesStatic.fromJson(
+        harnesses.concreteChildClass.toJson(),
       ).unsafeCoerce() as any;
     expect(
-      harnesses.concreteChildClassNodeShape.equals(fromJsonInstance).extract(),
+      harnesses.concreteChildClass.equals(fromJsonInstance).extract(),
     ).toStrictEqual(true);
   });
 
   it("concrete base class fromJson", ({ expect }) => {
-    const fromJsonInstance =
-      kitchenSink.ConcreteParentClassNodeShapeStatic.fromJson(
-        harnesses.concreteChildClassNodeShape.toJson(),
-      ).unsafeCoerce() as any;
+    const fromJsonInstance = kitchenSink.ConcreteParentClassStatic.fromJson(
+      harnesses.concreteChildClass.toJson(),
+    ).unsafeCoerce() as any;
     expect(
-      harnesses.concreteChildClassNodeShape.equals(fromJsonInstance).extract(),
+      harnesses.concreteChildClass.equals(fromJsonInstance).extract(),
     ).toStrictEqual(true);
   });
 });

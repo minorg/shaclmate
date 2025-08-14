@@ -20,14 +20,14 @@ describe("equals", () => {
     expect,
   }) => {
     expect(
-      new kitchenSink.NonClassNodeShape({
+      new kitchenSink.NonClass({
         identifier: dataFactory.blankNode(),
-        stringProperty: "Test",
+        nonClassProperty: "Test",
       })
         .equals(
-          new kitchenSink.NonClassNodeShape({
+          new kitchenSink.NonClass({
             identifier: dataFactory.blankNode(),
-            stringProperty: "Test2",
+            nonClassProperty: "Test2",
           }),
         )
         .extract(),
@@ -37,12 +37,12 @@ describe("equals", () => {
   it("terms union type", ({ expect }) => {
     const identifier = dataFactory.blankNode();
     expect(
-      new kitchenSink.UnionPropertiesNodeShape({
+      new kitchenSink.UnionPropertiesClass({
         identifier,
         widenedTermsProperty: dataFactory.namedNode("http://example.com/term"),
       })
         .equals(
-          new kitchenSink.UnionPropertiesNodeShape({
+          new kitchenSink.UnionPropertiesClass({
             identifier,
             widenedTermsProperty: dataFactory.namedNode(
               "http://example.com/term",
@@ -53,12 +53,12 @@ describe("equals", () => {
     ).toStrictEqual(true);
 
     expect(
-      new kitchenSink.UnionPropertiesNodeShape({
+      new kitchenSink.UnionPropertiesClass({
         identifier,
         widenedTermsProperty: dataFactory.namedNode("http://example.com/term"),
       })
         .equals(
-          new kitchenSink.UnionPropertiesNodeShape({
+          new kitchenSink.UnionPropertiesClass({
             identifier,
             widenedTermsProperty: dataFactory.literal("test"),
           }),
@@ -70,12 +70,12 @@ describe("equals", () => {
   it("unrelated union type", ({ expect }) => {
     const identifier = dataFactory.blankNode();
     expect(
-      new kitchenSink.UnionPropertiesNodeShape({
+      new kitchenSink.UnionPropertiesClass({
         identifier,
         unrelatedTypesProperty: 1,
       })
         .equals(
-          new kitchenSink.UnionPropertiesNodeShape({
+          new kitchenSink.UnionPropertiesClass({
             identifier,
             unrelatedTypesProperty: 1,
           }),
@@ -84,16 +84,16 @@ describe("equals", () => {
     ).toStrictEqual(true);
 
     expect(
-      new kitchenSink.UnionPropertiesNodeShape({
+      new kitchenSink.UnionPropertiesClass({
         identifier,
         unrelatedTypesProperty: 1,
       })
         .equals(
-          new kitchenSink.UnionPropertiesNodeShape({
+          new kitchenSink.UnionPropertiesClass({
             identifier,
-            unrelatedTypesProperty: new kitchenSink.NonClassNodeShape({
+            unrelatedTypesProperty: new kitchenSink.NonClass({
               identifier: dataFactory.blankNode(),
-              stringProperty: "test",
+              nonClassProperty: "test",
             }),
           }),
         )

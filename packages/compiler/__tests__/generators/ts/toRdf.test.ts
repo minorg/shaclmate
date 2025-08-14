@@ -10,14 +10,14 @@ describe("toRdf", () => {
   it("should populate a dataset", ({ expect }) => {
     const dataset = new N3.Store();
     const resourceSet = new MutableResourceSet({ dataFactory, dataset });
-    const resource = harnesses.concreteChildClassNodeShape.instance.toRdf({
+    const resource = harnesses.concreteChildClass.instance.toRdf({
       resourceSet,
       mutateGraph: dataFactory.defaultGraph(),
     });
     expect(dataset.size).toStrictEqual(4);
     expect(
       resource.identifier.equals(
-        harnesses.concreteChildClassNodeShape.instance.identifier,
+        harnesses.concreteChildClass.instance.identifier,
       ),
     ).toStrictEqual(true);
     expect(
@@ -41,7 +41,7 @@ describe("toRdf", () => {
 
   it("should produce serializable RDF", ({ expect }) => {
     const dataset = new N3.Store();
-    harnesses.nonClassNodeShape.toRdf({
+    harnesses.nonClass.toRdf({
       mutateGraph: dataFactory.defaultGraph(),
       resourceSet: new MutableResourceSet({ dataFactory, dataset }),
     });
@@ -53,7 +53,7 @@ describe("toRdf", () => {
 
   it("explicit rdfType", ({ expect }) => {
     const dataset = new N3.Store();
-    const resource = harnesses.explicitRdfType.toRdf({
+    const resource = harnesses.explicitRdfTypeClass.toRdf({
       mutateGraph: dataFactory.defaultGraph(),
       resourceSet: new MutableResourceSet({
         dataFactory,
@@ -76,7 +76,7 @@ describe("toRdf", () => {
 
   it("explicit toRdfType", ({ expect }) => {
     const dataset = new N3.Store();
-    const resource = harnesses.explicitFromToRdfTypes.toRdf({
+    const resource = harnesses.explicitFromToRdfTypesClass.toRdf({
       mutateGraph: dataFactory.defaultGraph(),
       resourceSet: new MutableResourceSet({
         dataFactory,
@@ -104,7 +104,7 @@ describe("toRdf", () => {
 
   it("should not serialize default values", ({ expect }) => {
     const dataset = new N3.Store();
-    harnesses.defaultValuePropertiesNodeShape.toRdf({
+    harnesses.defaultValuePropertiesClass.toRdf({
       mutateGraph: dataFactory.defaultGraph(),
       resourceSet: new MutableResourceSet({ dataFactory, dataset }),
     });
