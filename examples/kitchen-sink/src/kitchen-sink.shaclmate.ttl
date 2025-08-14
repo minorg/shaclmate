@@ -617,11 +617,10 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     rdfs:comment "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
     sh:xone (:UnionNodeShapeMember1
         :UnionNodeShapeMember2
-        :ExternObjectType
     ) .
 
 :UnionNodeShapeMember1
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
@@ -630,7 +629,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :UnionNodeShapeMember2
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
@@ -642,26 +641,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:xone properties." ;
     sh:property [
-        sh:maxCount 1 ;
-        sh:path :widenedTermsProperty ;
-        sh:xone ([
-                sh:nodeKind sh:Literal
-            ]
-            [
-                sh:nodeKind sh:IRI
-            ]
-        )
-    ], [
-        sh:maxCount 1 ;
-        sh:path :unrelatedTypesProperty ;
-        sh:xone ([
-                sh:datatype xsd:integer
-            ]
-            [
-                sh:node :NonClassNodeShape
-            ]
-        )
-    ], [
         shaclmate:widen false ;
         sh:maxCount 1 ;
         sh:path :narrowLiteralsProperty ;
@@ -680,6 +659,26 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
             [
                 sh:datatype xsd:string
+            ]
+        )
+    ], [
+        sh:maxCount 1 ;
+        sh:path :widenedTermsProperty ;
+        sh:xone ([
+                sh:nodeKind sh:Literal
+            ]
+            [
+                sh:nodeKind sh:IRI
+            ]
+        )
+    ], [
+        sh:maxCount 1 ;
+        sh:path :unrelatedTypesProperty ;
+        sh:xone ([
+                sh:datatype xsd:integer
+            ]
+            [
+                sh:node :NonClassNodeShape
             ]
         )
     ] .

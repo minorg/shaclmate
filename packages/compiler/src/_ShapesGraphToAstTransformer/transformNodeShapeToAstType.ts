@@ -211,11 +211,11 @@ export function transformNodeShapeToAstType(
       memberTypeI++
     ) {
       const memberType = nonExternMemberTypes[memberTypeI];
+
       if (memberTypeI === 0) {
         for (const tsFeature of memberType.tsFeatures) {
           compositeType.tsFeatures.add(tsFeature);
         }
-        continue;
       }
 
       memberType.fromRdfType.ifJust((fromRdfType) =>
