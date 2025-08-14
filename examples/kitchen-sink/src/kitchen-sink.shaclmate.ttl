@@ -121,16 +121,6 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:defaultValue properties." ;
     sh:property [
-        sh:defaultValue "" ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :stringProperty
-    ], [
-        sh:defaultValue true ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :trueBooleanProperty
-    ], [
         sh:defaultValue false ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
@@ -150,6 +140,16 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :numberProperty
+    ], [
+        sh:defaultValue "" ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :stringProperty
+    ], [
+        sh:defaultValue true ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :trueBooleanProperty
     ] .
 
 :ExplicitFromToRdfTypesNodeShape
@@ -641,17 +641,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:xone properties." ;
     sh:property [
-        shaclmate:widen false ;
-        sh:maxCount 1 ;
-        sh:path :narrowLiteralsProperty ;
-        sh:xone ([
-                sh:datatype xsd:integer
-            ]
-            [
-                sh:datatype xsd:string
-            ]
-        )
-    ], [
         sh:maxCount 1 ;
         sh:path :widenedLiteralsProperty ;
         sh:xone ([
@@ -679,6 +668,17 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
             [
                 sh:node :NonClassNodeShape
+            ]
+        )
+    ], [
+        shaclmate:widen false ;
+        sh:maxCount 1 ;
+        sh:path :narrowLiteralsProperty ;
+        sh:xone ([
+                sh:datatype xsd:integer
+            ]
+            [
+                sh:datatype xsd:string
             ]
         )
     ] .

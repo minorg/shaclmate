@@ -53,6 +53,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
         name: "$objectIdentifiersSync",
         parameters: [parameters.objectType, parameters.query],
         returnType: `Generator<${typeParameters.ObjectIdentifierT.name}>`,
+        scope: Scope.Protected,
         statements: [
           `\
 for (const object of this.$objectsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectType.name}, ${parameters.query.name})) {
@@ -73,6 +74,7 @@ for (const object of this.$objectsSync<${typeParameters.ObjectT.name}, ${typePar
         name: "$objectsSync",
         parameters: [parameters.objectType, parameters.query],
         returnType: `Generator<purify.Either<Error, ${typeParameters.ObjectT.name}>>`,
+        scope: Scope.Protected,
         statements: [
           `\
 const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
@@ -117,6 +119,7 @@ for (const resource of this.resourceSet.instancesOf(objectType.fromRdfType)) {
         name: "$objectsCountSync",
         parameters: [parameters.objectType, parameters.query],
         returnType: "purify.Either<Error, number>",
+        scope: Scope.Protected,
         statements: [
           "let count = 0;",
           `for (const _ of this.$objectIdentifiersSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectType.name}, ${parameters.query.name})) { count++; }`,
@@ -126,7 +129,6 @@ for (const resource of this.resourceSet.instancesOf(objectType.fromRdfType)) {
           typeParameters.ObjectT,
           typeParameters.ObjectIdentifierT,
         ],
-        scope: Scope.Protected,
       },
     );
   }
@@ -153,6 +155,7 @@ for (const resource of this.resourceSet.instancesOf(objectType.fromRdfType)) {
         name: "$objectUnionIdentifiersSync",
         parameters: [parameters.objectTypes, parameters.query],
         returnType: `Generator<${typeParameters.ObjectIdentifierT.name}>`,
+        scope: Scope.Protected,
         statements: [
           `\
 for (const object of this.$objectUnionsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectTypes.name}, ${parameters.query.name})) {
@@ -173,6 +176,7 @@ for (const object of this.$objectUnionsSync<${typeParameters.ObjectT.name}, ${ty
         name: "$objectUnionsSync",
         parameters: [parameters.objectTypes, parameters.query],
         returnType: `Generator<purify.Either<Error, ${typeParameters.ObjectT.name}>>`,
+        scope: Scope.Protected,
         statements: [
           `\
 const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;

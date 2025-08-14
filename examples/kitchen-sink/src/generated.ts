@@ -23725,7 +23725,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >([UnionNodeShapeMember1, UnionNodeShapeMember2], query);
   }
 
-  *$objectIdentifiersSync<
+  protected *$objectIdentifiersSync<
     ObjectT extends { readonly identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
@@ -23747,7 +23747,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
   }
 
-  *$objectsSync<
+  protected *$objectsSync<
     ObjectT extends { readonly identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
@@ -23826,7 +23826,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return purify.Either.of(count);
   }
 
-  *$objectUnionIdentifiersSync<
+  protected *$objectUnionIdentifiersSync<
     ObjectT extends { readonly identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
@@ -23848,7 +23848,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
   }
 
-  *$objectUnionsSync<
+  protected *$objectUnionsSync<
     ObjectT extends { readonly identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
