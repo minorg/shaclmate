@@ -94,9 +94,13 @@ if (!objectType.fromRdfType) {
   return;
 }
 
+const resources = [...this.resourceSet.instancesOf(objectType.fromRdfType)];
+// Sort resources by identifier so limit and offset are deterministic
+resources.sort((left, right) => left.identifier.value.localeCompare(right.identifier.value));
+
 let objectCount = 0;
 let objectI = 0;
-for (const resource of this.resourceSet.instancesOf(objectType.fromRdfType)) {
+for (const resource of resources) {
   const object = objectType.fromRdf({ resource });
   if (object.isLeft()) {
     continue;
@@ -209,21 +213,30 @@ if (query?.where) {
 
 let objectCount = 0;
 let objectI = 0;
+
+const resources: { objectType: ${objectTypeType}, resource: rdfjs.Resource }[] = [];
 for (const objectType of objectTypes) {
   if (!objectType.fromRdfType) {
     continue;
   }
 
   for (const resource of this.resourceSet.instancesOf(objectType.fromRdfType)) {
-    const object = objectType.fromRdf({ resource });
-    if (object.isLeft()) {
-      continue;
-    }
-    if (objectI++ >= offset) {
-      yield object;
-      if (++objectCount === limit) {
-        return;
-      }
+    resources.push({ objectType, resource });
+  }
+}
+
+// Sort resources by identifier so limit and offset are deterministic
+resources.sort((left, right) => left.resource.identifier.value.localeCompare(right.resource.identifier.value));
+
+for (const { objectType, resource } of resources) {
+  const object = objectType.fromRdf({ resource });
+  if (object.isLeft()) {
+    continue;
+  }
+  if (objectI++ >= offset) {
+    yield object;
+    if (++objectCount === limit) {
+      return;
     }
   }
 }`,
