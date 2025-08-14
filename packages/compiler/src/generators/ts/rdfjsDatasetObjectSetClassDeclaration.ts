@@ -214,7 +214,7 @@ if (query?.where) {
 let objectCount = 0;
 let objectI = 0;
 
-const resources: { objectType: ${objectTypeType}, resource: rdfjs.Resource }[] = [];
+const resources: { objectType: ${objectTypeType}, resource: rdfjsResource.Resource }[] = [];
 for (const objectType of objectTypes) {
   if (!objectType.fromRdfType) {
     continue;

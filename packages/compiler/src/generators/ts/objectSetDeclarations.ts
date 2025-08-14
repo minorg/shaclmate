@@ -94,6 +94,7 @@ export function objectSetDeclarations({
       ...sparqlObjectSetClassDeclaration({
         dataFactoryVariable,
         objectTypes,
+        objectUnionTypes,
       }),
     );
   }

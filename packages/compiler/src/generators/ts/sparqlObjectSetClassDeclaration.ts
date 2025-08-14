@@ -1,4 +1,4 @@
-import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
+import {} from "@tpluscode/rdf-ns-builders";
 import {
   type ClassDeclarationStructure,
   type MethodDeclarationStructure,
@@ -10,15 +10,18 @@ import {
   type TypeParameterDeclarationStructure,
 } from "ts-morph";
 import type { ObjectType } from "./ObjectType.js";
+import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMethodDeclarations.js";
 
 export function sparqlObjectSetClassDeclaration({
   dataFactoryVariable,
   objectTypes,
+  objectUnionTypes,
 }: {
   dataFactoryVariable: string;
   objectTypes: readonly ObjectType[];
+  objectUnionTypes: readonly ObjectUnionType[];
 }): readonly (ClassDeclarationStructure | ModuleDeclarationStructure)[] {
   const typeParameters = {
     ObjectT: {
@@ -31,19 +34,15 @@ export function sparqlObjectSetClassDeclaration({
     } satisfies OptionalKind<TypeParameterDeclarationStructure>,
   };
 
+  const sparqlWherePatternsFunctionType = `(parameters?: { subject?: sparqljs.Triple["subject"]; }) => readonly sparqljs.Pattern[]`;
+
   const parameters = {
-    objectTypeWithFromRdfFromRdfTypeSparqlConstructQueryString: {
+    constructObjectType: {
       name: "objectType",
       type: `{\
   fromRdf: (parameters: { resource: rdfjsResource.Resource }) => purify.Either<rdfjsResource.Resource.ValueError, ${typeParameters.ObjectT.name}>;
-  fromRdfType?: rdfjs.NamedNode;
-  sparqlConstructQueryString: (parameters?: { subject: sparqljs.Triple["subject"]; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> & sparqljs.GeneratorOptions) => string;
-}`,
-    } satisfies OptionalKind<ParameterDeclarationStructure>,
-    objectTypeWithFromRdfType: {
-      name: "objectType",
-      type: `{\
-  fromRdfType?: rdfjs.NamedNode;
+  sparqlConstructQueryString: (parameters?: { subject?: sparqljs.Triple["subject"]; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> & sparqljs.GeneratorOptions) => string;
+  sparqlWherePatterns: ${sparqlWherePatternsFunctionType};
 }`,
     } satisfies OptionalKind<ParameterDeclarationStructure>,
     query: {
@@ -51,6 +50,10 @@ export function sparqlObjectSetClassDeclaration({
       name: "query",
       type: `$SparqlObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>`,
     } satisfies OptionalKind<ParameterDeclarationStructure>,
+    selectObjectTypeType: {
+      name: "objectType",
+      type: `{ sparqlWherePatterns: ${sparqlWherePatternsFunctionType} }`,
+    },
     where: {
       hasQuestionToken: true,
       name: "where",
@@ -77,8 +80,11 @@ export function sparqlObjectSetClassDeclaration({
       name: "$SparqlObjectSet",
       // methods: [
       methods: (
-        objectTypes.flatMap((objectType) => {
-          if (!objectType.features.has("sparql")) {
+        [...objectTypes, ...objectUnionTypes].flatMap((objectType) => {
+          if (
+            !objectType.features.has("sparql") ||
+            objectType.kind === "ObjectUnionType"
+          ) {
             return unsupportedObjectSetMethodDeclarations({
               objectType,
             });
@@ -89,9 +95,7 @@ export function sparqlObjectSetClassDeclaration({
             queryT: "$SparqlObjectSet.Query",
           });
 
-          const runtimeObjectType = objectType.fromRdfType.isJust()
-            ? `${objectType.staticModuleName}`
-            : `{ ...${objectType.staticModuleName}, fromRdfType: undefined }`;
+          const runtimeObjectType = objectType.staticModuleName;
 
           return [
             {
@@ -107,7 +111,7 @@ export function sparqlObjectSetClassDeclaration({
               kind: StructureKind.Method,
               isAsync: true,
               statements: [
-                `return this.$objectIdentifiers<${objectType.identifierType.name}>(${runtimeObjectType}, query);`,
+                `return this.$objectIdentifiers<${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
               ],
             },
             {
@@ -115,7 +119,7 @@ export function sparqlObjectSetClassDeclaration({
               kind: StructureKind.Method,
               isAsync: true,
               statements: [
-                `return this.$objects<${objectType.name}, ${objectType.identifierType.name}>(${runtimeObjectType}, query);`,
+                `return this.$objects<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
               ],
             },
             {
@@ -123,7 +127,7 @@ export function sparqlObjectSetClassDeclaration({
               isAsync: true,
               kind: StructureKind.Method,
               statements: [
-                `return this.$objectsCount<${objectType.identifierType.name}>(${runtimeObjectType}, query);`,
+                `return this.$objectsCount<${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
               ],
             },
           ];
@@ -200,7 +204,7 @@ return identifiers;`,
           kind: StructureKind.Method,
           isAsync: true,
           name: "$objectIdentifiers",
-          parameters: [parameters.objectTypeWithFromRdfType, parameters.query],
+          parameters: [parameters.selectObjectTypeType, parameters.query],
           returnType: `Promise<purify.Either<Error, readonly ${typeParameters.ObjectIdentifierT.name}[]>>`,
           scope: Scope.Protected,
           statements: [
@@ -245,10 +249,7 @@ return purify.EitherAsync(async () =>
           isAsync: true,
           kind: StructureKind.Method,
           name: "$objects",
-          parameters: [
-            parameters.objectTypeWithFromRdfFromRdfTypeSparqlConstructQueryString,
-            parameters.query,
-          ],
+          parameters: [parameters.constructObjectType, parameters.query],
           returnType: `Promise<readonly purify.Either<Error, ${typeParameters.ObjectT.name}>[]>`,
           statements: [
             `\
@@ -299,7 +300,7 @@ return identifiers.map((identifier) =>
           kind: StructureKind.Method,
           isAsync: true,
           name: "$objectsCount",
-          parameters: [parameters.objectTypeWithFromRdfType, parameters.query],
+          parameters: [parameters.selectObjectTypeType, parameters.query],
           returnType: "Promise<purify.Either<Error, number>>",
           scope: Scope.Protected,
           statements: [
@@ -342,14 +343,14 @@ return purify.EitherAsync(async ({ liftEither }) =>
         {
           kind: StructureKind.Method,
           name: "$wherePatterns",
-          parameters: [parameters.objectTypeWithFromRdfType, parameters.where],
+          parameters: [parameters.selectObjectTypeType, parameters.where],
           returnType: "sparqljs.Pattern[]",
           scope: Scope.Protected,
           statements: [
             `\
 const patterns: sparqljs.Pattern[] = [];
 
-// Pattern should be most to least specific.
+// Patterns should be most to least specific.
 
 if (where) {
   switch (where.type) {
@@ -369,29 +370,7 @@ if (where) {
   }
 }
 
-if (objectType.fromRdfType) {
-  patterns.push({
-    triples: [
-      {
-        object: objectType.fromRdfType!,
-        subject: this.objectVariable,
-        predicate: {
-          items: [
-            ${dataFactoryVariable}.namedNode("${rdf.type.value}"),
-            {
-              items: [${dataFactoryVariable}.namedNode("${rdfs.subClassOf.value}")],
-              pathType: "*",
-              type: "path",
-            },
-          ],
-          pathType: "/",
-          type: "path",
-        },
-      },
-    ],
-    type: "bgp",
-  });
-}
+patterns.push(...objectType.sparqlWherePatterns({ subject: this.objectVariable }));
 
 return patterns;`,
           ],

@@ -144,6 +144,7 @@ export function sparqlFunctionDeclarations(
       name: "sparqlWherePatterns",
       parameters: [
         {
+          hasQuestionToken: true,
           name: `${sparqlWherePatterns.length === 0 ? "_" : ""}parameters`,
           type: '{ ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }',
         },
