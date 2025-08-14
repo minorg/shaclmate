@@ -81,10 +81,7 @@ export function sparqlObjectSetClassDeclaration({
       // methods: [
       methods: (
         [...objectTypes, ...objectUnionTypes].flatMap((objectType) => {
-          if (
-            !objectType.features.has("sparql") ||
-            objectType.kind === "ObjectUnionType"
-          ) {
+          if (!objectType.features.has("sparql")) {
             return unsupportedObjectSetMethodDeclarations({
               objectType,
             });

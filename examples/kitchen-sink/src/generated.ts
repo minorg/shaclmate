@@ -19808,7 +19808,7 @@ export namespace InterfaceUnionNodeShape {
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -19816,7 +19816,7 @@ export namespace InterfaceUnionNodeShape {
     return [
       ...InterfaceUnionNodeShapeMember1.sparqlConstructTemplateTriples({
         subject:
-          parameters.subject ??
+          parameters?.subject ??
           dataFactory.variable!(
             "interfaceUnionNodeShapeInterfaceUnionNodeShapeMember1",
           ),
@@ -19826,7 +19826,7 @@ export namespace InterfaceUnionNodeShape {
       }).concat(),
       ...InterfaceUnionNodeShapeMember2a.sparqlConstructTemplateTriples({
         subject:
-          parameters.subject ??
+          parameters?.subject ??
           dataFactory.variable!(
             "interfaceUnionNodeShapeInterfaceUnionNodeShapeMember2a",
           ),
@@ -19836,7 +19836,7 @@ export namespace InterfaceUnionNodeShape {
       }).concat(),
       ...InterfaceUnionNodeShapeMember2b.sparqlConstructTemplateTriples({
         subject:
-          parameters.subject ??
+          parameters?.subject ??
           dataFactory.variable!(
             "interfaceUnionNodeShapeInterfaceUnionNodeShapeMember2b",
           ),
@@ -19847,7 +19847,7 @@ export namespace InterfaceUnionNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -19858,7 +19858,7 @@ export namespace InterfaceUnionNodeShape {
           {
             patterns: InterfaceUnionNodeShapeMember1.sparqlWherePatterns({
               subject:
-                parameters.subject ??
+                parameters?.subject ??
                 dataFactory.variable!(
                   "interfaceUnionNodeShapeInterfaceUnionNodeShapeMember1",
                 ),
@@ -19871,7 +19871,7 @@ export namespace InterfaceUnionNodeShape {
           {
             patterns: InterfaceUnionNodeShapeMember2a.sparqlWherePatterns({
               subject:
-                parameters.subject ??
+                parameters?.subject ??
                 dataFactory.variable!(
                   "interfaceUnionNodeShapeInterfaceUnionNodeShapeMember2a",
                 ),
@@ -19884,7 +19884,7 @@ export namespace InterfaceUnionNodeShape {
           {
             patterns: InterfaceUnionNodeShapeMember2b.sparqlWherePatterns({
               subject:
-                parameters.subject ??
+                parameters?.subject ??
                 dataFactory.variable!(
                   "interfaceUnionNodeShapeInterfaceUnionNodeShapeMember2b",
                 ),
@@ -20110,7 +20110,7 @@ export namespace InterfaceUnionNodeShapeMember2 {
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -20118,7 +20118,7 @@ export namespace InterfaceUnionNodeShapeMember2 {
     return [
       ...InterfaceUnionNodeShapeMember2a.sparqlConstructTemplateTriples({
         subject:
-          parameters.subject ??
+          parameters?.subject ??
           dataFactory.variable!(
             "interfaceUnionNodeShapeMember2InterfaceUnionNodeShapeMember2a",
           ),
@@ -20128,7 +20128,7 @@ export namespace InterfaceUnionNodeShapeMember2 {
       }).concat(),
       ...InterfaceUnionNodeShapeMember2b.sparqlConstructTemplateTriples({
         subject:
-          parameters.subject ??
+          parameters?.subject ??
           dataFactory.variable!(
             "interfaceUnionNodeShapeMember2InterfaceUnionNodeShapeMember2b",
           ),
@@ -20139,7 +20139,7 @@ export namespace InterfaceUnionNodeShapeMember2 {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -20150,7 +20150,7 @@ export namespace InterfaceUnionNodeShapeMember2 {
           {
             patterns: InterfaceUnionNodeShapeMember2a.sparqlWherePatterns({
               subject:
-                parameters.subject ??
+                parameters?.subject ??
                 dataFactory.variable!(
                   "interfaceUnionNodeShapeMember2InterfaceUnionNodeShapeMember2a",
                 ),
@@ -20163,7 +20163,7 @@ export namespace InterfaceUnionNodeShapeMember2 {
           {
             patterns: InterfaceUnionNodeShapeMember2b.sparqlWherePatterns({
               subject:
-                parameters.subject ??
+                parameters?.subject ??
                 dataFactory.variable!(
                   "interfaceUnionNodeShapeMember2InterfaceUnionNodeShapeMember2b",
                 ),
@@ -20354,7 +20354,7 @@ export namespace UnionNodeShape {
     );
   }
 
-  export function sparqlConstructTemplateTriples(parameters: {
+  export function sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -20362,7 +20362,7 @@ export namespace UnionNodeShape {
     return [
       ...UnionNodeShapeMember1.sparqlConstructTemplateTriples({
         subject:
-          parameters.subject ??
+          parameters?.subject ??
           dataFactory.variable!("unionNodeShapeUnionNodeShapeMember1"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}UnionNodeShapeMember1`
@@ -20370,7 +20370,7 @@ export namespace UnionNodeShape {
       }).concat(),
       ...UnionNodeShapeMember2.sparqlConstructTemplateTriples({
         subject:
-          parameters.subject ??
+          parameters?.subject ??
           dataFactory.variable!("unionNodeShapeUnionNodeShapeMember2"),
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}UnionNodeShapeMember2`
@@ -20379,7 +20379,7 @@ export namespace UnionNodeShape {
     ];
   }
 
-  export function sparqlWherePatterns(parameters: {
+  export function sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -20390,7 +20390,7 @@ export namespace UnionNodeShape {
           {
             patterns: UnionNodeShapeMember1.sparqlWherePatterns({
               subject:
-                parameters.subject ??
+                parameters?.subject ??
                 dataFactory.variable!("unionNodeShapeUnionNodeShapeMember1"),
               variablePrefix: parameters?.variablePrefix
                 ? `${parameters.variablePrefix}UnionNodeShapeMember1`
@@ -20401,7 +20401,7 @@ export namespace UnionNodeShape {
           {
             patterns: UnionNodeShapeMember2.sparqlWherePatterns({
               subject:
-                parameters.subject ??
+                parameters?.subject ??
                 dataFactory.variable!("unionNodeShapeUnionNodeShapeMember2"),
               variablePrefix: parameters?.variablePrefix
                 ? `${parameters.variablePrefix}UnionNodeShapeMember2`
@@ -25424,85 +25424,121 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async interfaceUnionNodeShape(
-    _identifier: InterfaceUnionNodeShape.Identifier,
+    identifier: InterfaceUnionNodeShape.Identifier,
   ): Promise<purify.Either<Error, InterfaceUnionNodeShape>> {
-    return purify.Left(new Error("object: not supported"));
+    return (
+      await this.interfaceUnionNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
   }
 
   async interfaceUnionNodeShapeIdentifiers(
-    _query?: $ObjectSet.Query<InterfaceUnionNodeShape.Identifier>,
+    query?: $SparqlObjectSet.Query<InterfaceUnionNodeShape.Identifier>,
   ): Promise<
     purify.Either<Error, readonly InterfaceUnionNodeShape.Identifier[]>
   > {
-    return purify.Left(new Error("objectIdentifiers: not supported"));
+    return this.$objectIdentifiers<InterfaceUnionNodeShape.Identifier>(
+      InterfaceUnionNodeShape,
+      query,
+    );
   }
 
   async interfaceUnionNodeShapes(
-    _query?: $ObjectSet.Query<InterfaceUnionNodeShape.Identifier>,
+    query?: $SparqlObjectSet.Query<InterfaceUnionNodeShape.Identifier>,
   ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShape>[]> {
-    return [purify.Left(new Error("objects: not supported"))];
+    return this.$objects<
+      InterfaceUnionNodeShape,
+      InterfaceUnionNodeShape.Identifier
+    >(InterfaceUnionNodeShape, query);
   }
 
   async interfaceUnionNodeShapesCount(
-    _query?: Pick<
-      $ObjectSet.Query<InterfaceUnionNodeShape.Identifier>,
+    query?: Pick<
+      $SparqlObjectSet.Query<InterfaceUnionNodeShape.Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return purify.Left(new Error("objectsCount: not supported"));
+    return this.$objectsCount<InterfaceUnionNodeShape.Identifier>(
+      InterfaceUnionNodeShape,
+      query,
+    );
   }
 
   async interfaceUnionNodeShapeMember2(
-    _identifier: InterfaceUnionNodeShapeMember2.Identifier,
+    identifier: InterfaceUnionNodeShapeMember2.Identifier,
   ): Promise<purify.Either<Error, InterfaceUnionNodeShapeMember2>> {
-    return purify.Left(new Error("object: not supported"));
+    return (
+      await this.interfaceUnionNodeShapeMember2s({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
   }
 
   async interfaceUnionNodeShapeMember2Identifiers(
-    _query?: $ObjectSet.Query<InterfaceUnionNodeShapeMember2.Identifier>,
+    query?: $SparqlObjectSet.Query<InterfaceUnionNodeShapeMember2.Identifier>,
   ): Promise<
     purify.Either<Error, readonly InterfaceUnionNodeShapeMember2.Identifier[]>
   > {
-    return purify.Left(new Error("objectIdentifiers: not supported"));
+    return this.$objectIdentifiers<InterfaceUnionNodeShapeMember2.Identifier>(
+      InterfaceUnionNodeShapeMember2,
+      query,
+    );
   }
 
   async interfaceUnionNodeShapeMember2s(
-    _query?: $ObjectSet.Query<InterfaceUnionNodeShapeMember2.Identifier>,
+    query?: $SparqlObjectSet.Query<InterfaceUnionNodeShapeMember2.Identifier>,
   ): Promise<readonly purify.Either<Error, InterfaceUnionNodeShapeMember2>[]> {
-    return [purify.Left(new Error("objects: not supported"))];
+    return this.$objects<
+      InterfaceUnionNodeShapeMember2,
+      InterfaceUnionNodeShapeMember2.Identifier
+    >(InterfaceUnionNodeShapeMember2, query);
   }
 
   async interfaceUnionNodeShapeMember2sCount(
-    _query?: Pick<
-      $ObjectSet.Query<InterfaceUnionNodeShapeMember2.Identifier>,
+    query?: Pick<
+      $SparqlObjectSet.Query<InterfaceUnionNodeShapeMember2.Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return purify.Left(new Error("objectsCount: not supported"));
+    return this.$objectsCount<InterfaceUnionNodeShapeMember2.Identifier>(
+      InterfaceUnionNodeShapeMember2,
+      query,
+    );
   }
 
   async unionNodeShape(
-    _identifier: UnionNodeShape.Identifier,
+    identifier: UnionNodeShape.Identifier,
   ): Promise<purify.Either<Error, UnionNodeShape>> {
-    return purify.Left(new Error("object: not supported"));
+    return (
+      await this.unionNodeShapes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
   }
 
   async unionNodeShapeIdentifiers(
-    _query?: $ObjectSet.Query<UnionNodeShape.Identifier>,
+    query?: $SparqlObjectSet.Query<UnionNodeShape.Identifier>,
   ): Promise<purify.Either<Error, readonly UnionNodeShape.Identifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: not supported"));
+    return this.$objectIdentifiers<UnionNodeShape.Identifier>(
+      UnionNodeShape,
+      query,
+    );
   }
 
   async unionNodeShapes(
-    _query?: $ObjectSet.Query<UnionNodeShape.Identifier>,
+    query?: $SparqlObjectSet.Query<UnionNodeShape.Identifier>,
   ): Promise<readonly purify.Either<Error, UnionNodeShape>[]> {
-    return [purify.Left(new Error("objects: not supported"))];
+    return this.$objects<UnionNodeShape, UnionNodeShape.Identifier>(
+      UnionNodeShape,
+      query,
+    );
   }
 
   async unionNodeShapesCount(
-    _query?: Pick<$ObjectSet.Query<UnionNodeShape.Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<UnionNodeShape.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
-    return purify.Left(new Error("objectsCount: not supported"));
+    return this.$objectsCount<UnionNodeShape.Identifier>(UnionNodeShape, query);
   }
 
   protected $mapBindingsToCount(

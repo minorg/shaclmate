@@ -471,6 +471,7 @@ return $strictEquals(left.type, right.type).chain(() => {
         // Accept ignoreRdfType in order to reuse code but don't pass it through, since deserialization may depend on it
         parameters: [
           {
+            hasQuestionToken: true,
             name: "parameters",
             type: '{ ignoreRdfType?: boolean, subject?: sparqljs.Triple["subject"], variablePrefix?: string }',
           },
@@ -480,7 +481,7 @@ return $strictEquals(left.type, right.type).chain(() => {
           `return [${this.memberTypes
             .map(
               (memberType) =>
-                `...${memberType.staticModuleName}.sparqlConstructTemplateTriples({ subject: parameters.subject ?? ${this.dataFactoryVariable}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
+                `...${memberType.staticModuleName}.sparqlConstructTemplateTriples({ subject: parameters?.subject ?? ${this.dataFactoryVariable}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
             )
             .join(", ")}];`,
         ],
@@ -492,6 +493,7 @@ return $strictEquals(left.type, right.type).chain(() => {
         // Accept ignoreRdfType in order to reuse code but don't pass it through, since deserialization may depend on it
         parameters: [
           {
+            hasQuestionToken: true,
             name: "parameters",
             type: '{ ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }',
           },
@@ -501,7 +503,7 @@ return $strictEquals(left.type, right.type).chain(() => {
           `return [{ patterns: [${this.memberTypes
             .map((memberType) =>
               objectInitializer({
-                patterns: `${memberType.staticModuleName}.sparqlWherePatterns({ subject: parameters.subject ?? ${this.dataFactoryVariable}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
+                patterns: `${memberType.staticModuleName}.sparqlWherePatterns({ subject: parameters?.subject ?? ${this.dataFactoryVariable}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
                 type: '"group"',
               }),
             )
