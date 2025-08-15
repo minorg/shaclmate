@@ -118,4 +118,17 @@ describe("graphqlSchema", () => {
       concreteChildrenCount: 4,
     });
   });
+
+  it("union object", async ({ expect }) => {
+    const result = await execute(
+      `query { union(identifier: "<http://example.com/union0>") { identifier, optionalNumberProperty } }`,
+    );
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      concreteChild: {
+        identifier: "<http://example.com/union0>",
+        optionalNumberProperty: 1,
+      },
+    });
+  });
 });

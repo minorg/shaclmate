@@ -12,8 +12,8 @@ import { sparqlObjectSetClassDeclaration } from "./sparqlObjectSetClassDeclarati
 
 export function objectSetDeclarations({
   dataFactoryVariable,
-  objectTypes: objectTypesUnsorted,
-  objectUnionTypes: objectUnionTypesUnsorted,
+  objectUnionTypes,
+  ...parameters
 }: {
   dataFactoryVariable: string;
   objectTypes: readonly ObjectType[];
@@ -23,9 +23,9 @@ export function objectSetDeclarations({
   | InterfaceDeclarationStructure
   | ModuleDeclarationStructure
 )[] {
-  const objectTypes = objectTypesUnsorted
-    .filter((objectType) => !objectType.abstract)
-    .toSorted((left, right) => left.name.localeCompare(right.name));
+  const objectTypes = parameters.objectTypes.filter(
+    (objectType) => !objectType.abstract,
+  );
   let objectTypesWithRdfFeatureCount = 0;
   let objectTypesWithSparqlFeatureCount = 0;
   for (const objectType of objectTypes) {
@@ -40,9 +40,6 @@ export function objectSetDeclarations({
     }
   }
 
-  const objectUnionTypes = objectUnionTypesUnsorted.toSorted((left, right) =>
-    left.name.localeCompare(right.name),
-  );
   let objectUnionTypesWithRdfFeatureCount = 0;
   let objectUnionTypesWithSparqlFeatureCount = 0;
   for (const objectUnionType of objectUnionTypes) {

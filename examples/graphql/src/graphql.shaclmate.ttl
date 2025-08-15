@@ -40,6 +40,26 @@
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property :optionalNumberProperty, :optionalStringProperty, :requiredStringProperty .
 
+:Union
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Union" ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:xone (:UnionMember1
+        :UnionMember2
+    ) .
+
+:UnionMember1
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "UnionMember1" ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property :optionalNumberProperty .
+
+:UnionMember2
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "UnionMember1" ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property :optionalStringProperty .
+
 :optionalNestedObjectProperty
     a sh:PropertyShape ;
     rdfs:comment "Optional nested object property" ;

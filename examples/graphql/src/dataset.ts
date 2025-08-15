@@ -1,6 +1,12 @@
 import N3 from "n3";
 import { MutableResourceSet } from "rdfjs-resource";
-import { ConcreteChild, ConcreteParent, Nested } from "./generated.js";
+import {
+  ConcreteChild,
+  ConcreteParent,
+  Nested,
+  UnionMember1,
+  UnionMember2,
+} from "./generated.js";
 
 export const dataset = new N3.Store();
 const resourceSet = new MutableResourceSet({
@@ -32,4 +38,16 @@ for (let i = 0; i < 4; i++) {
     ),
     parentStringProperty: "parent string",
   }).toRdf({ resourceSet });
+
+  if (i % 2 === 0) {
+    new UnionMember1({
+      identifier: N3.DataFactory.namedNode(`http://example.com/union${i}`),
+      optionalNumberProperty: 1,
+    }).toRdf({ resourceSet });
+  } else {
+    new UnionMember2({
+      identifier: N3.DataFactory.namedNode(`http://example.com/union${i}`),
+      optionalStringProperty: "test",
+    });
+  }
 }
