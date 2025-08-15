@@ -24,11 +24,11 @@ export * from "./jsonTypeAliasDeclaration.js";
 
 export * from "./objectSetMethodNames.js";
 
+export * from "./propertiesVariableStatement.js";
+
 export * from "./Property.js";
 
 export * from "./rdfFunctionDeclarations.js";
-
-export * from "./rdfPropertiesVariableStatement.js";
 
 export * from "./ShaclProperty.js";
 

@@ -4,6 +4,7 @@ import N3, { DataFactory as dataFactory } from "n3";
 import { MutableResourceSet } from "rdfjs-resource";
 import { describe, it } from "vitest";
 
+import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { harnesses } from "./harnesses.js";
 
 describe("toRdf", () => {
@@ -25,15 +26,14 @@ describe("toRdf", () => {
         .value(rdf.type)
         .chain((value) => value.toIri())
         .unsafeCoerce()
-        .equals(
-          dataFactory.namedNode(
-            "http://example.com/ConcreteChildClassNodeShape",
-          ),
-        ),
+        .equals(kitchenSink.ConcreteChildClass.fromRdfType),
     ).toStrictEqual(true);
     expect(
       resource
-        .value(dataFactory.namedNode("http://example.com/childStringProperty"))
+        .value(
+          kitchenSink.ConcreteChildClass.$properties.concreteChildClassProperty
+            .identifier,
+        )
         .chain((value) => value.toString())
         .unsafeCoerce(),
     ).toStrictEqual("child");
@@ -68,7 +68,10 @@ describe("toRdf", () => {
     ).toBe(true);
     expect(
       resource
-        .value(dataFactory.namedNode("http://example.com/stringProperty"))
+        .value(
+          kitchenSink.ExplicitRdfTypeClass.$properties.explicitRdfTypeProperty
+            .identifier,
+        )
         .chain((value) => value.toString())
         .unsafeCoerce(),
     ).toStrictEqual("test");
@@ -96,7 +99,10 @@ describe("toRdf", () => {
     ).toBe(true);
     expect(
       resource
-        .value(dataFactory.namedNode("http://example.com/stringProperty"))
+        .value(
+          kitchenSink.ExplicitFromToRdfTypesClass.$properties
+            .explicitFromToRdfTypesProperty.identifier,
+        )
         .chain((value) => value.toString())
         .unsafeCoerce(),
     ).toStrictEqual("test");
@@ -120,7 +126,10 @@ describe("toRdf", () => {
     expect(dataset.size).toStrictEqual(4);
     expect(
       resource
-        .value(dataFactory.namedNode("http://example.com/falseBooleanProperty"))
+        .value(
+          kitchenSink.DefaultValuePropertiesClass.$properties
+            .falseBooleanDefaultValueProperty.identifier,
+        )
         .chain((value) => value.toBoolean())
         .unsafeCoerce(),
     ).toStrictEqual(true);

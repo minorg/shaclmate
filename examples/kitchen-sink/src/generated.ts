@@ -492,9 +492,11 @@ export namespace UuidV4IriClass {
     );
   }
 
-  export const rdfProperties = [
-    { path: dataFactory.namedNode("http://example.com/uuidV4IriProperty") },
-  ];
+  export const $properties = {
+    uuidV4IriProperty: {
+      identifier: dataFactory.namedNode("http://example.com/uuidV4IriProperty"),
+    },
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -1383,18 +1385,28 @@ export namespace UnionPropertiesClass {
     );
   }
 
-  export const rdfProperties = [
-    {
-      path: dataFactory.namedNode("http://example.com/narrowLiteralsProperty"),
+  export const $properties = {
+    narrowLiteralsProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/narrowLiteralsProperty",
+      ),
     },
-    {
-      path: dataFactory.namedNode("http://example.com/unrelatedTypesProperty"),
+    unrelatedTypesProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/unrelatedTypesProperty",
+      ),
     },
-    {
-      path: dataFactory.namedNode("http://example.com/widenedLiteralsProperty"),
+    widenedLiteralsProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/widenedLiteralsProperty",
+      ),
     },
-    { path: dataFactory.namedNode("http://example.com/widenedTermsProperty") },
-  ];
+    widenedTermsProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/widenedTermsProperty",
+      ),
+    },
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -2530,16 +2542,42 @@ export namespace TermPropertiesClass {
     );
   }
 
-  export const rdfProperties = [
-    { path: dataFactory.namedNode("http://example.com/booleanTermProperty") },
-    { path: dataFactory.namedNode("http://example.com/dateTermProperty") },
-    { path: dataFactory.namedNode("http://example.com/dateTimeTermProperty") },
-    { path: dataFactory.namedNode("http://example.com/iriTermProperty") },
-    { path: dataFactory.namedNode("http://example.com/literalTermProperty") },
-    { path: dataFactory.namedNode("http://example.com/numberTermProperty") },
-    { path: dataFactory.namedNode("http://example.com/stringTermProperty") },
-    { path: dataFactory.namedNode("http://example.com/termProperty") },
-  ];
+  export const $properties = {
+    booleanTermProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/booleanTermProperty",
+      ),
+    },
+    dateTermProperty: {
+      identifier: dataFactory.namedNode("http://example.com/dateTermProperty"),
+    },
+    dateTimeTermProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/dateTimeTermProperty",
+      ),
+    },
+    iriTermProperty: {
+      identifier: dataFactory.namedNode("http://example.com/iriTermProperty"),
+    },
+    literalTermProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/literalTermProperty",
+      ),
+    },
+    numberTermProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/numberTermProperty",
+      ),
+    },
+    stringTermProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/stringTermProperty",
+      ),
+    },
+    termProperty: {
+      identifier: dataFactory.namedNode("http://example.com/termProperty"),
+    },
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -3097,9 +3135,11 @@ export namespace Sha256IriClass {
     );
   }
 
-  export const rdfProperties = [
-    { path: dataFactory.namedNode("http://example.com/sha256IriProperty") },
-  ];
+  export const $properties = {
+    sha256IriProperty: {
+      identifier: dataFactory.namedNode("http://example.com/sha256IriProperty"),
+    },
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -3544,11 +3584,17 @@ export namespace PropertyVisibilitiesClass {
     );
   }
 
-  export const rdfProperties = [
-    { path: dataFactory.namedNode("http://example.com/privateProperty") },
-    { path: dataFactory.namedNode("http://example.com/protectedProperty") },
-    { path: dataFactory.namedNode("http://example.com/publicProperty") },
-  ];
+  export const $properties = {
+    privateProperty: {
+      identifier: dataFactory.namedNode("http://example.com/privateProperty"),
+    },
+    protectedProperty: {
+      identifier: dataFactory.namedNode("http://example.com/protectedProperty"),
+    },
+    publicProperty: {
+      identifier: dataFactory.namedNode("http://example.com/publicProperty"),
+    },
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -4185,22 +4231,28 @@ export namespace PropertyCardinalitiesClass {
     );
   }
 
-  export const rdfProperties = [
-    {
-      path: dataFactory.namedNode("http://example.com/emptyStringSetProperty"),
+  export const $properties = {
+    emptyStringSetProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/emptyStringSetProperty",
+      ),
     },
-    {
-      path: dataFactory.namedNode(
+    nonEmptyStringSetProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/nonEmptyStringSetProperty",
       ),
     },
-    {
-      path: dataFactory.namedNode("http://example.com/optionalStringProperty"),
+    optionalStringProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/optionalStringProperty",
+      ),
     },
-    {
-      path: dataFactory.namedNode("http://example.com/requiredStringProperty"),
+    requiredStringProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/requiredStringProperty",
+      ),
     },
-  ];
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -4737,11 +4789,17 @@ export namespace OrderedPropertiesClass {
     );
   }
 
-  export const rdfProperties = [
-    { path: dataFactory.namedNode("http://example.com/orderedPropertyC") },
-    { path: dataFactory.namedNode("http://example.com/orderedPropertyB") },
-    { path: dataFactory.namedNode("http://example.com/orderedPropertyA") },
-  ];
+  export const $properties = {
+    orderedPropertyC: {
+      identifier: dataFactory.namedNode("http://example.com/orderedPropertyC"),
+    },
+    orderedPropertyB: {
+      identifier: dataFactory.namedNode("http://example.com/orderedPropertyB"),
+    },
+    orderedPropertyA: {
+      identifier: dataFactory.namedNode("http://example.com/orderedPropertyA"),
+    },
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -5120,9 +5178,11 @@ export namespace NonClass {
     );
   }
 
-  export const rdfProperties = [
-    { path: dataFactory.namedNode("http://example.com/nonClassProperty") },
-  ];
+  export const $properties = {
+    nonClassProperty: {
+      identifier: dataFactory.namedNode("http://example.com/nonClassProperty"),
+    },
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -5742,11 +5802,23 @@ export namespace MutablePropertiesClass {
     );
   }
 
-  export const rdfProperties = [
-    { path: dataFactory.namedNode("http://example.com/mutableListProperty") },
-    { path: dataFactory.namedNode("http://example.com/mutableSetProperty") },
-    { path: dataFactory.namedNode("http://example.com/mutableStringProperty") },
-  ];
+  export const $properties = {
+    mutableListProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/mutableListProperty",
+      ),
+    },
+    mutableSetProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/mutableSetProperty",
+      ),
+    },
+    mutableStringProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/mutableStringProperty",
+      ),
+    },
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -6546,10 +6618,18 @@ export namespace ListPropertiesClass {
     );
   }
 
-  export const rdfProperties = [
-    { path: dataFactory.namedNode("http://example.com/objectListProperty") },
-    { path: dataFactory.namedNode("http://example.com/stringListProperty") },
-  ];
+  export const $properties = {
+    objectListProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/objectListProperty",
+      ),
+    },
+    stringListProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/stringListProperty",
+      ),
+    },
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -7527,18 +7607,18 @@ export namespace LanguageInPropertiesClass {
     );
   }
 
-  export const rdfProperties = [
-    {
-      path: dataFactory.namedNode(
+  export const $properties = {
+    languageInPropertiesLanguageInProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/languageInPropertiesLanguageInProperty",
       ),
     },
-    {
-      path: dataFactory.namedNode(
+    languageInPropertiesLiteralProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/languageInPropertiesLiteralProperty",
       ),
     },
-  ];
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -7879,7 +7959,7 @@ export namespace IriClass {
     );
   }
 
-  export const rdfProperties = [];
+  export const $properties = {};
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -8218,13 +8298,13 @@ export namespace InterfaceUnionMember2b {
     return _resource;
   }
 
-  export const rdfProperties = [
-    {
-      path: dataFactory.namedNode(
+  export const $properties = {
+    interfaceUnionMember2bProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/interfaceUnionMember2bProperty",
       ),
     },
-  ];
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -8605,13 +8685,13 @@ export namespace InterfaceUnionMember2a {
     return _resource;
   }
 
-  export const rdfProperties = [
-    {
-      path: dataFactory.namedNode(
+  export const $properties = {
+    interfaceUnionMember2aProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/interfaceUnionMember2aProperty",
       ),
     },
-  ];
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -8981,13 +9061,13 @@ export namespace InterfaceUnionMember1 {
     return _resource;
   }
 
-  export const rdfProperties = [
-    {
-      path: dataFactory.namedNode(
+  export const $properties = {
+    interfaceUnionMember1Property: {
+      identifier: dataFactory.namedNode(
         "http://example.com/interfaceUnionMember1Property",
       ),
     },
-  ];
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -9338,9 +9418,11 @@ export namespace Interface {
     return _resource;
   }
 
-  export const rdfProperties = [
-    { path: dataFactory.namedNode("http://example.com/interfaceProperty") },
-  ];
+  export const $properties = {
+    interfaceProperty: {
+      identifier: dataFactory.namedNode("http://example.com/interfaceProperty"),
+    },
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -10141,13 +10223,27 @@ export namespace InPropertiesClass {
     );
   }
 
-  export const rdfProperties = [
-    { path: dataFactory.namedNode("http://example.com/inBooleansProperty") },
-    { path: dataFactory.namedNode("http://example.com/inDateTimesProperty") },
-    { path: dataFactory.namedNode("http://example.com/inIrisProperty") },
-    { path: dataFactory.namedNode("http://example.com/inNumbersProperty") },
-    { path: dataFactory.namedNode("http://example.com/inStringsProperty") },
-  ];
+  export const $properties = {
+    inBooleansProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/inBooleansProperty",
+      ),
+    },
+    inDateTimesProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/inDateTimesProperty",
+      ),
+    },
+    inIrisProperty: {
+      identifier: dataFactory.namedNode("http://example.com/inIrisProperty"),
+    },
+    inNumbersProperty: {
+      identifier: dataFactory.namedNode("http://example.com/inNumbersProperty"),
+    },
+    inStringsProperty: {
+      identifier: dataFactory.namedNode("http://example.com/inStringsProperty"),
+    },
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -10680,9 +10776,13 @@ export namespace InIdentifierClass {
     );
   }
 
-  export const rdfProperties = [
-    { path: dataFactory.namedNode("http://example.com/inIdentifierProperty") },
-  ];
+  export const $properties = {
+    inIdentifierProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/inIdentifierProperty",
+      ),
+    },
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -11127,9 +11227,7 @@ export namespace HasValuePropertiesClass {
           dataFactory.namedNode("http://example.com/hasLiteralValueProperty"),
           { unique: true },
         )
-        .find((_value) =>
-          _value.toTerm().equals(dataFactory.literal("test", "")),
-        )
+        .find((_value) => _value.toTerm().equals(dataFactory.literal("test")))
         .chain((_value) => _value.toString())
         .toMaybe(),
     );
@@ -11154,12 +11252,18 @@ export namespace HasValuePropertiesClass {
     );
   }
 
-  export const rdfProperties = [
-    { path: dataFactory.namedNode("http://example.com/hasIriValueProperty") },
-    {
-      path: dataFactory.namedNode("http://example.com/hasLiteralValueProperty"),
+  export const $properties = {
+    hasIriValueProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/hasIriValueProperty",
+      ),
     },
-  ];
+    hasLiteralValueProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/hasLiteralValueProperty",
+      ),
+    },
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -11566,13 +11670,13 @@ export namespace ExternPropertiesInlineNestedClass {
     );
   }
 
-  export const rdfProperties = [
-    {
-      path: dataFactory.namedNode(
+  export const $properties = {
+    externPropertiesInlineNestedStringProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/externPropertiesInlineNestedStringProperty",
       ),
     },
-  ];
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -11953,13 +12057,13 @@ export namespace ExternPropertiesExternNestedClass {
     );
   }
 
-  export const rdfProperties = [
-    {
-      path: dataFactory.namedNode(
+  export const $properties = {
+    externPropertiesExternNestedStringProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/externPropertiesExternNestedStringProperty",
       ),
     },
-  ];
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -12538,11 +12642,23 @@ export namespace ExternPropertiesClass {
     );
   }
 
-  export const rdfProperties = [
-    { path: dataFactory.namedNode("http://example.com/externClassProperty") },
-    { path: dataFactory.namedNode("http://example.com/externNestedProperty") },
-    { path: dataFactory.namedNode("http://example.com/inlineNestedProperty") },
-  ];
+  export const $properties = {
+    externClassProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/externClassProperty",
+      ),
+    },
+    externNestedProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/externNestedProperty",
+      ),
+    },
+    inlineNestedProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/inlineNestedProperty",
+      ),
+    },
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -13022,11 +13138,13 @@ export namespace ExplicitRdfTypeClass {
     );
   }
 
-  export const rdfProperties = [
-    {
-      path: dataFactory.namedNode("http://example.com/explicitRdfTypeProperty"),
+  export const $properties = {
+    explicitRdfTypeProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/explicitRdfTypeProperty",
+      ),
     },
-  ];
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -13534,13 +13652,13 @@ export namespace ExplicitFromToRdfTypesClass {
     );
   }
 
-  export const rdfProperties = [
-    {
-      path: dataFactory.namedNode(
+  export const $properties = {
+    explicitFromToRdfTypesProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/explicitFromToRdfTypesProperty",
       ),
     },
-  ];
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -14383,7 +14501,7 @@ export namespace DefaultValuePropertiesClass {
             predicate: dataFactory.namedNode(
               "http://example.com/stringDefaultValueProperty",
             ),
-            object: dataFactory.literal("", ""),
+            object: dataFactory.literal(""),
           }),
         ),
       )
@@ -14450,38 +14568,38 @@ export namespace DefaultValuePropertiesClass {
     );
   }
 
-  export const rdfProperties = [
-    {
-      path: dataFactory.namedNode(
+  export const $properties = {
+    dateDefaultValueProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/dateDefaultValueProperty",
       ),
     },
-    {
-      path: dataFactory.namedNode(
+    dateTimeDefaultValueProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/dateTimeDefaultValueProperty",
       ),
     },
-    {
-      path: dataFactory.namedNode(
+    falseBooleanDefaultValueProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/falseBooleanDefaultValueProperty",
       ),
     },
-    {
-      path: dataFactory.namedNode(
+    numberDefaultValueProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/numberDefaultValueProperty",
       ),
     },
-    {
-      path: dataFactory.namedNode(
+    stringDefaultValueProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/stringDefaultValueProperty",
       ),
     },
-    {
-      path: dataFactory.namedNode(
+    trueBooleanDefaultValueProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/trueBooleanDefaultValueProperty",
       ),
     },
-  ];
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -15100,13 +15218,13 @@ export namespace BaseInterfaceWithPropertiesStatic {
     return _resource;
   }
 
-  export const rdfProperties = [
-    {
-      path: dataFactory.namedNode(
+  export const $properties = {
+    baseInterfaceWithPropertiesProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/baseInterfaceWithPropertiesProperty",
       ),
     },
-  ];
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -15578,9 +15696,9 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     return _resource;
   }
 
-  export const rdfProperties = [
-    ...BaseInterfaceWithPropertiesStatic.rdfProperties,
-  ];
+  export const $properties = {
+    ...BaseInterfaceWithPropertiesStatic.$properties,
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -16086,14 +16204,14 @@ export namespace ConcreteParentInterfaceStatic {
     return _resource;
   }
 
-  export const rdfProperties = [
-    ...BaseInterfaceWithoutPropertiesStatic.rdfProperties,
-    {
-      path: dataFactory.namedNode(
+  export const $properties = {
+    ...BaseInterfaceWithoutPropertiesStatic.$properties,
+    concreteParentInterfaceProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/concreteParentInterfaceProperty",
       ),
     },
-  ];
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -16600,14 +16718,14 @@ export namespace ConcreteChildInterface {
     return _resource;
   }
 
-  export const rdfProperties = [
-    ...ConcreteParentInterfaceStatic.rdfProperties,
-    {
-      path: dataFactory.namedNode(
+  export const $properties = {
+    ...ConcreteParentInterfaceStatic.$properties,
+    concreteChildInterfaceProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/concreteChildInterfaceProperty",
       ),
     },
-  ];
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -17097,13 +17215,13 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     >;
   }
 
-  export const rdfProperties = [
-    {
-      path: dataFactory.namedNode(
+  export const $properties = {
+    abstractBaseClassWithPropertiesProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/abstractBaseClassWithPropertiesProperty",
       ),
     },
-  ];
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -17363,9 +17481,9 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     >;
   }
 
-  export const rdfProperties = [
-    ...AbstractBaseClassWithPropertiesStatic.rdfProperties,
-  ];
+  export const $properties = {
+    ...AbstractBaseClassWithPropertiesStatic.$properties,
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -17773,14 +17891,14 @@ export namespace ConcreteParentClassStatic {
     );
   }
 
-  export const rdfProperties = [
-    ...AbstractBaseClassWithoutPropertiesStatic.rdfProperties,
-    {
-      path: dataFactory.namedNode(
+  export const $properties = {
+    ...AbstractBaseClassWithoutPropertiesStatic.$properties,
+    concreteParentClassProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/concreteParentClassProperty",
       ),
     },
-  ];
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -18258,14 +18376,14 @@ export namespace ConcreteChildClass {
     );
   }
 
-  export const rdfProperties = [
-    ...ConcreteParentClassStatic.rdfProperties,
-    {
-      path: dataFactory.namedNode(
+  export const $properties = {
+    ...ConcreteParentClassStatic.$properties,
+    concreteChildClassProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/concreteChildClassProperty",
       ),
     },
-  ];
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -18757,13 +18875,13 @@ export namespace ClassUnionMember2 {
     );
   }
 
-  export const rdfProperties = [
-    {
-      path: dataFactory.namedNode(
+  export const $properties = {
+    classUnionMember2Property: {
+      identifier: dataFactory.namedNode(
         "http://example.com/classUnionMember2Property",
       ),
     },
-  ];
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -19245,13 +19363,13 @@ export namespace ClassUnionMember1 {
     );
   }
 
-  export const rdfProperties = [
-    {
-      path: dataFactory.namedNode(
+  export const $properties = {
+    classUnionMember1Property: {
+      identifier: dataFactory.namedNode(
         "http://example.com/classUnionMember1Property",
       ),
     },
-  ];
+  };
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -19643,7 +19761,7 @@ export namespace BlankClass {
     );
   }
 
-  export const rdfProperties = [];
+  export const $properties = {};
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -19966,13 +20084,13 @@ export namespace AbstractBaseClassForExternClassStatic {
     >;
   }
 
-  export const rdfProperties = [
-    {
-      path: dataFactory.namedNode(
+  export const $properties = {
+    abstractBaseClassForExternClassProperty: {
+      identifier: dataFactory.namedNode(
         "http://example.com/abstractBaseClassForExternClassProperty",
       ),
     },
-  ];
+  };
 
   export function sparqlConstructQuery(
     parameters?: {

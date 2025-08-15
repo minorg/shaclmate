@@ -7,7 +7,7 @@ describe("hash", () => {
     expect(
       harnesses.nonClass.instance.hash(sha256.create()).hex(),
     ).toStrictEqual(
-      "051a4288e0371489df27a7cb346e0568e9205ad5aba7e545270ee23e80336600",
+      "a4ad9a44edc4b7d6baf915ee46ee55ea09664a226709146e31ded0c07ba92507",
     );
   });
 });

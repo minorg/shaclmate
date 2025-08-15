@@ -69,7 +69,8 @@ describe("fromRdf", () => {
       dataFactory.namedNode("http://example.com/ExplicitFromToRdfTypes"),
     );
     resource.add(
-      dataFactory.namedNode("http://example.com/stringProperty"),
+      kitchenSink.ExplicitFromToRdfTypesClass.$properties
+        .explicitFromToRdfTypesProperty.identifier,
       dataFactory.literal("test"),
     );
 
@@ -90,7 +91,8 @@ describe("fromRdf", () => {
       dataFactory.namedNode("http://example.com/FromRdfType"),
     );
     resource.add(
-      dataFactory.namedNode("http://example.com/stringProperty"),
+      kitchenSink.ExplicitFromToRdfTypesClass.$properties
+        .explicitFromToRdfTypesProperty.identifier,
       dataFactory.literal("test"),
     );
 
@@ -103,18 +105,23 @@ describe("fromRdf", () => {
   it("ensure hasValue (sh:hasValue)", ({ expect }) => {
     const dataset = new N3.Store();
     const identifier = dataFactory.blankNode();
-    const predicate = dataFactory.namedNode(
-      "http://example.com/hasIriProperty",
-    );
     const object = dataFactory.namedNode(
       "http://example.com/HasValuePropertiesClassIri1",
     );
-    dataset.add(dataFactory.quad(identifier, predicate, object));
+    dataset.add(
+      dataFactory.quad(
+        identifier,
+        kitchenSink.HasValuePropertiesClass.$properties.hasIriValueProperty
+          .identifier,
+        object,
+      ),
+    );
     // Add an extra object of the same predicate, which should be ignored
     dataset.add(
       dataFactory.quad(
         identifier,
-        predicate,
+        kitchenSink.HasValuePropertiesClass.$properties.hasIriValueProperty
+          .identifier,
         dataFactory.namedNode("http://example.com/HasValuePropertiesClassIri2"),
       ),
     );
@@ -133,7 +140,8 @@ describe("fromRdf", () => {
     dataset.add(
       dataFactory.quad(
         identifier,
-        dataFactory.namedNode("http://example.com/hasLiteralProperty"),
+        kitchenSink.HasValuePropertiesClass.$properties.hasLiteralValueProperty
+          .identifier,
         dataFactory.literal("nottest"),
       ),
     );
@@ -154,7 +162,8 @@ describe("fromRdf", () => {
     dataset.add(
       dataFactory.quad(
         identifier,
-        dataFactory.namedNode("http://example.com/stringProperty"),
+        kitchenSink.InIdentifierClass.$properties.inIdentifierProperty
+          .identifier,
         dataFactory.literal("whatever"),
       ),
     );
@@ -173,7 +182,7 @@ describe("fromRdf", () => {
     dataset.add(
       dataFactory.quad(
         identifier,
-        dataFactory.namedNode("http://example.com/inIrisProperty"),
+        kitchenSink.InPropertiesClass.$properties.inIrisProperty.identifier,
         dataFactory.namedNode("http://example.com/WithInPropertiesIriInvalid"),
       ),
     );
@@ -189,11 +198,14 @@ describe("fromRdf", () => {
   it("ignore invalid literal property values (sh:in)", ({ expect }) => {
     const dataset = new N3.Store();
     const identifier = dataFactory.blankNode();
-    const predicate = dataFactory.namedNode(
-      "http://example.com/inStringsProperty",
-    );
     const object = dataFactory.literal("somethingelse");
-    dataset.add(dataFactory.quad(identifier, predicate, object));
+    dataset.add(
+      dataFactory.quad(
+        identifier,
+        kitchenSink.InPropertiesClass.$properties.inStringsProperty.identifier,
+        object,
+      ),
+    );
     const instance = kitchenSink.InPropertiesClass.fromRdf({
       resource: new MutableResourceSet({
         dataFactory,
@@ -210,13 +222,11 @@ describe("fromRdf", () => {
       dataFactory,
       dataset: dataset,
     }).resource(identifier);
-    const predicate = dataFactory.namedNode(
-      "http://example.com/literalProperty",
-    );
     dataset.add(
       dataFactory.quad(
         identifier,
-        predicate,
+        kitchenSink.LanguageInPropertiesClass.$properties
+          .languageInPropertiesLiteralProperty.identifier,
         dataFactory.literal("arvalue", "ar"),
       ),
     );
@@ -234,7 +244,8 @@ describe("fromRdf", () => {
     dataset.add(
       dataFactory.quad(
         identifier,
-        predicate,
+        kitchenSink.LanguageInPropertiesClass.$properties
+          .languageInPropertiesLiteralProperty.identifier,
         dataFactory.literal("envalue", "en"),
       ),
     );
@@ -257,20 +268,19 @@ describe("fromRdf", () => {
       dataFactory,
       dataset: dataset,
     }).resource(identifier);
-    const predicate = dataFactory.namedNode(
-      "http://example.com/languageInProperty",
-    );
     dataset.add(
       dataFactory.quad(
         identifier,
-        predicate,
+        kitchenSink.LanguageInPropertiesClass.$properties
+          .languageInPropertiesLanguageInProperty.identifier,
         dataFactory.literal("arvalue", "ar"),
       ),
     );
     dataset.add(
       dataFactory.quad(
         identifier,
-        predicate,
+        kitchenSink.LanguageInPropertiesClass.$properties
+          .languageInPropertiesLanguageInProperty.identifier,
         dataFactory.literal("envalue", "en"),
       ),
     );
