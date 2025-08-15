@@ -101,12 +101,12 @@ export namespace UnionMember2 {
     }),
     name: "UnionMember2",
   });
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -298,12 +298,12 @@ export namespace UnionMember1 {
     }),
     name: "UnionMember1",
   });
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -537,12 +537,12 @@ export namespace Nested {
     }),
     name: "Nested",
   });
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -1285,7 +1285,23 @@ export namespace Union {
     );
   }
 
-  export type Identifier = UnionMember1.Identifier | UnionMember2.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory: dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
 
   export function toRdf(
     _union: Union,

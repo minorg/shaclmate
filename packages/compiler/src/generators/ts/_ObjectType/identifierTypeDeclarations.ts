@@ -17,62 +17,6 @@ type IdentifierTypeDeclarations = readonly (
   | VariableStatementStructure
 )[];
 
-// ObjectUnionType needs an IdentifierType instead of current hacks
-// this fromStringFunction declaration (or re-export) should be on IdentifierType, not here
-function identifierFromStringFunctionDeclaration(
-  this: ObjectType,
-): FunctionDeclarationStructure {
-  const expressions: string[] = [
-    `purify.Either.encase(() => rdfjsResource.Resource.Identifier.fromString({ dataFactory: ${this.dataFactoryVariable}, identifier }))`,
-  ];
-
-  if (this.identifierType.isNamedNodeKind) {
-    expressions.push(
-      `chain((identifier) => (identifier.termType === "NamedNode") ? purify.Either.of(identifier) : purify.Left(new Error("expected identifier to be NamedNode")))`,
-    );
-
-    if (this.identifierType.in_.length > 0) {
-      expressions.push(
-        `chain((identifier) => { switch (identifier.value) { ${this.identifierType.in_.map((iri) => `case "${iri.value}": return purify.Either.of(identifier as rdfjs.NamedNode<"${iri.value}">);`).join(" ")} default: return purify.Left(new Error("expected NamedNode identifier to be one of ${this.identifierType.in_.map((iri) => iri.value).join(" ")}")); } })`,
-      );
-    }
-  }
-
-  return {
-    isExported: true,
-    kind: StructureKind.Function,
-    name: "fromString",
-    parameters: [
-      {
-        name: "identifier",
-        type: "string",
-      },
-    ],
-    returnType: "purify.Either<Error, Identifier>",
-    statements: [
-      `return ${expressions.join(".")} as purify.Either<Error, Identifier>;`,
-    ],
-  };
-}
-
-function identifierToStringFunctionDeclaration(
-  this: ObjectType,
-): VariableStatementStructure {
-  return {
-    declarationKind: VariableDeclarationKind.Const,
-    isExported: true,
-    kind: StructureKind.VariableStatement,
-    declarations: [
-      {
-        initializer: "rdfjsResource.Resource.Identifier.toString",
-        leadingTrivia:
-          "// biome-ignore lint/suspicious/noShadowRestrictedNames:",
-        name: "toString",
-      },
-    ],
-  };
-}
-
 export function identifierTypeDeclarations(
   this: ObjectType,
 ): IdentifierTypeDeclarations {
@@ -92,14 +36,6 @@ export function identifierTypeDeclarations(
     );
   }
 
-  if (
-    this.identifierType.nodeKinds.has("BlankNode") &&
-    this.identifierType.nodeKinds.has("NamedNode") &&
-    this.identifierType.in_.length === 0
-  ) {
-    return reExportRdfjsResourceIdentifierTypeDeclarations.bind(this)();
-  }
-
   // Bespoke identifier type and associated functions
   return [
     {
@@ -113,8 +49,8 @@ export function identifierTypeDeclarations(
       kind: StructureKind.Module,
       name: "Identifier",
       statements: [
-        identifierFromStringFunctionDeclaration.bind(this)(),
-        identifierToStringFunctionDeclaration.bind(this)(),
+        this.identifierType.fromStringFunctionDeclaration,
+        this.identifierType.toStringFunctionDeclaration,
       ],
     },
   ];
@@ -140,55 +76,6 @@ function reExportAncestorIdentifierTypeDeclarations(
         {
           initializer: ancestorObjectType.identifierTypeAlias,
           name: "Identifier",
-        },
-      ],
-    },
-  ];
-}
-
-function reExportRdfjsResourceIdentifierTypeDeclarations(
-  this: ObjectType,
-): IdentifierTypeDeclarations {
-  // This object type's identifier type is equivalent to rdfjsResource.Resource.Identifier, so just reuse the latter.
-  return [
-    {
-      isExported: true,
-      kind: StructureKind.TypeAlias,
-      name: "Identifier",
-      type: "rdfjsResource.Resource.Identifier",
-    },
-    {
-      isExported: true,
-      kind: StructureKind.Module,
-      name: "Identifier",
-      statements: [
-        {
-          isExported: true,
-          kind: StructureKind.Function,
-          name: "fromString",
-          parameters: [
-            {
-              name: "identifier",
-              type: "string",
-            },
-          ],
-          returnType: "purify.Either<Error, Identifier>",
-          statements: [
-            `return purify.Either.encase(() => rdfjsResource.Resource.Identifier.fromString({ dataFactory: ${this.dataFactoryVariable}, identifier }));`,
-          ],
-        },
-        {
-          declarationKind: VariableDeclarationKind.Const,
-          isExported: true,
-          kind: StructureKind.VariableStatement,
-          declarations: [
-            {
-              initializer: "rdfjsResource.Resource.Identifier.toString",
-              leadingTrivia:
-                "// biome-ignore lint/suspicious/noShadowRestrictedNames:",
-              name: "toString",
-            },
-          ],
         },
       ],
     },

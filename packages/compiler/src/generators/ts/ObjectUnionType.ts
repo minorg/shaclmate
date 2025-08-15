@@ -7,10 +7,13 @@ import {
   type StatementStructures,
   StructureKind,
   type TypeAliasDeclarationStructure,
+  type VariableStatementStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
+
 import type { TsFeature } from "../../enums/TsFeature.js";
 import { DeclaredType } from "./DeclaredType.js";
+import type { IdentifierType } from "./IdentifierType.js";
 import type { Import } from "./Import.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { Type } from "./Type.js";
@@ -127,25 +130,29 @@ export class ObjectUnionType extends DeclaredType {
   private readonly _discriminatorProperty: Type.DiscriminatorProperty;
   private readonly comment: Maybe<string>;
   private readonly label: Maybe<string>;
-  readonly memberTypes: readonly MemberType[];
 
+  readonly identifierType: IdentifierType;
   readonly kind = "ObjectUnionType";
+  readonly memberTypes: readonly MemberType[];
   readonly typeof = "object";
 
   constructor({
     comment,
+    identifierType,
     label,
     memberTypes,
     ...superParameters
   }: ConstructorParameters<typeof DeclaredType>[0] & {
     comment: Maybe<string>;
     export_: boolean;
+    identifierType: IdentifierType;
     label: Maybe<string>;
     memberTypes: readonly ObjectType[];
     name: string;
   }) {
     super(superParameters);
     this.comment = comment;
+    this.identifierType = identifierType;
     this.label = label;
     invariant(memberTypes.length > 0);
     const discriminatorPropertyDescendantValues: string[] = [];
@@ -205,7 +212,7 @@ export class ObjectUnionType extends DeclaredType {
       ...this.hashFunctionDeclaration.toList(),
       ...this.jsonTypeAliasDeclaration.toList(),
       ...this.jsonZodSchemaFunctionDeclaration.toList(),
-      this.identifierTypeDeclaration,
+      ...this.identifierTypeDeclarations,
       ...this.sparqlFunctionDeclarations,
       ...this.toJsonFunctionDeclaration.toList(),
       ...this.toRdfFunctionDeclaration.toList(),
@@ -416,15 +423,29 @@ return $strictEquals(left.type, right.type).chain(() => {
     });
   }
 
-  private get identifierTypeDeclaration(): TypeAliasDeclarationStructure {
-    return {
-      kind: StructureKind.TypeAlias,
-      isExported: true,
-      name: "Identifier",
-      type: this.memberTypes
-        .map((memberType) => memberType.identifierTypeAlias)
-        .join(" | "),
-    };
+  private get identifierTypeDeclarations(): readonly (
+    | FunctionDeclarationStructure
+    | ModuleDeclarationStructure
+    | TypeAliasDeclarationStructure
+    | VariableStatementStructure
+  )[] {
+    return [
+      {
+        isExported: true,
+        kind: StructureKind.TypeAlias,
+        name: "Identifier",
+        type: this.identifierType.name,
+      },
+      {
+        isExported: true,
+        kind: StructureKind.Module,
+        name: "Identifier",
+        statements: [
+          this.identifierType.fromStringFunctionDeclaration,
+          this.identifierType.toStringFunctionDeclaration,
+        ],
+      },
+    ];
   }
 
   private get jsonTypeAliasDeclaration(): Maybe<TypeAliasDeclarationStructure> {

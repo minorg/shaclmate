@@ -1,5 +1,11 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 
+import {
+  type FunctionDeclarationStructure,
+  StructureKind,
+  VariableDeclarationKind,
+  type VariableStatementStructure,
+} from "ts-morph";
 import { Memoize } from "typescript-memoize";
 
 import { TermType } from "./TermType.js";
@@ -24,18 +30,70 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
   }
 
   @Memoize()
-  get isNamedNodeKind(): boolean {
-    return this.nodeKinds.size === 1 && this.nodeKinds.has("NamedNode");
+  get fromStringFunctionDeclaration(): FunctionDeclarationStructure {
+    if (
+      this.nodeKinds.has("BlankNode") &&
+      this.nodeKinds.has("NamedNode") &&
+      this.in_.length === 0
+    ) {
+      // Wrap rdfjsResource.Resource.Identifier.fromString
+      return {
+        isExported: true,
+        kind: StructureKind.Function,
+        name: "fromString",
+        parameters: [
+          {
+            name: "identifier",
+            type: "string",
+          },
+        ],
+        returnType: "purify.Either<Error, rdfjsResource.Resource.Identifier>",
+        statements: [
+          `return purify.Either.encase(() => rdfjsResource.Resource.Identifier.fromString({ dataFactory: ${this.dataFactoryVariable}, identifier }));`,
+        ],
+      };
+    }
+
+    const expressions: string[] = [
+      `purify.Either.encase(() => rdfjsResource.Resource.Identifier.fromString({ dataFactory: ${this.dataFactoryVariable}, identifier }))`,
+    ];
+
+    if (this.isNamedNodeKind) {
+      expressions.push(
+        `chain((identifier) => (identifier.termType === "NamedNode") ? purify.Either.of(identifier) : purify.Left(new Error("expected identifier to be NamedNode")))`,
+      );
+
+      if (this.in_.length > 0) {
+        expressions.push(
+          `chain((identifier) => { switch (identifier.value) { ${this.in_.map((iri) => `case "${iri.value}": return purify.Either.of(identifier as rdfjs.NamedNode<"${iri.value}">);`).join(" ")} default: return purify.Left(new Error("expected NamedNode identifier to be one of ${this.in_.map((iri) => iri.value).join(" ")}")); } })`,
+        );
+      }
+    }
+
+    return {
+      isExported: true,
+      kind: StructureKind.Function,
+      name: "fromString",
+      parameters: [
+        {
+          name: "identifier",
+          type: "string",
+        },
+      ],
+      returnType: "purify.Either<Error, Identifier>",
+      statements: [
+        `return ${expressions.join(".")} as purify.Either<Error, Identifier>;`,
+      ],
+    };
   }
 
   override get graphqlName(): string {
     return "graphql.GraphQLString";
   }
 
-  override graphqlResolveExpression({
-    variables: { value },
-  }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
-    return `rdfjsResource.Resource.Identifier.toString(${value})`;
+  @Memoize()
+  get isNamedNodeKind(): boolean {
+    return this.nodeKinds.size === 1 && this.nodeKinds.has("NamedNode");
   }
 
   @Memoize()
@@ -64,6 +122,24 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
       .join(" | ")})`;
   }
 
+  @Memoize()
+  get toStringFunctionDeclaration(): VariableStatementStructure {
+    // Re-export rdfjsResource.Resource.Identifier.toString
+    return {
+      declarationKind: VariableDeclarationKind.Const,
+      isExported: true,
+      kind: StructureKind.VariableStatement,
+      declarations: [
+        {
+          initializer: "rdfjsResource.Resource.Identifier.toString",
+          leadingTrivia:
+            "// biome-ignore lint/suspicious/noShadowRestrictedNames:",
+          name: "toString",
+        },
+      ],
+    };
+  }
+
   override fromJsonExpression({
     variables,
   }: Parameters<
@@ -81,6 +157,12 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
       case "NamedNode":
         return valueToNamedNode;
     }
+  }
+
+  override graphqlResolveExpression({
+    variables: { value },
+  }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
+    return `rdfjsResource.Resource.Identifier.toString(${value})`;
   }
 
   override jsonZodSchema({

@@ -504,30 +504,29 @@ export class TypeFactory {
       .map((astType) => this.createTypeFromAstType(astType))
       .filter((memberType) => memberType instanceof ObjectType);
 
-    // let memberIdentifierBlankNodeKind: boolean = false;
-    // const memberIdentifierNodeKinds: IdentifierType["nodeKinds"] = new Set();
-    // for (const memberType of memberTypes) {
-    //   for (const nodeKind of memberType.identifierType.nodeKinds) {
-    //     memberIdentifierNodeKinds.add(nodeKind);
-    //   }
-    // }
-
-    // let identifierType: IdentifierType;
-    // if (identifierType)
-
-    // const identifierType = new IdentifierType({
-    //   dataFactoryVariable: this.dataFactoryVariable,
-    //   defaultValue: Maybe.empty(),
-    //   hasValues: [],
-    //   in_: astType.identifierIn,
-    //   nodeKinds: astType.identifierKinds,
-    // });
+    const memberIdentifierTypeNodeKinds = new Set<"BlankNode" | "NamedNode">();
+    const memberIdentifierTypesIn = new TermSet<NamedNode>();
+    for (const memberType of memberTypes) {
+      for (const nodeKind of memberType.identifierType.nodeKinds) {
+        memberIdentifierTypeNodeKinds.add(nodeKind);
+      }
+      for (const in_ of memberType.identifierType.in_) {
+        memberIdentifierTypesIn.add(in_);
+      }
+    }
 
     const objectUnionType = new ObjectUnionType({
       comment: astType.comment,
       dataFactoryVariable: this.dataFactoryVariable,
       export_: astType.export,
       features: astType.tsFeatures,
+      identifierType: new IdentifierType({
+        dataFactoryVariable: this.dataFactoryVariable,
+        defaultValue: Maybe.empty(),
+        hasValues: [],
+        in_: [...memberIdentifierTypesIn],
+        nodeKinds: memberIdentifierTypeNodeKinds,
+      }),
       label: astType.label,
       memberTypes,
       name: tsName((astType as ast.ObjectUnionType).name),
