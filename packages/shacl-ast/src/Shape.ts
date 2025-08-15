@@ -113,11 +113,11 @@ export namespace Shape {
       return this.generatedShaclCoreShape.datatype;
     }
 
-    get hasValues(): readonly (BlankNode | Literal | NamedNode)[] {
+    get hasValues(): readonly (Literal | NamedNode)[] {
       return this.generatedShaclCoreShape.hasValues;
     }
 
-    get in_(): readonly (BlankNode | Literal | NamedNode)[] {
+    get in_(): readonly (Literal | NamedNode)[] {
       return this.generatedShaclCoreShape.in_.orDefault([]);
     }
 

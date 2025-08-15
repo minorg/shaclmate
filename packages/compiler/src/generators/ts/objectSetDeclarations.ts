@@ -24,7 +24,7 @@ export function objectSetDeclarations({
   | ModuleDeclarationStructure
 )[] {
   const objectTypes = parameters.objectTypes.filter(
-    (objectType) => !objectType.abstract,
+    (objectType) => !objectType.abstract && !objectType.extern,
   );
   let objectTypesWithRdfFeatureCount = 0;
   let objectTypesWithSparqlFeatureCount = 0;
