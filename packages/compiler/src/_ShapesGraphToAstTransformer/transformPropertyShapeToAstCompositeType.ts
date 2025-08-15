@@ -1,4 +1,4 @@
-import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
+import type { Literal, NamedNode } from "@rdfjs/types";
 import type { NodeKind } from "@shaclmate/shacl-ast";
 import { owl, rdfs } from "@tpluscode/rdf-ns-builders";
 import { Either, Left, Maybe } from "purify-ts";
@@ -15,7 +15,7 @@ export function transformPropertyShapeToAstCompositeType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
   inherited: {
-    defaultValue: Maybe<BlankNode | Literal | NamedNode>;
+    defaultValue: Maybe<Literal | NamedNode>;
     extern: Maybe<boolean>;
   } | null,
 ): Either<Error, ast.Type> {
@@ -166,7 +166,7 @@ function widenAstCompositeTypeToSingleType({
   memberTypes,
   shape,
 }: {
-  defaultValue: Maybe<BlankNode | Literal | NamedNode>;
+  defaultValue: Maybe<Literal | NamedNode>;
   memberTypes: readonly ast.Type[];
   shape: input.Shape;
 }): Either<Error, ast.Type> {

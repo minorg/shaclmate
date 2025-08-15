@@ -1,4 +1,4 @@
-import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
+import type { Literal, NamedNode } from "@rdfjs/types";
 import type { Either, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
@@ -15,7 +15,7 @@ export function transformPropertyShapeToAstType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
   inherited: {
-    defaultValue: Maybe<BlankNode | Literal | NamedNode>;
+    defaultValue: Maybe<Literal | NamedNode>;
     extern: Maybe<boolean>;
   } | null,
 ): Either<Error, ast.Type> {
