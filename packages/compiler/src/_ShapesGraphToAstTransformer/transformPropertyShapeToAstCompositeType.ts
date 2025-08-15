@@ -195,10 +195,7 @@ function widenAstCompositeTypeToSingleType({
   });
 
   const canWiden = (
-    memberItemType:
-      | ast.IdentifierType
-      | ast.LiteralType
-      | ast.TermType<BlankNode | Literal | NamedNode>,
+    memberItemType: ast.IdentifierType | ast.LiteralType | ast.TermType,
   ) => {
     if (memberItemType.in_.length > 0) {
       return false;
@@ -286,8 +283,7 @@ function widenAstCompositeTypeToSingleType({
     // Special case: all member types are terms without further constraints
     const nodeKinds = new Set<NodeKind>(
       memberItemTypes.flatMap((memberItemType) => [
-        ...(memberItemType as ast.TermType<BlankNode | Literal | NamedNode>)
-          .nodeKinds,
+        ...(memberItemType as ast.TermType).nodeKinds,
       ]),
     );
     invariant(

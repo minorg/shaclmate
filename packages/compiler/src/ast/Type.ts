@@ -23,7 +23,10 @@ export type Type =
   | OptionType
   | PlaceholderType
   | SetType
-  | (Omit<TermType<BlankNode | Literal | NamedNode>, "kind"> & {
+  | (Omit<
+      TermType<Literal | NamedNode, BlankNode | Literal | NamedNode>,
+      "kind"
+    > & {
       readonly kind: "TermType";
     })
   | UnionType;

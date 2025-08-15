@@ -17,6 +17,8 @@ type IdentifierTypeDeclarations = readonly (
   | VariableStatementStructure
 )[];
 
+// ObjectUnionType needs an IdentifierType instead of current hacks
+// this fromStringFunction declaration (or re-export) should be on IdentifierType, not here
 function identifierFromStringFunctionDeclaration(
   this: ObjectType,
 ): FunctionDeclarationStructure {

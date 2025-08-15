@@ -5,7 +5,7 @@ import { Memoize } from "typescript-memoize";
 import { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 
-export class IdentifierType extends TermType<BlankNode | NamedNode> {
+export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
   readonly kind = "IdentifierType";
 
   @Memoize()
@@ -67,7 +67,7 @@ export class IdentifierType extends TermType<BlankNode | NamedNode> {
   override fromJsonExpression({
     variables,
   }: Parameters<
-    TermType<BlankNode | NamedNode>["fromJsonExpression"]
+    TermType<NamedNode, BlankNode | NamedNode>["fromJsonExpression"]
   >[0]): string {
     const valueToBlankNode = `${this.dataFactoryVariable}.blankNode(${variables.value}["@id"].substring(2))`;
     const valueToNamedNode = `${this.dataFactoryVariable}.namedNode(${variables.value}["@id"])`;
@@ -86,8 +86,10 @@ export class IdentifierType extends TermType<BlankNode | NamedNode> {
   override jsonZodSchema({
     variables,
   }: Parameters<
-    TermType<BlankNode | NamedNode>["jsonZodSchema"]
-  >[0]): ReturnType<TermType<BlankNode | NamedNode>["jsonZodSchema"]> {
+    TermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
+  >[0]): ReturnType<
+    TermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
+  > {
     let idSchema: string;
     if (this.in_.length > 0 && this.isNamedNodeKind) {
       // Treat sh:in as a union of the IRIs
@@ -103,7 +105,7 @@ export class IdentifierType extends TermType<BlankNode | NamedNode> {
   override toJsonExpression({
     variables,
   }: Parameters<
-    TermType<BlankNode | NamedNode>["toJsonExpression"]
+    TermType<NamedNode, BlankNode | NamedNode>["toJsonExpression"]
   >[0]): string {
     const valueToBlankNode = `{ "@id": \`_:\${${variables.value}.value}\` }`;
     const valueToNamedNode = `{ "@id": ${variables.value}.value }`;
@@ -121,7 +123,10 @@ export class IdentifierType extends TermType<BlankNode | NamedNode> {
   protected override propertyFromRdfResourceValueExpression({
     variables,
   }: Parameters<
-    TermType<BlankNode | NamedNode>["propertyFromRdfResourceValueExpression"]
+    TermType<
+      NamedNode,
+      BlankNode | NamedNode
+    >["propertyFromRdfResourceValueExpression"]
   >[0]): string {
     if (this.nodeKinds.size === 2) {
       return `${variables.resourceValue}.toIdentifier()`;

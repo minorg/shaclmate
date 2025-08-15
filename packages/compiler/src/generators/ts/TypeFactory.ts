@@ -58,6 +58,10 @@ export class TypeFactory {
     BlankNode | NamedNode,
     ObjectType
   > = new TermMap();
+  private cachedObjectUnionTypesByIdentifier: TermMap<
+    BlankNode | NamedNode,
+    ObjectUnionType
+  > = new TermMap();
 
   constructor({ dataFactoryVariable }: { dataFactoryVariable: string }) {
     this.dataFactoryVariable = dataFactoryVariable;
@@ -70,7 +74,7 @@ export class TypeFactory {
           dataFactoryVariable: this.dataFactoryVariable,
           defaultValue: astType.defaultValue,
           hasValues: astType.hasValues,
-          in_: astType.in_,
+          in_: astType.in_.filter((_) => _.termType === "NamedNode"),
           nodeKinds: astType.nodeKinds,
         });
       case "IntersectionType":
@@ -203,17 +207,7 @@ export class TypeFactory {
       case "ObjectType":
         return this.createObjectTypeFromAstType(astType);
       case "ObjectUnionType":
-        return new ObjectUnionType({
-          comment: astType.comment,
-          dataFactoryVariable: this.dataFactoryVariable,
-          export_: astType.export,
-          features: astType.tsFeatures,
-          label: astType.label,
-          memberTypes: astType.memberTypes
-            .map((astType) => this.createTypeFromAstType(astType))
-            .filter((memberType) => memberType instanceof ObjectType),
-          name: tsName((astType as ast.ObjectUnionType).name),
-        });
+        return this.createObjectUnionTypeFromAstType(astType);
       case "OptionType":
         return new OptionType({
           dataFactoryVariable: this.dataFactoryVariable,
@@ -231,10 +225,10 @@ export class TypeFactory {
       case "TermType":
         return new TermType({
           dataFactoryVariable: this.dataFactoryVariable,
-          defaultValue: astType.defaultValue,
-          hasValues: astType.hasValues,
-          in_: astType.in_,
-          nodeKinds: astType.nodeKinds,
+          defaultValue: astType["defaultValue"],
+          hasValues: astType["hasValues"],
+          in_: astType["in_"],
+          nodeKinds: astType["nodeKinds"],
         });
       case "UnionType":
         return new UnionType({
@@ -492,6 +486,58 @@ export class TypeFactory {
       property,
     );
     return property;
+  }
+
+  private createObjectUnionTypeFromAstType(
+    astType: ast.ObjectUnionType,
+  ): ObjectUnionType {
+    {
+      const cachedObjectUnionType = this.cachedObjectUnionTypesByIdentifier.get(
+        astType.name.identifier,
+      );
+      if (cachedObjectUnionType) {
+        return cachedObjectUnionType;
+      }
+    }
+
+    const memberTypes = astType.memberTypes
+      .map((astType) => this.createTypeFromAstType(astType))
+      .filter((memberType) => memberType instanceof ObjectType);
+
+    // let memberIdentifierBlankNodeKind: boolean = false;
+    // const memberIdentifierNodeKinds: IdentifierType["nodeKinds"] = new Set();
+    // for (const memberType of memberTypes) {
+    //   for (const nodeKind of memberType.identifierType.nodeKinds) {
+    //     memberIdentifierNodeKinds.add(nodeKind);
+    //   }
+    // }
+
+    // let identifierType: IdentifierType;
+    // if (identifierType)
+
+    // const identifierType = new IdentifierType({
+    //   dataFactoryVariable: this.dataFactoryVariable,
+    //   defaultValue: Maybe.empty(),
+    //   hasValues: [],
+    //   in_: astType.identifierIn,
+    //   nodeKinds: astType.identifierKinds,
+    // });
+
+    const objectUnionType = new ObjectUnionType({
+      comment: astType.comment,
+      dataFactoryVariable: this.dataFactoryVariable,
+      export_: astType.export,
+      features: astType.tsFeatures,
+      label: astType.label,
+      memberTypes,
+      name: tsName((astType as ast.ObjectUnionType).name),
+    });
+
+    this.cachedObjectUnionTypesByIdentifier.set(
+      astType.name.identifier,
+      objectUnionType,
+    );
+    return objectUnionType;
   }
 }
 
