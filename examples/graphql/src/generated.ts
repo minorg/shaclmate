@@ -1285,6 +1285,12 @@ export namespace Union {
     );
   }
 
+  export const GraphQL = new graphql.GraphQLUnionType({
+    description: "Union",
+    name: "Union",
+    resolveType: (value: Union) => value.type,
+    types: [UnionMember1.GraphQL, UnionMember2.GraphQL],
+  });
   export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {

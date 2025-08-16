@@ -7,6 +7,7 @@ import {
   type StatementStructures,
   StructureKind,
   type TypeAliasDeclarationStructure,
+  VariableDeclarationKind,
   type VariableStatementStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
@@ -209,6 +210,7 @@ export class ObjectUnionType extends DeclaredType {
       ...this.equalsFunctionDeclaration.toList(),
       ...this.fromJsonFunctionDeclaration.toList(),
       ...this.fromRdfFunctionDeclaration.toList(),
+      ...this.graphqlTypeVariableStatement.toList(),
       ...this.hashFunctionDeclaration.toList(),
       ...this.jsonTypeAliasDeclaration.toList(),
       ...this.jsonZodSchemaFunctionDeclaration.toList(),
@@ -373,6 +375,29 @@ return $strictEquals(left.type, right.type).chain(() => {
         }, "")};`,
       ],
     });
+  }
+
+  private get graphqlTypeVariableStatement(): Maybe<VariableStatementStructure> {
+    if (!this.features.has("graphql")) {
+      return Maybe.empty();
+    }
+
+    return Maybe.of({
+      declarationKind: VariableDeclarationKind.Const,
+      kind: StructureKind.VariableStatement,
+      declarations: [
+        {
+          name: "GraphQL",
+          initializer: `new graphql.GraphQLUnionType(${objectInitializer({
+            description: this.comment.map(JSON.stringify).extract(),
+            name: `"${this.name}"`,
+            resolveType: `function (value: ${this.name}) { return value.type; }`,
+            types: `[${this.memberTypes.map((memberType) => memberType.graphqlName).join(", ")}]`,
+          })})`,
+        },
+      ],
+      isExported: true,
+    } satisfies VariableStatementStructure);
   }
 
   private get hashFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
