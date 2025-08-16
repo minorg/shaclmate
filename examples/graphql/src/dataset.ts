@@ -48,6 +48,6 @@ for (let i = 0; i < 4; i++) {
     new UnionMember2({
       identifier: N3.DataFactory.namedNode(`http://example.com/union${i}`),
       optionalStringProperty: "test",
-    });
+    }).toRdf({ resourceSet });
   }
 }
