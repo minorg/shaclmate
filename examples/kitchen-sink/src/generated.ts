@@ -997,12 +997,12 @@ export class UnionPropertiesClass {
 }
 
 export namespace UnionPropertiesClass {
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -2099,12 +2099,12 @@ export class TermPropertiesClass {
 }
 
 export namespace TermPropertiesClass {
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -3384,12 +3384,12 @@ export class PropertyVisibilitiesClass {
 }
 
 export namespace PropertyVisibilitiesClass {
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -3948,12 +3948,12 @@ export class PropertyCardinalitiesClass {
 }
 
 export namespace PropertyCardinalitiesClass {
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -4585,12 +4585,12 @@ export class OrderedPropertiesClass {
 }
 
 export namespace OrderedPropertiesClass {
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -5034,12 +5034,12 @@ export class NonClass {
 }
 
 export namespace NonClass {
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -5550,12 +5550,12 @@ export class MutablePropertiesClass {
 }
 
 export namespace MutablePropertiesClass {
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -6394,12 +6394,12 @@ export class ListPropertiesClass {
 }
 
 export namespace ListPropertiesClass {
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -7329,12 +7329,12 @@ export class LanguageInPropertiesClass {
 }
 
 export namespace LanguageInPropertiesClass {
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -8060,12 +8060,12 @@ export namespace InterfaceUnionMember2b {
       );
   }
 
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -8445,12 +8445,12 @@ export namespace InterfaceUnionMember2a {
       );
   }
 
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -8830,12 +8830,12 @@ export namespace InterfaceUnionMember1 {
       );
   }
 
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -9202,12 +9202,12 @@ export namespace Interface {
       );
   }
 
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -9788,12 +9788,12 @@ export class InPropertiesClass {
 }
 
 export namespace InPropertiesClass {
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -11028,12 +11028,12 @@ export class HasValuePropertiesClass {
 }
 
 export namespace HasValuePropertiesClass {
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -11481,12 +11481,12 @@ export class ExternPropertiesInlineNestedClass {
 }
 
 export namespace ExternPropertiesInlineNestedClass {
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -11866,12 +11866,12 @@ export class ExternPropertiesExternNestedClass {
 }
 
 export namespace ExternPropertiesExternNestedClass {
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -12367,12 +12367,12 @@ export class ExternPropertiesClass {
 }
 
 export namespace ExternPropertiesClass {
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -12932,12 +12932,12 @@ export namespace ExplicitRdfTypeClass {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/RdfType",
   );
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -13435,12 +13435,12 @@ export namespace ExplicitFromToRdfTypesClass {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/FromRdfType",
   );
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -14140,12 +14140,12 @@ export class DefaultValuePropertiesClass {
 }
 
 export namespace DefaultValuePropertiesClass {
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -14874,12 +14874,12 @@ export namespace BaseInterfaceWithPropertiesStatic {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/BaseInterfaceWithProperties",
   );
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -17002,12 +17002,12 @@ export abstract class AbstractBaseClassWithProperties {
 }
 
 export namespace AbstractBaseClassWithPropertiesStatic {
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -18645,12 +18645,12 @@ export namespace ClassUnionMember2 {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/ClassUnionMember2",
   );
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -19131,12 +19131,12 @@ export namespace ClassUnionMember1 {
   export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/ClassUnionMember1",
   );
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -19585,12 +19585,12 @@ export class BlankClass {
 }
 
 export namespace BlankClass {
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -19858,12 +19858,12 @@ export abstract class AbstractBaseClassForExternClass {
 }
 
 export namespace AbstractBaseClassForExternClassStatic {
-  export type Identifier = rdfjsResource.Resource.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -20208,9 +20208,23 @@ export namespace ClassUnion {
     ]);
   }
 
-  export type Identifier =
-    | ClassUnionMember1.Identifier
-    | ClassUnionMember2.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory: dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -20471,10 +20485,23 @@ export namespace InterfaceUnion {
     ]);
   }
 
-  export type Identifier =
-    | InterfaceUnionMember1.Identifier
-    | InterfaceUnionMember2a.Identifier
-    | InterfaceUnionMember2b.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory: dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -20733,9 +20760,23 @@ export namespace InterfaceUnionMember2 {
     ]);
   }
 
-  export type Identifier =
-    | InterfaceUnionMember2a.Identifier
-    | InterfaceUnionMember2b.Identifier;
+  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory: dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
 
   export function sparqlConstructQuery(
     parameters?: {
@@ -21061,18 +21102,6 @@ export interface $ObjectSet {
   ): Promise<readonly purify.Either<Error, ExplicitRdfTypeClass>[]>;
   explicitRdfTypeClassesCount(
     query?: Pick<$ObjectSet.Query<ExplicitRdfTypeClass.Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>>;
-  externClass(
-    identifier: ExternClass.Identifier,
-  ): Promise<purify.Either<Error, ExternClass>>;
-  externClassIdentifiers(
-    query?: $ObjectSet.Query<ExternClass.Identifier>,
-  ): Promise<purify.Either<Error, readonly ExternClass.Identifier[]>>;
-  externClasses(
-    query?: $ObjectSet.Query<ExternClass.Identifier>,
-  ): Promise<readonly purify.Either<Error, ExternClass>[]>;
-  externClassesCount(
-    query?: Pick<$ObjectSet.Query<ExternClass.Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
   externPropertiesClass(
     identifier: ExternPropertiesClass.Identifier,
@@ -22260,69 +22289,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ExplicitRdfTypeClass,
       ExplicitRdfTypeClass.Identifier
     >(ExplicitRdfTypeClass, query);
-  }
-
-  async externClass(
-    identifier: ExternClass.Identifier,
-  ): Promise<purify.Either<Error, ExternClass>> {
-    return this.externClassSync(identifier);
-  }
-
-  externClassSync(
-    identifier: ExternClass.Identifier,
-  ): purify.Either<Error, ExternClass> {
-    return this.externClassesSync({
-      where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
-  }
-
-  async externClassIdentifiers(
-    query?: $ObjectSet.Query<ExternClass.Identifier>,
-  ): Promise<purify.Either<Error, readonly ExternClass.Identifier[]>> {
-    return this.externClassIdentifiersSync(query);
-  }
-
-  externClassIdentifiersSync(
-    query?: $ObjectSet.Query<ExternClass.Identifier>,
-  ): purify.Either<Error, readonly ExternClass.Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<ExternClass, ExternClass.Identifier>(
-        { ...ExternClass, fromRdfType: undefined },
-        query,
-      ),
-    ]);
-  }
-
-  async externClasses(
-    query?: $ObjectSet.Query<ExternClass.Identifier>,
-  ): Promise<readonly purify.Either<Error, ExternClass>[]> {
-    return this.externClassesSync(query);
-  }
-
-  externClassesSync(
-    query?: $ObjectSet.Query<ExternClass.Identifier>,
-  ): readonly purify.Either<Error, ExternClass>[] {
-    return [
-      ...this.$objectsSync<ExternClass, ExternClass.Identifier>(
-        { ...ExternClass, fromRdfType: undefined },
-        query,
-      ),
-    ];
-  }
-
-  async externClassesCount(
-    query?: Pick<$ObjectSet.Query<ExternClass.Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.externClassesCountSync(query);
-  }
-
-  externClassesCountSync(
-    query?: Pick<$ObjectSet.Query<ExternClass.Identifier>, "where">,
-  ): purify.Either<Error, number> {
-    return this.$objectsCountSync<ExternClass, ExternClass.Identifier>(
-      { ...ExternClass, fromRdfType: undefined },
-      query,
-    );
   }
 
   async externPropertiesClass(
@@ -24765,30 +24731,6 @@ export class $SparqlObjectSet implements $ObjectSet {
       ExplicitRdfTypeClass,
       query,
     );
-  }
-
-  async externClass(
-    _identifier: ExternClass.Identifier,
-  ): Promise<purify.Either<Error, ExternClass>> {
-    return purify.Left(new Error("object: not supported"));
-  }
-
-  async externClassIdentifiers(
-    _query?: $ObjectSet.Query<ExternClass.Identifier>,
-  ): Promise<purify.Either<Error, readonly ExternClass.Identifier[]>> {
-    return purify.Left(new Error("objectIdentifiers: not supported"));
-  }
-
-  async externClasses(
-    _query?: $ObjectSet.Query<ExternClass.Identifier>,
-  ): Promise<readonly purify.Either<Error, ExternClass>[]> {
-    return [purify.Left(new Error("objects: not supported"))];
-  }
-
-  async externClassesCount(
-    _query?: Pick<$ObjectSet.Query<ExternClass.Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return purify.Left(new Error("objectsCount: not supported"));
   }
 
   async externPropertiesClass(
