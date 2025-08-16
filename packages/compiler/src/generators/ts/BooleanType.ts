@@ -8,6 +8,7 @@ export class BooleanType extends PrimitiveType<boolean> {
   readonly kind = "BooleanType";
   override readonly typeof = "boolean";
 
+  @Memoize()
   override get conversions(): readonly Type.Conversion[] {
     const conversions: Type.Conversion[] = [
       {

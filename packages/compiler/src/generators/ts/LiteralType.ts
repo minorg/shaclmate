@@ -2,14 +2,14 @@ import type { Literal } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { TermType } from "./TermType.js";
 
-export class LiteralType extends TermType<Literal> {
+export class LiteralType extends TermType<Literal, Literal> {
   private readonly languageIn: readonly string[];
 
   constructor({
     languageIn,
     ...superParameters
   }: { languageIn: readonly string[] } & Omit<
-    ConstructorParameters<typeof TermType<Literal>>[0],
+    ConstructorParameters<typeof TermType<Literal, Literal>>[0],
     "nodeKinds"
   >) {
     super({
@@ -25,14 +25,16 @@ export class LiteralType extends TermType<Literal> {
 
   override fromJsonExpression({
     variables,
-  }: Parameters<TermType<Literal>["fromJsonExpression"]>[0]): string {
+  }: Parameters<TermType<Literal, Literal>["fromJsonExpression"]>[0]): string {
     return `${this.dataFactoryVariable}.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? dataFactory.namedNode(${variables.value}["@type"]) : undefined))`;
   }
 
   override hashStatements({
     depth,
     variables,
-  }: Parameters<TermType<Literal>["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<
+    TermType<Literal, Literal>["hashStatements"]
+  >[0]): readonly string[] {
     return [
       `${variables.hasher}.update(${variables.value}.datatype.value);`,
       `${variables.hasher}.update(${variables.value}.language);`,
@@ -41,8 +43,8 @@ export class LiteralType extends TermType<Literal> {
 
   override jsonZodSchema({
     variables,
-  }: Parameters<TermType<Literal>["jsonZodSchema"]>[0]): ReturnType<
-    TermType<Literal>["jsonZodSchema"]
+  }: Parameters<TermType<Literal, Literal>["jsonZodSchema"]>[0]): ReturnType<
+    TermType<Literal, Literal>["jsonZodSchema"]
   > {
     return `${variables.zod}.object({ "@language": ${variables.zod}.string().optional(), "@type": ${variables.zod}.string().optional(), "@value": ${variables.zod}.string() })`;
   }
@@ -50,21 +52,21 @@ export class LiteralType extends TermType<Literal> {
   override propertyFromRdfResourceValueExpression({
     variables,
   }: Parameters<
-    TermType<Literal>["propertyFromRdfResourceValueExpression"]
+    TermType<Literal, Literal>["propertyFromRdfResourceValueExpression"]
   >[0]): string {
     return `${variables.resourceValue}.toLiteral()`;
   }
 
   override toJsonExpression({
     variables,
-  }: Parameters<TermType<Literal>["toJsonExpression"]>[0]): string {
+  }: Parameters<TermType<Literal, Literal>["toJsonExpression"]>[0]): string {
     return `{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value }`;
   }
 
   protected override propertyFilterRdfResourceValuesExpression({
     variables,
   }: Parameters<
-    TermType<Literal>["propertyFilterRdfResourceValuesExpression"]
+    TermType<Literal, Literal>["propertyFilterRdfResourceValuesExpression"]
   >[0]): string {
     return `${variables.resourceValues}.filter(_value => {
   const _languageInOrDefault = ${variables.languageIn} ?? ${JSON.stringify(this.languageIn)};

@@ -1,4 +1,4 @@
-import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
+import type { Literal, NamedNode } from "@rdfjs/types";
 import type { NodeKind } from "@shaclmate/shacl-ast";
 import { Either, Maybe } from "purify-ts";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
@@ -13,11 +13,11 @@ export function transformPropertyShapeToAstTermType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
   inherited: {
-    defaultValue: Maybe<BlankNode | Literal | NamedNode>;
+    defaultValue: Maybe<Literal | NamedNode>;
   } | null,
 ): Either<
   Error,
-  Omit<ast.TermType<BlankNode | Literal | NamedNode>, "kind"> & {
+  Omit<ast.TermType, "kind"> & {
     readonly kind: "TermType";
   }
 > {

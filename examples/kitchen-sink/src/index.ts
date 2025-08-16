@@ -1,2 +1,2 @@
-export * from "./ExternObjectType.js";
+export * from "./ExternClass.js";
 export * from "./generated.js";

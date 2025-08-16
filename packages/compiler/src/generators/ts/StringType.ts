@@ -8,6 +8,7 @@ export class StringType extends PrimitiveType<string> {
   readonly kind = "StringType";
   override readonly typeof = "string";
 
+  @Memoize()
   override get conversions(): readonly Type.Conversion[] {
     const conversions: Type.Conversion[] = [
       {

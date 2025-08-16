@@ -2,7 +2,11 @@ import type { MethodSignatureStructure, OptionalKind } from "ts-morph";
 import type { ObjectType } from "./ObjectType.js";
 
 export function objectSetMethodSignatures(parameters: {
-  objectType: ObjectType;
+  objectType: {
+    readonly identifierTypeAlias: string;
+    readonly objectSetMethodNames: ObjectType.ObjectSetMethodNames;
+    readonly name: string;
+  };
   queryT?: string;
 }): Record<
   keyof ObjectType.ObjectSetMethodNames,

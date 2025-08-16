@@ -1,4 +1,4 @@
-import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
+import type { Literal, NamedNode } from "@rdfjs/types";
 import type { Maybe } from "purify-ts";
 import type { OntologyLike } from "./OntologyLike.js";
 import type { PropertyPath } from "./PropertyPath.js";
@@ -41,7 +41,7 @@ export class PropertyShape<
     );
   }
 
-  get defaultValue(): Maybe<BlankNode | Literal | NamedNode> {
+  get defaultValue(): Maybe<Literal | NamedNode> {
     return this.generatedShaclCorePropertyShape.defaultValue;
   }
 

@@ -13,16 +13,25 @@ import { objectInitializer } from "./objectInitializer.js";
 
 /**
  * Abstract base class for IdentifierType and LiteralType.
+ *
+ * ConstantTermT is the type of sh:defaultValue, sh:hasValue, and sh:in.
+ * RuntimeTermT is the type of values at runtime.
+ *
+ * The two are differentiated because identifiers can have BlankNode or NamedNode values at runtime but only NamedNode values for sh:defaultValue et al.
  */
 export class TermType<
-  TermT extends BlankNode | Literal | NamedNode,
+  ConstantTermT extends Literal | NamedNode = Literal | NamedNode,
+  RuntimeTermT extends BlankNode | Literal | NamedNode =
+    | BlankNode
+    | Literal
+    | NamedNode,
 > extends Type {
-  readonly defaultValue: Maybe<TermT>;
+  readonly defaultValue: Maybe<ConstantTermT>;
   readonly equalsFunction: string = "$booleanEquals";
-  readonly hasValues: readonly TermT[];
-  readonly in_: readonly TermT[];
+  readonly hasValues: readonly ConstantTermT[];
+  readonly in_: readonly ConstantTermT[];
   readonly mutable: boolean = false;
-  readonly nodeKinds: Set<TermT["termType"]>;
+  readonly nodeKinds: Set<RuntimeTermT["termType"]>;
   readonly typeof: "boolean" | "number" | "object" | "string" = "object";
 
   constructor({
@@ -32,10 +41,10 @@ export class TermType<
     nodeKinds,
     ...superParameters
   }: {
-    defaultValue: Maybe<TermT>;
-    hasValues: readonly TermT[];
-    in_: readonly TermT[];
-    nodeKinds: Set<TermT["termType"]>;
+    defaultValue: Maybe<ConstantTermT>;
+    hasValues: readonly ConstantTermT[];
+    in_: readonly ConstantTermT[];
+    nodeKinds: Set<RuntimeTermT["termType"]>;
   } & ConstructorParameters<typeof Type>[0]) {
     super(superParameters);
     this.defaultValue = defaultValue;
@@ -45,6 +54,7 @@ export class TermType<
     invariant(this.nodeKinds.size > 0);
   }
 
+  @Memoize()
   get conversions(): readonly Type.Conversion[] {
     const conversions: Type.Conversion[] = [];
 
@@ -95,6 +105,7 @@ export class TermType<
     return conversions;
   }
 
+  @Memoize()
   override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
     return Maybe.of({
       name: "termType",
@@ -108,6 +119,7 @@ export class TermType<
     throw new Error("not implemented");
   }
 
+  @Memoize()
   get jsonName(): string {
     invariant(
       this.nodeKinds.has("Literal") &&

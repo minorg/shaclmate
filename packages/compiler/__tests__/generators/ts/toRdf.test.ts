@@ -4,20 +4,21 @@ import N3, { DataFactory as dataFactory } from "n3";
 import { MutableResourceSet } from "rdfjs-resource";
 import { describe, it } from "vitest";
 
+import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { harnesses } from "./harnesses.js";
 
 describe("toRdf", () => {
   it("should populate a dataset", ({ expect }) => {
     const dataset = new N3.Store();
     const resourceSet = new MutableResourceSet({ dataFactory, dataset });
-    const resource = harnesses.concreteChildClassNodeShape.instance.toRdf({
+    const resource = harnesses.concreteChildClass.instance.toRdf({
       resourceSet,
       mutateGraph: dataFactory.defaultGraph(),
     });
     expect(dataset.size).toStrictEqual(4);
     expect(
       resource.identifier.equals(
-        harnesses.concreteChildClassNodeShape.instance.identifier,
+        harnesses.concreteChildClass.instance.identifier,
       ),
     ).toStrictEqual(true);
     expect(
@@ -25,15 +26,14 @@ describe("toRdf", () => {
         .value(rdf.type)
         .chain((value) => value.toIri())
         .unsafeCoerce()
-        .equals(
-          dataFactory.namedNode(
-            "http://example.com/ConcreteChildClassNodeShape",
-          ),
-        ),
+        .equals(kitchenSink.ConcreteChildClass.fromRdfType),
     ).toStrictEqual(true);
     expect(
       resource
-        .value(dataFactory.namedNode("http://example.com/childStringProperty"))
+        .value(
+          kitchenSink.ConcreteChildClass.$properties.concreteChildClassProperty
+            .identifier,
+        )
         .chain((value) => value.toString())
         .unsafeCoerce(),
     ).toStrictEqual("child");
@@ -41,7 +41,7 @@ describe("toRdf", () => {
 
   it("should produce serializable RDF", ({ expect }) => {
     const dataset = new N3.Store();
-    harnesses.nonClassNodeShape.toRdf({
+    harnesses.nonClass.toRdf({
       mutateGraph: dataFactory.defaultGraph(),
       resourceSet: new MutableResourceSet({ dataFactory, dataset }),
     });
@@ -53,7 +53,7 @@ describe("toRdf", () => {
 
   it("explicit rdfType", ({ expect }) => {
     const dataset = new N3.Store();
-    const resource = harnesses.explicitRdfType.toRdf({
+    const resource = harnesses.explicitRdfTypeClass.toRdf({
       mutateGraph: dataFactory.defaultGraph(),
       resourceSet: new MutableResourceSet({
         dataFactory,
@@ -68,7 +68,10 @@ describe("toRdf", () => {
     ).toBe(true);
     expect(
       resource
-        .value(dataFactory.namedNode("http://example.com/stringProperty"))
+        .value(
+          kitchenSink.ExplicitRdfTypeClass.$properties.explicitRdfTypeProperty
+            .identifier,
+        )
         .chain((value) => value.toString())
         .unsafeCoerce(),
     ).toStrictEqual("test");
@@ -76,7 +79,7 @@ describe("toRdf", () => {
 
   it("explicit toRdfType", ({ expect }) => {
     const dataset = new N3.Store();
-    const resource = harnesses.explicitFromToRdfTypes.toRdf({
+    const resource = harnesses.explicitFromToRdfTypesClass.toRdf({
       mutateGraph: dataFactory.defaultGraph(),
       resourceSet: new MutableResourceSet({
         dataFactory,
@@ -96,7 +99,10 @@ describe("toRdf", () => {
     ).toBe(true);
     expect(
       resource
-        .value(dataFactory.namedNode("http://example.com/stringProperty"))
+        .value(
+          kitchenSink.ExplicitFromToRdfTypesClass.$properties
+            .explicitFromToRdfTypesProperty.identifier,
+        )
         .chain((value) => value.toString())
         .unsafeCoerce(),
     ).toStrictEqual("test");
@@ -104,7 +110,7 @@ describe("toRdf", () => {
 
   it("should not serialize default values", ({ expect }) => {
     const dataset = new N3.Store();
-    harnesses.defaultValuePropertiesNodeShape.toRdf({
+    harnesses.defaultValuePropertiesClass.toRdf({
       mutateGraph: dataFactory.defaultGraph(),
       resourceSet: new MutableResourceSet({ dataFactory, dataset }),
     });
@@ -120,7 +126,10 @@ describe("toRdf", () => {
     expect(dataset.size).toStrictEqual(4);
     expect(
       resource
-        .value(dataFactory.namedNode("http://example.com/falseBooleanProperty"))
+        .value(
+          kitchenSink.DefaultValuePropertiesClass.$properties
+            .falseBooleanDefaultValueProperty.identifier,
+        )
         .chain((value) => value.toBoolean())
         .unsafeCoerce(),
     ).toStrictEqual(true);

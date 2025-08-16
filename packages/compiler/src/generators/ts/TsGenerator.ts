@@ -114,12 +114,24 @@ export class TsGenerator implements Generator {
       sourceFile.addStatements(objectUnionType.declarations);
     }
 
+    const objectTypesSortedByName = objectTypes.toSorted((left, right) =>
+      left.name.localeCompare(right.name),
+    );
+    const objectUnionTypesSortedByName = objectUnionTypes.toSorted(
+      (left, right) => left.name.localeCompare(right.name),
+    );
+
     sourceFile.addStatements(
-      objectSetDeclarations({ dataFactoryVariable, objectTypes }),
+      objectSetDeclarations({
+        dataFactoryVariable,
+        objectTypes: objectTypesSortedByName,
+        objectUnionTypes: objectUnionTypesSortedByName,
+      }),
     );
     sourceFile.addVariableStatements(
       graphqlSchemaVariableStatement({
-        objectTypes,
+        objectTypes: objectTypesSortedByName,
+        objectUnionTypes: objectUnionTypesSortedByName,
       }).toList(),
     );
   }

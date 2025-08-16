@@ -3,10 +3,13 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 
-import type * as ast from "../ast/index.js";
-import * as input from "../input/index.js";
-
+import TermSet from "@rdfjs/term-set";
+import type { NamedNode } from "@rdfjs/types";
+import { Resource } from "rdfjs-resource";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
+import type * as ast from "../ast/index.js";
+import type { TsFeature } from "../enums/TsFeature.js";
+import * as input from "../input/index.js";
 import { tsFeaturesDefault } from "../input/tsFeatures.js";
 import { logger } from "../logger.js";
 import type { NodeShapeAstType } from "./NodeShapeAstType.js";
@@ -168,7 +171,7 @@ export function transformNodeShapeToAstType(
       label: pickLiteral(nodeShape.labels).map((literal) => literal.value),
       memberTypes: [] as ast.ObjectType[],
       name: this.shapeAstName(nodeShape),
-      tsFeatures: nodeShape.tsFeatures.orDefault(new Set(tsFeaturesDefault)),
+      tsFeatures: new Set<TsFeature>(),
     };
 
     this.nodeShapeAstTypesByIdentifier.set(nodeShape.identifier, compositeType);
@@ -195,6 +198,60 @@ export function transformNodeShapeToAstType(
           );
       }
     }
+
+    // Members of the composite type must have the same tsFeatures.
+    // They must also have distinct RDF types or no RDF types at all.
+    const nonExternMemberTypes = compositeType.memberTypes.filter(
+      (memberType) => !memberType.extern,
+    );
+    const fromRdfTypes = new TermSet<NamedNode>();
+    for (
+      let memberTypeI = 0;
+      memberTypeI < nonExternMemberTypes.length;
+      memberTypeI++
+    ) {
+      const memberType = nonExternMemberTypes[memberTypeI];
+
+      if (memberTypeI === 0) {
+        for (const tsFeature of memberType.tsFeatures) {
+          compositeType.tsFeatures.add(tsFeature);
+        }
+      }
+
+      memberType.fromRdfType.ifJust((fromRdfType) =>
+        fromRdfTypes.add(fromRdfType),
+      );
+
+      if (memberType.tsFeatures.size !== compositeType.tsFeatures.size) {
+        return Left(
+          new Error(
+            `${nodeShape} has a member ObjectType (${Resource.Identifier.toString(memberType.name.identifier)}) with different tsFeatures than the other member ObjectType's`,
+          ),
+        );
+      }
+
+      for (const tsFeature of memberType.tsFeatures) {
+        if (!compositeType.tsFeatures.has(tsFeature)) {
+          return Left(
+            new Error(
+              `${nodeShape} has a member ObjectType (${Resource.Identifier.toString(memberType.name.identifier)}) with different tsFeatures than the other member ObjectType's`,
+            ),
+          );
+        }
+      }
+    }
+
+    if (
+      fromRdfTypes.size > 0 &&
+      fromRdfTypes.size !== nonExternMemberTypes.length
+    ) {
+      return Left(
+        new Error(
+          `one or more ${nodeShape} members ([${nonExternMemberTypes.map((memberType) => Resource.Identifier.toString(memberType.name.identifier)).join(", ")}]) lack distinguishing fromRdfType's ({${[...fromRdfTypes].map((fromRdfType) => Resource.Identifier.toString(fromRdfType)).join(", ")}})`,
+        ),
+      );
+    }
+
     return Either.of(compositeType);
   }
 

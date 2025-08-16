@@ -32,6 +32,7 @@ export class SetType extends Type {
     this._mutable = mutable;
   }
 
+  @Memoize()
   override get conversions(): readonly Type.Conversion[] {
     const conversions: Type.Conversion[] = [];
 
@@ -62,14 +63,17 @@ export class SetType extends Type {
     return conversions;
   }
 
+  @Memoize()
   override get equalsFunction(): string {
     return `((left, right) => $arrayEquals(left, right, ${this.itemType.equalsFunction}))`;
   }
 
+  @Memoize()
   override get graphqlName(): string {
     return `new graphql.GraphQLList(new graphql.GraphQLNonNull(${this.itemType.graphqlName}))`;
   }
 
+  @Memoize()
   override get jsonName(): string {
     return `readonly (${this.itemType.jsonName})[]`;
   }

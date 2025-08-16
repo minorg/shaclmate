@@ -1,4 +1,4 @@
-import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
+import type { Literal, NamedNode } from "@rdfjs/types";
 import { Either, Left, Maybe } from "purify-ts";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type * as ast from "../ast/index.js";
@@ -12,7 +12,7 @@ export function transformPropertyShapeToAstIdentifierType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
   inherited: {
-    defaultValue: Maybe<BlankNode | Literal | NamedNode>;
+    defaultValue: Maybe<Literal | NamedNode>;
   } | null,
 ): Either<Error, ast.IdentifierType> {
   // defaultValue / hasValue / in only makes sense with IRIs

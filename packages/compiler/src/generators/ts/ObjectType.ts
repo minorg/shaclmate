@@ -1,6 +1,6 @@
 import type { NamedNode } from "@rdfjs/types";
 
-import { camelCase, trainCase } from "change-case";
+import { camelCase } from "change-case";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import {
@@ -11,8 +11,6 @@ import {
   StructureKind,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
-
-import plur from "plur";
 import type {
   IdentifierMintingStrategy,
   TsFeature,
@@ -126,7 +124,6 @@ export class ObjectType extends DeclaredType {
     ];
   }
 
-  @Memoize()
   get declarationImports(): readonly Import[] {
     if (this.extern) {
       return [];
@@ -172,7 +169,7 @@ export class ObjectType extends DeclaredType {
       ..._ObjectType.jsonFunctionDeclarations.bind(this)(),
       ..._ObjectType.hashFunctionDeclarations.bind(this)(),
       ..._ObjectType.rdfFunctionDeclarations.bind(this)(),
-      ..._ObjectType.rdfPropertiesVariableStatement.bind(this)().toList(),
+      ..._ObjectType.propertiesVariableStatement.bind(this)().toList(),
       ..._ObjectType.sparqlFunctionDeclarations.bind(this)(),
     ];
 
@@ -216,6 +213,11 @@ export class ObjectType extends DeclaredType {
   }
 
   @Memoize()
+  get fromRdfTypeVariable(): Maybe<string> {
+    return this.fromRdfType.map(() => `${this.staticModuleName}.fromRdfType`);
+  }
+
+  @Memoize()
   get identifierProperty(): ObjectType.IdentifierProperty {
     const identifierProperty = this.properties.find(
       (property) => property instanceof ObjectType.IdentifierProperty,
@@ -251,22 +253,7 @@ export class ObjectType extends DeclaredType {
 
   @Memoize()
   get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
-    const prefixSingular = camelCase(this.name);
-    const thisNameParts = trainCase(this.name).split("-");
-    let prefixPlural = camelCase(
-      `${thisNameParts.slice(0, thisNameParts.length - 1).join("")}${plur(thisNameParts[thisNameParts.length - 1])}`,
-    );
-    if (prefixPlural === prefixSingular) {
-      // Happens with singular-s nouns like "series"
-      prefixPlural = `${prefixPlural}s`;
-    }
-
-    return {
-      object: prefixSingular,
-      objectIdentifiers: `${prefixSingular}Identifiers`,
-      objects: prefixPlural,
-      objectsCount: `${prefixPlural}Count`,
-    };
+    return _ObjectType.objectSetMethodNames.bind(this)();
   }
 
   @Memoize()
@@ -304,6 +291,7 @@ export class ObjectType extends DeclaredType {
     return properties;
   }
 
+  @Memoize()
   get staticModuleName(): string {
     return this.childObjectTypes.length > 0 ? `${this.name}Static` : this.name;
   }
@@ -360,6 +348,7 @@ export class ObjectType extends DeclaredType {
     return `${this.staticModuleName}.jsonZodSchema()`;
   }
 
+  @Memoize()
   get toRdfjsResourceType(): string {
     if (this.parentObjectTypes.length > 0) {
       return this.parentObjectTypes[0].toRdfjsResourceType;

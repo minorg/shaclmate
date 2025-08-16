@@ -12,326 +12,336 @@ import { InterfaceHarness } from "./InterfaceHarness.js";
 const identifier = dataFactory.namedNode("http://example.com/instance");
 
 export const harnesses = {
-  blankNodeShape: new ClassHarness(
-    new kitchenSink.BlankNodeShape({}),
-    kitchenSink.BlankNodeShape,
+  blankClass: new ClassHarness(
+    new kitchenSink.BlankClass({}),
+    kitchenSink.BlankClass,
   ),
-  concreteChildClassNodeShape: new ClassHarness(
-    new kitchenSink.ConcreteChildClassNodeShape({
-      abcStringProperty: "abc",
-      childStringProperty: "child",
+  classUnionMember1: new ClassUnionHarness(
+    new kitchenSink.ClassUnionMember1({
       identifier,
-      parentStringProperty: "parent",
+      classUnionMember1Property: "test",
     }),
-    kitchenSink.ConcreteChildClassNodeShape,
+    kitchenSink.ClassUnion,
   ),
-  concreteChildInterfaceNodeShape: new InterfaceHarness(
+  classUnionMember2: new ClassUnionHarness(
+    new kitchenSink.ClassUnionMember2({
+      identifier,
+      classUnionMember2Property: "test",
+    }),
+    kitchenSink.ClassUnion,
+  ),
+  concreteChildClass: new ClassHarness(
+    new kitchenSink.ConcreteChildClass({
+      abstractBaseClassWithPropertiesProperty: "abc",
+      concreteChildClassProperty: "child",
+      concreteParentClassProperty: "parent",
+      identifier,
+    }),
+    kitchenSink.ConcreteChildClass,
+  ),
+  concreteChildInterface: new InterfaceHarness(
     {
-      baseStringProperty: "abc",
-      childStringProperty: "child",
+      baseInterfaceWithPropertiesProperty: "abc",
+      concreteChildInterfaceProperty: "child",
+      concreteParentInterfaceProperty: "parent",
       identifier,
-      parentStringProperty: "parent",
-      type: "ConcreteChildInterfaceNodeShape",
+      type: "ConcreteChildInterface",
     },
-    kitchenSink.ConcreteChildInterfaceNodeShape,
+    kitchenSink.ConcreteChildInterface,
   ),
-  concreteParentClassNodeShape: new ClassHarness(
-    new kitchenSink.ConcreteParentClassNodeShape({
-      abcStringProperty: "abc",
+  concreteParentClass: new ClassHarness(
+    new kitchenSink.ConcreteParentClass({
+      abstractBaseClassWithPropertiesProperty: "abc",
+      concreteParentClassProperty: "parent",
       identifier,
-      parentStringProperty: "parent",
     }),
-    kitchenSink.ConcreteParentClassNodeShapeStatic,
+    kitchenSink.ConcreteParentClassStatic,
   ),
-  concreteParentInterfaceNodeShape: new InterfaceHarness(
+  concreteParentInterface: new InterfaceHarness(
     {
-      baseStringProperty: "abc",
+      baseInterfaceWithPropertiesProperty: "abc",
+      concreteParentInterfaceProperty: "parent",
       identifier,
-      parentStringProperty: "parent",
-      type: "ConcreteParentInterfaceNodeShape",
+      type: "ConcreteParentInterface",
     },
-    kitchenSink.ConcreteParentInterfaceNodeShapeStatic,
+    kitchenSink.ConcreteParentInterfaceStatic,
   ),
-  defaultValuePropertiesNodeShape: new ClassHarness(
-    new kitchenSink.DefaultValuePropertiesNodeShape({
+  defaultValuePropertiesClass: new ClassHarness(
+    new kitchenSink.DefaultValuePropertiesClass({
       identifier,
     }),
-    kitchenSink.DefaultValuePropertiesNodeShape,
+    kitchenSink.DefaultValuePropertiesClass,
   ),
   defaultValuePropertiesOverriddenDifferent: new ClassHarness(
-    new kitchenSink.DefaultValuePropertiesNodeShape({
-      falseBooleanProperty: true,
+    new kitchenSink.DefaultValuePropertiesClass({
+      falseBooleanDefaultValueProperty: true,
       identifier,
-      numberProperty: 1,
-      stringProperty: "test",
-      trueBooleanProperty: false,
+      numberDefaultValueProperty: 1,
+      stringDefaultValueProperty: "test",
+      trueBooleanDefaultValueProperty: false,
     }),
-    kitchenSink.DefaultValuePropertiesNodeShape,
+    kitchenSink.DefaultValuePropertiesClass,
   ),
   defaultValuePropertiesOverriddenSame: new ClassHarness(
-    new kitchenSink.DefaultValuePropertiesNodeShape({
-      falseBooleanProperty: false,
-      dateProperty: new Date("2025-03-06"),
-      dateTimeProperty: new Date(1523268000000),
+    new kitchenSink.DefaultValuePropertiesClass({
+      falseBooleanDefaultValueProperty: false,
+      dateDefaultValueProperty: new Date("2025-03-06"),
+      dateTimeDefaultValueProperty: new Date(1523268000000),
       identifier,
-      numberProperty: 0,
-      stringProperty: "",
-      trueBooleanProperty: true,
+      numberDefaultValueProperty: 0,
+      stringDefaultValueProperty: "",
+      trueBooleanDefaultValueProperty: true,
     }),
-    kitchenSink.DefaultValuePropertiesNodeShape,
+    kitchenSink.DefaultValuePropertiesClass,
   ),
-  emptyListProperty: new ClassHarness(
-    new kitchenSink.ListPropertiesNodeShape({
+  emptyListPropertiesClass: new ClassHarness(
+    new kitchenSink.ListPropertiesClass({
       identifier,
       stringListProperty: [],
     }),
-    kitchenSink.ListPropertiesNodeShape,
+    kitchenSink.ListPropertiesClass,
   ),
-  explicitFromToRdfTypes: new ClassHarness(
-    new kitchenSink.ExplicitFromToRdfTypesNodeShape({
+  explicitFromToRdfTypesClass: new ClassHarness(
+    new kitchenSink.ExplicitFromToRdfTypesClass({
+      explicitFromToRdfTypesProperty: "test",
       identifier,
-      stringProperty: "test",
     }),
-    kitchenSink.ExplicitFromToRdfTypesNodeShape,
+    kitchenSink.ExplicitFromToRdfTypesClass,
   ),
-  explicitRdfType: new ClassHarness(
-    new kitchenSink.ExplicitRdfTypeNodeShape({
+  explicitRdfTypeClass: new ClassHarness(
+    new kitchenSink.ExplicitRdfTypeClass({
+      explicitRdfTypeProperty: "test",
       identifier,
-      stringProperty: "test",
     }),
-    kitchenSink.ExplicitRdfTypeNodeShape,
+    kitchenSink.ExplicitRdfTypeClass,
   ),
-  externProperties: new ClassHarness(
-    new kitchenSink.ExternPropertiesNodeShape({
-      externObjectTypeProperty: new kitchenSink.ExternObjectType(
+  externPropertiesCLass: new ClassHarness(
+    new kitchenSink.ExternPropertiesClass({
+      externClassProperty: new kitchenSink.ExternClass(
         dataFactory.namedNode("http://example.com/externObjectType"),
       ),
-      externProperty: dataFactory.namedNode(
+      externNestedProperty: dataFactory.namedNode(
         "http://example.com/externProperty",
       ),
       identifier,
-      inlineProperty: new kitchenSink.InlineNodeShape({
-        stringProperty: "Test",
+      inlineNestedProperty: new kitchenSink.ExternPropertiesInlineNestedClass({
+        externPropertiesInlineNestedStringProperty: "Test",
       }),
     }),
-    kitchenSink.ExternPropertiesNodeShape,
+    kitchenSink.ExternPropertiesClass,
   ),
-  hasValueProperties: new ClassHarness(
-    new kitchenSink.HasValuePropertiesNodeShape({
-      hasIriProperty: dataFactory.namedNode(
-        "http://example.com/HasValuePropertiesNodeShapeIri1",
+  hasIriValuePropertiesClass: new ClassHarness(
+    new kitchenSink.HasValuePropertiesClass({
+      hasIriValueProperty: dataFactory.namedNode(
+        "http://example.com/HasValuePropertiesClassIri1",
       ),
       identifier,
     }),
-    kitchenSink.HasValuePropertiesNodeShape,
+    kitchenSink.HasValuePropertiesClass,
   ),
-  inIdentifierNodeShape: new ClassHarness(
-    new kitchenSink.InIdentifierNodeShape({
-      identifier: dataFactory.namedNode(
-        "http://example.com/InIdentifierNodeShapeInstance1",
-      ),
-      stringProperty: "doesn't matter",
+  hasLiteralValuePropertiesClass: new ClassHarness(
+    new kitchenSink.HasValuePropertiesClass({
+      hasLiteralValueProperty: "test",
+      identifier,
     }),
-    kitchenSink.InIdentifierNodeShape,
+    kitchenSink.HasValuePropertiesClass,
   ),
-  inIrisProperty: new ClassHarness(
-    new kitchenSink.InPropertiesNodeShape({
+  inIdentifierClass: new ClassHarness(
+    new kitchenSink.InIdentifierClass({
+      identifier: dataFactory.namedNode(
+        "http://example.com/InIdentifierInstance1",
+      ),
+      inIdentifierProperty: "doesn't matter",
+    }),
+    kitchenSink.InIdentifierClass,
+  ),
+  inIrisPropertyClass: new ClassHarness(
+    new kitchenSink.InPropertiesClass({
       identifier,
       inIrisProperty: dataFactory.namedNode(
-        "http://example.com/InPropertiesNodeShapeIri1",
+        "http://example.com/InPropertiesIri1",
       ),
     }),
-    kitchenSink.InPropertiesNodeShape,
+    kitchenSink.InPropertiesClass,
   ),
-  inLiteralsProperty: new ClassHarness(
-    new kitchenSink.InPropertiesNodeShape({
+  inLiteralsPropertyCLass: new ClassHarness(
+    new kitchenSink.InPropertiesClass({
       identifier,
       inStringsProperty: "text",
     }),
-    kitchenSink.InPropertiesNodeShape,
+    kitchenSink.InPropertiesClass,
   ),
-  interfaceNodeShape: new InterfaceHarness<
-    kitchenSink.InterfaceNodeShape,
+  interfaceClass: new InterfaceHarness<
+    kitchenSink.Interface,
     BlankNode | NamedNode
   >(
     {
       identifier,
-      stringProperty: "Test",
-      type: "InterfaceNodeShape",
+      interfaceProperty: "Test",
+      type: "Interface",
     },
-    kitchenSink.InterfaceNodeShape,
+    kitchenSink.Interface,
   ),
-  interfaceUnionNodeShapeMember1: new InterfaceHarness<
-    kitchenSink.InterfaceUnionNodeShape,
+  interfaceUnionMember1: new InterfaceHarness<
+    kitchenSink.InterfaceUnion,
     BlankNode | NamedNode
   >(
     {
       identifier,
-      stringProperty1: "Test1",
-      type: "InterfaceUnionNodeShapeMember1",
+      interfaceUnionMember1Property: "Test1",
+      type: "InterfaceUnionMember1",
     },
-    kitchenSink.InterfaceUnionNodeShape,
+    kitchenSink.InterfaceUnion,
   ),
-  interfaceUnionNodeShapeMember2: new InterfaceHarness<
-    kitchenSink.InterfaceUnionNodeShape,
+  interfaceUnionMember2a: new InterfaceHarness<
+    kitchenSink.InterfaceUnion,
     BlankNode | NamedNode
   >(
     {
       identifier,
-      stringProperty2a: "Test2",
-      type: "InterfaceUnionNodeShapeMember2a",
+      interfaceUnionMember2aProperty: "Test2",
+      type: "InterfaceUnionMember2a",
     },
-    kitchenSink.InterfaceUnionNodeShape,
+    kitchenSink.InterfaceUnion,
   ),
-  iriNodeShape: new ClassHarness(
-    new kitchenSink.IriNodeShape({
+  iriClass: new ClassHarness(
+    new kitchenSink.IriClass({
       identifier,
     }),
-    kitchenSink.IriNodeShape,
+    kitchenSink.IriClass,
   ),
-  languageInProperties: new ClassHarness(
-    new kitchenSink.LanguageInPropertiesNodeShape({
+  languageInPropertiesClass: new ClassHarness(
+    new kitchenSink.LanguageInPropertiesClass({
       identifier,
-      literalProperty: dataFactory.literal("envalue", "en"),
-      languageInProperty: dataFactory.literal("frvalue", "fr"),
+      languageInPropertiesLanguageInProperty: dataFactory.literal(
+        "frvalue",
+        "fr",
+      ),
+      languageInPropertiesLiteralProperty: dataFactory.literal("envalue", "en"),
     }),
-    kitchenSink.LanguageInPropertiesNodeShape,
+    kitchenSink.LanguageInPropertiesClass,
   ),
-  mutableProperties: new ClassHarness(
-    new kitchenSink.MutablePropertiesNodeShape({
+  mutablePropertiesClass: new ClassHarness(
+    new kitchenSink.MutablePropertiesClass({
       identifier,
       mutableListProperty: ["test1", "test2"],
       mutableStringProperty: "test",
       mutableSetProperty: ["test1", "test2"],
     }),
-    kitchenSink.MutablePropertiesNodeShape,
+    kitchenSink.MutablePropertiesClass,
   ),
   objectListProperty: new ClassHarness(
-    new kitchenSink.ListPropertiesNodeShape({
+    new kitchenSink.ListPropertiesClass({
       identifier,
       objectListProperty: [
-        new kitchenSink.NonClassNodeShape({ stringProperty: "Test1" }),
-        new kitchenSink.NonClassNodeShape({ stringProperty: "Test2" }),
+        new kitchenSink.NonClass({ nonClassProperty: "Test1" }),
+        new kitchenSink.NonClass({ nonClassProperty: "Test2" }),
       ],
     }),
-    kitchenSink.ListPropertiesNodeShape,
+    kitchenSink.ListPropertiesClass,
   ),
-  orderedProperties: new ClassHarness(
-    new kitchenSink.OrderedPropertiesNodeShape({
+  orderedPropertiesClass: new ClassHarness(
+    new kitchenSink.OrderedPropertiesClass({
       identifier,
-      propertyA: "testA",
-      propertyB: "testB",
-      propertyC: "testC",
+      orderedPropertyA: "testA",
+      orderedPropertyB: "testB",
+      orderedPropertyC: "testC",
     }),
-    kitchenSink.OrderedPropertiesNodeShape,
+    kitchenSink.OrderedPropertiesClass,
   ),
-  propertyCardinalities: new ClassHarness(
-    new kitchenSink.PropertyCardinalitiesNodeShape({
+  propertyCardinalitiesClass: new ClassHarness(
+    new kitchenSink.PropertyCardinalitiesClass({
       identifier,
       emptyStringSetProperty: undefined,
       nonEmptyStringSetProperty: NonEmptyList(["test1"]),
       optionalStringProperty: undefined,
       requiredStringProperty: "test",
     }),
-    kitchenSink.PropertyCardinalitiesNodeShape,
+    kitchenSink.PropertyCardinalitiesClass,
   ),
-  propertyVisibilities: new ClassHarness(
-    new kitchenSink.PropertyVisibilitiesNodeShape({
+  propertyVisibilitiesClass: new ClassHarness(
+    new kitchenSink.PropertyVisibilitiesClass({
       identifier,
       privateProperty: "private",
       protectedProperty: "protected",
       publicProperty: "public",
     }),
-    kitchenSink.PropertyVisibilitiesNodeShape,
+    kitchenSink.PropertyVisibilitiesClass,
   ),
-  nonClassNodeShape: new ClassHarness(
-    new kitchenSink.NonClassNodeShape({
+  nonClass: new ClassHarness(
+    new kitchenSink.NonClass({
       identifier,
-      stringProperty: "Test",
+      nonClassProperty: "Test",
     }),
-    kitchenSink.NonClassNodeShape,
+    kitchenSink.NonClass,
   ),
-  sha256IriNodeShapeWithExplicitIdentifier: new ClassHarness(
-    new kitchenSink.Sha256IriNodeShape({
+  sha256IriClassWithExplicitIdentifier: new ClassHarness(
+    new kitchenSink.Sha256IriClass({
       identifier,
-      stringProperty: "test",
+      sha256IriProperty: "test",
     }),
-    kitchenSink.Sha256IriNodeShape,
+    kitchenSink.Sha256IriClass,
   ),
-  sha256IriNodeShapeWithoutExplicitIdentifier: new ClassHarness(
-    new kitchenSink.Sha256IriNodeShape({
-      stringProperty: "test",
+  sha256IriClassWithoutExplicitIdentifier: new ClassHarness(
+    new kitchenSink.Sha256IriClass({
+      sha256IriProperty: "test",
     }),
-    kitchenSink.Sha256IriNodeShape,
+    kitchenSink.Sha256IriClass,
   ),
   stringListProperty: new ClassHarness(
-    new kitchenSink.ListPropertiesNodeShape({
+    new kitchenSink.ListPropertiesClass({
       identifier,
       stringListProperty: ["Test1", "Test2"],
     }),
-    kitchenSink.ListPropertiesNodeShape,
+    kitchenSink.ListPropertiesClass,
   ),
-  termProperties: new ClassHarness(
-    new kitchenSink.TermPropertiesNodeShape({
-      booleanProperty: true,
-      dateProperty: new Date("2025-03-06"),
-      dateTimeProperty: new Date(1523268000000),
+  termPropertiesClass: new ClassHarness(
+    new kitchenSink.TermPropertiesClass({
+      booleanTermProperty: true,
+      dateTermProperty: new Date("2025-03-06"),
+      dateTimeTermProperty: new Date(1523268000000),
       identifier,
-      iriProperty: dataFactory.namedNode("http://example.com"),
-      literalProperty: dataFactory.literal("test"),
-      numberProperty: 1,
-      stringProperty: "test",
+      iriTermProperty: dataFactory.namedNode("http://example.com"),
+      literalTermProperty: dataFactory.literal("test"),
+      numberTermProperty: 1,
+      stringTermProperty: "test",
       termProperty: 1,
     }),
-    kitchenSink.TermPropertiesNodeShape,
-  ),
-  unionNodeShapeMember1: new ClassUnionHarness(
-    new kitchenSink.UnionNodeShapeMember1({
-      identifier,
-      stringProperty1: "test",
-    }),
-    kitchenSink.UnionNodeShape,
-  ),
-  unionNodeShapeMember2: new ClassUnionHarness(
-    new kitchenSink.UnionNodeShapeMember2({
-      identifier,
-      stringProperty2: "test",
-    }),
-    kitchenSink.UnionNodeShape,
+    kitchenSink.TermPropertiesClass,
   ),
   unionProperties1: new ClassHarness(
-    new kitchenSink.UnionPropertiesNodeShape({
+    new kitchenSink.UnionPropertiesClass({
       identifier,
       narrowLiteralsProperty: 1,
       unrelatedTypesProperty: 1,
       widenedLiteralsProperty: 1,
       widenedTermsProperty: dataFactory.literal("test"),
     }),
-    kitchenSink.UnionPropertiesNodeShape,
+    kitchenSink.UnionPropertiesClass,
   ),
-  unionProperties2: new ClassHarness(
-    new kitchenSink.UnionPropertiesNodeShape({
+  unionProperties2Class: new ClassHarness(
+    new kitchenSink.UnionPropertiesClass({
       identifier,
       narrowLiteralsProperty: 1,
-      unrelatedTypesProperty: new kitchenSink.NonClassNodeShape({
-        stringProperty: "test",
+      unrelatedTypesProperty: new kitchenSink.NonClass({
+        nonClassProperty: "test",
       }),
       widenedLiteralsProperty: new Date(),
       widenedTermsProperty: dataFactory.literal("test"),
     }),
-    kitchenSink.UnionPropertiesNodeShape,
+    kitchenSink.UnionPropertiesClass,
   ),
-  uuidv4IriNodeShapeWithExplicitIdentifier: new ClassHarness(
-    new kitchenSink.UuidV4IriNodeShape({
+  uuidv4IriClassWithExplicitIdentifier: new ClassHarness(
+    new kitchenSink.UuidV4IriClass({
       identifier,
-      stringProperty: "test",
+      uuidV4IriProperty: "test",
     }),
-    kitchenSink.UuidV4IriNodeShape,
+    kitchenSink.UuidV4IriClass,
   ),
-  uuidv4IriNodeShapeWithoutExplicitIdentifier: new ClassHarness(
-    new kitchenSink.UuidV4IriNodeShape({
-      stringProperty: "test",
+  uuidv4IriClassWithoutExplicitIdentifier: new ClassHarness(
+    new kitchenSink.UuidV4IriClass({
+      uuidV4IriProperty: "test",
     }),
-    kitchenSink.UuidV4IriNodeShape,
+    kitchenSink.UuidV4IriClass,
   ),
 };

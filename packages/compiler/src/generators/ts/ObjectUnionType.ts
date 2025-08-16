@@ -7,15 +7,19 @@ import {
   type StatementStructures,
   StructureKind,
   type TypeAliasDeclarationStructure,
+  VariableDeclarationKind,
+  type VariableStatementStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 
-import type { TsFeature } from "enums/TsFeature.js";
+import type { TsFeature } from "../../enums/TsFeature.js";
 import { DeclaredType } from "./DeclaredType.js";
+import type { IdentifierType } from "./IdentifierType.js";
 import type { Import } from "./Import.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { Type } from "./Type.js";
 import { hasherTypeConstraint } from "./_ObjectType/hashFunctionOrMethodDeclarations.js";
+import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
 import { sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/sparqlConstructQueryStringFunctionDeclaration.js";
 import { objectInitializer } from "./objectInitializer.js";
@@ -64,8 +68,24 @@ class MemberType {
     );
   }
 
+  get features() {
+    return this.delegate.features;
+  }
+
+  get fromRdfType() {
+    return this.delegate.fromRdfType;
+  }
+
+  get fromRdfTypeVariable() {
+    return this.delegate.fromRdfTypeVariable;
+  }
+
   get graphqlName() {
     return this.delegate.graphqlName;
+  }
+
+  get identifierTypeAlias() {
+    return this.delegate.identifierTypeAlias;
   }
 
   get jsonName() {
@@ -111,25 +131,29 @@ export class ObjectUnionType extends DeclaredType {
   private readonly _discriminatorProperty: Type.DiscriminatorProperty;
   private readonly comment: Maybe<string>;
   private readonly label: Maybe<string>;
-  private readonly memberTypes: readonly MemberType[];
 
+  readonly identifierType: IdentifierType;
   readonly kind = "ObjectUnionType";
+  readonly memberTypes: readonly MemberType[];
   readonly typeof = "object";
 
   constructor({
     comment,
+    identifierType,
     label,
     memberTypes,
     ...superParameters
   }: ConstructorParameters<typeof DeclaredType>[0] & {
     comment: Maybe<string>;
     export_: boolean;
+    identifierType: IdentifierType;
     label: Maybe<string>;
     memberTypes: readonly ObjectType[];
     name: string;
   }) {
     super(superParameters);
     this.comment = comment;
+    this.identifierType = identifierType;
     this.label = label;
     invariant(memberTypes.length > 0);
     const discriminatorPropertyDescendantValues: string[] = [];
@@ -159,6 +183,7 @@ export class ObjectUnionType extends DeclaredType {
     );
   }
 
+  @Memoize()
   override get conversions(): readonly Type.Conversion[] {
     return [
       {
@@ -185,9 +210,11 @@ export class ObjectUnionType extends DeclaredType {
       ...this.equalsFunctionDeclaration.toList(),
       ...this.fromJsonFunctionDeclaration.toList(),
       ...this.fromRdfFunctionDeclaration.toList(),
+      ...this.graphqlTypeVariableStatement.toList(),
       ...this.hashFunctionDeclaration.toList(),
       ...this.jsonTypeAliasDeclaration.toList(),
       ...this.jsonZodSchemaFunctionDeclaration.toList(),
+      ...this.identifierTypeDeclarations,
       ...this.sparqlFunctionDeclarations,
       ...this.toJsonFunctionDeclaration.toList(),
       ...this.toRdfFunctionDeclaration.toList(),
@@ -205,26 +232,41 @@ export class ObjectUnionType extends DeclaredType {
     return declarations;
   }
 
+  @Memoize()
   override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
     return Maybe.of(this._discriminatorProperty);
   }
 
+  @Memoize()
   override get equalsFunction(): string {
     return `${this.staticModuleName}.equals`;
   }
 
+  @Memoize()
   override get graphqlName(): string {
     return `${this.staticModuleName}.GraphQL`;
   }
 
+  @Memoize()
+  get identifierTypeAlias(): string {
+    return `${this.staticModuleName}.Identifier`;
+  }
+
+  @Memoize()
   override get jsonName(): string {
     return this.memberTypes
       .map((memberType) => memberType.jsonName)
       .join(" | ");
   }
 
+  @Memoize()
   override get mutable(): boolean {
     return this.memberTypes.some((memberType) => memberType.mutable);
+  }
+
+  @Memoize()
+  get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
+    return objectSetMethodNames.bind(this)();
   }
 
   get staticModuleName() {
@@ -335,6 +377,29 @@ return $strictEquals(left.type, right.type).chain(() => {
     });
   }
 
+  private get graphqlTypeVariableStatement(): Maybe<VariableStatementStructure> {
+    if (!this.features.has("graphql")) {
+      return Maybe.empty();
+    }
+
+    return Maybe.of({
+      declarationKind: VariableDeclarationKind.Const,
+      kind: StructureKind.VariableStatement,
+      declarations: [
+        {
+          name: "GraphQL",
+          initializer: `new graphql.GraphQLUnionType(${objectInitializer({
+            description: this.comment.map(JSON.stringify).extract(),
+            name: `"${this.name}"`,
+            resolveType: `function (value: ${this.name}) { return value.type; }`,
+            types: `[${this.memberTypes.map((memberType) => memberType.graphqlName).join(", ")}]`,
+          })})`,
+        },
+      ],
+      isExported: true,
+    } satisfies VariableStatementStructure);
+  }
+
   private get hashFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
     if (!this.features.has("hash")) {
       return Maybe.empty();
@@ -383,6 +448,31 @@ return $strictEquals(left.type, right.type).chain(() => {
     });
   }
 
+  private get identifierTypeDeclarations(): readonly (
+    | FunctionDeclarationStructure
+    | ModuleDeclarationStructure
+    | TypeAliasDeclarationStructure
+    | VariableStatementStructure
+  )[] {
+    return [
+      {
+        isExported: true,
+        kind: StructureKind.TypeAlias,
+        name: "Identifier",
+        type: this.identifierType.name,
+      },
+      {
+        isExported: true,
+        kind: StructureKind.Module,
+        name: "Identifier",
+        statements: [
+          this.identifierType.fromStringFunctionDeclaration,
+          this.identifierType.toStringFunctionDeclaration,
+        ],
+      },
+    ];
+  }
+
   private get jsonTypeAliasDeclaration(): Maybe<TypeAliasDeclarationStructure> {
     if (!this.features.has("json")) {
       return Maybe.empty();
@@ -427,6 +517,7 @@ return $strictEquals(left.type, right.type).chain(() => {
         // Accept ignoreRdfType in order to reuse code but don't pass it through, since deserialization may depend on it
         parameters: [
           {
+            hasQuestionToken: true,
             name: "parameters",
             type: '{ ignoreRdfType?: boolean, subject?: sparqljs.Triple["subject"], variablePrefix?: string }',
           },
@@ -436,7 +527,7 @@ return $strictEquals(left.type, right.type).chain(() => {
           `return [${this.memberTypes
             .map(
               (memberType) =>
-                `...${memberType.staticModuleName}.sparqlConstructTemplateTriples({ subject: parameters.subject ?? ${this.dataFactoryVariable}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
+                `...${memberType.staticModuleName}.sparqlConstructTemplateTriples({ subject: parameters?.subject ?? ${this.dataFactoryVariable}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
             )
             .join(", ")}];`,
         ],
@@ -448,6 +539,7 @@ return $strictEquals(left.type, right.type).chain(() => {
         // Accept ignoreRdfType in order to reuse code but don't pass it through, since deserialization may depend on it
         parameters: [
           {
+            hasQuestionToken: true,
             name: "parameters",
             type: '{ ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }',
           },
@@ -457,7 +549,7 @@ return $strictEquals(left.type, right.type).chain(() => {
           `return [{ patterns: [${this.memberTypes
             .map((memberType) =>
               objectInitializer({
-                patterns: `${memberType.staticModuleName}.sparqlWherePatterns({ subject: parameters.subject ?? ${this.dataFactoryVariable}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
+                patterns: `${memberType.staticModuleName}.sparqlWherePatterns({ subject: parameters?.subject ?? ${this.dataFactoryVariable}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
                 type: '"group"',
               }),
             )

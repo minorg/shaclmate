@@ -1,15 +1,18 @@
 import { Maybe } from "purify-ts";
 import type { OptionalKind, VariableStatementStructure } from "ts-morph";
 import type { ObjectType } from "./ObjectType.js";
+import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 function graphqlQueryObjectType({
   objectTypes,
+  objectUnionTypes,
 }: {
   objectTypes: readonly ObjectType[];
+  objectUnionTypes: readonly ObjectUnionType[];
 }): string {
   return `new graphql.GraphQLObjectType<null, { objectSet: $ObjectSet }>({ name: "Query", fields: ${objectInitializer(
-    objectTypes.reduce(
+    [...objectTypes, ...objectUnionTypes].reduce(
       (fields, objectType) => {
         fields[objectType.objectSetMethodNames.object] = objectInitializer({
           args: objectInitializer({
@@ -87,14 +90,16 @@ async (_source, _args, { objectSet }): Promise<number> => (await objectSet.${obj
   )} })`;
 }
 
-export function graphqlSchemaVariableStatement({
-  objectTypes: objectTypesUnsorted,
-}: { objectTypes: readonly ObjectType[] }): Maybe<
-  OptionalKind<VariableStatementStructure>
-> {
-  const objectTypes = objectTypesUnsorted
-    .filter((objectType) => objectType.features.has("graphql"))
-    .toSorted((left, right) => left.name.localeCompare(right.name));
+export function graphqlSchemaVariableStatement(parameters: {
+  objectTypes: readonly ObjectType[];
+  objectUnionTypes: ObjectUnionType[];
+}): Maybe<OptionalKind<VariableStatementStructure>> {
+  const objectTypes = parameters.objectTypes.filter((objectType) =>
+    objectType.features.has("graphql"),
+  );
+  const objectUnionTypes = parameters.objectUnionTypes.filter(
+    (objectUnionType) => objectUnionType.features.has("graphql"),
+  );
 
   if (objectTypes.length === 0) {
     return Maybe.empty();
@@ -105,7 +110,7 @@ export function graphqlSchemaVariableStatement({
     declarations: [
       {
         name: "graphqlSchema",
-        initializer: `new graphql.GraphQLSchema({ query: ${graphqlQueryObjectType({ objectTypes })} })`,
+        initializer: `new graphql.GraphQLSchema({ query: ${graphqlQueryObjectType({ objectTypes, objectUnionTypes })} })`,
       },
     ],
   });

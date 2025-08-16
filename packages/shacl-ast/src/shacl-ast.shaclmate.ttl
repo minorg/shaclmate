@@ -56,13 +56,14 @@ shaclmate:BaseShaclCoreShape-flags
 shaclmate:BaseShaclCoreShape-hasValues
     a sh:PropertyShape ;
     sh:name "hasValues" ;
+    sh:nodeKind sh:IRIOrLiteral ;
     sh:path sh:hasValue .
 
 shaclmate:BaseShaclCoreShape-in
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:name "in_" ;
-    sh:node shaclmate:TermList ;
+    sh:node shaclmate:InList ;
     sh:path sh:in .
 
 shaclmate:BaseShaclCoreShape-isDefinedBy
@@ -196,6 +197,32 @@ shaclmate:IdentifierList-rest
         ]
     ) .
 
+shaclmate:InList
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf rdf:List ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property shaclmate:InList-first, shaclmate:InList-rest .
+
+shaclmate:InList-first
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:nodeKind sh:IRIOrLiteral ;
+    sh:path rdf:first .
+
+shaclmate:InList-rest
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:path rdf:rest ;
+    sh:xone ([
+            sh:class shaclmate:InList
+        ]
+        [
+            sh:hasValue ( )
+        ]
+    ) .
+
 shaclmate:IriList
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf rdf:List ;
@@ -290,6 +317,7 @@ shaclmate:ShaclCorePropertyShape
 shaclmate:ShaclCorePropertyShape-defaultValue
     a sh:PropertyShape ;
     sh:maxCount 1 ;
+    sh:nodeKind sh:IRIOrLiteral ;
     sh:path sh:defaultValue .
 
 shaclmate:ShaclCorePropertyShape-descriptions
@@ -355,31 +383,6 @@ shaclmate:StringList-rest
     sh:path rdf:rest ;
     sh:xone ([
             sh:class shaclmate:StringList
-        ]
-        [
-            sh:hasValue ( )
-        ]
-    ) .
-
-shaclmate:TermList
-    a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf rdf:List ;
-    sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:property shaclmate:TermList-first, shaclmate:TermList-rest .
-
-shaclmate:TermList-first
-    a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path rdf:first .
-
-shaclmate:TermList-rest
-    a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path rdf:rest ;
-    sh:xone ([
-            sh:class shaclmate:TermList
         ]
         [
             sh:hasValue ( )

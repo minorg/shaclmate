@@ -3,6 +3,7 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 
 import { Maybe } from "purify-ts";
 
+import { Memoize } from "typescript-memoize";
 import type {
   IdentifierMintingStrategy,
   TsFeature,
@@ -46,6 +47,7 @@ export class ListType extends Type {
     this.toRdfTypes = toRdfTypes;
   }
 
+  @Memoize()
   override get conversions(): readonly Type.Conversion[] {
     return [
       {
@@ -64,14 +66,17 @@ export class ListType extends Type {
     return Maybe.empty();
   }
 
+  @Memoize()
   override get equalsFunction(): string {
     return `((left, right) => $arrayEquals(left, right, ${this.itemType.equalsFunction}))`;
   }
 
+  @Memoize()
   override get graphqlName(): string {
     return `new graphql.GraphQLList(new graphql.GraphQLNonNull(${this.itemType.graphqlName}))`;
   }
 
+  @Memoize()
   override get jsonName(): string {
     return `readonly (${this.itemType.jsonName})[]`;
   }
@@ -80,6 +85,7 @@ export class ListType extends Type {
     return this._mutable || this.itemType.mutable;
   }
 
+  @Memoize()
   override get name(): string {
     return `${this._mutable ? "" : "readonly "}${this.itemType.name}[]`;
   }

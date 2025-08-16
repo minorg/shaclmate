@@ -118,4 +118,75 @@ describe("graphqlSchema", () => {
       concreteChildrenCount: 4,
     });
   });
+
+  it("union object", async ({ expect }) => {
+    const result = await execute(
+      `\
+query {
+  union(identifier: "<http://example.com/union0>") {
+    ... on UnionMember1 {
+      identifier
+      optionalNumberProperty
+    }
+    ... on UnionMember2 {
+      identifier
+      optionalStringProperty
+    }
+  }
+}`,
+    );
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      union: {
+        identifier: "<http://example.com/union0>",
+        optionalNumberProperty: 1,
+      },
+    });
+  });
+
+  it("union object identifiers (all)", async ({ expect }) => {
+    const result = await execute("query { unionIdentifiers }");
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      unionIdentifiers: [...new Array(4)].map(
+        (_, i) => `<http://example.com/union${i}>`,
+      ),
+    });
+  });
+
+  it("union objects (all)", async ({ expect }) => {
+    const result = await execute(
+      `\
+query {
+  unions {
+    ... on UnionMember1 {
+      identifier
+      optionalNumberProperty
+    }
+    ... on UnionMember2 {
+      identifier
+      optionalStringProperty
+    }
+  }
+}`,
+    );
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      unions: [...new Array(4)].map((_, i) => {
+        const identifier = `<http://example.com/union${i}>`;
+        if (i % 2 === 0) {
+          return { identifier, optionalNumberProperty: 1 };
+        }
+        return { identifier, optionalStringProperty: "test" };
+      }),
+    });
+  });
+
+  it("union objectsCount", async ({ expect }) => {
+    const result = await execute("query { unionsCount }");
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      unionsCount: 4,
+    });
+  });
 });

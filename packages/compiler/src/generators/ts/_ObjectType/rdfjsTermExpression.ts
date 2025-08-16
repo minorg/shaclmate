@@ -17,6 +17,9 @@ export function rdfjsTermExpression({
       return `${dataFactoryVariable}.blankNode("${rdfjsTerm.value}")`;
     case "Literal":
       if (rdfjsTerm.datatype.equals(xsd.string)) {
+        if (rdfjsTerm.language.length === 0) {
+          return `${dataFactoryVariable}.literal("${rdfjsTerm.value}")`;
+        }
         return `${dataFactoryVariable}.literal("${rdfjsTerm.value}", "${rdfjsTerm.language}")`;
       }
       return `${dataFactoryVariable}.literal("${rdfjsTerm.value}", ${dataFactoryVariable}.namedNode("${rdfjsTerm.datatype.value}"))`;
