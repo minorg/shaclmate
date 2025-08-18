@@ -53,7 +53,7 @@ export function sparqlObjectSetClassDeclaration({
     } satisfies OptionalKind<ParameterDeclarationStructure>,
     selectObjectTypeType: {
       name: "objectType",
-      type: `{ sparqlWherePatterns: ${sparqlWherePatternsFunctionType} }`,
+      type: `{ ${syntheticNamePrefix}sparqlWherePatterns: ${sparqlWherePatternsFunctionType} }`,
     },
     where: {
       hasQuestionToken: true,
@@ -69,7 +69,7 @@ export function sparqlObjectSetClassDeclaration({
           parameters: [
             {
               name: "{ sparqlClient }",
-              type: `{ sparqlClient: ${syntheticNamePrefix}SparqlObjectSet["sparqlClient"] }`,
+              type: `{ sparqlClient: ${syntheticNamePrefix}SparqlObjectSet["${syntheticNamePrefix}sparqlClient"] }`,
             },
           ],
           statements: [
@@ -285,7 +285,7 @@ try {
 const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
 
 return identifiers.map((identifier) =>
-  objectType.fromRdf({
+  objectType.${syntheticNamePrefix}fromRdf({
     resource: new rdfjsResource.Resource<rdfjs.NamedNode>({ dataset, identifier: identifier as rdfjs.NamedNode })
   })
 );

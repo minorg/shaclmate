@@ -137,7 +137,9 @@ function jsonSchemaFunctionDeclaration(
     isExported: true,
     kind: StructureKind.Function,
     name: `${syntheticNamePrefix}jsonSchema`,
-    statements: ["return zodToJsonSchema(jsonZodSchema());"],
+    statements: [
+      `return zodToJsonSchema(${syntheticNamePrefix}jsonZodSchema());`,
+    ],
   };
 }
 

@@ -86,23 +86,23 @@ if (offset < 0) { offset = 0; }
 
 if (query?.where) {
   for (const identifier of query.where.identifiers.slice(offset, offset + limit)) {
-    yield objectType.fromRdf({ resource: this.resourceSet.resource(identifier) });
+    yield objectType.${syntheticNamePrefix}fromRdf({ resource: this.resourceSet.resource(identifier) });
   }
   return;
 }
 
-if (!objectType.fromRdfType) {
+if (!objectType.${syntheticNamePrefix}fromRdfType) {
   return;
 }
 
-const resources = [...this.resourceSet.instancesOf(objectType.fromRdfType)];
+const resources = [...this.resourceSet.instancesOf(objectType.${syntheticNamePrefix}fromRdfType)];
 // Sort resources by identifier so limit and offset are deterministic
 resources.sort((left, right) => left.identifier.value.localeCompare(right.identifier.value));
 
 let objectCount = 0;
 let objectI = 0;
 for (const resource of resources) {
-  const object = objectType.fromRdf({ resource });
+  const object = objectType.${syntheticNamePrefix}fromRdf({ resource });
   if (object.isLeft()) {
     continue;
   }
@@ -196,7 +196,7 @@ if (query?.where) {
     const resource = this.resourceSet.resource(identifier);
     const lefts: purify.Either<Error, ${typeParameters.ObjectT.name}>[] = [];
     for (const objectType of objectTypes) {
-      const object = objectType.fromRdf({ resource });
+      const object = objectType.${syntheticNamePrefix}fromRdf({ resource });
       if (object.isRight()) {
          yield object;
          break;
@@ -217,11 +217,11 @@ let objectI = 0;
 
 const resources: { objectType: ${objectTypeType}, resource: rdfjsResource.Resource }[] = [];
 for (const objectType of objectTypes) {
-  if (!objectType.fromRdfType) {
+  if (!objectType.${syntheticNamePrefix}fromRdfType) {
     continue;
   }
 
-  for (const resource of this.resourceSet.instancesOf(objectType.fromRdfType)) {
+  for (const resource of this.resourceSet.instancesOf(objectType.${syntheticNamePrefix}fromRdfType)) {
     resources.push({ objectType, resource });
   }
 }
@@ -230,7 +230,7 @@ for (const objectType of objectTypes) {
 resources.sort((left, right) => left.resource.identifier.value.localeCompare(right.resource.identifier.value));
 
 for (const { objectType, resource } of resources) {
-  const object = objectType.fromRdf({ resource });
+  const object = objectType.${syntheticNamePrefix}fromRdf({ resource });
   if (object.isLeft()) {
     continue;
   }

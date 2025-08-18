@@ -437,7 +437,7 @@ export class TypeFactory {
             },
             override: astType.parentObjectTypes.length > 0,
             type: identifierType,
-            typeAlias: `${astType.childObjectTypes.length > 0 ? `${tsName(astType.name)}Static` : tsName(astType.name)}.Identifier`,
+            typeAlias: `${astType.childObjectTypes.length > 0 ? `${tsName(astType.name)}Static` : tsName(astType.name)}.${syntheticNamePrefix}Identifier`,
             visibility: "public",
           }),
         );

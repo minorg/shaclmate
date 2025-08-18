@@ -17,7 +17,7 @@ export function sparqlConstructQueryStringFunctionDeclaration(this: {
     ],
     returnType: "string",
     statements: [
-      `return new sparqljs.Generator(parameters).stringify(${this.staticModuleName}.sparqlConstructQuery(parameters));`,
+      `return new sparqljs.Generator(parameters).stringify(${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructQuery(parameters));`,
     ],
   };
 }

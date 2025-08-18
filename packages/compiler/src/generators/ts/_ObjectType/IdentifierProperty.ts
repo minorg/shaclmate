@@ -20,7 +20,7 @@ import { Property } from "./Property.js";
 
 export class IdentifierProperty extends Property<IdentifierType> {
   readonly abstract: boolean;
-  readonly equalsFunction = "$booleanEquals";
+  readonly equalsFunction = `${syntheticNamePrefix}booleanEquals`;
   readonly mutable = false;
   private readonly classGetAccessorScope: Maybe<Scope>;
   private readonly classPropertyDeclarationVisibility: Maybe<PropertyVisibility>;
