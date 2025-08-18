@@ -392,7 +392,7 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
           initializer: `new graphql.GraphQLUnionType(${objectInitializer({
             description: this.comment.map(JSON.stringify).extract(),
             name: `"${this.name}"`,
-            resolveType: `function (value: ${this.name}) { return value.type; }`,
+            resolveType: `function (value: ${this.name}) { return value.${syntheticNamePrefix}type; }`,
             types: `[${this.memberTypes.map((memberType) => memberType.graphqlName).join(", ")}]`,
           })})`,
         },
