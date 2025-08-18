@@ -33,7 +33,7 @@ for (let i = 0; i < 4; i++) {
   }).$toRdf({ resourceSet });
 
   new ConcreteParent({
-    identifier: N3.DataFactory.namedNode(
+    $identifier: N3.DataFactory.namedNode(
       `http://example.com/concreteParent${i}`,
     ),
     parentStringProperty: "parent string",
@@ -41,12 +41,12 @@ for (let i = 0; i < 4; i++) {
 
   if (i % 2 === 0) {
     new UnionMember1({
-      identifier: N3.DataFactory.namedNode(`http://example.com/union${i}`),
+      $identifier: N3.DataFactory.namedNode(`http://example.com/union${i}`),
       optionalNumberProperty: 1,
     }).$toRdf({ resourceSet });
   } else {
     new UnionMember2({
-      identifier: N3.DataFactory.namedNode(`http://example.com/union${i}`),
+      $identifier: N3.DataFactory.namedNode(`http://example.com/union${i}`),
       optionalStringProperty: "test",
     }).$toRdf({ resourceSet });
   }
