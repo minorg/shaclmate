@@ -5,6 +5,7 @@ import {
   type TypeParameterDeclarationStructure,
 } from "ts-morph";
 import { ObjectType } from "../ObjectType.js";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 const hasherVariable = "_hasher";
 
@@ -63,7 +64,7 @@ export function hashFunctionOrMethodDeclarations(this: ObjectType): readonly {
     switch (this.declarationType) {
       case "class": {
         hashShaclPropertiesStatements.push(
-          `super.hashShaclProperties(${hasherVariable});`,
+          `super.${syntheticNamePrefix}hashShaclProperties(${hasherVariable});`,
         );
         hasOverrideKeyword = true;
         break;
@@ -71,7 +72,7 @@ export function hashFunctionOrMethodDeclarations(this: ObjectType): readonly {
       case "interface": {
         for (const parentObjectType of this.parentObjectTypes) {
           hashShaclPropertiesStatements.push(
-            `${parentObjectType.staticModuleName}.hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
+            `${parentObjectType.staticModuleName}.${syntheticNamePrefix}hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
           );
         }
         break;
@@ -91,7 +92,7 @@ export function hashFunctionOrMethodDeclarations(this: ObjectType): readonly {
   return [
     {
       hasOverrideKeyword,
-      name: "hash",
+      name: `${syntheticNamePrefix}hash`,
       parameters,
       returnType,
       statements: [
@@ -107,15 +108,15 @@ export function hashFunctionOrMethodDeclarations(this: ObjectType): readonly {
             }),
           ),
         this.declarationType === "class"
-          ? `this.hashShaclProperties(${hasherVariable});`
-          : `${this.staticModuleName}.hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
+          ? `this.${syntheticNamePrefix}hashShaclProperties(${hasherVariable});`
+          : `${this.staticModuleName}.${syntheticNamePrefix}hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
         `return ${hasherVariable};`,
       ],
       typeParameters,
     },
     {
       hasOverrideKeyword,
-      name: "hashShaclProperties",
+      name: `${syntheticNamePrefix}hashShaclProperties`,
       parameters,
       returnType,
       scope: this.declarationType === "class" ? Scope.Protected : undefined,

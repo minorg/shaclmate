@@ -1,4 +1,5 @@
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function sparqlConstructQueryFunctionDeclaration(this: {
   readonly staticModuleName: string;
@@ -6,7 +7,7 @@ export function sparqlConstructQueryFunctionDeclaration(this: {
   return {
     kind: StructureKind.Function,
     isExported: true,
-    name: "sparqlConstructQuery",
+    name: `${syntheticNamePrefix}sparqlConstructQuery`,
     parameters: [
       {
         hasQuestionToken: true,
@@ -17,7 +18,7 @@ export function sparqlConstructQueryFunctionDeclaration(this: {
     returnType: "sparqljs.ConstructQuery",
     statements: [
       "const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {}",
-      `return { ...queryParameters, prefixes: parameters?.prefixes ?? {}, queryType: "CONSTRUCT", template: (queryParameters.template ?? []).concat(${this.staticModuleName}.sparqlConstructTemplateTriples({ ignoreRdfType, subject })), type: "query", where: (queryParameters.where ?? []).concat(${this.staticModuleName}.sparqlWherePatterns({ ignoreRdfType, subject })) };`,
+      `return { ...queryParameters, prefixes: parameters?.prefixes ?? {}, queryType: "CONSTRUCT", template: (queryParameters.template ?? []).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTemplateTriples({ ignoreRdfType, subject })), type: "query", where: (queryParameters.where ?? []).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ ignoreRdfType, subject })) };`,
     ],
   };
 }

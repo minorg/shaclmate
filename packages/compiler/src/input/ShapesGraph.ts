@@ -32,7 +32,7 @@ export class ShapesGraph extends RdfjsShapesGraph<
           resource: Resource;
           shapesGraph: ShapesGraph;
         }): Either<Error, NodeShape> {
-          return generated.ShaclmateNodeShape.fromRdf({
+          return generated.ShaclmateNodeShape.$fromRdf({
             ignoreRdfType: true,
             resource,
           }).map(
@@ -62,7 +62,7 @@ export class ShapesGraph extends RdfjsShapesGraph<
         }: {
           resource: Resource;
         }): Either<Error, Ontology> {
-          return generated.ShaclmateOntology.fromRdf({
+          return generated.ShaclmateOntology.$fromRdf({
             ignoreRdfType: true,
             resource,
           }).map((generatedOntology) => new Ontology(generatedOntology));
@@ -72,7 +72,7 @@ export class ShapesGraph extends RdfjsShapesGraph<
         }: {
           resource: Resource;
         }): Either<Error, PropertyGroup> {
-          return generated.ShaclCorePropertyGroup.fromRdf({
+          return generated.ShaclCorePropertyGroup.$fromRdf({
             ignoreRdfType: true,
             resource,
           }).map(
@@ -87,7 +87,7 @@ export class ShapesGraph extends RdfjsShapesGraph<
           resource: Resource;
           shapesGraph: ShapesGraph;
         }): Either<Error, PropertyShape> {
-          return generated.ShaclmatePropertyShape.fromRdf({
+          return generated.ShaclmatePropertyShape.$fromRdf({
             ignoreRdfType: true,
             resource,
           }).map(

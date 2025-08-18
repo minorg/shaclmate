@@ -13,14 +13,14 @@ const testData = {
     switch (i % 2) {
       case 0:
         return new kitchenSink.ClassUnionMember1({
-          identifier: N3.DataFactory.namedNode(
+          $identifier: N3.DataFactory.namedNode(
             `http://example.com/classClassUnion${i}`,
           ),
           classUnionMember1Property: `string ${i}`,
         });
       case 1:
         return new kitchenSink.ClassUnionMember2({
-          identifier: N3.DataFactory.namedNode(
+          $identifier: N3.DataFactory.namedNode(
             `http://example.com/classClassUnion${i}`,
           ),
           classUnionMember2Property: `string ${i}`,
@@ -36,7 +36,7 @@ const testData = {
         abstractBaseClassWithPropertiesProperty: `ABC string ${i}`,
         concreteChildClassProperty: `child string ${i}`,
         concreteParentClassProperty: `parent string ${i}`,
-        identifier: N3.DataFactory.namedNode(
+        $identifier: N3.DataFactory.namedNode(
           `http://example.com/concreteChildClass${i}`,
         ),
       }),
@@ -46,27 +46,27 @@ const testData = {
     switch (i % 3) {
       case 0:
         return {
-          identifier: N3.DataFactory.namedNode(
+          $identifier: N3.DataFactory.namedNode(
             `http://example.com/interfaceUnion${i}`,
           ),
           interfaceUnionMember1Property: `string ${i}`,
-          type: "InterfaceUnionMember1",
+          $type: "InterfaceUnionMember1",
         } satisfies kitchenSink.InterfaceUnion;
       case 1:
         return {
-          identifier: N3.DataFactory.namedNode(
+          $identifier: N3.DataFactory.namedNode(
             `http://example.com/interfaceUnion${i}`,
           ),
           interfaceUnionMember2aProperty: `string ${i}`,
-          type: "InterfaceUnionMember2a",
+          $type: "InterfaceUnionMember2a",
         } satisfies kitchenSink.InterfaceUnion;
       case 2:
         return {
-          identifier: N3.DataFactory.namedNode(
+          $identifier: N3.DataFactory.namedNode(
             `http://example.com/interfaceUnion${i}`,
           ),
           interfaceUnionMember2bProperty: `string ${i}`,
-          type: "InterfaceUnionMember2b",
+          $type: "InterfaceUnionMember2b",
         } satisfies kitchenSink.InterfaceUnion;
       default:
         throw new RangeError(i.toString());
@@ -86,13 +86,13 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
       dataset,
     });
     for (const object of testData.classClassUnions) {
-      object.toRdf({ resourceSet, mutateGraph });
+      object.$toRdf({ resourceSet, mutateGraph });
     }
     for (const object of testData.concreteChildClasses) {
-      object.toRdf({ resourceSet, mutateGraph });
+      object.$toRdf({ resourceSet, mutateGraph });
     }
     for (const object of testData.interfaceUnions) {
-      kitchenSink.InterfaceUnion.toRdf(object, {
+      kitchenSink.InterfaceUnion.$toRdf(object, {
         resourceSet,
         mutateGraph,
       });
@@ -106,11 +106,11 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     expect(
       (
         await objectSet.concreteChildClass(
-          testData.concreteChildClasses[0].identifier,
+          testData.concreteChildClasses[0].$identifier,
         )
       )
         .unsafeCoerce()
-        .equals(testData.concreteChildClasses[0])
+        .$equals(testData.concreteChildClasses[0])
         .unsafeCoerce(),
     ).toBe(true);
   });
@@ -121,7 +121,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
         .unsafeCoerce()
         .map((identifier) => identifier.value),
     ).toStrictEqual(
-      testData.concreteChildClasses.map((object) => object.identifier.value),
+      testData.concreteChildClasses.map((object) => object.$identifier.value),
     );
   });
 
@@ -130,7 +130,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
       (await objectSet.concreteChildClassIdentifiers({ limit: 1 }))
         .unsafeCoerce()
         .map((identifier) => identifier.value),
-    ).toStrictEqual([testData.concreteChildClasses[0].identifier.value]);
+    ).toStrictEqual([testData.concreteChildClasses[0].$identifier.value]);
   });
 
   it("objectIdentifiers (offset 1)", async ({ expect }) => {
@@ -145,7 +145,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     ).toStrictEqual(
       testData.concreteChildClasses
         .slice(1)
-        .map((object) => object.identifier.value),
+        .map((object) => object.$identifier.value),
     );
   });
 
@@ -161,8 +161,8 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
         .map((identifier) => identifier.value)
         .sort(),
     ).toStrictEqual([
-      testData.concreteChildClasses[1].identifier.value,
-      testData.concreteChildClasses[2].identifier.value,
+      testData.concreteChildClasses[1].$identifier.value,
+      testData.concreteChildClasses[2].$identifier.value,
     ]);
   });
 
@@ -171,7 +171,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
       await objectSet.concreteChildClasses({
         where: {
           identifiers: testData.concreteChildClasses.map(
-            (object) => object.identifier,
+            (object) => object.$identifier,
           ),
           type: "identifiers",
         },
@@ -181,7 +181,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     for (const expectedObject of testData.concreteChildClasses) {
       expect(
         actualObjects.some((actualObject) =>
-          actualObject.equals(expectedObject).isRight(),
+          actualObject.$equals(expectedObject).isRight(),
         ),
       );
     }
@@ -194,7 +194,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
         where: {
           identifiers: testData.concreteChildClasses
             .slice(sliceStart)
-            .map((object) => object.identifier),
+            .map((object) => object.$identifier),
           type: "identifiers",
         },
       })
@@ -207,7 +207,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     )) {
       expect(
         actualObjects.some((actualObject) =>
-          actualObject.equals(expectedObject).isRight(),
+          actualObject.$equals(expectedObject).isRight(),
         ),
       );
     }
@@ -222,9 +222,9 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
   it("objectUnion (class with fromRdfType)", async ({ expect }) => {
     for (const expectedClassClassUnion of testData.classClassUnions) {
       expect(
-        (await objectSet.classUnion(expectedClassClassUnion.identifier))
+        (await objectSet.classUnion(expectedClassClassUnion.$identifier))
           .unsafeCoerce()
-          .equals(expectedClassClassUnion as any)
+          .$equals(expectedClassClassUnion as any)
           .unsafeCoerce(),
       ).toBe(true);
     }
@@ -233,9 +233,9 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
   it("objectUnion (interface without fromRdfType)", async ({ expect }) => {
     for (const expectedInterfaceUnion of testData.interfaceUnions) {
       const actualInterfaceUnion = (
-        await objectSet.interfaceUnion(expectedInterfaceUnion.identifier)
+        await objectSet.interfaceUnion(expectedInterfaceUnion.$identifier)
       ).unsafeCoerce();
-      const equalsResult = kitchenSink.InterfaceUnion.equals(
+      const equalsResult = kitchenSink.InterfaceUnion.$equals(
         expectedInterfaceUnion,
         actualInterfaceUnion,
       );
@@ -252,7 +252,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
       ),
     ).toStrictEqual(
       new Set(
-        testData.classClassUnions.map((object) => object.identifier.value),
+        testData.classClassUnions.map((object) => object.$identifier.value),
       ),
     );
   });
@@ -262,7 +262,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
       (await objectSet.classUnionIdentifiers({ limit: 1 }))
         .unsafeCoerce()
         .map((identifier) => identifier.value),
-    ).toStrictEqual([testData.classClassUnions[0].identifier.value]);
+    ).toStrictEqual([testData.classClassUnions[0].$identifier.value]);
   });
 
   it("objectUnions (all identifiers)", async ({ expect }) => {
@@ -270,7 +270,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
       await objectSet.interfaceUnions({
         where: {
           identifiers: testData.interfaceUnions.map(
-            (object) => object.identifier,
+            (object) => object.$identifier,
           ),
           type: "identifiers",
         },
@@ -280,7 +280,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     for (const expectedObject of testData.interfaceUnions) {
       expect(
         actualObjects.some((actualObject) =>
-          kitchenSink.InterfaceUnion.equals(
+          kitchenSink.InterfaceUnion.$equals(
             expectedObject,
             actualObject,
           ).isRight(),
@@ -296,7 +296,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
         where: {
           identifiers: testData.classClassUnions
             .slice(sliceStart)
-            .map((object) => object.identifier),
+            .map((object) => object.$identifier),
           type: "identifiers",
         },
       })
@@ -307,7 +307,10 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     for (const expectedObject of testData.classClassUnions.slice(sliceStart)) {
       expect(
         actualObjects.some((actualObject) =>
-          kitchenSink.ClassUnion.equals(expectedObject, actualObject).isRight(),
+          kitchenSink.ClassUnion.$equals(
+            expectedObject,
+            actualObject,
+          ).isRight(),
         ),
       );
     }

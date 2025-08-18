@@ -29,7 +29,7 @@ describe("fromRdf", () => {
 
   it("abstract base class fromRdf", ({ expect }) => {
     const fromRdfInstance =
-      kitchenSink.AbstractBaseClassWithPropertiesStatic.fromRdf({
+      kitchenSink.AbstractBaseClassWithPropertiesStatic.$fromRdf({
         resource: harnesses.concreteChildClass.toRdf({
           mutateGraph: dataFactory.defaultGraph(),
           resourceSet: new MutableResourceSet({
@@ -44,7 +44,7 @@ describe("fromRdf", () => {
   });
 
   it("concrete base class fromRdf", ({ expect }) => {
-    const fromRdfInstance = kitchenSink.ConcreteParentClassStatic.fromRdf({
+    const fromRdfInstance = kitchenSink.ConcreteParentClassStatic.$fromRdf({
       resource: harnesses.concreteChildClass.toRdf({
         mutateGraph: dataFactory.defaultGraph(),
         resourceSet: new MutableResourceSet({
@@ -74,7 +74,7 @@ describe("fromRdf", () => {
       dataFactory.literal("test"),
     );
 
-    const fromRdfInstance = kitchenSink.ExplicitFromToRdfTypesClass.fromRdf({
+    const fromRdfInstance = kitchenSink.ExplicitFromToRdfTypesClass.$fromRdf({
       resource,
     });
     expect(fromRdfInstance.isLeft()).toBe(true);
@@ -96,7 +96,7 @@ describe("fromRdf", () => {
       dataFactory.literal("test"),
     );
 
-    const fromRdfInstance = kitchenSink.ExplicitFromToRdfTypesClass.fromRdf({
+    const fromRdfInstance = kitchenSink.ExplicitFromToRdfTypesClass.$fromRdf({
       resource,
     });
     expect(fromRdfInstance.isRight()).toBe(true);
@@ -125,7 +125,7 @@ describe("fromRdf", () => {
         dataFactory.namedNode("http://example.com/HasValuePropertiesClassIri2"),
       ),
     );
-    const instance = kitchenSink.HasValuePropertiesClass.fromRdf({
+    const instance = kitchenSink.HasValuePropertiesClass.$fromRdf({
       resource: new MutableResourceSet({
         dataFactory,
         dataset: dataset,
@@ -145,7 +145,7 @@ describe("fromRdf", () => {
         dataFactory.literal("nottest"),
       ),
     );
-    const instance = kitchenSink.HasValuePropertiesClass.fromRdf({
+    const instance = kitchenSink.HasValuePropertiesClass.$fromRdf({
       resource: new MutableResourceSet({
         dataFactory,
         dataset: dataset,
@@ -167,7 +167,7 @@ describe("fromRdf", () => {
         dataFactory.literal("whatever"),
       ),
     );
-    const instance = kitchenSink.InIdentifierClass.fromRdf({
+    const instance = kitchenSink.InIdentifierClass.$fromRdf({
       resource: new MutableResourceSet({
         dataFactory,
         dataset: dataset,
@@ -186,7 +186,7 @@ describe("fromRdf", () => {
         dataFactory.namedNode("http://example.com/WithInPropertiesIriInvalid"),
       ),
     );
-    const instance = kitchenSink.InPropertiesClass.fromRdf({
+    const instance = kitchenSink.InPropertiesClass.$fromRdf({
       resource: new MutableResourceSet({
         dataFactory,
         dataset: dataset,
@@ -206,7 +206,7 @@ describe("fromRdf", () => {
         object,
       ),
     );
-    const instance = kitchenSink.InPropertiesClass.fromRdf({
+    const instance = kitchenSink.InPropertiesClass.$fromRdf({
       resource: new MutableResourceSet({
         dataFactory,
         dataset: dataset,
@@ -232,7 +232,7 @@ describe("fromRdf", () => {
     );
 
     {
-      const instance = kitchenSink.LanguageInPropertiesClass.fromRdf({
+      const instance = kitchenSink.LanguageInPropertiesClass.$fromRdf({
         languageIn: ["en"],
         resource,
       }).unsafeCoerce();
@@ -251,7 +251,7 @@ describe("fromRdf", () => {
     );
 
     {
-      const instance = kitchenSink.LanguageInPropertiesClass.fromRdf({
+      const instance = kitchenSink.LanguageInPropertiesClass.$fromRdf({
         languageIn: ["en"],
         resource,
       }).unsafeCoerce();
@@ -284,7 +284,7 @@ describe("fromRdf", () => {
         dataFactory.literal("envalue", "en"),
       ),
     );
-    const instance = kitchenSink.LanguageInPropertiesClass.fromRdf({
+    const instance = kitchenSink.LanguageInPropertiesClass.$fromRdf({
       resource,
     }).unsafeCoerce();
     expect(
@@ -294,7 +294,7 @@ describe("fromRdf", () => {
 
   it("accept right identifier type (NamedNode)", ({ expect }) => {
     expect(
-      kitchenSink.IriClass.fromRdf({
+      kitchenSink.IriClass.$fromRdf({
         resource: new MutableResourceSet({
           dataFactory,
           dataset: new N3.Store(),
@@ -309,7 +309,7 @@ describe("fromRdf", () => {
 
   it("accept right identifier type (sh:in identifier)", ({ expect }) => {
     expect(
-      kitchenSink.InIdentifierClass.fromRdf({
+      kitchenSink.InIdentifierClass.$fromRdf({
         resource: new MutableResourceSet({
           dataFactory,
           dataset: new N3.Store(),
@@ -324,7 +324,7 @@ describe("fromRdf", () => {
 
   it("reject wrong identifier type (BlankNode)", ({ expect }) => {
     expect(
-      kitchenSink.IriClass.fromRdf({
+      kitchenSink.IriClass.$fromRdf({
         resource: new MutableResourceSet({
           dataFactory,
           dataset: new N3.Store(),
@@ -337,7 +337,7 @@ describe("fromRdf", () => {
 
   it("reject wrong identifier type (sh:in identifier)", ({ expect }) => {
     expect(
-      kitchenSink.InIdentifierClass.fromRdf({
+      kitchenSink.InIdentifierClass.$fromRdf({
         resource: new MutableResourceSet({
           dataFactory,
           dataset: new N3.Store(),

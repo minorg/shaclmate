@@ -6,6 +6,7 @@ import type { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class SetType extends Type {
   private readonly _mutable: boolean;
@@ -65,7 +66,7 @@ export class SetType extends Type {
 
   @Memoize()
   override get equalsFunction(): string {
-    return `((left, right) => $arrayEquals(left, right, ${this.itemType.equalsFunction}))`;
+    return `((left, right) => ${syntheticNamePrefix}arrayEquals(left, right, ${this.itemType.equalsFunction}))`;
   }
 
   @Memoize()

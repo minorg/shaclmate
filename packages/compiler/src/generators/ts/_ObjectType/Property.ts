@@ -49,6 +49,7 @@ export abstract class Property<
    * GraphQL.js field definition.
    */
   abstract readonly graphqlField: Maybe<{
+    name: string;
     description?: string;
     type: string;
   }>;

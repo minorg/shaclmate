@@ -52,7 +52,7 @@ export const defaultFactory: Factory<
     resource: Resource;
     shapesGraph: DefaultShapesGraph;
   }) {
-    return generated.ShaclCoreNodeShape.fromRdf({
+    return generated.ShaclCoreNodeShape.$fromRdf({
       ignoreRdfType: true,
       resource,
     }).map((generatedShape) => new NodeShape(generatedShape, shapesGraph));
@@ -64,7 +64,7 @@ export const defaultFactory: Factory<
     resource: Resource;
     shapesGraph: DefaultShapesGraph;
   }): Either<Error, Ontology> {
-    return generated.OwlOntology.fromRdf({
+    return generated.OwlOntology.$fromRdf({
       ignoreRdfType: true,
       resource,
     }).map((generatedOntology) => new Ontology(generatedOntology));
@@ -76,7 +76,7 @@ export const defaultFactory: Factory<
     resource: Resource;
     shapesGraph: DefaultShapesGraph;
   }): Either<Error, PropertyGroup> {
-    return generated.ShaclCorePropertyGroup.fromRdf({
+    return generated.ShaclCorePropertyGroup.$fromRdf({
       ignoreRdfType: true,
       resource,
     }).map((propertyGroup) => new PropertyGroup(propertyGroup));
@@ -89,7 +89,7 @@ export const defaultFactory: Factory<
     Error,
     DefaultPropertyShape
   > {
-    return generated.ShaclCorePropertyShape.fromRdf({
+    return generated.ShaclCorePropertyShape.$fromRdf({
       ignoreRdfType: true,
       resource,
     }).map((generatedShape) => new PropertyShape(generatedShape, shapesGraph));

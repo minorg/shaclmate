@@ -4,6 +4,7 @@ import type { TsFeature } from "../../enums/index.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class OptionType extends Type {
   readonly itemType: Type;
@@ -49,7 +50,7 @@ export class OptionType extends Type {
 
   @Memoize()
   override get equalsFunction(): string {
-    return `((left, right) => $maybeEquals(left, right, ${this.itemType.equalsFunction}))`;
+    return `((left, right) => ${syntheticNamePrefix}maybeEquals(left, right, ${this.itemType.equalsFunction}))`;
   }
 
   override get graphqlName(): string {

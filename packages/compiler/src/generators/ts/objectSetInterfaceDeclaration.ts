@@ -8,6 +8,7 @@ import {
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export function objectSetInterfaceDeclaration({
   objectTypes,
@@ -38,12 +39,12 @@ export function objectSetInterfaceDeclaration({
             ),
           ),
         ),
-      name: "$ObjectSet",
+      name: `${syntheticNamePrefix}ObjectSet`,
     },
     {
       isExported: true,
       kind: StructureKind.Module,
-      name: "$ObjectSet",
+      name: `${syntheticNamePrefix}ObjectSet`,
       statements: [
         {
           kind: StructureKind.TypeAlias,

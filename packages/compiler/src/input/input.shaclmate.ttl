@@ -10,7 +10,7 @@ shaclmate:ShaclmateNodeShape
     shaclmate:rdfType sh:NodeShape ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf shaclmate:ShaclCoreNodeShape ;
-    sh:property shaclmate:ShaclmateNodeShape-abstract, shaclmate:ShaclmateNodeShape-export, shaclmate:ShaclmateNodeShape-fromRdfType, shaclmate:ShaclmateNodeShape-identifierMintingStrategy, shaclmate:ShaclmateNodeShape-rdfType, shaclmate:ShaclmateNodeShape-toRdfTypes, shaclmate:ShaclmateShape-extern, shaclmate:ShaclmateShape-mutable, shaclmate:ShaclmateShape-name, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType, shaclmate:tsObjectIdentifierPrefixPropertyName, shaclmate:tsObjectIdentifierPropertyName, shaclmate:tsObjectTypeDiscriminatorPropertyName .
+    sh:property shaclmate:ShaclmateNodeShape-abstract, shaclmate:ShaclmateNodeShape-export, shaclmate:ShaclmateNodeShape-fromRdfType, shaclmate:ShaclmateNodeShape-identifierMintingStrategy, shaclmate:ShaclmateNodeShape-rdfType, shaclmate:ShaclmateNodeShape-toRdfTypes, shaclmate:ShaclmateShape-extern, shaclmate:ShaclmateShape-mutable, shaclmate:ShaclmateShape-name, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
 
 shaclmate:ShaclmateNodeShape-abstract
     a sh:PropertyShape ;
@@ -56,7 +56,7 @@ shaclmate:ShaclmateOntology
     shaclmate:rdfType owl:Ontology ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf shaclmate:OwlOntology ;
-    sh:property shaclmate:ShaclmateOntology-tsDataFactoryVariable, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType, shaclmate:tsObjectIdentifierPrefixPropertyName, shaclmate:tsObjectIdentifierPropertyName, shaclmate:tsObjectTypeDiscriminatorPropertyName .
+    sh:property shaclmate:ShaclmateOntology-tsDataFactoryVariable, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
 
 shaclmate:ShaclmateOntology-tsDataFactoryVariable
     a sh:PropertyShape ;
@@ -155,22 +155,4 @@ shaclmate:tsObjectDeclarationType
     ) ;
     sh:maxCount 1 ;
     sh:path shaclmate:tsObjectDeclarationType .
-
-shaclmate:tsObjectIdentifierPrefixPropertyName
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:maxCount 1 ;
-    sh:path shaclmate:tsObjectIdentifierPrefixPropertyName .
-
-shaclmate:tsObjectIdentifierPropertyName
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:maxCount 1 ;
-    sh:path shaclmate:tsObjectIdentifierPropertyName .
-
-shaclmate:tsObjectTypeDiscriminatorPropertyName
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:maxCount 1 ;
-    sh:path shaclmate:tsObjectTypeDiscriminatorPropertyName .
 

@@ -8,24 +8,24 @@ type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
  * UnionMember1
  */
 export class UnionMember2 {
-  private _identifier: UnionMember2.Identifier | undefined;
-  readonly type = "UnionMember2";
+  private _$identifier: UnionMember2.$Identifier | undefined;
+  readonly $type = "UnionMember2";
   /**
    * Optional string property
    */
   readonly optionalStringProperty: purify.Maybe<string>;
 
   constructor(parameters: {
-    readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly optionalStringProperty?: purify.Maybe<string> | string;
   }) {
-    if (typeof parameters.identifier === "object") {
-      this._identifier = parameters.identifier;
-    } else if (typeof parameters.identifier === "string") {
-      this._identifier = dataFactory.namedNode(parameters.identifier);
-    } else if (typeof parameters.identifier === "undefined") {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier satisfies never;
+      this._$identifier = parameters.$identifier satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.optionalStringProperty)) {
@@ -42,14 +42,14 @@ export class UnionMember2 {
     }
   }
 
-  get identifier(): UnionMember2.Identifier {
-    if (typeof this._identifier === "undefined") {
-      this._identifier = dataFactory.blankNode();
+  get $identifier(): UnionMember2.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
     }
-    return this._identifier;
+    return this._$identifier;
   }
 
-  toRdf({
+  $toRdf({
     ignoreRdfType,
     mutateGraph,
     resourceSet,
@@ -58,7 +58,7 @@ export class UnionMember2 {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.identifier, {
+    const _resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
     if (!ignoreRdfType) {
@@ -79,18 +79,18 @@ export class UnionMember2 {
 }
 
 export namespace UnionMember2 {
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/UnionMember2",
   );
-  export const GraphQL = new graphql.GraphQLObjectType<
+  export const $GraphQL = new graphql.GraphQLObjectType<
     UnionMember2,
     { objectSet: $ObjectSet }
   >({
     description: "UnionMember1",
     fields: () => ({
-      identifier: {
+      _identifier: {
         resolve: (source) =>
-          UnionMember2.Identifier.toString(source.identifier),
+          UnionMember2.$Identifier.toString(source.$identifier),
         type: graphql.GraphQLString,
       },
       optionalStringProperty: {
@@ -101,9 +101,9 @@ export namespace UnionMember2 {
     }),
     name: "UnionMember2",
   });
-  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
-  export namespace Identifier {
+  export namespace $Identifier {
     export function fromString(
       identifier: string,
     ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
@@ -119,7 +119,7 @@ export namespace UnionMember2 {
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
-  export function propertiesFromRdf({
+  export function $propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -133,7 +133,7 @@ export namespace UnionMember2 {
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
     {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       optionalStringProperty: purify.Maybe<string>;
     }
   > {
@@ -163,7 +163,7 @@ export namespace UnionMember2 {
         );
     }
 
-    const identifier: UnionMember2.Identifier = _resource.identifier;
+    const $identifier: UnionMember2.$Identifier = _resource.identifier;
     const _optionalStringPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -182,13 +182,13 @@ export namespace UnionMember2 {
     }
 
     const optionalStringProperty = _optionalStringPropertyEither.unsafeCoerce();
-    return purify.Either.of({ identifier, optionalStringProperty });
+    return purify.Either.of({ $identifier, optionalStringProperty });
   }
 
-  export function fromRdf(
-    parameters: Parameters<typeof UnionMember2.propertiesFromRdf>[0],
+  export function $fromRdf(
+    parameters: Parameters<typeof UnionMember2.$propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, UnionMember2> {
-    return UnionMember2.propertiesFromRdf(parameters).map(
+    return UnionMember2.$propertiesFromRdf(parameters).map(
       (properties) => new UnionMember2(properties),
     );
   }
@@ -205,24 +205,24 @@ export namespace UnionMember2 {
  * UnionMember1
  */
 export class UnionMember1 {
-  private _identifier: UnionMember1.Identifier | undefined;
-  readonly type = "UnionMember1";
+  private _$identifier: UnionMember1.$Identifier | undefined;
+  readonly $type = "UnionMember1";
   /**
    * Optional number property
    */
   readonly optionalNumberProperty: purify.Maybe<number>;
 
   constructor(parameters: {
-    readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly optionalNumberProperty?: number | purify.Maybe<number>;
   }) {
-    if (typeof parameters.identifier === "object") {
-      this._identifier = parameters.identifier;
-    } else if (typeof parameters.identifier === "string") {
-      this._identifier = dataFactory.namedNode(parameters.identifier);
-    } else if (typeof parameters.identifier === "undefined") {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier satisfies never;
+      this._$identifier = parameters.$identifier satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.optionalNumberProperty)) {
@@ -239,14 +239,14 @@ export class UnionMember1 {
     }
   }
 
-  get identifier(): UnionMember1.Identifier {
-    if (typeof this._identifier === "undefined") {
-      this._identifier = dataFactory.blankNode();
+  get $identifier(): UnionMember1.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
     }
-    return this._identifier;
+    return this._$identifier;
   }
 
-  toRdf({
+  $toRdf({
     ignoreRdfType,
     mutateGraph,
     resourceSet,
@@ -255,7 +255,7 @@ export class UnionMember1 {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.identifier, {
+    const _resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
     if (!ignoreRdfType) {
@@ -276,18 +276,18 @@ export class UnionMember1 {
 }
 
 export namespace UnionMember1 {
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/UnionMember1",
   );
-  export const GraphQL = new graphql.GraphQLObjectType<
+  export const $GraphQL = new graphql.GraphQLObjectType<
     UnionMember1,
     { objectSet: $ObjectSet }
   >({
     description: "UnionMember1",
     fields: () => ({
-      identifier: {
+      _identifier: {
         resolve: (source) =>
-          UnionMember1.Identifier.toString(source.identifier),
+          UnionMember1.$Identifier.toString(source.$identifier),
         type: graphql.GraphQLString,
       },
       optionalNumberProperty: {
@@ -298,9 +298,9 @@ export namespace UnionMember1 {
     }),
     name: "UnionMember1",
   });
-  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
-  export namespace Identifier {
+  export namespace $Identifier {
     export function fromString(
       identifier: string,
     ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
@@ -316,7 +316,7 @@ export namespace UnionMember1 {
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
-  export function propertiesFromRdf({
+  export function $propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -330,7 +330,7 @@ export namespace UnionMember1 {
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
     {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       optionalNumberProperty: purify.Maybe<number>;
     }
   > {
@@ -360,7 +360,7 @@ export namespace UnionMember1 {
         );
     }
 
-    const identifier: UnionMember1.Identifier = _resource.identifier;
+    const $identifier: UnionMember1.$Identifier = _resource.identifier;
     const _optionalNumberPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<number>
@@ -379,13 +379,13 @@ export namespace UnionMember1 {
     }
 
     const optionalNumberProperty = _optionalNumberPropertyEither.unsafeCoerce();
-    return purify.Either.of({ identifier, optionalNumberProperty });
+    return purify.Either.of({ $identifier, optionalNumberProperty });
   }
 
-  export function fromRdf(
-    parameters: Parameters<typeof UnionMember1.propertiesFromRdf>[0],
+  export function $fromRdf(
+    parameters: Parameters<typeof UnionMember1.$propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, UnionMember1> {
-    return UnionMember1.propertiesFromRdf(parameters).map(
+    return UnionMember1.$propertiesFromRdf(parameters).map(
       (properties) => new UnionMember1(properties),
     );
   }
@@ -402,8 +402,8 @@ export namespace UnionMember1 {
  * Nested
  */
 export class Nested {
-  private _identifier: Nested.Identifier | undefined;
-  readonly type = "Nested";
+  private _$identifier: Nested.$Identifier | undefined;
+  readonly $type = "Nested";
   /**
    * Optional number property
    */
@@ -418,18 +418,18 @@ export class Nested {
   readonly requiredStringProperty: string;
 
   constructor(parameters: {
-    readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly optionalNumberProperty?: number | purify.Maybe<number>;
     readonly optionalStringProperty?: purify.Maybe<string> | string;
     readonly requiredStringProperty: string;
   }) {
-    if (typeof parameters.identifier === "object") {
-      this._identifier = parameters.identifier;
-    } else if (typeof parameters.identifier === "string") {
-      this._identifier = dataFactory.namedNode(parameters.identifier);
-    } else if (typeof parameters.identifier === "undefined") {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier satisfies never;
+      this._$identifier = parameters.$identifier satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.optionalNumberProperty)) {
@@ -461,14 +461,14 @@ export class Nested {
     this.requiredStringProperty = parameters.requiredStringProperty;
   }
 
-  get identifier(): Nested.Identifier {
-    if (typeof this._identifier === "undefined") {
-      this._identifier = dataFactory.blankNode();
+  get $identifier(): Nested.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
     }
-    return this._identifier;
+    return this._$identifier;
   }
 
-  toRdf({
+  $toRdf({
     ignoreRdfType,
     mutateGraph,
     resourceSet,
@@ -477,7 +477,7 @@ export class Nested {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.identifier, {
+    const _resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
     if (!ignoreRdfType) {
@@ -506,17 +506,17 @@ export class Nested {
 }
 
 export namespace Nested {
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/Nested",
   );
-  export const GraphQL = new graphql.GraphQLObjectType<
+  export const $GraphQL = new graphql.GraphQLObjectType<
     Nested,
     { objectSet: $ObjectSet }
   >({
     description: "Nested",
     fields: () => ({
-      identifier: {
-        resolve: (source) => Nested.Identifier.toString(source.identifier),
+      _identifier: {
+        resolve: (source) => Nested.$Identifier.toString(source.$identifier),
         type: graphql.GraphQLString,
       },
       optionalNumberProperty: {
@@ -537,9 +537,9 @@ export namespace Nested {
     }),
     name: "Nested",
   });
-  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
-  export namespace Identifier {
+  export namespace $Identifier {
     export function fromString(
       identifier: string,
     ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
@@ -555,7 +555,7 @@ export namespace Nested {
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
-  export function propertiesFromRdf({
+  export function $propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -569,7 +569,7 @@ export namespace Nested {
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
     {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       optionalNumberProperty: purify.Maybe<number>;
       optionalStringProperty: purify.Maybe<string>;
       requiredStringProperty: string;
@@ -601,7 +601,7 @@ export namespace Nested {
         );
     }
 
-    const identifier: Nested.Identifier = _resource.identifier;
+    const $identifier: Nested.$Identifier = _resource.identifier;
     const _optionalNumberPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<number>
@@ -654,17 +654,17 @@ export namespace Nested {
 
     const requiredStringProperty = _requiredStringPropertyEither.unsafeCoerce();
     return purify.Either.of({
-      identifier,
+      $identifier,
       optionalNumberProperty,
       optionalStringProperty,
       requiredStringProperty,
     });
   }
 
-  export function fromRdf(
-    parameters: Parameters<typeof Nested.propertiesFromRdf>[0],
+  export function $fromRdf(
+    parameters: Parameters<typeof Nested.$propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, Nested> {
-    return Nested.propertiesFromRdf(parameters).map(
+    return Nested.$propertiesFromRdf(parameters).map(
       (properties) => new Nested(properties),
     );
   }
@@ -691,23 +691,23 @@ export namespace Nested {
  * Concrete parent
  */
 export class ConcreteParent {
-  readonly identifier: ConcreteParentStatic.Identifier;
-  readonly type: "ConcreteParent" | "ConcreteChild" = "ConcreteParent";
+  readonly $identifier: ConcreteParentStatic.$Identifier;
+  readonly $type: "ConcreteParent" | "ConcreteChild" = "ConcreteParent";
   /**
    * Parent string property
    */
   readonly parentStringProperty: purify.Maybe<string>;
 
   constructor(parameters: {
-    readonly identifier: rdfjs.NamedNode | string;
+    readonly $identifier: rdfjs.NamedNode | string;
     readonly parentStringProperty?: purify.Maybe<string> | string;
   }) {
-    if (typeof parameters.identifier === "object") {
-      this.identifier = parameters.identifier;
-    } else if (typeof parameters.identifier === "string") {
-      this.identifier = dataFactory.namedNode(parameters.identifier);
+    if (typeof parameters.$identifier === "object") {
+      this.$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this.$identifier = dataFactory.namedNode(parameters.$identifier);
     } else {
-      this.identifier = parameters.identifier satisfies never;
+      this.$identifier = parameters.$identifier satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.parentStringProperty)) {
@@ -724,7 +724,7 @@ export class ConcreteParent {
     }
   }
 
-  toRdf({
+  $toRdf({
     ignoreRdfType,
     mutateGraph,
     resourceSet,
@@ -733,7 +733,7 @@ export class ConcreteParent {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
-    const _resource = resourceSet.mutableNamedResource(this.identifier, {
+    const _resource = resourceSet.mutableNamedResource(this.$identifier, {
       mutateGraph,
     });
     if (!ignoreRdfType) {
@@ -754,18 +754,18 @@ export class ConcreteParent {
 }
 
 export namespace ConcreteParentStatic {
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/ConcreteParent",
   );
-  export const GraphQL = new graphql.GraphQLObjectType<
+  export const $GraphQL = new graphql.GraphQLObjectType<
     ConcreteParent,
     { objectSet: $ObjectSet }
   >({
     description: "Concrete parent",
     fields: () => ({
-      identifier: {
+      _identifier: {
         resolve: (source) =>
-          ConcreteParentStatic.Identifier.toString(source.identifier),
+          ConcreteParentStatic.$Identifier.toString(source.$identifier),
         type: graphql.GraphQLString,
       },
       parentStringProperty: {
@@ -776,12 +776,12 @@ export namespace ConcreteParentStatic {
     }),
     name: "ConcreteParent",
   });
-  export type Identifier = rdfjs.NamedNode;
+  export type $Identifier = rdfjs.NamedNode;
 
-  export namespace Identifier {
+  export namespace $Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, Identifier> {
+    ): purify.Either<Error, rdfjs.NamedNode> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory: dataFactory,
@@ -791,14 +791,14 @@ export namespace ConcreteParentStatic {
         identifier.termType === "NamedNode"
           ? purify.Either.of(identifier)
           : purify.Left(new Error("expected identifier to be NamedNode")),
-      ) as purify.Either<Error, Identifier>;
+      ) as purify.Either<Error, rdfjs.NamedNode>;
     }
 
     export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
-  export function propertiesFromRdf({
+  export function $propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -811,7 +811,7 @@ export namespace ConcreteParentStatic {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.NamedNode; parentStringProperty: purify.Maybe<string> }
+    { $identifier: rdfjs.NamedNode; parentStringProperty: purify.Maybe<string> }
   > {
     if (
       !_ignoreRdfType &&
@@ -852,7 +852,7 @@ export namespace ConcreteParentStatic {
       );
     }
 
-    const identifier: ConcreteParentStatic.Identifier = _resource.identifier;
+    const $identifier: ConcreteParentStatic.$Identifier = _resource.identifier;
     const _parentStringPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -871,20 +871,20 @@ export namespace ConcreteParentStatic {
     }
 
     const parentStringProperty = _parentStringPropertyEither.unsafeCoerce();
-    return purify.Either.of({ identifier, parentStringProperty });
+    return purify.Either.of({ $identifier, parentStringProperty });
   }
 
-  export function fromRdf(
-    parameters: Parameters<typeof ConcreteParentStatic.propertiesFromRdf>[0],
+  export function $fromRdf(
+    parameters: Parameters<typeof ConcreteParentStatic.$propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, ConcreteParent> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
-      ConcreteChild.fromRdf(otherParameters) as purify.Either<
+      ConcreteChild.$fromRdf(otherParameters) as purify.Either<
         rdfjsResource.Resource.ValueError,
         ConcreteParent
       >
     ).altLazy(() =>
-      ConcreteParentStatic.propertiesFromRdf(parameters).map(
+      ConcreteParentStatic.$propertiesFromRdf(parameters).map(
         (properties) => new ConcreteParent(properties),
       ),
     );
@@ -902,7 +902,7 @@ export namespace ConcreteParentStatic {
  * Concrete child
  */
 export class ConcreteChild extends ConcreteParent {
-  override readonly type = "ConcreteChild";
+  override readonly $type = "ConcreteChild";
   /**
    * Child string property
    */
@@ -922,7 +922,7 @@ export class ConcreteChild extends ConcreteParent {
 
   constructor(
     parameters: {
-      readonly identifier: rdfjs.NamedNode | string;
+      readonly $identifier: rdfjs.NamedNode | string;
       readonly childStringProperty?: purify.Maybe<string> | string;
       readonly optionalNestedObjectProperty?: Nested | purify.Maybe<Nested>;
       readonly optionalStringProperty?: purify.Maybe<string> | string;
@@ -975,7 +975,7 @@ export class ConcreteChild extends ConcreteParent {
     this.requiredStringProperty = parameters.requiredStringProperty;
   }
 
-  override toRdf({
+  override $toRdf({
     ignoreRdfType,
     mutateGraph,
     resourceSet,
@@ -984,7 +984,7 @@ export class ConcreteChild extends ConcreteParent {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
-    const _resource = super.toRdf({
+    const _resource = super.$toRdf({
       ignoreRdfType: true,
       mutateGraph,
       resourceSet,
@@ -1005,7 +1005,7 @@ export class ConcreteChild extends ConcreteParent {
     _resource.add(
       dataFactory.namedNode("http://example.com/optionalNestedObjectProperty"),
       this.optionalNestedObjectProperty.map((_value) =>
-        _value.toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+        _value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
@@ -1021,18 +1021,18 @@ export class ConcreteChild extends ConcreteParent {
 }
 
 export namespace ConcreteChild {
-  export const fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/ConcreteChild",
   );
-  export const GraphQL = new graphql.GraphQLObjectType<
+  export const $GraphQL = new graphql.GraphQLObjectType<
     ConcreteChild,
     { objectSet: $ObjectSet }
   >({
     description: "Concrete child",
     fields: () => ({
-      identifier: {
+      _identifier: {
         resolve: (source) =>
-          ConcreteChild.Identifier.toString(source.identifier),
+          ConcreteChild.$Identifier.toString(source.$identifier),
         type: graphql.GraphQLString,
       },
       childStringProperty: {
@@ -1044,7 +1044,7 @@ export namespace ConcreteChild {
         description: "Optional nested object property",
         resolve: (source) =>
           source.optionalNestedObjectProperty.extractNullable(),
-        type: Nested.GraphQL,
+        type: Nested.$GraphQL,
       },
       optionalStringProperty: {
         description: "Optional string property",
@@ -1059,10 +1059,10 @@ export namespace ConcreteChild {
     }),
     name: "ConcreteChild",
   });
-  export type Identifier = ConcreteParentStatic.Identifier;
-  export const Identifier = ConcreteParentStatic.Identifier;
+  export type $Identifier = ConcreteParentStatic.$Identifier;
+  export const $Identifier = ConcreteParentStatic.$Identifier;
 
-  export function propertiesFromRdf({
+  export function $propertiesFromRdf({
     ignoreRdfType: _ignoreRdfType,
     languageIn: _languageIn,
     resource: _resource,
@@ -1076,24 +1076,24 @@ export namespace ConcreteChild {
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
     {
-      identifier: rdfjs.NamedNode;
+      $identifier: rdfjs.NamedNode;
       childStringProperty: purify.Maybe<string>;
       optionalNestedObjectProperty: purify.Maybe<Nested>;
       optionalStringProperty: purify.Maybe<string>;
       requiredStringProperty: string;
-    } & $UnwrapR<ReturnType<typeof ConcreteParentStatic.propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof ConcreteParentStatic.$propertiesFromRdf>>
   > {
-    const _super0Either = ConcreteParentStatic.propertiesFromRdf({
+    const $super0Either = ConcreteParentStatic.$propertiesFromRdf({
       ..._context,
       ignoreRdfType: true,
       languageIn: _languageIn,
       resource: _resource,
     });
-    if (_super0Either.isLeft()) {
-      return _super0Either;
+    if ($super0Either.isLeft()) {
+      return $super0Either;
     }
 
-    const _super0 = _super0Either.unsafeCoerce();
+    const $super0 = $super0Either.unsafeCoerce();
     if (
       !_ignoreRdfType &&
       !_resource.isInstanceOf(
@@ -1133,7 +1133,7 @@ export namespace ConcreteChild {
       );
     }
 
-    const identifier: ConcreteChild.Identifier = _resource.identifier;
+    const $identifier: ConcreteChild.$Identifier = _resource.identifier;
     const _childStringPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -1166,7 +1166,7 @@ export namespace ConcreteChild {
         .head()
         .chain((value) => value.toResource())
         .chain((_resource) =>
-          Nested.fromRdf({
+          Nested.$fromRdf({
             ..._context,
             ignoreRdfType: true,
             languageIn: _languageIn,
@@ -1215,8 +1215,8 @@ export namespace ConcreteChild {
 
     const requiredStringProperty = _requiredStringPropertyEither.unsafeCoerce();
     return purify.Either.of({
-      ..._super0,
-      identifier,
+      ...$super0,
+      $identifier,
       childStringProperty,
       optionalNestedObjectProperty,
       optionalStringProperty,
@@ -1224,10 +1224,10 @@ export namespace ConcreteChild {
     });
   }
 
-  export function fromRdf(
-    parameters: Parameters<typeof ConcreteChild.propertiesFromRdf>[0],
+  export function $fromRdf(
+    parameters: Parameters<typeof ConcreteChild.$propertiesFromRdf>[0],
   ): purify.Either<rdfjsResource.Resource.ValueError, ConcreteChild> {
-    return ConcreteChild.propertiesFromRdf(parameters).map(
+    return ConcreteChild.$propertiesFromRdf(parameters).map(
       (properties) => new ConcreteChild(properties),
     );
   }
@@ -1262,7 +1262,7 @@ export namespace ConcreteChild {
 export type Union = UnionMember1 | UnionMember2;
 
 export namespace Union {
-  export function fromRdf({
+  export function $fromRdf({
     ignoreRdfType,
     resource,
     ...context
@@ -1272,28 +1272,28 @@ export namespace Union {
     resource: rdfjsResource.Resource;
   }): purify.Either<rdfjsResource.Resource.ValueError, Union> {
     return (
-      UnionMember1.fromRdf({ ...context, resource }) as purify.Either<
+      UnionMember1.$fromRdf({ ...context, resource }) as purify.Either<
         rdfjsResource.Resource.ValueError,
         Union
       >
     ).altLazy(
       () =>
-        UnionMember2.fromRdf({ ...context, resource }) as purify.Either<
+        UnionMember2.$fromRdf({ ...context, resource }) as purify.Either<
           rdfjsResource.Resource.ValueError,
           Union
         >,
     );
   }
 
-  export const GraphQL = new graphql.GraphQLUnionType({
+  export const $GraphQL = new graphql.GraphQLUnionType({
     description: "Union",
     name: "Union",
-    resolveType: (value: Union) => value.type,
-    types: [UnionMember1.GraphQL, UnionMember2.GraphQL],
+    resolveType: (value: Union) => value.$type,
+    types: [UnionMember1.$GraphQL, UnionMember2.$GraphQL],
   });
-  export type Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
-  export namespace Identifier {
+  export namespace $Identifier {
     export function fromString(
       identifier: string,
     ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
@@ -1309,18 +1309,18 @@ export namespace Union {
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
-  export function toRdf(
+  export function $toRdf(
     _union: Union,
     _parameters: {
       mutateGraph: rdfjsResource.MutableResource.MutateGraph;
       resourceSet: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    switch (_union.type) {
+    switch (_union.$type) {
       case "UnionMember1":
-        return _union.toRdf(_parameters);
+        return _union.$toRdf(_parameters);
       case "UnionMember2":
-        return _union.toRdf(_parameters);
+        return _union.$toRdf(_parameters);
       default:
         _union satisfies never;
         throw new Error("unrecognized type");
@@ -1329,72 +1329,72 @@ export namespace Union {
 }
 export interface $ObjectSet {
   concreteChild(
-    identifier: ConcreteChild.Identifier,
+    identifier: ConcreteChild.$Identifier,
   ): Promise<purify.Either<Error, ConcreteChild>>;
   concreteChildIdentifiers(
-    query?: $ObjectSet.Query<ConcreteChild.Identifier>,
-  ): Promise<purify.Either<Error, readonly ConcreteChild.Identifier[]>>;
+    query?: $ObjectSet.Query<ConcreteChild.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ConcreteChild.$Identifier[]>>;
   concreteChildren(
-    query?: $ObjectSet.Query<ConcreteChild.Identifier>,
+    query?: $ObjectSet.Query<ConcreteChild.$Identifier>,
   ): Promise<readonly purify.Either<Error, ConcreteChild>[]>;
   concreteChildrenCount(
-    query?: Pick<$ObjectSet.Query<ConcreteChild.Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ConcreteChild.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
   concreteParent(
-    identifier: ConcreteParentStatic.Identifier,
+    identifier: ConcreteParentStatic.$Identifier,
   ): Promise<purify.Either<Error, ConcreteParent>>;
   concreteParentIdentifiers(
-    query?: $ObjectSet.Query<ConcreteParentStatic.Identifier>,
-  ): Promise<purify.Either<Error, readonly ConcreteParentStatic.Identifier[]>>;
+    query?: $ObjectSet.Query<ConcreteParentStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ConcreteParentStatic.$Identifier[]>>;
   concreteParents(
-    query?: $ObjectSet.Query<ConcreteParentStatic.Identifier>,
+    query?: $ObjectSet.Query<ConcreteParentStatic.$Identifier>,
   ): Promise<readonly purify.Either<Error, ConcreteParent>[]>;
   concreteParentsCount(
-    query?: Pick<$ObjectSet.Query<ConcreteParentStatic.Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ConcreteParentStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
-  nested(identifier: Nested.Identifier): Promise<purify.Either<Error, Nested>>;
+  nested(identifier: Nested.$Identifier): Promise<purify.Either<Error, Nested>>;
   nestedIdentifiers(
-    query?: $ObjectSet.Query<Nested.Identifier>,
-  ): Promise<purify.Either<Error, readonly Nested.Identifier[]>>;
+    query?: $ObjectSet.Query<Nested.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Nested.$Identifier[]>>;
   nesteds(
-    query?: $ObjectSet.Query<Nested.Identifier>,
+    query?: $ObjectSet.Query<Nested.$Identifier>,
   ): Promise<readonly purify.Either<Error, Nested>[]>;
   nestedsCount(
-    query?: Pick<$ObjectSet.Query<Nested.Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<Nested.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
   unionMember1(
-    identifier: UnionMember1.Identifier,
+    identifier: UnionMember1.$Identifier,
   ): Promise<purify.Either<Error, UnionMember1>>;
   unionMember1Identifiers(
-    query?: $ObjectSet.Query<UnionMember1.Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionMember1.Identifier[]>>;
+    query?: $ObjectSet.Query<UnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UnionMember1.$Identifier[]>>;
   unionMember1s(
-    query?: $ObjectSet.Query<UnionMember1.Identifier>,
+    query?: $ObjectSet.Query<UnionMember1.$Identifier>,
   ): Promise<readonly purify.Either<Error, UnionMember1>[]>;
   unionMember1sCount(
-    query?: Pick<$ObjectSet.Query<UnionMember1.Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<UnionMember1.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
   unionMember2(
-    identifier: UnionMember2.Identifier,
+    identifier: UnionMember2.$Identifier,
   ): Promise<purify.Either<Error, UnionMember2>>;
   unionMember2Identifiers(
-    query?: $ObjectSet.Query<UnionMember2.Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionMember2.Identifier[]>>;
+    query?: $ObjectSet.Query<UnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UnionMember2.$Identifier[]>>;
   unionMember2s(
-    query?: $ObjectSet.Query<UnionMember2.Identifier>,
+    query?: $ObjectSet.Query<UnionMember2.$Identifier>,
   ): Promise<readonly purify.Either<Error, UnionMember2>[]>;
   unionMember2sCount(
-    query?: Pick<$ObjectSet.Query<UnionMember2.Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<UnionMember2.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
-  union(identifier: Union.Identifier): Promise<purify.Either<Error, Union>>;
+  union(identifier: Union.$Identifier): Promise<purify.Either<Error, Union>>;
   unionIdentifiers(
-    query?: $ObjectSet.Query<Union.Identifier>,
-  ): Promise<purify.Either<Error, readonly Union.Identifier[]>>;
+    query?: $ObjectSet.Query<Union.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Union.$Identifier[]>>;
   unions(
-    query?: $ObjectSet.Query<Union.Identifier>,
+    query?: $ObjectSet.Query<Union.$Identifier>,
   ): Promise<readonly purify.Either<Error, Union>[]>;
   unionsCount(
-    query?: Pick<$ObjectSet.Query<Union.Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<Union.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
 }
 
@@ -1422,13 +1422,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteChild(
-    identifier: ConcreteChild.Identifier,
+    identifier: ConcreteChild.$Identifier,
   ): Promise<purify.Either<Error, ConcreteChild>> {
     return this.concreteChildSync(identifier);
   }
 
   concreteChildSync(
-    identifier: ConcreteChild.Identifier,
+    identifier: ConcreteChild.$Identifier,
   ): purify.Either<Error, ConcreteChild> {
     return this.concreteChildrenSync({
       where: { identifiers: [identifier], type: "identifiers" },
@@ -1436,16 +1436,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteChildIdentifiers(
-    query?: $ObjectSet.Query<ConcreteChild.Identifier>,
-  ): Promise<purify.Either<Error, readonly ConcreteChild.Identifier[]>> {
+    query?: $ObjectSet.Query<ConcreteChild.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ConcreteChild.$Identifier[]>> {
     return this.concreteChildIdentifiersSync(query);
   }
 
   concreteChildIdentifiersSync(
-    query?: $ObjectSet.Query<ConcreteChild.Identifier>,
-  ): purify.Either<Error, readonly ConcreteChild.Identifier[]> {
+    query?: $ObjectSet.Query<ConcreteChild.$Identifier>,
+  ): purify.Either<Error, readonly ConcreteChild.$Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<ConcreteChild, ConcreteChild.Identifier>(
+      ...this.$objectIdentifiersSync<ConcreteChild, ConcreteChild.$Identifier>(
         ConcreteChild,
         query,
       ),
@@ -1453,16 +1453,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteChildren(
-    query?: $ObjectSet.Query<ConcreteChild.Identifier>,
+    query?: $ObjectSet.Query<ConcreteChild.$Identifier>,
   ): Promise<readonly purify.Either<Error, ConcreteChild>[]> {
     return this.concreteChildrenSync(query);
   }
 
   concreteChildrenSync(
-    query?: $ObjectSet.Query<ConcreteChild.Identifier>,
+    query?: $ObjectSet.Query<ConcreteChild.$Identifier>,
   ): readonly purify.Either<Error, ConcreteChild>[] {
     return [
-      ...this.$objectsSync<ConcreteChild, ConcreteChild.Identifier>(
+      ...this.$objectsSync<ConcreteChild, ConcreteChild.$Identifier>(
         ConcreteChild,
         query,
       ),
@@ -1470,28 +1470,28 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteChildrenCount(
-    query?: Pick<$ObjectSet.Query<ConcreteChild.Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ConcreteChild.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.concreteChildrenCountSync(query);
   }
 
   concreteChildrenCountSync(
-    query?: Pick<$ObjectSet.Query<ConcreteChild.Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ConcreteChild.$Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<ConcreteChild, ConcreteChild.Identifier>(
+    return this.$objectsCountSync<ConcreteChild, ConcreteChild.$Identifier>(
       ConcreteChild,
       query,
     );
   }
 
   async concreteParent(
-    identifier: ConcreteParentStatic.Identifier,
+    identifier: ConcreteParentStatic.$Identifier,
   ): Promise<purify.Either<Error, ConcreteParent>> {
     return this.concreteParentSync(identifier);
   }
 
   concreteParentSync(
-    identifier: ConcreteParentStatic.Identifier,
+    identifier: ConcreteParentStatic.$Identifier,
   ): purify.Either<Error, ConcreteParent> {
     return this.concreteParentsSync({
       where: { identifiers: [identifier], type: "identifiers" },
@@ -1499,33 +1499,35 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteParentIdentifiers(
-    query?: $ObjectSet.Query<ConcreteParentStatic.Identifier>,
-  ): Promise<purify.Either<Error, readonly ConcreteParentStatic.Identifier[]>> {
+    query?: $ObjectSet.Query<ConcreteParentStatic.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly ConcreteParentStatic.$Identifier[]>
+  > {
     return this.concreteParentIdentifiersSync(query);
   }
 
   concreteParentIdentifiersSync(
-    query?: $ObjectSet.Query<ConcreteParentStatic.Identifier>,
-  ): purify.Either<Error, readonly ConcreteParentStatic.Identifier[]> {
+    query?: $ObjectSet.Query<ConcreteParentStatic.$Identifier>,
+  ): purify.Either<Error, readonly ConcreteParentStatic.$Identifier[]> {
     return purify.Either.of([
       ...this.$objectIdentifiersSync<
         ConcreteParent,
-        ConcreteParentStatic.Identifier
+        ConcreteParentStatic.$Identifier
       >(ConcreteParentStatic, query),
     ]);
   }
 
   async concreteParents(
-    query?: $ObjectSet.Query<ConcreteParentStatic.Identifier>,
+    query?: $ObjectSet.Query<ConcreteParentStatic.$Identifier>,
   ): Promise<readonly purify.Either<Error, ConcreteParent>[]> {
     return this.concreteParentsSync(query);
   }
 
   concreteParentsSync(
-    query?: $ObjectSet.Query<ConcreteParentStatic.Identifier>,
+    query?: $ObjectSet.Query<ConcreteParentStatic.$Identifier>,
   ): readonly purify.Either<Error, ConcreteParent>[] {
     return [
-      ...this.$objectsSync<ConcreteParent, ConcreteParentStatic.Identifier>(
+      ...this.$objectsSync<ConcreteParent, ConcreteParentStatic.$Identifier>(
         ConcreteParentStatic,
         query,
       ),
@@ -1533,78 +1535,78 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteParentsCount(
-    query?: Pick<$ObjectSet.Query<ConcreteParentStatic.Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ConcreteParentStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.concreteParentsCountSync(query);
   }
 
   concreteParentsCountSync(
-    query?: Pick<$ObjectSet.Query<ConcreteParentStatic.Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ConcreteParentStatic.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       ConcreteParent,
-      ConcreteParentStatic.Identifier
+      ConcreteParentStatic.$Identifier
     >(ConcreteParentStatic, query);
   }
 
   async nested(
-    identifier: Nested.Identifier,
+    identifier: Nested.$Identifier,
   ): Promise<purify.Either<Error, Nested>> {
     return this.nestedSync(identifier);
   }
 
-  nestedSync(identifier: Nested.Identifier): purify.Either<Error, Nested> {
+  nestedSync(identifier: Nested.$Identifier): purify.Either<Error, Nested> {
     return this.nestedsSync({
       where: { identifiers: [identifier], type: "identifiers" },
     })[0];
   }
 
   async nestedIdentifiers(
-    query?: $ObjectSet.Query<Nested.Identifier>,
-  ): Promise<purify.Either<Error, readonly Nested.Identifier[]>> {
+    query?: $ObjectSet.Query<Nested.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Nested.$Identifier[]>> {
     return this.nestedIdentifiersSync(query);
   }
 
   nestedIdentifiersSync(
-    query?: $ObjectSet.Query<Nested.Identifier>,
-  ): purify.Either<Error, readonly Nested.Identifier[]> {
+    query?: $ObjectSet.Query<Nested.$Identifier>,
+  ): purify.Either<Error, readonly Nested.$Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<Nested, Nested.Identifier>(Nested, query),
+      ...this.$objectIdentifiersSync<Nested, Nested.$Identifier>(Nested, query),
     ]);
   }
 
   async nesteds(
-    query?: $ObjectSet.Query<Nested.Identifier>,
+    query?: $ObjectSet.Query<Nested.$Identifier>,
   ): Promise<readonly purify.Either<Error, Nested>[]> {
     return this.nestedsSync(query);
   }
 
   nestedsSync(
-    query?: $ObjectSet.Query<Nested.Identifier>,
+    query?: $ObjectSet.Query<Nested.$Identifier>,
   ): readonly purify.Either<Error, Nested>[] {
-    return [...this.$objectsSync<Nested, Nested.Identifier>(Nested, query)];
+    return [...this.$objectsSync<Nested, Nested.$Identifier>(Nested, query)];
   }
 
   async nestedsCount(
-    query?: Pick<$ObjectSet.Query<Nested.Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<Nested.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.nestedsCountSync(query);
   }
 
   nestedsCountSync(
-    query?: Pick<$ObjectSet.Query<Nested.Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<Nested.$Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Nested, Nested.Identifier>(Nested, query);
+    return this.$objectsCountSync<Nested, Nested.$Identifier>(Nested, query);
   }
 
   async unionMember1(
-    identifier: UnionMember1.Identifier,
+    identifier: UnionMember1.$Identifier,
   ): Promise<purify.Either<Error, UnionMember1>> {
     return this.unionMember1Sync(identifier);
   }
 
   unionMember1Sync(
-    identifier: UnionMember1.Identifier,
+    identifier: UnionMember1.$Identifier,
   ): purify.Either<Error, UnionMember1> {
     return this.unionMember1sSync({
       where: { identifiers: [identifier], type: "identifiers" },
@@ -1612,16 +1614,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async unionMember1Identifiers(
-    query?: $ObjectSet.Query<UnionMember1.Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionMember1.Identifier[]>> {
+    query?: $ObjectSet.Query<UnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UnionMember1.$Identifier[]>> {
     return this.unionMember1IdentifiersSync(query);
   }
 
   unionMember1IdentifiersSync(
-    query?: $ObjectSet.Query<UnionMember1.Identifier>,
-  ): purify.Either<Error, readonly UnionMember1.Identifier[]> {
+    query?: $ObjectSet.Query<UnionMember1.$Identifier>,
+  ): purify.Either<Error, readonly UnionMember1.$Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<UnionMember1, UnionMember1.Identifier>(
+      ...this.$objectIdentifiersSync<UnionMember1, UnionMember1.$Identifier>(
         UnionMember1,
         query,
       ),
@@ -1629,16 +1631,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async unionMember1s(
-    query?: $ObjectSet.Query<UnionMember1.Identifier>,
+    query?: $ObjectSet.Query<UnionMember1.$Identifier>,
   ): Promise<readonly purify.Either<Error, UnionMember1>[]> {
     return this.unionMember1sSync(query);
   }
 
   unionMember1sSync(
-    query?: $ObjectSet.Query<UnionMember1.Identifier>,
+    query?: $ObjectSet.Query<UnionMember1.$Identifier>,
   ): readonly purify.Either<Error, UnionMember1>[] {
     return [
-      ...this.$objectsSync<UnionMember1, UnionMember1.Identifier>(
+      ...this.$objectsSync<UnionMember1, UnionMember1.$Identifier>(
         UnionMember1,
         query,
       ),
@@ -1646,28 +1648,28 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async unionMember1sCount(
-    query?: Pick<$ObjectSet.Query<UnionMember1.Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<UnionMember1.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.unionMember1sCountSync(query);
   }
 
   unionMember1sCountSync(
-    query?: Pick<$ObjectSet.Query<UnionMember1.Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<UnionMember1.$Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<UnionMember1, UnionMember1.Identifier>(
+    return this.$objectsCountSync<UnionMember1, UnionMember1.$Identifier>(
       UnionMember1,
       query,
     );
   }
 
   async unionMember2(
-    identifier: UnionMember2.Identifier,
+    identifier: UnionMember2.$Identifier,
   ): Promise<purify.Either<Error, UnionMember2>> {
     return this.unionMember2Sync(identifier);
   }
 
   unionMember2Sync(
-    identifier: UnionMember2.Identifier,
+    identifier: UnionMember2.$Identifier,
   ): purify.Either<Error, UnionMember2> {
     return this.unionMember2sSync({
       where: { identifiers: [identifier], type: "identifiers" },
@@ -1675,16 +1677,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async unionMember2Identifiers(
-    query?: $ObjectSet.Query<UnionMember2.Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionMember2.Identifier[]>> {
+    query?: $ObjectSet.Query<UnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UnionMember2.$Identifier[]>> {
     return this.unionMember2IdentifiersSync(query);
   }
 
   unionMember2IdentifiersSync(
-    query?: $ObjectSet.Query<UnionMember2.Identifier>,
-  ): purify.Either<Error, readonly UnionMember2.Identifier[]> {
+    query?: $ObjectSet.Query<UnionMember2.$Identifier>,
+  ): purify.Either<Error, readonly UnionMember2.$Identifier[]> {
     return purify.Either.of([
-      ...this.$objectIdentifiersSync<UnionMember2, UnionMember2.Identifier>(
+      ...this.$objectIdentifiersSync<UnionMember2, UnionMember2.$Identifier>(
         UnionMember2,
         query,
       ),
@@ -1692,16 +1694,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async unionMember2s(
-    query?: $ObjectSet.Query<UnionMember2.Identifier>,
+    query?: $ObjectSet.Query<UnionMember2.$Identifier>,
   ): Promise<readonly purify.Either<Error, UnionMember2>[]> {
     return this.unionMember2sSync(query);
   }
 
   unionMember2sSync(
-    query?: $ObjectSet.Query<UnionMember2.Identifier>,
+    query?: $ObjectSet.Query<UnionMember2.$Identifier>,
   ): readonly purify.Either<Error, UnionMember2>[] {
     return [
-      ...this.$objectsSync<UnionMember2, UnionMember2.Identifier>(
+      ...this.$objectsSync<UnionMember2, UnionMember2.$Identifier>(
         UnionMember2,
         query,
       ),
@@ -1709,43 +1711,43 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async unionMember2sCount(
-    query?: Pick<$ObjectSet.Query<UnionMember2.Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<UnionMember2.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.unionMember2sCountSync(query);
   }
 
   unionMember2sCountSync(
-    query?: Pick<$ObjectSet.Query<UnionMember2.Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<UnionMember2.$Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<UnionMember2, UnionMember2.Identifier>(
+    return this.$objectsCountSync<UnionMember2, UnionMember2.$Identifier>(
       UnionMember2,
       query,
     );
   }
 
   async union(
-    identifier: Union.Identifier,
+    identifier: Union.$Identifier,
   ): Promise<purify.Either<Error, Union>> {
     return this.unionSync(identifier);
   }
 
-  unionSync(identifier: Union.Identifier): purify.Either<Error, Union> {
+  unionSync(identifier: Union.$Identifier): purify.Either<Error, Union> {
     return this.unionsSync({
       where: { identifiers: [identifier], type: "identifiers" },
     })[0];
   }
 
   async unionIdentifiers(
-    query?: $ObjectSet.Query<Union.Identifier>,
-  ): Promise<purify.Either<Error, readonly Union.Identifier[]>> {
+    query?: $ObjectSet.Query<Union.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Union.$Identifier[]>> {
     return this.unionIdentifiersSync(query);
   }
 
   unionIdentifiersSync(
-    query?: $ObjectSet.Query<Union.Identifier>,
-  ): purify.Either<Error, readonly Union.Identifier[]> {
+    query?: $ObjectSet.Query<Union.$Identifier>,
+  ): purify.Either<Error, readonly Union.$Identifier[]> {
     return purify.Either.of([
-      ...this.$objectUnionIdentifiersSync<Union, Union.Identifier>(
+      ...this.$objectUnionIdentifiersSync<Union, Union.$Identifier>(
         [UnionMember1, UnionMember2],
         query,
       ),
@@ -1753,16 +1755,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async unions(
-    query?: $ObjectSet.Query<Union.Identifier>,
+    query?: $ObjectSet.Query<Union.$Identifier>,
   ): Promise<readonly purify.Either<Error, Union>[]> {
     return this.unionsSync(query);
   }
 
   unionsSync(
-    query?: $ObjectSet.Query<Union.Identifier>,
+    query?: $ObjectSet.Query<Union.$Identifier>,
   ): readonly purify.Either<Error, Union>[] {
     return [
-      ...this.$objectUnionsSync<Union, Union.Identifier>(
+      ...this.$objectUnionsSync<Union, Union.$Identifier>(
         [UnionMember1, UnionMember2],
         query,
       ),
@@ -1770,29 +1772,29 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async unionsCount(
-    query?: Pick<$ObjectSet.Query<Union.Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<Union.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.unionsCountSync(query);
   }
 
   unionsCountSync(
-    query?: Pick<$ObjectSet.Query<Union.Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<Union.$Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectUnionsCountSync<Union, Union.Identifier>(
+    return this.$objectUnionsCountSync<Union, Union.$Identifier>(
       [UnionMember1, UnionMember2],
       query,
     );
   }
 
   protected *$objectIdentifiersSync<
-    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectType: {
-      fromRdf: (parameters: {
+      $fromRdf: (parameters: {
         resource: rdfjsResource.Resource;
       }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
-      fromRdfType?: rdfjs.NamedNode;
+      $fromRdfType?: rdfjs.NamedNode;
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): Generator<ObjectIdentifierT> {
@@ -1801,20 +1803,20 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     )) {
       if (object.isRight()) {
-        yield object.unsafeCoerce().identifier;
+        yield object.unsafeCoerce().$identifier;
       }
     }
   }
 
   protected *$objectsSync<
-    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectType: {
-      fromRdf: (parameters: {
+      $fromRdf: (parameters: {
         resource: rdfjsResource.Resource;
       }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
-      fromRdfType?: rdfjs.NamedNode;
+      $fromRdfType?: rdfjs.NamedNode;
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): Generator<purify.Either<Error, ObjectT>> {
@@ -1833,18 +1835,20 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         offset,
         offset + limit,
       )) {
-        yield objectType.fromRdf({
+        yield objectType.$fromRdf({
           resource: this.resourceSet.resource(identifier),
         });
       }
       return;
     }
 
-    if (!objectType.fromRdfType) {
+    if (!objectType.$fromRdfType) {
       return;
     }
 
-    const resources = [...this.resourceSet.instancesOf(objectType.fromRdfType)];
+    const resources = [
+      ...this.resourceSet.instancesOf(objectType.$fromRdfType),
+    ];
     // Sort resources by identifier so limit and offset are deterministic
     resources.sort((left, right) =>
       left.identifier.value.localeCompare(right.identifier.value),
@@ -1853,7 +1857,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     let objectCount = 0;
     let objectI = 0;
     for (const resource of resources) {
-      const object = objectType.fromRdf({ resource });
+      const object = objectType.$fromRdf({ resource });
       if (object.isLeft()) {
         continue;
       }
@@ -1867,14 +1871,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   protected $objectsCountSync<
-    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectType: {
-      fromRdf: (parameters: {
+      $fromRdf: (parameters: {
         resource: rdfjsResource.Resource;
       }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
-      fromRdfType?: rdfjs.NamedNode;
+      $fromRdfType?: rdfjs.NamedNode;
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, number> {
@@ -1890,14 +1894,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   protected *$objectUnionIdentifiersSync<
-    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectTypes: readonly {
-      fromRdf: (parameters: {
+      $fromRdf: (parameters: {
         resource: rdfjsResource.Resource;
       }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
-      fromRdfType?: rdfjs.NamedNode;
+      $fromRdfType?: rdfjs.NamedNode;
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): Generator<ObjectIdentifierT> {
@@ -1906,20 +1910,20 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     )) {
       if (object.isRight()) {
-        yield object.unsafeCoerce().identifier;
+        yield object.unsafeCoerce().$identifier;
       }
     }
   }
 
   protected *$objectUnionsSync<
-    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectTypes: readonly {
-      fromRdf: (parameters: {
+      $fromRdf: (parameters: {
         resource: rdfjsResource.Resource;
       }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
-      fromRdfType?: rdfjs.NamedNode;
+      $fromRdfType?: rdfjs.NamedNode;
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): Generator<purify.Either<Error, ObjectT>> {
@@ -1942,7 +1946,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         const resource = this.resourceSet.resource(identifier);
         const lefts: purify.Either<Error, ObjectT>[] = [];
         for (const objectType of objectTypes) {
-          const object = objectType.fromRdf({ resource });
+          const object = objectType.$fromRdf({ resource });
           if (object.isRight()) {
             yield object;
             break;
@@ -1963,20 +1967,20 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
     const resources: {
       objectType: {
-        fromRdf: (parameters: {
+        $fromRdf: (parameters: {
           resource: rdfjsResource.Resource;
         }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
-        fromRdfType?: rdfjs.NamedNode;
+        $fromRdfType?: rdfjs.NamedNode;
       };
       resource: rdfjsResource.Resource;
     }[] = [];
     for (const objectType of objectTypes) {
-      if (!objectType.fromRdfType) {
+      if (!objectType.$fromRdfType) {
         continue;
       }
 
       for (const resource of this.resourceSet.instancesOf(
-        objectType.fromRdfType,
+        objectType.$fromRdfType,
       )) {
         resources.push({ objectType, resource });
       }
@@ -1990,7 +1994,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
 
     for (const { objectType, resource } of resources) {
-      const object = objectType.fromRdf({ resource });
+      const object = objectType.$fromRdf({ resource });
       if (object.isLeft()) {
         continue;
       }
@@ -2004,14 +2008,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   protected $objectUnionsCountSync<
-    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectTypes: readonly {
-      fromRdf: (parameters: {
+      $fromRdf: (parameters: {
         resource: rdfjsResource.Resource;
       }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
-      fromRdfType?: rdfjs.NamedNode;
+      $fromRdfType?: rdfjs.NamedNode;
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, number> {
@@ -2046,13 +2050,13 @@ export const graphqlSchema = new graphql.GraphQLSchema({
                 liftEither(
                   await objectSet.concreteChild(
                     await liftEither(
-                      ConcreteChild.Identifier.fromString(args.identifier),
+                      ConcreteChild.$Identifier.fromString(args.identifier),
                     ),
                   ),
                 ),
             )
           ).unsafeCoerce(),
-        type: ConcreteChild.GraphQL,
+        type: ConcreteChild.$GraphQL,
       },
       concreteChildIdentifiers: {
         args: {
@@ -2071,7 +2075,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
             })
           )
             .unsafeCoerce()
-            .map(ConcreteChild.Identifier.toString),
+            .map(ConcreteChild.$Identifier.toString),
         type: new graphql.GraphQLNonNull(
           new graphql.GraphQLList(graphql.GraphQLString),
         ),
@@ -2099,14 +2103,14 @@ export const graphqlSchema = new graphql.GraphQLSchema({
             await purify.EitherAsync<Error, readonly ConcreteChild[]>(
               async ({ liftEither }) => {
                 let where:
-                  | $ObjectSet.Where<ConcreteChild.Identifier>
+                  | $ObjectSet.Where<ConcreteChild.$Identifier>
                   | undefined;
                 if (args.identifiers) {
-                  const identifiers: ConcreteChild.Identifier[] = [];
+                  const identifiers: ConcreteChild.$Identifier[] = [];
                   for (const identifierArg of args.identifiers) {
                     identifiers.push(
                       await liftEither(
-                        ConcreteChild.Identifier.fromString(identifierArg),
+                        ConcreteChild.$Identifier.fromString(identifierArg),
                       ),
                     );
                   }
@@ -2126,7 +2130,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           ).unsafeCoerce(),
         type: new graphql.GraphQLNonNull(
           new graphql.GraphQLList(
-            new graphql.GraphQLNonNull(ConcreteChild.GraphQL),
+            new graphql.GraphQLNonNull(ConcreteChild.$GraphQL),
           ),
         ),
       },
@@ -2150,7 +2154,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
                 liftEither(
                   await objectSet.concreteParent(
                     await liftEither(
-                      ConcreteParentStatic.Identifier.fromString(
+                      ConcreteParentStatic.$Identifier.fromString(
                         args.identifier,
                       ),
                     ),
@@ -2158,7 +2162,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
                 ),
             )
           ).unsafeCoerce(),
-        type: ConcreteParentStatic.GraphQL,
+        type: ConcreteParentStatic.$GraphQL,
       },
       concreteParentIdentifiers: {
         args: {
@@ -2177,7 +2181,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
             })
           )
             .unsafeCoerce()
-            .map(ConcreteParentStatic.Identifier.toString),
+            .map(ConcreteParentStatic.$Identifier.toString),
         type: new graphql.GraphQLNonNull(
           new graphql.GraphQLList(graphql.GraphQLString),
         ),
@@ -2205,14 +2209,14 @@ export const graphqlSchema = new graphql.GraphQLSchema({
             await purify.EitherAsync<Error, readonly ConcreteParent[]>(
               async ({ liftEither }) => {
                 let where:
-                  | $ObjectSet.Where<ConcreteParentStatic.Identifier>
+                  | $ObjectSet.Where<ConcreteParentStatic.$Identifier>
                   | undefined;
                 if (args.identifiers) {
-                  const identifiers: ConcreteParentStatic.Identifier[] = [];
+                  const identifiers: ConcreteParentStatic.$Identifier[] = [];
                   for (const identifierArg of args.identifiers) {
                     identifiers.push(
                       await liftEither(
-                        ConcreteParentStatic.Identifier.fromString(
+                        ConcreteParentStatic.$Identifier.fromString(
                           identifierArg,
                         ),
                       ),
@@ -2234,7 +2238,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           ).unsafeCoerce(),
         type: new graphql.GraphQLNonNull(
           new graphql.GraphQLList(
-            new graphql.GraphQLNonNull(ConcreteParentStatic.GraphQL),
+            new graphql.GraphQLNonNull(ConcreteParentStatic.$GraphQL),
           ),
         ),
       },
@@ -2257,13 +2261,13 @@ export const graphqlSchema = new graphql.GraphQLSchema({
               liftEither(
                 await objectSet.nested(
                   await liftEither(
-                    Nested.Identifier.fromString(args.identifier),
+                    Nested.$Identifier.fromString(args.identifier),
                   ),
                 ),
               ),
             )
           ).unsafeCoerce(),
-        type: Nested.GraphQL,
+        type: Nested.$GraphQL,
       },
       nestedIdentifiers: {
         args: {
@@ -2282,7 +2286,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
             })
           )
             .unsafeCoerce()
-            .map(Nested.Identifier.toString),
+            .map(Nested.$Identifier.toString),
         type: new graphql.GraphQLNonNull(
           new graphql.GraphQLList(graphql.GraphQLString),
         ),
@@ -2309,13 +2313,13 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           (
             await purify.EitherAsync<Error, readonly Nested[]>(
               async ({ liftEither }) => {
-                let where: $ObjectSet.Where<Nested.Identifier> | undefined;
+                let where: $ObjectSet.Where<Nested.$Identifier> | undefined;
                 if (args.identifiers) {
-                  const identifiers: Nested.Identifier[] = [];
+                  const identifiers: Nested.$Identifier[] = [];
                   for (const identifierArg of args.identifiers) {
                     identifiers.push(
                       await liftEither(
-                        Nested.Identifier.fromString(identifierArg),
+                        Nested.$Identifier.fromString(identifierArg),
                       ),
                     );
                   }
@@ -2334,7 +2338,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
             )
           ).unsafeCoerce(),
         type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(new graphql.GraphQLNonNull(Nested.GraphQL)),
+          new graphql.GraphQLList(new graphql.GraphQLNonNull(Nested.$GraphQL)),
         ),
       },
       nestedsCount: {
@@ -2357,13 +2361,13 @@ export const graphqlSchema = new graphql.GraphQLSchema({
                 liftEither(
                   await objectSet.unionMember1(
                     await liftEither(
-                      UnionMember1.Identifier.fromString(args.identifier),
+                      UnionMember1.$Identifier.fromString(args.identifier),
                     ),
                   ),
                 ),
             )
           ).unsafeCoerce(),
-        type: UnionMember1.GraphQL,
+        type: UnionMember1.$GraphQL,
       },
       unionMember1Identifiers: {
         args: {
@@ -2382,7 +2386,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
             })
           )
             .unsafeCoerce()
-            .map(UnionMember1.Identifier.toString),
+            .map(UnionMember1.$Identifier.toString),
         type: new graphql.GraphQLNonNull(
           new graphql.GraphQLList(graphql.GraphQLString),
         ),
@@ -2410,14 +2414,14 @@ export const graphqlSchema = new graphql.GraphQLSchema({
             await purify.EitherAsync<Error, readonly UnionMember1[]>(
               async ({ liftEither }) => {
                 let where:
-                  | $ObjectSet.Where<UnionMember1.Identifier>
+                  | $ObjectSet.Where<UnionMember1.$Identifier>
                   | undefined;
                 if (args.identifiers) {
-                  const identifiers: UnionMember1.Identifier[] = [];
+                  const identifiers: UnionMember1.$Identifier[] = [];
                   for (const identifierArg of args.identifiers) {
                     identifiers.push(
                       await liftEither(
-                        UnionMember1.Identifier.fromString(identifierArg),
+                        UnionMember1.$Identifier.fromString(identifierArg),
                       ),
                     );
                   }
@@ -2437,7 +2441,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           ).unsafeCoerce(),
         type: new graphql.GraphQLNonNull(
           new graphql.GraphQLList(
-            new graphql.GraphQLNonNull(UnionMember1.GraphQL),
+            new graphql.GraphQLNonNull(UnionMember1.$GraphQL),
           ),
         ),
       },
@@ -2461,13 +2465,13 @@ export const graphqlSchema = new graphql.GraphQLSchema({
                 liftEither(
                   await objectSet.unionMember2(
                     await liftEither(
-                      UnionMember2.Identifier.fromString(args.identifier),
+                      UnionMember2.$Identifier.fromString(args.identifier),
                     ),
                   ),
                 ),
             )
           ).unsafeCoerce(),
-        type: UnionMember2.GraphQL,
+        type: UnionMember2.$GraphQL,
       },
       unionMember2Identifiers: {
         args: {
@@ -2486,7 +2490,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
             })
           )
             .unsafeCoerce()
-            .map(UnionMember2.Identifier.toString),
+            .map(UnionMember2.$Identifier.toString),
         type: new graphql.GraphQLNonNull(
           new graphql.GraphQLList(graphql.GraphQLString),
         ),
@@ -2514,14 +2518,14 @@ export const graphqlSchema = new graphql.GraphQLSchema({
             await purify.EitherAsync<Error, readonly UnionMember2[]>(
               async ({ liftEither }) => {
                 let where:
-                  | $ObjectSet.Where<UnionMember2.Identifier>
+                  | $ObjectSet.Where<UnionMember2.$Identifier>
                   | undefined;
                 if (args.identifiers) {
-                  const identifiers: UnionMember2.Identifier[] = [];
+                  const identifiers: UnionMember2.$Identifier[] = [];
                   for (const identifierArg of args.identifiers) {
                     identifiers.push(
                       await liftEither(
-                        UnionMember2.Identifier.fromString(identifierArg),
+                        UnionMember2.$Identifier.fromString(identifierArg),
                       ),
                     );
                   }
@@ -2541,7 +2545,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           ).unsafeCoerce(),
         type: new graphql.GraphQLNonNull(
           new graphql.GraphQLList(
-            new graphql.GraphQLNonNull(UnionMember2.GraphQL),
+            new graphql.GraphQLNonNull(UnionMember2.$GraphQL),
           ),
         ),
       },
@@ -2564,13 +2568,13 @@ export const graphqlSchema = new graphql.GraphQLSchema({
               liftEither(
                 await objectSet.union(
                   await liftEither(
-                    Union.Identifier.fromString(args.identifier),
+                    Union.$Identifier.fromString(args.identifier),
                   ),
                 ),
               ),
             )
           ).unsafeCoerce(),
-        type: Union.GraphQL,
+        type: Union.$GraphQL,
       },
       unionIdentifiers: {
         args: {
@@ -2589,7 +2593,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
             })
           )
             .unsafeCoerce()
-            .map(Union.Identifier.toString),
+            .map(Union.$Identifier.toString),
         type: new graphql.GraphQLNonNull(
           new graphql.GraphQLList(graphql.GraphQLString),
         ),
@@ -2616,13 +2620,13 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           (
             await purify.EitherAsync<Error, readonly Union[]>(
               async ({ liftEither }) => {
-                let where: $ObjectSet.Where<Union.Identifier> | undefined;
+                let where: $ObjectSet.Where<Union.$Identifier> | undefined;
                 if (args.identifiers) {
-                  const identifiers: Union.Identifier[] = [];
+                  const identifiers: Union.$Identifier[] = [];
                   for (const identifierArg of args.identifiers) {
                     identifiers.push(
                       await liftEither(
-                        Union.Identifier.fromString(identifierArg),
+                        Union.$Identifier.fromString(identifierArg),
                       ),
                     );
                   }
@@ -2641,7 +2645,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
             )
           ).unsafeCoerce(),
         type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(new graphql.GraphQLNonNull(Union.GraphQL)),
+          new graphql.GraphQLList(new graphql.GraphQLNonNull(Union.$GraphQL)),
         ),
       },
       unionsCount: {

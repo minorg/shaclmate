@@ -80,9 +80,9 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
           type: "string",
         },
       ],
-      returnType: "purify.Either<Error, Identifier>",
+      returnType: `purify.Either<Error, ${this.name}>`,
       statements: [
-        `return ${expressions.join(".")} as purify.Either<Error, Identifier>;`,
+        `return ${expressions.join(".")} as purify.Either<Error, ${this.name}>;`,
       ],
     };
   }

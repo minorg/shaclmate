@@ -23,6 +23,7 @@ import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
 import { sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/sparqlConstructQueryStringFunctionDeclaration.js";
 import { objectInitializer } from "./objectInitializer.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { tsComment } from "./tsComment.js";
 
 class MemberType {
@@ -239,17 +240,17 @@ export class ObjectUnionType extends DeclaredType {
 
   @Memoize()
   override get equalsFunction(): string {
-    return `${this.staticModuleName}.equals`;
+    return `${this.staticModuleName}.${syntheticNamePrefix}equals`;
   }
 
   @Memoize()
   override get graphqlName(): string {
-    return `${this.staticModuleName}.GraphQL`;
+    return `${this.staticModuleName}.${syntheticNamePrefix}GraphQL`;
   }
 
   @Memoize()
   get identifierTypeAlias(): string {
-    return `${this.staticModuleName}.Identifier`;
+    return `${this.staticModuleName}.${syntheticNamePrefix}Identifier`;
   }
 
   @Memoize()
@@ -287,10 +288,10 @@ export class ObjectUnionType extends DeclaredType {
       let returnExpression: string;
       switch (memberType.declarationType) {
         case "class":
-          returnExpression = `left.equals(right as unknown as ${memberType.name})`;
+          returnExpression = `left.${syntheticNamePrefix}equals(right as unknown as ${memberType.name})`;
           break;
         case "interface":
-          returnExpression = `${memberType.staticModuleName}.equals(left, right as unknown as ${memberType.name})`;
+          returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}equals(left, right as unknown as ${memberType.name})`;
           break;
       }
       return `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${returnExpression};`;
@@ -302,7 +303,7 @@ export class ObjectUnionType extends DeclaredType {
     return Maybe.of({
       isExported: true,
       kind: StructureKind.Function,
-      name: "equals",
+      name: `${syntheticNamePrefix}equals`,
       parameters: [
         {
           name: "left",
@@ -313,9 +314,9 @@ export class ObjectUnionType extends DeclaredType {
           type: this.name,
         },
       ],
-      returnType: "$EqualsResult",
+      returnType: `${syntheticNamePrefix}EqualsResult`,
       statements: `\
-return $strictEquals(left.type, right.type).chain(() => {
+return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right.${syntheticNamePrefix}type).chain(() => {
   switch (left.${this._discriminatorProperty.name}) {
    ${caseBlocks.join(" ")}
   }
@@ -331,7 +332,7 @@ return $strictEquals(left.type, right.type).chain(() => {
     return Maybe.of({
       isExported: true,
       kind: StructureKind.Function,
-      name: "fromJson",
+      name: `${syntheticNamePrefix}fromJson`,
       parameters: [
         {
           name: "json",
@@ -341,7 +342,7 @@ return $strictEquals(left.type, right.type).chain(() => {
       returnType: `purify.Either<zod.ZodError, ${this.name}>`,
       statements: [
         `return ${this.memberTypes.reduce((expression, memberType) => {
-          const memberTypeExpression = `(${memberType.staticModuleName}.fromJson(json) as purify.Either<zod.ZodError, ${this.name}>)`;
+          const memberTypeExpression = `(${memberType.staticModuleName}.${syntheticNamePrefix}fromJson(json) as purify.Either<zod.ZodError, ${this.name}>)`;
           return expression.length > 0
             ? `${expression}.altLazy(() => ${memberTypeExpression})`
             : memberTypeExpression;
@@ -358,7 +359,7 @@ return $strictEquals(left.type, right.type).chain(() => {
     return Maybe.of({
       isExported: true,
       kind: StructureKind.Function,
-      name: "fromRdf",
+      name: `${syntheticNamePrefix}fromRdf`,
       parameters: [
         {
           name: "{ ignoreRdfType, resource, ...context }",
@@ -368,7 +369,7 @@ return $strictEquals(left.type, right.type).chain(() => {
       returnType: `purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>`,
       statements: [
         `return ${this.memberTypes.reduce((expression, memberType) => {
-          const memberTypeExpression = `(${memberType.staticModuleName}.fromRdf({ ...context, resource }) as purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>)`;
+          const memberTypeExpression = `(${memberType.staticModuleName}.${syntheticNamePrefix}fromRdf({ ...context, resource }) as purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>)`;
           return expression.length > 0
             ? `${expression}.altLazy(() => ${memberTypeExpression})`
             : memberTypeExpression;
@@ -387,11 +388,11 @@ return $strictEquals(left.type, right.type).chain(() => {
       kind: StructureKind.VariableStatement,
       declarations: [
         {
-          name: "GraphQL",
+          name: `${syntheticNamePrefix}GraphQL`,
           initializer: `new graphql.GraphQLUnionType(${objectInitializer({
             description: this.comment.map(JSON.stringify).extract(),
             name: `"${this.name}"`,
-            resolveType: `function (value: ${this.name}) { return value.type; }`,
+            resolveType: `function (value: ${this.name}) { return value.${syntheticNamePrefix}type; }`,
             types: `[${this.memberTypes.map((memberType) => memberType.graphqlName).join(", ")}]`,
           })})`,
         },
@@ -411,10 +412,10 @@ return $strictEquals(left.type, right.type).chain(() => {
       let returnExpression: string;
       switch (memberType.declarationType) {
         case "class":
-          returnExpression = `${this.thisVariable}.hash(${hasherVariable})`;
+          returnExpression = `${this.thisVariable}.${syntheticNamePrefix}hash(${hasherVariable})`;
           break;
         case "interface":
-          returnExpression = `${memberType.staticModuleName}.hash(${this.thisVariable}, ${hasherVariable})`;
+          returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}hash(${this.thisVariable}, ${hasherVariable})`;
           break;
       }
       return `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${returnExpression};`;
@@ -426,7 +427,7 @@ return $strictEquals(left.type, right.type).chain(() => {
     return Maybe.of({
       isExported: true,
       kind: StructureKind.Function,
-      name: "hash",
+      name: `${syntheticNamePrefix}hash`,
       parameters: [
         {
           name: this.thisVariable,
@@ -458,13 +459,13 @@ return $strictEquals(left.type, right.type).chain(() => {
       {
         isExported: true,
         kind: StructureKind.TypeAlias,
-        name: "Identifier",
+        name: `${syntheticNamePrefix}Identifier`,
         type: this.identifierType.name,
       },
       {
         isExported: true,
         kind: StructureKind.Module,
-        name: "Identifier",
+        name: `${syntheticNamePrefix}Identifier`,
         statements: [
           this.identifierType.fromStringFunctionDeclaration,
           this.identifierType.toStringFunctionDeclaration,
@@ -481,7 +482,7 @@ return $strictEquals(left.type, right.type).chain(() => {
     return Maybe.of({
       isExported: true,
       kind: StructureKind.TypeAlias,
-      name: "Json",
+      name: `${syntheticNamePrefix}Json`,
       type: this.memberTypes
         .map((memberType) => memberType.jsonName)
         .join(" | "),
@@ -497,7 +498,7 @@ return $strictEquals(left.type, right.type).chain(() => {
     return Maybe.of({
       isExported: true,
       kind: StructureKind.Function,
-      name: "jsonZodSchema",
+      name: `${syntheticNamePrefix}jsonZodSchema`,
       statements: `return ${variables.zod}.discriminatedUnion("${this._discriminatorProperty.name}", [${this.memberTypes.map((memberType) => memberType.jsonZodSchema({ variables })).join(", ")}]);`,
     });
   }
@@ -513,7 +514,7 @@ return $strictEquals(left.type, right.type).chain(() => {
       {
         isExported: true,
         kind: StructureKind.Function,
-        name: "sparqlConstructTemplateTriples",
+        name: `${syntheticNamePrefix}sparqlConstructTemplateTriples`,
         // Accept ignoreRdfType in order to reuse code but don't pass it through, since deserialization may depend on it
         parameters: [
           {
@@ -527,7 +528,7 @@ return $strictEquals(left.type, right.type).chain(() => {
           `return [${this.memberTypes
             .map(
               (memberType) =>
-                `...${memberType.staticModuleName}.sparqlConstructTemplateTriples({ subject: parameters?.subject ?? ${this.dataFactoryVariable}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
+                `...${memberType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTemplateTriples({ subject: parameters?.subject ?? ${this.dataFactoryVariable}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
             )
             .join(", ")}];`,
         ],
@@ -535,7 +536,7 @@ return $strictEquals(left.type, right.type).chain(() => {
       {
         isExported: true,
         kind: StructureKind.Function,
-        name: "sparqlWherePatterns",
+        name: `${syntheticNamePrefix}sparqlWherePatterns`,
         // Accept ignoreRdfType in order to reuse code but don't pass it through, since deserialization may depend on it
         parameters: [
           {
@@ -549,7 +550,7 @@ return $strictEquals(left.type, right.type).chain(() => {
           `return [{ patterns: [${this.memberTypes
             .map((memberType) =>
               objectInitializer({
-                patterns: `${memberType.staticModuleName}.sparqlWherePatterns({ subject: parameters?.subject ?? ${this.dataFactoryVariable}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
+                patterns: `${memberType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ subject: parameters?.subject ?? ${this.dataFactoryVariable}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
                 type: '"group"',
               }),
             )
@@ -568,10 +569,10 @@ return $strictEquals(left.type, right.type).chain(() => {
       let returnExpression: string;
       switch (memberType.declarationType) {
         case "class":
-          returnExpression = `${this.thisVariable}.toJson()`;
+          returnExpression = `${this.thisVariable}.${syntheticNamePrefix}toJson()`;
           break;
         case "interface":
-          returnExpression = `${memberType.staticModuleName}.toJson(${this.thisVariable})`;
+          returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}toJson(${this.thisVariable})`;
           break;
       }
       return `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${returnExpression};`;
@@ -583,7 +584,7 @@ return $strictEquals(left.type, right.type).chain(() => {
     return Maybe.of({
       isExported: true,
       kind: StructureKind.Function,
-      name: "toJson",
+      name: `${syntheticNamePrefix}toJson`,
       parameters: [
         {
           name: this.thisVariable,
@@ -606,10 +607,10 @@ return $strictEquals(left.type, right.type).chain(() => {
       let returnExpression: string;
       switch (memberType.declarationType) {
         case "class":
-          returnExpression = `${this.thisVariable}.toRdf(${parametersVariable})`;
+          returnExpression = `${this.thisVariable}.${syntheticNamePrefix}toRdf(${parametersVariable})`;
           break;
         case "interface":
-          returnExpression = `${memberType.staticModuleName}.toRdf(${this.thisVariable}, ${parametersVariable})`;
+          returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}toRdf(${this.thisVariable}, ${parametersVariable})`;
           break;
       }
       return `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${returnExpression};`;
@@ -621,7 +622,7 @@ return $strictEquals(left.type, right.type).chain(() => {
     return Maybe.of({
       isExported: true,
       kind: StructureKind.Function,
-      name: "toRdf",
+      name: `${syntheticNamePrefix}toRdf`,
       parameters: [
         {
           name: this.thisVariable,
@@ -664,14 +665,14 @@ return $strictEquals(left.type, right.type).chain(() => {
     variables,
   }: Parameters<Type["fromJsonExpression"]>[0]): string {
     // Assumes the JSON object has been recursively validated already.
-    return `${this.staticModuleName}.fromJson(${variables.value}).unsafeCoerce()`;
+    return `${this.staticModuleName}.${syntheticNamePrefix}fromJson(${variables.value}).unsafeCoerce()`;
   }
 
   override fromRdfExpression({
     variables,
   }: Parameters<Type["fromRdfExpression"]>[0]): string {
     // Don't ignoreRdfType, we may need it to distinguish the union members
-    return `${variables.resourceValues}.head().chain(value => value.toResource()).chain(_resource => ${this.staticModuleName}.fromRdf({ ...${variables.context}, languageIn: ${variables.languageIn}, resource: _resource }))`;
+    return `${variables.resourceValues}.head().chain(value => value.toResource()).chain(_resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf({ ...${variables.context}, languageIn: ${variables.languageIn}, resource: _resource }))`;
   }
 
   override hashStatements({
@@ -679,16 +680,18 @@ return $strictEquals(left.type, right.type).chain(() => {
   }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
     switch (this.memberTypes[0].declarationType) {
       case "class":
-        return [`${variables.value}.hash(${variables.hasher});`];
+        return [
+          `${variables.value}.${syntheticNamePrefix}hash(${variables.hasher});`,
+        ];
       case "interface":
         return [
-          `${this.staticModuleName}.hash(${variables.value}, ${variables.hasher});`,
+          `${this.staticModuleName}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
         ];
     }
   }
 
   override jsonZodSchema(): ReturnType<Type["jsonZodSchema"]> {
-    return `${this.staticModuleName}.jsonZodSchema()`;
+    return `${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
   }
 
   override sparqlConstructTemplateTriples({
@@ -700,7 +703,7 @@ return $strictEquals(left.type, right.type).chain(() => {
         return super.sparqlConstructTemplateTriples({ context, variables });
       case "type":
         return [
-          `...${this.staticModuleName}.sparqlConstructTemplateTriples(${objectInitializer(
+          `...${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTemplateTriples(${objectInitializer(
             {
               subject: variables.subject,
               variablePrefix: variables.variablePrefix,
@@ -719,10 +722,12 @@ return $strictEquals(left.type, right.type).chain(() => {
         return super.sparqlWherePatterns({ context, variables });
       case "type":
         return [
-          `...${this.staticModuleName}.sparqlWherePatterns(${objectInitializer({
-            subject: variables.subject,
-            variablePrefix: variables.variablePrefix,
-          })})`,
+          `...${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
+            {
+              subject: variables.subject,
+              variablePrefix: variables.variablePrefix,
+            },
+          )})`,
         ];
     }
   }
@@ -732,7 +737,7 @@ return $strictEquals(left.type, right.type).chain(() => {
   }: Parameters<Type["toJsonExpression"]>[0]): string {
     switch (this.memberTypes[0].declarationType) {
       case "class":
-        return `${variables.value}.toJson()`;
+        return `${variables.value}.${syntheticNamePrefix}toJson()`;
       case "interface":
         throw new Error(
           "not implemented: need a freestanding toJson function like the toRdf function",
@@ -747,9 +752,9 @@ return $strictEquals(left.type, right.type).chain(() => {
     const options = `{ mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} }`;
     switch (this.memberTypes[0].declarationType) {
       case "class":
-        return `${variables.value}.toRdf(${options})`;
+        return `${variables.value}.${syntheticNamePrefix}toRdf(${options})`;
       case "interface":
-        return `${this.staticModuleName}.toRdf(${variables.value}, ${options})`;
+        return `${this.staticModuleName}.${syntheticNamePrefix}toRdf(${variables.value}, ${options})`;
     }
   }
 

@@ -10,6 +10,7 @@ import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 /**
  * Abstract base class for IdentifierType and LiteralType.
@@ -27,7 +28,7 @@ export class TermType<
     | NamedNode,
 > extends Type {
   readonly defaultValue: Maybe<ConstantTermT>;
-  readonly equalsFunction: string = "$booleanEquals";
+  readonly equalsFunction: string = `${syntheticNamePrefix}booleanEquals`;
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
   readonly mutable: boolean = false;

@@ -14,12 +14,12 @@ describe("graphqlSchema", () => {
 
   it("concreteChild object", async ({ expect }) => {
     const result = await execute(
-      `query { concreteChild(identifier: "<http://example.com/concreteChild0>") { identifier, childStringProperty } }`,
+      `query { concreteChild(identifier: "<http://example.com/concreteChild0>") { _identifier, childStringProperty } }`,
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
       concreteChild: {
-        identifier: "<http://example.com/concreteChild0>",
+        _identifier: "<http://example.com/concreteChild0>",
         childStringProperty: "child string property",
       },
     });
@@ -61,12 +61,12 @@ describe("graphqlSchema", () => {
 
   it("concreteChild objects (all)", async ({ expect }) => {
     const result = await execute(
-      "query { concreteChildren { identifier, childStringProperty } }",
+      "query { concreteChildren { _identifier, childStringProperty } }",
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
       concreteChildren: [...new Array(4)].map((_, i) => ({
-        identifier: `<http://example.com/concreteChild${i}>`,
+        _identifier: `<http://example.com/concreteChild${i}>`,
         childStringProperty: "child string property",
       })),
     });
@@ -74,12 +74,12 @@ describe("graphqlSchema", () => {
 
   it("concreteChild objects (identifiers)", async ({ expect }) => {
     const result = await execute(
-      `query { concreteChildren(identifiers: [${[...new Array(2)].map((_, i) => `"<http://example.com/concreteChild${i + 1}>"`).join(", ")}]) { identifier, childStringProperty } }`,
+      `query { concreteChildren(identifiers: [${[...new Array(2)].map((_, i) => `"<http://example.com/concreteChild${i + 1}>"`).join(", ")}]) { _identifier, childStringProperty } }`,
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
       concreteChildren: [...new Array(2)].map((_, i) => ({
-        identifier: `<http://example.com/concreteChild${i + 1}>`,
+        _identifier: `<http://example.com/concreteChild${i + 1}>`,
         childStringProperty: "child string property",
       })),
     });
@@ -87,12 +87,12 @@ describe("graphqlSchema", () => {
 
   it("concreteChild objects (limit)", async ({ expect }) => {
     const result = await execute(
-      "query { concreteChildren(limit: 2) { identifier, childStringProperty } }",
+      "query { concreteChildren(limit: 2) { _identifier, childStringProperty } }",
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
       concreteChildren: [...new Array(2)].map((_, i) => ({
-        identifier: `<http://example.com/concreteChild${i}>`,
+        _identifier: `<http://example.com/concreteChild${i}>`,
         childStringProperty: "child string property",
       })),
     });
@@ -100,12 +100,12 @@ describe("graphqlSchema", () => {
 
   it("concreteChild objects (offset)", async ({ expect }) => {
     const result = await execute(
-      "query { concreteChildren(offset: 1) { identifier, childStringProperty } }",
+      "query { concreteChildren(offset: 1) { _identifier, childStringProperty } }",
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
       concreteChildren: [...new Array(3)].map((_, i) => ({
-        identifier: `<http://example.com/concreteChild${i + 1}>`,
+        _identifier: `<http://example.com/concreteChild${i + 1}>`,
         childStringProperty: "child string property",
       })),
     });
@@ -125,11 +125,11 @@ describe("graphqlSchema", () => {
 query {
   union(identifier: "<http://example.com/union0>") {
     ... on UnionMember1 {
-      identifier
+      _identifier
       optionalNumberProperty
     }
     ... on UnionMember2 {
-      identifier
+      _identifier
       optionalStringProperty
     }
   }
@@ -138,7 +138,7 @@ query {
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
       union: {
-        identifier: "<http://example.com/union0>",
+        _identifier: "<http://example.com/union0>",
         optionalNumberProperty: 1,
       },
     });
@@ -160,11 +160,11 @@ query {
 query {
   unions {
     ... on UnionMember1 {
-      identifier
+      _identifier
       optionalNumberProperty
     }
     ... on UnionMember2 {
-      identifier
+      _identifier
       optionalStringProperty
     }
   }
@@ -173,11 +173,11 @@ query {
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
       unions: [...new Array(4)].map((_, i) => {
-        const identifier = `<http://example.com/union${i}>`;
+        const _identifier = `<http://example.com/union${i}>`;
         if (i % 2 === 0) {
-          return { identifier, optionalNumberProperty: 1 };
+          return { _identifier, optionalNumberProperty: 1 };
         }
-        return { identifier, optionalStringProperty: "test" };
+        return { _identifier, optionalStringProperty: "test" };
       }),
     });
   });

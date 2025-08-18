@@ -2,6 +2,7 @@ import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function createFunctionDeclaration(
   this: ObjectType,
@@ -32,7 +33,7 @@ export function createFunctionDeclaration(
     .concat(
       this.parentObjectTypes.map(
         (parentObjectType) =>
-          `Parameters<typeof ${parentObjectType.staticModuleName}.create>[0]`,
+          `Parameters<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}create>[0]`,
       ),
     )
     .join(" & ");
@@ -42,7 +43,7 @@ export function createFunctionDeclaration(
   const propertyStatements: string[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     propertyInitializers.push(
-      `...${parentObjectType.staticModuleName}.create(parameters)`,
+      `...${parentObjectType.staticModuleName}.${syntheticNamePrefix}create(parameters)`,
     );
   }
   for (const property of this.properties) {
@@ -62,7 +63,7 @@ export function createFunctionDeclaration(
   return Maybe.of({
     isExported: true,
     kind: StructureKind.Function,
-    name: "create",
+    name: `${syntheticNamePrefix}create`,
     parameters: [
       {
         name: "parameters",

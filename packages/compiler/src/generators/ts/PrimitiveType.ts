@@ -3,11 +3,13 @@ import type { TsFeature } from "../../enums/index.js";
 import { LiteralType } from "./LiteralType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import type { Type } from "./Type.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export abstract class PrimitiveType<
   ValueT extends boolean | Date | string | number,
 > extends LiteralType {
-  override readonly equalsFunction: string = "$strictEquals";
+  override readonly equalsFunction: string =
+    `${syntheticNamePrefix}strictEquals`;
   readonly primitiveDefaultValue: Maybe<ValueT>;
   readonly primitiveIn: readonly ValueT[];
 

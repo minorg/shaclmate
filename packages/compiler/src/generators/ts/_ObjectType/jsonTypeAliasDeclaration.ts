@@ -1,6 +1,7 @@
 import { Maybe } from "purify-ts";
 import { StructureKind, type TypeAliasDeclarationStructure } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function jsonTypeAliasDeclaration(
   this: ObjectType,
@@ -32,7 +33,7 @@ export function jsonTypeAliasDeclaration(
   return Maybe.of({
     isExported: true,
     kind: StructureKind.TypeAlias,
-    name: "Json",
+    name: `${syntheticNamePrefix}Json`,
     type: members.length > 0 ? members.join(" & ") : "object",
   });
 }

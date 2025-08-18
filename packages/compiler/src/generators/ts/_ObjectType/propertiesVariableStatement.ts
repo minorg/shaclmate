@@ -7,6 +7,7 @@ import {
 
 import type { ObjectType } from "../ObjectType.js";
 import { objectInitializer } from "../objectInitializer.js";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { ShaclProperty } from "./ShaclProperty.js";
 
 export function propertiesVariableStatement(
@@ -19,7 +20,7 @@ export function propertiesVariableStatement(
   const propertiesObject: string[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     propertiesObject.push(
-      `...${parentObjectType.staticModuleName}.$properties`,
+      `...${parentObjectType.staticModuleName}.${syntheticNamePrefix}properties`,
     );
   }
   for (const property of this.properties) {
@@ -40,7 +41,7 @@ export function propertiesVariableStatement(
     kind: StructureKind.VariableStatement,
     declarations: [
       {
-        name: "$properties",
+        name: `${syntheticNamePrefix}properties`,
         initializer: `{${propertiesObject.join(", ")}}`,
       },
     ],

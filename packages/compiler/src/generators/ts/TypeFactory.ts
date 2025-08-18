@@ -26,6 +26,7 @@ import { StringType } from "./StringType.js";
 import { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import { UnionType } from "./UnionType.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { tsName } from "./tsName.js";
 
 const numberDatatypes = {
@@ -327,7 +328,7 @@ export class TypeFactory {
             new ObjectType.TypeDiscriminatorProperty({
               abstract: astType.abstract,
               dataFactoryVariable: this.dataFactoryVariable,
-              name: astType.tsTypeDiscriminatorPropertyName,
+              name: `${syntheticNamePrefix}type`,
               initializer: objectType.discriminatorValue,
               objectType: {
                 declarationType: astType.tsObjectDeclarationType,
@@ -357,7 +358,7 @@ export class TypeFactory {
               own: !astType.ancestorObjectTypes.some(
                 objectTypeNeedsIdentifierPrefixProperty,
               ),
-              name: astType.tsIdentifierPrefixPropertyName,
+              name: `${syntheticNamePrefix}identifierPrefix`,
               objectType: {
                 declarationType: astType.tsObjectDeclarationType,
                 features: astType.tsFeatures,
@@ -427,7 +428,8 @@ export class TypeFactory {
             })(),
             dataFactoryVariable: this.dataFactoryVariable,
             identifierMintingStrategy: astType.identifierMintingStrategy,
-            name: astType.tsIdentifierPropertyName,
+            identifierPrefixPropertyName: `${syntheticNamePrefix}identifierPrefix`,
+            name: `${syntheticNamePrefix}identifier`,
             objectType: {
               declarationType: astType.tsObjectDeclarationType,
               features: astType.tsFeatures,
@@ -435,7 +437,7 @@ export class TypeFactory {
             },
             override: astType.parentObjectTypes.length > 0,
             type: identifierType,
-            typeAlias: `${astType.childObjectTypes.length > 0 ? `${tsName(astType.name)}Static` : tsName(astType.name)}.Identifier`,
+            typeAlias: `${astType.childObjectTypes.length > 0 ? `${tsName(astType.name)}Static` : tsName(astType.name)}.${syntheticNamePrefix}Identifier`,
             visibility: "public",
           }),
         );

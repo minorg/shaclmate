@@ -20,7 +20,7 @@ export class NodeShape<
   >;
 
   constructor(
-    generatedShaclCoreNodeShape: Omit<generated.ShaclCoreNodeShape, "type">,
+    generatedShaclCoreNodeShape: Omit<generated.ShaclCoreNodeShape, "$type">,
     shapesGraph: ShapesGraph<
       NodeShapeT,
       OntologyT,
@@ -58,7 +58,7 @@ export namespace NodeShape {
     constructor(
       private readonly generatedShaclCoreNodeShape: Omit<
         generated.ShaclCoreNodeShape,
-        "type"
+        "$type"
       >,
       shapesGraph: ShapesGraph<
         NodeShapeT,

@@ -15,15 +15,17 @@ import type {
 import type { IdentifierType } from "../IdentifierType.js";
 import { Import } from "../Import.js";
 import { SnippetDeclarations } from "../SnippetDeclarations.js";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { Property } from "./Property.js";
 
 export class IdentifierProperty extends Property<IdentifierType> {
   readonly abstract: boolean;
-  readonly equalsFunction = "$booleanEquals";
+  readonly equalsFunction = `${syntheticNamePrefix}booleanEquals`;
   readonly mutable = false;
   private readonly classGetAccessorScope: Maybe<Scope>;
   private readonly classPropertyDeclarationVisibility: Maybe<PropertyVisibility>;
   private readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
+  private readonly identifierPrefixPropertyName: string;
   private readonly override: boolean;
   private readonly typeAlias: string;
 
@@ -32,6 +34,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
     classGetAccessorScope,
     classPropertyDeclarationVisibility,
     identifierMintingStrategy,
+    identifierPrefixPropertyName,
     override,
     typeAlias,
     ...superParameters
@@ -40,6 +43,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
     classGetAccessorScope: Maybe<Scope>;
     classPropertyDeclarationVisibility: Maybe<PropertyVisibility>;
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
+    identifierPrefixPropertyName: string;
     override: boolean;
     type: IdentifierType;
     typeAlias: string;
@@ -51,6 +55,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
     this.classPropertyDeclarationVisibility =
       classPropertyDeclarationVisibility;
     this.identifierMintingStrategy = identifierMintingStrategy;
+    this.identifierPrefixPropertyName = identifierPrefixPropertyName;
     this.override = override;
     this.typeAlias = typeAlias;
   }
@@ -75,13 +80,11 @@ export class IdentifierProperty extends Property<IdentifierType> {
         case "sha256":
           // If the object is mutable don't memoize the minted identifier, since the hash will change if the object mutates.
           memoizeMintedIdentifier = !this.objectType.mutable();
-          mintIdentifier =
-            "dataFactory.namedNode(`${this.identifierPrefix}${this.hashShaclProperties(sha256.create())}`)";
+          mintIdentifier = `dataFactory.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${this.${syntheticNamePrefix}hashShaclProperties(sha256.create())}\`)`;
           break;
         case "uuidv4":
           memoizeMintedIdentifier = true;
-          mintIdentifier =
-            "dataFactory.namedNode(`${this.identifierPrefix}${uuid.v4()}`)";
+          mintIdentifier = `dataFactory.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${uuid.v4()}\`)`;
           break;
       }
 
@@ -195,7 +198,9 @@ export class IdentifierProperty extends Property<IdentifierType> {
   }
 
   override get graphqlField(): Property<IdentifierType>["graphqlField"] {
+    invariant(this.name.startsWith(syntheticNamePrefix));
     return Maybe.of({
+      name: `_${this.name.substring(syntheticNamePrefix.length)}`,
       resolve: `(source) => ${this.typeAlias}.toString(source.${this.name})`,
       type: this.type.graphqlName,
     });

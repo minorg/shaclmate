@@ -8,6 +8,7 @@ import { Maybe } from "purify-ts";
 import type { ObjectType } from "../ObjectType.js";
 import { OptionType } from "../OptionType.js";
 import { objectInitializer } from "../objectInitializer.js";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { ShaclProperty } from "./ShaclProperty.js";
 
 export function graphqlTypeVariableStatement(
@@ -26,8 +27,8 @@ export function graphqlTypeVariableStatement(
     kind: StructureKind.VariableStatement,
     declarations: [
       {
-        name: "GraphQL",
-        initializer: `new graphql.GraphQLObjectType<${this.name}, { objectSet: $ObjectSet }>(${objectInitializer(
+        name: `${syntheticNamePrefix}GraphQL`,
+        initializer: `new graphql.GraphQLObjectType<${this.name}, { objectSet: ${syntheticNamePrefix}ObjectSet }>(${objectInitializer(
           {
             description: this.comment.map(JSON.stringify).extract(),
             fields: `() => (${objectInitializer(
@@ -40,7 +41,8 @@ export function graphqlTypeVariableStatement(
                     ) {
                       field.type = `new graphql.GraphQLNonNull(${field.type})`;
                     }
-                    fields[property.name] = objectInitializer(field);
+                    const { name: fieldName, ...fieldProps } = field;
+                    fields[fieldName] = objectInitializer(fieldProps);
                   });
                   return fields;
                 },

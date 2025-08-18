@@ -4,6 +4,7 @@ import { camelCase } from "change-case";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 
 import type { ObjectType } from "../ObjectType.js";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { sparqlConstructQueryFunctionDeclaration } from "./sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "./sparqlConstructQueryStringFunctionDeclaration.js";
 
@@ -31,7 +32,7 @@ export function sparqlFunctionDeclarations(
   const sparqlConstructTemplateTriples = [
     ...this.parentObjectTypes.map(
       (parentObjectType) =>
-        `...${parentObjectType.staticModuleName}.sparqlConstructTemplateTriples({ ignoreRdfType: true, subject, variablePrefix })`,
+        `...${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTemplateTriples({ ignoreRdfType: true, subject, variablePrefix })`,
     ),
     ...(this.fromRdfType.isJust()
       ? [
@@ -51,7 +52,7 @@ export function sparqlFunctionDeclarations(
   const sparqlWherePatterns = [
     ...this.parentObjectTypes.map(
       (parentObjectType) =>
-        `...${parentObjectType.staticModuleName}.sparqlWherePatterns({ ignoreRdfType: true, subject, variablePrefix })`,
+        `...${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ ignoreRdfType: true, subject, variablePrefix })`,
     ),
     ...(this.fromRdfType.isJust()
       ? [
@@ -122,7 +123,7 @@ export function sparqlFunctionDeclarations(
     {
       isExported: true,
       kind: StructureKind.Function,
-      name: "sparqlConstructTemplateTriples",
+      name: `${syntheticNamePrefix}sparqlConstructTemplateTriples`,
       parameters: [
         {
           hasQuestionToken: true,
@@ -141,7 +142,7 @@ export function sparqlFunctionDeclarations(
     {
       isExported: true,
       kind: StructureKind.Function,
-      name: "sparqlWherePatterns",
+      name: `${syntheticNamePrefix}sparqlWherePatterns`,
       parameters: [
         {
           hasQuestionToken: true,

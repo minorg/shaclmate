@@ -21,12 +21,12 @@ describe("equals", () => {
   }) => {
     expect(
       new kitchenSink.NonClass({
-        identifier: dataFactory.blankNode(),
+        $identifier: dataFactory.blankNode(),
         nonClassProperty: "Test",
       })
-        .equals(
+        .$equals(
           new kitchenSink.NonClass({
-            identifier: dataFactory.blankNode(),
+            $identifier: dataFactory.blankNode(),
             nonClassProperty: "Test2",
           }),
         )
@@ -35,15 +35,15 @@ describe("equals", () => {
   });
 
   it("terms union type", ({ expect }) => {
-    const identifier = dataFactory.blankNode();
+    const $identifier = dataFactory.blankNode();
     expect(
       new kitchenSink.UnionPropertiesClass({
-        identifier,
+        $identifier,
         widenedTermsProperty: dataFactory.namedNode("http://example.com/term"),
       })
-        .equals(
+        .$equals(
           new kitchenSink.UnionPropertiesClass({
-            identifier,
+            $identifier,
             widenedTermsProperty: dataFactory.namedNode(
               "http://example.com/term",
             ),
@@ -54,12 +54,12 @@ describe("equals", () => {
 
     expect(
       new kitchenSink.UnionPropertiesClass({
-        identifier,
+        $identifier,
         widenedTermsProperty: dataFactory.namedNode("http://example.com/term"),
       })
-        .equals(
+        .$equals(
           new kitchenSink.UnionPropertiesClass({
-            identifier,
+            $identifier,
             widenedTermsProperty: dataFactory.literal("test"),
           }),
         )
@@ -68,15 +68,15 @@ describe("equals", () => {
   });
 
   it("unrelated union type", ({ expect }) => {
-    const identifier = dataFactory.blankNode();
+    const $identifier = dataFactory.blankNode();
     expect(
       new kitchenSink.UnionPropertiesClass({
-        identifier,
+        $identifier,
         unrelatedTypesProperty: 1,
       })
-        .equals(
+        .$equals(
           new kitchenSink.UnionPropertiesClass({
-            identifier,
+            $identifier,
             unrelatedTypesProperty: 1,
           }),
         )
@@ -85,14 +85,14 @@ describe("equals", () => {
 
     expect(
       new kitchenSink.UnionPropertiesClass({
-        identifier,
+        $identifier,
         unrelatedTypesProperty: 1,
       })
-        .equals(
+        .$equals(
           new kitchenSink.UnionPropertiesClass({
-            identifier,
+            $identifier,
             unrelatedTypesProperty: new kitchenSink.NonClass({
-              identifier: dataFactory.blankNode(),
+              $identifier: dataFactory.blankNode(),
               nonClassProperty: "test",
             }),
           }),

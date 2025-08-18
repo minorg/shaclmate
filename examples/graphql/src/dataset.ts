@@ -15,12 +15,12 @@ const resourceSet = new MutableResourceSet({
 });
 for (let i = 0; i < 4; i++) {
   new ConcreteChild({
-    identifier: N3.DataFactory.namedNode(
+    $identifier: N3.DataFactory.namedNode(
       `http://example.com/concreteChild${i}`,
     ),
     childStringProperty: "child string property",
     optionalNestedObjectProperty: new Nested({
-      identifier: N3.DataFactory.namedNode(
+      $identifier: N3.DataFactory.namedNode(
         `http://example.com/concreteChild${i}/nested`,
       ),
       optionalNumberProperty: 2,
@@ -30,24 +30,24 @@ for (let i = 0; i < 4; i++) {
     optionalStringProperty: "optional string (concrete child)",
     parentStringProperty: "parent string (concrete child)",
     requiredStringProperty: "required string (concrete child)",
-  }).toRdf({ resourceSet });
+  }).$toRdf({ resourceSet });
 
   new ConcreteParent({
-    identifier: N3.DataFactory.namedNode(
+    $identifier: N3.DataFactory.namedNode(
       `http://example.com/concreteParent${i}`,
     ),
     parentStringProperty: "parent string",
-  }).toRdf({ resourceSet });
+  }).$toRdf({ resourceSet });
 
   if (i % 2 === 0) {
     new UnionMember1({
-      identifier: N3.DataFactory.namedNode(`http://example.com/union${i}`),
+      $identifier: N3.DataFactory.namedNode(`http://example.com/union${i}`),
       optionalNumberProperty: 1,
-    }).toRdf({ resourceSet });
+    }).$toRdf({ resourceSet });
   } else {
     new UnionMember2({
-      identifier: N3.DataFactory.namedNode(`http://example.com/union${i}`),
+      $identifier: N3.DataFactory.namedNode(`http://example.com/union${i}`),
       optionalStringProperty: "test",
-    }).toRdf({ resourceSet });
+    }).$toRdf({ resourceSet });
   }
 }

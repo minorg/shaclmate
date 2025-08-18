@@ -3,6 +3,7 @@ import type { OptionalKind, VariableStatementStructure } from "ts-morph";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectInitializer } from "./objectInitializer.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 function graphqlQueryObjectType({
   objectTypes,
@@ -11,7 +12,7 @@ function graphqlQueryObjectType({
   objectTypes: readonly ObjectType[];
   objectUnionTypes: readonly ObjectUnionType[];
 }): string {
-  return `new graphql.GraphQLObjectType<null, { objectSet: $ObjectSet }>({ name: "Query", fields: ${objectInitializer(
+  return `new graphql.GraphQLObjectType<null, { objectSet: ${syntheticNamePrefix}ObjectSet }>({ name: "Query", fields: ${objectInitializer(
     [...objectTypes, ...objectUnionTypes].reduce(
       (fields, objectType) => {
         fields[objectType.objectSetMethodNames.object] = objectInitializer({
@@ -25,7 +26,7 @@ async (_source, args: { identifier: string }, { objectSet }): Promise<${objectTy
   (await purify.EitherAsync<Error, ${objectType.name}>(async ({ liftEither }) => 
     liftEither(await objectSet.${objectType.objectSetMethodNames.object}(await liftEither(${objectType.identifierTypeAlias}.fromString(args.identifier))))
   )).unsafeCoerce()`,
-          type: `${objectType.staticModuleName}.GraphQL`,
+          type: objectType.graphqlName,
         });
 
         fields[objectType.objectSetMethodNames.objectIdentifiers] =
@@ -73,7 +74,7 @@ async (_source, args: { identifiers: readonly string[] | null; limit: number | n
   }
   return objects;
 })).unsafeCoerce()`,
-          type: `new graphql.GraphQLNonNull(new graphql.GraphQLList(new graphql.GraphQLNonNull(${objectType.staticModuleName}.GraphQL)))`,
+          type: `new graphql.GraphQLNonNull(new graphql.GraphQLList(new graphql.GraphQLNonNull(${objectType.graphqlName})))`,
         });
 
         fields[objectType.objectSetMethodNames.objectsCount] =

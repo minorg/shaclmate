@@ -9,6 +9,7 @@ import type {
 import { Memoize } from "typescript-memoize";
 import type { Import } from "../Import.js";
 import { SnippetDeclarations } from "../SnippetDeclarations.js";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { Property } from "./Property.js";
 
 export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorProperty.Type> {
@@ -24,7 +25,7 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
   override readonly graphqlField: Property<TypeDiscriminatorProperty.Type>["graphqlField"] =
     Maybe.empty();
   override readonly declarationImports: readonly Import[] = [];
-  override readonly equalsFunction = "$strictEquals";
+  override readonly equalsFunction = `${syntheticNamePrefix}strictEquals`;
   readonly initializer: string;
   override readonly mutable = false;
 

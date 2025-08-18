@@ -10,6 +10,7 @@ import {
   StructureKind,
 } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { tsComment } from "../tsComment.js";
 import { equalsFunctionOrMethodDeclaration } from "./equalsFunctionOrMethodDeclaration.js";
 import { hashFunctionOrMethodDeclarations } from "./hashFunctionOrMethodDeclarations.js";
@@ -163,6 +164,6 @@ function toStringMethodDeclaration(
     hasOverrideKeyword: this.parentObjectTypes.length > 0,
     name: "toString",
     returnType: "string",
-    statements: ["return JSON.stringify(this.toJson());"],
+    statements: [`return JSON.stringify(this.${syntheticNamePrefix}toJson());`],
   });
 }

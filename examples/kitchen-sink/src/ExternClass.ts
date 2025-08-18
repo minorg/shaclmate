@@ -18,37 +18,37 @@ import {
  * Normally you would only need one or the other.
  */
 export class ExternClass extends AbstractBaseClassForExternClass {
-  readonly type = "ExternClass";
+  readonly $type = "ExternClass";
 
-  constructor(readonly identifier: BlankNode | NamedNode<string>) {
+  constructor(readonly $identifier: BlankNode | NamedNode<string>) {
     super({ abstractBaseClassForExternClassProperty: "test" });
   }
 
   // Called by class methods
-  override equals(
+  override $equals(
     _other: ExternClass,
-  ): ReturnType<AbstractBaseClassForExternClass["equals"]> {
+  ): ReturnType<AbstractBaseClassForExternClass["$equals"]> {
     return Either.of(true);
   }
 
   // Called by class methods
-  override hash<
+  override $hash<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    return super.hash(_hasher);
+    return super.$hash(_hasher);
   }
 
   // Called by class methods
-  override toRdf({
+  override $toRdf({
     mutateGraph,
     resourceSet,
   }: {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet: rdfjsResource.MutableResourceSet;
   }) {
-    const resource = super.toRdf({ mutateGraph, resourceSet });
+    const resource = super.$toRdf({ mutateGraph, resourceSet });
     resource.add(
       resourceSet.dataFactory.namedNode("http://example.com/extraproperty"),
       resourceSet.dataFactory.literal("example"),
@@ -59,17 +59,17 @@ export class ExternClass extends AbstractBaseClassForExternClass {
 
 export namespace ExternClass {
   // Called by interface functions
-  export function equals(left: ExternClass, right: ExternClass) {
-    return left.equals(right);
+  export function $equals(left: ExternClass, right: ExternClass) {
+    return left.$equals(right);
   }
 
-  export function fromJson(json: unknown) {
-    return AbstractBaseClassForExternClassStatic.propertiesFromJson(json).map(
-      (properties) => new ExternClass(properties.identifier),
+  export function $fromJson(json: unknown) {
+    return AbstractBaseClassForExternClassStatic.$propertiesFromJson(json).map(
+      (properties) => new ExternClass(properties.$identifier),
     );
   }
 
-  export function fromRdf({
+  export function $fromRdf({
     extra,
     resource,
   }: {
@@ -85,26 +85,24 @@ export namespace ExternClass {
   }
 
   // Called by interface functions
-  export function hash<
+  export function $hash<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(instance: ExternClass, hasher: HasherT): HasherT {
-    instance.hash(hasher);
+    instance.$hash(hasher);
     return hasher;
   }
 
-  export type Identifier = AbstractBaseClassForExternClassStatic.Identifier;
-  export type Json = AbstractBaseClassForExternClassStatic.Json;
-  export const jsonZodSchema =
-    AbstractBaseClassForExternClassStatic.jsonZodSchema;
-  export const jsonUiSchema =
-    AbstractBaseClassForExternClassStatic.jsonUiSchema;
+  export type $Identifier = AbstractBaseClassForExternClassStatic.$Identifier;
+  export type $Json = AbstractBaseClassForExternClassStatic.$Json;
+  export const $jsonZodSchema =
+    AbstractBaseClassForExternClassStatic.$jsonZodSchema;
+  export const $jsonUiSchema =
+    AbstractBaseClassForExternClassStatic.$jsonUiSchema;
 
-  export const Pointers = {};
-
-  export const sparqlConstructTemplateTriples =
-    AbstractBaseClassForExternClassStatic.sparqlConstructTemplateTriples;
-  export const sparqlWherePatterns =
-    AbstractBaseClassForExternClassStatic.sparqlWherePatterns;
+  export const $sparqlConstructTemplateTriples =
+    AbstractBaseClassForExternClassStatic.$sparqlConstructTemplateTriples;
+  export const $sparqlWherePatterns =
+    AbstractBaseClassForExternClassStatic.$sparqlWherePatterns;
 }
