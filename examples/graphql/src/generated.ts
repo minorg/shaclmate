@@ -88,7 +88,7 @@ export namespace UnionMember2 {
   >({
     description: "UnionMember1",
     fields: () => ({
-      $identifier: {
+      _identifier: {
         resolve: (source) =>
           UnionMember2.$Identifier.toString(source.$identifier),
         type: graphql.GraphQLString,
@@ -285,7 +285,7 @@ export namespace UnionMember1 {
   >({
     description: "UnionMember1",
     fields: () => ({
-      $identifier: {
+      _identifier: {
         resolve: (source) =>
           UnionMember1.$Identifier.toString(source.$identifier),
         type: graphql.GraphQLString,
@@ -515,7 +515,7 @@ export namespace Nested {
   >({
     description: "Nested",
     fields: () => ({
-      $identifier: {
+      _identifier: {
         resolve: (source) => Nested.$Identifier.toString(source.$identifier),
         type: graphql.GraphQLString,
       },
@@ -763,7 +763,7 @@ export namespace ConcreteParentStatic {
   >({
     description: "Concrete parent",
     fields: () => ({
-      $identifier: {
+      _identifier: {
         resolve: (source) =>
           ConcreteParentStatic.$Identifier.toString(source.$identifier),
         type: graphql.GraphQLString,
@@ -1030,7 +1030,7 @@ export namespace ConcreteChild {
   >({
     description: "Concrete child",
     fields: () => ({
-      $identifier: {
+      _identifier: {
         resolve: (source) =>
           ConcreteChild.$Identifier.toString(source.$identifier),
         type: graphql.GraphQLString,

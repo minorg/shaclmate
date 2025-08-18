@@ -41,7 +41,8 @@ export function graphqlTypeVariableStatement(
                     ) {
                       field.type = `new graphql.GraphQLNonNull(${field.type})`;
                     }
-                    fields[property.name] = objectInitializer(field);
+                    const { name: fieldName, ...fieldProps } = field;
+                    fields[fieldName] = objectInitializer(fieldProps);
                   });
                   return fields;
                 },
