@@ -21,7 +21,7 @@ function fromRdfFunctionDeclarations(
       `if (${syntheticNamePrefix}super${parentObjectTypeI}Either.isLeft()) { return ${syntheticNamePrefix}super${parentObjectTypeI}Either; }`,
       `const ${syntheticNamePrefix}super${parentObjectTypeI} = ${syntheticNamePrefix}super${parentObjectTypeI}Either.unsafeCoerce()`,
     );
-    initializers.push(`...$super${parentObjectTypeI}`);
+    initializers.push(`...${syntheticNamePrefix}super${parentObjectTypeI}`);
     propertiesFromRdfReturnType.push(
       `${syntheticNamePrefix}UnwrapR<ReturnType<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf>>`,
     );

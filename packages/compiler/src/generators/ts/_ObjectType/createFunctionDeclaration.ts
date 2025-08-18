@@ -33,7 +33,7 @@ export function createFunctionDeclaration(
     .concat(
       this.parentObjectTypes.map(
         (parentObjectType) =>
-          `Parameters<typeof ${parentObjectType.staticModuleName}.$create>[0]`,
+          `Parameters<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}create>[0]`,
       ),
     )
     .join(" & ");

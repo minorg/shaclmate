@@ -407,20 +407,20 @@ return patterns;`,
     {
       isExported: true,
       kind: StructureKind.Module,
-      name: "$SparqlObjectSet",
+      name: `${syntheticNamePrefix}SparqlObjectSet`,
       statements: [
         {
           isExported: true,
           kind: StructureKind.TypeAlias,
           name: "Query",
-          type: `Omit<$ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>, "where"> & { readonly order?: (objectVariable: rdfjs.Variable) => readonly sparqljs.Ordering[]; readonly where?: Where<${typeParameters.ObjectIdentifierT.name}> }`,
+          type: `Omit<${syntheticNamePrefix}ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>, "where"> & { readonly order?: (objectVariable: rdfjs.Variable) => readonly sparqljs.Ordering[]; readonly where?: Where<${typeParameters.ObjectIdentifierT.name}> }`,
           typeParameters: [typeParameters.ObjectIdentifierT],
         },
         {
           kind: StructureKind.TypeAlias,
           isExported: true,
           name: "Where",
-          type: `$ObjectSet.Where<${typeParameters.ObjectIdentifierT.name}> | { readonly patterns: (objectVariable: rdfjs.Variable) => readonly sparqljs.Pattern[]; readonly type: "patterns" }`,
+          type: `${syntheticNamePrefix}ObjectSet.Where<${typeParameters.ObjectIdentifierT.name}> | { readonly patterns: (objectVariable: rdfjs.Variable) => readonly sparqljs.Pattern[]; readonly type: "patterns" }`,
           typeParameters: [typeParameters.ObjectIdentifierT],
         },
       ],

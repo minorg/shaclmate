@@ -7,12 +7,13 @@ import { PrimitiveType } from "./PrimitiveType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import type { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class DateTimeType extends PrimitiveType<Date> {
   protected readonly xsdDatatype: NamedNode = xsd.dateTime;
   protected readonly zodDatatype: string = "datetime";
 
-  override readonly equalsFunction = "$dateEquals";
+  override readonly equalsFunction = `${syntheticNamePrefix}dateEquals`;
   readonly kind: "DateTimeType" | "DateType" = "DateTimeType";
   override readonly mutable = true;
   override readonly typeof = "object";

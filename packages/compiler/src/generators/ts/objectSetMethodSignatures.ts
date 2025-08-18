@@ -1,5 +1,6 @@
 import type { MethodSignatureStructure, OptionalKind } from "ts-morph";
 import type { ObjectType } from "./ObjectType.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export function objectSetMethodSignatures(parameters: {
   objectType: {
@@ -13,7 +14,7 @@ export function objectSetMethodSignatures(parameters: {
   OptionalKind<MethodSignatureStructure>
 > {
   const { objectType } = parameters;
-  const queryT = parameters.queryT ?? "$ObjectSet.Query";
+  const queryT = parameters.queryT ?? `${syntheticNamePrefix}ObjectSet.Query`;
 
   const methodNames = objectType.objectSetMethodNames;
   return {
