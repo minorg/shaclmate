@@ -4,6 +4,7 @@ import { Maybe } from "purify-ts";
 import type { OptionalKind, ParameterDeclarationStructure } from "ts-morph";
 
 import type { ObjectType } from "../ObjectType.js";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function toRdfFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
   name: string;
@@ -25,10 +26,10 @@ export function toRdfFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
     let superToRdfCall: string;
     switch (this.declarationType) {
       case "class":
-        superToRdfCall = `super.toRdf(${superToRdfOptions})`;
+        superToRdfCall = `super.${syntheticNamePrefix}toRdf(${superToRdfOptions})`;
         break;
       case "interface":
-        superToRdfCall = `${this.parentObjectTypes[0].staticModuleName}.toRdf(${this.thisVariable}, ${superToRdfOptions})`;
+        superToRdfCall = `${this.parentObjectTypes[0].staticModuleName}.${syntheticNamePrefix}toRdf(${this.thisVariable}, ${superToRdfOptions})`;
         break;
     }
     statements.push(`const ${variables.resource} = ${superToRdfCall};`);
@@ -76,7 +77,7 @@ export function toRdfFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
   });
 
   return Maybe.of({
-    name: "toRdf",
+    name: `${syntheticNamePrefix}toRdf`,
     parameters,
     returnType: this.toRdfjsResourceType,
     statements,

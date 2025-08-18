@@ -1,4 +1,5 @@
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function sparqlConstructQueryStringFunctionDeclaration(this: {
   readonly staticModuleName: string;
@@ -6,7 +7,7 @@ export function sparqlConstructQueryStringFunctionDeclaration(this: {
   return {
     isExported: true,
     kind: StructureKind.Function,
-    name: "sparqlConstructQueryString",
+    name: `${syntheticNamePrefix}sparqlConstructQueryString`,
     parameters: [
       {
         hasQuestionToken: true,

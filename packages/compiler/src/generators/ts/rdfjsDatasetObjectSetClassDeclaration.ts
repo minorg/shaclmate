@@ -10,6 +10,7 @@ import {
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMethodDeclarations.js";
 
 export function rdfjsDatasetObjectSetClassDeclaration({
@@ -37,12 +38,12 @@ export function rdfjsDatasetObjectSetClassDeclaration({
     const parameters = {
       objectType: {
         name: "objectType",
-        type: `{ fromRdf: ${fromRdfFunctionType}; fromRdfType?: rdfjs.NamedNode }`,
+        type: `{ ${syntheticNamePrefix}fromRdf: ${fromRdfFunctionType}; ${syntheticNamePrefix}fromRdfType?: rdfjs.NamedNode }`,
       } satisfies OptionalKind<ParameterDeclarationStructure>,
       query: {
         hasQuestionToken: true,
         name: "query",
-        type: `$ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>`,
+        type: `${syntheticNamePrefix}ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>`,
       } satisfies OptionalKind<ParameterDeclarationStructure>,
     };
 
@@ -50,13 +51,13 @@ export function rdfjsDatasetObjectSetClassDeclaration({
       {
         kind: StructureKind.Method,
         isGenerator: true,
-        name: "$objectIdentifiersSync",
+        name: `${syntheticNamePrefix}objectIdentifiersSync`,
         parameters: [parameters.objectType, parameters.query],
         returnType: `Generator<${typeParameters.ObjectIdentifierT.name}>`,
         scope: Scope.Protected,
         statements: [
           `\
-for (const object of this.$objectsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectType.name}, ${parameters.query.name})) {
+for (const object of this.${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectType.name}, ${parameters.query.name})) {
   if (object.isRight()) {
     yield object.unsafeCoerce().identifier;
   }
@@ -71,7 +72,7 @@ for (const object of this.$objectsSync<${typeParameters.ObjectT.name}, ${typePar
       {
         isGenerator: true,
         kind: StructureKind.Method,
-        name: "$objectsSync",
+        name: `${syntheticNamePrefix}objectsSync`,
         parameters: [parameters.objectType, parameters.query],
         returnType: `Generator<purify.Either<Error, ${typeParameters.ObjectT.name}>>`,
         scope: Scope.Protected,
@@ -120,13 +121,13 @@ for (const resource of resources) {
       },
       {
         kind: StructureKind.Method,
-        name: "$objectsCountSync",
+        name: `${syntheticNamePrefix}objectsCountSync`,
         parameters: [parameters.objectType, parameters.query],
         returnType: "purify.Either<Error, number>",
         scope: Scope.Protected,
         statements: [
           "let count = 0;",
-          `for (const _ of this.$objectIdentifiersSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectType.name}, ${parameters.query.name})) { count++; }`,
+          `for (const _ of this.${syntheticNamePrefix}objectIdentifiersSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectType.name}, ${parameters.query.name})) { count++; }`,
           "return purify.Either.of(count);",
         ],
         typeParameters: [
@@ -138,7 +139,7 @@ for (const resource of resources) {
   }
 
   if (objectUnionTypes.length > 0) {
-    const objectTypeType = `{ fromRdf: ${fromRdfFunctionType}; fromRdfType?: rdfjs.NamedNode }`;
+    const objectTypeType = `{ ${syntheticNamePrefix}fromRdf: ${fromRdfFunctionType}; ${syntheticNamePrefix}fromRdfType?: rdfjs.NamedNode }`;
 
     const parameters = {
       objectTypes: {
@@ -148,7 +149,7 @@ for (const resource of resources) {
       query: {
         hasQuestionToken: true,
         name: "query",
-        type: `$ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>`,
+        type: `${syntheticNamePrefix}ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>`,
       } satisfies OptionalKind<ParameterDeclarationStructure>,
     };
 
@@ -156,13 +157,13 @@ for (const resource of resources) {
       {
         kind: StructureKind.Method,
         isGenerator: true,
-        name: "$objectUnionIdentifiersSync",
+        name: `${syntheticNamePrefix}objectUnionIdentifiersSync`,
         parameters: [parameters.objectTypes, parameters.query],
         returnType: `Generator<${typeParameters.ObjectIdentifierT.name}>`,
         scope: Scope.Protected,
         statements: [
           `\
-for (const object of this.$objectUnionsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectTypes.name}, ${parameters.query.name})) {
+for (const object of this.${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectTypes.name}, ${parameters.query.name})) {
   if (object.isRight()) {
     yield object.unsafeCoerce().identifier;
   }
@@ -177,7 +178,7 @@ for (const object of this.$objectUnionsSync<${typeParameters.ObjectT.name}, ${ty
       {
         isGenerator: true,
         kind: StructureKind.Method,
-        name: "$objectUnionsSync",
+        name: `${syntheticNamePrefix}objectUnionsSync`,
         parameters: [parameters.objectTypes, parameters.query],
         returnType: `Generator<purify.Either<Error, ${typeParameters.ObjectT.name}>>`,
         scope: Scope.Protected,
@@ -248,12 +249,12 @@ for (const { objectType, resource } of resources) {
       },
       {
         kind: StructureKind.Method,
-        name: "$objectUnionsCountSync",
+        name: `${syntheticNamePrefix}objectUnionsCountSync`,
         parameters: [parameters.objectTypes, parameters.query],
         returnType: "purify.Either<Error, number>",
         statements: [
           "let count = 0;",
-          `for (const _ of this.$objectUnionIdentifiersSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectTypes.name}, ${parameters.query.name})) { count++; }`,
+          `for (const _ of this.${syntheticNamePrefix}objectUnionIdentifiersSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectTypes.name}, ${parameters.query.name})) { count++; }`,
           "return purify.Either.of(count);",
         ],
         typeParameters: [
@@ -279,10 +280,10 @@ for (const { objectType, resource } of resources) {
         ],
       },
     ],
-    implements: ["$ObjectSet"],
+    implements: [`${syntheticNamePrefix}ObjectSet`],
     isExported: true,
     kind: StructureKind.Class,
-    name: "$RdfjsDatasetObjectSet",
+    name: `${syntheticNamePrefix}RdfjsDatasetObjectSet`,
     methods: (
       [...objectTypes, ...objectUnionTypes].flatMap((objectType) => {
         if (!objectType.features.has("rdf")) {
@@ -298,13 +299,13 @@ for (const { objectType, resource } of resources) {
           case "ObjectType":
             runtimeObjectType = objectType.fromRdfType.isJust()
               ? `${objectType.staticModuleName}`
-              : `{ ...${objectType.staticModuleName}, fromRdfType: undefined }`;
+              : `{ ...${objectType.staticModuleName}, ${syntheticNamePrefix}fromRdfType: undefined }`;
             break;
           case "ObjectUnionType":
             runtimeObjectType = `[${objectType.memberTypes.map((memberType) =>
               memberType.fromRdfType.isJust()
                 ? `${memberType.staticModuleName}`
-                : `{ ...${memberType.staticModuleName}, fromRdfType: undefined }`,
+                : `{ ...${memberType.staticModuleName}, ${syntheticNamePrefix}fromRdfType: undefined }`,
             )}]`;
             break;
         }
@@ -340,7 +341,7 @@ for (const { objectType, resource } of resources) {
             kind: StructureKind.Method,
             name: `${methodSignatures.objectIdentifiers.name}Sync`,
             returnType: `purify.Either<Error, readonly ${objectType.identifierTypeAlias}[]>`,
-            statements: `return purify.Either.of([...this.$object${objectType.kind === "ObjectUnionType" ? "Union" : ""}IdentifiersSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query)]);`,
+            statements: `return purify.Either.of([...this.${syntheticNamePrefix}object${objectType.kind === "ObjectUnionType" ? "Union" : ""}IdentifiersSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query)]);`,
           },
           {
             ...methodSignatures.objects,
@@ -356,7 +357,7 @@ for (const { objectType, resource } of resources) {
             name: `${methodSignatures.objects.name}Sync`,
             returnType: `readonly purify.Either<Error, ${objectType.name}>[]`,
             statements: [
-              `return [...this.$object${objectType.kind === "ObjectUnionType" ? "Union" : ""}sSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query)];`,
+              `return [...this.${syntheticNamePrefix}object${objectType.kind === "ObjectUnionType" ? "Union" : ""}sSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query)];`,
             ],
           },
           {
@@ -373,7 +374,7 @@ for (const { objectType, resource } of resources) {
             name: `${methodSignatures.objectsCount.name}Sync`,
             returnType: "purify.Either<Error, number>",
             statements: [
-              `return this.$object${objectType.kind === "ObjectUnionType" ? "Union" : ""}sCountSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
+              `return this.${syntheticNamePrefix}object${objectType.kind === "ObjectUnionType" ? "Union" : ""}sCountSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
             ],
           },
         ];

@@ -2,6 +2,7 @@ import { Maybe } from "purify-ts";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 
 import type { ObjectType } from "../ObjectType.js";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { toJsonFunctionOrMethodDeclaration } from "./toJsonFunctionOrMethodDeclaration.js";
 
 function fromJsonFunctionDeclarations(
@@ -13,20 +14,20 @@ function fromJsonFunctionDeclarations(
   const propertiesFromJsonStatements: string[] = [];
 
   propertiesFromJsonStatements.push(
-    "const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);",
-    "if (!_jsonSafeParseResult.success) { return purify.Left(_jsonSafeParseResult.error); }",
-    `const ${variables.jsonObject} = _jsonSafeParseResult.data;`,
+    `const ${syntheticNamePrefix}jsonSafeParseResult = ${syntheticNamePrefix}jsonZodSchema().safeParse(_json);`,
+    `if (!${syntheticNamePrefix}jsonSafeParseResult.success) { return purify.Left(${syntheticNamePrefix}jsonSafeParseResult.error); }`,
+    `const ${variables.jsonObject} = ${syntheticNamePrefix}jsonSafeParseResult.data;`,
   );
 
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
     propertiesFromJsonStatements.push(
-      `const _super${parentObjectTypeI}Either = ${parentObjectType.staticModuleName}.propertiesFromJson(${variables.jsonObject});`,
-      `if (_super${parentObjectTypeI}Either.isLeft()) { return _super${parentObjectTypeI}Either; }`,
-      `const _super${parentObjectTypeI} = _super${parentObjectTypeI}Either.unsafeCoerce()`,
+      `const ${syntheticNamePrefix}super${parentObjectTypeI}Either = ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromJson(${variables.jsonObject});`,
+      `if (${syntheticNamePrefix}super${parentObjectTypeI}Either.isLeft()) { return ${syntheticNamePrefix}super${parentObjectTypeI}Either; }`,
+      `const ${syntheticNamePrefix}super${parentObjectTypeI} = ${syntheticNamePrefix}super${parentObjectTypeI}Either.unsafeCoerce()`,
     );
-    initializers.push(`..._super${parentObjectTypeI}`);
+    initializers.push(`...${syntheticNamePrefix}super${parentObjectTypeI}`);
     deserializePropertiesReturnType.push(
-      `$UnwrapR<ReturnType<typeof ${parentObjectType.staticModuleName}.propertiesFromJson>>`,
+      `${syntheticNamePrefix}UnwrapR<ReturnType<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromJson>>`,
     );
   });
 
@@ -58,7 +59,7 @@ function fromJsonFunctionDeclarations(
   functionDeclarations.push({
     isExported: true,
     kind: StructureKind.Function,
-    name: "propertiesFromJson",
+    name: `${syntheticNamePrefix}propertiesFromJson`,
     parameters: [
       {
         name: "_json",
@@ -76,7 +77,7 @@ function fromJsonFunctionDeclarations(
       fromJsonStatements = [
         `return ${this.childObjectTypes.reduce(
           (expression, childObjectType) => {
-            const childObjectTypeExpression = `(${childObjectType.staticModuleName}.fromJson(json) as purify.Either<zod.ZodError, ${this.name}>)`;
+            const childObjectTypeExpression = `(${childObjectType.staticModuleName}.${syntheticNamePrefix}fromJson(json) as purify.Either<zod.ZodError, ${this.name}>)`;
             return expression.length > 0
               ? `${expression}.altLazy(() => ${childObjectTypeExpression})`
               : childObjectTypeExpression;
@@ -88,7 +89,7 @@ function fromJsonFunctionDeclarations(
       fromJsonStatements = [];
     }
   } else {
-    let propertiesFromJsonExpression = "propertiesFromJson(json)";
+    let propertiesFromJsonExpression = `${syntheticNamePrefix}propertiesFromJson(json)`;
     if (this.declarationType === "class") {
       propertiesFromJsonExpression = `${propertiesFromJsonExpression}.map(properties => new ${this.name}(properties))`;
     }
@@ -97,7 +98,7 @@ function fromJsonFunctionDeclarations(
       fromJsonStatements = [
         `return ${this.childObjectTypes.reduce(
           (expression, childObjectType) => {
-            const childObjectTypeExpression = `(${childObjectType.staticModuleName}.fromJson(json) as purify.Either<zod.ZodError, ${this.name}>)`;
+            const childObjectTypeExpression = `(${childObjectType.staticModuleName}.${syntheticNamePrefix}fromJson(json) as purify.Either<zod.ZodError, ${this.name}>)`;
             return expression.length > 0
               ? `${expression}.altLazy(() => ${childObjectTypeExpression})`
               : childObjectTypeExpression;
@@ -114,7 +115,7 @@ function fromJsonFunctionDeclarations(
     functionDeclarations.push({
       isExported: true,
       kind: StructureKind.Function,
-      name: "fromJson",
+      name: `${syntheticNamePrefix}fromJson`,
       parameters: [
         {
           name: "json",
@@ -135,7 +136,7 @@ function jsonSchemaFunctionDeclaration(
   return {
     isExported: true,
     kind: StructureKind.Function,
-    name: "jsonSchema",
+    name: `${syntheticNamePrefix}jsonSchema`,
     statements: ["return zodToJsonSchema(jsonZodSchema());"],
   };
 }
@@ -147,7 +148,7 @@ function jsonUiSchemaFunctionDeclaration(
   const elements: string[] = this.parentObjectTypes
     .map(
       (parentObjectType) =>
-        `${parentObjectType.staticModuleName}.jsonUiSchema({ scopePrefix })`,
+        `${parentObjectType.staticModuleName}.${syntheticNamePrefix}jsonUiSchema({ scopePrefix })`,
     )
     .concat(
       this.ownProperties.flatMap((property) =>
@@ -158,7 +159,7 @@ function jsonUiSchemaFunctionDeclaration(
   return {
     isExported: true,
     kind: StructureKind.Function,
-    name: "jsonUiSchema",
+    name: `${syntheticNamePrefix}jsonUiSchema`,
     parameters: [
       {
         hasQuestionToken: true,
@@ -195,7 +196,7 @@ function jsonZodSchemaFunctionDeclaration(
   return {
     isExported: true,
     kind: StructureKind.Function,
-    name: "jsonZodSchema",
+    name: `${syntheticNamePrefix}jsonZodSchema`,
     statements: [
       `return ${
         mergeZodObjectSchemas.length > 0
@@ -224,7 +225,7 @@ function toJsonFunctionDeclaration(
       ...toJsonFunctionOrMethodDeclaration,
       isExported: true,
       kind: StructureKind.Function,
-      name: "toJson",
+      name: `${syntheticNamePrefix}toJson`,
     }));
 }
 

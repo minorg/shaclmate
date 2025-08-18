@@ -9,6 +9,7 @@ import {
   type TypeAliasDeclarationStructure,
 } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 type IdentifierTypeDeclarations = readonly (
   | FunctionDeclarationStructure
@@ -41,13 +42,13 @@ export function identifierTypeDeclarations(
     {
       isExported: true,
       kind: StructureKind.TypeAlias,
-      name: "Identifier",
+      name: `${syntheticNamePrefix}Identifier`,
       type: this.identifierType.name,
     },
     {
       isExported: true,
       kind: StructureKind.Module,
-      name: "Identifier",
+      name: `${syntheticNamePrefix}Identifier`,
       statements: [
         this.identifierType.fromStringFunctionDeclaration,
         this.identifierType.toStringFunctionDeclaration,
@@ -65,7 +66,7 @@ function reExportAncestorIdentifierTypeDeclarations(
     {
       isExported: true,
       kind: StructureKind.TypeAlias,
-      name: "Identifier",
+      name: `${syntheticNamePrefix}Identifier`,
       type: ancestorObjectType.identifierTypeAlias,
     },
     {
@@ -75,7 +76,7 @@ function reExportAncestorIdentifierTypeDeclarations(
       declarations: [
         {
           initializer: ancestorObjectType.identifierTypeAlias,
-          name: "Identifier",
+          name: `${syntheticNamePrefix}Identifier`,
         },
       ],
     },

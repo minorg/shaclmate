@@ -11,10 +11,11 @@ import type { IdentifierType } from "../IdentifierType.js";
 import type { Import } from "../Import.js";
 import { SnippetDeclarations } from "../SnippetDeclarations.js";
 import type { StringType } from "../StringType.js";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { Property } from "./Property.js";
 
 export class IdentifierPrefixProperty extends Property<StringType> {
-  readonly equalsFunction = "$strictEquals";
+  readonly equalsFunction = `${syntheticNamePrefix}strictEquals`;
   readonly mutable = false;
   private readonly own: boolean;
 

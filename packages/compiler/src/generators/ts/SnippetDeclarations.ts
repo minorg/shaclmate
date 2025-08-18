@@ -1,10 +1,12 @@
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+
 export namespace SnippetDeclarations {
   export const arrayEquals = `\
-export function $arrayEquals<T>(
+export function ${syntheticNamePrefix}arrayEquals<T>(
   leftArray: readonly T[],
   rightArray: readonly T[],
-  elementEquals: (left: T, right: T) => boolean | $EqualsResult,
-): $EqualsResult {
+  elementEquals: (left: T, right: T) => boolean | ${syntheticNamePrefix}EqualsResult,
+): ${syntheticNamePrefix}EqualsResult {
   if (leftArray.length !== rightArray.length) {
     return purify.Left({
       left: leftArray,
@@ -20,7 +22,7 @@ export function $arrayEquals<T>(
   ) {
     const leftElement = leftArray[leftElementIndex];
 
-    const rightUnequals: $EqualsResult.Unequal[] = [];
+    const rightUnequals: ${syntheticNamePrefix}EqualsResult.Unequal[] = [];
     for (
       let rightElementIndex = 0;
       rightElementIndex < rightArray.length;
@@ -29,7 +31,7 @@ export function $arrayEquals<T>(
       const rightElement = rightArray[rightElementIndex];
 
       const leftElementEqualsRightElement =
-        $EqualsResult.fromBooleanEqualsResult(
+        ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
           leftElement,
           rightElement,
           elementEquals(leftElement, rightElement),
@@ -38,7 +40,7 @@ export function $arrayEquals<T>(
         break; // left element === right element, break out of the right iteration
       }
       rightUnequals.push(
-        leftElementEqualsRightElement.extract() as $EqualsResult.Unequal,
+        leftElementEqualsRightElement.extract() as ${syntheticNamePrefix}EqualsResult.Unequal,
       );
     }
 
@@ -60,19 +62,19 @@ export function $arrayEquals<T>(
     // Else there was a right element equal to the left element, continue to the next left element
   }
 
-  return $EqualsResult.Equal;
+  return ${syntheticNamePrefix}EqualsResult.Equal;
 }
 `;
 
   export const booleanEquals = `\
 /**
- * Compare two objects with equals(other: T): boolean methods and return an $EqualsResult.
+ * Compare two objects with equals(other: T): boolean methods and return an ${syntheticNamePrefix}EqualsResult.
  */
-export function $booleanEquals<T extends { equals: (other: T) => boolean }>(
+export function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => boolean }>(
   left: T,
   right: T,
-): $EqualsResult {
-  return $EqualsResult.fromBooleanEqualsResult(
+): ${syntheticNamePrefix}EqualsResult {
+  return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
     left,
     right,
     left.equals(right),
@@ -81,10 +83,10 @@ export function $booleanEquals<T extends { equals: (other: T) => boolean }>(
 
   export const dateEquals = `\
 /**
- * Compare two Dates and return an $EqualsResult.
+ * Compare two Dates and return an ${syntheticNamePrefix}EqualsResult.
  */
-export function $dateEquals(left: Date, right: Date): $EqualsResult {
-  return $EqualsResult.fromBooleanEqualsResult(
+export function ${syntheticNamePrefix}dateEquals(left: Date, right: Date): ${syntheticNamePrefix}EqualsResult {
+  return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
     left,
     right,
     left.getTime() === right.getTime(),
@@ -92,16 +94,16 @@ export function $dateEquals(left: Date, right: Date): $EqualsResult {
 }`;
 
   export const EqualsResult = `\
-export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
+export type ${syntheticNamePrefix}EqualsResult = purify.Either<${syntheticNamePrefix}EqualsResult.Unequal, true>;
 
-export namespace $EqualsResult {
-  export const Equal: $EqualsResult = purify.Either.of<Unequal, true>(true);
+export namespace ${syntheticNamePrefix}EqualsResult {
+  export const Equal: ${syntheticNamePrefix}EqualsResult = purify.Either.of<Unequal, true>(true);
 
   export function fromBooleanEqualsResult(
     left: any,
     right: any,
-    equalsResult: boolean | $EqualsResult,
-  ): $EqualsResult {
+    equalsResult: boolean | ${syntheticNamePrefix}EqualsResult,
+  ): ${syntheticNamePrefix}EqualsResult {
     if (typeof equalsResult !== "boolean") {
       return equalsResult;
     }
@@ -170,14 +172,14 @@ export namespace $EqualsResult {
 `;
 
   export const maybeEquals = `\
-export function $maybeEquals<T>(
+export function ${syntheticNamePrefix}maybeEquals<T>(
   leftMaybe: purify.Maybe<T>,
   rightMaybe: purify.Maybe<T>,
-  valueEquals: (left: T, right: T) => boolean | $EqualsResult,
-): $EqualsResult {
+  valueEquals: (left: T, right: T) => boolean | ${syntheticNamePrefix}EqualsResult,
+): ${syntheticNamePrefix}EqualsResult {
   if (leftMaybe.isJust()) {
     if (rightMaybe.isJust()) {
-      return $EqualsResult.fromBooleanEqualsResult(
+      return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
         leftMaybe,
         rightMaybe,
         valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
@@ -196,23 +198,21 @@ export function $maybeEquals<T>(
     });
   }
 
-  return $EqualsResult.Equal;
+  return ${syntheticNamePrefix}EqualsResult.Equal;
 }
 `;
 
   export const strictEquals = `\
 /**
- * Compare two values for strict equality (===), returning an $EqualsResult rather than a boolean.
+ * Compare two values for strict equality (===), returning an ${syntheticNamePrefix}EqualsResult rather than a boolean.
  */
-export function $strictEquals<T extends bigint | boolean | number | string>(
+export function ${syntheticNamePrefix}strictEquals<T extends bigint | boolean | number | string>(
   left: T,
   right: T,
-): $EqualsResult {
-  return $EqualsResult.fromBooleanEqualsResult(left, right, left === right);
+): ${syntheticNamePrefix}EqualsResult {
+  return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(left, right, left === right);
 }`;
 
-  export const UnwrapL =
-    "type $UnwrapL<T> = T extends purify.Either<infer L, any> ? L : never";
-  export const UnwrapR =
-    "type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never";
+  export const UnwrapL = `type ${syntheticNamePrefix}UnwrapL<T> = T extends purify.Either<infer L, any> ? L : never`;
+  export const UnwrapR = `type ${syntheticNamePrefix}UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never`;
 }

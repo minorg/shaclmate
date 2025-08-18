@@ -160,7 +160,7 @@ function toStringMethodDeclaration(
   }
 
   return Maybe.of({
-    hasOverrideKeyword: this.parentObjectTypes.length > 0,
+    hasOverrideKeyword: true,
     name: "toString",
     returnType: "string",
     statements: ["return JSON.stringify(this.toJson());"],

@@ -2,6 +2,7 @@ import { Maybe } from "purify-ts";
 import type { OptionalKind, ParameterDeclarationStructure } from "ts-morph";
 
 import type { ObjectType } from "../ObjectType.js";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function toJsonFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
   name: string;
@@ -27,13 +28,13 @@ export function toJsonFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
   switch (this.declarationType) {
     case "class":
       if (this.parentObjectTypes.length > 0) {
-        jsonObjectMembers.push("...super.toJson()");
+        jsonObjectMembers.push(`...super.${syntheticNamePrefix}toJson()`);
       }
       break;
     case "interface":
       for (const parentObjectType of this.parentObjectTypes) {
         jsonObjectMembers.push(
-          `...${parentObjectType.staticModuleName}.toJson(${this.thisVariable})`,
+          `...${parentObjectType.staticModuleName}.${syntheticNamePrefix}toJson(${this.thisVariable})`,
         );
       }
       parameters.push({
@@ -70,7 +71,7 @@ export function toJsonFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
   // }
 
   return Maybe.of({
-    name: "toJson",
+    name: `${syntheticNamePrefix}toJson`,
     parameters,
     returnType: this.jsonName,
     statements: [

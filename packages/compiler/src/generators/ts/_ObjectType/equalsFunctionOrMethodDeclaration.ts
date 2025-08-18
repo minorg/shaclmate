@@ -1,6 +1,7 @@
 import { Maybe } from "purify-ts";
 import type { OptionalKind, ParameterDeclarationStructure } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function equalsFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
   hasOverrideKeyword: boolean;
@@ -36,7 +37,7 @@ export function equalsFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
   if (this.parentObjectTypes.length > 0) {
     switch (this.declarationType) {
       case "class": {
-        chain.push("super.equals(other)");
+        chain.push(`super.${syntheticNamePrefix}equals(other)`);
         hasOverrideKeyword = true;
         break;
       }
@@ -44,7 +45,7 @@ export function equalsFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
         // For every parent, find the nearest equals implementation
         for (const parentObjectType of this.parentObjectTypes) {
           chain.push(
-            `${parentObjectType.staticModuleName}.equals(left, right)`,
+            `${parentObjectType.staticModuleName}.${syntheticNamePrefix}equals(left, right)`,
           );
         }
         break;
@@ -60,7 +61,7 @@ export function equalsFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
 
   return Maybe.of({
     hasOverrideKeyword,
-    name: "equals",
+    name: `${syntheticNamePrefix}equals`,
     parameters:
       this.declarationType === "interface"
         ? [
@@ -79,7 +80,7 @@ export function equalsFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
               type: this.name,
             },
           ],
-    returnType: "$EqualsResult",
+    returnType: `${syntheticNamePrefix}EqualsResult`,
     statements: [
       `return ${chain
         .map((chainPart, chainPartI) =>

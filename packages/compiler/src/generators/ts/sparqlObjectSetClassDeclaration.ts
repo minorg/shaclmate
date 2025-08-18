@@ -12,6 +12,7 @@ import {
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMethodDeclarations.js";
 
 export function sparqlObjectSetClassDeclaration({
@@ -40,15 +41,15 @@ export function sparqlObjectSetClassDeclaration({
     constructObjectType: {
       name: "objectType",
       type: `{\
-  fromRdf: (parameters: { resource: rdfjsResource.Resource }) => purify.Either<rdfjsResource.Resource.ValueError, ${typeParameters.ObjectT.name}>;
-  sparqlConstructQueryString: (parameters?: { subject?: sparqljs.Triple["subject"]; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> & sparqljs.GeneratorOptions) => string;
-  sparqlWherePatterns: ${sparqlWherePatternsFunctionType};
+  ${syntheticNamePrefix}fromRdf: (parameters: { resource: rdfjsResource.Resource }) => purify.Either<rdfjsResource.Resource.ValueError, ${typeParameters.ObjectT.name}>;
+  ${syntheticNamePrefix}sparqlConstructQueryString: (parameters?: { subject?: sparqljs.Triple["subject"]; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> & sparqljs.GeneratorOptions) => string;
+  ${syntheticNamePrefix}sparqlWherePatterns: ${sparqlWherePatternsFunctionType};
 }`,
     } satisfies OptionalKind<ParameterDeclarationStructure>,
     query: {
       hasQuestionToken: true,
       name: "query",
-      type: `$SparqlObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>`,
+      type: `${syntheticNamePrefix}SparqlObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>`,
     } satisfies OptionalKind<ParameterDeclarationStructure>,
     selectObjectTypeType: {
       name: "objectType",
@@ -57,7 +58,7 @@ export function sparqlObjectSetClassDeclaration({
     where: {
       hasQuestionToken: true,
       name: "where",
-      type: `$SparqlObjectSet.Where<${typeParameters.ObjectIdentifierT.name}>`,
+      type: `${syntheticNamePrefix}SparqlObjectSet.Where<${typeParameters.ObjectIdentifierT.name}>`,
     } satisfies OptionalKind<ParameterDeclarationStructure>,
   };
 
@@ -68,16 +69,18 @@ export function sparqlObjectSetClassDeclaration({
           parameters: [
             {
               name: "{ sparqlClient }",
-              type: '{ sparqlClient: $SparqlObjectSet["sparqlClient"] }',
+              type: `{ sparqlClient: ${syntheticNamePrefix}SparqlObjectSet["sparqlClient"] }`,
             },
           ],
-          statements: ["this.sparqlClient = sparqlClient;"],
+          statements: [
+            `this.${syntheticNamePrefix}sparqlClient = sparqlClient;`,
+          ],
         },
       ],
-      implements: ["$ObjectSet"],
+      implements: [`${syntheticNamePrefix}ObjectSet`],
       isExported: true,
       kind: StructureKind.Class,
-      name: "$SparqlObjectSet",
+      name: `${syntheticNamePrefix}SparqlObjectSet`,
       // methods: [
       methods: (
         [...objectTypes, ...objectUnionTypes].flatMap((objectType) => {
@@ -89,7 +92,7 @@ export function sparqlObjectSetClassDeclaration({
 
           const methodSignatures = objectSetMethodSignatures({
             objectType,
-            queryT: "$SparqlObjectSet.Query",
+            queryT: `${syntheticNamePrefix}SparqlObjectSet.Query`,
           });
 
           const runtimeObjectType = objectType.staticModuleName;
@@ -108,7 +111,7 @@ export function sparqlObjectSetClassDeclaration({
               kind: StructureKind.Method,
               isAsync: true,
               statements: [
-                `return this.$objectIdentifiers<${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
+                `return this.${syntheticNamePrefix}objectIdentifiers<${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
               ],
             },
             {
@@ -116,7 +119,7 @@ export function sparqlObjectSetClassDeclaration({
               kind: StructureKind.Method,
               isAsync: true,
               statements: [
-                `return this.$objects<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
+                `return this.${syntheticNamePrefix}objects<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
               ],
             },
             {
@@ -124,7 +127,7 @@ export function sparqlObjectSetClassDeclaration({
               isAsync: true,
               kind: StructureKind.Method,
               statements: [
-                `return this.$objectsCount<${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
+                `return this.${syntheticNamePrefix}objectsCount<${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
               ],
             },
           ];
@@ -132,7 +135,7 @@ export function sparqlObjectSetClassDeclaration({
       ).concat(
         {
           kind: StructureKind.Method,
-          name: "$mapBindingsToCount",
+          name: `${syntheticNamePrefix}mapBindingsToCount`,
           parameters: [
             {
               name: "bindings",
@@ -169,7 +172,7 @@ return purify.Either.of(parsedCount);`,
         },
         {
           kind: StructureKind.Method,
-          name: "$mapBindingsToIdentifiers",
+          name: `${syntheticNamePrefix}mapBindingsToIdentifiers`,
           parameters: [
             {
               name: "bindings",
@@ -200,7 +203,7 @@ return identifiers;`,
         {
           kind: StructureKind.Method,
           isAsync: true,
-          name: "$objectIdentifiers",
+          name: `${syntheticNamePrefix}objectIdentifiers`,
           parameters: [parameters.selectObjectTypeType, parameters.query],
           returnType: `Promise<purify.Either<Error, readonly ${typeParameters.ObjectIdentifierT.name}[]>>`,
           scope: Scope.Protected,
@@ -216,27 +219,27 @@ if (offset < 0) {
   offset = 0;
 }
 
-const wherePatterns = this.$wherePatterns(objectType, query?.where);
+const wherePatterns = this.${syntheticNamePrefix}wherePatterns(objectType, query?.where);
 if (wherePatterns.length === 0) {
   return purify.Left(new Error("no SPARQL WHERE patterns for identifiers"));
 }
   
 return purify.EitherAsync(async () =>
-  this.$mapBindingsToIdentifiers(
-    await this.sparqlClient.queryBindings(
-      this.sparqlGenerator.stringify({
+  this.${syntheticNamePrefix}mapBindingsToIdentifiers(
+    await this.${syntheticNamePrefix}sparqlClient.queryBindings(
+      this.${syntheticNamePrefix}sparqlGenerator.stringify({
         distinct: true,
         limit: limit < Number.MAX_SAFE_INTEGER ? limit : undefined,
         offset,
-        order: query?.order ? query.order(this.objectVariable).concat() : [{ expression: this.objectVariable }],
+        order: query?.order ? query.order(this.${syntheticNamePrefix}objectVariable).concat() : [{ expression: this.${syntheticNamePrefix}objectVariable }],
         prefixes: {},
         queryType: "SELECT",
         type: "query",
-        variables: [this.objectVariable],
+        variables: [this.${syntheticNamePrefix}objectVariable],
         where: wherePatterns
       }),
     ),
-    this.objectVariable.value,
+    this.${syntheticNamePrefix}objectVariable.value,
   ) as readonly ${typeParameters.ObjectIdentifierT.name}[],
 );`,
           ],
@@ -245,12 +248,12 @@ return purify.EitherAsync(async () =>
         {
           isAsync: true,
           kind: StructureKind.Method,
-          name: "$objects",
+          name: `${syntheticNamePrefix}objects`,
           parameters: [parameters.constructObjectType, parameters.query],
           returnType: `Promise<readonly purify.Either<Error, ${typeParameters.ObjectT.name}>[]>`,
           statements: [
             `\
-const identifiersEither = await this.$objectIdentifiers<${typeParameters.ObjectIdentifierT.name}>(objectType, query);
+const identifiersEither = await this.${syntheticNamePrefix}objectIdentifiers<${typeParameters.ObjectIdentifierT.name}>(objectType, query);
 if (identifiersEither.isLeft()) {
   return [identifiersEither];
 }
@@ -259,8 +262,8 @@ if (identifiers.length === 0) {
   return [];
 }
 
-const constructQueryString = objectType.sparqlConstructQueryString({
-  subject: this.objectVariable,
+const constructQueryString = objectType.${syntheticNamePrefix}sparqlConstructQueryString({
+  subject: this.${syntheticNamePrefix}objectVariable,
   where: [{
     type: "values" as const,
     values: identifiers.map((identifier) => {
@@ -273,7 +276,7 @@ const constructQueryString = objectType.sparqlConstructQueryString({
 
 let quads: readonly rdfjs.Quad[];
 try {
-  quads = await this.sparqlClient.queryQuads(constructQueryString);
+  quads = await this.${syntheticNamePrefix}sparqlClient.queryQuads(constructQueryString);
 } catch (e) {
   const left = purify.Left<Error, ${typeParameters.ObjectT.name}>(e as Error);
   return identifiers.map(() => left);
@@ -296,22 +299,22 @@ return identifiers.map((identifier) =>
         {
           kind: StructureKind.Method,
           isAsync: true,
-          name: "$objectsCount",
+          name: `${syntheticNamePrefix}objectsCount`,
           parameters: [parameters.selectObjectTypeType, parameters.query],
           returnType: "Promise<purify.Either<Error, number>>",
           scope: Scope.Protected,
           statements: [
             `\
-const wherePatterns = this.$wherePatterns(objectType, query?.where);
+const wherePatterns = this.${syntheticNamePrefix}wherePatterns(objectType, query?.where);
 if (wherePatterns.length === 0) {
   return purify.Left(new Error("no SPARQL WHERE patterns for count"));
 }
 
 return purify.EitherAsync(async ({ liftEither }) =>
   liftEither(
-    this.$mapBindingsToCount(
-      await this.sparqlClient.queryBindings(
-        this.sparqlGenerator.stringify({
+    this.${syntheticNamePrefix}mapBindingsToCount(
+      await this.${syntheticNamePrefix}sparqlClient.queryBindings(
+        this.${syntheticNamePrefix}sparqlGenerator.stringify({
           distinct: true,
           prefixes: {},
           queryType: "SELECT",
@@ -321,16 +324,16 @@ return purify.EitherAsync(async ({ liftEither }) =>
               expression: {
                 aggregation: "COUNT",
                 distinct: true,
-                expression: this.objectVariable,
+                expression: this.${syntheticNamePrefix}objectVariable,
                 type: "aggregate",
               },
-              variable: this.countVariable,
+              variable: this.${syntheticNamePrefix}countVariable,
             },
           ],
           where: wherePatterns
         }),
       ),
-      this.countVariable.value,
+      this.${syntheticNamePrefix}countVariable.value,
     ),
   ),
 );`,
@@ -339,7 +342,7 @@ return purify.EitherAsync(async ({ liftEither }) =>
         },
         {
           kind: StructureKind.Method,
-          name: "$wherePatterns",
+          name: `${syntheticNamePrefix}wherePatterns`,
           parameters: [parameters.selectObjectTypeType, parameters.where],
           returnType: "sparqljs.Pattern[]",
           scope: Scope.Protected,
@@ -362,12 +365,12 @@ if (where) {
       });
       break;
     case "patterns":
-      patterns.push(...where.patterns(this.objectVariable));
+      patterns.push(...where.patterns(this.${syntheticNamePrefix}objectVariable));
       break;
   }
 }
 
-patterns.push(...objectType.sparqlWherePatterns({ subject: this.objectVariable }));
+patterns.push(...objectType.${syntheticNamePrefix}sparqlWherePatterns({ subject: this.${syntheticNamePrefix}objectVariable }));
 
 return patterns;`,
           ],
@@ -378,25 +381,25 @@ return patterns;`,
         {
           initializer: `${dataFactoryVariable}.variable!("count");`,
           isReadonly: true,
-          name: "countVariable",
+          name: `${syntheticNamePrefix}countVariable`,
           scope: Scope.Protected,
         },
         {
           initializer: `${dataFactoryVariable}.variable!("object");`,
           isReadonly: true,
-          name: "objectVariable",
+          name: `${syntheticNamePrefix}objectVariable`,
           scope: Scope.Protected,
         },
         {
           isReadonly: true,
-          name: "sparqlClient",
+          name: `${syntheticNamePrefix}sparqlClient`,
           scope: Scope.Protected,
           type: "{ queryBindings: (query: string) => Promise<readonly Record<string, rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>[]>; queryQuads: (query: string) => Promise<readonly rdfjs.Quad[]>; }",
         },
         {
           initializer: "new sparqljs.Generator()",
           isReadonly: true,
-          name: "sparqlGenerator",
+          name: `${syntheticNamePrefix}sparqlGenerator`,
           scope: Scope.Protected,
         },
       ],

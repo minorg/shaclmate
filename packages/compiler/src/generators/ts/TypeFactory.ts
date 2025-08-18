@@ -26,6 +26,7 @@ import { StringType } from "./StringType.js";
 import { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import { UnionType } from "./UnionType.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { tsName } from "./tsName.js";
 
 const numberDatatypes = {
@@ -357,7 +358,7 @@ export class TypeFactory {
               own: !astType.ancestorObjectTypes.some(
                 objectTypeNeedsIdentifierPrefixProperty,
               ),
-              name: astType.tsIdentifierPrefixPropertyName,
+              name: `${syntheticNamePrefix}${astType.tsIdentifierPrefixPropertyName}`,
               objectType: {
                 declarationType: astType.tsObjectDeclarationType,
                 features: astType.tsFeatures,
@@ -427,6 +428,7 @@ export class TypeFactory {
             })(),
             dataFactoryVariable: this.dataFactoryVariable,
             identifierMintingStrategy: astType.identifierMintingStrategy,
+            identifierPrefixPropertyName: `${syntheticNamePrefix}${astType.tsIdentifierPrefixPropertyName}`,
             name: astType.tsIdentifierPropertyName,
             objectType: {
               declarationType: astType.tsObjectDeclarationType,
