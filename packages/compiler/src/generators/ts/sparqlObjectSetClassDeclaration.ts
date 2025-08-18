@@ -26,7 +26,6 @@ export function sparqlObjectSetClassDeclaration({
 }): readonly (ClassDeclarationStructure | ModuleDeclarationStructure)[] {
   const typeParameters = {
     ObjectT: {
-      constraint: "{ readonly identifier: ObjectIdentifierT }",
       name: "ObjectT",
     } satisfies OptionalKind<TypeParameterDeclarationStructure>,
     ObjectIdentifierT: {

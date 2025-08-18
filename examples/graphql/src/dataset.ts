@@ -15,12 +15,12 @@ const resourceSet = new MutableResourceSet({
 });
 for (let i = 0; i < 4; i++) {
   new ConcreteChild({
-    identifier: N3.DataFactory.namedNode(
+    $identifier: N3.DataFactory.namedNode(
       `http://example.com/concreteChild${i}`,
     ),
     childStringProperty: "child string property",
     optionalNestedObjectProperty: new Nested({
-      identifier: N3.DataFactory.namedNode(
+      $identifier: N3.DataFactory.namedNode(
         `http://example.com/concreteChild${i}/nested`,
       ),
       optionalNumberProperty: 2,

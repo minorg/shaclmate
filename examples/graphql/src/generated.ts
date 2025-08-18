@@ -8,7 +8,7 @@ type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
  * UnionMember1
  */
 export class UnionMember2 {
-  private _identifier: UnionMember2.$Identifier | undefined;
+  private _$identifier: UnionMember2.$Identifier | undefined;
   readonly type = "UnionMember2";
   /**
    * Optional string property
@@ -16,16 +16,16 @@ export class UnionMember2 {
   readonly optionalStringProperty: purify.Maybe<string>;
 
   constructor(parameters: {
-    readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly optionalStringProperty?: purify.Maybe<string> | string;
   }) {
-    if (typeof parameters.identifier === "object") {
-      this._identifier = parameters.identifier;
-    } else if (typeof parameters.identifier === "string") {
-      this._identifier = dataFactory.namedNode(parameters.identifier);
-    } else if (typeof parameters.identifier === "undefined") {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier satisfies never;
+      this._$identifier = parameters.$identifier satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.optionalStringProperty)) {
@@ -42,11 +42,11 @@ export class UnionMember2 {
     }
   }
 
-  get identifier(): UnionMember2.$Identifier {
-    if (typeof this._identifier === "undefined") {
-      this._identifier = dataFactory.blankNode();
+  get $identifier(): UnionMember2.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
     }
-    return this._identifier;
+    return this._$identifier;
   }
 
   $toRdf({
@@ -58,7 +58,7 @@ export class UnionMember2 {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.identifier, {
+    const _resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
     if (!ignoreRdfType) {
@@ -88,9 +88,9 @@ export namespace UnionMember2 {
   >({
     description: "UnionMember1",
     fields: () => ({
-      identifier: {
+      $identifier: {
         resolve: (source) =>
-          UnionMember2.$Identifier.toString(source.identifier),
+          UnionMember2.$Identifier.toString(source.$identifier),
         type: graphql.GraphQLString,
       },
       optionalStringProperty: {
@@ -133,7 +133,7 @@ export namespace UnionMember2 {
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
     {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       optionalStringProperty: purify.Maybe<string>;
     }
   > {
@@ -163,7 +163,7 @@ export namespace UnionMember2 {
         );
     }
 
-    const identifier: UnionMember2.$Identifier = _resource.identifier;
+    const $identifier: UnionMember2.$Identifier = _resource.identifier;
     const _optionalStringPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -182,7 +182,7 @@ export namespace UnionMember2 {
     }
 
     const optionalStringProperty = _optionalStringPropertyEither.unsafeCoerce();
-    return purify.Either.of({ identifier, optionalStringProperty });
+    return purify.Either.of({ $identifier, optionalStringProperty });
   }
 
   export function $fromRdf(
@@ -205,7 +205,7 @@ export namespace UnionMember2 {
  * UnionMember1
  */
 export class UnionMember1 {
-  private _identifier: UnionMember1.$Identifier | undefined;
+  private _$identifier: UnionMember1.$Identifier | undefined;
   readonly type = "UnionMember1";
   /**
    * Optional number property
@@ -213,16 +213,16 @@ export class UnionMember1 {
   readonly optionalNumberProperty: purify.Maybe<number>;
 
   constructor(parameters: {
-    readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly optionalNumberProperty?: number | purify.Maybe<number>;
   }) {
-    if (typeof parameters.identifier === "object") {
-      this._identifier = parameters.identifier;
-    } else if (typeof parameters.identifier === "string") {
-      this._identifier = dataFactory.namedNode(parameters.identifier);
-    } else if (typeof parameters.identifier === "undefined") {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier satisfies never;
+      this._$identifier = parameters.$identifier satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.optionalNumberProperty)) {
@@ -239,11 +239,11 @@ export class UnionMember1 {
     }
   }
 
-  get identifier(): UnionMember1.$Identifier {
-    if (typeof this._identifier === "undefined") {
-      this._identifier = dataFactory.blankNode();
+  get $identifier(): UnionMember1.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
     }
-    return this._identifier;
+    return this._$identifier;
   }
 
   $toRdf({
@@ -255,7 +255,7 @@ export class UnionMember1 {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.identifier, {
+    const _resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
     if (!ignoreRdfType) {
@@ -285,9 +285,9 @@ export namespace UnionMember1 {
   >({
     description: "UnionMember1",
     fields: () => ({
-      identifier: {
+      $identifier: {
         resolve: (source) =>
-          UnionMember1.$Identifier.toString(source.identifier),
+          UnionMember1.$Identifier.toString(source.$identifier),
         type: graphql.GraphQLString,
       },
       optionalNumberProperty: {
@@ -330,7 +330,7 @@ export namespace UnionMember1 {
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
     {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       optionalNumberProperty: purify.Maybe<number>;
     }
   > {
@@ -360,7 +360,7 @@ export namespace UnionMember1 {
         );
     }
 
-    const identifier: UnionMember1.$Identifier = _resource.identifier;
+    const $identifier: UnionMember1.$Identifier = _resource.identifier;
     const _optionalNumberPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<number>
@@ -379,7 +379,7 @@ export namespace UnionMember1 {
     }
 
     const optionalNumberProperty = _optionalNumberPropertyEither.unsafeCoerce();
-    return purify.Either.of({ identifier, optionalNumberProperty });
+    return purify.Either.of({ $identifier, optionalNumberProperty });
   }
 
   export function $fromRdf(
@@ -402,7 +402,7 @@ export namespace UnionMember1 {
  * Nested
  */
 export class Nested {
-  private _identifier: Nested.$Identifier | undefined;
+  private _$identifier: Nested.$Identifier | undefined;
   readonly type = "Nested";
   /**
    * Optional number property
@@ -418,18 +418,18 @@ export class Nested {
   readonly requiredStringProperty: string;
 
   constructor(parameters: {
-    readonly identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly optionalNumberProperty?: number | purify.Maybe<number>;
     readonly optionalStringProperty?: purify.Maybe<string> | string;
     readonly requiredStringProperty: string;
   }) {
-    if (typeof parameters.identifier === "object") {
-      this._identifier = parameters.identifier;
-    } else if (typeof parameters.identifier === "string") {
-      this._identifier = dataFactory.namedNode(parameters.identifier);
-    } else if (typeof parameters.identifier === "undefined") {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
     } else {
-      this._identifier = parameters.identifier satisfies never;
+      this._$identifier = parameters.$identifier satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.optionalNumberProperty)) {
@@ -461,11 +461,11 @@ export class Nested {
     this.requiredStringProperty = parameters.requiredStringProperty;
   }
 
-  get identifier(): Nested.$Identifier {
-    if (typeof this._identifier === "undefined") {
-      this._identifier = dataFactory.blankNode();
+  get $identifier(): Nested.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
     }
-    return this._identifier;
+    return this._$identifier;
   }
 
   $toRdf({
@@ -477,7 +477,7 @@ export class Nested {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.identifier, {
+    const _resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
     if (!ignoreRdfType) {
@@ -515,8 +515,8 @@ export namespace Nested {
   >({
     description: "Nested",
     fields: () => ({
-      identifier: {
-        resolve: (source) => Nested.$Identifier.toString(source.identifier),
+      $identifier: {
+        resolve: (source) => Nested.$Identifier.toString(source.$identifier),
         type: graphql.GraphQLString,
       },
       optionalNumberProperty: {
@@ -569,7 +569,7 @@ export namespace Nested {
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
     {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       optionalNumberProperty: purify.Maybe<number>;
       optionalStringProperty: purify.Maybe<string>;
       requiredStringProperty: string;
@@ -601,7 +601,7 @@ export namespace Nested {
         );
     }
 
-    const identifier: Nested.$Identifier = _resource.identifier;
+    const $identifier: Nested.$Identifier = _resource.identifier;
     const _optionalNumberPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<number>
@@ -654,7 +654,7 @@ export namespace Nested {
 
     const requiredStringProperty = _requiredStringPropertyEither.unsafeCoerce();
     return purify.Either.of({
-      identifier,
+      $identifier,
       optionalNumberProperty,
       optionalStringProperty,
       requiredStringProperty,
@@ -691,7 +691,7 @@ export namespace Nested {
  * Concrete parent
  */
 export class ConcreteParent {
-  readonly identifier: ConcreteParentStatic.$Identifier;
+  readonly $identifier: ConcreteParentStatic.$Identifier;
   readonly type: "ConcreteParent" | "ConcreteChild" = "ConcreteParent";
   /**
    * Parent string property
@@ -699,15 +699,15 @@ export class ConcreteParent {
   readonly parentStringProperty: purify.Maybe<string>;
 
   constructor(parameters: {
-    readonly identifier: rdfjs.NamedNode | string;
+    readonly $identifier: rdfjs.NamedNode | string;
     readonly parentStringProperty?: purify.Maybe<string> | string;
   }) {
-    if (typeof parameters.identifier === "object") {
-      this.identifier = parameters.identifier;
-    } else if (typeof parameters.identifier === "string") {
-      this.identifier = dataFactory.namedNode(parameters.identifier);
+    if (typeof parameters.$identifier === "object") {
+      this.$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this.$identifier = dataFactory.namedNode(parameters.$identifier);
     } else {
-      this.identifier = parameters.identifier satisfies never;
+      this.$identifier = parameters.$identifier satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.parentStringProperty)) {
@@ -733,7 +733,7 @@ export class ConcreteParent {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
-    const _resource = resourceSet.mutableNamedResource(this.identifier, {
+    const _resource = resourceSet.mutableNamedResource(this.$identifier, {
       mutateGraph,
     });
     if (!ignoreRdfType) {
@@ -763,9 +763,9 @@ export namespace ConcreteParentStatic {
   >({
     description: "Concrete parent",
     fields: () => ({
-      identifier: {
+      $identifier: {
         resolve: (source) =>
-          ConcreteParentStatic.$Identifier.toString(source.identifier),
+          ConcreteParentStatic.$Identifier.toString(source.$identifier),
         type: graphql.GraphQLString,
       },
       parentStringProperty: {
@@ -811,7 +811,7 @@ export namespace ConcreteParentStatic {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
-    { identifier: rdfjs.NamedNode; parentStringProperty: purify.Maybe<string> }
+    { $identifier: rdfjs.NamedNode; parentStringProperty: purify.Maybe<string> }
   > {
     if (
       !_ignoreRdfType &&
@@ -852,7 +852,7 @@ export namespace ConcreteParentStatic {
       );
     }
 
-    const identifier: ConcreteParentStatic.$Identifier = _resource.identifier;
+    const $identifier: ConcreteParentStatic.$Identifier = _resource.identifier;
     const _parentStringPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -871,7 +871,7 @@ export namespace ConcreteParentStatic {
     }
 
     const parentStringProperty = _parentStringPropertyEither.unsafeCoerce();
-    return purify.Either.of({ identifier, parentStringProperty });
+    return purify.Either.of({ $identifier, parentStringProperty });
   }
 
   export function $fromRdf(
@@ -922,7 +922,7 @@ export class ConcreteChild extends ConcreteParent {
 
   constructor(
     parameters: {
-      readonly identifier: rdfjs.NamedNode | string;
+      readonly $identifier: rdfjs.NamedNode | string;
       readonly childStringProperty?: purify.Maybe<string> | string;
       readonly optionalNestedObjectProperty?: Nested | purify.Maybe<Nested>;
       readonly optionalStringProperty?: purify.Maybe<string> | string;
@@ -1030,9 +1030,9 @@ export namespace ConcreteChild {
   >({
     description: "Concrete child",
     fields: () => ({
-      identifier: {
+      $identifier: {
         resolve: (source) =>
-          ConcreteChild.$Identifier.toString(source.identifier),
+          ConcreteChild.$Identifier.toString(source.$identifier),
         type: graphql.GraphQLString,
       },
       childStringProperty: {
@@ -1076,7 +1076,7 @@ export namespace ConcreteChild {
   }): purify.Either<
     rdfjsResource.Resource.ValueError,
     {
-      identifier: rdfjs.NamedNode;
+      $identifier: rdfjs.NamedNode;
       childStringProperty: purify.Maybe<string>;
       optionalNestedObjectProperty: purify.Maybe<Nested>;
       optionalStringProperty: purify.Maybe<string>;
@@ -1133,7 +1133,7 @@ export namespace ConcreteChild {
       );
     }
 
-    const identifier: ConcreteChild.$Identifier = _resource.identifier;
+    const $identifier: ConcreteChild.$Identifier = _resource.identifier;
     const _childStringPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<string>
@@ -1216,7 +1216,7 @@ export namespace ConcreteChild {
     const requiredStringProperty = _requiredStringPropertyEither.unsafeCoerce();
     return purify.Either.of({
       ...$super0,
-      identifier,
+      $identifier,
       childStringProperty,
       optionalNestedObjectProperty,
       optionalStringProperty,
@@ -1787,7 +1787,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   protected *$objectIdentifiersSync<
-    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectType: {
@@ -1803,13 +1803,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     )) {
       if (object.isRight()) {
-        yield object.unsafeCoerce().identifier;
+        yield object.unsafeCoerce().$identifier;
       }
     }
   }
 
   protected *$objectsSync<
-    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectType: {
@@ -1871,7 +1871,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   protected $objectsCountSync<
-    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectType: {
@@ -1894,7 +1894,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   protected *$objectUnionIdentifiersSync<
-    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectTypes: readonly {
@@ -1910,13 +1910,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     )) {
       if (object.isRight()) {
-        yield object.unsafeCoerce().identifier;
+        yield object.unsafeCoerce().$identifier;
       }
     }
   }
 
   protected *$objectUnionsSync<
-    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectTypes: readonly {
@@ -2008,7 +2008,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   protected $objectUnionsCountSync<
-    ObjectT extends { readonly identifier: ObjectIdentifierT },
+    ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectTypes: readonly {

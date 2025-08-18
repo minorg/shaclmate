@@ -9,9 +9,9 @@ import { Harness } from "./Harness.js";
 
 export class ClassUnionHarness<
   T extends {
-    identifier: IdentifierT;
-    toJson: () => any;
-    toRdf: (options: {
+    $identifier: IdentifierT;
+    $toJson: () => any;
+    $toRdf: (options: {
       mutateGraph: MutableResource.MutateGraph;
       resourceSet: MutableResourceSet;
     }) => Resource<IdentifierT>;
@@ -34,13 +34,13 @@ export class ClassUnionHarness<
   }
 
   override toJson(): any {
-    return this.instance.toJson();
+    return this.instance.$toJson();
   }
 
   override toRdf(options: {
     mutateGraph: MutableResource.MutateGraph;
     resourceSet: MutableResourceSet;
   }): Resource<IdentifierT> {
-    return this.instance.toRdf(options);
+    return this.instance.$toRdf(options);
   }
 }

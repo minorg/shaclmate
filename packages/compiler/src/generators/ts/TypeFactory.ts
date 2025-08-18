@@ -429,7 +429,7 @@ export class TypeFactory {
             dataFactoryVariable: this.dataFactoryVariable,
             identifierMintingStrategy: astType.identifierMintingStrategy,
             identifierPrefixPropertyName: `${syntheticNamePrefix}${astType.tsIdentifierPrefixPropertyName}`,
-            name: astType.tsIdentifierPropertyName,
+            name: `${syntheticNamePrefix}${astType.tsIdentifierPropertyName}`,
             objectType: {
               declarationType: astType.tsObjectDeclarationType,
               features: astType.tsFeatures,

@@ -86,7 +86,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
       dataset,
     });
     for (const object of testData.classClassUnions) {
-      object.toRdf({ resourceSet, mutateGraph });
+      object.$toRdf({ resourceSet, mutateGraph });
     }
     for (const object of testData.concreteChildClasses) {
       object.toRdf({ resourceSet, mutateGraph });

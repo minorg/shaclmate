@@ -20,7 +20,7 @@ import {
 export class ExternClass extends AbstractBaseClassForExternClass {
   readonly type = "ExternClass";
 
-  constructor(readonly identifier: BlankNode | NamedNode<string>) {
+  constructor(readonly $identifier: BlankNode | NamedNode<string>) {
     super({ abstractBaseClassForExternClassProperty: "test" });
   }
 
@@ -65,7 +65,7 @@ export namespace ExternClass {
 
   export function $fromJson(json: unknown) {
     return AbstractBaseClassForExternClassStatic.$propertiesFromJson(json).map(
-      (properties) => new ExternClass(properties.identifier),
+      (properties) => new ExternClass(properties.$identifier),
     );
   }
 

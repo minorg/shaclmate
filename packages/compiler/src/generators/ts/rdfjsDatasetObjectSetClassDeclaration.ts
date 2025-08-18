@@ -22,7 +22,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
 }): ClassDeclarationStructure {
   const typeParameters = {
     ObjectT: {
-      constraint: "{ readonly identifier: ObjectIdentifierT }",
+      constraint: "{ readonly $identifier: ObjectIdentifierT }",
       name: "ObjectT",
     } satisfies OptionalKind<TypeParameterDeclarationStructure>,
     ObjectIdentifierT: {
@@ -59,7 +59,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
           `\
 for (const object of this.${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectType.name}, ${parameters.query.name})) {
   if (object.isRight()) {
-    yield object.unsafeCoerce().identifier;
+    yield object.unsafeCoerce().${syntheticNamePrefix}identifier;
   }
 }
 `,
@@ -165,7 +165,7 @@ for (const resource of resources) {
           `\
 for (const object of this.${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectTypes.name}, ${parameters.query.name})) {
   if (object.isRight()) {
-    yield object.unsafeCoerce().identifier;
+    yield object.unsafeCoerce().$identifier;
   }
 }
 `,
