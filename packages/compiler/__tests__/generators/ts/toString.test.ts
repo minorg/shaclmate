@@ -9,7 +9,7 @@ describe("toString", () => {
       abstractBaseClassWithPropertiesProperty: "abc",
       concreteChildClassProperty: "child",
       concreteParentClassProperty: "parent",
-      identifier: dataFactory.namedNode("http://example.com/test"),
+      $identifier: dataFactory.namedNode("http://example.com/test"),
     });
     expect(instance.toString()).toStrictEqual(
       '{"@id":"http://example.com/test","type":"ConcreteChildClass","abstractBaseClassWithPropertiesProperty":"abc","concreteParentClassProperty":"parent","concreteChildClassProperty":"child"}',

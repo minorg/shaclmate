@@ -8,7 +8,7 @@ import { quadsToTurtle } from "./quadsToTurtle.js";
 
 describe("sparql", () => {
   for (const [id, harness] of Object.entries(harnesses)) {
-    if (harness.instance.identifier.termType !== "NamedNode") {
+    if (harness.instance.$identifier.termType !== "NamedNode") {
       continue;
     }
 
@@ -41,7 +41,7 @@ describe("sparql", () => {
           resource: new MutableResourceSet({
             dataFactory,
             dataset: constructResultDataset,
-          }).namedResource(harness.instance.identifier as NamedNode),
+          }).namedResource(harness.instance.$identifier as NamedNode),
         })
         .unsafeCoerce();
       const equalsResult = harness.equals(constructInstance as any).extract();

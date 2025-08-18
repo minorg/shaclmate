@@ -3,7 +3,7 @@ import { harnesses } from "./harnesses.js";
 
 describe("toJson", () => {
   it("union properties", ({ expect }) => {
-    const jsonObject = harnesses.unionProperties1.instance.toJson();
+    const jsonObject = harnesses.unionProperties1.instance.$toJson();
     expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
     expect(jsonObject.type).toStrictEqual("UnionPropertiesClass");
     expect(jsonObject.widenedLiteralsProperty).toStrictEqual({
@@ -17,7 +17,7 @@ describe("toJson", () => {
   });
 
   it("child-parent", ({ expect }) => {
-    const jsonObject = harnesses.concreteChildClass.instance.toJson();
+    const jsonObject = harnesses.concreteChildClass.instance.$toJson();
     expect(jsonObject.abstractBaseClassWithPropertiesProperty).toStrictEqual(
       "abc",
     );

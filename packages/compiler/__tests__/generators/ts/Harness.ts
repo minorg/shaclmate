@@ -9,7 +9,7 @@ import type {
 import type { z as zod } from "zod";
 
 export abstract class Harness<
-  T extends { readonly identifier: IdentifierT },
+  T extends { readonly $identifier: IdentifierT },
   IdentifierT extends BlankNode | NamedNode,
 > {
   readonly fromJson: (json: unknown) => Either<zod.ZodError, T>;
@@ -22,21 +22,21 @@ export abstract class Harness<
   constructor(
     readonly instance: T,
     {
-      fromJson,
-      fromRdf,
-      sparqlConstructQueryString,
+      $fromJson,
+      $fromRdf,
+      $sparqlConstructQueryString,
     }: {
-      fromJson: Harness<T, IdentifierT>["fromJson"];
-      fromRdf: Harness<T, IdentifierT>["fromRdf"];
-      sparqlConstructQueryString: Harness<
+      $fromJson: Harness<T, IdentifierT>["fromJson"];
+      $fromRdf: Harness<T, IdentifierT>["fromRdf"];
+      $sparqlConstructQueryString: Harness<
         T,
         IdentifierT
       >["sparqlConstructQueryString"];
     },
   ) {
-    this.fromJson = fromJson;
-    this.fromRdf = fromRdf;
-    this.sparqlConstructQueryString = sparqlConstructQueryString;
+    this.fromJson = $fromJson;
+    this.fromRdf = $fromRdf;
+    this.sparqlConstructQueryString = $sparqlConstructQueryString;
   }
 
   abstract equals(other: T): $EqualsResult;

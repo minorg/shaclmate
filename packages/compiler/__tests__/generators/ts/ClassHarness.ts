@@ -9,10 +9,10 @@ import { Harness } from "./Harness.js";
 
 export class ClassHarness<
   T extends {
-    equals: (other: T) => $EqualsResult;
-    identifier: IdentifierT;
-    toJson: () => any;
-    toRdf: (options: {
+    $equals: (other: T) => $EqualsResult;
+    $identifier: IdentifierT;
+    $toJson: () => any;
+    $toRdf: (options: {
       mutateGraph: MutableResource.MutateGraph;
       resourceSet: MutableResourceSet;
     }) => Resource<IdentifierT>;
@@ -20,17 +20,17 @@ export class ClassHarness<
   IdentifierT extends BlankNode | NamedNode,
 > extends Harness<T, IdentifierT> {
   override equals(other: T): $EqualsResult {
-    return this.instance.equals(other);
+    return this.instance.$equals(other);
   }
 
   override toJson(): any {
-    return this.instance.toJson();
+    return this.instance.$toJson();
   }
 
   override toRdf(options: {
     mutateGraph: MutableResource.MutateGraph;
     resourceSet: MutableResourceSet;
   }): Resource<IdentifierT> {
-    return this.instance.toRdf(options);
+    return this.instance.$toRdf(options);
   }
 }

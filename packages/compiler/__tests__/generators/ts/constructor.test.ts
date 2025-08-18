@@ -27,7 +27,7 @@ describe("constructor", () => {
   it("union of literals property", ({ expect }) => {
     expect(
       new kitchenSink.UnionPropertiesClass({
-        identifier: dataFactory.blankNode(),
+        $identifier: dataFactory.blankNode(),
         widenedLiteralsProperty: dataFactory.literal("test"),
       }).widenedLiteralsProperty.unsafeCoerce().value,
     ).toStrictEqual("test");

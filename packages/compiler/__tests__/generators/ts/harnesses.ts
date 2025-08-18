@@ -9,7 +9,7 @@ import { ClassHarness } from "./ClassHarness.js";
 import { ClassUnionHarness } from "./ClassUnionHarness.js";
 import { InterfaceHarness } from "./InterfaceHarness.js";
 
-const identifier = dataFactory.namedNode("http://example.com/instance");
+const $identifier = dataFactory.namedNode("http://example.com/instance");
 
 export const harnesses = {
   blankClass: new ClassHarness(
@@ -18,14 +18,14 @@ export const harnesses = {
   ),
   classUnionMember1: new ClassUnionHarness(
     new kitchenSink.ClassUnionMember1({
-      identifier,
+      $identifier,
       classUnionMember1Property: "test",
     }),
     kitchenSink.ClassUnion,
   ),
   classUnionMember2: new ClassUnionHarness(
     new kitchenSink.ClassUnionMember2({
-      identifier,
+      $identifier,
       classUnionMember2Property: "test",
     }),
     kitchenSink.ClassUnion,
@@ -35,7 +35,7 @@ export const harnesses = {
       abstractBaseClassWithPropertiesProperty: "abc",
       concreteChildClassProperty: "child",
       concreteParentClassProperty: "parent",
-      identifier,
+      $identifier,
     }),
     kitchenSink.ConcreteChildClass,
   ),
@@ -44,7 +44,7 @@ export const harnesses = {
       baseInterfaceWithPropertiesProperty: "abc",
       concreteChildInterfaceProperty: "child",
       concreteParentInterfaceProperty: "parent",
-      identifier,
+      $identifier,
       type: "ConcreteChildInterface",
     },
     kitchenSink.ConcreteChildInterface,
@@ -53,7 +53,7 @@ export const harnesses = {
     new kitchenSink.ConcreteParentClass({
       abstractBaseClassWithPropertiesProperty: "abc",
       concreteParentClassProperty: "parent",
-      identifier,
+      $identifier,
     }),
     kitchenSink.ConcreteParentClassStatic,
   ),
@@ -61,21 +61,21 @@ export const harnesses = {
     {
       baseInterfaceWithPropertiesProperty: "abc",
       concreteParentInterfaceProperty: "parent",
-      identifier,
+      $identifier,
       type: "ConcreteParentInterface",
     },
     kitchenSink.ConcreteParentInterfaceStatic,
   ),
   defaultValuePropertiesClass: new ClassHarness(
     new kitchenSink.DefaultValuePropertiesClass({
-      identifier,
+      $identifier,
     }),
     kitchenSink.DefaultValuePropertiesClass,
   ),
   defaultValuePropertiesOverriddenDifferent: new ClassHarness(
     new kitchenSink.DefaultValuePropertiesClass({
       falseBooleanDefaultValueProperty: true,
-      identifier,
+      $identifier,
       numberDefaultValueProperty: 1,
       stringDefaultValueProperty: "test",
       trueBooleanDefaultValueProperty: false,
@@ -87,7 +87,7 @@ export const harnesses = {
       falseBooleanDefaultValueProperty: false,
       dateDefaultValueProperty: new Date("2025-03-06"),
       dateTimeDefaultValueProperty: new Date(1523268000000),
-      identifier,
+      $identifier,
       numberDefaultValueProperty: 0,
       stringDefaultValueProperty: "",
       trueBooleanDefaultValueProperty: true,
@@ -96,7 +96,7 @@ export const harnesses = {
   ),
   emptyListPropertiesClass: new ClassHarness(
     new kitchenSink.ListPropertiesClass({
-      identifier,
+      $identifier,
       stringListProperty: [],
     }),
     kitchenSink.ListPropertiesClass,
@@ -104,14 +104,14 @@ export const harnesses = {
   explicitFromToRdfTypesClass: new ClassHarness(
     new kitchenSink.ExplicitFromToRdfTypesClass({
       explicitFromToRdfTypesProperty: "test",
-      identifier,
+      $identifier,
     }),
     kitchenSink.ExplicitFromToRdfTypesClass,
   ),
   explicitRdfTypeClass: new ClassHarness(
     new kitchenSink.ExplicitRdfTypeClass({
       explicitRdfTypeProperty: "test",
-      identifier,
+      $identifier,
     }),
     kitchenSink.ExplicitRdfTypeClass,
   ),
@@ -123,7 +123,7 @@ export const harnesses = {
       externNestedProperty: dataFactory.namedNode(
         "http://example.com/externProperty",
       ),
-      identifier,
+      $identifier,
       inlineNestedProperty: new kitchenSink.ExternPropertiesInlineNestedClass({
         externPropertiesInlineNestedStringProperty: "Test",
       }),
@@ -135,20 +135,20 @@ export const harnesses = {
       hasIriValueProperty: dataFactory.namedNode(
         "http://example.com/HasValuePropertiesClassIri1",
       ),
-      identifier,
+      $identifier,
     }),
     kitchenSink.HasValuePropertiesClass,
   ),
   hasLiteralValuePropertiesClass: new ClassHarness(
     new kitchenSink.HasValuePropertiesClass({
       hasLiteralValueProperty: "test",
-      identifier,
+      $identifier,
     }),
     kitchenSink.HasValuePropertiesClass,
   ),
   inIdentifierClass: new ClassHarness(
     new kitchenSink.InIdentifierClass({
-      identifier: dataFactory.namedNode(
+      $identifier: dataFactory.namedNode(
         "http://example.com/InIdentifierInstance1",
       ),
       inIdentifierProperty: "doesn't matter",
@@ -157,7 +157,7 @@ export const harnesses = {
   ),
   inIrisPropertyClass: new ClassHarness(
     new kitchenSink.InPropertiesClass({
-      identifier,
+      $identifier,
       inIrisProperty: dataFactory.namedNode(
         "http://example.com/InPropertiesIri1",
       ),
@@ -166,7 +166,7 @@ export const harnesses = {
   ),
   inLiteralsPropertyCLass: new ClassHarness(
     new kitchenSink.InPropertiesClass({
-      identifier,
+      $identifier,
       inStringsProperty: "text",
     }),
     kitchenSink.InPropertiesClass,
@@ -176,7 +176,7 @@ export const harnesses = {
     BlankNode | NamedNode
   >(
     {
-      identifier,
+      $identifier,
       interfaceProperty: "Test",
       type: "Interface",
     },
@@ -187,7 +187,7 @@ export const harnesses = {
     BlankNode | NamedNode
   >(
     {
-      identifier,
+      $identifier,
       interfaceUnionMember1Property: "Test1",
       type: "InterfaceUnionMember1",
     },
@@ -198,7 +198,7 @@ export const harnesses = {
     BlankNode | NamedNode
   >(
     {
-      identifier,
+      $identifier,
       interfaceUnionMember2aProperty: "Test2",
       type: "InterfaceUnionMember2a",
     },
@@ -206,13 +206,13 @@ export const harnesses = {
   ),
   iriClass: new ClassHarness(
     new kitchenSink.IriClass({
-      identifier,
+      $identifier,
     }),
     kitchenSink.IriClass,
   ),
   languageInPropertiesClass: new ClassHarness(
     new kitchenSink.LanguageInPropertiesClass({
-      identifier,
+      $identifier,
       languageInPropertiesLanguageInProperty: dataFactory.literal(
         "frvalue",
         "fr",
@@ -223,7 +223,7 @@ export const harnesses = {
   ),
   mutablePropertiesClass: new ClassHarness(
     new kitchenSink.MutablePropertiesClass({
-      identifier,
+      $identifier,
       mutableListProperty: ["test1", "test2"],
       mutableStringProperty: "test",
       mutableSetProperty: ["test1", "test2"],
@@ -232,7 +232,7 @@ export const harnesses = {
   ),
   objectListProperty: new ClassHarness(
     new kitchenSink.ListPropertiesClass({
-      identifier,
+      $identifier,
       objectListProperty: [
         new kitchenSink.NonClass({ nonClassProperty: "Test1" }),
         new kitchenSink.NonClass({ nonClassProperty: "Test2" }),
@@ -242,7 +242,7 @@ export const harnesses = {
   ),
   orderedPropertiesClass: new ClassHarness(
     new kitchenSink.OrderedPropertiesClass({
-      identifier,
+      $identifier,
       orderedPropertyA: "testA",
       orderedPropertyB: "testB",
       orderedPropertyC: "testC",
@@ -251,7 +251,7 @@ export const harnesses = {
   ),
   propertyCardinalitiesClass: new ClassHarness(
     new kitchenSink.PropertyCardinalitiesClass({
-      identifier,
+      $identifier,
       emptyStringSetProperty: undefined,
       nonEmptyStringSetProperty: NonEmptyList(["test1"]),
       optionalStringProperty: undefined,
@@ -261,7 +261,7 @@ export const harnesses = {
   ),
   propertyVisibilitiesClass: new ClassHarness(
     new kitchenSink.PropertyVisibilitiesClass({
-      identifier,
+      $identifier,
       privateProperty: "private",
       protectedProperty: "protected",
       publicProperty: "public",
@@ -270,14 +270,14 @@ export const harnesses = {
   ),
   nonClass: new ClassHarness(
     new kitchenSink.NonClass({
-      identifier,
+      $identifier,
       nonClassProperty: "Test",
     }),
     kitchenSink.NonClass,
   ),
   sha256IriClassWithExplicitIdentifier: new ClassHarness(
     new kitchenSink.Sha256IriClass({
-      identifier,
+      $identifier,
       sha256IriProperty: "test",
     }),
     kitchenSink.Sha256IriClass,
@@ -290,7 +290,7 @@ export const harnesses = {
   ),
   stringListProperty: new ClassHarness(
     new kitchenSink.ListPropertiesClass({
-      identifier,
+      $identifier,
       stringListProperty: ["Test1", "Test2"],
     }),
     kitchenSink.ListPropertiesClass,
@@ -300,7 +300,7 @@ export const harnesses = {
       booleanTermProperty: true,
       dateTermProperty: new Date("2025-03-06"),
       dateTimeTermProperty: new Date(1523268000000),
-      identifier,
+      $identifier,
       iriTermProperty: dataFactory.namedNode("http://example.com"),
       literalTermProperty: dataFactory.literal("test"),
       numberTermProperty: 1,
@@ -311,7 +311,7 @@ export const harnesses = {
   ),
   unionProperties1: new ClassHarness(
     new kitchenSink.UnionPropertiesClass({
-      identifier,
+      $identifier,
       narrowLiteralsProperty: 1,
       unrelatedTypesProperty: 1,
       widenedLiteralsProperty: 1,
@@ -321,7 +321,7 @@ export const harnesses = {
   ),
   unionProperties2Class: new ClassHarness(
     new kitchenSink.UnionPropertiesClass({
-      identifier,
+      $identifier,
       narrowLiteralsProperty: 1,
       unrelatedTypesProperty: new kitchenSink.NonClass({
         nonClassProperty: "test",
@@ -333,7 +333,7 @@ export const harnesses = {
   ),
   uuidv4IriClassWithExplicitIdentifier: new ClassHarness(
     new kitchenSink.UuidV4IriClass({
-      identifier,
+      $identifier,
       uuidV4IriProperty: "test",
     }),
     kitchenSink.UuidV4IriClass,

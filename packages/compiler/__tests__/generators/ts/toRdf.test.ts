@@ -11,14 +11,14 @@ describe("toRdf", () => {
   it("should populate a dataset", ({ expect }) => {
     const dataset = new N3.Store();
     const resourceSet = new MutableResourceSet({ dataFactory, dataset });
-    const resource = harnesses.concreteChildClass.instance.toRdf({
+    const resource = harnesses.concreteChildClass.toRdf({
       resourceSet,
       mutateGraph: dataFactory.defaultGraph(),
     });
     expect(dataset.size).toStrictEqual(4);
     expect(
       resource.identifier.equals(
-        harnesses.concreteChildClass.instance.identifier,
+        harnesses.concreteChildClass.instance.$identifier,
       ),
     ).toStrictEqual(true);
     expect(
@@ -26,7 +26,7 @@ describe("toRdf", () => {
         .value(rdf.type)
         .chain((value) => value.toIri())
         .unsafeCoerce()
-        .equals(kitchenSink.ConcreteChildClass.fromRdfType),
+        .equals(kitchenSink.ConcreteChildClass.$fromRdfType),
     ).toStrictEqual(true);
     expect(
       resource

@@ -23,14 +23,14 @@ export class ClassUnionHarness<
   constructor(
     instance: T,
     {
-      equals,
+      $equals,
       ...superParameters
     }: {
-      equals: (left: T, right: T) => $EqualsResult;
+      $equals: (left: T, right: T) => $EqualsResult;
     } & ConstructorParameters<typeof Harness<T, IdentifierT>>[1],
   ) {
     super(instance, superParameters);
-    this.equals = (other) => equals(this.instance, other);
+    this.equals = (other) => $equals(this.instance, other);
   }
 
   override toJson(): any {
