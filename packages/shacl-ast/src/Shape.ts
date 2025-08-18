@@ -24,7 +24,7 @@ export abstract class Shape<
   constructor(
     private readonly generatedShaclCoreShape: Omit<
       generated.ShaclCoreShape,
-      "type"
+      "$type"
     >,
     protected readonly shapesGraph: ShapesGraph<
       NodeShapeT,
@@ -90,7 +90,7 @@ export namespace Shape {
     constructor(
       private readonly generatedShaclCoreShape: Omit<
         generated.ShaclCoreShape,
-        "type"
+        "$type"
       >,
       protected readonly shapesGraph: ShapesGraph<
         NodeShapeT,

@@ -4,7 +4,7 @@ import type * as generated from "./generated.js";
 
 export class Ontology implements OntologyLike {
   constructor(
-    private readonly generatedOntology: Omit<generated.OwlOntology, "type">,
+    private readonly generatedOntology: Omit<generated.OwlOntology, "$type">,
   ) {}
 
   get identifier(): BlankNode | NamedNode {

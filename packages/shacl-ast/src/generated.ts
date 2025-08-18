@@ -6,7 +6,7 @@ import { PropertyPath } from "./PropertyPath.js";
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 export interface BaseShaclCoreShape {
   readonly $identifier: BaseShaclCoreShapeStatic.$Identifier;
-  readonly type: "ShaclCoreNodeShape" | "ShaclCorePropertyShape";
+  readonly $type: "ShaclCoreNodeShape" | "ShaclCorePropertyShape";
   readonly and: readonly (readonly (rdfjs.BlankNode | rdfjs.NamedNode)[])[];
   readonly classes: readonly rdfjs.NamedNode[];
   readonly comments: readonly rdfjs.Literal[];
@@ -1436,7 +1436,7 @@ export namespace BaseShaclCoreShapeStatic {
 }
 export interface ShaclCorePropertyShape extends BaseShaclCoreShape {
   readonly $identifier: ShaclCorePropertyShape.$Identifier;
-  readonly type: "ShaclCorePropertyShape";
+  readonly $type: "ShaclCorePropertyShape";
   readonly defaultValue: purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>;
   readonly descriptions: readonly rdfjs.Literal[];
   readonly groups: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
@@ -1468,7 +1468,7 @@ export namespace ShaclCorePropertyShape {
     rdfjsResource.Resource.ValueError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "ShaclCorePropertyShape";
+      $type: "ShaclCorePropertyShape";
       defaultValue: purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>;
       descriptions: readonly rdfjs.Literal[];
       groups: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
@@ -1517,7 +1517,7 @@ export namespace ShaclCorePropertyShape {
 
     const $identifier: ShaclCorePropertyShape.$Identifier =
       _resource.identifier;
-    const type = "ShaclCorePropertyShape" as const;
+    const $type = "ShaclCorePropertyShape" as const;
     const _defaultValueEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>
@@ -1708,7 +1708,7 @@ export namespace ShaclCorePropertyShape {
     return purify.Either.of({
       ...$super0,
       $identifier,
-      type,
+      $type,
       defaultValue,
       descriptions,
       groups,
@@ -1828,7 +1828,7 @@ export namespace ShaclCorePropertyShape {
 }
 export interface ShaclCorePropertyGroup {
   readonly $identifier: ShaclCorePropertyGroup.$Identifier;
-  readonly type: "ShaclCorePropertyGroup";
+  readonly $type: "ShaclCorePropertyGroup";
   readonly comments: readonly rdfjs.Literal[];
   readonly labels: readonly rdfjs.Literal[];
 }
@@ -1870,7 +1870,7 @@ export namespace ShaclCorePropertyGroup {
     rdfjsResource.Resource.ValueError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "ShaclCorePropertyGroup";
+      $type: "ShaclCorePropertyGroup";
       comments: readonly rdfjs.Literal[];
       labels: readonly rdfjs.Literal[];
     }
@@ -1903,7 +1903,7 @@ export namespace ShaclCorePropertyGroup {
 
     const $identifier: ShaclCorePropertyGroup.$Identifier =
       _resource.identifier;
-    const type = "ShaclCorePropertyGroup" as const;
+    const $type = "ShaclCorePropertyGroup" as const;
     const _commentsEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly rdfjs.Literal[]
@@ -1976,7 +1976,7 @@ export namespace ShaclCorePropertyGroup {
     }
 
     const labels = _labelsEither.unsafeCoerce();
-    return purify.Either.of({ $identifier, type, comments, labels });
+    return purify.Either.of({ $identifier, $type, comments, labels });
   }
 
   export function $fromRdf(
@@ -2038,7 +2038,7 @@ export namespace ShaclCorePropertyGroup {
 }
 export interface ShaclCoreNodeShape extends BaseShaclCoreShape {
   readonly $identifier: ShaclCoreNodeShape.$Identifier;
-  readonly type: "ShaclCoreNodeShape";
+  readonly $type: "ShaclCoreNodeShape";
   readonly closed: purify.Maybe<boolean>;
   readonly ignoredProperties: purify.Maybe<readonly rdfjs.NamedNode[]>;
   readonly properties: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
@@ -2066,7 +2066,7 @@ export namespace ShaclCoreNodeShape {
     rdfjsResource.Resource.ValueError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "ShaclCoreNodeShape";
+      $type: "ShaclCoreNodeShape";
       closed: purify.Maybe<boolean>;
       ignoredProperties: purify.Maybe<readonly rdfjs.NamedNode[]>;
       properties: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
@@ -2110,7 +2110,7 @@ export namespace ShaclCoreNodeShape {
     }
 
     const $identifier: ShaclCoreNodeShape.$Identifier = _resource.identifier;
-    const type = "ShaclCoreNodeShape" as const;
+    const $type = "ShaclCoreNodeShape" as const;
     const _closedEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.Maybe<boolean>
@@ -2181,7 +2181,7 @@ export namespace ShaclCoreNodeShape {
     return purify.Either.of({
       ...$super0,
       $identifier,
-      type,
+      $type,
       closed,
       ignoredProperties,
       properties,
@@ -2319,7 +2319,7 @@ export namespace ShaclCoreNodeShape {
 }
 export interface OwlOntology {
   readonly $identifier: OwlOntology.$Identifier;
-  readonly type: "OwlOntology";
+  readonly $type: "OwlOntology";
   readonly labels: readonly rdfjs.Literal[];
 }
 
@@ -2360,7 +2360,7 @@ export namespace OwlOntology {
     rdfjsResource.Resource.ValueError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "OwlOntology";
+      $type: "OwlOntology";
       labels: readonly rdfjs.Literal[];
     }
   > {
@@ -2391,7 +2391,7 @@ export namespace OwlOntology {
     }
 
     const $identifier: OwlOntology.$Identifier = _resource.identifier;
-    const type = "OwlOntology" as const;
+    const $type = "OwlOntology" as const;
     const _labelsEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly rdfjs.Literal[]
@@ -2428,7 +2428,7 @@ export namespace OwlOntology {
     }
 
     const labels = _labelsEither.unsafeCoerce();
-    return purify.Either.of({ $identifier, type, labels });
+    return purify.Either.of({ $identifier, $type, labels });
   }
 
   export function $fromRdf(
@@ -2537,7 +2537,7 @@ export namespace ShaclCoreShape {
       resourceSet: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    switch (_shaclCoreShape.type) {
+    switch (_shaclCoreShape.$type) {
       case "ShaclCoreNodeShape":
         return ShaclCoreNodeShape.$toRdf(_shaclCoreShape, _parameters);
       case "ShaclCorePropertyShape":

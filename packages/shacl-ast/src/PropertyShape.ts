@@ -24,7 +24,7 @@ export class PropertyShape<
   constructor(
     private readonly generatedShaclCorePropertyShape: Omit<
       generated.ShaclCorePropertyShape,
-      "type"
+      "$type"
     >,
     shapesGraph: ShapesGraph<
       NodeShapeT,
