@@ -50,7 +50,7 @@ export type PropertyPath =
   | ZeroOrOnePath;
 
 export namespace PropertyPath {
-  export function fromRdf({
+  export function $fromRdf({
     resource,
   }: {
     [_index: string]: any;
@@ -82,7 +82,7 @@ export namespace PropertyPath {
               }),
             );
           }
-          const member = PropertyPath.fromRdf({
+          const member = PropertyPath.$fromRdf({
             resource: memberResource.unsafeCoerce(),
           });
           if (member.isLeft()) {
@@ -130,7 +130,7 @@ export namespace PropertyPath {
       // Inverse path
       // sh:path: [ sh:inversePath ex:parent ]
       if (quad.predicate.equals(sh.inversePath)) {
-        return PropertyPath.fromRdf({ resource: objectResource }).map(
+        return PropertyPath.$fromRdf({ resource: objectResource }).map(
           (path) => ({
             kind: "InversePath",
             path,
@@ -140,7 +140,7 @@ export namespace PropertyPath {
 
       // One or more path
       if (quad.predicate.equals(sh.oneOrMorePath)) {
-        return PropertyPath.fromRdf({ resource: objectResource }).map(
+        return PropertyPath.$fromRdf({ resource: objectResource }).map(
           (path) => ({
             kind: "OneOrMorePath",
             path,
@@ -159,7 +159,7 @@ export namespace PropertyPath {
 
       // Zero or more path
       if (quad.predicate.equals(sh.zeroOrMorePath)) {
-        return PropertyPath.fromRdf({ resource: objectResource }).map(
+        return PropertyPath.$fromRdf({ resource: objectResource }).map(
           (path) => ({
             kind: "ZeroOrMorePath",
             path,
@@ -168,7 +168,7 @@ export namespace PropertyPath {
       }
 
       if (quad.predicate.equals(sh.zeroOrOnePath)) {
-        return PropertyPath.fromRdf({ resource: objectResource }).map(
+        return PropertyPath.$fromRdf({ resource: objectResource }).map(
           (path) => ({
             kind: "ZeroOrOnePath",
             path,
@@ -186,7 +186,10 @@ export namespace PropertyPath {
     );
   }
 
-  export function toRdf(_propertyPath: PropertyPath, _options?: any): Resource {
+  export function $toRdf(
+    _propertyPath: PropertyPath,
+    _options?: any,
+  ): Resource {
     throw new Error("not implemented");
   }
 }

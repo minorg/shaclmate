@@ -8,7 +8,7 @@ export class Ontology implements OntologyLike {
   ) {}
 
   get identifier(): BlankNode | NamedNode {
-    return this.generatedOntology.identifier;
+    return this.generatedOntology.$identifier;
   }
 
   toString(): string {

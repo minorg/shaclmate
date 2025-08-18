@@ -9,7 +9,7 @@ export class PropertyGroup {
   }
 
   get identifier(): BlankNode | NamedNode {
-    return this.delegate.identifier;
+    return this.delegate.$identifier;
   }
 
   get labels(): readonly Literal[] {

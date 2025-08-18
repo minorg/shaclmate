@@ -40,7 +40,7 @@ export abstract class Shape<
   }
 
   get identifier(): BlankNode | NamedNode {
-    return this.generatedShaclCoreShape.identifier;
+    return this.generatedShaclCoreShape.$identifier;
   }
 
   get isDefinedBy(): Maybe<OntologyT> {
