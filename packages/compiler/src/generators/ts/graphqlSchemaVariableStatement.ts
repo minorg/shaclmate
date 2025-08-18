@@ -26,7 +26,7 @@ async (_source, args: { identifier: string }, { objectSet }): Promise<${objectTy
   (await purify.EitherAsync<Error, ${objectType.name}>(async ({ liftEither }) => 
     liftEither(await objectSet.${objectType.objectSetMethodNames.object}(await liftEither(${objectType.identifierTypeAlias}.fromString(args.identifier))))
   )).unsafeCoerce()`,
-          type: `${objectType.staticModuleName}.GraphQL`,
+          type: objectType.graphqlName,
         });
 
         fields[objectType.objectSetMethodNames.objectIdentifiers] =
@@ -74,7 +74,7 @@ async (_source, args: { identifiers: readonly string[] | null; limit: number | n
   }
   return objects;
 })).unsafeCoerce()`,
-          type: `new graphql.GraphQLNonNull(new graphql.GraphQLList(new graphql.GraphQLNonNull(${objectType.staticModuleName}.GraphQL)))`,
+          type: `new graphql.GraphQLNonNull(new graphql.GraphQLList(new graphql.GraphQLNonNull(${objectType.graphqlName})))`,
         });
 
         fields[objectType.objectSetMethodNames.objectsCount] =

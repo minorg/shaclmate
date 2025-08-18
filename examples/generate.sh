@@ -16,7 +16,7 @@ format_rdf() {
 
 # GraphQL
 # format_rdf $PWD/examples/graphql/src/graphql.shaclmate.ttl
-# ./packages/cli/dist/cli.js generate $PWD/examples/graphql/src/graphql.shaclmate.ttl >examples/graphql/src/generated.ts
+./packages/cli/dist/cli.js generate $PWD/examples/graphql/src/graphql.shaclmate.ttl >examples/graphql/src/generated.ts
 
 # Kitchen sink
 format_rdf $PWD/examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl
