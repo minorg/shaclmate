@@ -49,7 +49,7 @@ export class IdentifierPrefixProperty extends Property<StringType> {
       name: this.name,
       returnType: this.type.name,
       statements: [
-        `return (typeof this._${this.name} !== "undefined") ? this._${this.name} : \`urn:shaclmate:\${this.type}:\``,
+        `return (typeof this._${this.name} !== "undefined") ? this._${this.name} : \`urn:shaclmate:\${this.${syntheticNamePrefix}type}:\``,
       ],
     } satisfies OptionalKind<GetAccessorDeclarationStructure>);
   }

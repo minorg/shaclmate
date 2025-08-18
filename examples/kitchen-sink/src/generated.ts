@@ -209,7 +209,7 @@ type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 export class UuidV4IriClass {
   private _$identifier: UuidV4IriClass.$Identifier | undefined;
   protected readonly _$identifierPrefix?: string;
-  readonly type = "UuidV4IriClass";
+  readonly $type = "UuidV4IriClass";
   readonly uuidV4IriProperty: string;
 
   constructor(parameters: {
@@ -242,7 +242,7 @@ export class UuidV4IriClass {
   protected get $identifierPrefix(): string {
     return typeof this._$identifierPrefix !== "undefined"
       ? this._$identifierPrefix
-      : `urn:shaclmate:${this.type}:`;
+      : `urn:shaclmate:${this.$type}:`;
   }
 
   $equals(other: UuidV4IriClass): $EqualsResult {
@@ -266,11 +266,11 @@ export class UuidV4IriClass {
         ),
       )
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -295,7 +295,7 @@ export class UuidV4IriClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -313,7 +313,7 @@ export class UuidV4IriClass {
     return JSON.parse(
       JSON.stringify({
         "@id": this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         uuidV4IriProperty: this.uuidV4IriProperty,
       } satisfies UuidV4IriClass.$Json),
     );
@@ -367,7 +367,7 @@ export namespace UuidV4IriClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "UuidV4IriClass";
+    readonly $type: "UuidV4IriClass";
     readonly uuidV4IriProperty: string;
   };
 
@@ -413,11 +413,11 @@ export namespace UuidV4IriClass {
           rule: {
             condition: {
               schema: { const: "UuidV4IriClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -433,7 +433,7 @@ export namespace UuidV4IriClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("UuidV4IriClass"),
+      $type: zod.literal("UuidV4IriClass"),
       uuidV4IriProperty: zod.string(),
     });
   }
@@ -589,7 +589,7 @@ export namespace UuidV4IriClass {
  */
 export class UnionPropertiesClass {
   private _$identifier: UnionPropertiesClass.$Identifier | undefined;
-  readonly type = "UnionPropertiesClass";
+  readonly $type = "UnionPropertiesClass";
   readonly narrowLiteralsProperty: purify.Maybe<number | string>;
   readonly unrelatedTypesProperty: purify.Maybe<number | NonClass>;
   readonly widenedLiteralsProperty: purify.Maybe<rdfjs.Literal>;
@@ -745,11 +745,11 @@ export class UnionPropertiesClass {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -857,7 +857,7 @@ export class UnionPropertiesClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -917,7 +917,7 @@ export class UnionPropertiesClass {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         narrowLiteralsProperty: this.narrowLiteralsProperty
           .map((_item) => (typeof _item === "string" ? _item : _item))
           .extract(),
@@ -1020,7 +1020,7 @@ export namespace UnionPropertiesClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "UnionPropertiesClass";
+    readonly $type: "UnionPropertiesClass";
     readonly narrowLiteralsProperty: (number | string) | undefined;
     readonly unrelatedTypesProperty: (number | NonClass.$Json) | undefined;
     readonly widenedLiteralsProperty:
@@ -1043,7 +1043,9 @@ export namespace UnionPropertiesClass {
       | undefined;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -1132,11 +1134,11 @@ export namespace UnionPropertiesClass {
           rule: {
             condition: {
               schema: { const: "UnionPropertiesClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -1164,7 +1166,7 @@ export namespace UnionPropertiesClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("UnionPropertiesClass"),
+      $type: zod.literal("UnionPropertiesClass"),
       narrowLiteralsProperty: zod
         .union([zod.number(), zod.string()])
         .optional(),
@@ -1621,7 +1623,7 @@ export namespace UnionPropertiesClass {
  */
 export class TermPropertiesClass {
   private _$identifier: TermPropertiesClass.$Identifier | undefined;
-  readonly type = "TermPropertiesClass";
+  readonly $type = "TermPropertiesClass";
   readonly booleanTermProperty: purify.Maybe<boolean>;
   readonly dateTermProperty: purify.Maybe<Date>;
   readonly dateTimeTermProperty: purify.Maybe<Date>;
@@ -1821,11 +1823,11 @@ export class TermPropertiesClass {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -1935,7 +1937,7 @@ export class TermPropertiesClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -1984,7 +1986,7 @@ export class TermPropertiesClass {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         booleanTermProperty: this.booleanTermProperty
           .map((_item) => _item)
           .extract(),
@@ -2122,7 +2124,7 @@ export namespace TermPropertiesClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "TermPropertiesClass";
+    readonly $type: "TermPropertiesClass";
     readonly booleanTermProperty: boolean | undefined;
     readonly dateTermProperty: string | undefined;
     readonly dateTimeTermProperty: string | undefined;
@@ -2152,7 +2154,9 @@ export namespace TermPropertiesClass {
       | undefined;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2261,11 +2265,11 @@ export namespace TermPropertiesClass {
           rule: {
             condition: {
               schema: { const: "TermPropertiesClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -2303,7 +2307,7 @@ export namespace TermPropertiesClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("TermPropertiesClass"),
+      $type: zod.literal("TermPropertiesClass"),
       booleanTermProperty: zod.boolean().optional(),
       dateTermProperty: zod.string().date().optional(),
       dateTimeTermProperty: zod.string().datetime().optional(),
@@ -2851,7 +2855,7 @@ export namespace TermPropertiesClass {
 export class Sha256IriClass {
   private _$identifier: Sha256IriClass.$Identifier | undefined;
   protected readonly _$identifierPrefix?: string;
-  readonly type = "Sha256IriClass";
+  readonly $type = "Sha256IriClass";
   readonly sha256IriProperty: string;
 
   constructor(parameters: {
@@ -2884,7 +2888,7 @@ export class Sha256IriClass {
   protected get $identifierPrefix(): string {
     return typeof this._$identifierPrefix !== "undefined"
       ? this._$identifierPrefix
-      : `urn:shaclmate:${this.type}:`;
+      : `urn:shaclmate:${this.$type}:`;
   }
 
   $equals(other: Sha256IriClass): $EqualsResult {
@@ -2908,11 +2912,11 @@ export class Sha256IriClass {
         ),
       )
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -2937,7 +2941,7 @@ export class Sha256IriClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -2955,7 +2959,7 @@ export class Sha256IriClass {
     return JSON.parse(
       JSON.stringify({
         "@id": this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         sha256IriProperty: this.sha256IriProperty,
       } satisfies Sha256IriClass.$Json),
     );
@@ -3009,7 +3013,7 @@ export namespace Sha256IriClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "Sha256IriClass";
+    readonly $type: "Sha256IriClass";
     readonly sha256IriProperty: string;
   };
 
@@ -3055,11 +3059,11 @@ export namespace Sha256IriClass {
           rule: {
             condition: {
               schema: { const: "Sha256IriClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -3075,7 +3079,7 @@ export namespace Sha256IriClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("Sha256IriClass"),
+      $type: zod.literal("Sha256IriClass"),
       sha256IriProperty: zod.string(),
     });
   }
@@ -3231,7 +3235,7 @@ export namespace Sha256IriClass {
  */
 export class PropertyVisibilitiesClass {
   private _$identifier: PropertyVisibilitiesClass.$Identifier | undefined;
-  readonly type = "PropertyVisibilitiesClass";
+  readonly $type = "PropertyVisibilitiesClass";
   private readonly privateProperty: string;
   protected readonly protectedProperty: string;
   readonly publicProperty: string;
@@ -3273,11 +3277,11 @@ export class PropertyVisibilitiesClass {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -3324,7 +3328,7 @@ export class PropertyVisibilitiesClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -3347,7 +3351,7 @@ export class PropertyVisibilitiesClass {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         privateProperty: this.privateProperty,
         protectedProperty: this.protectedProperty,
         publicProperty: this.publicProperty,
@@ -3407,13 +3411,15 @@ export namespace PropertyVisibilitiesClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "PropertyVisibilitiesClass";
+    readonly $type: "PropertyVisibilitiesClass";
     readonly privateProperty: string;
     readonly protectedProperty: string;
     readonly publicProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3467,11 +3473,11 @@ export namespace PropertyVisibilitiesClass {
           rule: {
             condition: {
               schema: { const: "PropertyVisibilitiesClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         { scope: `${scopePrefix}/properties/privateProperty`, type: "Control" },
@@ -3489,7 +3495,7 @@ export namespace PropertyVisibilitiesClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("PropertyVisibilitiesClass"),
+      $type: zod.literal("PropertyVisibilitiesClass"),
       privateProperty: zod.string(),
       protectedProperty: zod.string(),
       publicProperty: zod.string(),
@@ -3725,7 +3731,7 @@ export namespace PropertyVisibilitiesClass {
  */
 export class PropertyCardinalitiesClass {
   private _$identifier: PropertyCardinalitiesClass.$Identifier | undefined;
-  readonly type = "PropertyCardinalitiesClass";
+  readonly $type = "PropertyCardinalitiesClass";
   /**
    * Set: minCount implicitly=0, no maxCount or maxCount > 1
    */
@@ -3802,11 +3808,11 @@ export class PropertyCardinalitiesClass {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -3868,7 +3874,7 @@ export class PropertyCardinalitiesClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -3900,7 +3906,7 @@ export class PropertyCardinalitiesClass {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         emptyStringSetProperty: this.emptyStringSetProperty.map(
           (_item) => _item,
         ),
@@ -3971,14 +3977,16 @@ export namespace PropertyCardinalitiesClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "PropertyCardinalitiesClass";
+    readonly $type: "PropertyCardinalitiesClass";
     readonly emptyStringSetProperty: readonly string[];
     readonly nonEmptyStringSetProperty: readonly string[];
     readonly optionalStringProperty: string | undefined;
     readonly requiredStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4039,11 +4047,11 @@ export namespace PropertyCardinalitiesClass {
           rule: {
             condition: {
               schema: { const: "PropertyCardinalitiesClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -4071,7 +4079,7 @@ export namespace PropertyCardinalitiesClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("PropertyCardinalitiesClass"),
+      $type: zod.literal("PropertyCardinalitiesClass"),
       emptyStringSetProperty: zod
         .string()
         .array()
@@ -4432,7 +4440,7 @@ export namespace PropertyCardinalitiesClass {
  */
 export class OrderedPropertiesClass {
   private _$identifier: OrderedPropertiesClass.$Identifier | undefined;
-  readonly type = "OrderedPropertiesClass";
+  readonly $type = "OrderedPropertiesClass";
   readonly orderedPropertyC: string;
   readonly orderedPropertyB: string;
   readonly orderedPropertyA: string;
@@ -4474,11 +4482,11 @@ export class OrderedPropertiesClass {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -4525,7 +4533,7 @@ export class OrderedPropertiesClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -4548,7 +4556,7 @@ export class OrderedPropertiesClass {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         orderedPropertyC: this.orderedPropertyC,
         orderedPropertyB: this.orderedPropertyB,
         orderedPropertyA: this.orderedPropertyA,
@@ -4608,13 +4616,15 @@ export namespace OrderedPropertiesClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "OrderedPropertiesClass";
+    readonly $type: "OrderedPropertiesClass";
     readonly orderedPropertyC: string;
     readonly orderedPropertyB: string;
     readonly orderedPropertyA: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4668,11 +4678,11 @@ export namespace OrderedPropertiesClass {
           rule: {
             condition: {
               schema: { const: "OrderedPropertiesClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -4696,7 +4706,7 @@ export namespace OrderedPropertiesClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("OrderedPropertiesClass"),
+      $type: zod.literal("OrderedPropertiesClass"),
       orderedPropertyC: zod.string(),
       orderedPropertyB: zod.string(),
       orderedPropertyA: zod.string(),
@@ -4922,7 +4932,7 @@ export namespace OrderedPropertiesClass {
  */
 export class NonClass {
   private _$identifier: NonClass.$Identifier | undefined;
-  readonly type = "NonClass";
+  readonly $type = "NonClass";
   readonly nonClassProperty: string;
 
   constructor(parameters: {
@@ -4958,11 +4968,11 @@ export class NonClass {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -4987,7 +4997,7 @@ export class NonClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -5008,7 +5018,7 @@ export class NonClass {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         nonClassProperty: this.nonClassProperty,
       } satisfies NonClass.$Json),
     );
@@ -5058,7 +5068,7 @@ export namespace NonClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "NonClass";
+    readonly $type: "NonClass";
     readonly nonClassProperty: string;
   };
 
@@ -5106,11 +5116,11 @@ export namespace NonClass {
           rule: {
             condition: {
               schema: { const: "NonClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -5126,7 +5136,7 @@ export namespace NonClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("NonClass"),
+      $type: zod.literal("NonClass"),
       nonClassProperty: zod.string(),
     });
   }
@@ -5263,7 +5273,7 @@ export namespace NonClass {
 export class MutablePropertiesClass {
   private _$identifier: MutablePropertiesClass.$Identifier | undefined;
   protected readonly _$identifierPrefix?: string;
-  readonly type = "MutablePropertiesClass";
+  readonly $type = "MutablePropertiesClass";
   /**
    * List-valued property that can't be reassigned but whose value can be mutated
    */
@@ -5339,7 +5349,7 @@ export class MutablePropertiesClass {
   protected get $identifierPrefix(): string {
     return typeof this._$identifierPrefix !== "undefined"
       ? this._$identifierPrefix
-      : `urn:shaclmate:${this.type}:`;
+      : `urn:shaclmate:${this.$type}:`;
   }
 
   $equals(other: MutablePropertiesClass): $EqualsResult {
@@ -5363,11 +5373,11 @@ export class MutablePropertiesClass {
         ),
       )
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -5419,7 +5429,7 @@ export class MutablePropertiesClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -5451,7 +5461,7 @@ export class MutablePropertiesClass {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         mutableListProperty: this.mutableListProperty
           .map((_item) => _item.map((_item) => _item))
           .extract(),
@@ -5574,13 +5584,15 @@ export namespace MutablePropertiesClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "MutablePropertiesClass";
+    readonly $type: "MutablePropertiesClass";
     readonly mutableListProperty: readonly string[] | undefined;
     readonly mutableSetProperty: readonly string[];
     readonly mutableStringProperty: string | undefined;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5638,11 +5650,11 @@ export namespace MutablePropertiesClass {
           rule: {
             condition: {
               schema: { const: "MutablePropertiesClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -5666,7 +5678,7 @@ export namespace MutablePropertiesClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("MutablePropertiesClass"),
+      $type: zod.literal("MutablePropertiesClass"),
       mutableListProperty: zod
         .string()
         .array()
@@ -6103,7 +6115,7 @@ export namespace MutablePropertiesClass {
  */
 export class ListPropertiesClass {
   private _$identifier: ListPropertiesClass.$Identifier | undefined;
-  readonly type = "ListPropertiesClass";
+  readonly $type = "ListPropertiesClass";
   readonly objectListProperty: purify.Maybe<readonly NonClass[]>;
   readonly stringListProperty: purify.Maybe<readonly string[]>;
 
@@ -6163,11 +6175,11 @@ export class ListPropertiesClass {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -6209,7 +6221,7 @@ export class ListPropertiesClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -6239,7 +6251,7 @@ export class ListPropertiesClass {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         objectListProperty: this.objectListProperty
           .map((_item) => _item.map((_item) => _item.$toJson()))
           .extract(),
@@ -6419,12 +6431,14 @@ export namespace ListPropertiesClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "ListPropertiesClass";
+    readonly $type: "ListPropertiesClass";
     readonly objectListProperty: readonly NonClass.$Json[] | undefined;
     readonly stringListProperty: readonly string[] | undefined;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6481,11 +6495,11 @@ export namespace ListPropertiesClass {
           rule: {
             condition: {
               schema: { const: "ListPropertiesClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         NonClass.$jsonUiSchema({
@@ -6504,7 +6518,7 @@ export namespace ListPropertiesClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("ListPropertiesClass"),
+      $type: zod.literal("ListPropertiesClass"),
       objectListProperty: NonClass.$jsonZodSchema().array().optional(),
       stringListProperty: zod.string().array().optional(),
     });
@@ -7046,7 +7060,7 @@ export namespace ListPropertiesClass {
  */
 export class LanguageInPropertiesClass {
   private _$identifier: LanguageInPropertiesClass.$Identifier | undefined;
-  readonly type = "LanguageInPropertiesClass";
+  readonly $type = "LanguageInPropertiesClass";
   readonly languageInPropertiesLanguageInProperty: purify.Maybe<rdfjs.Literal>;
   /**
    * literal property for testing runtime languageIn
@@ -7197,11 +7211,11 @@ export class LanguageInPropertiesClass {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -7239,7 +7253,7 @@ export class LanguageInPropertiesClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -7271,7 +7285,7 @@ export class LanguageInPropertiesClass {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         languageInPropertiesLanguageInProperty:
           this.languageInPropertiesLanguageInProperty
             .map((_item) => ({
@@ -7354,7 +7368,7 @@ export namespace LanguageInPropertiesClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "LanguageInPropertiesClass";
+    readonly $type: "LanguageInPropertiesClass";
     readonly languageInPropertiesLanguageInProperty:
       | {
           readonly "@language": string | undefined;
@@ -7371,7 +7385,9 @@ export namespace LanguageInPropertiesClass {
       | undefined;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -7444,11 +7460,11 @@ export namespace LanguageInPropertiesClass {
           rule: {
             condition: {
               schema: { const: "LanguageInPropertiesClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -7468,7 +7484,7 @@ export namespace LanguageInPropertiesClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("LanguageInPropertiesClass"),
+      $type: zod.literal("LanguageInPropertiesClass"),
       languageInPropertiesLanguageInProperty: zod
         .object({
           "@language": zod.string().optional(),
@@ -7744,7 +7760,7 @@ export namespace LanguageInPropertiesClass {
  */
 export class IriClass {
   readonly $identifier: IriClass.$Identifier;
-  readonly type = "IriClass";
+  readonly $type = "IriClass";
 
   constructor(parameters: { readonly $identifier: rdfjs.NamedNode | string }) {
     if (typeof parameters.$identifier === "object") {
@@ -7766,11 +7782,11 @@ export class IriClass {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -7784,7 +7800,7 @@ export class IriClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -7801,7 +7817,7 @@ export class IriClass {
     return JSON.parse(
       JSON.stringify({
         "@id": this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
       } satisfies IriClass.$Json),
     );
   }
@@ -7848,7 +7864,7 @@ export namespace IriClass {
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
-  export type $Json = { readonly "@id": string; readonly type: "IriClass" };
+  export type $Json = { readonly "@id": string; readonly $type: "IriClass" };
 
   export function $propertiesFromJson(
     _json: unknown,
@@ -7888,11 +7904,11 @@ export namespace IriClass {
           rule: {
             condition: {
               schema: { const: "IriClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
       ],
@@ -7904,7 +7920,7 @@ export namespace IriClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("IriClass"),
+      $type: zod.literal("IriClass"),
     });
   }
 
@@ -8004,7 +8020,7 @@ export namespace IriClass {
 }
 export interface InterfaceUnionMember2b {
   readonly $identifier: InterfaceUnionMember2b.$Identifier;
-  readonly type: "InterfaceUnionMember2b";
+  readonly $type: "InterfaceUnionMember2b";
   readonly interfaceUnionMember2bProperty: string;
 }
 
@@ -8022,10 +8038,10 @@ export namespace InterfaceUnionMember2b {
       $identifier = parameters.$identifier satisfies never;
     }
 
-    const type = "InterfaceUnionMember2b" as const;
+    const $type = "InterfaceUnionMember2b" as const;
     const interfaceUnionMember2bProperty =
       parameters.interfaceUnionMember2bProperty;
-    return { $identifier, type, interfaceUnionMember2bProperty };
+    return { $identifier, $type, interfaceUnionMember2bProperty };
   }
 
   export function $equals(
@@ -8041,11 +8057,11 @@ export namespace InterfaceUnionMember2b {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(left.type, right.type).mapLeft(
+        $strictEquals(left.$type, right.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: left,
             right: right,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -8085,15 +8101,17 @@ export namespace InterfaceUnionMember2b {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "InterfaceUnionMember2b";
+    readonly $type: "InterfaceUnionMember2b";
     readonly interfaceUnionMember2bProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "InterfaceUnionMember2b";
+      $type: "InterfaceUnionMember2b";
       interfaceUnionMember2bProperty: string;
     }
   > {
@@ -8106,12 +8124,12 @@ export namespace InterfaceUnionMember2b {
     const $identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    const type = "InterfaceUnionMember2b" as const;
+    const $type = "InterfaceUnionMember2b" as const;
     const interfaceUnionMember2bProperty =
       _jsonObject["interfaceUnionMember2bProperty"];
     return purify.Either.of({
       $identifier,
-      type,
+      $type,
       interfaceUnionMember2bProperty,
     });
   }
@@ -8139,11 +8157,11 @@ export namespace InterfaceUnionMember2b {
           rule: {
             condition: {
               schema: { const: "InterfaceUnionMember2b" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -8165,7 +8183,7 @@ export namespace InterfaceUnionMember2b {
           _interfaceUnionMember2b.$identifier.termType === "BlankNode"
             ? `_:${_interfaceUnionMember2b.$identifier.value}`
             : _interfaceUnionMember2b.$identifier.value,
-        type: _interfaceUnionMember2b.type,
+        $type: _interfaceUnionMember2b.$type,
         interfaceUnionMember2bProperty:
           _interfaceUnionMember2b.interfaceUnionMember2bProperty,
       } satisfies InterfaceUnionMember2b.$Json),
@@ -8175,7 +8193,7 @@ export namespace InterfaceUnionMember2b {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("InterfaceUnionMember2b"),
+      $type: zod.literal("InterfaceUnionMember2b"),
       interfaceUnionMember2bProperty: zod.string(),
     });
   }
@@ -8189,7 +8207,7 @@ export namespace InterfaceUnionMember2b {
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(_interfaceUnionMember2b.$identifier.value);
-    _hasher.update(_interfaceUnionMember2b.type);
+    _hasher.update(_interfaceUnionMember2b.$type);
     InterfaceUnionMember2b.$hashShaclProperties(
       _interfaceUnionMember2b,
       _hasher,
@@ -8224,13 +8242,13 @@ export namespace InterfaceUnionMember2b {
     rdfjsResource.Resource.ValueError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "InterfaceUnionMember2b";
+      $type: "InterfaceUnionMember2b";
       interfaceUnionMember2bProperty: string;
     }
   > {
     const $identifier: InterfaceUnionMember2b.$Identifier =
       _resource.identifier;
-    const type = "InterfaceUnionMember2b" as const;
+    const $type = "InterfaceUnionMember2b" as const;
     const _interfaceUnionMember2bPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       string
@@ -8251,7 +8269,7 @@ export namespace InterfaceUnionMember2b {
       _interfaceUnionMember2bPropertyEither.unsafeCoerce();
     return purify.Either.of({
       $identifier,
-      type,
+      $type,
       interfaceUnionMember2bProperty,
     });
   }
@@ -8390,7 +8408,7 @@ export namespace InterfaceUnionMember2b {
 }
 export interface InterfaceUnionMember2a {
   readonly $identifier: InterfaceUnionMember2a.$Identifier;
-  readonly type: "InterfaceUnionMember2a";
+  readonly $type: "InterfaceUnionMember2a";
   readonly interfaceUnionMember2aProperty: string;
 }
 
@@ -8408,10 +8426,10 @@ export namespace InterfaceUnionMember2a {
       $identifier = parameters.$identifier satisfies never;
     }
 
-    const type = "InterfaceUnionMember2a" as const;
+    const $type = "InterfaceUnionMember2a" as const;
     const interfaceUnionMember2aProperty =
       parameters.interfaceUnionMember2aProperty;
-    return { $identifier, type, interfaceUnionMember2aProperty };
+    return { $identifier, $type, interfaceUnionMember2aProperty };
   }
 
   export function $equals(
@@ -8427,11 +8445,11 @@ export namespace InterfaceUnionMember2a {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(left.type, right.type).mapLeft(
+        $strictEquals(left.$type, right.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: left,
             right: right,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -8471,15 +8489,17 @@ export namespace InterfaceUnionMember2a {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "InterfaceUnionMember2a";
+    readonly $type: "InterfaceUnionMember2a";
     readonly interfaceUnionMember2aProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "InterfaceUnionMember2a";
+      $type: "InterfaceUnionMember2a";
       interfaceUnionMember2aProperty: string;
     }
   > {
@@ -8492,12 +8512,12 @@ export namespace InterfaceUnionMember2a {
     const $identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    const type = "InterfaceUnionMember2a" as const;
+    const $type = "InterfaceUnionMember2a" as const;
     const interfaceUnionMember2aProperty =
       _jsonObject["interfaceUnionMember2aProperty"];
     return purify.Either.of({
       $identifier,
-      type,
+      $type,
       interfaceUnionMember2aProperty,
     });
   }
@@ -8525,11 +8545,11 @@ export namespace InterfaceUnionMember2a {
           rule: {
             condition: {
               schema: { const: "InterfaceUnionMember2a" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -8551,7 +8571,7 @@ export namespace InterfaceUnionMember2a {
           _interfaceUnionMember2a.$identifier.termType === "BlankNode"
             ? `_:${_interfaceUnionMember2a.$identifier.value}`
             : _interfaceUnionMember2a.$identifier.value,
-        type: _interfaceUnionMember2a.type,
+        $type: _interfaceUnionMember2a.$type,
         interfaceUnionMember2aProperty:
           _interfaceUnionMember2a.interfaceUnionMember2aProperty,
       } satisfies InterfaceUnionMember2a.$Json),
@@ -8561,7 +8581,7 @@ export namespace InterfaceUnionMember2a {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("InterfaceUnionMember2a"),
+      $type: zod.literal("InterfaceUnionMember2a"),
       interfaceUnionMember2aProperty: zod.string(),
     });
   }
@@ -8575,7 +8595,7 @@ export namespace InterfaceUnionMember2a {
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(_interfaceUnionMember2a.$identifier.value);
-    _hasher.update(_interfaceUnionMember2a.type);
+    _hasher.update(_interfaceUnionMember2a.$type);
     InterfaceUnionMember2a.$hashShaclProperties(
       _interfaceUnionMember2a,
       _hasher,
@@ -8610,13 +8630,13 @@ export namespace InterfaceUnionMember2a {
     rdfjsResource.Resource.ValueError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "InterfaceUnionMember2a";
+      $type: "InterfaceUnionMember2a";
       interfaceUnionMember2aProperty: string;
     }
   > {
     const $identifier: InterfaceUnionMember2a.$Identifier =
       _resource.identifier;
-    const type = "InterfaceUnionMember2a" as const;
+    const $type = "InterfaceUnionMember2a" as const;
     const _interfaceUnionMember2aPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       string
@@ -8637,7 +8657,7 @@ export namespace InterfaceUnionMember2a {
       _interfaceUnionMember2aPropertyEither.unsafeCoerce();
     return purify.Either.of({
       $identifier,
-      type,
+      $type,
       interfaceUnionMember2aProperty,
     });
   }
@@ -8776,7 +8796,7 @@ export namespace InterfaceUnionMember2a {
 }
 export interface InterfaceUnionMember1 {
   readonly $identifier: InterfaceUnionMember1.$Identifier;
-  readonly type: "InterfaceUnionMember1";
+  readonly $type: "InterfaceUnionMember1";
   readonly interfaceUnionMember1Property: string;
 }
 
@@ -8794,10 +8814,10 @@ export namespace InterfaceUnionMember1 {
       $identifier = parameters.$identifier satisfies never;
     }
 
-    const type = "InterfaceUnionMember1" as const;
+    const $type = "InterfaceUnionMember1" as const;
     const interfaceUnionMember1Property =
       parameters.interfaceUnionMember1Property;
-    return { $identifier, type, interfaceUnionMember1Property };
+    return { $identifier, $type, interfaceUnionMember1Property };
   }
 
   export function $equals(
@@ -8813,11 +8833,11 @@ export namespace InterfaceUnionMember1 {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(left.type, right.type).mapLeft(
+        $strictEquals(left.$type, right.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: left,
             right: right,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -8857,15 +8877,17 @@ export namespace InterfaceUnionMember1 {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "InterfaceUnionMember1";
+    readonly $type: "InterfaceUnionMember1";
     readonly interfaceUnionMember1Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "InterfaceUnionMember1";
+      $type: "InterfaceUnionMember1";
       interfaceUnionMember1Property: string;
     }
   > {
@@ -8878,12 +8900,12 @@ export namespace InterfaceUnionMember1 {
     const $identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    const type = "InterfaceUnionMember1" as const;
+    const $type = "InterfaceUnionMember1" as const;
     const interfaceUnionMember1Property =
       _jsonObject["interfaceUnionMember1Property"];
     return purify.Either.of({
       $identifier,
-      type,
+      $type,
       interfaceUnionMember1Property,
     });
   }
@@ -8911,11 +8933,11 @@ export namespace InterfaceUnionMember1 {
           rule: {
             condition: {
               schema: { const: "InterfaceUnionMember1" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -8937,7 +8959,7 @@ export namespace InterfaceUnionMember1 {
           _interfaceUnionMember1.$identifier.termType === "BlankNode"
             ? `_:${_interfaceUnionMember1.$identifier.value}`
             : _interfaceUnionMember1.$identifier.value,
-        type: _interfaceUnionMember1.type,
+        $type: _interfaceUnionMember1.$type,
         interfaceUnionMember1Property:
           _interfaceUnionMember1.interfaceUnionMember1Property,
       } satisfies InterfaceUnionMember1.$Json),
@@ -8947,7 +8969,7 @@ export namespace InterfaceUnionMember1 {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("InterfaceUnionMember1"),
+      $type: zod.literal("InterfaceUnionMember1"),
       interfaceUnionMember1Property: zod.string(),
     });
   }
@@ -8958,7 +8980,7 @@ export namespace InterfaceUnionMember1 {
     },
   >(_interfaceUnionMember1: InterfaceUnionMember1, _hasher: HasherT): HasherT {
     _hasher.update(_interfaceUnionMember1.$identifier.value);
-    _hasher.update(_interfaceUnionMember1.type);
+    _hasher.update(_interfaceUnionMember1.$type);
     InterfaceUnionMember1.$hashShaclProperties(_interfaceUnionMember1, _hasher);
     return _hasher;
   }
@@ -8987,12 +9009,12 @@ export namespace InterfaceUnionMember1 {
     rdfjsResource.Resource.ValueError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "InterfaceUnionMember1";
+      $type: "InterfaceUnionMember1";
       interfaceUnionMember1Property: string;
     }
   > {
     const $identifier: InterfaceUnionMember1.$Identifier = _resource.identifier;
-    const type = "InterfaceUnionMember1" as const;
+    const $type = "InterfaceUnionMember1" as const;
     const _interfaceUnionMember1PropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       string
@@ -9013,7 +9035,7 @@ export namespace InterfaceUnionMember1 {
       _interfaceUnionMember1PropertyEither.unsafeCoerce();
     return purify.Either.of({
       $identifier,
-      type,
+      $type,
       interfaceUnionMember1Property,
     });
   }
@@ -9153,7 +9175,7 @@ export namespace InterfaceUnionMember1 {
  */
 export interface Interface {
   readonly $identifier: Interface.$Identifier;
-  readonly type: "Interface";
+  readonly $type: "Interface";
   readonly interfaceProperty: string;
 }
 
@@ -9171,9 +9193,9 @@ export namespace Interface {
       $identifier = parameters.$identifier satisfies never;
     }
 
-    const type = "Interface" as const;
+    const $type = "Interface" as const;
     const interfaceProperty = parameters.interfaceProperty;
-    return { $identifier, type, interfaceProperty };
+    return { $identifier, $type, interfaceProperty };
   }
 
   export function $equals(left: Interface, right: Interface): $EqualsResult {
@@ -9186,11 +9208,11 @@ export namespace Interface {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(left.type, right.type).mapLeft(
+        $strictEquals(left.$type, right.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: left,
             right: right,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -9229,15 +9251,17 @@ export namespace Interface {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "Interface";
+    readonly $type: "Interface";
     readonly interfaceProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "Interface";
+      $type: "Interface";
       interfaceProperty: string;
     }
   > {
@@ -9250,9 +9274,9 @@ export namespace Interface {
     const $identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    const type = "Interface" as const;
+    const $type = "Interface" as const;
     const interfaceProperty = _jsonObject["interfaceProperty"];
-    return purify.Either.of({ $identifier, type, interfaceProperty });
+    return purify.Either.of({ $identifier, $type, interfaceProperty });
   }
 
   export function $fromJson(
@@ -9278,11 +9302,11 @@ export namespace Interface {
           rule: {
             condition: {
               schema: { const: "Interface" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -9302,7 +9326,7 @@ export namespace Interface {
           _interface.$identifier.termType === "BlankNode"
             ? `_:${_interface.$identifier.value}`
             : _interface.$identifier.value,
-        type: _interface.type,
+        $type: _interface.$type,
         interfaceProperty: _interface.interfaceProperty,
       } satisfies Interface.$Json),
     );
@@ -9311,7 +9335,7 @@ export namespace Interface {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("Interface"),
+      $type: zod.literal("Interface"),
       interfaceProperty: zod.string(),
     });
   }
@@ -9322,7 +9346,7 @@ export namespace Interface {
     },
   >(_interface: Interface, _hasher: HasherT): HasherT {
     _hasher.update(_interface.$identifier.value);
-    _hasher.update(_interface.type);
+    _hasher.update(_interface.$type);
     Interface.$hashShaclProperties(_interface, _hasher);
     return _hasher;
   }
@@ -9351,12 +9375,12 @@ export namespace Interface {
     rdfjsResource.Resource.ValueError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "Interface";
+      $type: "Interface";
       interfaceProperty: string;
     }
   > {
     const $identifier: Interface.$Identifier = _resource.identifier;
-    const type = "Interface" as const;
+    const $type = "Interface" as const;
     const _interfacePropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       string
@@ -9371,7 +9395,7 @@ export namespace Interface {
     }
 
     const interfaceProperty = _interfacePropertyEither.unsafeCoerce();
-    return purify.Either.of({ $identifier, type, interfaceProperty });
+    return purify.Either.of({ $identifier, $type, interfaceProperty });
   }
 
   export function $fromRdf(
@@ -9493,7 +9517,7 @@ export namespace Interface {
  */
 export class InPropertiesClass {
   private _$identifier: InPropertiesClass.$Identifier | undefined;
-  readonly type = "InPropertiesClass";
+  readonly $type = "InPropertiesClass";
   readonly inBooleansProperty: purify.Maybe<true>;
   readonly inDateTimesProperty: purify.Maybe<Date>;
   readonly inIrisProperty: purify.Maybe<
@@ -9614,11 +9638,11 @@ export class InPropertiesClass {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -9692,7 +9716,7 @@ export class InPropertiesClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -9728,7 +9752,7 @@ export class InPropertiesClass {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         inBooleansProperty: this.inBooleansProperty
           .map((_item) => _item)
           .extract(),
@@ -9815,7 +9839,7 @@ export namespace InPropertiesClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "InPropertiesClass";
+    readonly $type: "InPropertiesClass";
     readonly inBooleansProperty: true | undefined;
     readonly inDateTimesProperty: string | undefined;
     readonly inIrisProperty:
@@ -9829,7 +9853,9 @@ export namespace InPropertiesClass {
     readonly inStringsProperty: ("text" | "html") | undefined;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9904,11 +9930,11 @@ export namespace InPropertiesClass {
           rule: {
             condition: {
               schema: { const: "InPropertiesClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -9937,7 +9963,7 @@ export namespace InPropertiesClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("InPropertiesClass"),
+      $type: zod.literal("InPropertiesClass"),
       inBooleansProperty: zod.literal(true).optional(),
       inDateTimesProperty: zod.string().datetime().optional(),
       inIrisProperty: zod
@@ -9992,20 +10018,22 @@ export namespace InPropertiesClass {
         )
         .head()
         .chain((_value) =>
-          _value.toBoolean().chain((value) =>
-            value === true
-              ? purify.Either.of(value)
-              : purify.Left(
-                  new rdfjsResource.Resource.MistypedValueError({
-                    actualValue: rdfLiteral.toRdf(value),
-                    expectedValueType: "true",
-                    focusResource: _resource,
-                    predicate: dataFactory.namedNode(
-                      "http://example.com/inBooleansProperty",
-                    ),
-                  }),
-                ),
-          ),
+          _value
+            .toBoolean()
+            .chain((value) =>
+              value === true
+                ? purify.Either.of(value)
+                : purify.Left(
+                    new rdfjsResource.Resource.MistypedValueError({
+                      actualValue: rdfLiteral.toRdf(value),
+                      expectedValueType: "true",
+                      focusResource: _resource,
+                      predicate: dataFactory.namedNode(
+                        "http://example.com/inBooleansProperty",
+                      ),
+                    }),
+                  ),
+            ),
         )
         .toMaybe(),
     );
@@ -10424,7 +10452,7 @@ export namespace InPropertiesClass {
  */
 export class InIdentifierClass {
   readonly $identifier: InIdentifierClass.$Identifier;
-  readonly type = "InIdentifierClass";
+  readonly $type = "InIdentifierClass";
   readonly inIdentifierProperty: purify.Maybe<string>;
 
   constructor(parameters: {
@@ -10469,11 +10497,11 @@ export class InIdentifierClass {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -10499,7 +10527,7 @@ export class InIdentifierClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -10519,7 +10547,7 @@ export class InIdentifierClass {
     return JSON.parse(
       JSON.stringify({
         "@id": this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         inIdentifierProperty: this.inIdentifierProperty
           .map((_item) => _item)
           .extract(),
@@ -10609,11 +10637,13 @@ export namespace InIdentifierClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "InIdentifierClass";
+    readonly $type: "InIdentifierClass";
     readonly inIdentifierProperty: string | undefined;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.NamedNode<
@@ -10661,11 +10691,11 @@ export namespace InIdentifierClass {
           rule: {
             condition: {
               schema: { const: "InIdentifierClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -10684,7 +10714,7 @@ export namespace InIdentifierClass {
         "http://example.com/InIdentifierInstance1",
         "http://example.com/InIdentifierInstance2",
       ]),
-      type: zod.literal("InIdentifierClass"),
+      $type: zod.literal("InIdentifierClass"),
       inIdentifierProperty: zod.string().optional(),
     });
   }
@@ -10871,7 +10901,7 @@ export namespace InIdentifierClass {
  */
 export class HasValuePropertiesClass {
   private _$identifier: HasValuePropertiesClass.$Identifier | undefined;
-  readonly type = "HasValuePropertiesClass";
+  readonly $type = "HasValuePropertiesClass";
   readonly hasIriValueProperty: purify.Maybe<rdfjs.NamedNode>;
   readonly hasLiteralValueProperty: purify.Maybe<string>;
 
@@ -10939,11 +10969,11 @@ export class HasValuePropertiesClass {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -10981,7 +11011,7 @@ export class HasValuePropertiesClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -11008,7 +11038,7 @@ export class HasValuePropertiesClass {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         hasIriValueProperty: this.hasIriValueProperty
           .map((_item) => ({ "@id": _item.value }))
           .extract(),
@@ -11067,12 +11097,14 @@ export namespace HasValuePropertiesClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "HasValuePropertiesClass";
+    readonly $type: "HasValuePropertiesClass";
     readonly hasIriValueProperty: { readonly "@id": string } | undefined;
     readonly hasLiteralValueProperty: string | undefined;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11127,11 +11159,11 @@ export namespace HasValuePropertiesClass {
           rule: {
             condition: {
               schema: { const: "HasValuePropertiesClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -11151,7 +11183,7 @@ export namespace HasValuePropertiesClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("HasValuePropertiesClass"),
+      $type: zod.literal("HasValuePropertiesClass"),
       hasIriValueProperty: zod
         .object({ "@id": zod.string().min(1) })
         .optional(),
@@ -11387,7 +11419,7 @@ export class ExternPropertiesInlineNestedClass {
   private _$identifier:
     | ExternPropertiesInlineNestedClass.$Identifier
     | undefined;
-  readonly type = "ExternPropertiesInlineNestedClass";
+  readonly $type = "ExternPropertiesInlineNestedClass";
   readonly externPropertiesInlineNestedStringProperty: string;
 
   constructor(parameters: {
@@ -11424,11 +11456,11 @@ export class ExternPropertiesInlineNestedClass {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -11454,7 +11486,7 @@ export class ExternPropertiesInlineNestedClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -11475,7 +11507,7 @@ export class ExternPropertiesInlineNestedClass {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         externPropertiesInlineNestedStringProperty:
           this.externPropertiesInlineNestedStringProperty,
       } satisfies ExternPropertiesInlineNestedClass.$Json),
@@ -11528,11 +11560,13 @@ export namespace ExternPropertiesInlineNestedClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "ExternPropertiesInlineNestedClass";
+    readonly $type: "ExternPropertiesInlineNestedClass";
     readonly externPropertiesInlineNestedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11581,11 +11615,11 @@ export namespace ExternPropertiesInlineNestedClass {
           rule: {
             condition: {
               schema: { const: "ExternPropertiesInlineNestedClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -11601,7 +11635,7 @@ export namespace ExternPropertiesInlineNestedClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("ExternPropertiesInlineNestedClass"),
+      $type: zod.literal("ExternPropertiesInlineNestedClass"),
       externPropertiesInlineNestedStringProperty: zod.string(),
     });
   }
@@ -11774,7 +11808,7 @@ export class ExternPropertiesExternNestedClass {
   private _$identifier:
     | ExternPropertiesExternNestedClass.$Identifier
     | undefined;
-  readonly type = "ExternPropertiesExternNestedClass";
+  readonly $type = "ExternPropertiesExternNestedClass";
   readonly externPropertiesExternNestedStringProperty: string;
 
   constructor(parameters: {
@@ -11811,11 +11845,11 @@ export class ExternPropertiesExternNestedClass {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -11841,7 +11875,7 @@ export class ExternPropertiesExternNestedClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -11862,7 +11896,7 @@ export class ExternPropertiesExternNestedClass {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         externPropertiesExternNestedStringProperty:
           this.externPropertiesExternNestedStringProperty,
       } satisfies ExternPropertiesExternNestedClass.$Json),
@@ -11915,11 +11949,13 @@ export namespace ExternPropertiesExternNestedClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "ExternPropertiesExternNestedClass";
+    readonly $type: "ExternPropertiesExternNestedClass";
     readonly externPropertiesExternNestedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11968,11 +12004,11 @@ export namespace ExternPropertiesExternNestedClass {
           rule: {
             condition: {
               schema: { const: "ExternPropertiesExternNestedClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -11988,7 +12024,7 @@ export namespace ExternPropertiesExternNestedClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("ExternPropertiesExternNestedClass"),
+      $type: zod.literal("ExternPropertiesExternNestedClass"),
       externPropertiesExternNestedStringProperty: zod.string(),
     });
   }
@@ -12162,7 +12198,7 @@ export namespace ExternPropertiesExternNestedClass {
  */
 export class ExternPropertiesClass {
   private _$identifier: ExternPropertiesClass.$Identifier | undefined;
-  readonly type = "ExternPropertiesClass";
+  readonly $type = "ExternPropertiesClass";
   readonly externClassProperty: purify.Maybe<ExternClass>;
   readonly externNestedProperty: purify.Maybe<
     rdfjs.BlankNode | rdfjs.NamedNode
@@ -12256,11 +12292,11 @@ export class ExternPropertiesClass {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -12312,7 +12348,7 @@ export class ExternPropertiesClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -12342,7 +12378,7 @@ export class ExternPropertiesClass {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         externClassProperty: this.externClassProperty
           .map((_item) => _item.$toJson())
           .extract(),
@@ -12416,7 +12452,7 @@ export namespace ExternPropertiesClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "ExternPropertiesClass";
+    readonly $type: "ExternPropertiesClass";
     readonly externClassProperty: ExternClass.$Json | undefined;
     readonly externNestedProperty: { readonly "@id": string } | undefined;
     readonly inlineNestedProperty:
@@ -12424,7 +12460,9 @@ export namespace ExternPropertiesClass {
       | undefined;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12490,11 +12528,11 @@ export namespace ExternPropertiesClass {
           rule: {
             condition: {
               schema: { const: "ExternPropertiesClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         ExternClass.$jsonUiSchema({
@@ -12516,7 +12554,7 @@ export namespace ExternPropertiesClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("ExternPropertiesClass"),
+      $type: zod.literal("ExternPropertiesClass"),
       externClassProperty: ExternClass.$jsonZodSchema().optional(),
       externNestedProperty: zod
         .object({ "@id": zod.string().min(1) })
@@ -12831,7 +12869,7 @@ export namespace ExternPropertiesClass {
  */
 export class ExplicitRdfTypeClass {
   private _$identifier: ExplicitRdfTypeClass.$Identifier | undefined;
-  readonly type = "ExplicitRdfTypeClass";
+  readonly $type = "ExplicitRdfTypeClass";
   readonly explicitRdfTypeProperty: string;
 
   constructor(parameters: {
@@ -12867,11 +12905,11 @@ export class ExplicitRdfTypeClass {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -12897,7 +12935,7 @@ export class ExplicitRdfTypeClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -12918,7 +12956,7 @@ export class ExplicitRdfTypeClass {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         explicitRdfTypeProperty: this.explicitRdfTypeProperty,
       } satisfies ExplicitRdfTypeClass.$Json),
     );
@@ -12981,11 +13019,13 @@ export namespace ExplicitRdfTypeClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "ExplicitRdfTypeClass";
+    readonly $type: "ExplicitRdfTypeClass";
     readonly explicitRdfTypeProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13030,11 +13070,11 @@ export namespace ExplicitRdfTypeClass {
           rule: {
             condition: {
               schema: { const: "ExplicitRdfTypeClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -13050,7 +13090,7 @@ export namespace ExplicitRdfTypeClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("ExplicitRdfTypeClass"),
+      $type: zod.literal("ExplicitRdfTypeClass"),
       explicitRdfTypeProperty: zod.string(),
     });
   }
@@ -13325,7 +13365,7 @@ export namespace ExplicitRdfTypeClass {
  */
 export class ExplicitFromToRdfTypesClass {
   private _$identifier: ExplicitFromToRdfTypesClass.$Identifier | undefined;
-  readonly type = "ExplicitFromToRdfTypesClass";
+  readonly $type = "ExplicitFromToRdfTypesClass";
   readonly explicitFromToRdfTypesProperty: string;
 
   constructor(parameters: {
@@ -13362,11 +13402,11 @@ export class ExplicitFromToRdfTypesClass {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -13392,7 +13432,7 @@ export class ExplicitFromToRdfTypesClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -13413,7 +13453,7 @@ export class ExplicitFromToRdfTypesClass {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         explicitFromToRdfTypesProperty: this.explicitFromToRdfTypesProperty,
       } satisfies ExplicitFromToRdfTypesClass.$Json),
     );
@@ -13484,11 +13524,13 @@ export namespace ExplicitFromToRdfTypesClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "ExplicitFromToRdfTypesClass";
+    readonly $type: "ExplicitFromToRdfTypesClass";
     readonly explicitFromToRdfTypesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13534,11 +13576,11 @@ export namespace ExplicitFromToRdfTypesClass {
           rule: {
             condition: {
               schema: { const: "ExplicitFromToRdfTypesClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -13554,7 +13596,7 @@ export namespace ExplicitFromToRdfTypesClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("ExplicitFromToRdfTypesClass"),
+      $type: zod.literal("ExplicitFromToRdfTypesClass"),
       explicitFromToRdfTypesProperty: zod.string(),
     });
   }
@@ -13842,7 +13884,7 @@ export namespace ExplicitFromToRdfTypesClass {
 export class DefaultValuePropertiesClass {
   private _$identifier: DefaultValuePropertiesClass.$Identifier | undefined;
   protected readonly _$identifierPrefix?: string;
-  readonly type = "DefaultValuePropertiesClass";
+  readonly $type = "DefaultValuePropertiesClass";
   readonly dateDefaultValueProperty: Date;
   readonly dateTimeDefaultValueProperty: Date;
   readonly falseBooleanDefaultValueProperty: boolean;
@@ -13949,7 +13991,7 @@ export class DefaultValuePropertiesClass {
   protected get $identifierPrefix(): string {
     return typeof this._$identifierPrefix !== "undefined"
       ? this._$identifierPrefix
-      : `urn:shaclmate:${this.type}:`;
+      : `urn:shaclmate:${this.$type}:`;
   }
 
   $equals(other: DefaultValuePropertiesClass): $EqualsResult {
@@ -13973,11 +14015,11 @@ export class DefaultValuePropertiesClass {
         ),
       )
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -14063,7 +14105,7 @@ export class DefaultValuePropertiesClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -14089,7 +14131,7 @@ export class DefaultValuePropertiesClass {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         dateDefaultValueProperty: this.dateDefaultValueProperty
           .toISOString()
           .replace(/T.*$/, ""),
@@ -14189,7 +14231,7 @@ export namespace DefaultValuePropertiesClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "DefaultValuePropertiesClass";
+    readonly $type: "DefaultValuePropertiesClass";
     readonly dateDefaultValueProperty: string;
     readonly dateTimeDefaultValueProperty: string;
     readonly falseBooleanDefaultValueProperty: boolean;
@@ -14198,7 +14240,9 @@ export namespace DefaultValuePropertiesClass {
     readonly trueBooleanDefaultValueProperty: boolean;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14269,11 +14313,11 @@ export namespace DefaultValuePropertiesClass {
           rule: {
             condition: {
               schema: { const: "DefaultValuePropertiesClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -14309,7 +14353,7 @@ export namespace DefaultValuePropertiesClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("DefaultValuePropertiesClass"),
+      $type: zod.literal("DefaultValuePropertiesClass"),
       dateDefaultValueProperty: zod.string().date(),
       dateTimeDefaultValueProperty: zod.string().datetime(),
       falseBooleanDefaultValueProperty: zod.boolean(),
@@ -14835,7 +14879,7 @@ export namespace DefaultValuePropertiesClass {
  */
 export interface BaseInterfaceWithProperties {
   readonly $identifier: BaseInterfaceWithPropertiesStatic.$Identifier;
-  readonly type:
+  readonly $type:
     | "BaseInterfaceWithProperties"
     | "BaseInterfaceWithoutProperties"
     | "ConcreteChildInterface"
@@ -14857,10 +14901,10 @@ export namespace BaseInterfaceWithPropertiesStatic {
       $identifier = parameters.$identifier satisfies never;
     }
 
-    const type = "BaseInterfaceWithProperties" as const;
+    const $type = "BaseInterfaceWithProperties" as const;
     const baseInterfaceWithPropertiesProperty =
       parameters.baseInterfaceWithPropertiesProperty;
-    return { $identifier, type, baseInterfaceWithPropertiesProperty };
+    return { $identifier, $type, baseInterfaceWithPropertiesProperty };
   }
 
   export function $equals(
@@ -14876,11 +14920,11 @@ export namespace BaseInterfaceWithPropertiesStatic {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(left.type, right.type).mapLeft(
+        $strictEquals(left.$type, right.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: left,
             right: right,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -14923,7 +14967,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type:
+    readonly $type:
       | "BaseInterfaceWithProperties"
       | "BaseInterfaceWithoutProperties"
       | "ConcreteChildInterface"
@@ -14931,11 +14975,13 @@ export namespace BaseInterfaceWithPropertiesStatic {
     readonly baseInterfaceWithPropertiesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type:
+      $type:
         | "BaseInterfaceWithProperties"
         | "BaseInterfaceWithoutProperties"
         | "ConcreteChildInterface"
@@ -14952,12 +14998,12 @@ export namespace BaseInterfaceWithPropertiesStatic {
     const $identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    const type = "BaseInterfaceWithProperties" as const;
+    const $type = "BaseInterfaceWithProperties" as const;
     const baseInterfaceWithPropertiesProperty =
       _jsonObject["baseInterfaceWithPropertiesProperty"];
     return purify.Either.of({
       $identifier,
-      type,
+      $type,
       baseInterfaceWithPropertiesProperty,
     });
   }
@@ -14990,11 +15036,11 @@ export namespace BaseInterfaceWithPropertiesStatic {
           rule: {
             condition: {
               schema: { const: "BaseInterfaceWithProperties" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -15016,7 +15062,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
           _baseInterfaceWithProperties.$identifier.termType === "BlankNode"
             ? `_:${_baseInterfaceWithProperties.$identifier.value}`
             : _baseInterfaceWithProperties.$identifier.value,
-        type: _baseInterfaceWithProperties.type,
+        $type: _baseInterfaceWithProperties.$type,
         baseInterfaceWithPropertiesProperty:
           _baseInterfaceWithProperties.baseInterfaceWithPropertiesProperty,
       } satisfies BaseInterfaceWithPropertiesStatic.$Json),
@@ -15026,7 +15072,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.enum([
+      $type: zod.enum([
         "BaseInterfaceWithProperties",
         "BaseInterfaceWithoutProperties",
         "ConcreteChildInterface",
@@ -15045,7 +15091,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(_baseInterfaceWithProperties.$identifier.value);
-    _hasher.update(_baseInterfaceWithProperties.type);
+    _hasher.update(_baseInterfaceWithProperties.$type);
     BaseInterfaceWithPropertiesStatic.$hashShaclProperties(
       _baseInterfaceWithProperties,
       _hasher,
@@ -15082,7 +15128,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
     rdfjsResource.Resource.ValueError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type:
+      $type:
         | "BaseInterfaceWithProperties"
         | "BaseInterfaceWithoutProperties"
         | "ConcreteChildInterface"
@@ -15118,7 +15164,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
 
     const $identifier: BaseInterfaceWithPropertiesStatic.$Identifier =
       _resource.identifier;
-    const type = "BaseInterfaceWithProperties" as const;
+    const $type = "BaseInterfaceWithProperties" as const;
     const _baseInterfaceWithPropertiesPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       string
@@ -15139,7 +15185,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
       _baseInterfaceWithPropertiesPropertyEither.unsafeCoerce();
     return purify.Either.of({
       $identifier,
-      type,
+      $type,
       baseInterfaceWithPropertiesProperty,
     });
   }
@@ -15404,7 +15450,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
 export interface BaseInterfaceWithoutProperties
   extends BaseInterfaceWithProperties {
   readonly $identifier: BaseInterfaceWithoutPropertiesStatic.$Identifier;
-  readonly type:
+  readonly $type:
     | "BaseInterfaceWithoutProperties"
     | "ConcreteChildInterface"
     | "ConcreteParentInterface";
@@ -15425,11 +15471,11 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       $identifier = parameters.$identifier satisfies never;
     }
 
-    const type = "BaseInterfaceWithoutProperties" as const;
+    const $type = "BaseInterfaceWithoutProperties" as const;
     return {
       ...BaseInterfaceWithPropertiesStatic.$create(parameters),
       $identifier,
-      type,
+      $type,
     };
   }
 
@@ -15447,11 +15493,13 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export const $Identifier = BaseInterfaceWithPropertiesStatic.$Identifier;
   export type $Json = BaseInterfaceWithPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type:
+      $type:
         | "BaseInterfaceWithoutProperties"
         | "ConcreteChildInterface"
         | "ConcreteParentInterface";
@@ -15475,8 +15523,8 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     const $identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    const type = "BaseInterfaceWithoutProperties" as const;
-    return purify.Either.of({ ...$super0, $identifier, type });
+    const $type = "BaseInterfaceWithoutProperties" as const;
+    return purify.Either.of({ ...$super0, $identifier, $type });
   }
 
   export function $fromJson(
@@ -15521,7 +15569,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     return BaseInterfaceWithPropertiesStatic.$jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
-        type: zod.enum([
+        $type: zod.enum([
           "BaseInterfaceWithoutProperties",
           "ConcreteChildInterface",
           "ConcreteParentInterface",
@@ -15575,7 +15623,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     rdfjsResource.Resource.ValueError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type:
+      $type:
         | "BaseInterfaceWithoutProperties"
         | "ConcreteChildInterface"
         | "ConcreteParentInterface";
@@ -15624,8 +15672,8 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
 
     const $identifier: BaseInterfaceWithoutPropertiesStatic.$Identifier =
       _resource.identifier;
-    const type = "BaseInterfaceWithoutProperties" as const;
-    return purify.Either.of({ ...$super0, $identifier, type });
+    const $type = "BaseInterfaceWithoutProperties" as const;
+    return purify.Either.of({ ...$super0, $identifier, $type });
   }
 
   export function $fromRdf(
@@ -15863,7 +15911,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
 export interface ConcreteParentInterface
   extends BaseInterfaceWithoutProperties {
   readonly $identifier: ConcreteParentInterfaceStatic.$Identifier;
-  readonly type: "ConcreteParentInterface" | "ConcreteChildInterface";
+  readonly $type: "ConcreteParentInterface" | "ConcreteChildInterface";
   readonly concreteParentInterfaceProperty: string;
 }
 
@@ -15883,13 +15931,13 @@ export namespace ConcreteParentInterfaceStatic {
       $identifier = parameters.$identifier satisfies never;
     }
 
-    const type = "ConcreteParentInterface" as const;
+    const $type = "ConcreteParentInterface" as const;
     const concreteParentInterfaceProperty =
       parameters.concreteParentInterfaceProperty;
     return {
       ...BaseInterfaceWithoutPropertiesStatic.$create(parameters),
       $identifier,
-      type,
+      $type,
       concreteParentInterfaceProperty,
     };
   }
@@ -15921,11 +15969,13 @@ export namespace ConcreteParentInterfaceStatic {
     readonly concreteParentInterfaceProperty: string;
   } & BaseInterfaceWithoutPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "ConcreteParentInterface" | "ConcreteChildInterface";
+      $type: "ConcreteParentInterface" | "ConcreteChildInterface";
       concreteParentInterfaceProperty: string;
     } & $UnwrapR<
       ReturnType<
@@ -15949,13 +15999,13 @@ export namespace ConcreteParentInterfaceStatic {
     const $identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    const type = "ConcreteParentInterface" as const;
+    const $type = "ConcreteParentInterface" as const;
     const concreteParentInterfaceProperty =
       _jsonObject["concreteParentInterfaceProperty"];
     return purify.Either.of({
       ...$super0,
       $identifier,
-      type,
+      $type,
       concreteParentInterfaceProperty,
     });
   }
@@ -16008,7 +16058,7 @@ export namespace ConcreteParentInterfaceStatic {
     return BaseInterfaceWithoutPropertiesStatic.$jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
-        type: zod.enum(["ConcreteParentInterface", "ConcreteChildInterface"]),
+        $type: zod.enum(["ConcreteParentInterface", "ConcreteChildInterface"]),
         concreteParentInterfaceProperty: zod.string(),
       }),
     );
@@ -16060,7 +16110,7 @@ export namespace ConcreteParentInterfaceStatic {
     rdfjsResource.Resource.ValueError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "ConcreteParentInterface" | "ConcreteChildInterface";
+      $type: "ConcreteParentInterface" | "ConcreteChildInterface";
       concreteParentInterfaceProperty: string;
     } & $UnwrapR<
       ReturnType<typeof BaseInterfaceWithoutPropertiesStatic.$propertiesFromRdf>
@@ -16106,7 +16156,7 @@ export namespace ConcreteParentInterfaceStatic {
 
     const $identifier: ConcreteParentInterfaceStatic.$Identifier =
       _resource.identifier;
-    const type = "ConcreteParentInterface" as const;
+    const $type = "ConcreteParentInterface" as const;
     const _concreteParentInterfacePropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       string
@@ -16128,7 +16178,7 @@ export namespace ConcreteParentInterfaceStatic {
     return purify.Either.of({
       ...$super0,
       $identifier,
-      type,
+      $type,
       concreteParentInterfaceProperty,
     });
   }
@@ -16396,7 +16446,7 @@ export namespace ConcreteParentInterfaceStatic {
  */
 export interface ConcreteChildInterface extends ConcreteParentInterface {
   readonly $identifier: ConcreteChildInterface.$Identifier;
-  readonly type: "ConcreteChildInterface";
+  readonly $type: "ConcreteChildInterface";
   readonly concreteChildInterfaceProperty: string;
 }
 
@@ -16416,13 +16466,13 @@ export namespace ConcreteChildInterface {
       $identifier = parameters.$identifier satisfies never;
     }
 
-    const type = "ConcreteChildInterface" as const;
+    const $type = "ConcreteChildInterface" as const;
     const concreteChildInterfaceProperty =
       parameters.concreteChildInterfaceProperty;
     return {
       ...ConcreteParentInterfaceStatic.$create(parameters),
       $identifier,
-      type,
+      $type,
       concreteChildInterfaceProperty,
     };
   }
@@ -16454,11 +16504,13 @@ export namespace ConcreteChildInterface {
     readonly concreteChildInterfaceProperty: string;
   } & ConcreteParentInterfaceStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "ConcreteChildInterface";
+      $type: "ConcreteChildInterface";
       concreteChildInterfaceProperty: string;
     } & $UnwrapR<
       ReturnType<typeof ConcreteParentInterfaceStatic.$propertiesFromJson>
@@ -16480,13 +16532,13 @@ export namespace ConcreteChildInterface {
     const $identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    const type = "ConcreteChildInterface" as const;
+    const $type = "ConcreteChildInterface" as const;
     const concreteChildInterfaceProperty =
       _jsonObject["concreteChildInterfaceProperty"];
     return purify.Either.of({
       ...$super0,
       $identifier,
-      type,
+      $type,
       concreteChildInterfaceProperty,
     });
   }
@@ -16532,7 +16584,7 @@ export namespace ConcreteChildInterface {
     return ConcreteParentInterfaceStatic.$jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
-        type: zod.literal("ConcreteChildInterface"),
+        $type: zod.literal("ConcreteChildInterface"),
         concreteChildInterfaceProperty: zod.string(),
       }),
     );
@@ -16584,7 +16636,7 @@ export namespace ConcreteChildInterface {
     rdfjsResource.Resource.ValueError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "ConcreteChildInterface";
+      $type: "ConcreteChildInterface";
       concreteChildInterfaceProperty: string;
     } & $UnwrapR<
       ReturnType<typeof ConcreteParentInterfaceStatic.$propertiesFromRdf>
@@ -16629,7 +16681,7 @@ export namespace ConcreteChildInterface {
 
     const $identifier: ConcreteChildInterface.$Identifier =
       _resource.identifier;
-    const type = "ConcreteChildInterface" as const;
+    const $type = "ConcreteChildInterface" as const;
     const _concreteChildInterfacePropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       string
@@ -16651,7 +16703,7 @@ export namespace ConcreteChildInterface {
     return purify.Either.of({
       ...$super0,
       $identifier,
-      type,
+      $type,
       concreteChildInterfaceProperty,
     });
   }
@@ -16911,7 +16963,7 @@ export namespace ConcreteChildInterface {
 export abstract class AbstractBaseClassWithProperties {
   abstract readonly $identifier: AbstractBaseClassWithPropertiesStatic.$Identifier;
   protected readonly _$identifierPrefix?: string;
-  abstract readonly type: "ConcreteChildClass" | "ConcreteParentClass";
+  abstract readonly $type: "ConcreteChildClass" | "ConcreteParentClass";
   readonly abstractBaseClassWithPropertiesProperty: string;
 
   constructor(parameters: {
@@ -16926,7 +16978,7 @@ export abstract class AbstractBaseClassWithProperties {
   protected get $identifierPrefix(): string {
     return typeof this._$identifierPrefix !== "undefined"
       ? this._$identifierPrefix
-      : `urn:shaclmate:${this.type}:`;
+      : `urn:shaclmate:${this.$type}:`;
   }
 
   $equals(other: AbstractBaseClassWithProperties): $EqualsResult {
@@ -16950,11 +17002,11 @@ export abstract class AbstractBaseClassWithProperties {
         ),
       )
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -16980,7 +17032,7 @@ export abstract class AbstractBaseClassWithProperties {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -17001,7 +17053,7 @@ export abstract class AbstractBaseClassWithProperties {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         abstractBaseClassWithPropertiesProperty:
           this.abstractBaseClassWithPropertiesProperty,
       } satisfies AbstractBaseClassWithPropertiesStatic.$Json),
@@ -17054,11 +17106,13 @@ export namespace AbstractBaseClassWithPropertiesStatic {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "ConcreteChildClass" | "ConcreteParentClass";
+    readonly $type: "ConcreteChildClass" | "ConcreteParentClass";
     readonly abstractBaseClassWithPropertiesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17107,11 +17161,11 @@ export namespace AbstractBaseClassWithPropertiesStatic {
           rule: {
             condition: {
               schema: { const: "AbstractBaseClassWithProperties" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -17127,7 +17181,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.enum(["ConcreteChildClass", "ConcreteParentClass"]),
+      $type: zod.enum(["ConcreteChildClass", "ConcreteParentClass"]),
       abstractBaseClassWithPropertiesProperty: zod.string(),
     });
   }
@@ -17305,7 +17359,9 @@ export namespace AbstractBaseClassWithPropertiesStatic {
  */
 export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseClassWithProperties {
   abstract override readonly $identifier: AbstractBaseClassWithoutPropertiesStatic.$Identifier;
-  abstract override readonly type: "ConcreteChildClass" | "ConcreteParentClass";
+  abstract override readonly $type:
+    | "ConcreteChildClass"
+    | "ConcreteParentClass";
 
   // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
@@ -17319,7 +17375,7 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
   protected override get $identifierPrefix(): string {
     return typeof this._$identifierPrefix !== "undefined"
       ? this._$identifierPrefix
-      : `urn:shaclmate:${this.type}:`;
+      : `urn:shaclmate:${this.$type}:`;
   }
 
   override $toRdf({
@@ -17405,7 +17461,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     return AbstractBaseClassWithPropertiesStatic.$jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
-        type: zod.enum(["ConcreteChildClass", "ConcreteParentClass"]),
+        $type: zod.enum(["ConcreteChildClass", "ConcreteParentClass"]),
       }),
     );
   }
@@ -17557,7 +17613,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
  */
 export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
   protected _$identifier: ConcreteParentClassStatic.$Identifier | undefined;
-  override readonly type: "ConcreteParentClass" | "ConcreteChildClass" =
+  override readonly $type: "ConcreteParentClass" | "ConcreteChildClass" =
     "ConcreteParentClass";
   readonly concreteParentClassProperty: string;
 
@@ -17593,22 +17649,24 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
   protected override get $identifierPrefix(): string {
     return typeof this._$identifierPrefix !== "undefined"
       ? this._$identifierPrefix
-      : `urn:shaclmate:${this.type}:`;
+      : `urn:shaclmate:${this.$type}:`;
   }
 
   override $equals(other: ConcreteParentClass): $EqualsResult {
-    return super.$equals(other).chain(() =>
-      $strictEquals(
-        this.concreteParentClassProperty,
-        other.concreteParentClassProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "concreteParentClassProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .$equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.concreteParentClassProperty,
+          other.concreteParentClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "concreteParentClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override $hash<
@@ -17688,7 +17746,9 @@ export namespace ConcreteParentClassStatic {
     readonly concreteParentClassProperty: string;
   } & AbstractBaseClassWithoutPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17762,7 +17822,7 @@ export namespace ConcreteParentClassStatic {
     return AbstractBaseClassWithoutPropertiesStatic.$jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
-        type: zod.enum(["ConcreteParentClass", "ConcreteChildClass"]),
+        $type: zod.enum(["ConcreteParentClass", "ConcreteChildClass"]),
         concreteParentClassProperty: zod.string(),
       }),
     );
@@ -18075,7 +18135,7 @@ export namespace ConcreteParentClassStatic {
  * Child (class) of ConcreteParentClass. Should inherit properties, node kinds, and minting strategy.
  */
 export class ConcreteChildClass extends ConcreteParentClass {
-  override readonly type = "ConcreteChildClass";
+  override readonly $type = "ConcreteChildClass";
   readonly concreteChildClassProperty: string;
 
   constructor(
@@ -18101,22 +18161,24 @@ export class ConcreteChildClass extends ConcreteParentClass {
   protected override get $identifierPrefix(): string {
     return typeof this._$identifierPrefix !== "undefined"
       ? this._$identifierPrefix
-      : `urn:shaclmate:${this.type}:`;
+      : `urn:shaclmate:${this.$type}:`;
   }
 
   override $equals(other: ConcreteChildClass): $EqualsResult {
-    return super.$equals(other).chain(() =>
-      $strictEquals(
-        this.concreteChildClassProperty,
-        other.concreteChildClassProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "concreteChildClassProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .$equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.concreteChildClassProperty,
+          other.concreteChildClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "concreteChildClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override $hash<
@@ -18194,7 +18256,9 @@ export namespace ConcreteChildClass {
     readonly concreteChildClassProperty: string;
   } & ConcreteParentClassStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18259,7 +18323,7 @@ export namespace ConcreteChildClass {
     return ConcreteParentClassStatic.$jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
-        type: zod.literal("ConcreteChildClass"),
+        $type: zod.literal("ConcreteChildClass"),
         concreteChildClassProperty: zod.string(),
       }),
     );
@@ -18555,7 +18619,7 @@ export namespace ConcreteChildClass {
 }
 export class ClassUnionMember2 {
   private _$identifier: ClassUnionMember2.$Identifier | undefined;
-  readonly type = "ClassUnionMember2";
+  readonly $type = "ClassUnionMember2";
   readonly classUnionMember2Property: string;
 
   constructor(parameters: {
@@ -18591,11 +18655,11 @@ export class ClassUnionMember2 {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -18621,7 +18685,7 @@ export class ClassUnionMember2 {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -18642,7 +18706,7 @@ export class ClassUnionMember2 {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         classUnionMember2Property: this.classUnionMember2Property,
       } satisfies ClassUnionMember2.$Json),
     );
@@ -18705,11 +18769,13 @@ export namespace ClassUnionMember2 {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "ClassUnionMember2";
+    readonly $type: "ClassUnionMember2";
     readonly classUnionMember2Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18754,11 +18820,11 @@ export namespace ClassUnionMember2 {
           rule: {
             condition: {
               schema: { const: "ClassUnionMember2" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -18774,7 +18840,7 @@ export namespace ClassUnionMember2 {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("ClassUnionMember2"),
+      $type: zod.literal("ClassUnionMember2"),
       classUnionMember2Property: zod.string(),
     });
   }
@@ -19041,7 +19107,7 @@ export namespace ClassUnionMember2 {
 }
 export class ClassUnionMember1 {
   private _$identifier: ClassUnionMember1.$Identifier | undefined;
-  readonly type = "ClassUnionMember1";
+  readonly $type = "ClassUnionMember1";
   readonly classUnionMember1Property: string;
 
   constructor(parameters: {
@@ -19077,11 +19143,11 @@ export class ClassUnionMember1 {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -19107,7 +19173,7 @@ export class ClassUnionMember1 {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -19128,7 +19194,7 @@ export class ClassUnionMember1 {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         classUnionMember1Property: this.classUnionMember1Property,
       } satisfies ClassUnionMember1.$Json),
     );
@@ -19191,11 +19257,13 @@ export namespace ClassUnionMember1 {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "ClassUnionMember1";
+    readonly $type: "ClassUnionMember1";
     readonly classUnionMember1Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19240,11 +19308,11 @@ export namespace ClassUnionMember1 {
           rule: {
             condition: {
               schema: { const: "ClassUnionMember1" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -19260,7 +19328,7 @@ export namespace ClassUnionMember1 {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("ClassUnionMember1"),
+      $type: zod.literal("ClassUnionMember1"),
       classUnionMember1Property: zod.string(),
     });
   }
@@ -19530,7 +19598,7 @@ export namespace ClassUnionMember1 {
  */
 export class BlankClass {
   private _$identifier: BlankClass.$Identifier | undefined;
-  readonly type = "BlankClass";
+  readonly $type = "BlankClass";
 
   constructor(parameters: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
@@ -19562,11 +19630,11 @@ export class BlankClass {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -19580,7 +19648,7 @@ export class BlankClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -19600,7 +19668,7 @@ export class BlankClass {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
       } satisfies BlankClass.$Json),
     );
   }
@@ -19643,7 +19711,7 @@ export namespace BlankClass {
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
-  export type $Json = { readonly "@id": string; readonly type: "BlankClass" };
+  export type $Json = { readonly "@id": string; readonly $type: "BlankClass" };
 
   export function $propertiesFromJson(
     _json: unknown,
@@ -19688,11 +19756,11 @@ export namespace BlankClass {
           rule: {
             condition: {
               schema: { const: "BlankClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
       ],
@@ -19704,7 +19772,7 @@ export namespace BlankClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("BlankClass"),
+      $type: zod.literal("BlankClass"),
     });
   }
 
@@ -19794,7 +19862,7 @@ export namespace BlankClass {
  */
 export abstract class AbstractBaseClassForExternClass {
   abstract readonly $identifier: AbstractBaseClassForExternClassStatic.$Identifier;
-  abstract readonly type: "ExternClass";
+  abstract readonly $type: "ExternClass";
   readonly abstractBaseClassForExternClassProperty: string;
 
   constructor(parameters: {
@@ -19814,11 +19882,11 @@ export abstract class AbstractBaseClassForExternClass {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.type, other.type).mapLeft(
+        $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
             right: other,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
@@ -19844,7 +19912,7 @@ export abstract class AbstractBaseClassForExternClass {
     },
   >(_hasher: HasherT): HasherT {
     _hasher.update(this.$identifier.value);
-    _hasher.update(this.type);
+    _hasher.update(this.$type);
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
@@ -19865,7 +19933,7 @@ export abstract class AbstractBaseClassForExternClass {
           this.$identifier.termType === "BlankNode"
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
-        type: this.type,
+        $type: this.$type,
         abstractBaseClassForExternClassProperty:
           this.abstractBaseClassForExternClassProperty,
       } satisfies AbstractBaseClassForExternClassStatic.$Json),
@@ -19918,11 +19986,13 @@ export namespace AbstractBaseClassForExternClassStatic {
 
   export type $Json = {
     readonly "@id": string;
-    readonly type: "ExternClass";
+    readonly $type: "ExternClass";
     readonly abstractBaseClassForExternClassProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19972,11 +20042,11 @@ export namespace AbstractBaseClassForExternClassStatic {
           rule: {
             condition: {
               schema: { const: "AbstractBaseClassForExternClass" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -19992,7 +20062,7 @@ export namespace AbstractBaseClassForExternClassStatic {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("ExternClass"),
+      $type: zod.literal("ExternClass"),
       abstractBaseClassForExternClassProperty: zod.string(),
     });
   }
@@ -20170,8 +20240,8 @@ export type ClassUnion = ClassUnionMember1 | ClassUnionMember2;
 
 export namespace ClassUnion {
   export function $equals(left: ClassUnion, right: ClassUnion): $EqualsResult {
-    return $strictEquals(left.type, right.type).chain(() => {
-      switch (left.type) {
+    return $strictEquals(left.$type, right.$type).chain(() => {
+      switch (left.$type) {
         case "ClassUnionMember1":
           return left.$equals(right as unknown as ClassUnionMember1);
         case "ClassUnionMember2":
@@ -20228,7 +20298,7 @@ export namespace ClassUnion {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_classUnion: ClassUnion, _hasher: HasherT): HasherT {
-    switch (_classUnion.type) {
+    switch (_classUnion.$type) {
       case "ClassUnionMember1":
         return _classUnion.$hash(_hasher);
       case "ClassUnionMember2":
@@ -20242,7 +20312,7 @@ export namespace ClassUnion {
   export type $Json = ClassUnionMember1.$Json | ClassUnionMember2.$Json;
 
   export function $jsonZodSchema() {
-    return zod.discriminatedUnion("type", [
+    return zod.discriminatedUnion("$type", [
       ClassUnionMember1.$jsonZodSchema(),
       ClassUnionMember2.$jsonZodSchema(),
     ]);
@@ -20366,7 +20436,7 @@ export namespace ClassUnion {
   export function $toJson(
     _classUnion: ClassUnion,
   ): ClassUnionMember1.$Json | ClassUnionMember2.$Json {
-    switch (_classUnion.type) {
+    switch (_classUnion.$type) {
       case "ClassUnionMember1":
         return _classUnion.$toJson();
       case "ClassUnionMember2":
@@ -20384,7 +20454,7 @@ export namespace ClassUnion {
       resourceSet: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    switch (_classUnion.type) {
+    switch (_classUnion.$type) {
       case "ClassUnionMember1":
         return _classUnion.$toRdf(_parameters);
       case "ClassUnionMember2":
@@ -20408,8 +20478,8 @@ export namespace InterfaceUnion {
     left: InterfaceUnion,
     right: InterfaceUnion,
   ): $EqualsResult {
-    return $strictEquals(left.type, right.type).chain(() => {
-      switch (left.type) {
+    return $strictEquals(left.$type, right.$type).chain(() => {
+      switch (left.$type) {
         case "InterfaceUnionMember1":
           return InterfaceUnionMember1.$equals(
             left,
@@ -20499,7 +20569,7 @@ export namespace InterfaceUnion {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_interfaceUnion: InterfaceUnion, _hasher: HasherT): HasherT {
-    switch (_interfaceUnion.type) {
+    switch (_interfaceUnion.$type) {
       case "InterfaceUnionMember1":
         return InterfaceUnionMember1.$hash(_interfaceUnion, _hasher);
       case "InterfaceUnionMember2a":
@@ -20518,7 +20588,7 @@ export namespace InterfaceUnion {
     | InterfaceUnionMember2b.$Json;
 
   export function $jsonZodSchema() {
-    return zod.discriminatedUnion("type", [
+    return zod.discriminatedUnion("$type", [
       InterfaceUnionMember1.$jsonZodSchema(),
       InterfaceUnionMember2a.$jsonZodSchema(),
       InterfaceUnionMember2b.$jsonZodSchema(),
@@ -20668,7 +20738,7 @@ export namespace InterfaceUnion {
     | InterfaceUnionMember1.$Json
     | InterfaceUnionMember2a.$Json
     | InterfaceUnionMember2b.$Json {
-    switch (_interfaceUnion.type) {
+    switch (_interfaceUnion.$type) {
       case "InterfaceUnionMember1":
         return InterfaceUnionMember1.$toJson(_interfaceUnion);
       case "InterfaceUnionMember2a":
@@ -20688,7 +20758,7 @@ export namespace InterfaceUnion {
       resourceSet: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    switch (_interfaceUnion.type) {
+    switch (_interfaceUnion.$type) {
       case "InterfaceUnionMember1":
         return InterfaceUnionMember1.$toRdf(_interfaceUnion, _parameters);
       case "InterfaceUnionMember2a":
@@ -20713,8 +20783,8 @@ export namespace InterfaceUnionMember2 {
     left: InterfaceUnionMember2,
     right: InterfaceUnionMember2,
   ): $EqualsResult {
-    return $strictEquals(left.type, right.type).chain(() => {
-      switch (left.type) {
+    return $strictEquals(left.$type, right.$type).chain(() => {
+      switch (left.$type) {
         case "InterfaceUnionMember2a":
           return InterfaceUnionMember2a.$equals(
             left,
@@ -20783,7 +20853,7 @@ export namespace InterfaceUnionMember2 {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_interfaceUnionMember2: InterfaceUnionMember2, _hasher: HasherT): HasherT {
-    switch (_interfaceUnionMember2.type) {
+    switch (_interfaceUnionMember2.$type) {
       case "InterfaceUnionMember2a":
         return InterfaceUnionMember2a.$hash(_interfaceUnionMember2, _hasher);
       case "InterfaceUnionMember2b":
@@ -20799,7 +20869,7 @@ export namespace InterfaceUnionMember2 {
     | InterfaceUnionMember2b.$Json;
 
   export function $jsonZodSchema() {
-    return zod.discriminatedUnion("type", [
+    return zod.discriminatedUnion("$type", [
       InterfaceUnionMember2a.$jsonZodSchema(),
       InterfaceUnionMember2b.$jsonZodSchema(),
     ]);
@@ -20930,7 +21000,7 @@ export namespace InterfaceUnionMember2 {
   export function $toJson(
     _interfaceUnionMember2: InterfaceUnionMember2,
   ): InterfaceUnionMember2a.$Json | InterfaceUnionMember2b.$Json {
-    switch (_interfaceUnionMember2.type) {
+    switch (_interfaceUnionMember2.$type) {
       case "InterfaceUnionMember2a":
         return InterfaceUnionMember2a.$toJson(_interfaceUnionMember2);
       case "InterfaceUnionMember2b":
@@ -20948,7 +21018,7 @@ export namespace InterfaceUnionMember2 {
       resourceSet: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    switch (_interfaceUnionMember2.type) {
+    switch (_interfaceUnionMember2.$type) {
       case "InterfaceUnionMember2a":
         return InterfaceUnionMember2a.$toRdf(
           _interfaceUnionMember2,

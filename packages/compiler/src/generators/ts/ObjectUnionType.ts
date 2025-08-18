@@ -316,7 +316,7 @@ export class ObjectUnionType extends DeclaredType {
       ],
       returnType: `${syntheticNamePrefix}EqualsResult`,
       statements: `\
-return ${syntheticNamePrefix}strictEquals(left.type, right.type).chain(() => {
+return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right.${syntheticNamePrefix}type).chain(() => {
   switch (left.${this._discriminatorProperty.name}) {
    ${caseBlocks.join(" ")}
   }

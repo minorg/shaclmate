@@ -297,17 +297,9 @@ export function transformNodeShapeToAstType(
     parentObjectTypes: [], // This is mutable, we'll populate it below
     toRdfTypes,
     tsFeatures: nodeShape.tsFeatures.orDefault(new Set(tsFeaturesDefault)),
-    tsIdentifierPrefixPropertyName:
-      nodeShape.tsObjectIdentifierPrefixPropertyName.orDefault(
-        "identifierPrefix",
-      ),
-    tsIdentifierPropertyName:
-      nodeShape.tsObjectIdentifierPropertyName.orDefault("identifier"),
     tsImports: nodeShape.tsImports,
     tsObjectDeclarationType:
       nodeShape.tsObjectDeclarationType.orDefault("class"),
-    tsTypeDiscriminatorPropertyName:
-      nodeShape.tsObjectTypeDiscriminatorPropertyName.orDefault("type"),
   };
   this.nodeShapeAstTypesByIdentifier.set(nodeShape.identifier, objectType);
 

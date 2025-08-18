@@ -18,7 +18,7 @@ import {
  * Normally you would only need one or the other.
  */
 export class ExternClass extends AbstractBaseClassForExternClass {
-  readonly type = "ExternClass";
+  readonly $type = "ExternClass";
 
   constructor(readonly $identifier: BlankNode | NamedNode<string>) {
     super({ abstractBaseClassForExternClassProperty: "test" });

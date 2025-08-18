@@ -328,7 +328,7 @@ export class TypeFactory {
             new ObjectType.TypeDiscriminatorProperty({
               abstract: astType.abstract,
               dataFactoryVariable: this.dataFactoryVariable,
-              name: astType.tsTypeDiscriminatorPropertyName,
+              name: `${syntheticNamePrefix}type`,
               initializer: objectType.discriminatorValue,
               objectType: {
                 declarationType: astType.tsObjectDeclarationType,
@@ -358,7 +358,7 @@ export class TypeFactory {
               own: !astType.ancestorObjectTypes.some(
                 objectTypeNeedsIdentifierPrefixProperty,
               ),
-              name: `${syntheticNamePrefix}${astType.tsIdentifierPrefixPropertyName}`,
+              name: `${syntheticNamePrefix}identifierPrefix`,
               objectType: {
                 declarationType: astType.tsObjectDeclarationType,
                 features: astType.tsFeatures,
@@ -428,8 +428,8 @@ export class TypeFactory {
             })(),
             dataFactoryVariable: this.dataFactoryVariable,
             identifierMintingStrategy: astType.identifierMintingStrategy,
-            identifierPrefixPropertyName: `${syntheticNamePrefix}${astType.tsIdentifierPrefixPropertyName}`,
-            name: `${syntheticNamePrefix}${astType.tsIdentifierPropertyName}`,
+            identifierPrefixPropertyName: `${syntheticNamePrefix}identifierPrefix`,
+            name: `${syntheticNamePrefix}identifier`,
             objectType: {
               declarationType: astType.tsObjectDeclarationType,
               features: astType.tsFeatures,

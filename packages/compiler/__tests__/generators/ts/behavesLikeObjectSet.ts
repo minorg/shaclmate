@@ -50,7 +50,7 @@ const testData = {
             `http://example.com/interfaceUnion${i}`,
           ),
           interfaceUnionMember1Property: `string ${i}`,
-          type: "InterfaceUnionMember1",
+          $type: "InterfaceUnionMember1",
         } satisfies kitchenSink.InterfaceUnion;
       case 1:
         return {
@@ -58,7 +58,7 @@ const testData = {
             `http://example.com/interfaceUnion${i}`,
           ),
           interfaceUnionMember2aProperty: `string ${i}`,
-          type: "InterfaceUnionMember2a",
+          $type: "InterfaceUnionMember2a",
         } satisfies kitchenSink.InterfaceUnion;
       case 2:
         return {
@@ -66,7 +66,7 @@ const testData = {
             `http://example.com/interfaceUnion${i}`,
           ),
           interfaceUnionMember2bProperty: `string ${i}`,
-          type: "InterfaceUnionMember2b",
+          $type: "InterfaceUnionMember2b",
         } satisfies kitchenSink.InterfaceUnion;
       default:
         throw new RangeError(i.toString());

@@ -9,7 +9,7 @@ type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
  */
 export class UnionMember2 {
   private _$identifier: UnionMember2.$Identifier | undefined;
-  readonly type = "UnionMember2";
+  readonly $type = "UnionMember2";
   /**
    * Optional string property
    */
@@ -206,7 +206,7 @@ export namespace UnionMember2 {
  */
 export class UnionMember1 {
   private _$identifier: UnionMember1.$Identifier | undefined;
-  readonly type = "UnionMember1";
+  readonly $type = "UnionMember1";
   /**
    * Optional number property
    */
@@ -403,7 +403,7 @@ export namespace UnionMember1 {
  */
 export class Nested {
   private _$identifier: Nested.$Identifier | undefined;
-  readonly type = "Nested";
+  readonly $type = "Nested";
   /**
    * Optional number property
    */
@@ -692,7 +692,7 @@ export namespace Nested {
  */
 export class ConcreteParent {
   readonly $identifier: ConcreteParentStatic.$Identifier;
-  readonly type: "ConcreteParent" | "ConcreteChild" = "ConcreteParent";
+  readonly $type: "ConcreteParent" | "ConcreteChild" = "ConcreteParent";
   /**
    * Parent string property
    */
@@ -902,7 +902,7 @@ export namespace ConcreteParentStatic {
  * Concrete child
  */
 export class ConcreteChild extends ConcreteParent {
-  override readonly type = "ConcreteChild";
+  override readonly $type = "ConcreteChild";
   /**
    * Child string property
    */
@@ -1316,7 +1316,7 @@ export namespace Union {
       resourceSet: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    switch (_union.type) {
+    switch (_union.$type) {
       case "UnionMember1":
         return _union.$toRdf(_parameters);
       case "UnionMember2":
