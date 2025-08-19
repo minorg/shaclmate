@@ -208,6 +208,7 @@ export namespace ${syntheticNamePrefix}RdfVocabularies {
     export const first = ${dataFactoryVariable}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#first");
     export const nil = ${dataFactoryVariable}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
     export const rest = ${dataFactoryVariable}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#rest");
+    export const subject = ${dataFactoryVariable}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#subject");
     export const type = ${dataFactoryVariable}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
   }
 
