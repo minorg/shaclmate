@@ -1,4 +1,3 @@
-import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type {
@@ -79,7 +78,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
           break;
         case "sha256":
           // If the object is mutable don't memoize the minted identifier, since the hash will change if the object mutates.
-          memoizeMintedIdentifier = !this.objectType.mutable();
+          memoizeMintedIdentifier = !this.objectType.mutable;
           mintIdentifier = `dataFactory.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${this.${syntheticNamePrefix}hashShaclProperties(sha256.create())}\`)`;
           break;
         case "uuidv4":
@@ -294,14 +293,14 @@ export class IdentifierProperty extends Property<IdentifierType> {
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
       return [
         `let ${this.name}: ${this.typeAlias};`,
-        `switch (${variables.resource}.identifier.value) { ${this.type.in_.map((iri) => `case "${iri.value}": ${this.name} = ${this.rdfjsTermExpression(iri)}; break;`).join(" ")} default: return purify.Left(new rdfjsResource.Resource.MistypedValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${this.rdfjsTermExpression(rdf.subject)} })); }`,
+        `switch (${variables.resource}.identifier.value) { ${this.type.in_.map((iri) => `case "${iri.value}": ${this.name} = ${this.rdfjsTermExpression(iri)}; break;`).join(" ")} default: return purify.Left(new rdfjsResource.Resource.MistypedValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${syntheticNamePrefix}RdfVocabularies.rdf.subject })); }`,
       ];
     }
 
     const statements: string[] = [];
     if (this.type.isNamedNodeKind) {
       statements.push(
-        `if (${variables.resource}.identifier.termType !== "NamedNode") { return purify.Left(new rdfjsResource.Resource.MistypedValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${this.rdfjsTermExpression(rdf.subject)} })); }`,
+        `if (${variables.resource}.identifier.termType !== "NamedNode") { return purify.Left(new rdfjsResource.Resource.MistypedValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${syntheticNamePrefix}RdfVocabularies.rdf.subject })); }`,
       );
     }
     statements.push(

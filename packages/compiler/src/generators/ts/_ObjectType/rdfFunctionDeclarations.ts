@@ -1,7 +1,5 @@
 import { Maybe } from "purify-ts";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
-
-import { rdf } from "@tpluscode/rdf-ns-builders";
 import type { ObjectType } from "../ObjectType.js";
 import { objectInitializer } from "../objectInitializer.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
@@ -28,10 +26,11 @@ function fromRdfFunctionDeclarations(
   });
 
   this.fromRdfType.ifJust((rdfType) => {
+    const predicate = `${syntheticNamePrefix}RdfVocabularies.rdf.type`;
     propertiesFromRdfStatements.push(
       `\
-if (!${variables.ignoreRdfType} && !${variables.resource}.isInstanceOf(${this.rdfjsTermExpression(rdfType)})) {
-  return ${variables.resource}.value(${this.rdfjsTermExpression(rdf.type)}).chain(actualRdfType => actualRdfType.toIri()).chain((actualRdfType) => purify.Left(new rdfjsResource.Resource.ValueError(${objectInitializer({ focusResource: variables.resource, message: `\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} has unexpected RDF type (actual: \${actualRdfType.value}, expected: ${rdfType.value})\``, predicate: this.rdfjsTermExpression(rdf.type) })})));
+if (!${variables.ignoreRdfType} && !${variables.resource}.isInstanceOf(${syntheticNamePrefix}fromRdfType)) {
+  return ${variables.resource}.value(${predicate}).chain(actualRdfType => actualRdfType.toIri()).chain((actualRdfType) => purify.Left(new rdfjsResource.Resource.ValueError(${objectInitializer({ focusResource: variables.resource, message: `\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} has unexpected RDF type (actual: \${actualRdfType.value}, expected: ${rdfType.value})\``, predicate })})));
 }`,
     );
   });

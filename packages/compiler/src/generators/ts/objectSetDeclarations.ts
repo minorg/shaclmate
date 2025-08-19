@@ -1,4 +1,3 @@
-import {} from "@tpluscode/rdf-ns-builders";
 import type {
   ClassDeclarationStructure,
   InterfaceDeclarationStructure,

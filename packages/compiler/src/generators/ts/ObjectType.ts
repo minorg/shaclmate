@@ -38,6 +38,7 @@ export class ObjectType extends DeclaredType {
   readonly extern: boolean;
   readonly fromRdfType: Maybe<NamedNode>;
   readonly kind = "ObjectType";
+  readonly staticModuleName: string;
   readonly typeof = "object";
 
   constructor({
@@ -46,14 +47,15 @@ export class ObjectType extends DeclaredType {
     declarationType,
     extern,
     fromRdfType,
+    imports,
+    identifierMintingStrategy,
     label,
     lazyAncestorObjectTypes,
     lazyChildObjectTypes,
     lazyDescendantObjectTypes,
     lazyParentObjectTypes,
     lazyProperties,
-    imports,
-    identifierMintingStrategy,
+    staticModuleName,
     toRdfTypes,
     ...superParameters
   }: {
@@ -62,14 +64,15 @@ export class ObjectType extends DeclaredType {
     declarationType: TsObjectDeclarationType;
     extern: boolean;
     fromRdfType: Maybe<NamedNode>;
+    identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     imports: readonly string[];
     label: Maybe<string>;
     lazyAncestorObjectTypes: () => readonly ObjectType[];
     lazyChildObjectTypes: () => readonly ObjectType[];
     lazyDescendantObjectTypes: () => readonly ObjectType[];
     lazyParentObjectTypes: () => readonly ObjectType[];
-    lazyProperties: () => readonly ObjectType.Property[];
-    identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
+    lazyProperties: (objectType: ObjectType) => readonly ObjectType.Property[];
+    staticModuleName: string;
     toRdfTypes: readonly NamedNode[];
   } & ConstructorParameters<typeof DeclaredType>[0]) {
     super(superParameters);
@@ -78,6 +81,7 @@ export class ObjectType extends DeclaredType {
     this.declarationType = declarationType;
     this.extern = extern;
     this.fromRdfType = fromRdfType;
+    this.identifierMintingStrategy = identifierMintingStrategy;
     this.imports = imports;
     this.label = label;
     // Lazily initialize some members in getters to avoid recursive construction
@@ -86,7 +90,7 @@ export class ObjectType extends DeclaredType {
     this.lazyDescendantObjectTypes = lazyDescendantObjectTypes;
     this.lazyParentObjectTypes = lazyParentObjectTypes;
     this.lazyProperties = lazyProperties;
-    this.identifierMintingStrategy = identifierMintingStrategy;
+    this.staticModuleName = staticModuleName;
     this.toRdfTypes = toRdfTypes;
   }
 
@@ -284,7 +288,7 @@ export class ObjectType extends DeclaredType {
 
   @Memoize()
   get properties(): readonly ObjectType.Property[] {
-    const properties = this.lazyProperties();
+    const properties = this.lazyProperties(this);
     const propertyNames = new Set<string>();
     for (const property of properties) {
       if (propertyNames.has(property.name)) {
@@ -292,11 +296,6 @@ export class ObjectType extends DeclaredType {
       }
     }
     return properties;
-  }
-
-  @Memoize()
-  get staticModuleName(): string {
-    return this.childObjectTypes.length > 0 ? `${this.name}Static` : this.name;
   }
 
   @Memoize()
@@ -366,6 +365,11 @@ export class ObjectType extends DeclaredType {
     const snippetDeclarations: string[] = [];
     if (this.features.has("equals")) {
       snippetDeclarations.push(SnippetDeclarations.EqualsResult);
+    }
+    if (this.features.has("rdf")) {
+      snippetDeclarations.push(
+        SnippetDeclarations.RdfVocabularies(this.dataFactoryVariable),
+      );
     }
     if (
       (this.features.has("json") || this.features.has("rdf")) &&
@@ -461,7 +465,9 @@ export class ObjectType extends DeclaredType {
 
   private readonly lazyParentObjectTypes: () => readonly ObjectType[];
 
-  private readonly lazyProperties: () => readonly ObjectType.Property[];
+  private readonly lazyProperties: (
+    objectType: ObjectType,
+  ) => readonly ObjectType.Property[];
 }
 
 export namespace ObjectType {

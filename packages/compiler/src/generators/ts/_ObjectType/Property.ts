@@ -7,12 +7,9 @@ import {
   type PropertySignatureStructure,
   Scope,
 } from "ts-morph";
-import type {
-  PropertyVisibility,
-  TsFeature,
-  TsObjectDeclarationType,
-} from "../../../enums/index.js";
+import type { PropertyVisibility } from "../../../enums/index.js";
 import type { Import } from "../Import.js";
+import type { ObjectType } from "../ObjectType.js";
 import type { Type } from "../Type.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 
@@ -100,11 +97,7 @@ export abstract class Property<
   readonly visibility: PropertyVisibility;
 
   protected readonly dataFactoryVariable: string;
-  protected readonly objectType: {
-    readonly declarationType: TsObjectDeclarationType;
-    readonly features: Set<TsFeature>;
-    readonly mutable: () => boolean;
-  };
+  protected readonly objectType: ObjectType;
 
   constructor({
     dataFactoryVariable,
@@ -115,7 +108,7 @@ export abstract class Property<
   }: {
     dataFactoryVariable: string;
     name: string;
-    objectType: Property<TypeT>["objectType"];
+    objectType: ObjectType;
     type: TypeT;
     visibility: PropertyVisibility;
   }) {
