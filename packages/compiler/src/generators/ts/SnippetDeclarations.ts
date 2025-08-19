@@ -1,3 +1,4 @@
+import { xsd } from "@tpluscode/rdf-ns-builders";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export namespace SnippetDeclarations {
@@ -201,6 +202,7 @@ export function ${syntheticNamePrefix}maybeEquals<T>(
   return ${syntheticNamePrefix}EqualsResult.Equal;
 }
 `;
+  xsd;
 
   export const RdfVocabularies = (dataFactoryVariable: string) => `\
 export namespace ${syntheticNamePrefix}RdfVocabularies {
@@ -214,6 +216,13 @@ export namespace ${syntheticNamePrefix}RdfVocabularies {
 
   export namespace rdfs {
     export const subClassOf = ${dataFactoryVariable}.namedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf");
+  }
+
+  export namespace xsd {
+    export const boolean = ${dataFactoryVariable}.namedNode("http://www.w3.org/2001/XMLSchema#boolean");
+    export const date = ${dataFactoryVariable}.namedNode("http://www.w3.org/2001/XMLSchema#date");
+    export const dateTime = ${dataFactoryVariable}.namedNode("http://www.w3.org/2001/XMLSchema#dateTime");
+    export const integer = ${dataFactoryVariable}.namedNode("http://www.w3.org/2001/XMLSchema#integer");
   }
 }`;
 

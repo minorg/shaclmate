@@ -29,7 +29,7 @@ function fromRdfFunctionDeclarations(
     const predicate = `${syntheticNamePrefix}RdfVocabularies.rdf.type`;
     propertiesFromRdfStatements.push(
       `\
-if (!${variables.ignoreRdfType} && !${variables.resource}.isInstanceOf(${this.rdfjsTermExpression(rdfType)})) {
+if (!${variables.ignoreRdfType} && !${variables.resource}.isInstanceOf(${syntheticNamePrefix}fromRdfType)) {
   return ${variables.resource}.value(${predicate}).chain(actualRdfType => actualRdfType.toIri()).chain((actualRdfType) => purify.Left(new rdfjsResource.Resource.ValueError(${objectInitializer({ focusResource: variables.resource, message: `\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} has unexpected RDF type (actual: \${actualRdfType.value}, expected: ${rdfType.value})\``, predicate })})));
 }`,
     );

@@ -84,6 +84,46 @@ export namespace $EqualsResult {
         readonly type: "RightNull";
       };
 }
+export namespace $RdfVocabularies {
+  export namespace rdf {
+    export const first = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
+    );
+    export const nil = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+    );
+    export const rest = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+    );
+    export const subject = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+    );
+    export const type = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    );
+  }
+
+  export namespace rdfs {
+    export const subClassOf = dataFactory.namedNode(
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+    );
+  }
+
+  export namespace xsd {
+    export const boolean = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#boolean",
+    );
+    export const date = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#date",
+    );
+    export const dateTime = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#dateTime",
+    );
+    export const integer = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#integer",
+    );
+  }
+}
 /**
  * Compare two objects with equals(other: T): boolean methods and return an $EqualsResult.
  */
@@ -331,7 +371,7 @@ export class UuidV4IriClass {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode("http://example.com/uuidV4IriProperty"),
+      UuidV4IriClass.$properties.uuidV4IriProperty["identifier"],
       this.uuidV4IriProperty,
     );
     return _resource;
@@ -459,9 +499,7 @@ export namespace UuidV4IriClass {
           actualValue: _resource.identifier,
           expectedValueType: "(rdfjs.NamedNode)",
           focusResource: _resource,
-          predicate: dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-          ),
+          predicate: $RdfVocabularies.rdf.subject,
         }),
       );
     }
@@ -548,9 +586,7 @@ export namespace UuidV4IriClass {
     return [
       {
         object: dataFactory.variable!(`${variablePrefix}UuidV4IriProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/uuidV4IriProperty",
-        ),
+        predicate: UuidV4IriClass.$properties.uuidV4IriProperty["identifier"],
         subject,
       },
     ];
@@ -571,9 +607,8 @@ export namespace UuidV4IriClass {
         triples: [
           {
             object: dataFactory.variable!(`${variablePrefix}UuidV4IriProperty`),
-            predicate: dataFactory.namedNode(
-              "http://example.com/uuidV4IriProperty",
-            ),
+            predicate:
+              UuidV4IriClass.$properties.uuidV4IriProperty["identifier"],
             subject,
           },
         ],
@@ -965,13 +1000,13 @@ export class UnionPropertiesClass {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode("http://example.com/narrowLiteralsProperty"),
+      UnionPropertiesClass.$properties.narrowLiteralsProperty["identifier"],
       this.narrowLiteralsProperty.map((_value) =>
         typeof _value === "string" ? _value : _value,
       ),
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/unrelatedTypesProperty"),
+      UnionPropertiesClass.$properties.unrelatedTypesProperty["identifier"],
       this.unrelatedTypesProperty.map((_value) =>
         typeof _value === "object"
           ? _value.$toRdf({
@@ -982,11 +1017,11 @@ export class UnionPropertiesClass {
       ),
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/widenedLiteralsProperty"),
+      UnionPropertiesClass.$properties.widenedLiteralsProperty["identifier"],
       this.widenedLiteralsProperty,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/widenedTermsProperty"),
+      UnionPropertiesClass.$properties.widenedTermsProperty["identifier"],
       this.widenedTermsProperty,
     );
     return _resource;
@@ -1041,9 +1076,7 @@ export namespace UnionPropertiesClass {
       | undefined;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -1344,9 +1377,10 @@ export namespace UnionPropertiesClass {
                     actualValue: term,
                     expectedValueType: "(rdfjs.Literal | rdfjs.NamedNode)",
                     focusResource: _resource,
-                    predicate: dataFactory.namedNode(
-                      "http://example.com/widenedTermsProperty",
-                    ),
+                    predicate:
+                      UnionPropertiesClass.$properties.widenedTermsProperty[
+                        "identifier"
+                      ],
                   }),
                 );
             }
@@ -1455,18 +1489,16 @@ export namespace UnionPropertiesClass {
         object: dataFactory.variable!(
           `${variablePrefix}NarrowLiteralsProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/narrowLiteralsProperty",
-        ),
+        predicate:
+          UnionPropertiesClass.$properties.narrowLiteralsProperty["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(
           `${variablePrefix}UnrelatedTypesProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/unrelatedTypesProperty",
-        ),
+        predicate:
+          UnionPropertiesClass.$properties.unrelatedTypesProperty["identifier"],
         subject,
       },
       ...NonClass.$sparqlConstructTemplateTriples({
@@ -1480,16 +1512,16 @@ export namespace UnionPropertiesClass {
         object: dataFactory.variable!(
           `${variablePrefix}WidenedLiteralsProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/widenedLiteralsProperty",
-        ),
+        predicate:
+          UnionPropertiesClass.$properties.widenedLiteralsProperty[
+            "identifier"
+          ],
         subject,
       },
       {
         object: dataFactory.variable!(`${variablePrefix}WidenedTermsProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/widenedTermsProperty",
-        ),
+        predicate:
+          UnionPropertiesClass.$properties.widenedTermsProperty["identifier"],
         subject,
       },
     ];
@@ -1516,9 +1548,10 @@ export namespace UnionPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}NarrowLiteralsProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/narrowLiteralsProperty",
-                ),
+                predicate:
+                  UnionPropertiesClass.$properties.narrowLiteralsProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -1536,9 +1569,10 @@ export namespace UnionPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}UnrelatedTypesProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/unrelatedTypesProperty",
-                ),
+                predicate:
+                  UnionPropertiesClass.$properties.unrelatedTypesProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -1573,9 +1607,10 @@ export namespace UnionPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}WidenedLiteralsProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/widenedLiteralsProperty",
-                ),
+                predicate:
+                  UnionPropertiesClass.$properties.widenedLiteralsProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -1592,9 +1627,10 @@ export namespace UnionPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}WidenedTermsProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/widenedTermsProperty",
-                ),
+                predicate:
+                  UnionPropertiesClass.$properties.widenedTermsProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -2038,49 +2074,45 @@ export class TermPropertiesClass {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode("http://example.com/booleanTermProperty"),
+      TermPropertiesClass.$properties.booleanTermProperty["identifier"],
       this.booleanTermProperty,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/dateTermProperty"),
+      TermPropertiesClass.$properties.dateTermProperty["identifier"],
       this.dateTermProperty.map((_value) =>
         rdfLiteral.toRdf(_value, {
           dataFactory,
-          datatype: dataFactory.namedNode(
-            "http://www.w3.org/2001/XMLSchema#date",
-          ),
+          datatype: $RdfVocabularies.xsd.date,
         }),
       ),
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/dateTimeTermProperty"),
+      TermPropertiesClass.$properties.dateTimeTermProperty["identifier"],
       this.dateTimeTermProperty.map((_value) =>
         rdfLiteral.toRdf(_value, {
           dataFactory,
-          datatype: dataFactory.namedNode(
-            "http://www.w3.org/2001/XMLSchema#dateTime",
-          ),
+          datatype: $RdfVocabularies.xsd.dateTime,
         }),
       ),
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/iriTermProperty"),
+      TermPropertiesClass.$properties.iriTermProperty["identifier"],
       this.iriTermProperty,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/literalTermProperty"),
+      TermPropertiesClass.$properties.literalTermProperty["identifier"],
       this.literalTermProperty,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/numberTermProperty"),
+      TermPropertiesClass.$properties.numberTermProperty["identifier"],
       this.numberTermProperty,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/stringTermProperty"),
+      TermPropertiesClass.$properties.stringTermProperty["identifier"],
       this.stringTermProperty,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/termProperty"),
+      TermPropertiesClass.$properties.termProperty["identifier"],
       this.termProperty,
     );
     return _resource;
@@ -2142,9 +2174,7 @@ export namespace TermPropertiesClass {
       | undefined;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2603,52 +2633,49 @@ export namespace TermPropertiesClass {
     return [
       {
         object: dataFactory.variable!(`${variablePrefix}BooleanTermProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/booleanTermProperty",
-        ),
+        predicate:
+          TermPropertiesClass.$properties.booleanTermProperty["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(`${variablePrefix}DateTermProperty`),
-        predicate: dataFactory.namedNode("http://example.com/dateTermProperty"),
+        predicate:
+          TermPropertiesClass.$properties.dateTermProperty["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(`${variablePrefix}DateTimeTermProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/dateTimeTermProperty",
-        ),
+        predicate:
+          TermPropertiesClass.$properties.dateTimeTermProperty["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(`${variablePrefix}IriTermProperty`),
-        predicate: dataFactory.namedNode("http://example.com/iriTermProperty"),
+        predicate:
+          TermPropertiesClass.$properties.iriTermProperty["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(`${variablePrefix}LiteralTermProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/literalTermProperty",
-        ),
+        predicate:
+          TermPropertiesClass.$properties.literalTermProperty["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(`${variablePrefix}NumberTermProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/numberTermProperty",
-        ),
+        predicate:
+          TermPropertiesClass.$properties.numberTermProperty["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(`${variablePrefix}StringTermProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/stringTermProperty",
-        ),
+        predicate:
+          TermPropertiesClass.$properties.stringTermProperty["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(`${variablePrefix}TermProperty`),
-        predicate: dataFactory.namedNode("http://example.com/termProperty"),
+        predicate: TermPropertiesClass.$properties.termProperty["identifier"],
         subject,
       },
     ];
@@ -2673,9 +2700,10 @@ export namespace TermPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}BooleanTermProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/booleanTermProperty",
-                ),
+                predicate:
+                  TermPropertiesClass.$properties.booleanTermProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -2692,9 +2720,10 @@ export namespace TermPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}DateTermProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/dateTermProperty",
-                ),
+                predicate:
+                  TermPropertiesClass.$properties.dateTermProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -2711,9 +2740,10 @@ export namespace TermPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}DateTimeTermProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/dateTimeTermProperty",
-                ),
+                predicate:
+                  TermPropertiesClass.$properties.dateTimeTermProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -2730,9 +2760,8 @@ export namespace TermPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}IriTermProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/iriTermProperty",
-                ),
+                predicate:
+                  TermPropertiesClass.$properties.iriTermProperty["identifier"],
                 subject,
               },
             ],
@@ -2749,9 +2778,10 @@ export namespace TermPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}LiteralTermProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/literalTermProperty",
-                ),
+                predicate:
+                  TermPropertiesClass.$properties.literalTermProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -2768,9 +2798,10 @@ export namespace TermPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}NumberTermProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/numberTermProperty",
-                ),
+                predicate:
+                  TermPropertiesClass.$properties.numberTermProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -2787,9 +2818,10 @@ export namespace TermPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}StringTermProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/stringTermProperty",
-                ),
+                predicate:
+                  TermPropertiesClass.$properties.stringTermProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -2804,9 +2836,8 @@ export namespace TermPropertiesClass {
             triples: [
               {
                 object: dataFactory.variable!(`${variablePrefix}TermProperty`),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/termProperty",
-                ),
+                predicate:
+                  TermPropertiesClass.$properties.termProperty["identifier"],
                 subject,
               },
             ],
@@ -2946,7 +2977,7 @@ export class Sha256IriClass {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode("http://example.com/sha256IriProperty"),
+      Sha256IriClass.$properties.sha256IriProperty["identifier"],
       this.sha256IriProperty,
     );
     return _resource;
@@ -3074,9 +3105,7 @@ export namespace Sha256IriClass {
           actualValue: _resource.identifier,
           expectedValueType: "(rdfjs.NamedNode)",
           focusResource: _resource,
-          predicate: dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-          ),
+          predicate: $RdfVocabularies.rdf.subject,
         }),
       );
     }
@@ -3163,9 +3192,7 @@ export namespace Sha256IriClass {
     return [
       {
         object: dataFactory.variable!(`${variablePrefix}Sha256IriProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/sha256IriProperty",
-        ),
+        predicate: Sha256IriClass.$properties.sha256IriProperty["identifier"],
         subject,
       },
     ];
@@ -3186,9 +3213,8 @@ export namespace Sha256IriClass {
         triples: [
           {
             object: dataFactory.variable!(`${variablePrefix}Sha256IriProperty`),
-            predicate: dataFactory.namedNode(
-              "http://example.com/sha256IriProperty",
-            ),
+            predicate:
+              Sha256IriClass.$properties.sha256IriProperty["identifier"],
             subject,
           },
         ],
@@ -3338,15 +3364,15 @@ export class PropertyVisibilitiesClass {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode("http://example.com/privateProperty"),
+      PropertyVisibilitiesClass.$properties.privateProperty["identifier"],
       this.privateProperty,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/protectedProperty"),
+      PropertyVisibilitiesClass.$properties.protectedProperty["identifier"],
       this.protectedProperty,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/publicProperty"),
+      PropertyVisibilitiesClass.$properties.publicProperty["identifier"],
       this.publicProperty,
     );
     return _resource;
@@ -3384,9 +3410,7 @@ export namespace PropertyVisibilitiesClass {
     readonly publicProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3617,19 +3641,20 @@ export namespace PropertyVisibilitiesClass {
     return [
       {
         object: dataFactory.variable!(`${variablePrefix}PrivateProperty`),
-        predicate: dataFactory.namedNode("http://example.com/privateProperty"),
+        predicate:
+          PropertyVisibilitiesClass.$properties.privateProperty["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(`${variablePrefix}ProtectedProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/protectedProperty",
-        ),
+        predicate:
+          PropertyVisibilitiesClass.$properties.protectedProperty["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(`${variablePrefix}PublicProperty`),
-        predicate: dataFactory.namedNode("http://example.com/publicProperty"),
+        predicate:
+          PropertyVisibilitiesClass.$properties.publicProperty["identifier"],
         subject,
       },
     ];
@@ -3652,9 +3677,10 @@ export namespace PropertyVisibilitiesClass {
         triples: [
           {
             object: dataFactory.variable!(`${variablePrefix}PrivateProperty`),
-            predicate: dataFactory.namedNode(
-              "http://example.com/privateProperty",
-            ),
+            predicate:
+              PropertyVisibilitiesClass.$properties.privateProperty[
+                "identifier"
+              ],
             subject,
           },
         ],
@@ -3664,9 +3690,10 @@ export namespace PropertyVisibilitiesClass {
         triples: [
           {
             object: dataFactory.variable!(`${variablePrefix}ProtectedProperty`),
-            predicate: dataFactory.namedNode(
-              "http://example.com/protectedProperty",
-            ),
+            predicate:
+              PropertyVisibilitiesClass.$properties.protectedProperty[
+                "identifier"
+              ],
             subject,
           },
         ],
@@ -3676,9 +3703,10 @@ export namespace PropertyVisibilitiesClass {
         triples: [
           {
             object: dataFactory.variable!(`${variablePrefix}PublicProperty`),
-            predicate: dataFactory.namedNode(
-              "http://example.com/publicProperty",
-            ),
+            predicate:
+              PropertyVisibilitiesClass.$properties.publicProperty[
+                "identifier"
+              ],
             subject,
           },
         ],
@@ -3894,19 +3922,27 @@ export class PropertyCardinalitiesClass {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode("http://example.com/emptyStringSetProperty"),
+      PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
+        "identifier"
+      ],
       this.emptyStringSetProperty.map((_item) => _item),
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/nonEmptyStringSetProperty"),
+      PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
+        "identifier"
+      ],
       this.nonEmptyStringSetProperty.map((_item) => _item),
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/optionalStringProperty"),
+      PropertyCardinalitiesClass.$properties.optionalStringProperty[
+        "identifier"
+      ],
       this.optionalStringProperty,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/requiredStringProperty"),
+      PropertyCardinalitiesClass.$properties.requiredStringProperty[
+        "identifier"
+      ],
       this.requiredStringProperty,
     );
     return _resource;
@@ -3945,9 +3981,7 @@ export namespace PropertyCardinalitiesClass {
     readonly requiredStringProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4127,9 +4161,10 @@ export namespace PropertyCardinalitiesClass {
       new rdfjsResource.Resource.ValueError({
         focusResource: _resource,
         message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} is empty`,
-        predicate: dataFactory.namedNode(
-          "http://example.com/nonEmptyStringSetProperty",
-        ),
+        predicate:
+          PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
+            "identifier"
+          ],
       }),
     );
     if (_nonEmptyStringSetPropertyEither.isLeft()) {
@@ -4274,36 +4309,40 @@ export namespace PropertyCardinalitiesClass {
         object: dataFactory.variable!(
           `${variablePrefix}EmptyStringSetProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/emptyStringSetProperty",
-        ),
+        predicate:
+          PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
+            "identifier"
+          ],
         subject,
       },
       {
         object: dataFactory.variable!(
           `${variablePrefix}NonEmptyStringSetProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/nonEmptyStringSetProperty",
-        ),
+        predicate:
+          PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
+            "identifier"
+          ],
         subject,
       },
       {
         object: dataFactory.variable!(
           `${variablePrefix}OptionalStringProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/optionalStringProperty",
-        ),
+        predicate:
+          PropertyCardinalitiesClass.$properties.optionalStringProperty[
+            "identifier"
+          ],
         subject,
       },
       {
         object: dataFactory.variable!(
           `${variablePrefix}RequiredStringProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/requiredStringProperty",
-        ),
+        predicate:
+          PropertyCardinalitiesClass.$properties.requiredStringProperty[
+            "identifier"
+          ],
         subject,
       },
     ];
@@ -4331,9 +4370,10 @@ export namespace PropertyCardinalitiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}EmptyStringSetProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/emptyStringSetProperty",
-                ),
+                predicate:
+                  PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -4348,9 +4388,10 @@ export namespace PropertyCardinalitiesClass {
             object: dataFactory.variable!(
               `${variablePrefix}NonEmptyStringSetProperty`,
             ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/nonEmptyStringSetProperty",
-            ),
+            predicate:
+              PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
+                "identifier"
+              ],
             subject,
           },
         ],
@@ -4364,9 +4405,10 @@ export namespace PropertyCardinalitiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}OptionalStringProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/optionalStringProperty",
-                ),
+                predicate:
+                  PropertyCardinalitiesClass.$properties.optionalStringProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -4381,9 +4423,10 @@ export namespace PropertyCardinalitiesClass {
             object: dataFactory.variable!(
               `${variablePrefix}RequiredStringProperty`,
             ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/requiredStringProperty",
-            ),
+            predicate:
+              PropertyCardinalitiesClass.$properties.requiredStringProperty[
+                "identifier"
+              ],
             subject,
           },
         ],
@@ -4533,15 +4576,15 @@ export class OrderedPropertiesClass {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode("http://example.com/orderedPropertyC"),
+      OrderedPropertiesClass.$properties.orderedPropertyC["identifier"],
       this.orderedPropertyC,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/orderedPropertyB"),
+      OrderedPropertiesClass.$properties.orderedPropertyB["identifier"],
       this.orderedPropertyB,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/orderedPropertyA"),
+      OrderedPropertiesClass.$properties.orderedPropertyA["identifier"],
       this.orderedPropertyA,
     );
     return _resource;
@@ -4579,9 +4622,7 @@ export namespace OrderedPropertiesClass {
     readonly orderedPropertyA: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4810,17 +4851,20 @@ export namespace OrderedPropertiesClass {
     return [
       {
         object: dataFactory.variable!(`${variablePrefix}OrderedPropertyC`),
-        predicate: dataFactory.namedNode("http://example.com/orderedPropertyC"),
+        predicate:
+          OrderedPropertiesClass.$properties.orderedPropertyC["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(`${variablePrefix}OrderedPropertyB`),
-        predicate: dataFactory.namedNode("http://example.com/orderedPropertyB"),
+        predicate:
+          OrderedPropertiesClass.$properties.orderedPropertyB["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(`${variablePrefix}OrderedPropertyA`),
-        predicate: dataFactory.namedNode("http://example.com/orderedPropertyA"),
+        predicate:
+          OrderedPropertiesClass.$properties.orderedPropertyA["identifier"],
         subject,
       },
     ];
@@ -4843,9 +4887,8 @@ export namespace OrderedPropertiesClass {
         triples: [
           {
             object: dataFactory.variable!(`${variablePrefix}OrderedPropertyC`),
-            predicate: dataFactory.namedNode(
-              "http://example.com/orderedPropertyC",
-            ),
+            predicate:
+              OrderedPropertiesClass.$properties.orderedPropertyC["identifier"],
             subject,
           },
         ],
@@ -4855,9 +4898,8 @@ export namespace OrderedPropertiesClass {
         triples: [
           {
             object: dataFactory.variable!(`${variablePrefix}OrderedPropertyB`),
-            predicate: dataFactory.namedNode(
-              "http://example.com/orderedPropertyB",
-            ),
+            predicate:
+              OrderedPropertiesClass.$properties.orderedPropertyB["identifier"],
             subject,
           },
         ],
@@ -4867,9 +4909,8 @@ export namespace OrderedPropertiesClass {
         triples: [
           {
             object: dataFactory.variable!(`${variablePrefix}OrderedPropertyA`),
-            predicate: dataFactory.namedNode(
-              "http://example.com/orderedPropertyA",
-            ),
+            predicate:
+              OrderedPropertiesClass.$properties.orderedPropertyA["identifier"],
             subject,
           },
         ],
@@ -4987,7 +5028,7 @@ export class NonClass {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode("http://example.com/nonClassProperty"),
+      NonClass.$properties.nonClassProperty["identifier"],
       this.nonClassProperty,
     );
     return _resource;
@@ -5185,7 +5226,7 @@ export namespace NonClass {
     return [
       {
         object: dataFactory.variable!(`${variablePrefix}NonClassProperty`),
-        predicate: dataFactory.namedNode("http://example.com/nonClassProperty"),
+        predicate: NonClass.$properties.nonClassProperty["identifier"],
         subject,
       },
     ];
@@ -5205,9 +5246,7 @@ export namespace NonClass {
         triples: [
           {
             object: dataFactory.variable!(`${variablePrefix}NonClassProperty`),
-            predicate: dataFactory.namedNode(
-              "http://example.com/nonClassProperty",
-            ),
+            predicate: NonClass.$properties.nonClassProperty["identifier"],
             subject,
           },
         ],
@@ -5434,7 +5473,7 @@ export class MutablePropertiesClass {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode("http://example.com/mutableListProperty"),
+      MutablePropertiesClass.$properties.mutableListProperty["identifier"],
       this.mutableListProperty.map((_value) =>
         _value.length > 0
           ? _value.reduce(
@@ -5452,29 +5491,18 @@ export class MutablePropertiesClass {
                     { mutateGraph },
                   );
                   currentSubListResource!.add(
-                    dataFactory.namedNode(
-                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-                    ),
+                    $RdfVocabularies.rdf.rest,
                     newSubListResource.identifier,
                   );
                   currentSubListResource = newSubListResource;
                 }
 
-                currentSubListResource.add(
-                  dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-                  ),
-                  item,
-                );
+                currentSubListResource.add($RdfVocabularies.rdf.first, item);
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
-                    dataFactory.namedNode(
-                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-                    ),
-                    dataFactory.namedNode(
-                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
-                    ),
+                    $RdfVocabularies.rdf.rest,
+                    $RdfVocabularies.rdf.nil,
                   );
                 }
 
@@ -5491,17 +5519,15 @@ export class MutablePropertiesClass {
                 listResource: rdfjsResource.MutableResource;
               },
             ).listResource.identifier
-          : dataFactory.namedNode(
-              "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
-            ),
+          : $RdfVocabularies.rdf.nil,
       ),
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/mutableSetProperty"),
+      MutablePropertiesClass.$properties.mutableSetProperty["identifier"],
       this.mutableSetProperty.map((_item) => _item),
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/mutableStringProperty"),
+      MutablePropertiesClass.$properties.mutableStringProperty["identifier"],
       this.mutableStringProperty,
     );
     return _resource;
@@ -5539,9 +5565,7 @@ export namespace MutablePropertiesClass {
     readonly mutableStringProperty: string | undefined;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5821,25 +5845,20 @@ export namespace MutablePropertiesClass {
     return [
       {
         object: dataFactory.variable!(`${variablePrefix}MutableListProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/mutableListProperty",
-        ),
+        predicate:
+          MutablePropertiesClass.$properties.mutableListProperty["identifier"],
         subject,
       },
       {
         subject: dataFactory.variable!(`${variablePrefix}MutableListProperty`),
-        predicate: dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-        ),
+        predicate: $RdfVocabularies.rdf.first,
         object: dataFactory.variable!(
           `${`${variablePrefix}MutableListProperty`}Item0`,
         ),
       },
       {
         subject: dataFactory.variable!(`${variablePrefix}MutableListProperty`),
-        predicate: dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-        ),
+        predicate: $RdfVocabularies.rdf.rest,
         object: dataFactory.variable!(
           `${`${variablePrefix}MutableListProperty`}Rest0`,
         ),
@@ -5848,9 +5867,7 @@ export namespace MutablePropertiesClass {
         subject: dataFactory.variable!(
           `${`${variablePrefix}MutableListProperty`}RestN`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-        ),
+        predicate: $RdfVocabularies.rdf.first,
         object: dataFactory.variable!(
           `${`${variablePrefix}MutableListProperty`}ItemN`,
         ),
@@ -5859,25 +5876,23 @@ export namespace MutablePropertiesClass {
         subject: dataFactory.variable!(
           `${`${variablePrefix}MutableListProperty`}RestN`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-        ),
+        predicate: $RdfVocabularies.rdf.rest,
         object: dataFactory.variable!(
           `${`${variablePrefix}MutableListProperty`}RestNBasic`,
         ),
       },
       {
         object: dataFactory.variable!(`${variablePrefix}MutableSetProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/mutableSetProperty",
-        ),
+        predicate:
+          MutablePropertiesClass.$properties.mutableSetProperty["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(`${variablePrefix}MutableStringProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/mutableStringProperty",
-        ),
+        predicate:
+          MutablePropertiesClass.$properties.mutableStringProperty[
+            "identifier"
+          ],
         subject,
       },
     ];
@@ -5904,9 +5919,10 @@ export namespace MutablePropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}MutableListProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/mutableListProperty",
-                ),
+                predicate:
+                  MutablePropertiesClass.$properties.mutableListProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -5922,9 +5938,7 @@ export namespace MutablePropertiesClass {
                     subject: dataFactory.variable!(
                       `${variablePrefix}MutableListProperty`,
                     ),
-                    predicate: dataFactory.namedNode(
-                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-                    ),
+                    predicate: $RdfVocabularies.rdf.first,
                     object: dataFactory.variable!(
                       `${`${variablePrefix}MutableListProperty`}Item0`,
                     ),
@@ -5938,9 +5952,7 @@ export namespace MutablePropertiesClass {
                     subject: dataFactory.variable!(
                       `${variablePrefix}MutableListProperty`,
                     ),
-                    predicate: dataFactory.namedNode(
-                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-                    ),
+                    predicate: $RdfVocabularies.rdf.rest,
                     object: dataFactory.variable!(
                       `${`${variablePrefix}MutableListProperty`}Rest0`,
                     ),
@@ -5960,11 +5972,7 @@ export namespace MutablePropertiesClass {
                         predicate: {
                           type: "path",
                           pathType: "*",
-                          items: [
-                            dataFactory.namedNode(
-                              "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-                            ),
-                          ],
+                          items: [$RdfVocabularies.rdf.rest],
                         },
                         object: dataFactory.variable!(
                           `${`${variablePrefix}MutableListProperty`}RestN`,
@@ -5979,9 +5987,7 @@ export namespace MutablePropertiesClass {
                         subject: dataFactory.variable!(
                           `${`${variablePrefix}MutableListProperty`}RestN`,
                         ),
-                        predicate: dataFactory.namedNode(
-                          "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-                        ),
+                        predicate: $RdfVocabularies.rdf.first,
                         object: dataFactory.variable!(
                           `${`${variablePrefix}MutableListProperty`}ItemN`,
                         ),
@@ -5995,9 +6001,7 @@ export namespace MutablePropertiesClass {
                         subject: dataFactory.variable!(
                           `${`${variablePrefix}MutableListProperty`}RestN`,
                         ),
-                        predicate: dataFactory.namedNode(
-                          "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-                        ),
+                        predicate: $RdfVocabularies.rdf.rest,
                         object: dataFactory.variable!(
                           `${`${variablePrefix}MutableListProperty`}RestNBasic`,
                         ),
@@ -6019,9 +6023,10 @@ export namespace MutablePropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}MutableSetProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/mutableSetProperty",
-                ),
+                predicate:
+                  MutablePropertiesClass.$properties.mutableSetProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -6038,9 +6043,10 @@ export namespace MutablePropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}MutableStringProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/mutableStringProperty",
-                ),
+                predicate:
+                  MutablePropertiesClass.$properties.mutableStringProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -6216,7 +6222,7 @@ export class ListPropertiesClass {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode("http://example.com/objectListProperty"),
+      ListPropertiesClass.$properties.objectListProperty["identifier"],
       this.objectListProperty.map((_value) =>
         _value.length > 0
           ? _value.reduce(
@@ -6234,18 +6240,14 @@ export class ListPropertiesClass {
                     { mutateGraph },
                   );
                   currentSubListResource!.add(
-                    dataFactory.namedNode(
-                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-                    ),
+                    $RdfVocabularies.rdf.rest,
                     newSubListResource.identifier,
                   );
                   currentSubListResource = newSubListResource;
                 }
 
                 currentSubListResource.add(
-                  dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-                  ),
+                  $RdfVocabularies.rdf.first,
                   item.$toRdf({
                     mutateGraph: mutateGraph,
                     resourceSet: resourceSet,
@@ -6254,12 +6256,8 @@ export class ListPropertiesClass {
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
-                    dataFactory.namedNode(
-                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-                    ),
-                    dataFactory.namedNode(
-                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
-                    ),
+                    $RdfVocabularies.rdf.rest,
+                    $RdfVocabularies.rdf.nil,
                   );
                 }
 
@@ -6276,13 +6274,11 @@ export class ListPropertiesClass {
                 listResource: rdfjsResource.MutableResource;
               },
             ).listResource.identifier
-          : dataFactory.namedNode(
-              "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
-            ),
+          : $RdfVocabularies.rdf.nil,
       ),
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/stringListProperty"),
+      ListPropertiesClass.$properties.stringListProperty["identifier"],
       this.stringListProperty.map((_value) =>
         _value.length > 0
           ? _value.reduce(
@@ -6300,29 +6296,18 @@ export class ListPropertiesClass {
                     { mutateGraph },
                   );
                   currentSubListResource!.add(
-                    dataFactory.namedNode(
-                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-                    ),
+                    $RdfVocabularies.rdf.rest,
                     newSubListResource.identifier,
                   );
                   currentSubListResource = newSubListResource;
                 }
 
-                currentSubListResource.add(
-                  dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-                  ),
-                  item,
-                );
+                currentSubListResource.add($RdfVocabularies.rdf.first, item);
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
-                    dataFactory.namedNode(
-                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-                    ),
-                    dataFactory.namedNode(
-                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
-                    ),
+                    $RdfVocabularies.rdf.rest,
+                    $RdfVocabularies.rdf.nil,
                   );
                 }
 
@@ -6339,9 +6324,7 @@ export class ListPropertiesClass {
                 listResource: rdfjsResource.MutableResource;
               },
             ).listResource.identifier
-          : dataFactory.namedNode(
-              "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
-            ),
+          : $RdfVocabularies.rdf.nil,
       ),
     );
     return _resource;
@@ -6378,9 +6361,7 @@ export namespace ListPropertiesClass {
     readonly stringListProperty: readonly string[] | undefined;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6624,16 +6605,13 @@ export namespace ListPropertiesClass {
     return [
       {
         object: dataFactory.variable!(`${variablePrefix}ObjectListProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/objectListProperty",
-        ),
+        predicate:
+          ListPropertiesClass.$properties.objectListProperty["identifier"],
         subject,
       },
       {
         subject: dataFactory.variable!(`${variablePrefix}ObjectListProperty`),
-        predicate: dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-        ),
+        predicate: $RdfVocabularies.rdf.first,
         object: dataFactory.variable!(
           `${`${variablePrefix}ObjectListProperty`}Item0`,
         ),
@@ -6647,9 +6625,7 @@ export namespace ListPropertiesClass {
       }),
       {
         subject: dataFactory.variable!(`${variablePrefix}ObjectListProperty`),
-        predicate: dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-        ),
+        predicate: $RdfVocabularies.rdf.rest,
         object: dataFactory.variable!(
           `${`${variablePrefix}ObjectListProperty`}Rest0`,
         ),
@@ -6658,9 +6634,7 @@ export namespace ListPropertiesClass {
         subject: dataFactory.variable!(
           `${`${variablePrefix}ObjectListProperty`}RestN`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-        ),
+        predicate: $RdfVocabularies.rdf.first,
         object: dataFactory.variable!(
           `${`${variablePrefix}ObjectListProperty`}ItemN`,
         ),
@@ -6676,34 +6650,27 @@ export namespace ListPropertiesClass {
         subject: dataFactory.variable!(
           `${`${variablePrefix}ObjectListProperty`}RestN`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-        ),
+        predicate: $RdfVocabularies.rdf.rest,
         object: dataFactory.variable!(
           `${`${variablePrefix}ObjectListProperty`}RestNBasic`,
         ),
       },
       {
         object: dataFactory.variable!(`${variablePrefix}StringListProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/stringListProperty",
-        ),
+        predicate:
+          ListPropertiesClass.$properties.stringListProperty["identifier"],
         subject,
       },
       {
         subject: dataFactory.variable!(`${variablePrefix}StringListProperty`),
-        predicate: dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-        ),
+        predicate: $RdfVocabularies.rdf.first,
         object: dataFactory.variable!(
           `${`${variablePrefix}StringListProperty`}Item0`,
         ),
       },
       {
         subject: dataFactory.variable!(`${variablePrefix}StringListProperty`),
-        predicate: dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-        ),
+        predicate: $RdfVocabularies.rdf.rest,
         object: dataFactory.variable!(
           `${`${variablePrefix}StringListProperty`}Rest0`,
         ),
@@ -6712,9 +6679,7 @@ export namespace ListPropertiesClass {
         subject: dataFactory.variable!(
           `${`${variablePrefix}StringListProperty`}RestN`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-        ),
+        predicate: $RdfVocabularies.rdf.first,
         object: dataFactory.variable!(
           `${`${variablePrefix}StringListProperty`}ItemN`,
         ),
@@ -6723,9 +6688,7 @@ export namespace ListPropertiesClass {
         subject: dataFactory.variable!(
           `${`${variablePrefix}StringListProperty`}RestN`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-        ),
+        predicate: $RdfVocabularies.rdf.rest,
         object: dataFactory.variable!(
           `${`${variablePrefix}StringListProperty`}RestNBasic`,
         ),
@@ -6752,9 +6715,10 @@ export namespace ListPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}ObjectListProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/objectListProperty",
-                ),
+                predicate:
+                  ListPropertiesClass.$properties.objectListProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -6770,9 +6734,7 @@ export namespace ListPropertiesClass {
                     subject: dataFactory.variable!(
                       `${variablePrefix}ObjectListProperty`,
                     ),
-                    predicate: dataFactory.namedNode(
-                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-                    ),
+                    predicate: $RdfVocabularies.rdf.first,
                     object: dataFactory.variable!(
                       `${`${variablePrefix}ObjectListProperty`}Item0`,
                     ),
@@ -6793,9 +6755,7 @@ export namespace ListPropertiesClass {
                     subject: dataFactory.variable!(
                       `${variablePrefix}ObjectListProperty`,
                     ),
-                    predicate: dataFactory.namedNode(
-                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-                    ),
+                    predicate: $RdfVocabularies.rdf.rest,
                     object: dataFactory.variable!(
                       `${`${variablePrefix}ObjectListProperty`}Rest0`,
                     ),
@@ -6815,11 +6775,7 @@ export namespace ListPropertiesClass {
                         predicate: {
                           type: "path",
                           pathType: "*",
-                          items: [
-                            dataFactory.namedNode(
-                              "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-                            ),
-                          ],
+                          items: [$RdfVocabularies.rdf.rest],
                         },
                         object: dataFactory.variable!(
                           `${`${variablePrefix}ObjectListProperty`}RestN`,
@@ -6834,9 +6790,7 @@ export namespace ListPropertiesClass {
                         subject: dataFactory.variable!(
                           `${`${variablePrefix}ObjectListProperty`}RestN`,
                         ),
-                        predicate: dataFactory.namedNode(
-                          "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-                        ),
+                        predicate: $RdfVocabularies.rdf.first,
                         object: dataFactory.variable!(
                           `${`${variablePrefix}ObjectListProperty`}ItemN`,
                         ),
@@ -6857,9 +6811,7 @@ export namespace ListPropertiesClass {
                         subject: dataFactory.variable!(
                           `${`${variablePrefix}ObjectListProperty`}RestN`,
                         ),
-                        predicate: dataFactory.namedNode(
-                          "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-                        ),
+                        predicate: $RdfVocabularies.rdf.rest,
                         object: dataFactory.variable!(
                           `${`${variablePrefix}ObjectListProperty`}RestNBasic`,
                         ),
@@ -6881,9 +6833,10 @@ export namespace ListPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}StringListProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/stringListProperty",
-                ),
+                predicate:
+                  ListPropertiesClass.$properties.stringListProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -6899,9 +6852,7 @@ export namespace ListPropertiesClass {
                     subject: dataFactory.variable!(
                       `${variablePrefix}StringListProperty`,
                     ),
-                    predicate: dataFactory.namedNode(
-                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-                    ),
+                    predicate: $RdfVocabularies.rdf.first,
                     object: dataFactory.variable!(
                       `${`${variablePrefix}StringListProperty`}Item0`,
                     ),
@@ -6915,9 +6866,7 @@ export namespace ListPropertiesClass {
                     subject: dataFactory.variable!(
                       `${variablePrefix}StringListProperty`,
                     ),
-                    predicate: dataFactory.namedNode(
-                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-                    ),
+                    predicate: $RdfVocabularies.rdf.rest,
                     object: dataFactory.variable!(
                       `${`${variablePrefix}StringListProperty`}Rest0`,
                     ),
@@ -6937,11 +6886,7 @@ export namespace ListPropertiesClass {
                         predicate: {
                           type: "path",
                           pathType: "*",
-                          items: [
-                            dataFactory.namedNode(
-                              "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-                            ),
-                          ],
+                          items: [$RdfVocabularies.rdf.rest],
                         },
                         object: dataFactory.variable!(
                           `${`${variablePrefix}StringListProperty`}RestN`,
@@ -6956,9 +6901,7 @@ export namespace ListPropertiesClass {
                         subject: dataFactory.variable!(
                           `${`${variablePrefix}StringListProperty`}RestN`,
                         ),
-                        predicate: dataFactory.namedNode(
-                          "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-                        ),
+                        predicate: $RdfVocabularies.rdf.first,
                         object: dataFactory.variable!(
                           `${`${variablePrefix}StringListProperty`}ItemN`,
                         ),
@@ -6972,9 +6915,7 @@ export namespace ListPropertiesClass {
                         subject: dataFactory.variable!(
                           `${`${variablePrefix}StringListProperty`}RestN`,
                         ),
-                        predicate: dataFactory.namedNode(
-                          "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-                        ),
+                        predicate: $RdfVocabularies.rdf.rest,
                         object: dataFactory.variable!(
                           `${`${variablePrefix}StringListProperty`}RestNBasic`,
                         ),
@@ -7264,15 +7205,14 @@ export class LanguageInPropertiesClass {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode(
-        "http://example.com/languageInPropertiesLanguageInProperty",
-      ),
+      LanguageInPropertiesClass.$properties
+        .languageInPropertiesLanguageInProperty["identifier"],
       this.languageInPropertiesLanguageInProperty,
     );
     _resource.add(
-      dataFactory.namedNode(
-        "http://example.com/languageInPropertiesLiteralProperty",
-      ),
+      LanguageInPropertiesClass.$properties.languageInPropertiesLiteralProperty[
+        "identifier"
+      ],
       this.languageInPropertiesLiteralProperty,
     );
     return _resource;
@@ -7321,9 +7261,7 @@ export namespace LanguageInPropertiesClass {
       | undefined;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -7615,18 +7553,18 @@ export namespace LanguageInPropertiesClass {
         object: dataFactory.variable!(
           `${variablePrefix}LanguageInPropertiesLanguageInProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/languageInPropertiesLanguageInProperty",
-        ),
+        predicate:
+          LanguageInPropertiesClass.$properties
+            .languageInPropertiesLanguageInProperty["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(
           `${variablePrefix}LanguageInPropertiesLiteralProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/languageInPropertiesLiteralProperty",
-        ),
+        predicate:
+          LanguageInPropertiesClass.$properties
+            .languageInPropertiesLiteralProperty["identifier"],
         subject,
       },
     ];
@@ -7653,9 +7591,9 @@ export namespace LanguageInPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}LanguageInPropertiesLanguageInProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/languageInPropertiesLanguageInProperty",
-                ),
+                predicate:
+                  LanguageInPropertiesClass.$properties
+                    .languageInPropertiesLanguageInProperty["identifier"],
                 subject,
               },
             ],
@@ -7672,9 +7610,9 @@ export namespace LanguageInPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}LanguageInPropertiesLiteralProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/languageInPropertiesLiteralProperty",
-                ),
+                predicate:
+                  LanguageInPropertiesClass.$properties
+                    .languageInPropertiesLiteralProperty["identifier"],
                 subject,
               },
             ],
@@ -7876,9 +7814,7 @@ export namespace IriClass {
           actualValue: _resource.identifier,
           expectedValueType: "(rdfjs.NamedNode)",
           focusResource: _resource,
-          predicate: dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-          ),
+          predicate: $RdfVocabularies.rdf.subject,
         }),
       );
     }
@@ -8036,9 +7972,7 @@ export namespace InterfaceUnionMember2b {
     readonly interfaceUnionMember2bProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8224,9 +8158,9 @@ export namespace InterfaceUnionMember2b {
       { mutateGraph },
     );
     _resource.add(
-      dataFactory.namedNode(
-        "http://example.com/interfaceUnionMember2bProperty",
-      ),
+      InterfaceUnionMember2b.$properties.interfaceUnionMember2bProperty[
+        "identifier"
+      ],
       _interfaceUnionMember2b.interfaceUnionMember2bProperty,
     );
     return _resource;
@@ -8296,9 +8230,10 @@ export namespace InterfaceUnionMember2b {
         object: dataFactory.variable!(
           `${variablePrefix}InterfaceUnionMember2bProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/interfaceUnionMember2bProperty",
-        ),
+        predicate:
+          InterfaceUnionMember2b.$properties.interfaceUnionMember2bProperty[
+            "identifier"
+          ],
         subject,
       },
     ];
@@ -8323,9 +8258,10 @@ export namespace InterfaceUnionMember2b {
             object: dataFactory.variable!(
               `${variablePrefix}InterfaceUnionMember2bProperty`,
             ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/interfaceUnionMember2bProperty",
-            ),
+            predicate:
+              InterfaceUnionMember2b.$properties.interfaceUnionMember2bProperty[
+                "identifier"
+              ],
             subject,
           },
         ],
@@ -8421,9 +8357,7 @@ export namespace InterfaceUnionMember2a {
     readonly interfaceUnionMember2aProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8609,9 +8543,9 @@ export namespace InterfaceUnionMember2a {
       { mutateGraph },
     );
     _resource.add(
-      dataFactory.namedNode(
-        "http://example.com/interfaceUnionMember2aProperty",
-      ),
+      InterfaceUnionMember2a.$properties.interfaceUnionMember2aProperty[
+        "identifier"
+      ],
       _interfaceUnionMember2a.interfaceUnionMember2aProperty,
     );
     return _resource;
@@ -8681,9 +8615,10 @@ export namespace InterfaceUnionMember2a {
         object: dataFactory.variable!(
           `${variablePrefix}InterfaceUnionMember2aProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/interfaceUnionMember2aProperty",
-        ),
+        predicate:
+          InterfaceUnionMember2a.$properties.interfaceUnionMember2aProperty[
+            "identifier"
+          ],
         subject,
       },
     ];
@@ -8708,9 +8643,10 @@ export namespace InterfaceUnionMember2a {
             object: dataFactory.variable!(
               `${variablePrefix}InterfaceUnionMember2aProperty`,
             ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/interfaceUnionMember2aProperty",
-            ),
+            predicate:
+              InterfaceUnionMember2a.$properties.interfaceUnionMember2aProperty[
+                "identifier"
+              ],
             subject,
           },
         ],
@@ -8806,9 +8742,7 @@ export namespace InterfaceUnionMember1 {
     readonly interfaceUnionMember1Property: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8984,7 +8918,9 @@ export namespace InterfaceUnionMember1 {
       { mutateGraph },
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/interfaceUnionMember1Property"),
+      InterfaceUnionMember1.$properties.interfaceUnionMember1Property[
+        "identifier"
+      ],
       _interfaceUnionMember1.interfaceUnionMember1Property,
     );
     return _resource;
@@ -9054,9 +8990,10 @@ export namespace InterfaceUnionMember1 {
         object: dataFactory.variable!(
           `${variablePrefix}InterfaceUnionMember1Property`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/interfaceUnionMember1Property",
-        ),
+        predicate:
+          InterfaceUnionMember1.$properties.interfaceUnionMember1Property[
+            "identifier"
+          ],
         subject,
       },
     ];
@@ -9081,9 +9018,10 @@ export namespace InterfaceUnionMember1 {
             object: dataFactory.variable!(
               `${variablePrefix}InterfaceUnionMember1Property`,
             ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/interfaceUnionMember1Property",
-            ),
+            predicate:
+              InterfaceUnionMember1.$properties.interfaceUnionMember1Property[
+                "identifier"
+              ],
             subject,
           },
         ],
@@ -9177,9 +9115,7 @@ export namespace Interface {
     readonly interfaceProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9339,7 +9275,7 @@ export namespace Interface {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode("http://example.com/interfaceProperty"),
+      Interface.$properties.interfaceProperty["identifier"],
       _interface.interfaceProperty,
     );
     return _resource;
@@ -9399,9 +9335,7 @@ export namespace Interface {
     return [
       {
         object: dataFactory.variable!(`${variablePrefix}InterfaceProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/interfaceProperty",
-        ),
+        predicate: Interface.$properties.interfaceProperty["identifier"],
         subject,
       },
     ];
@@ -9421,9 +9355,7 @@ export namespace Interface {
         triples: [
           {
             object: dataFactory.variable!(`${variablePrefix}InterfaceProperty`),
-            predicate: dataFactory.namedNode(
-              "http://example.com/interfaceProperty",
-            ),
+            predicate: Interface.$properties.interfaceProperty["identifier"],
             subject,
           },
         ],
@@ -9704,30 +9636,28 @@ export class InPropertiesClass {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode("http://example.com/inBooleansProperty"),
+      InPropertiesClass.$properties.inBooleansProperty["identifier"],
       this.inBooleansProperty,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/inDateTimesProperty"),
+      InPropertiesClass.$properties.inDateTimesProperty["identifier"],
       this.inDateTimesProperty.map((_value) =>
         rdfLiteral.toRdf(_value, {
           dataFactory,
-          datatype: dataFactory.namedNode(
-            "http://www.w3.org/2001/XMLSchema#dateTime",
-          ),
+          datatype: $RdfVocabularies.xsd.dateTime,
         }),
       ),
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/inIrisProperty"),
+      InPropertiesClass.$properties.inIrisProperty["identifier"],
       this.inIrisProperty,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/inNumbersProperty"),
+      InPropertiesClass.$properties.inNumbersProperty["identifier"],
       this.inNumbersProperty,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/inStringsProperty"),
+      InPropertiesClass.$properties.inStringsProperty["identifier"],
       this.inStringsProperty,
     );
     return _resource;
@@ -9773,9 +9703,7 @@ export namespace InPropertiesClass {
     readonly inStringsProperty: ("text" | "html") | undefined;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9935,22 +9863,21 @@ export namespace InPropertiesClass {
         .values($properties.inBooleansProperty["identifier"], { unique: true })
         .head()
         .chain((_value) =>
-          _value
-            .toBoolean()
-            .chain((value) =>
-              value === true
-                ? purify.Either.of(value)
-                : purify.Left(
-                    new rdfjsResource.Resource.MistypedValueError({
-                      actualValue: rdfLiteral.toRdf(value),
-                      expectedValueType: "true",
-                      focusResource: _resource,
-                      predicate: dataFactory.namedNode(
-                        "http://example.com/inBooleansProperty",
-                      ),
-                    }),
-                  ),
-            ),
+          _value.toBoolean().chain((value) =>
+            value === true
+              ? purify.Either.of(value)
+              : purify.Left(
+                  new rdfjsResource.Resource.MistypedValueError({
+                    actualValue: rdfLiteral.toRdf(value),
+                    expectedValueType: "true",
+                    focusResource: _resource,
+                    predicate:
+                      InPropertiesClass.$properties.inBooleansProperty[
+                        "identifier"
+                      ],
+                  }),
+                ),
+          ),
         )
         .toMaybe(),
     );
@@ -9975,15 +9902,14 @@ export namespace InPropertiesClass {
               new rdfjsResource.Resource.MistypedValueError({
                 actualValue: rdfLiteral.toRdf(value, {
                   dataFactory,
-                  datatype: dataFactory.namedNode(
-                    "http://www.w3.org/2001/XMLSchema#dateTime",
-                  ),
+                  datatype: $RdfVocabularies.xsd.dateTime,
                 }),
                 expectedValueType: "Date",
                 focusResource: _resource,
-                predicate: dataFactory.namedNode(
-                  "http://example.com/inDateTimesProperty",
-                ),
+                predicate:
+                  InPropertiesClass.$properties.inDateTimesProperty[
+                    "identifier"
+                  ],
               }),
             );
           }),
@@ -10037,9 +9963,10 @@ export namespace InPropertiesClass {
                     expectedValueType:
                       'rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">',
                     focusResource: _resource,
-                    predicate: dataFactory.namedNode(
-                      "http://example.com/inIrisProperty",
-                    ),
+                    predicate:
+                      InPropertiesClass.$properties.inIrisProperty[
+                        "identifier"
+                      ],
                   }),
                 );
             }
@@ -10071,9 +9998,10 @@ export namespace InPropertiesClass {
                     actualValue: rdfLiteral.toRdf(value),
                     expectedValueType: "1 | 2",
                     focusResource: _resource,
-                    predicate: dataFactory.namedNode(
-                      "http://example.com/inNumbersProperty",
-                    ),
+                    predicate:
+                      InPropertiesClass.$properties.inNumbersProperty[
+                        "identifier"
+                      ],
                   }),
                 );
             }
@@ -10105,9 +10033,10 @@ export namespace InPropertiesClass {
                     actualValue: rdfLiteral.toRdf(value),
                     expectedValueType: '"text" | "html"',
                     focusResource: _resource,
-                    predicate: dataFactory.namedNode(
-                      "http://example.com/inStringsProperty",
-                    ),
+                    predicate:
+                      InPropertiesClass.$properties.inStringsProperty[
+                        "identifier"
+                      ],
                   }),
                 );
             }
@@ -10212,35 +10141,31 @@ export namespace InPropertiesClass {
     return [
       {
         object: dataFactory.variable!(`${variablePrefix}InBooleansProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/inBooleansProperty",
-        ),
+        predicate:
+          InPropertiesClass.$properties.inBooleansProperty["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(`${variablePrefix}InDateTimesProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/inDateTimesProperty",
-        ),
+        predicate:
+          InPropertiesClass.$properties.inDateTimesProperty["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(`${variablePrefix}InIrisProperty`),
-        predicate: dataFactory.namedNode("http://example.com/inIrisProperty"),
+        predicate: InPropertiesClass.$properties.inIrisProperty["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(`${variablePrefix}InNumbersProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/inNumbersProperty",
-        ),
+        predicate:
+          InPropertiesClass.$properties.inNumbersProperty["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(`${variablePrefix}InStringsProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/inStringsProperty",
-        ),
+        predicate:
+          InPropertiesClass.$properties.inStringsProperty["identifier"],
         subject,
       },
     ];
@@ -10265,9 +10190,10 @@ export namespace InPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}InBooleansProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/inBooleansProperty",
-                ),
+                predicate:
+                  InPropertiesClass.$properties.inBooleansProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -10284,9 +10210,10 @@ export namespace InPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}InDateTimesProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/inDateTimesProperty",
-                ),
+                predicate:
+                  InPropertiesClass.$properties.inDateTimesProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -10303,9 +10230,8 @@ export namespace InPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}InIrisProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/inIrisProperty",
-                ),
+                predicate:
+                  InPropertiesClass.$properties.inIrisProperty["identifier"],
                 subject,
               },
             ],
@@ -10322,9 +10248,8 @@ export namespace InPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}InNumbersProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/inNumbersProperty",
-                ),
+                predicate:
+                  InPropertiesClass.$properties.inNumbersProperty["identifier"],
                 subject,
               },
             ],
@@ -10341,9 +10266,8 @@ export namespace InPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}InStringsProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/inStringsProperty",
-                ),
+                predicate:
+                  InPropertiesClass.$properties.inStringsProperty["identifier"],
                 subject,
               },
             ],
@@ -10475,7 +10399,7 @@ export class InIdentifierClass {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode("http://example.com/inIdentifierProperty"),
+      InIdentifierClass.$properties.inIdentifierProperty["identifier"],
       this.inIdentifierProperty,
     );
     return _resource;
@@ -10549,9 +10473,7 @@ export namespace InIdentifierClass {
     readonly inIdentifierProperty: string | undefined;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.NamedNode<
@@ -10667,9 +10589,7 @@ export namespace InIdentifierClass {
             expectedValueType:
               'rdfjs.NamedNode<"http://example.com/InIdentifierInstance1" | "http://example.com/InIdentifierInstance2">',
             focusResource: _resource,
-            predicate: dataFactory.namedNode(
-              "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-            ),
+            predicate: $RdfVocabularies.rdf.subject,
           }),
         );
     }
@@ -10762,9 +10682,8 @@ export namespace InIdentifierClass {
     return [
       {
         object: dataFactory.variable!(`${variablePrefix}InIdentifierProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/inIdentifierProperty",
-        ),
+        predicate:
+          InIdentifierClass.$properties.inIdentifierProperty["identifier"],
         subject,
       },
     ];
@@ -10789,9 +10708,10 @@ export namespace InIdentifierClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}InIdentifierProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/inIdentifierProperty",
-                ),
+                predicate:
+                  InIdentifierClass.$properties.inIdentifierProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -10968,11 +10888,11 @@ export class HasValuePropertiesClass {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode("http://example.com/hasIriValueProperty"),
+      HasValuePropertiesClass.$properties.hasIriValueProperty["identifier"],
       this.hasIriValueProperty,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/hasLiteralValueProperty"),
+      HasValuePropertiesClass.$properties.hasLiteralValueProperty["identifier"],
       this.hasLiteralValueProperty,
     );
     return _resource;
@@ -11009,9 +10929,7 @@ export namespace HasValuePropertiesClass {
     readonly hasLiteralValueProperty: string | undefined;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11247,18 +11165,18 @@ export namespace HasValuePropertiesClass {
     return [
       {
         object: dataFactory.variable!(`${variablePrefix}HasIriValueProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/hasIriValueProperty",
-        ),
+        predicate:
+          HasValuePropertiesClass.$properties.hasIriValueProperty["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(
           `${variablePrefix}HasLiteralValueProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/hasLiteralValueProperty",
-        ),
+        predicate:
+          HasValuePropertiesClass.$properties.hasLiteralValueProperty[
+            "identifier"
+          ],
         subject,
       },
     ];
@@ -11285,9 +11203,10 @@ export namespace HasValuePropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}HasIriValueProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/hasIriValueProperty",
-                ),
+                predicate:
+                  HasValuePropertiesClass.$properties.hasIriValueProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -11304,9 +11223,10 @@ export namespace HasValuePropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}HasLiteralValueProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/hasLiteralValueProperty",
-                ),
+                predicate:
+                  HasValuePropertiesClass.$properties.hasLiteralValueProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -11429,9 +11349,8 @@ export class ExternPropertiesInlineNestedClass {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode(
-        "http://example.com/externPropertiesInlineNestedStringProperty",
-      ),
+      ExternPropertiesInlineNestedClass.$properties
+        .externPropertiesInlineNestedStringProperty["identifier"],
       this.externPropertiesInlineNestedStringProperty,
     );
     return _resource;
@@ -11467,9 +11386,7 @@ export namespace ExternPropertiesInlineNestedClass {
     readonly externPropertiesInlineNestedStringProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11666,9 +11583,9 @@ export namespace ExternPropertiesInlineNestedClass {
         object: dataFactory.variable!(
           `${variablePrefix}ExternPropertiesInlineNestedStringProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/externPropertiesInlineNestedStringProperty",
-        ),
+        predicate:
+          ExternPropertiesInlineNestedClass.$properties
+            .externPropertiesInlineNestedStringProperty["identifier"],
         subject,
       },
     ];
@@ -11694,9 +11611,9 @@ export namespace ExternPropertiesInlineNestedClass {
             object: dataFactory.variable!(
               `${variablePrefix}ExternPropertiesInlineNestedStringProperty`,
             ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/externPropertiesInlineNestedStringProperty",
-            ),
+            predicate:
+              ExternPropertiesInlineNestedClass.$properties
+                .externPropertiesInlineNestedStringProperty["identifier"],
             subject,
           },
         ],
@@ -11816,9 +11733,8 @@ export class ExternPropertiesExternNestedClass {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode(
-        "http://example.com/externPropertiesExternNestedStringProperty",
-      ),
+      ExternPropertiesExternNestedClass.$properties
+        .externPropertiesExternNestedStringProperty["identifier"],
       this.externPropertiesExternNestedStringProperty,
     );
     return _resource;
@@ -11854,9 +11770,7 @@ export namespace ExternPropertiesExternNestedClass {
     readonly externPropertiesExternNestedStringProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12053,9 +11967,9 @@ export namespace ExternPropertiesExternNestedClass {
         object: dataFactory.variable!(
           `${variablePrefix}ExternPropertiesExternNestedStringProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/externPropertiesExternNestedStringProperty",
-        ),
+        predicate:
+          ExternPropertiesExternNestedClass.$properties
+            .externPropertiesExternNestedStringProperty["identifier"],
         subject,
       },
     ];
@@ -12081,9 +11995,9 @@ export namespace ExternPropertiesExternNestedClass {
             object: dataFactory.variable!(
               `${variablePrefix}ExternPropertiesExternNestedStringProperty`,
             ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/externPropertiesExternNestedStringProperty",
-            ),
+            predicate:
+              ExternPropertiesExternNestedClass.$properties
+                .externPropertiesExternNestedStringProperty["identifier"],
             subject,
           },
         ],
@@ -12307,17 +12221,17 @@ export class ExternPropertiesClass {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode("http://example.com/externClassProperty"),
+      ExternPropertiesClass.$properties.externClassProperty["identifier"],
       this.externClassProperty.map((_value) =>
         _value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/externNestedProperty"),
+      ExternPropertiesClass.$properties.externNestedProperty["identifier"],
       this.externNestedProperty,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/inlineNestedProperty"),
+      ExternPropertiesClass.$properties.inlineNestedProperty["identifier"],
       this.inlineNestedProperty.map((_value) =>
         _value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
@@ -12359,9 +12273,7 @@ export namespace ExternPropertiesClass {
       | undefined;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12637,9 +12549,8 @@ export namespace ExternPropertiesClass {
     return [
       {
         object: dataFactory.variable!(`${variablePrefix}ExternClassProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/externClassProperty",
-        ),
+        predicate:
+          ExternPropertiesClass.$properties.externClassProperty["identifier"],
         subject,
       },
       ...ExternClass.$sparqlConstructTemplateTriples({
@@ -12649,16 +12560,14 @@ export namespace ExternPropertiesClass {
       }),
       {
         object: dataFactory.variable!(`${variablePrefix}ExternNestedProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/externNestedProperty",
-        ),
+        predicate:
+          ExternPropertiesClass.$properties.externNestedProperty["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(`${variablePrefix}InlineNestedProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/inlineNestedProperty",
-        ),
+        predicate:
+          ExternPropertiesClass.$properties.inlineNestedProperty["identifier"],
         subject,
       },
       ...ExternPropertiesInlineNestedClass.$sparqlConstructTemplateTriples({
@@ -12690,9 +12599,10 @@ export namespace ExternPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}ExternClassProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/externClassProperty",
-                ),
+                predicate:
+                  ExternPropertiesClass.$properties.externClassProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -12716,9 +12626,10 @@ export namespace ExternPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}ExternNestedProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/externNestedProperty",
-                ),
+                predicate:
+                  ExternPropertiesClass.$properties.externNestedProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -12735,9 +12646,10 @@ export namespace ExternPropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}InlineNestedProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/inlineNestedProperty",
-                ),
+                predicate:
+                  ExternPropertiesClass.$properties.inlineNestedProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -12870,15 +12782,13 @@ export class ExplicitRdfTypeClass {
     });
     if (!ignoreRdfType) {
       _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
+        $RdfVocabularies.rdf.type,
         _resource.dataFactory.namedNode("http://example.com/RdfType"),
       );
     }
 
     _resource.add(
-      dataFactory.namedNode("http://example.com/explicitRdfTypeProperty"),
+      ExplicitRdfTypeClass.$properties.explicitRdfTypeProperty["identifier"],
       this.explicitRdfTypeProperty,
     );
     return _resource;
@@ -12917,9 +12827,7 @@ export namespace ExplicitRdfTypeClass {
     readonly explicitRdfTypeProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13007,27 +12915,16 @@ export namespace ExplicitRdfTypeClass {
       explicitRdfTypeProperty: string;
     }
   > {
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://example.com/RdfType"),
-      )
-    ) {
+    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
       return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
+        .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
             new rdfjsResource.Resource.ValueError({
               focusResource: _resource,
               message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/RdfType)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
             }),
           ),
         );
@@ -13125,16 +13022,12 @@ export namespace ExplicitRdfTypeClass {
         : [
             {
               subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
             {
               subject: dataFactory.variable!(`${variablePrefix}RdfType`),
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
               object: dataFactory.variable!(`${variablePrefix}RdfClass`),
             },
           ]),
@@ -13142,9 +13035,10 @@ export namespace ExplicitRdfTypeClass {
         object: dataFactory.variable!(
           `${variablePrefix}ExplicitRdfTypeProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/explicitRdfTypeProperty",
-        ),
+        predicate:
+          ExplicitRdfTypeClass.$properties.explicitRdfTypeProperty[
+            "identifier"
+          ],
         subject,
       },
     ];
@@ -13172,15 +13066,9 @@ export namespace ExplicitRdfTypeClass {
                   subject,
                   predicate: {
                     items: [
-                      dataFactory.namedNode(
-                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                      ),
+                      $RdfVocabularies.rdf.type,
                       {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
+                        items: [$RdfVocabularies.rdfs.subClassOf],
                         pathType: "*" as const,
                         type: "path" as const,
                       },
@@ -13188,7 +13076,7 @@ export namespace ExplicitRdfTypeClass {
                     pathType: "/" as const,
                     type: "path" as const,
                   },
-                  object: dataFactory.namedNode("http://example.com/RdfType"),
+                  object: $fromRdfType,
                 },
               ],
               type: "bgp" as const,
@@ -13197,9 +13085,7 @@ export namespace ExplicitRdfTypeClass {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: $RdfVocabularies.rdf.type,
                   object: dataFactory.variable!(`${variablePrefix}RdfType`),
                 },
               ],
@@ -13214,11 +13100,7 @@ export namespace ExplicitRdfTypeClass {
                         `${variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
+                        items: [$RdfVocabularies.rdfs.subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -13239,9 +13121,10 @@ export namespace ExplicitRdfTypeClass {
             object: dataFactory.variable!(
               `${variablePrefix}ExplicitRdfTypeProperty`,
             ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/explicitRdfTypeProperty",
-            ),
+            predicate:
+              ExplicitRdfTypeClass.$properties.explicitRdfTypeProperty[
+                "identifier"
+              ],
             subject,
           },
         ],
@@ -13366,23 +13249,19 @@ export class ExplicitFromToRdfTypesClass {
     });
     if (!ignoreRdfType) {
       _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
+        $RdfVocabularies.rdf.type,
         _resource.dataFactory.namedNode("http://example.com/ToRdfType"),
       );
       _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
+        $RdfVocabularies.rdf.type,
         _resource.dataFactory.namedNode("http://example.com/FromRdfType"),
       );
     }
 
     _resource.add(
-      dataFactory.namedNode(
-        "http://example.com/explicitFromToRdfTypesProperty",
-      ),
+      ExplicitFromToRdfTypesClass.$properties.explicitFromToRdfTypesProperty[
+        "identifier"
+      ],
       this.explicitFromToRdfTypesProperty,
     );
     return _resource;
@@ -13421,9 +13300,7 @@ export namespace ExplicitFromToRdfTypesClass {
     readonly explicitFromToRdfTypesProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13512,27 +13389,16 @@ export namespace ExplicitFromToRdfTypesClass {
       explicitFromToRdfTypesProperty: string;
     }
   > {
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://example.com/FromRdfType"),
-      )
-    ) {
+    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
       return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
+        .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
             new rdfjsResource.Resource.ValueError({
               focusResource: _resource,
               message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/FromRdfType)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
             }),
           ),
         );
@@ -13640,16 +13506,12 @@ export namespace ExplicitFromToRdfTypesClass {
         : [
             {
               subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
             {
               subject: dataFactory.variable!(`${variablePrefix}RdfType`),
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
               object: dataFactory.variable!(`${variablePrefix}RdfClass`),
             },
           ]),
@@ -13657,9 +13519,9 @@ export namespace ExplicitFromToRdfTypesClass {
         object: dataFactory.variable!(
           `${variablePrefix}ExplicitFromToRdfTypesProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/explicitFromToRdfTypesProperty",
-        ),
+        predicate:
+          ExplicitFromToRdfTypesClass.$properties
+            .explicitFromToRdfTypesProperty["identifier"],
         subject,
       },
     ];
@@ -13688,15 +13550,9 @@ export namespace ExplicitFromToRdfTypesClass {
                   subject,
                   predicate: {
                     items: [
-                      dataFactory.namedNode(
-                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                      ),
+                      $RdfVocabularies.rdf.type,
                       {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
+                        items: [$RdfVocabularies.rdfs.subClassOf],
                         pathType: "*" as const,
                         type: "path" as const,
                       },
@@ -13704,9 +13560,7 @@ export namespace ExplicitFromToRdfTypesClass {
                     pathType: "/" as const,
                     type: "path" as const,
                   },
-                  object: dataFactory.namedNode(
-                    "http://example.com/FromRdfType",
-                  ),
+                  object: $fromRdfType,
                 },
               ],
               type: "bgp" as const,
@@ -13715,9 +13569,7 @@ export namespace ExplicitFromToRdfTypesClass {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: $RdfVocabularies.rdf.type,
                   object: dataFactory.variable!(`${variablePrefix}RdfType`),
                 },
               ],
@@ -13732,11 +13584,7 @@ export namespace ExplicitFromToRdfTypesClass {
                         `${variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
+                        items: [$RdfVocabularies.rdfs.subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -13757,9 +13605,9 @@ export namespace ExplicitFromToRdfTypesClass {
             object: dataFactory.variable!(
               `${variablePrefix}ExplicitFromToRdfTypesProperty`,
             ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/explicitFromToRdfTypesProperty",
-            ),
+            predicate:
+              ExplicitFromToRdfTypesClass.$properties
+                .explicitFromToRdfTypesProperty["identifier"],
             subject,
           },
         ],
@@ -14048,49 +13896,53 @@ export class DefaultValuePropertiesClass {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode("http://example.com/dateDefaultValueProperty"),
+      DefaultValuePropertiesClass.$properties.dateDefaultValueProperty[
+        "identifier"
+      ],
       this.dateDefaultValueProperty.getTime() !== 1523232000000
         ? rdfLiteral.toRdf(this.dateDefaultValueProperty, {
             dataFactory,
-            datatype: dataFactory.namedNode(
-              "http://www.w3.org/2001/XMLSchema#date",
-            ),
+            datatype: $RdfVocabularies.xsd.date,
           })
         : undefined,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/dateTimeDefaultValueProperty"),
+      DefaultValuePropertiesClass.$properties.dateTimeDefaultValueProperty[
+        "identifier"
+      ],
       this.dateTimeDefaultValueProperty.getTime() !== 1523268000000
         ? rdfLiteral.toRdf(this.dateTimeDefaultValueProperty, {
             dataFactory,
-            datatype: dataFactory.namedNode(
-              "http://www.w3.org/2001/XMLSchema#dateTime",
-            ),
+            datatype: $RdfVocabularies.xsd.dateTime,
           })
         : undefined,
     );
     _resource.add(
-      dataFactory.namedNode(
-        "http://example.com/falseBooleanDefaultValueProperty",
-      ),
+      DefaultValuePropertiesClass.$properties.falseBooleanDefaultValueProperty[
+        "identifier"
+      ],
       this.falseBooleanDefaultValueProperty ? true : undefined,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/numberDefaultValueProperty"),
+      DefaultValuePropertiesClass.$properties.numberDefaultValueProperty[
+        "identifier"
+      ],
       this.numberDefaultValueProperty !== 0
         ? this.numberDefaultValueProperty
         : undefined,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/stringDefaultValueProperty"),
+      DefaultValuePropertiesClass.$properties.stringDefaultValueProperty[
+        "identifier"
+      ],
       this.stringDefaultValueProperty !== ""
         ? this.stringDefaultValueProperty
         : undefined,
     );
     _resource.add(
-      dataFactory.namedNode(
-        "http://example.com/trueBooleanDefaultValueProperty",
-      ),
+      DefaultValuePropertiesClass.$properties.trueBooleanDefaultValueProperty[
+        "identifier"
+      ],
       !this.trueBooleanDefaultValueProperty ? false : undefined,
     );
     return _resource;
@@ -14131,9 +13983,7 @@ export namespace DefaultValuePropertiesClass {
     readonly trueBooleanDefaultValueProperty: boolean;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14291,12 +14141,13 @@ export namespace DefaultValuePropertiesClass {
         purify.Either.of(
           new rdfjsResource.Resource.Value({
             subject: _resource,
-            predicate: dataFactory.namedNode(
-              "http://example.com/dateDefaultValueProperty",
-            ),
+            predicate:
+              DefaultValuePropertiesClass.$properties.dateDefaultValueProperty[
+                "identifier"
+              ],
             object: dataFactory.literal(
               "2018-04-09",
-              dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#date"),
+              $RdfVocabularies.xsd.date,
             ),
           }),
         ),
@@ -14320,14 +14171,12 @@ export namespace DefaultValuePropertiesClass {
         purify.Either.of(
           new rdfjsResource.Resource.Value({
             subject: _resource,
-            predicate: dataFactory.namedNode(
-              "http://example.com/dateTimeDefaultValueProperty",
-            ),
+            predicate:
+              DefaultValuePropertiesClass.$properties
+                .dateTimeDefaultValueProperty["identifier"],
             object: dataFactory.literal(
               "2018-04-09T10:00:00Z",
-              dataFactory.namedNode(
-                "http://www.w3.org/2001/XMLSchema#dateTime",
-              ),
+              $RdfVocabularies.xsd.dateTime,
             ),
           }),
         ),
@@ -14351,13 +14200,10 @@ export namespace DefaultValuePropertiesClass {
         purify.Either.of(
           new rdfjsResource.Resource.Value({
             subject: _resource,
-            predicate: dataFactory.namedNode(
-              "http://example.com/falseBooleanDefaultValueProperty",
-            ),
-            object: dataFactory.literal(
-              "false",
-              dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#boolean"),
-            ),
+            predicate:
+              DefaultValuePropertiesClass.$properties
+                .falseBooleanDefaultValueProperty["identifier"],
+            object: dataFactory.literal("false", $RdfVocabularies.xsd.boolean),
           }),
         ),
       )
@@ -14380,13 +14226,10 @@ export namespace DefaultValuePropertiesClass {
         purify.Either.of(
           new rdfjsResource.Resource.Value({
             subject: _resource,
-            predicate: dataFactory.namedNode(
-              "http://example.com/numberDefaultValueProperty",
-            ),
-            object: dataFactory.literal(
-              "0",
-              dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#integer"),
-            ),
+            predicate:
+              DefaultValuePropertiesClass.$properties
+                .numberDefaultValueProperty["identifier"],
+            object: dataFactory.literal("0", $RdfVocabularies.xsd.integer),
           }),
         ),
       )
@@ -14409,9 +14252,9 @@ export namespace DefaultValuePropertiesClass {
         purify.Either.of(
           new rdfjsResource.Resource.Value({
             subject: _resource,
-            predicate: dataFactory.namedNode(
-              "http://example.com/stringDefaultValueProperty",
-            ),
+            predicate:
+              DefaultValuePropertiesClass.$properties
+                .stringDefaultValueProperty["identifier"],
             object: dataFactory.literal(""),
           }),
         ),
@@ -14435,13 +14278,10 @@ export namespace DefaultValuePropertiesClass {
         purify.Either.of(
           new rdfjsResource.Resource.Value({
             subject: _resource,
-            predicate: dataFactory.namedNode(
-              "http://example.com/trueBooleanDefaultValueProperty",
-            ),
-            object: dataFactory.literal(
-              "true",
-              dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#boolean"),
-            ),
+            predicate:
+              DefaultValuePropertiesClass.$properties
+                .trueBooleanDefaultValueProperty["identifier"],
+            object: dataFactory.literal("true", $RdfVocabularies.xsd.boolean),
           }),
         ),
       )
@@ -14569,54 +14409,58 @@ export namespace DefaultValuePropertiesClass {
         object: dataFactory.variable!(
           `${variablePrefix}DateDefaultValueProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/dateDefaultValueProperty",
-        ),
+        predicate:
+          DefaultValuePropertiesClass.$properties.dateDefaultValueProperty[
+            "identifier"
+          ],
         subject,
       },
       {
         object: dataFactory.variable!(
           `${variablePrefix}DateTimeDefaultValueProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/dateTimeDefaultValueProperty",
-        ),
+        predicate:
+          DefaultValuePropertiesClass.$properties.dateTimeDefaultValueProperty[
+            "identifier"
+          ],
         subject,
       },
       {
         object: dataFactory.variable!(
           `${variablePrefix}FalseBooleanDefaultValueProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/falseBooleanDefaultValueProperty",
-        ),
+        predicate:
+          DefaultValuePropertiesClass.$properties
+            .falseBooleanDefaultValueProperty["identifier"],
         subject,
       },
       {
         object: dataFactory.variable!(
           `${variablePrefix}NumberDefaultValueProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/numberDefaultValueProperty",
-        ),
+        predicate:
+          DefaultValuePropertiesClass.$properties.numberDefaultValueProperty[
+            "identifier"
+          ],
         subject,
       },
       {
         object: dataFactory.variable!(
           `${variablePrefix}StringDefaultValueProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/stringDefaultValueProperty",
-        ),
+        predicate:
+          DefaultValuePropertiesClass.$properties.stringDefaultValueProperty[
+            "identifier"
+          ],
         subject,
       },
       {
         object: dataFactory.variable!(
           `${variablePrefix}TrueBooleanDefaultValueProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/trueBooleanDefaultValueProperty",
-        ),
+        predicate:
+          DefaultValuePropertiesClass.$properties
+            .trueBooleanDefaultValueProperty["identifier"],
         subject,
       },
     ];
@@ -14644,9 +14488,9 @@ export namespace DefaultValuePropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}DateDefaultValueProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/dateDefaultValueProperty",
-                ),
+                predicate:
+                  DefaultValuePropertiesClass.$properties
+                    .dateDefaultValueProperty["identifier"],
                 subject,
               },
             ],
@@ -14663,9 +14507,9 @@ export namespace DefaultValuePropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}DateTimeDefaultValueProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/dateTimeDefaultValueProperty",
-                ),
+                predicate:
+                  DefaultValuePropertiesClass.$properties
+                    .dateTimeDefaultValueProperty["identifier"],
                 subject,
               },
             ],
@@ -14682,9 +14526,9 @@ export namespace DefaultValuePropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}FalseBooleanDefaultValueProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/falseBooleanDefaultValueProperty",
-                ),
+                predicate:
+                  DefaultValuePropertiesClass.$properties
+                    .falseBooleanDefaultValueProperty["identifier"],
                 subject,
               },
             ],
@@ -14701,9 +14545,9 @@ export namespace DefaultValuePropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}NumberDefaultValueProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/numberDefaultValueProperty",
-                ),
+                predicate:
+                  DefaultValuePropertiesClass.$properties
+                    .numberDefaultValueProperty["identifier"],
                 subject,
               },
             ],
@@ -14720,9 +14564,9 @@ export namespace DefaultValuePropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}StringDefaultValueProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/stringDefaultValueProperty",
-                ),
+                predicate:
+                  DefaultValuePropertiesClass.$properties
+                    .stringDefaultValueProperty["identifier"],
                 subject,
               },
             ],
@@ -14739,9 +14583,9 @@ export namespace DefaultValuePropertiesClass {
                 object: dataFactory.variable!(
                   `${variablePrefix}TrueBooleanDefaultValueProperty`,
                 ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/trueBooleanDefaultValueProperty",
-                ),
+                predicate:
+                  DefaultValuePropertiesClass.$properties
+                    .trueBooleanDefaultValueProperty["identifier"],
                 subject,
               },
             ],
@@ -14854,9 +14698,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
     readonly baseInterfaceWithPropertiesProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15015,27 +14857,16 @@ export namespace BaseInterfaceWithPropertiesStatic {
       baseInterfaceWithPropertiesProperty: string;
     }
   > {
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://example.com/BaseInterfaceWithProperties"),
-      )
-    ) {
+    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
       return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
+        .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
             new rdfjsResource.Resource.ValueError({
               focusResource: _resource,
               message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BaseInterfaceWithProperties)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
             }),
           ),
         );
@@ -15105,9 +14936,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
     );
     if (!ignoreRdfType) {
       _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
+        $RdfVocabularies.rdf.type,
         _resource.dataFactory.namedNode(
           "http://example.com/BaseInterfaceWithProperties",
         ),
@@ -15115,9 +14944,8 @@ export namespace BaseInterfaceWithPropertiesStatic {
     }
 
     _resource.add(
-      dataFactory.namedNode(
-        "http://example.com/baseInterfaceWithPropertiesProperty",
-      ),
+      BaseInterfaceWithPropertiesStatic.$properties
+        .baseInterfaceWithPropertiesProperty["identifier"],
       _baseInterfaceWithProperties.baseInterfaceWithPropertiesProperty,
     );
     return _resource;
@@ -15192,16 +15020,12 @@ export namespace BaseInterfaceWithPropertiesStatic {
         : [
             {
               subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
             {
               subject: dataFactory.variable!(`${variablePrefix}RdfType`),
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
               object: dataFactory.variable!(`${variablePrefix}RdfClass`),
             },
           ]),
@@ -15209,9 +15033,9 @@ export namespace BaseInterfaceWithPropertiesStatic {
         object: dataFactory.variable!(
           `${variablePrefix}BaseInterfaceWithPropertiesProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/baseInterfaceWithPropertiesProperty",
-        ),
+        predicate:
+          BaseInterfaceWithPropertiesStatic.$properties
+            .baseInterfaceWithPropertiesProperty["identifier"],
         subject,
       },
     ];
@@ -15240,15 +15064,9 @@ export namespace BaseInterfaceWithPropertiesStatic {
                   subject,
                   predicate: {
                     items: [
-                      dataFactory.namedNode(
-                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                      ),
+                      $RdfVocabularies.rdf.type,
                       {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
+                        items: [$RdfVocabularies.rdfs.subClassOf],
                         pathType: "*" as const,
                         type: "path" as const,
                       },
@@ -15256,9 +15074,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
                     pathType: "/" as const,
                     type: "path" as const,
                   },
-                  object: dataFactory.namedNode(
-                    "http://example.com/BaseInterfaceWithProperties",
-                  ),
+                  object: $fromRdfType,
                 },
               ],
               type: "bgp" as const,
@@ -15267,9 +15083,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: $RdfVocabularies.rdf.type,
                   object: dataFactory.variable!(`${variablePrefix}RdfType`),
                 },
               ],
@@ -15284,11 +15098,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
                         `${variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
+                        items: [$RdfVocabularies.rdfs.subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -15309,9 +15119,9 @@ export namespace BaseInterfaceWithPropertiesStatic {
             object: dataFactory.variable!(
               `${variablePrefix}BaseInterfaceWithPropertiesProperty`,
             ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/baseInterfaceWithPropertiesProperty",
-            ),
+            predicate:
+              BaseInterfaceWithPropertiesStatic.$properties
+                .baseInterfaceWithPropertiesProperty["identifier"],
             subject,
           },
         ],
@@ -15369,9 +15179,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export const $Identifier = BaseInterfaceWithPropertiesStatic.$Identifier;
   export type $Json = BaseInterfaceWithPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15518,29 +15326,16 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode(
-          "http://example.com/BaseInterfaceWithoutProperties",
-        ),
-      )
-    ) {
+    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
       return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
+        .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
             new rdfjsResource.Resource.ValueError({
               focusResource: _resource,
               message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BaseInterfaceWithoutProperties)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
             }),
           ),
         );
@@ -15589,9 +15384,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     );
     if (!ignoreRdfType) {
       _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
+        $RdfVocabularies.rdf.type,
         _resource.dataFactory.namedNode(
           "http://example.com/BaseInterfaceWithoutProperties",
         ),
@@ -15671,16 +15464,12 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
         : [
             {
               subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
             {
               subject: dataFactory.variable!(`${variablePrefix}RdfType`),
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
               object: dataFactory.variable!(`${variablePrefix}RdfClass`),
             },
           ]),
@@ -15715,15 +15504,9 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
                   subject,
                   predicate: {
                     items: [
-                      dataFactory.namedNode(
-                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                      ),
+                      $RdfVocabularies.rdf.type,
                       {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
+                        items: [$RdfVocabularies.rdfs.subClassOf],
                         pathType: "*" as const,
                         type: "path" as const,
                       },
@@ -15731,9 +15514,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
                     pathType: "/" as const,
                     type: "path" as const,
                   },
-                  object: dataFactory.namedNode(
-                    "http://example.com/BaseInterfaceWithoutProperties",
-                  ),
+                  object: $fromRdfType,
                 },
               ],
               type: "bgp" as const,
@@ -15742,9 +15523,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: $RdfVocabularies.rdf.type,
                   object: dataFactory.variable!(`${variablePrefix}RdfType`),
                 },
               ],
@@ -15759,11 +15538,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
                         `${variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
+                        items: [$RdfVocabularies.rdfs.subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -15845,9 +15620,7 @@ export namespace ConcreteParentInterfaceStatic {
     readonly concreteParentInterfaceProperty: string;
   } & BaseInterfaceWithoutPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16004,27 +15777,16 @@ export namespace ConcreteParentInterfaceStatic {
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://example.com/ConcreteParentInterface"),
-      )
-    ) {
+    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
       return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
+        .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
             new rdfjsResource.Resource.ValueError({
               focusResource: _resource,
               message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteParentInterface)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
             }),
           ),
         );
@@ -16090,9 +15852,7 @@ export namespace ConcreteParentInterfaceStatic {
     );
     if (!ignoreRdfType) {
       _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
+        $RdfVocabularies.rdf.type,
         _resource.dataFactory.namedNode(
           "http://example.com/ConcreteParentInterface",
         ),
@@ -16100,9 +15860,9 @@ export namespace ConcreteParentInterfaceStatic {
     }
 
     _resource.add(
-      dataFactory.namedNode(
-        "http://example.com/concreteParentInterfaceProperty",
-      ),
+      ConcreteParentInterfaceStatic.$properties.concreteParentInterfaceProperty[
+        "identifier"
+      ],
       _concreteParentInterface.concreteParentInterfaceProperty,
     );
     return _resource;
@@ -16182,16 +15942,12 @@ export namespace ConcreteParentInterfaceStatic {
         : [
             {
               subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
             {
               subject: dataFactory.variable!(`${variablePrefix}RdfType`),
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
               object: dataFactory.variable!(`${variablePrefix}RdfClass`),
             },
           ]),
@@ -16199,9 +15955,9 @@ export namespace ConcreteParentInterfaceStatic {
         object: dataFactory.variable!(
           `${variablePrefix}ConcreteParentInterfaceProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/concreteParentInterfaceProperty",
-        ),
+        predicate:
+          ConcreteParentInterfaceStatic.$properties
+            .concreteParentInterfaceProperty["identifier"],
         subject,
       },
     ];
@@ -16234,15 +15990,9 @@ export namespace ConcreteParentInterfaceStatic {
                   subject,
                   predicate: {
                     items: [
-                      dataFactory.namedNode(
-                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                      ),
+                      $RdfVocabularies.rdf.type,
                       {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
+                        items: [$RdfVocabularies.rdfs.subClassOf],
                         pathType: "*" as const,
                         type: "path" as const,
                       },
@@ -16250,9 +16000,7 @@ export namespace ConcreteParentInterfaceStatic {
                     pathType: "/" as const,
                     type: "path" as const,
                   },
-                  object: dataFactory.namedNode(
-                    "http://example.com/ConcreteParentInterface",
-                  ),
+                  object: $fromRdfType,
                 },
               ],
               type: "bgp" as const,
@@ -16261,9 +16009,7 @@ export namespace ConcreteParentInterfaceStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: $RdfVocabularies.rdf.type,
                   object: dataFactory.variable!(`${variablePrefix}RdfType`),
                 },
               ],
@@ -16278,11 +16024,7 @@ export namespace ConcreteParentInterfaceStatic {
                         `${variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
+                        items: [$RdfVocabularies.rdfs.subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -16303,9 +16045,9 @@ export namespace ConcreteParentInterfaceStatic {
             object: dataFactory.variable!(
               `${variablePrefix}ConcreteParentInterfaceProperty`,
             ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/concreteParentInterfaceProperty",
-            ),
+            predicate:
+              ConcreteParentInterfaceStatic.$properties
+                .concreteParentInterfaceProperty["identifier"],
             subject,
           },
         ],
@@ -16377,9 +16119,7 @@ export namespace ConcreteChildInterface {
     readonly concreteChildInterfaceProperty: string;
   } & ConcreteParentInterfaceStatic.$Json;
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16526,27 +16266,16 @@ export namespace ConcreteChildInterface {
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://example.com/ConcreteChildInterface"),
-      )
-    ) {
+    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
       return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
+        .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
             new rdfjsResource.Resource.ValueError({
               focusResource: _resource,
               message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteChildInterface)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
             }),
           ),
         );
@@ -16602,9 +16331,7 @@ export namespace ConcreteChildInterface {
     );
     if (!ignoreRdfType) {
       _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
+        $RdfVocabularies.rdf.type,
         _resource.dataFactory.namedNode(
           "http://example.com/ConcreteChildInterface",
         ),
@@ -16612,9 +16339,9 @@ export namespace ConcreteChildInterface {
     }
 
     _resource.add(
-      dataFactory.namedNode(
-        "http://example.com/concreteChildInterfaceProperty",
-      ),
+      ConcreteChildInterface.$properties.concreteChildInterfaceProperty[
+        "identifier"
+      ],
       _concreteChildInterface.concreteChildInterfaceProperty,
     );
     return _resource;
@@ -16691,16 +16418,12 @@ export namespace ConcreteChildInterface {
         : [
             {
               subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
             {
               subject: dataFactory.variable!(`${variablePrefix}RdfType`),
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
               object: dataFactory.variable!(`${variablePrefix}RdfClass`),
             },
           ]),
@@ -16708,9 +16431,10 @@ export namespace ConcreteChildInterface {
         object: dataFactory.variable!(
           `${variablePrefix}ConcreteChildInterfaceProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/concreteChildInterfaceProperty",
-        ),
+        predicate:
+          ConcreteChildInterface.$properties.concreteChildInterfaceProperty[
+            "identifier"
+          ],
         subject,
       },
     ];
@@ -16743,15 +16467,9 @@ export namespace ConcreteChildInterface {
                   subject,
                   predicate: {
                     items: [
-                      dataFactory.namedNode(
-                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                      ),
+                      $RdfVocabularies.rdf.type,
                       {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
+                        items: [$RdfVocabularies.rdfs.subClassOf],
                         pathType: "*" as const,
                         type: "path" as const,
                       },
@@ -16759,9 +16477,7 @@ export namespace ConcreteChildInterface {
                     pathType: "/" as const,
                     type: "path" as const,
                   },
-                  object: dataFactory.namedNode(
-                    "http://example.com/ConcreteChildInterface",
-                  ),
+                  object: $fromRdfType,
                 },
               ],
               type: "bgp" as const,
@@ -16770,9 +16486,7 @@ export namespace ConcreteChildInterface {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: $RdfVocabularies.rdf.type,
                   object: dataFactory.variable!(`${variablePrefix}RdfType`),
                 },
               ],
@@ -16787,11 +16501,7 @@ export namespace ConcreteChildInterface {
                         `${variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
+                        items: [$RdfVocabularies.rdfs.subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -16812,9 +16522,10 @@ export namespace ConcreteChildInterface {
             object: dataFactory.variable!(
               `${variablePrefix}ConcreteChildInterfaceProperty`,
             ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/concreteChildInterfaceProperty",
-            ),
+            predicate:
+              ConcreteChildInterface.$properties.concreteChildInterfaceProperty[
+                "identifier"
+              ],
             subject,
           },
         ],
@@ -16942,9 +16653,8 @@ export abstract class AbstractBaseClassWithProperties {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode(
-        "http://example.com/abstractBaseClassWithPropertiesProperty",
-      ),
+      AbstractBaseClassWithPropertiesStatic.$properties
+        .abstractBaseClassWithPropertiesProperty["identifier"],
       this.abstractBaseClassWithPropertiesProperty,
     );
     return _resource;
@@ -16980,9 +16690,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     readonly abstractBaseClassWithPropertiesProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17183,9 +16891,9 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         object: dataFactory.variable!(
           `${variablePrefix}AbstractBaseClassWithPropertiesProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/abstractBaseClassWithPropertiesProperty",
-        ),
+        predicate:
+          AbstractBaseClassWithPropertiesStatic.$properties
+            .abstractBaseClassWithPropertiesProperty["identifier"],
         subject,
       },
     ];
@@ -17211,9 +16919,9 @@ export namespace AbstractBaseClassWithPropertiesStatic {
             object: dataFactory.variable!(
               `${variablePrefix}AbstractBaseClassWithPropertiesProperty`,
             ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/abstractBaseClassWithPropertiesProperty",
-            ),
+            predicate:
+              AbstractBaseClassWithPropertiesStatic.$properties
+                .abstractBaseClassWithPropertiesProperty["identifier"],
             subject,
           },
         ],
@@ -17521,20 +17229,18 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
   }
 
   override $equals(other: ConcreteParentClass): $EqualsResult {
-    return super
-      .$equals(other)
-      .chain(() =>
-        $strictEquals(
-          this.concreteParentClassProperty,
-          other.concreteParentClassProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "concreteParentClassProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.$equals(other).chain(() =>
+      $strictEquals(
+        this.concreteParentClassProperty,
+        other.concreteParentClassProperty,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "concreteParentClassProperty",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override $hash<
@@ -17581,9 +17287,7 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
     });
     if (!ignoreRdfType) {
       _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
+        $RdfVocabularies.rdf.type,
         _resource.dataFactory.namedNode(
           "http://example.com/ConcreteParentClass",
         ),
@@ -17591,7 +17295,9 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
     }
 
     _resource.add(
-      dataFactory.namedNode("http://example.com/concreteParentClassProperty"),
+      ConcreteParentClassStatic.$properties.concreteParentClassProperty[
+        "identifier"
+      ],
       this.concreteParentClassProperty,
     );
     return _resource;
@@ -17614,9 +17320,7 @@ export namespace ConcreteParentClassStatic {
     readonly concreteParentClassProperty: string;
   } & AbstractBaseClassWithoutPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17730,27 +17434,16 @@ export namespace ConcreteParentClassStatic {
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://example.com/ConcreteParentClass"),
-      )
-    ) {
+    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
       return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
+        .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
             new rdfjsResource.Resource.ValueError({
               focusResource: _resource,
               message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteParentClass)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
             }),
           ),
         );
@@ -17868,16 +17561,12 @@ export namespace ConcreteParentClassStatic {
         : [
             {
               subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
             {
               subject: dataFactory.variable!(`${variablePrefix}RdfType`),
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
               object: dataFactory.variable!(`${variablePrefix}RdfClass`),
             },
           ]),
@@ -17885,9 +17574,10 @@ export namespace ConcreteParentClassStatic {
         object: dataFactory.variable!(
           `${variablePrefix}ConcreteParentClassProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/concreteParentClassProperty",
-        ),
+        predicate:
+          ConcreteParentClassStatic.$properties.concreteParentClassProperty[
+            "identifier"
+          ],
         subject,
       },
     ];
@@ -17918,15 +17608,9 @@ export namespace ConcreteParentClassStatic {
                   subject,
                   predicate: {
                     items: [
-                      dataFactory.namedNode(
-                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                      ),
+                      $RdfVocabularies.rdf.type,
                       {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
+                        items: [$RdfVocabularies.rdfs.subClassOf],
                         pathType: "*" as const,
                         type: "path" as const,
                       },
@@ -17934,9 +17618,7 @@ export namespace ConcreteParentClassStatic {
                     pathType: "/" as const,
                     type: "path" as const,
                   },
-                  object: dataFactory.namedNode(
-                    "http://example.com/ConcreteParentClass",
-                  ),
+                  object: $fromRdfType,
                 },
               ],
               type: "bgp" as const,
@@ -17945,9 +17627,7 @@ export namespace ConcreteParentClassStatic {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: $RdfVocabularies.rdf.type,
                   object: dataFactory.variable!(`${variablePrefix}RdfType`),
                 },
               ],
@@ -17962,11 +17642,7 @@ export namespace ConcreteParentClassStatic {
                         `${variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
+                        items: [$RdfVocabularies.rdfs.subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -17987,9 +17663,10 @@ export namespace ConcreteParentClassStatic {
             object: dataFactory.variable!(
               `${variablePrefix}ConcreteParentClassProperty`,
             ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/concreteParentClassProperty",
-            ),
+            predicate:
+              ConcreteParentClassStatic.$properties.concreteParentClassProperty[
+                "identifier"
+              ],
             subject,
           },
         ],
@@ -18032,20 +17709,18 @@ export class ConcreteChildClass extends ConcreteParentClass {
   }
 
   override $equals(other: ConcreteChildClass): $EqualsResult {
-    return super
-      .$equals(other)
-      .chain(() =>
-        $strictEquals(
-          this.concreteChildClassProperty,
-          other.concreteChildClassProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "concreteChildClassProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.$equals(other).chain(() =>
+      $strictEquals(
+        this.concreteChildClassProperty,
+        other.concreteChildClassProperty,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "concreteChildClassProperty",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override $hash<
@@ -18092,9 +17767,7 @@ export class ConcreteChildClass extends ConcreteParentClass {
     });
     if (!ignoreRdfType) {
       _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
+        $RdfVocabularies.rdf.type,
         _resource.dataFactory.namedNode(
           "http://example.com/ConcreteChildClass",
         ),
@@ -18102,7 +17775,7 @@ export class ConcreteChildClass extends ConcreteParentClass {
     }
 
     _resource.add(
-      dataFactory.namedNode("http://example.com/concreteChildClassProperty"),
+      ConcreteChildClass.$properties.concreteChildClassProperty["identifier"],
       this.concreteChildClassProperty,
     );
     return _resource;
@@ -18123,9 +17796,7 @@ export namespace ConcreteChildClass {
     readonly concreteChildClassProperty: string;
   } & ConcreteParentClassStatic.$Json;
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18227,27 +17898,16 @@ export namespace ConcreteChildClass {
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://example.com/ConcreteChildClass"),
-      )
-    ) {
+    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
       return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
+        .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
             new rdfjsResource.Resource.ValueError({
               focusResource: _resource,
               message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteChildClass)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
             }),
           ),
         );
@@ -18353,16 +18013,12 @@ export namespace ConcreteChildClass {
         : [
             {
               subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
             {
               subject: dataFactory.variable!(`${variablePrefix}RdfType`),
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
               object: dataFactory.variable!(`${variablePrefix}RdfClass`),
             },
           ]),
@@ -18370,9 +18026,10 @@ export namespace ConcreteChildClass {
         object: dataFactory.variable!(
           `${variablePrefix}ConcreteChildClassProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/concreteChildClassProperty",
-        ),
+        predicate:
+          ConcreteChildClass.$properties.concreteChildClassProperty[
+            "identifier"
+          ],
         subject,
       },
     ];
@@ -18403,15 +18060,9 @@ export namespace ConcreteChildClass {
                   subject,
                   predicate: {
                     items: [
-                      dataFactory.namedNode(
-                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                      ),
+                      $RdfVocabularies.rdf.type,
                       {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
+                        items: [$RdfVocabularies.rdfs.subClassOf],
                         pathType: "*" as const,
                         type: "path" as const,
                       },
@@ -18419,9 +18070,7 @@ export namespace ConcreteChildClass {
                     pathType: "/" as const,
                     type: "path" as const,
                   },
-                  object: dataFactory.namedNode(
-                    "http://example.com/ConcreteChildClass",
-                  ),
+                  object: $fromRdfType,
                 },
               ],
               type: "bgp" as const,
@@ -18430,9 +18079,7 @@ export namespace ConcreteChildClass {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: $RdfVocabularies.rdf.type,
                   object: dataFactory.variable!(`${variablePrefix}RdfType`),
                 },
               ],
@@ -18447,11 +18094,7 @@ export namespace ConcreteChildClass {
                         `${variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
+                        items: [$RdfVocabularies.rdfs.subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -18472,9 +18115,10 @@ export namespace ConcreteChildClass {
             object: dataFactory.variable!(
               `${variablePrefix}ConcreteChildClassProperty`,
             ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/concreteChildClassProperty",
-            ),
+            predicate:
+              ConcreteChildClass.$properties.concreteChildClassProperty[
+                "identifier"
+              ],
             subject,
           },
         ],
@@ -18592,15 +18236,13 @@ export class ClassUnionMember2 {
     });
     if (!ignoreRdfType) {
       _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
+        $RdfVocabularies.rdf.type,
         _resource.dataFactory.namedNode("http://example.com/ClassUnionMember2"),
       );
     }
 
     _resource.add(
-      dataFactory.namedNode("http://example.com/classUnionMember2Property"),
+      ClassUnionMember2.$properties.classUnionMember2Property["identifier"],
       this.classUnionMember2Property,
     );
     return _resource;
@@ -18639,9 +18281,7 @@ export namespace ClassUnionMember2 {
     readonly classUnionMember2Property: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18729,27 +18369,16 @@ export namespace ClassUnionMember2 {
       classUnionMember2Property: string;
     }
   > {
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://example.com/ClassUnionMember2"),
-      )
-    ) {
+    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
       return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
+        .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
             new rdfjsResource.Resource.ValueError({
               focusResource: _resource,
               message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassUnionMember2)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
             }),
           ),
         );
@@ -18845,16 +18474,12 @@ export namespace ClassUnionMember2 {
         : [
             {
               subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
             {
               subject: dataFactory.variable!(`${variablePrefix}RdfType`),
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
               object: dataFactory.variable!(`${variablePrefix}RdfClass`),
             },
           ]),
@@ -18862,9 +18487,8 @@ export namespace ClassUnionMember2 {
         object: dataFactory.variable!(
           `${variablePrefix}ClassUnionMember2Property`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/classUnionMember2Property",
-        ),
+        predicate:
+          ClassUnionMember2.$properties.classUnionMember2Property["identifier"],
         subject,
       },
     ];
@@ -18890,15 +18514,9 @@ export namespace ClassUnionMember2 {
                   subject,
                   predicate: {
                     items: [
-                      dataFactory.namedNode(
-                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                      ),
+                      $RdfVocabularies.rdf.type,
                       {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
+                        items: [$RdfVocabularies.rdfs.subClassOf],
                         pathType: "*" as const,
                         type: "path" as const,
                       },
@@ -18906,9 +18524,7 @@ export namespace ClassUnionMember2 {
                     pathType: "/" as const,
                     type: "path" as const,
                   },
-                  object: dataFactory.namedNode(
-                    "http://example.com/ClassUnionMember2",
-                  ),
+                  object: $fromRdfType,
                 },
               ],
               type: "bgp" as const,
@@ -18917,9 +18533,7 @@ export namespace ClassUnionMember2 {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: $RdfVocabularies.rdf.type,
                   object: dataFactory.variable!(`${variablePrefix}RdfType`),
                 },
               ],
@@ -18934,11 +18548,7 @@ export namespace ClassUnionMember2 {
                         `${variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
+                        items: [$RdfVocabularies.rdfs.subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -18959,9 +18569,10 @@ export namespace ClassUnionMember2 {
             object: dataFactory.variable!(
               `${variablePrefix}ClassUnionMember2Property`,
             ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/classUnionMember2Property",
-            ),
+            predicate:
+              ClassUnionMember2.$properties.classUnionMember2Property[
+                "identifier"
+              ],
             subject,
           },
         ],
@@ -19079,15 +18690,13 @@ export class ClassUnionMember1 {
     });
     if (!ignoreRdfType) {
       _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
+        $RdfVocabularies.rdf.type,
         _resource.dataFactory.namedNode("http://example.com/ClassUnionMember1"),
       );
     }
 
     _resource.add(
-      dataFactory.namedNode("http://example.com/classUnionMember1Property"),
+      ClassUnionMember1.$properties.classUnionMember1Property["identifier"],
       this.classUnionMember1Property,
     );
     return _resource;
@@ -19126,9 +18735,7 @@ export namespace ClassUnionMember1 {
     readonly classUnionMember1Property: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19216,27 +18823,16 @@ export namespace ClassUnionMember1 {
       classUnionMember1Property: string;
     }
   > {
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://example.com/ClassUnionMember1"),
-      )
-    ) {
+    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
       return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
+        .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
             new rdfjsResource.Resource.ValueError({
               focusResource: _resource,
               message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassUnionMember1)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
             }),
           ),
         );
@@ -19332,16 +18928,12 @@ export namespace ClassUnionMember1 {
         : [
             {
               subject,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
               object: dataFactory.variable!(`${variablePrefix}RdfType`),
             },
             {
               subject: dataFactory.variable!(`${variablePrefix}RdfType`),
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-              ),
+              predicate: $RdfVocabularies.rdfs.subClassOf,
               object: dataFactory.variable!(`${variablePrefix}RdfClass`),
             },
           ]),
@@ -19349,9 +18941,8 @@ export namespace ClassUnionMember1 {
         object: dataFactory.variable!(
           `${variablePrefix}ClassUnionMember1Property`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/classUnionMember1Property",
-        ),
+        predicate:
+          ClassUnionMember1.$properties.classUnionMember1Property["identifier"],
         subject,
       },
     ];
@@ -19377,15 +18968,9 @@ export namespace ClassUnionMember1 {
                   subject,
                   predicate: {
                     items: [
-                      dataFactory.namedNode(
-                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                      ),
+                      $RdfVocabularies.rdf.type,
                       {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
+                        items: [$RdfVocabularies.rdfs.subClassOf],
                         pathType: "*" as const,
                         type: "path" as const,
                       },
@@ -19393,9 +18978,7 @@ export namespace ClassUnionMember1 {
                     pathType: "/" as const,
                     type: "path" as const,
                   },
-                  object: dataFactory.namedNode(
-                    "http://example.com/ClassUnionMember1",
-                  ),
+                  object: $fromRdfType,
                 },
               ],
               type: "bgp" as const,
@@ -19404,9 +18987,7 @@ export namespace ClassUnionMember1 {
               triples: [
                 {
                   subject,
-                  predicate: dataFactory.namedNode(
-                    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                  ),
+                  predicate: $RdfVocabularies.rdf.type,
                   object: dataFactory.variable!(`${variablePrefix}RdfType`),
                 },
               ],
@@ -19421,11 +19002,7 @@ export namespace ClassUnionMember1 {
                         `${variablePrefix}RdfType`,
                       ),
                       predicate: {
-                        items: [
-                          dataFactory.namedNode(
-                            "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-                          ),
-                        ],
+                        items: [$RdfVocabularies.rdfs.subClassOf],
                         pathType: "+" as const,
                         type: "path" as const,
                       },
@@ -19446,9 +19023,10 @@ export namespace ClassUnionMember1 {
             object: dataFactory.variable!(
               `${variablePrefix}ClassUnionMember1Property`,
             ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/classUnionMember1Property",
-            ),
+            predicate:
+              ClassUnionMember1.$properties.classUnionMember1Property[
+                "identifier"
+              ],
             subject,
           },
         ],
@@ -19816,9 +19394,8 @@ export abstract class AbstractBaseClassForExternClass {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode(
-        "http://example.com/abstractBaseClassForExternClassProperty",
-      ),
+      AbstractBaseClassForExternClassStatic.$properties
+        .abstractBaseClassForExternClassProperty["identifier"],
       this.abstractBaseClassForExternClassProperty,
     );
     return _resource;
@@ -19854,9 +19431,7 @@ export namespace AbstractBaseClassForExternClassStatic {
     readonly abstractBaseClassForExternClassProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -20056,9 +19631,9 @@ export namespace AbstractBaseClassForExternClassStatic {
         object: dataFactory.variable!(
           `${variablePrefix}AbstractBaseClassForExternClassProperty`,
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/abstractBaseClassForExternClassProperty",
-        ),
+        predicate:
+          AbstractBaseClassForExternClassStatic.$properties
+            .abstractBaseClassForExternClassProperty["identifier"],
         subject,
       },
     ];
@@ -20084,9 +19659,9 @@ export namespace AbstractBaseClassForExternClassStatic {
             object: dataFactory.variable!(
               `${variablePrefix}AbstractBaseClassForExternClassProperty`,
             ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/abstractBaseClassForExternClassProperty",
-            ),
+            predicate:
+              AbstractBaseClassForExternClassStatic.$properties
+                .abstractBaseClassForExternClassProperty["identifier"],
             subject,
           },
         ],

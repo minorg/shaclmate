@@ -72,7 +72,7 @@ export function sparqlFunctionDeclarations(
                       pathType: "/" as const,
                       type: "path" as const
                     },
-                    object: fromRdfType
+                    object: ${syntheticNamePrefix}fromRdfType
                   }
                 ],
                 type: "bgp" as const

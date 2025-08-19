@@ -3,6 +3,46 @@ import * as graphql from "graphql";
 import { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
 import * as rdfjsResource from "rdfjs-resource";
+export namespace $RdfVocabularies {
+  export namespace rdf {
+    export const first = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
+    );
+    export const nil = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+    );
+    export const rest = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+    );
+    export const subject = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+    );
+    export const type = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    );
+  }
+
+  export namespace rdfs {
+    export const subClassOf = dataFactory.namedNode(
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+    );
+  }
+
+  export namespace xsd {
+    export const boolean = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#boolean",
+    );
+    export const date = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#date",
+    );
+    export const dateTime = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#dateTime",
+    );
+    export const integer = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#integer",
+    );
+  }
+}
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 /**
  * UnionMember1
@@ -63,15 +103,13 @@ export class UnionMember2 {
     });
     if (!ignoreRdfType) {
       _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
+        $RdfVocabularies.rdf.type,
         _resource.dataFactory.namedNode("http://example.com/UnionMember2"),
       );
     }
 
     _resource.add(
-      dataFactory.namedNode("http://example.com/optionalStringProperty"),
+      UnionMember2.$properties.optionalStringProperty["identifier"],
       this.optionalStringProperty,
     );
     return _resource;
@@ -137,27 +175,16 @@ export namespace UnionMember2 {
       optionalStringProperty: purify.Maybe<string>;
     }
   > {
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://example.com/UnionMember2"),
-      )
-    ) {
+    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
       return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
+        .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
             new rdfjsResource.Resource.ValueError({
               focusResource: _resource,
               message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember2)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
             }),
           ),
         );
@@ -259,15 +286,13 @@ export class UnionMember1 {
     });
     if (!ignoreRdfType) {
       _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
+        $RdfVocabularies.rdf.type,
         _resource.dataFactory.namedNode("http://example.com/UnionMember1"),
       );
     }
 
     _resource.add(
-      dataFactory.namedNode("http://example.com/optionalNumberProperty"),
+      UnionMember1.$properties.optionalNumberProperty["identifier"],
       this.optionalNumberProperty,
     );
     return _resource;
@@ -333,27 +358,16 @@ export namespace UnionMember1 {
       optionalNumberProperty: purify.Maybe<number>;
     }
   > {
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://example.com/UnionMember1"),
-      )
-    ) {
+    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
       return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
+        .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
             new rdfjsResource.Resource.ValueError({
               focusResource: _resource,
               message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember1)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
             }),
           ),
         );
@@ -480,23 +494,21 @@ export class Nested {
     });
     if (!ignoreRdfType) {
       _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
+        $RdfVocabularies.rdf.type,
         _resource.dataFactory.namedNode("http://example.com/Nested"),
       );
     }
 
     _resource.add(
-      dataFactory.namedNode("http://example.com/optionalNumberProperty"),
+      UnionMember1.$properties.optionalNumberProperty["identifier"],
       this.optionalNumberProperty,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/optionalStringProperty"),
+      UnionMember2.$properties.optionalStringProperty["identifier"],
       this.optionalStringProperty,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/requiredStringProperty"),
+      Nested.$properties.requiredStringProperty["identifier"],
       this.requiredStringProperty,
     );
     return _resource;
@@ -573,27 +585,16 @@ export namespace Nested {
       requiredStringProperty: string;
     }
   > {
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://example.com/Nested"),
-      )
-    ) {
+    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
       return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
+        .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
             new rdfjsResource.Resource.ValueError({
               focusResource: _resource,
               message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Nested)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
             }),
           ),
         );
@@ -733,15 +734,13 @@ export class ConcreteParent {
     });
     if (!ignoreRdfType) {
       _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
+        $RdfVocabularies.rdf.type,
         _resource.dataFactory.namedNode("http://example.com/ConcreteParent"),
       );
     }
 
     _resource.add(
-      dataFactory.namedNode("http://example.com/parentStringProperty"),
+      ConcreteParentStatic.$properties.parentStringProperty["identifier"],
       this.parentStringProperty,
     );
     return _resource;
@@ -808,27 +807,16 @@ export namespace ConcreteParentStatic {
     rdfjsResource.Resource.ValueError,
     { $identifier: rdfjs.NamedNode; parentStringProperty: purify.Maybe<string> }
   > {
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://example.com/ConcreteParent"),
-      )
-    ) {
+    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
       return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
+        .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
             new rdfjsResource.Resource.ValueError({
               focusResource: _resource,
               message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteParent)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
             }),
           ),
         );
@@ -840,9 +828,7 @@ export namespace ConcreteParentStatic {
           actualValue: _resource.identifier,
           expectedValueType: "(rdfjs.NamedNode)",
           focusResource: _resource,
-          predicate: dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-          ),
+          predicate: $RdfVocabularies.rdf.subject,
         }),
       );
     }
@@ -985,29 +971,27 @@ export class ConcreteChild extends ConcreteParent {
     });
     if (!ignoreRdfType) {
       _resource.add(
-        _resource.dataFactory.namedNode(
-          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        ),
+        $RdfVocabularies.rdf.type,
         _resource.dataFactory.namedNode("http://example.com/ConcreteChild"),
       );
     }
 
     _resource.add(
-      dataFactory.namedNode("http://example.com/childStringProperty"),
+      ConcreteChild.$properties.childStringProperty["identifier"],
       this.childStringProperty,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/optionalNestedObjectProperty"),
+      ConcreteChild.$properties.optionalNestedObjectProperty["identifier"],
       this.optionalNestedObjectProperty.map((_value) =>
         _value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/optionalStringProperty"),
+      UnionMember2.$properties.optionalStringProperty["identifier"],
       this.optionalStringProperty,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/requiredStringProperty"),
+      Nested.$properties.requiredStringProperty["identifier"],
       this.requiredStringProperty,
     );
     return _resource;
@@ -1088,27 +1072,16 @@ export namespace ConcreteChild {
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (
-      !_ignoreRdfType &&
-      !_resource.isInstanceOf(
-        dataFactory.namedNode("http://example.com/ConcreteChild"),
-      )
-    ) {
+    if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
       return _resource
-        .value(
-          dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          ),
-        )
+        .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
             new rdfjsResource.Resource.ValueError({
               focusResource: _resource,
               message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteChild)`,
-              predicate: dataFactory.namedNode(
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-              ),
+              predicate: $RdfVocabularies.rdf.type,
             }),
           ),
         );
@@ -1120,9 +1093,7 @@ export namespace ConcreteChild {
           actualValue: _resource.identifier,
           expectedValueType: "(rdfjs.NamedNode)",
           focusResource: _resource,
-          predicate: dataFactory.namedNode(
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-          ),
+          predicate: $RdfVocabularies.rdf.subject,
         }),
       );
     }
