@@ -79,7 +79,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
           break;
         case "sha256":
           // If the object is mutable don't memoize the minted identifier, since the hash will change if the object mutates.
-          memoizeMintedIdentifier = !this.objectType.mutable();
+          memoizeMintedIdentifier = !this.objectType.mutable;
           mintIdentifier = `dataFactory.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${this.${syntheticNamePrefix}hashShaclProperties(sha256.create())}\`)`;
           break;
         case "uuidv4":

@@ -13,6 +13,7 @@ import { Memoize } from "typescript-memoize";
 import type { IdentifierType } from "../IdentifierType.js";
 import type { Import } from "../Import.js";
 import type { Type } from "../Type.js";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { tsComment } from "../tsComment.js";
 import { Property } from "./Property.js";
 
@@ -181,7 +182,7 @@ export class ShaclProperty extends Property<Type> {
     // This also accommodates the case where the object of a property is a dangling identifier that's not the
     // subject of any statements.
     return [
-      `const _${this.name}Either: purify.Either<rdfjsResource.Resource.ValueError, ${this.type.name}> = ${this.type.fromRdfExpression({ variables: { ...variables, ignoreRdfType: true, predicate: this.pathExpression, resourceValues: `${variables.resource}.values(${this.pathExpression}, { unique: true })` } })};`,
+      `const _${this.name}Either: purify.Either<rdfjsResource.Resource.ValueError, ${this.type.name}> = ${this.type.fromRdfExpression({ variables: { ...variables, ignoreRdfType: true, predicate: this.pathExpression, resourceValues: `${variables.resource}.values(${syntheticNamePrefix}properties.${this.name}["identifier"], { unique: true })` } })};`,
       `if (_${this.name}Either.isLeft()) { return _${this.name}Either; }`,
       `const ${this.name} = _${this.name}Either.unsafeCoerce();`,
     ];

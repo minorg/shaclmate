@@ -259,6 +259,11 @@ export class TypeFactory {
       nodeKinds: astType.identifierKinds,
     });
 
+    const staticModuleName =
+      astType.childObjectTypes.length > 0
+        ? `${tsName(astType.name)}Static`
+        : tsName(astType.name);
+
     const objectType = new ObjectType({
       abstract: astType.abstract,
       comment: astType.comment,
@@ -286,7 +291,7 @@ export class TypeFactory {
         astType.parentObjectTypes.map((astType) =>
           this.createObjectTypeFromAstType(astType),
         ),
-      lazyProperties: () => {
+      lazyProperties: (objectType: ObjectType) => {
         const properties: ObjectType.Property[] = astType.properties
           .toSorted((left, right) => {
             if (left.order < right.order) {
@@ -298,12 +303,10 @@ export class TypeFactory {
             return tsName(left.name).localeCompare(tsName(right.name));
           })
           .map((astProperty) =>
-            this.createObjectTypePropertyFromAstProperty(astType, astProperty),
-          );
-
-        const lazyMutable = () =>
-          properties.some(
-            (property) => property.mutable || property.type.mutable,
+            this.createObjectTypePropertyFromAstProperty({
+              astObjectTypeProperty: astProperty,
+              objectType,
+            }),
           );
 
         // Type discriminator property
@@ -330,11 +333,7 @@ export class TypeFactory {
               dataFactoryVariable: this.dataFactoryVariable,
               name: `${syntheticNamePrefix}type`,
               initializer: objectType.discriminatorValue,
-              objectType: {
-                declarationType: astType.tsObjectDeclarationType,
-                features: astType.tsFeatures,
-                mutable: lazyMutable,
-              },
+              objectType,
               override: objectType.parentObjectTypes.length > 0,
               type: new ObjectType.TypeDiscriminatorProperty.Type({
                 descendantValues: [...typeDiscriminatorDescendantValues].sort(),
@@ -359,11 +358,7 @@ export class TypeFactory {
                 objectTypeNeedsIdentifierPrefixProperty,
               ),
               name: `${syntheticNamePrefix}identifierPrefix`,
-              objectType: {
-                declarationType: astType.tsObjectDeclarationType,
-                features: astType.tsFeatures,
-                mutable: lazyMutable,
-              },
+              objectType,
               type: new StringType({
                 dataFactoryVariable: this.dataFactoryVariable,
                 defaultValue: Maybe.empty(),
@@ -430,14 +425,10 @@ export class TypeFactory {
             identifierMintingStrategy: astType.identifierMintingStrategy,
             identifierPrefixPropertyName: `${syntheticNamePrefix}identifierPrefix`,
             name: `${syntheticNamePrefix}identifier`,
-            objectType: {
-              declarationType: astType.tsObjectDeclarationType,
-              features: astType.tsFeatures,
-              mutable: lazyMutable,
-            },
+            objectType,
             override: astType.parentObjectTypes.length > 0,
             type: identifierType,
-            typeAlias: `${astType.childObjectTypes.length > 0 ? `${tsName(astType.name)}Static` : tsName(astType.name)}.${syntheticNamePrefix}Identifier`,
+            typeAlias: `${staticModuleName}.${syntheticNamePrefix}Identifier`,
             visibility: "public",
           }),
         );
@@ -446,16 +437,20 @@ export class TypeFactory {
       },
       identifierMintingStrategy: astType.identifierMintingStrategy,
       name: tsName(astType.name),
+      staticModuleName,
       toRdfTypes: astType.toRdfTypes,
     });
     this.cachedObjectTypesByIdentifier.set(astType.name.identifier, objectType);
     return objectType;
   }
 
-  private createObjectTypePropertyFromAstProperty(
-    astObjectType: ast.ObjectType,
-    astObjectTypeProperty: ast.ObjectType.Property,
-  ): ObjectType.Property {
+  private createObjectTypePropertyFromAstProperty({
+    astObjectTypeProperty,
+    objectType,
+  }: {
+    astObjectTypeProperty: ast.ObjectType.Property;
+    objectType: ObjectType;
+  }): ObjectType.Property {
     {
       const cachedProperty = this.cachedObjectTypePropertiesByIdentifier.get(
         astObjectTypeProperty.name.identifier,
@@ -471,13 +466,7 @@ export class TypeFactory {
       description: astObjectTypeProperty.description,
       label: astObjectTypeProperty.label,
       mutable: astObjectTypeProperty.mutable.orDefault(false),
-      objectType: {
-        declarationType: astObjectType.tsObjectDeclarationType,
-        features: astObjectType.tsFeatures,
-        mutable: () => {
-          throw new Error("not implemented");
-        },
-      },
+      objectType,
       name: tsName(astObjectTypeProperty.name),
       path: astObjectTypeProperty.path.iri,
       type: this.createTypeFromAstType(astObjectTypeProperty.type),
