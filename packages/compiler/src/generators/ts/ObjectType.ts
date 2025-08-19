@@ -366,6 +366,11 @@ export class ObjectType extends DeclaredType {
     if (this.features.has("equals")) {
       snippetDeclarations.push(SnippetDeclarations.EqualsResult);
     }
+    if (this.features.has("rdf")) {
+      snippetDeclarations.push(
+        SnippetDeclarations.RdfVocabularies(this.dataFactoryVariable),
+      );
+    }
     if (
       (this.features.has("json") || this.features.has("rdf")) &&
       this.parentObjectTypes.length > 0
