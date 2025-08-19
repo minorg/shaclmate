@@ -471,9 +471,7 @@ export namespace UuidV4IriClass {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(dataFactory.namedNode("http://example.com/uuidV4IriProperty"), {
-        unique: true,
-      })
+      .values($properties.uuidV4IriProperty["identifier"], { unique: true })
       .head()
       .chain((_value) => _value.toString());
     if (_uuidV4IriPropertyEither.isLeft()) {
@@ -1043,7 +1041,9 @@ export namespace UnionPropertiesClass {
       | undefined;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -1223,10 +1223,9 @@ export namespace UnionPropertiesClass {
     > = purify.Either.of(
       (
         _resource
-          .values(
-            dataFactory.namedNode("http://example.com/narrowLiteralsProperty"),
-            { unique: true },
-          )
+          .values($properties.narrowLiteralsProperty["identifier"], {
+            unique: true,
+          })
           .head()
           .chain((_value) => _value.toNumber()) as purify.Either<
           rdfjsResource.Resource.ValueError,
@@ -1236,12 +1235,9 @@ export namespace UnionPropertiesClass {
         .altLazy(
           () =>
             _resource
-              .values(
-                dataFactory.namedNode(
-                  "http://example.com/narrowLiteralsProperty",
-                ),
-                { unique: true },
-              )
+              .values($properties.narrowLiteralsProperty["identifier"], {
+                unique: true,
+              })
               .head()
               .chain((_value) => _value.toString()) as purify.Either<
               rdfjsResource.Resource.ValueError,
@@ -1261,10 +1257,9 @@ export namespace UnionPropertiesClass {
     > = purify.Either.of(
       (
         _resource
-          .values(
-            dataFactory.namedNode("http://example.com/unrelatedTypesProperty"),
-            { unique: true },
-          )
+          .values($properties.unrelatedTypesProperty["identifier"], {
+            unique: true,
+          })
           .head()
           .chain((_value) => _value.toNumber()) as purify.Either<
           rdfjsResource.Resource.ValueError,
@@ -1274,12 +1269,9 @@ export namespace UnionPropertiesClass {
         .altLazy(
           () =>
             _resource
-              .values(
-                dataFactory.namedNode(
-                  "http://example.com/unrelatedTypesProperty",
-                ),
-                { unique: true },
-              )
+              .values($properties.unrelatedTypesProperty["identifier"], {
+                unique: true,
+              })
               .head()
               .chain((value) => value.toResource())
               .chain((_resource) =>
@@ -1305,10 +1297,9 @@ export namespace UnionPropertiesClass {
       purify.Maybe<rdfjs.Literal>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/widenedLiteralsProperty"),
-          { unique: true },
-        )
+        .values($properties.widenedLiteralsProperty["identifier"], {
+          unique: true,
+        })
         .filter((_value) => {
           const _languageInOrDefault = _languageIn ?? [];
           if (_languageInOrDefault.length === 0) {
@@ -1337,10 +1328,9 @@ export namespace UnionPropertiesClass {
       purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/widenedTermsProperty"),
-          { unique: true },
-        )
+        .values($properties.widenedTermsProperty["identifier"], {
+          unique: true,
+        })
         .head()
         .chain((_value) =>
           purify.Either.of(_value.toTerm()).chain((term) => {
@@ -2152,7 +2142,9 @@ export namespace TermPropertiesClass {
       | undefined;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2371,10 +2363,7 @@ export namespace TermPropertiesClass {
       purify.Maybe<boolean>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/booleanTermProperty"),
-          { unique: true },
-        )
+        .values($properties.booleanTermProperty["identifier"], { unique: true })
         .head()
         .chain((_value) => _value.toBoolean())
         .toMaybe(),
@@ -2389,9 +2378,7 @@ export namespace TermPropertiesClass {
       purify.Maybe<Date>
     > = purify.Either.of(
       _resource
-        .values(dataFactory.namedNode("http://example.com/dateTermProperty"), {
-          unique: true,
-        })
+        .values($properties.dateTermProperty["identifier"], { unique: true })
         .head()
         .chain((_value) => _value.toDate())
         .toMaybe(),
@@ -2406,10 +2393,9 @@ export namespace TermPropertiesClass {
       purify.Maybe<Date>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/dateTimeTermProperty"),
-          { unique: true },
-        )
+        .values($properties.dateTimeTermProperty["identifier"], {
+          unique: true,
+        })
         .head()
         .chain((_value) => _value.toDate())
         .toMaybe(),
@@ -2424,9 +2410,7 @@ export namespace TermPropertiesClass {
       purify.Maybe<rdfjs.NamedNode>
     > = purify.Either.of(
       _resource
-        .values(dataFactory.namedNode("http://example.com/iriTermProperty"), {
-          unique: true,
-        })
+        .values($properties.iriTermProperty["identifier"], { unique: true })
         .head()
         .chain((_value) => _value.toIri())
         .toMaybe(),
@@ -2441,10 +2425,7 @@ export namespace TermPropertiesClass {
       purify.Maybe<rdfjs.Literal>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/literalTermProperty"),
-          { unique: true },
-        )
+        .values($properties.literalTermProperty["identifier"], { unique: true })
         .filter((_value) => {
           const _languageInOrDefault = _languageIn ?? [];
           if (_languageInOrDefault.length === 0) {
@@ -2472,10 +2453,7 @@ export namespace TermPropertiesClass {
       purify.Maybe<number>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/numberTermProperty"),
-          { unique: true },
-        )
+        .values($properties.numberTermProperty["identifier"], { unique: true })
         .head()
         .chain((_value) => _value.toNumber())
         .toMaybe(),
@@ -2490,10 +2468,7 @@ export namespace TermPropertiesClass {
       purify.Maybe<string>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/stringTermProperty"),
-          { unique: true },
-        )
+        .values($properties.stringTermProperty["identifier"], { unique: true })
         .head()
         .chain((_value) => _value.toString())
         .toMaybe(),
@@ -2508,9 +2483,7 @@ export namespace TermPropertiesClass {
       purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
     > = purify.Either.of(
       _resource
-        .values(dataFactory.namedNode("http://example.com/termProperty"), {
-          unique: true,
-        })
+        .values($properties.termProperty["identifier"], { unique: true })
         .head()
         .chain((_value) => purify.Either.of(_value.toTerm()))
         .toMaybe(),
@@ -3113,9 +3086,7 @@ export namespace Sha256IriClass {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(dataFactory.namedNode("http://example.com/sha256IriProperty"), {
-        unique: true,
-      })
+      .values($properties.sha256IriProperty["identifier"], { unique: true })
       .head()
       .chain((_value) => _value.toString());
     if (_sha256IriPropertyEither.isLeft()) {
@@ -3413,7 +3384,9 @@ export namespace PropertyVisibilitiesClass {
     readonly publicProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3522,9 +3495,7 @@ export namespace PropertyVisibilitiesClass {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(dataFactory.namedNode("http://example.com/privateProperty"), {
-        unique: true,
-      })
+      .values($properties.privateProperty["identifier"], { unique: true })
       .head()
       .chain((_value) => _value.toString());
     if (_privatePropertyEither.isLeft()) {
@@ -3536,9 +3507,7 @@ export namespace PropertyVisibilitiesClass {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(dataFactory.namedNode("http://example.com/protectedProperty"), {
-        unique: true,
-      })
+      .values($properties.protectedProperty["identifier"], { unique: true })
       .head()
       .chain((_value) => _value.toString());
     if (_protectedPropertyEither.isLeft()) {
@@ -3550,9 +3519,7 @@ export namespace PropertyVisibilitiesClass {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(dataFactory.namedNode("http://example.com/publicProperty"), {
-        unique: true,
-      })
+      .values($properties.publicProperty["identifier"], { unique: true })
       .head()
       .chain((_value) => _value.toString());
     if (_publicPropertyEither.isLeft()) {
@@ -3978,7 +3945,9 @@ export namespace PropertyCardinalitiesClass {
     readonly requiredStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4121,10 +4090,9 @@ export namespace PropertyCardinalitiesClass {
       readonly string[]
     > = purify.Either.of([
       ..._resource
-        .values(
-          dataFactory.namedNode("http://example.com/emptyStringSetProperty"),
-          { unique: true },
-        )
+        .values($properties.emptyStringSetProperty["identifier"], {
+          unique: true,
+        })
         .flatMap((_item) =>
           _item
             .toValues()
@@ -4144,10 +4112,9 @@ export namespace PropertyCardinalitiesClass {
       purify.NonEmptyList<string>
     > = purify.NonEmptyList.fromArray([
       ..._resource
-        .values(
-          dataFactory.namedNode("http://example.com/nonEmptyStringSetProperty"),
-          { unique: true },
-        )
+        .values($properties.nonEmptyStringSetProperty["identifier"], {
+          unique: true,
+        })
         .flatMap((_item) =>
           _item
             .toValues()
@@ -4176,10 +4143,9 @@ export namespace PropertyCardinalitiesClass {
       purify.Maybe<string>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/optionalStringProperty"),
-          { unique: true },
-        )
+        .values($properties.optionalStringProperty["identifier"], {
+          unique: true,
+        })
         .head()
         .chain((_value) => _value.toString())
         .toMaybe(),
@@ -4193,10 +4159,9 @@ export namespace PropertyCardinalitiesClass {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(
-        dataFactory.namedNode("http://example.com/requiredStringProperty"),
-        { unique: true },
-      )
+      .values($properties.requiredStringProperty["identifier"], {
+        unique: true,
+      })
       .head()
       .chain((_value) => _value.toString());
     if (_requiredStringPropertyEither.isLeft()) {
@@ -4614,7 +4579,9 @@ export namespace OrderedPropertiesClass {
     readonly orderedPropertyA: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4729,9 +4696,7 @@ export namespace OrderedPropertiesClass {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(dataFactory.namedNode("http://example.com/orderedPropertyC"), {
-        unique: true,
-      })
+      .values($properties.orderedPropertyC["identifier"], { unique: true })
       .head()
       .chain((_value) => _value.toString());
     if (_orderedPropertyCEither.isLeft()) {
@@ -4743,9 +4708,7 @@ export namespace OrderedPropertiesClass {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(dataFactory.namedNode("http://example.com/orderedPropertyB"), {
-        unique: true,
-      })
+      .values($properties.orderedPropertyB["identifier"], { unique: true })
       .head()
       .chain((_value) => _value.toString());
     if (_orderedPropertyBEither.isLeft()) {
@@ -4757,9 +4720,7 @@ export namespace OrderedPropertiesClass {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(dataFactory.namedNode("http://example.com/orderedPropertyA"), {
-        unique: true,
-      })
+      .values($properties.orderedPropertyA["identifier"], { unique: true })
       .head()
       .chain((_value) => _value.toString());
     if (_orderedPropertyAEither.isLeft()) {
@@ -5151,9 +5112,7 @@ export namespace NonClass {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(dataFactory.namedNode("http://example.com/nonClassProperty"), {
-        unique: true,
-      })
+      .values($properties.nonClassProperty["identifier"], { unique: true })
       .head()
       .chain((_value) => _value.toString());
     if (_nonClassPropertyEither.isLeft()) {
@@ -5580,7 +5539,9 @@ export namespace MutablePropertiesClass {
     readonly mutableStringProperty: string | undefined;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5715,10 +5676,7 @@ export namespace MutablePropertiesClass {
       purify.Maybe<string[]>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/mutableListProperty"),
-          { unique: true },
-        )
+        .values($properties.mutableListProperty["identifier"], { unique: true })
         .head()
         .chain((value) => value.toList())
         .map((values) =>
@@ -5743,10 +5701,7 @@ export namespace MutablePropertiesClass {
       string[]
     > = purify.Either.of([
       ..._resource
-        .values(
-          dataFactory.namedNode("http://example.com/mutableSetProperty"),
-          { unique: true },
-        )
+        .values($properties.mutableSetProperty["identifier"], { unique: true })
         .flatMap((_item) =>
           _item
             .toValues()
@@ -5766,10 +5721,9 @@ export namespace MutablePropertiesClass {
       purify.Maybe<string>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/mutableStringProperty"),
-          { unique: true },
-        )
+        .values($properties.mutableStringProperty["identifier"], {
+          unique: true,
+        })
         .head()
         .chain((_value) => _value.toString())
         .toMaybe(),
@@ -6424,7 +6378,9 @@ export namespace ListPropertiesClass {
     readonly stringListProperty: readonly string[] | undefined;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6535,10 +6491,7 @@ export namespace ListPropertiesClass {
       purify.Maybe<readonly NonClass[]>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/objectListProperty"),
-          { unique: true },
-        )
+        .values($properties.objectListProperty["identifier"], { unique: true })
         .head()
         .chain((value) => value.toList())
         .map((values) =>
@@ -6571,10 +6524,7 @@ export namespace ListPropertiesClass {
       purify.Maybe<readonly string[]>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/stringListProperty"),
-          { unique: true },
-        )
+        .values($properties.stringListProperty["identifier"], { unique: true })
         .head()
         .chain((value) => value.toList())
         .map((values) =>
@@ -7371,7 +7321,9 @@ export namespace LanguageInPropertiesClass {
       | undefined;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -7514,9 +7466,7 @@ export namespace LanguageInPropertiesClass {
     > = purify.Either.of(
       _resource
         .values(
-          dataFactory.namedNode(
-            "http://example.com/languageInPropertiesLanguageInProperty",
-          ),
+          $properties.languageInPropertiesLanguageInProperty["identifier"],
           { unique: true },
         )
         .filter((_value) => {
@@ -7547,12 +7497,9 @@ export namespace LanguageInPropertiesClass {
       purify.Maybe<rdfjs.Literal>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode(
-            "http://example.com/languageInPropertiesLiteralProperty",
-          ),
-          { unique: true },
-        )
+        .values($properties.languageInPropertiesLiteralProperty["identifier"], {
+          unique: true,
+        })
         .filter((_value) => {
           const _languageInOrDefault = _languageIn ?? [];
           if (_languageInOrDefault.length === 0) {
@@ -8089,7 +8036,9 @@ export namespace InterfaceUnionMember2b {
     readonly interfaceUnionMember2bProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8235,12 +8184,9 @@ export namespace InterfaceUnionMember2b {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(
-        dataFactory.namedNode(
-          "http://example.com/interfaceUnionMember2bProperty",
-        ),
-        { unique: true },
-      )
+      .values($properties.interfaceUnionMember2bProperty["identifier"], {
+        unique: true,
+      })
       .head()
       .chain((_value) => _value.toString());
     if (_interfaceUnionMember2bPropertyEither.isLeft()) {
@@ -8475,7 +8421,9 @@ export namespace InterfaceUnionMember2a {
     readonly interfaceUnionMember2aProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8621,12 +8569,9 @@ export namespace InterfaceUnionMember2a {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(
-        dataFactory.namedNode(
-          "http://example.com/interfaceUnionMember2aProperty",
-        ),
-        { unique: true },
-      )
+      .values($properties.interfaceUnionMember2aProperty["identifier"], {
+        unique: true,
+      })
       .head()
       .chain((_value) => _value.toString());
     if (_interfaceUnionMember2aPropertyEither.isLeft()) {
@@ -8861,7 +8806,9 @@ export namespace InterfaceUnionMember1 {
     readonly interfaceUnionMember1Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8997,12 +8944,9 @@ export namespace InterfaceUnionMember1 {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(
-        dataFactory.namedNode(
-          "http://example.com/interfaceUnionMember1Property",
-        ),
-        { unique: true },
-      )
+      .values($properties.interfaceUnionMember1Property["identifier"], {
+        unique: true,
+      })
       .head()
       .chain((_value) => _value.toString());
     if (_interfaceUnionMember1PropertyEither.isLeft()) {
@@ -9233,7 +9177,9 @@ export namespace Interface {
     readonly interfaceProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9361,9 +9307,7 @@ export namespace Interface {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(dataFactory.namedNode("http://example.com/interfaceProperty"), {
-        unique: true,
-      })
+      .values($properties.interfaceProperty["identifier"], { unique: true })
       .head()
       .chain((_value) => _value.toString());
     if (_interfacePropertyEither.isLeft()) {
@@ -9829,7 +9773,9 @@ export namespace InPropertiesClass {
     readonly inStringsProperty: ("text" | "html") | undefined;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9986,26 +9932,25 @@ export namespace InPropertiesClass {
       purify.Maybe<true>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/inBooleansProperty"),
-          { unique: true },
-        )
+        .values($properties.inBooleansProperty["identifier"], { unique: true })
         .head()
         .chain((_value) =>
-          _value.toBoolean().chain((value) =>
-            value === true
-              ? purify.Either.of(value)
-              : purify.Left(
-                  new rdfjsResource.Resource.MistypedValueError({
-                    actualValue: rdfLiteral.toRdf(value),
-                    expectedValueType: "true",
-                    focusResource: _resource,
-                    predicate: dataFactory.namedNode(
-                      "http://example.com/inBooleansProperty",
-                    ),
-                  }),
-                ),
-          ),
+          _value
+            .toBoolean()
+            .chain((value) =>
+              value === true
+                ? purify.Either.of(value)
+                : purify.Left(
+                    new rdfjsResource.Resource.MistypedValueError({
+                      actualValue: rdfLiteral.toRdf(value),
+                      expectedValueType: "true",
+                      focusResource: _resource,
+                      predicate: dataFactory.namedNode(
+                        "http://example.com/inBooleansProperty",
+                      ),
+                    }),
+                  ),
+            ),
         )
         .toMaybe(),
     );
@@ -10019,10 +9964,7 @@ export namespace InPropertiesClass {
       purify.Maybe<Date>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/inDateTimesProperty"),
-          { unique: true },
-        )
+        .values($properties.inDateTimesProperty["identifier"], { unique: true })
         .head()
         .chain((_value) =>
           _value.toDate().chain((value) => {
@@ -10063,9 +10005,7 @@ export namespace InPropertiesClass {
       >
     > = purify.Either.of(
       _resource
-        .values(dataFactory.namedNode("http://example.com/inIrisProperty"), {
-          unique: true,
-        })
+        .values($properties.inIrisProperty["identifier"], { unique: true })
         .head()
         .chain((_value) =>
           _value.toIri().chain((iri) => {
@@ -10117,9 +10057,7 @@ export namespace InPropertiesClass {
       purify.Maybe<1 | 2>
     > = purify.Either.of(
       _resource
-        .values(dataFactory.namedNode("http://example.com/inNumbersProperty"), {
-          unique: true,
-        })
+        .values($properties.inNumbersProperty["identifier"], { unique: true })
         .head()
         .chain((_value) =>
           _value.toNumber().chain((value) => {
@@ -10153,9 +10091,7 @@ export namespace InPropertiesClass {
       purify.Maybe<"text" | "html">
     > = purify.Either.of(
       _resource
-        .values(dataFactory.namedNode("http://example.com/inStringsProperty"), {
-          unique: true,
-        })
+        .values($properties.inStringsProperty["identifier"], { unique: true })
         .head()
         .chain((_value) =>
           _value.toString().chain((value) => {
@@ -10613,7 +10549,9 @@ export namespace InIdentifierClass {
     readonly inIdentifierProperty: string | undefined;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.NamedNode<
@@ -10741,10 +10679,9 @@ export namespace InIdentifierClass {
       purify.Maybe<string>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/inIdentifierProperty"),
-          { unique: true },
-        )
+        .values($properties.inIdentifierProperty["identifier"], {
+          unique: true,
+        })
         .head()
         .chain((_value) => _value.toString())
         .toMaybe(),
@@ -11072,7 +11009,9 @@ export namespace HasValuePropertiesClass {
     readonly hasLiteralValueProperty: string | undefined;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11185,10 +11124,7 @@ export namespace HasValuePropertiesClass {
       purify.Maybe<rdfjs.NamedNode>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/hasIriValueProperty"),
-          { unique: true },
-        )
+        .values($properties.hasIriValueProperty["identifier"], { unique: true })
         .find((_value) =>
           _value
             .toTerm()
@@ -11211,10 +11147,9 @@ export namespace HasValuePropertiesClass {
       purify.Maybe<string>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/hasLiteralValueProperty"),
-          { unique: true },
-        )
+        .values($properties.hasLiteralValueProperty["identifier"], {
+          unique: true,
+        })
         .find((_value) => _value.toTerm().equals(dataFactory.literal("test")))
         .chain((_value) => _value.toString())
         .toMaybe(),
@@ -11532,7 +11467,9 @@ export namespace ExternPropertiesInlineNestedClass {
     readonly externPropertiesInlineNestedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11631,9 +11568,7 @@ export namespace ExternPropertiesInlineNestedClass {
       string
     > = _resource
       .values(
-        dataFactory.namedNode(
-          "http://example.com/externPropertiesInlineNestedStringProperty",
-        ),
+        $properties.externPropertiesInlineNestedStringProperty["identifier"],
         { unique: true },
       )
       .head()
@@ -11919,7 +11854,9 @@ export namespace ExternPropertiesExternNestedClass {
     readonly externPropertiesExternNestedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12018,9 +11955,7 @@ export namespace ExternPropertiesExternNestedClass {
       string
     > = _resource
       .values(
-        dataFactory.namedNode(
-          "http://example.com/externPropertiesExternNestedStringProperty",
-        ),
+        $properties.externPropertiesExternNestedStringProperty["identifier"],
         { unique: true },
       )
       .head()
@@ -12424,7 +12359,9 @@ export namespace ExternPropertiesClass {
       | undefined;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12552,10 +12489,7 @@ export namespace ExternPropertiesClass {
       purify.Maybe<ExternClass>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/externClassProperty"),
-          { unique: true },
-        )
+        .values($properties.externClassProperty["identifier"], { unique: true })
         .head()
         .chain((value) => value.toResource())
         .chain((_resource) =>
@@ -12578,10 +12512,9 @@ export namespace ExternPropertiesClass {
       purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/externNestedProperty"),
-          { unique: true },
-        )
+        .values($properties.externNestedProperty["identifier"], {
+          unique: true,
+        })
         .head()
         .chain((_value) => _value.toIdentifier())
         .toMaybe(),
@@ -12596,10 +12529,9 @@ export namespace ExternPropertiesClass {
       purify.Maybe<ExternPropertiesInlineNestedClass>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/inlineNestedProperty"),
-          { unique: true },
-        )
+        .values($properties.inlineNestedProperty["identifier"], {
+          unique: true,
+        })
         .head()
         .chain((value) => value.toResource())
         .chain((_resource) =>
@@ -12985,7 +12917,9 @@ export namespace ExplicitRdfTypeClass {
     readonly explicitRdfTypeProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13104,10 +13038,9 @@ export namespace ExplicitRdfTypeClass {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(
-        dataFactory.namedNode("http://example.com/explicitRdfTypeProperty"),
-        { unique: true },
-      )
+      .values($properties.explicitRdfTypeProperty["identifier"], {
+        unique: true,
+      })
       .head()
       .chain((_value) => _value.toString());
     if (_explicitRdfTypePropertyEither.isLeft()) {
@@ -13488,7 +13421,9 @@ export namespace ExplicitFromToRdfTypesClass {
     readonly explicitFromToRdfTypesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13609,12 +13544,9 @@ export namespace ExplicitFromToRdfTypesClass {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(
-        dataFactory.namedNode(
-          "http://example.com/explicitFromToRdfTypesProperty",
-        ),
-        { unique: true },
-      )
+      .values($properties.explicitFromToRdfTypesProperty["identifier"], {
+        unique: true,
+      })
       .head()
       .chain((_value) => _value.toString());
     if (_explicitFromToRdfTypesPropertyEither.isLeft()) {
@@ -13939,11 +13871,12 @@ export class DefaultValuePropertiesClass {
   }
 
   get $identifier(): DefaultValuePropertiesClass.$Identifier {
-    return typeof this._$identifier !== "undefined"
-      ? this._$identifier
-      : dataFactory.namedNode(
-          `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
-        );
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.namedNode(
+        `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
+      );
+    }
+    return this._$identifier;
   }
 
   protected get $identifierPrefix(): string {
@@ -14198,7 +14131,9 @@ export namespace DefaultValuePropertiesClass {
     readonly trueBooleanDefaultValueProperty: boolean;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14348,10 +14283,9 @@ export namespace DefaultValuePropertiesClass {
       rdfjsResource.Resource.ValueError,
       Date
     > = _resource
-      .values(
-        dataFactory.namedNode("http://example.com/dateDefaultValueProperty"),
-        { unique: true },
-      )
+      .values($properties.dateDefaultValueProperty["identifier"], {
+        unique: true,
+      })
       .head()
       .alt(
         purify.Either.of(
@@ -14378,12 +14312,9 @@ export namespace DefaultValuePropertiesClass {
       rdfjsResource.Resource.ValueError,
       Date
     > = _resource
-      .values(
-        dataFactory.namedNode(
-          "http://example.com/dateTimeDefaultValueProperty",
-        ),
-        { unique: true },
-      )
+      .values($properties.dateTimeDefaultValueProperty["identifier"], {
+        unique: true,
+      })
       .head()
       .alt(
         purify.Either.of(
@@ -14412,12 +14343,9 @@ export namespace DefaultValuePropertiesClass {
       rdfjsResource.Resource.ValueError,
       boolean
     > = _resource
-      .values(
-        dataFactory.namedNode(
-          "http://example.com/falseBooleanDefaultValueProperty",
-        ),
-        { unique: true },
-      )
+      .values($properties.falseBooleanDefaultValueProperty["identifier"], {
+        unique: true,
+      })
       .head()
       .alt(
         purify.Either.of(
@@ -14444,10 +14372,9 @@ export namespace DefaultValuePropertiesClass {
       rdfjsResource.Resource.ValueError,
       number
     > = _resource
-      .values(
-        dataFactory.namedNode("http://example.com/numberDefaultValueProperty"),
-        { unique: true },
-      )
+      .values($properties.numberDefaultValueProperty["identifier"], {
+        unique: true,
+      })
       .head()
       .alt(
         purify.Either.of(
@@ -14474,10 +14401,9 @@ export namespace DefaultValuePropertiesClass {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(
-        dataFactory.namedNode("http://example.com/stringDefaultValueProperty"),
-        { unique: true },
-      )
+      .values($properties.stringDefaultValueProperty["identifier"], {
+        unique: true,
+      })
       .head()
       .alt(
         purify.Either.of(
@@ -14501,12 +14427,9 @@ export namespace DefaultValuePropertiesClass {
       rdfjsResource.Resource.ValueError,
       boolean
     > = _resource
-      .values(
-        dataFactory.namedNode(
-          "http://example.com/trueBooleanDefaultValueProperty",
-        ),
-        { unique: true },
-      )
+      .values($properties.trueBooleanDefaultValueProperty["identifier"], {
+        unique: true,
+      })
       .head()
       .alt(
         purify.Either.of(
@@ -14931,7 +14854,9 @@ export namespace BaseInterfaceWithPropertiesStatic {
     readonly baseInterfaceWithPropertiesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15123,12 +15048,9 @@ export namespace BaseInterfaceWithPropertiesStatic {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(
-        dataFactory.namedNode(
-          "http://example.com/baseInterfaceWithPropertiesProperty",
-        ),
-        { unique: true },
-      )
+      .values($properties.baseInterfaceWithPropertiesProperty["identifier"], {
+        unique: true,
+      })
       .head()
       .chain((_value) => _value.toString());
     if (_baseInterfaceWithPropertiesPropertyEither.isLeft()) {
@@ -15447,7 +15369,9 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export const $Identifier = BaseInterfaceWithPropertiesStatic.$Identifier;
   export type $Json = BaseInterfaceWithPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15921,7 +15845,9 @@ export namespace ConcreteParentInterfaceStatic {
     readonly concreteParentInterfaceProperty: string;
   } & BaseInterfaceWithoutPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16111,12 +16037,9 @@ export namespace ConcreteParentInterfaceStatic {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(
-        dataFactory.namedNode(
-          "http://example.com/concreteParentInterfaceProperty",
-        ),
-        { unique: true },
-      )
+      .values($properties.concreteParentInterfaceProperty["identifier"], {
+        unique: true,
+      })
       .head()
       .chain((_value) => _value.toString());
     if (_concreteParentInterfacePropertyEither.isLeft()) {
@@ -16454,7 +16377,9 @@ export namespace ConcreteChildInterface {
     readonly concreteChildInterfaceProperty: string;
   } & ConcreteParentInterfaceStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16634,12 +16559,9 @@ export namespace ConcreteChildInterface {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(
-        dataFactory.namedNode(
-          "http://example.com/concreteChildInterfaceProperty",
-        ),
-        { unique: true },
-      )
+      .values($properties.concreteChildInterfaceProperty["identifier"], {
+        unique: true,
+      })
       .head()
       .chain((_value) => _value.toString());
     if (_concreteChildInterfacePropertyEither.isLeft()) {
@@ -17058,7 +16980,9 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     readonly abstractBaseClassWithPropertiesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17157,9 +17081,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       string
     > = _resource
       .values(
-        dataFactory.namedNode(
-          "http://example.com/abstractBaseClassWithPropertiesProperty",
-        ),
+        $properties.abstractBaseClassWithPropertiesProperty["identifier"],
         { unique: true },
       )
       .head()
@@ -17599,18 +17521,20 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
   }
 
   override $equals(other: ConcreteParentClass): $EqualsResult {
-    return super.$equals(other).chain(() =>
-      $strictEquals(
-        this.concreteParentClassProperty,
-        other.concreteParentClassProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "concreteParentClassProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .$equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.concreteParentClassProperty,
+          other.concreteParentClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "concreteParentClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override $hash<
@@ -17690,7 +17614,9 @@ export namespace ConcreteParentClassStatic {
     readonly concreteParentClassProperty: string;
   } & AbstractBaseClassWithoutPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17836,10 +17762,9 @@ export namespace ConcreteParentClassStatic {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(
-        dataFactory.namedNode("http://example.com/concreteParentClassProperty"),
-        { unique: true },
-      )
+      .values($properties.concreteParentClassProperty["identifier"], {
+        unique: true,
+      })
       .head()
       .chain((_value) => _value.toString());
     if (_concreteParentClassPropertyEither.isLeft()) {
@@ -18107,18 +18032,20 @@ export class ConcreteChildClass extends ConcreteParentClass {
   }
 
   override $equals(other: ConcreteChildClass): $EqualsResult {
-    return super.$equals(other).chain(() =>
-      $strictEquals(
-        this.concreteChildClassProperty,
-        other.concreteChildClassProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "concreteChildClassProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .$equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.concreteChildClassProperty,
+          other.concreteChildClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "concreteChildClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override $hash<
@@ -18196,7 +18123,9 @@ export namespace ConcreteChildClass {
     readonly concreteChildClassProperty: string;
   } & ConcreteParentClassStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18329,10 +18258,9 @@ export namespace ConcreteChildClass {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(
-        dataFactory.namedNode("http://example.com/concreteChildClassProperty"),
-        { unique: true },
-      )
+      .values($properties.concreteChildClassProperty["identifier"], {
+        unique: true,
+      })
       .head()
       .chain((_value) => _value.toString());
     if (_concreteChildClassPropertyEither.isLeft()) {
@@ -18711,7 +18639,9 @@ export namespace ClassUnionMember2 {
     readonly classUnionMember2Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18830,10 +18760,9 @@ export namespace ClassUnionMember2 {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(
-        dataFactory.namedNode("http://example.com/classUnionMember2Property"),
-        { unique: true },
-      )
+      .values($properties.classUnionMember2Property["identifier"], {
+        unique: true,
+      })
       .head()
       .chain((_value) => _value.toString());
     if (_classUnionMember2PropertyEither.isLeft()) {
@@ -19197,7 +19126,9 @@ export namespace ClassUnionMember1 {
     readonly classUnionMember1Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19316,10 +19247,9 @@ export namespace ClassUnionMember1 {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(
-        dataFactory.namedNode("http://example.com/classUnionMember1Property"),
-        { unique: true },
-      )
+      .values($properties.classUnionMember1Property["identifier"], {
+        unique: true,
+      })
       .head()
       .chain((_value) => _value.toString());
     if (_classUnionMember1PropertyEither.isLeft()) {
@@ -19924,7 +19854,9 @@ export namespace AbstractBaseClassForExternClassStatic {
     readonly abstractBaseClassForExternClassProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -20024,9 +19956,7 @@ export namespace AbstractBaseClassForExternClassStatic {
       string
     > = _resource
       .values(
-        dataFactory.namedNode(
-          "http://example.com/abstractBaseClassForExternClassProperty",
-        ),
+        $properties.abstractBaseClassForExternClassProperty["identifier"],
         { unique: true },
       )
       .head()

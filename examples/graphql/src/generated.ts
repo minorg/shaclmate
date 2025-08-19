@@ -169,10 +169,9 @@ export namespace UnionMember2 {
       purify.Maybe<string>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/optionalStringProperty"),
-          { unique: true },
-        )
+        .values($properties.optionalStringProperty["identifier"], {
+          unique: true,
+        })
         .head()
         .chain((_value) => _value.toString())
         .toMaybe(),
@@ -366,10 +365,9 @@ export namespace UnionMember1 {
       purify.Maybe<number>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/optionalNumberProperty"),
-          { unique: true },
-        )
+        .values($properties.optionalNumberProperty["identifier"], {
+          unique: true,
+        })
         .head()
         .chain((_value) => _value.toNumber())
         .toMaybe(),
@@ -607,10 +605,9 @@ export namespace Nested {
       purify.Maybe<number>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/optionalNumberProperty"),
-          { unique: true },
-        )
+        .values($properties.optionalNumberProperty["identifier"], {
+          unique: true,
+        })
         .head()
         .chain((_value) => _value.toNumber())
         .toMaybe(),
@@ -625,10 +622,9 @@ export namespace Nested {
       purify.Maybe<string>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/optionalStringProperty"),
-          { unique: true },
-        )
+        .values($properties.optionalStringProperty["identifier"], {
+          unique: true,
+        })
         .head()
         .chain((_value) => _value.toString())
         .toMaybe(),
@@ -642,10 +638,9 @@ export namespace Nested {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(
-        dataFactory.namedNode("http://example.com/requiredStringProperty"),
-        { unique: true },
-      )
+      .values($properties.requiredStringProperty["identifier"], {
+        unique: true,
+      })
       .head()
       .chain((_value) => _value.toString());
     if (_requiredStringPropertyEither.isLeft()) {
@@ -858,10 +853,9 @@ export namespace ConcreteParentStatic {
       purify.Maybe<string>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/parentStringProperty"),
-          { unique: true },
-        )
+        .values($properties.parentStringProperty["identifier"], {
+          unique: true,
+        })
         .head()
         .chain((_value) => _value.toString())
         .toMaybe(),
@@ -1139,10 +1133,7 @@ export namespace ConcreteChild {
       purify.Maybe<string>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/childStringProperty"),
-          { unique: true },
-        )
+        .values($properties.childStringProperty["identifier"], { unique: true })
         .head()
         .chain((_value) => _value.toString())
         .toMaybe(),
@@ -1157,12 +1148,9 @@ export namespace ConcreteChild {
       purify.Maybe<Nested>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode(
-            "http://example.com/optionalNestedObjectProperty",
-          ),
-          { unique: true },
-        )
+        .values($properties.optionalNestedObjectProperty["identifier"], {
+          unique: true,
+        })
         .head()
         .chain((value) => value.toResource())
         .chain((_resource) =>
@@ -1186,10 +1174,9 @@ export namespace ConcreteChild {
       purify.Maybe<string>
     > = purify.Either.of(
       _resource
-        .values(
-          dataFactory.namedNode("http://example.com/optionalStringProperty"),
-          { unique: true },
-        )
+        .values($properties.optionalStringProperty["identifier"], {
+          unique: true,
+        })
         .head()
         .chain((_value) => _value.toString())
         .toMaybe(),
@@ -1203,10 +1190,9 @@ export namespace ConcreteChild {
       rdfjsResource.Resource.ValueError,
       string
     > = _resource
-      .values(
-        dataFactory.namedNode("http://example.com/requiredStringProperty"),
-        { unique: true },
-      )
+      .values($properties.requiredStringProperty["identifier"], {
+        unique: true,
+      })
       .head()
       .chain((_value) => _value.toString());
     if (_requiredStringPropertyEither.isLeft()) {
