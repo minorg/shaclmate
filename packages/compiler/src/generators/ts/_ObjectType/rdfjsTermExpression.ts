@@ -1,5 +1,5 @@
 import type { BlankNode, Literal, NamedNode, Variable } from "@rdfjs/types";
-import { xsd } from "@tpluscode/rdf-ns-builders";
+import { rdf, rdfs, xsd } from "@tpluscode/rdf-ns-builders";
 import { logger } from "../../../logger.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
@@ -24,26 +24,45 @@ export function rdfjsTermExpression({
         }
         return `${dataFactoryVariable}.literal("${rdfjsTerm.value}", "${rdfjsTerm.language}")`;
       }
-      if (rdfjsTerm.datatype.value.startsWith(xsd[""].value)) {
-        const xsdName = rdfjsTerm.datatype.value.substring(
-          xsd[""].value.length,
+      return `${dataFactoryVariable}.literal("${rdfjsTerm.value}", ${rdfjsTermExpression({ dataFactoryVariable, rdfjsTerm: rdfjsTerm.datatype })})`;
+    case "NamedNode": {
+      if (rdfjsTerm.value.startsWith(rdf[""].value)) {
+        const unqualifiedName = rdfjsTerm.value.substring(rdf[""].value.length);
+        switch (unqualifiedName) {
+          case "first":
+          case "nil":
+          case "rest":
+          case "subject":
+          case "type":
+            return `${syntheticNamePrefix}RdfVocabularies.rdf.${unqualifiedName}`;
+          default:
+            logger.warn("unrecognized rdf IRI: %s", rdfjsTerm.value);
+        }
+      } else if (rdfjsTerm.value.startsWith(rdfs[""].value)) {
+        const unqualifiedName = rdfjsTerm.value.substring(
+          rdfs[""].value.length,
         );
-        switch (xsdName) {
+        switch (unqualifiedName) {
+          case "subClassOf":
+            return `${syntheticNamePrefix}RdfVocabularies.rdfs.${unqualifiedName}`;
+          default:
+            logger.warn("unrecognized rdfs IRI: %s", rdfjsTerm.value);
+        }
+      } else if (rdfjsTerm.value.startsWith(xsd[""].value)) {
+        const unqualifiedName = rdfjsTerm.value.substring(xsd[""].value.length);
+        switch (unqualifiedName) {
           case "boolean":
           case "date":
           case "dateTime":
           case "integer":
-            return `${dataFactoryVariable}.literal("${rdfjsTerm.value}", ${syntheticNamePrefix}RdfVocabularies.xsd.${xsdName})`;
+            return `${syntheticNamePrefix}RdfVocabularies.xsd.${unqualifiedName}`;
           default:
-            logger.warn(
-              "unrecognized XSD literal datatype: %s",
-              rdfjsTerm.datatype.value,
-            );
+            logger.warn("unrecognized xsd IRI: %s", rdfjsTerm.value);
         }
       }
-      return `${dataFactoryVariable}.literal("${rdfjsTerm.value}", ${dataFactoryVariable}.namedNode("${rdfjsTerm.datatype.value}"))`;
-    case "NamedNode":
+
       return `${dataFactoryVariable}.namedNode("${rdfjsTerm.value}")`;
+    }
     case "Variable":
       return `${dataFactoryVariable}.variable!("${rdfjsTerm.value}")`;
   }

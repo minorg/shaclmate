@@ -1,6 +1,7 @@
 import { Maybe } from "purify-ts";
 import type { OptionalKind, ParameterDeclarationStructure } from "ts-morph";
 
+import { rdf } from "@tpluscode/rdf-ns-builders";
 import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
@@ -44,7 +45,7 @@ export function toRdfFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
 
   if (this.toRdfTypes.length > 0) {
     statements.push(
-      `if (!${variables.ignoreRdfType}) { ${this.toRdfTypes.map((toRdfType) => `${variables.resource}.add(${syntheticNamePrefix}RdfVocabularies.rdf.type, ${variables.resource}.dataFactory.namedNode("${toRdfType.value}"));`).join(" ")} }`,
+      `if (!${variables.ignoreRdfType}) { ${this.toRdfTypes.map((toRdfType) => `${variables.resource}.add(${this.rdfjsTermExpression(rdf.type)}, ${variables.resource}.dataFactory.namedNode("${toRdfType.value}"));`).join(" ")} }`,
     );
     usedIgnoreRdfTypeVariable = true;
   }
