@@ -1,5 +1,4 @@
 import type { NamedNode } from "@rdfjs/types";
-import { rdf } from "@tpluscode/rdf-ns-builders";
 
 import { Maybe } from "purify-ts";
 
@@ -161,7 +160,7 @@ export class ListType extends Type {
           triples.push(
             objectInitializer({
               subject: listVariable,
-              predicate: this.rdfjsTermExpression(rdf.first),
+              predicate: `${syntheticNamePrefix}RdfVocabularies.rdf.first`,
               object: item0Variable,
             }),
             ...this.itemType.sparqlConstructTemplateTriples({
@@ -180,7 +179,7 @@ export class ListType extends Type {
           triples.push(
             objectInitializer({
               subject: listVariable,
-              predicate: this.rdfjsTermExpression(rdf.rest),
+              predicate: `${syntheticNamePrefix}RdfVocabularies.rdf.rest`,
               object: rest0Variable,
             }),
           );
@@ -195,7 +194,7 @@ export class ListType extends Type {
           triples.push(
             objectInitializer({
               subject: restNVariable,
-              predicate: this.rdfjsTermExpression(rdf.first),
+              predicate: `${syntheticNamePrefix}RdfVocabularies.rdf.first`,
               object: itemNVariable,
             }),
             ...this.itemType.sparqlConstructTemplateTriples({
@@ -212,7 +211,7 @@ export class ListType extends Type {
         triples.push(
           objectInitializer({
             subject: restNVariable,
-            predicate: this.rdfjsTermExpression(rdf.rest),
+            predicate: `${syntheticNamePrefix}RdfVocabularies.rdf.rest`,
             object: variable("RestNBasic"),
           }),
         );
@@ -248,7 +247,7 @@ export class ListType extends Type {
           patterns.push(
             `{ type: "bgp", triples: [${objectInitializer({
               subject: listVariable,
-              predicate: this.rdfjsTermExpression(rdf.first),
+              predicate: `${syntheticNamePrefix}RdfVocabularies.rdf.first`,
               object: item0Variable,
             })}] }`,
             ...this.itemType.sparqlWherePatterns({
@@ -267,7 +266,7 @@ export class ListType extends Type {
           patterns.push(
             `{ type: "bgp", triples: [${objectInitializer({
               subject: listVariable,
-              predicate: this.rdfjsTermExpression(rdf.rest),
+              predicate: `${syntheticNamePrefix}RdfVocabularies.rdf.rest`,
               object: rest0Variable,
             })}] }`,
           );
@@ -280,7 +279,7 @@ export class ListType extends Type {
         optionalPatterns.push(
           `{ type: "bgp", triples: [${objectInitializer({
             subject: listVariable,
-            predicate: `{ type: "path", pathType: "*", items: [${this.rdfjsTermExpression(rdf.rest)}] }`,
+            predicate: `{ type: "path", pathType: "*", items: [${syntheticNamePrefix}RdfVocabularies.rdf.rest] }`,
             object: restNVariable,
           })}] }`,
         );
@@ -291,7 +290,7 @@ export class ListType extends Type {
           optionalPatterns.push(
             `{ type: "bgp", triples: [${objectInitializer({
               subject: restNVariable,
-              predicate: this.rdfjsTermExpression(rdf.first),
+              predicate: `${syntheticNamePrefix}RdfVocabularies.rdf.first`,
               object: itemNVariable,
             })}] }`,
             ...this.itemType.sparqlWherePatterns({
@@ -308,7 +307,7 @@ export class ListType extends Type {
         optionalPatterns.push(
           `{ type: "bgp", triples: [${objectInitializer({
             subject: restNVariable,
-            predicate: this.rdfjsTermExpression(rdf.rest),
+            predicate: `${syntheticNamePrefix}RdfVocabularies.rdf.rest`,
             object: variable("RestNBasic"),
           })}] }`,
         );
@@ -346,7 +345,8 @@ export class ListType extends Type {
     let subListIdentifier: string;
     switch (this.identifierNodeKind) {
       case "BlankNode": {
-        listIdentifier = subListIdentifier = "dataFactory.blankNode()";
+        listIdentifier =
+          subListIdentifier = `${this.dataFactoryVariable}.blankNode()`;
         mutableResourceTypeName = "rdfjsResource.MutableResource";
         resourceSetMethodName = "mutableResource";
         break;
@@ -356,7 +356,7 @@ export class ListType extends Type {
           case "blankNode":
             throw new RangeError(this.identifierMintingStrategy);
           case "sha256":
-            listIdentifier = `dataFactory.namedNode(\`urn:shaclmate:list:\${${variables.value}.reduce(
+            listIdentifier = `${this.dataFactoryVariable}.namedNode(\`urn:shaclmate:list:\${${variables.value}.reduce(
         (_hasher, _item) => {
           ${this.itemType.hashStatements({ depth: 0, variables: { hasher: "_hasher", value: "_item" } }).join("\n")}
           return _hasher;
@@ -365,15 +365,13 @@ export class ListType extends Type {
       )}\`)`;
             break;
           case "uuidv4":
-            listIdentifier =
-              "dataFactory.namedNode(`urn:shaclmate:list:${uuid.v4()}`)";
+            listIdentifier = `${this.dataFactoryVariable}.namedNode(\`urn:shaclmate:list:\${uuid.v4()}\`)`;
             break;
         }
         mutableResourceTypeName =
           "rdfjsResource.MutableResource<rdfjs.NamedNode>";
         resourceSetMethodName = "mutableNamedResource";
-        subListIdentifier =
-          "dataFactory.namedNode(`${listResource.identifier.value}:${itemIndex}`)";
+        subListIdentifier = `${this.dataFactoryVariable}.namedNode(\`\${listResource.identifier.value}:\${itemIndex}\`)`;
         break;
       }
     }
@@ -387,16 +385,16 @@ export class ListType extends Type {
           mutateGraph: variables.mutateGraph,
         },
       )});
-      currentSubListResource!.add(dataFactory.namedNode("${rdf.rest.value}"), newSubListResource.identifier);
+      currentSubListResource!.add(${syntheticNamePrefix}RdfVocabularies.rdf.rest, newSubListResource.identifier);
       currentSubListResource = newSubListResource;
     }
     
-    ${this.toRdfTypes.map((rdfType) => `currentSubListResource.add(dataFactory.namedNode("${rdf.type.value}"), dataFactory.namedNode("${rdfType.value}"))`).join("\n")}
+    ${this.toRdfTypes.map((rdfType) => `currentSubListResource.add(${syntheticNamePrefix}RdfVocabularies.rdf.type, ${this.dataFactoryVariable}.namedNode("${rdfType.value}"))`).join("\n")}
         
-    currentSubListResource.add(dataFactory.namedNode("${rdf.first.value}"), ${this.itemType.toRdfExpression({ variables: { mutateGraph: variables.mutateGraph, predicate: `dataFactory.namedNode("${rdf.first.value}")`, resource: "currentSubListResource", resourceSet: variables.resourceSet, value: "item" } })});
+    currentSubListResource.add(${syntheticNamePrefix}RdfVocabularies.rdf.first, ${this.itemType.toRdfExpression({ variables: { mutateGraph: variables.mutateGraph, predicate: `${syntheticNamePrefix}RdfVocabularies.rdf.first`, resource: "currentSubListResource", resourceSet: variables.resourceSet, value: "item" } })});
 
     if (itemIndex + 1 === list.length) {
-      currentSubListResource.add(dataFactory.namedNode("${rdf.rest.value}"), dataFactory.namedNode("${rdf.nil.value}"));
+      currentSubListResource.add(${syntheticNamePrefix}RdfVocabularies.rdf.rest, ${syntheticNamePrefix}RdfVocabularies.rdf.nil);
     }
     
     return { currentSubListResource, listResource };
@@ -412,7 +410,7 @@ export class ListType extends Type {
     currentSubListResource: ${mutableResourceTypeName} | null;
     listResource: ${mutableResourceTypeName};
   },
-).listResource.identifier : dataFactory.namedNode("${rdf.nil.value}")`;
+).listResource.identifier : ${syntheticNamePrefix}RdfVocabularies.rdf.nil`;
   }
 
   override useImports(features: Set<TsFeature>): readonly Import[] {
