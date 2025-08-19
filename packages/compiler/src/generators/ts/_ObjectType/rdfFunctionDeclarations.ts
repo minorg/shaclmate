@@ -1,3 +1,4 @@
+import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
@@ -26,7 +27,7 @@ function fromRdfFunctionDeclarations(
   });
 
   this.fromRdfType.ifJust((rdfType) => {
-    const predicate = `${syntheticNamePrefix}RdfVocabularies.rdf.type`;
+    const predicate = this.rdfjsTermExpression(rdf.type);
     propertiesFromRdfStatements.push(
       `\
 if (!${variables.ignoreRdfType} && !${variables.resource}.isInstanceOf(${syntheticNamePrefix}fromRdfType)) {

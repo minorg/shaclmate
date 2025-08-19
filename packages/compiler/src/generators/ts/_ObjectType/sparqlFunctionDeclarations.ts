@@ -1,6 +1,7 @@
 import { camelCase } from "change-case";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 
+import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { sparqlConstructQueryFunctionDeclaration } from "./sparqlConstructQueryFunctionDeclaration.js";
@@ -36,8 +37,8 @@ export function sparqlFunctionDeclarations(
       ? [
           `...(parameters?.ignoreRdfType ? [] :
             [
-              { subject, predicate: ${syntheticNamePrefix}RdfVocabularies.rdf.type, object: ${rdfTypeVariable} },
-              { subject: ${rdfTypeVariable}, predicate: ${syntheticNamePrefix}RdfVocabularies.rdfs.subClassOf, object: ${rdfClassVariable} },
+              { subject, predicate: ${this.rdfjsTermExpression(rdf.type)}, object: ${rdfTypeVariable} },
+              { subject: ${rdfTypeVariable}, predicate: ${this.rdfjsTermExpression(rdfs.subClassOf)}, object: ${rdfClassVariable} },
             ]
           )`,
         ]
@@ -62,9 +63,9 @@ export function sparqlFunctionDeclarations(
                     subject,
                     predicate: {
                       items: [
-                        ${syntheticNamePrefix}RdfVocabularies.rdf.type,
+                        ${this.rdfjsTermExpression(rdf.type)},
                         {
-                          items: [${syntheticNamePrefix}RdfVocabularies.rdfs.subClassOf],
+                          items: [${this.rdfjsTermExpression(rdfs.subClassOf)}],
                           pathType: "*" as const,
                           type: "path" as const
                         },
@@ -81,7 +82,7 @@ export function sparqlFunctionDeclarations(
                 triples: [
                   {
                     subject,
-                    predicate: ${syntheticNamePrefix}RdfVocabularies.rdf.type,
+                    predicate: ${this.rdfjsTermExpression(rdf.type)},
                     object: ${rdfTypeVariable}
                   }
                 ],
@@ -94,7 +95,7 @@ export function sparqlFunctionDeclarations(
                       {
                         subject: ${rdfTypeVariable},
                         predicate: {
-                          items: [${syntheticNamePrefix}RdfVocabularies.rdfs.subClassOf],
+                          items: [${this.rdfjsTermExpression(rdfs.subClassOf)}],
                           pathType: "+" as const,
                           type: "path" as const
                         },
