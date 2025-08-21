@@ -242,6 +242,38 @@ export function $arrayEquals<T>(
 
   return $EqualsResult.Equal;
 }
+/**
+ * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
+ */
+export function $sparqlInstancesOfPattern({
+  rdfType,
+  subject,
+}: {
+  rdfType: rdfjs.NamedNode;
+  subject: sparqljs.Triple["subject"];
+}): sparqljs.Pattern {
+  return {
+    triples: [
+      {
+        subject,
+        predicate: {
+          items: [
+            $RdfVocabularies.rdf.type,
+            {
+              items: [$RdfVocabularies.rdfs.subClassOf],
+              pathType: "*",
+              type: "path",
+            },
+          ],
+          pathType: "/",
+          type: "path",
+        },
+        object: rdfType,
+      },
+    ],
+    type: "bgp",
+  };
+}
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 /**
  * A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.
@@ -13060,27 +13092,7 @@ export namespace ExplicitRdfTypeClass {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -13544,27 +13556,7 @@ export namespace ExplicitFromToRdfTypesClass {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -15058,27 +15050,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -15498,27 +15470,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -15984,27 +15936,7 @@ export namespace ConcreteParentInterfaceStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -16461,27 +16393,7 @@ export namespace ConcreteChildInterface {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -17602,27 +17514,7 @@ export namespace ConcreteParentClassStatic {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -18054,27 +17946,7 @@ export namespace ConcreteChildClass {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -18508,27 +18380,7 @@ export namespace ClassUnionMember2 {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
@@ -18962,27 +18814,7 @@ export namespace ClassUnionMember1 {
       ...(parameters?.ignoreRdfType
         ? []
         : [
-            {
-              triples: [
-                {
-                  subject,
-                  predicate: {
-                    items: [
-                      $RdfVocabularies.rdf.type,
-                      {
-                        items: [$RdfVocabularies.rdfs.subClassOf],
-                        pathType: "*" as const,
-                        type: "path" as const,
-                      },
-                    ],
-                    pathType: "/" as const,
-                    type: "path" as const,
-                  },
-                  object: $fromRdfType,
-                },
-              ],
-              type: "bgp" as const,
-            },
+            $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
             {
               triples: [
                 {
