@@ -57,27 +57,7 @@ export function sparqlFunctionDeclarations(
       ? [
           `...(parameters?.ignoreRdfType ? [] : 
             [
-              {
-                triples: [
-                  {
-                    subject,
-                    predicate: {
-                      items: [
-                        ${this.rdfjsTermExpression(rdf.type)},
-                        {
-                          items: [${this.rdfjsTermExpression(rdfs.subClassOf)}],
-                          pathType: "*" as const,
-                          type: "path" as const
-                        },
-                      ],
-                      pathType: "/" as const,
-                      type: "path" as const
-                    },
-                    object: ${syntheticNamePrefix}fromRdfType
-                  }
-                ],
-                type: "bgp" as const
-              },
+              ${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType: ${syntheticNamePrefix}fromRdfType, subject }),
               {
                 triples: [
                   {
