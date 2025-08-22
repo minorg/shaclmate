@@ -306,7 +306,7 @@ return identifiers.map((identifier) =>
             `\
 const wherePatterns = this.${syntheticNamePrefix}wherePatterns(objectType, query?.where).filter(pattern => pattern.type !== "optional");
 if (wherePatterns.length === 0) {
-  return purify.Left(new Error("no SPARQL WHERE patterns for count"));
+  return purify.Left(new Error("no required SPARQL WHERE patterns for count"));
 }
 
 const selectQueryString = \
