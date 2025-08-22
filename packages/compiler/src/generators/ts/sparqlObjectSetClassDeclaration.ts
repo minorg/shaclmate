@@ -304,7 +304,7 @@ return identifiers.map((identifier) =>
           scope: Scope.Protected,
           statements: [
             `\
-const wherePatterns = this.${syntheticNamePrefix}wherePatterns(objectType, query?.where);
+const wherePatterns = this.${syntheticNamePrefix}wherePatterns(objectType, query?.where).filter(pattern => pattern.type !== "optional");
 if (wherePatterns.length === 0) {
   return purify.Left(new Error("no SPARQL WHERE patterns for count"));
 }
