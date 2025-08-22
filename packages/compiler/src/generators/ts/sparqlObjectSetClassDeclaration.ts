@@ -313,7 +313,6 @@ return purify.EitherAsync(async ({ liftEither }) =>
     this.${syntheticNamePrefix}mapBindingsToCount(
       await this.${syntheticNamePrefix}sparqlClient.queryBindings(
         this.${syntheticNamePrefix}sparqlGenerator.stringify({
-          distinct: true,
           prefixes: {},
           queryType: "SELECT",
           type: "query",
