@@ -25639,29 +25639,33 @@ export class $SparqlObjectSet implements $ObjectSet {
       offset = 0;
     }
 
-    const wherePatterns = this.$wherePatterns(objectType, query?.where);
+    const wherePatterns = this.$wherePatterns(objectType, query?.where).filter(
+      (pattern) => pattern.type !== "optional",
+    );
     if (wherePatterns.length === 0) {
-      return purify.Left(new Error("no SPARQL WHERE patterns for identifiers"));
+      return purify.Left(
+        new Error("no required SPARQL WHERE patterns for identifiers"),
+      );
     }
+
+    const selectQueryString = this.$sparqlGenerator.stringify({
+      distinct: true,
+      limit: limit < Number.MAX_SAFE_INTEGER ? limit : undefined,
+      offset,
+      order: query?.order
+        ? query.order(this.$objectVariable).concat()
+        : [{ expression: this.$objectVariable }],
+      prefixes: {},
+      queryType: "SELECT",
+      type: "query",
+      variables: [this.$objectVariable],
+      where: wherePatterns,
+    });
 
     return purify.EitherAsync(
       async () =>
         this.$mapBindingsToIdentifiers(
-          await this.$sparqlClient.queryBindings(
-            this.$sparqlGenerator.stringify({
-              distinct: true,
-              limit: limit < Number.MAX_SAFE_INTEGER ? limit : undefined,
-              offset,
-              order: query?.order
-                ? query.order(this.$objectVariable).concat()
-                : [{ expression: this.$objectVariable }],
-              prefixes: {},
-              queryType: "SELECT",
-              type: "query",
-              variables: [this.$objectVariable],
-              where: wherePatterns,
-            }),
-          ),
+          await this.$sparqlClient.queryBindings(selectQueryString),
           this.$objectVariable.value,
         ) as readonly ObjectIdentifierT[],
     );
@@ -25744,33 +25748,37 @@ export class $SparqlObjectSet implements $ObjectSet {
     },
     query?: $SparqlObjectSet.Query<ObjectIdentifierT>,
   ): Promise<purify.Either<Error, number>> {
-    const wherePatterns = this.$wherePatterns(objectType, query?.where);
+    const wherePatterns = this.$wherePatterns(objectType, query?.where).filter(
+      (pattern) => pattern.type !== "optional",
+    );
     if (wherePatterns.length === 0) {
-      return purify.Left(new Error("no SPARQL WHERE patterns for count"));
+      return purify.Left(
+        new Error("no required SPARQL WHERE patterns for count"),
+      );
     }
+
+    const selectQueryString = this.$sparqlGenerator.stringify({
+      prefixes: {},
+      queryType: "SELECT",
+      type: "query",
+      variables: [
+        {
+          expression: {
+            aggregation: "COUNT",
+            distinct: true,
+            expression: this.$objectVariable,
+            type: "aggregate",
+          },
+          variable: this.$countVariable,
+        },
+      ],
+      where: wherePatterns,
+    });
 
     return purify.EitherAsync(async ({ liftEither }) =>
       liftEither(
         this.$mapBindingsToCount(
-          await this.$sparqlClient.queryBindings(
-            this.$sparqlGenerator.stringify({
-              prefixes: {},
-              queryType: "SELECT",
-              type: "query",
-              variables: [
-                {
-                  expression: {
-                    aggregation: "COUNT",
-                    distinct: true,
-                    expression: this.$objectVariable,
-                    type: "aggregate",
-                  },
-                  variable: this.$countVariable,
-                },
-              ],
-              where: wherePatterns,
-            }),
-          ),
+          await this.$sparqlClient.queryBindings(selectQueryString),
           this.$countVariable.value,
         ),
       ),
