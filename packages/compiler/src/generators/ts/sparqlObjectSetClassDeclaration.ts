@@ -217,26 +217,27 @@ if (offset < 0) {
   offset = 0;
 }
 
-const wherePatterns = this.${syntheticNamePrefix}wherePatterns(objectType, query?.where);
+const wherePatterns = this.${syntheticNamePrefix}wherePatterns(objectType, query?.where).filter(pattern => pattern.type !== "optional");
 if (wherePatterns.length === 0) {
-  return purify.Left(new Error("no SPARQL WHERE patterns for identifiers"));
+  return purify.Left(new Error("no required SPARQL WHERE patterns for identifiers"));
 }
+
+const selectQueryString = \
+  this.${syntheticNamePrefix}sparqlGenerator.stringify({
+    distinct: true,
+    limit: limit < Number.MAX_SAFE_INTEGER ? limit : undefined,
+    offset,
+    order: query?.order ? query.order(this.${syntheticNamePrefix}objectVariable).concat() : [{ expression: this.${syntheticNamePrefix}objectVariable }],
+    prefixes: {},
+    queryType: "SELECT",
+    type: "query",
+    variables: [this.${syntheticNamePrefix}objectVariable],
+    where: wherePatterns
+  });
   
 return purify.EitherAsync(async () =>
   this.${syntheticNamePrefix}mapBindingsToIdentifiers(
-    await this.${syntheticNamePrefix}sparqlClient.queryBindings(
-      this.${syntheticNamePrefix}sparqlGenerator.stringify({
-        distinct: true,
-        limit: limit < Number.MAX_SAFE_INTEGER ? limit : undefined,
-        offset,
-        order: query?.order ? query.order(this.${syntheticNamePrefix}objectVariable).concat() : [{ expression: this.${syntheticNamePrefix}objectVariable }],
-        prefixes: {},
-        queryType: "SELECT",
-        type: "query",
-        variables: [this.${syntheticNamePrefix}objectVariable],
-        where: wherePatterns
-      }),
-    ),
+    await this.${syntheticNamePrefix}sparqlClient.queryBindings(selectQueryString),
     this.${syntheticNamePrefix}objectVariable.value,
   ) as readonly ${typeParameters.ObjectIdentifierT.name}[],
 );`,
@@ -308,28 +309,29 @@ if (wherePatterns.length === 0) {
   return purify.Left(new Error("no SPARQL WHERE patterns for count"));
 }
 
+const selectQueryString = \
+  this.${syntheticNamePrefix}sparqlGenerator.stringify({
+    prefixes: {},
+    queryType: "SELECT",
+    type: "query",
+    variables: [
+      {
+        expression: {
+          aggregation: "COUNT",
+          distinct: true,
+          expression: this.${syntheticNamePrefix}objectVariable,
+          type: "aggregate",
+        },
+        variable: this.${syntheticNamePrefix}countVariable,
+      },
+    ],
+    where: wherePatterns
+  });
+
 return purify.EitherAsync(async ({ liftEither }) =>
   liftEither(
     this.${syntheticNamePrefix}mapBindingsToCount(
-      await this.${syntheticNamePrefix}sparqlClient.queryBindings(
-        this.${syntheticNamePrefix}sparqlGenerator.stringify({
-          prefixes: {},
-          queryType: "SELECT",
-          type: "query",
-          variables: [
-            {
-              expression: {
-                aggregation: "COUNT",
-                distinct: true,
-                expression: this.${syntheticNamePrefix}objectVariable,
-                type: "aggregate",
-              },
-              variable: this.${syntheticNamePrefix}countVariable,
-            },
-          ],
-          where: wherePatterns
-        }),
-      ),
+      await this.${syntheticNamePrefix}sparqlClient.queryBindings(selectQueryString),
       this.${syntheticNamePrefix}countVariable.value,
     ),
   ),
