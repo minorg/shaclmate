@@ -154,12 +154,18 @@ export function transformNodeShapeToAstType(
       compositeTypeKind = "ObjectUnionType";
     }
 
-    const compositeTypeNodeShapes = compositeTypeShapes.filter(
-      (shape) => shape instanceof input.NodeShape,
-    );
+    const compositeTypeNodeShapes: input.NodeShape[] = [];
+    for (const compositeTypeShape of compositeTypeShapes) {
+      if (!(compositeTypeShape instanceof input.NodeShape)) {
+        return Left(
+          new Error(`${nodeShape} has non-NodeShape in its logical constraint`),
+        );
+      }
+      compositeTypeNodeShapes.push(compositeTypeShape);
+    }
     if (compositeTypeNodeShapes.length === 0) {
       return Left(
-        new Error(`${nodeShape} has no node shapes in its logical constraint`),
+        new Error(`${nodeShape} has no NodeShapes in its logical constraint`),
       );
     }
 
