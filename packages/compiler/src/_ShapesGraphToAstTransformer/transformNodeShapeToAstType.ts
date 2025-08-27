@@ -177,19 +177,27 @@ export function transformNodeShapeToAstType(
     this.nodeShapeAstTypesByIdentifier.set(nodeShape.identifier, compositeType);
 
     for (const memberNodeShape of compositeTypeNodeShapes) {
-      const memberAstTypeEither =
+      const memberTypeEither =
         this.transformNodeShapeToAstType(memberNodeShape);
-      if (memberAstTypeEither.isLeft()) {
-        return memberAstTypeEither;
+      if (memberTypeEither.isLeft()) {
+        return memberTypeEither;
       }
-      const memberAstType = memberAstTypeEither.unsafeCoerce();
-      switch (memberAstType.kind) {
+      const memberType = memberTypeEither.unsafeCoerce();
+      switch (memberType.kind) {
         case "ObjectType":
-          compositeType.memberTypes.push(memberAstType);
+          compositeType.memberTypes.push(memberType);
           break;
+        case "ObjectIntersectionType":
         case "ObjectUnionType":
-          compositeType.memberTypes.push(...memberAstType.memberTypes);
-          break;
+          if (compositeTypeKind === memberType.kind) {
+            compositeType.memberTypes.push(...memberType.memberTypes);
+            break;
+          }
+          return Left(
+            new Error(
+              `${nodeShape} is a ${compositeTypeKind} with a nested ${memberType.kind}`,
+            ),
+          );
         default:
           return Left(
             new Error(
