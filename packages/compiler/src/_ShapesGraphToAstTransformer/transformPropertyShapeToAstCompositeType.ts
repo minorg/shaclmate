@@ -132,18 +132,13 @@ export function transformPropertyShapeToAstCompositeType(
   }
   invariant(memberTypeEithers.length > 0);
 
-  const memberTypes = Either.rights(memberTypeEithers);
-  if (memberTypes.length !== memberTypeEithers.length) {
-    logger.warn(
-      "shape %s composition did not map all member types successfully: %s",
-      shape,
-      Either.lefts(memberTypeEithers)
-        .map((left) => left.message)
-        .join("; "),
-    );
-    return memberTypeEithers[0];
+  const memberTypes: ast.Type[] = [];
+  for (const memberTypeEither of memberTypeEithers) {
+    if (memberTypeEither.isLeft()) {
+      return memberTypeEither;
+    }
+    memberTypes.push(memberTypeEither.unsafeCoerce());
   }
-  invariant(memberTypes.length > 0);
 
   if (memberTypes.length === 1) {
     return Either.of(memberTypes[0]);
