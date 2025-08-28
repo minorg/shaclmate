@@ -1,11 +1,8 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
 
+import { flattenAstObjectCompositeTypeMemberTypes } from "_ShapesGraphToAstTransformer/flattenAstObjectCompositeTypeMemberTypes.js";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
-
-import TermSet from "@rdfjs/term-set";
-import type { NamedNode } from "@rdfjs/types";
-import { Resource } from "rdfjs-resource";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type * as ast from "../ast/index.js";
 import type { TsFeature } from "../enums/TsFeature.js";
@@ -19,7 +16,7 @@ import { pickLiteral } from "./pickLiteral.js";
  * Is an ast.ObjectType actually the shape of an RDF list?
  * If so, return the type of its rdf:first.
  */
-function transformNodeShapeToListType(
+function transformNodeShapeToAstListType(
   this: ShapesGraphToAstTransformer,
   nodeShape: input.NodeShape,
 ): Either<Error, ast.ListType> {
@@ -121,6 +118,100 @@ function transformNodeShapeToListType(
   return Either.of(listType);
 }
 
+export function transformNodeShapeToAstObjectCompositeType(
+  this: ShapesGraphToAstTransformer,
+  {
+    export_,
+    nodeShape,
+  }: {
+    export_: boolean;
+    nodeShape: input.NodeShape;
+  },
+): Either<Error, ast.ObjectIntersectionType | ast.ObjectUnionType> {
+  let compositeTypeShapes: readonly input.Shape[];
+  let compositeTypeKind:
+    | ast.ObjectIntersectionType["kind"]
+    | ast.ObjectUnionType["kind"];
+  if (nodeShape.constraints.and.length > 0) {
+    compositeTypeShapes = nodeShape.constraints.and;
+    compositeTypeKind = "ObjectIntersectionType";
+  } else if (nodeShape.constraints.xone.length > 0) {
+    compositeTypeShapes = nodeShape.constraints.xone;
+    compositeTypeKind = "ObjectUnionType";
+  } else {
+    throw new Error("should never be reached");
+  }
+
+  const compositeTypeNodeShapes: input.NodeShape[] = [];
+  for (const compositeTypeShape of compositeTypeShapes) {
+    if (!(compositeTypeShape instanceof input.NodeShape)) {
+      return Left(
+        new Error(`${nodeShape} has non-NodeShape in its logical constraint`),
+      );
+    }
+    compositeTypeNodeShapes.push(compositeTypeShape);
+  }
+  if (compositeTypeNodeShapes.length === 0) {
+    return Left(
+      new Error(`${nodeShape} has no NodeShapes in its logical constraint`),
+    );
+  }
+
+  // Put a placeholder in the cache to deal with cyclic references
+  const compositeType = {
+    comment: pickLiteral(nodeShape.comments).map((literal) => literal.value),
+    export: export_,
+    kind: compositeTypeKind,
+    label: pickLiteral(nodeShape.labels).map((literal) => literal.value),
+    memberTypes: [] as ast.ObjectType[],
+    name: this.shapeAstName(nodeShape),
+    tsFeatures: new Set<TsFeature>(),
+  };
+
+  this.nodeShapeAstTypesByIdentifier.set(nodeShape.identifier, compositeType);
+
+  const memberTypes: (
+    | ast.ObjectType
+    | ast.ObjectIntersectionType
+    | ast.ObjectUnionType
+  )[] = [];
+  for (const memberNodeShape of compositeTypeNodeShapes) {
+    const memberTypeEither = this.transformNodeShapeToAstType(memberNodeShape);
+    if (memberTypeEither.isLeft()) {
+      return memberTypeEither;
+    }
+    const memberType = memberTypeEither.unsafeCoerce();
+    switch (memberType.kind) {
+      case "ObjectType":
+      case "ObjectIntersectionType":
+      case "ObjectUnionType":
+        memberTypes.push(memberType);
+        break;
+      default:
+        return Left(
+          new Error(
+            `${nodeShape} has one or more non-ObjectType node shapes in its logical constraint`,
+          ),
+        );
+    }
+  }
+
+  return flattenAstObjectCompositeTypeMemberTypes({
+    objectCompositeTypeKind: compositeTypeKind,
+    memberTypes,
+    shape: nodeShape,
+  }).map(({ memberTypes, tsFeatures }) => {
+    // Add to the placeholder composite type and return it.
+    for (const memberType of memberTypes) {
+      compositeType.memberTypes.push(memberType);
+    }
+    for (const tsFeature of tsFeatures) {
+      compositeType.tsFeatures.add(tsFeature);
+    }
+    return compositeType;
+  });
+}
+
 export function transformNodeShapeToAstType(
   this: ShapesGraphToAstTransformer,
   nodeShape: input.NodeShape,
@@ -133,7 +224,7 @@ export function transformNodeShapeToAstType(
   }
 
   if (nodeShape.isList) {
-    return transformNodeShapeToListType.bind(this)(nodeShape);
+    return transformNodeShapeToAstListType.bind(this)(nodeShape);
   }
 
   const export_ = nodeShape.export.orDefault(true);
@@ -142,131 +233,10 @@ export function transformNodeShapeToAstType(
     nodeShape.constraints.and.length > 0 ||
     nodeShape.constraints.xone.length > 0
   ) {
-    let compositeTypeShapes: readonly input.Shape[];
-    let compositeTypeKind:
-      | ast.ObjectIntersectionType["kind"]
-      | ast.ObjectUnionType["kind"];
-    if (nodeShape.constraints.and.length > 0) {
-      compositeTypeShapes = nodeShape.constraints.and;
-      compositeTypeKind = "ObjectIntersectionType";
-    } else {
-      compositeTypeShapes = nodeShape.constraints.xone;
-      compositeTypeKind = "ObjectUnionType";
-    }
-
-    const compositeTypeNodeShapes: input.NodeShape[] = [];
-    for (const compositeTypeShape of compositeTypeShapes) {
-      if (!(compositeTypeShape instanceof input.NodeShape)) {
-        return Left(
-          new Error(`${nodeShape} has non-NodeShape in its logical constraint`),
-        );
-      }
-      compositeTypeNodeShapes.push(compositeTypeShape);
-    }
-    if (compositeTypeNodeShapes.length === 0) {
-      return Left(
-        new Error(`${nodeShape} has no NodeShapes in its logical constraint`),
-      );
-    }
-
-    // Put a placeholder in the cache to deal with cyclic references
-    const compositeType = {
-      comment: pickLiteral(nodeShape.comments).map((literal) => literal.value),
-      export: export_,
-      kind: compositeTypeKind,
-      label: pickLiteral(nodeShape.labels).map((literal) => literal.value),
-      memberTypes: [] as ast.ObjectType[],
-      name: this.shapeAstName(nodeShape),
-      tsFeatures: new Set<TsFeature>(),
-    };
-
-    this.nodeShapeAstTypesByIdentifier.set(nodeShape.identifier, compositeType);
-
-    for (const memberNodeShape of compositeTypeNodeShapes) {
-      const memberTypeEither =
-        this.transformNodeShapeToAstType(memberNodeShape);
-      if (memberTypeEither.isLeft()) {
-        return memberTypeEither;
-      }
-      const memberType = memberTypeEither.unsafeCoerce();
-      switch (memberType.kind) {
-        case "ObjectType":
-          compositeType.memberTypes.push(memberType);
-          break;
-        case "ObjectIntersectionType":
-        case "ObjectUnionType":
-          if (compositeTypeKind === memberType.kind) {
-            compositeType.memberTypes.push(...memberType.memberTypes);
-            break;
-          }
-          return Left(
-            new Error(
-              `${nodeShape} is a ${compositeTypeKind} with a nested ${memberType.kind}`,
-            ),
-          );
-        default:
-          return Left(
-            new Error(
-              `${nodeShape} has one or more non-ObjectType node shapes in its logical constraint`,
-            ),
-          );
-      }
-    }
-
-    // Members of the composite type must have the same tsFeatures.
-    // They must also have distinct RDF types or no RDF types at all.
-    const nonExternMemberTypes = compositeType.memberTypes.filter(
-      (memberType) => !memberType.extern,
-    );
-    const fromRdfTypes = new TermSet<NamedNode>();
-    for (
-      let memberTypeI = 0;
-      memberTypeI < nonExternMemberTypes.length;
-      memberTypeI++
-    ) {
-      const memberType = nonExternMemberTypes[memberTypeI];
-
-      if (memberTypeI === 0) {
-        for (const tsFeature of memberType.tsFeatures) {
-          compositeType.tsFeatures.add(tsFeature);
-        }
-      }
-
-      memberType.fromRdfType.ifJust((fromRdfType) =>
-        fromRdfTypes.add(fromRdfType),
-      );
-
-      if (memberType.tsFeatures.size !== compositeType.tsFeatures.size) {
-        return Left(
-          new Error(
-            `${nodeShape} has a member ObjectType (${Resource.Identifier.toString(memberType.name.identifier)}) with different tsFeatures than the other member ObjectType's`,
-          ),
-        );
-      }
-
-      for (const tsFeature of memberType.tsFeatures) {
-        if (!compositeType.tsFeatures.has(tsFeature)) {
-          return Left(
-            new Error(
-              `${nodeShape} has a member ObjectType (${Resource.Identifier.toString(memberType.name.identifier)}) with different tsFeatures than the other member ObjectType's`,
-            ),
-          );
-        }
-      }
-    }
-
-    if (
-      fromRdfTypes.size > 0 &&
-      fromRdfTypes.size !== nonExternMemberTypes.length
-    ) {
-      return Left(
-        new Error(
-          `one or more ${nodeShape} members ([${nonExternMemberTypes.map((memberType) => Resource.Identifier.toString(memberType.name.identifier)).join(", ")}]) lack distinguishing fromRdfType's ({${[...fromRdfTypes].map((fromRdfType) => Resource.Identifier.toString(fromRdfType)).join(", ")}})`,
-        ),
-      );
-    }
-
-    return Either.of(compositeType);
+    return transformNodeShapeToAstObjectCompositeType.bind(this)({
+      export_,
+      nodeShape,
+    });
   }
 
   const fromRdfType = nodeShape.fromRdfType.alt(nodeShape.rdfType);
