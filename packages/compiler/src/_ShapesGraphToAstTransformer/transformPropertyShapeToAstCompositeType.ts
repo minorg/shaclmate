@@ -7,6 +7,7 @@ import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer
 import type * as ast from "../ast/index.js";
 import * as input from "../input/index.js";
 import { logger } from "../logger.js";
+import { flattenAstObjectCompositeTypeMemberTypes } from "./flattenAstObjectCompositeTypeMemberTypes.js";
 
 /**
  * Try to convert a property shape to a composite type (intersection or union) using some heuristics.
@@ -132,16 +133,49 @@ export function transformPropertyShapeToAstCompositeType(
   }
   invariant(memberTypeEithers.length > 0);
 
-  const memberTypes: ast.Type[] = [];
+  let memberObjectTypes: (
+    | ast.ObjectType
+    | ast.ObjectIntersectionType
+    | ast.ObjectUnionType
+  )[] = [];
+  let memberTypes: ast.Type[] = [];
   for (const memberTypeEither of memberTypeEithers) {
     if (memberTypeEither.isLeft()) {
       return memberTypeEither;
     }
-    memberTypes.push(memberTypeEither.unsafeCoerce());
+    const memberType = memberTypeEither.unsafeCoerce();
+    memberTypes.push(memberType);
+    switch (memberType.kind) {
+      case "ObjectType":
+      case "ObjectIntersectionType":
+      case "ObjectUnionType":
+        memberObjectTypes.push(memberType);
+        break;
+    }
   }
 
   if (memberTypes.length === 1) {
     return Either.of(memberTypes[0]);
+  }
+
+  if (memberTypes.length === memberObjectTypes.length) {
+    // If all the member types are ast.ObjectType, flatten them.
+    const flattenedMemberTypesEither = flattenAstObjectCompositeTypeMemberTypes(
+      {
+        objectCompositeTypeKind:
+          compositeTypeKind === "IntersectionType"
+            ? "ObjectIntersectionType"
+            : "ObjectUnionType",
+        memberTypes: memberObjectTypes,
+        shape,
+      },
+    );
+    if (flattenedMemberTypesEither.isLeft()) {
+      return flattenedMemberTypesEither;
+    }
+    const { memberTypes: flattenedMemberTypes } =
+      flattenedMemberTypesEither.unsafeCoerce();
+    memberTypes = memberObjectTypes = flattenedMemberTypes.concat();
   }
 
   return widenAstCompositeTypeToSingleType({

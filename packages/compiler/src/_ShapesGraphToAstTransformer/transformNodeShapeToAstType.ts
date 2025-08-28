@@ -1,6 +1,5 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
 
-import { flattenAstObjectCompositeTypeMemberTypes } from "_ShapesGraphToAstTransformer/flattenAstObjectCompositeTypeMemberTypes.js";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
@@ -10,6 +9,7 @@ import * as input from "../input/index.js";
 import { tsFeaturesDefault } from "../input/tsFeatures.js";
 import { logger } from "../logger.js";
 import type { NodeShapeAstType } from "./NodeShapeAstType.js";
+import { flattenAstObjectCompositeTypeMemberTypes } from "./flattenAstObjectCompositeTypeMemberTypes.js";
 import { pickLiteral } from "./pickLiteral.js";
 
 /**
