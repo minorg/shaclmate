@@ -400,7 +400,12 @@ ${this.memberTypes
   ): readonly string[] {
     return this.memberTypes.reduce(
       (array, memberType) =>
-        array.concat(memberType.sparqlConstructTemplateTriples(parameters)),
+        array.concat(
+          memberType.sparqlConstructTemplateTriples({
+            ...parameters,
+            allowIgnoreRdfType: false,
+          }),
+        ),
       [] as string[],
     );
   }
@@ -412,7 +417,10 @@ ${this.memberTypes
     return [
       `{ patterns: [${this.memberTypes
         .flatMap((memberType) => {
-          const groupPatterns = memberType.sparqlWherePatterns(parameters);
+          const groupPatterns = memberType.sparqlWherePatterns({
+            ...parameters,
+            allowIgnoreRdfType: false,
+          });
           if (groupPatterns.length === 0) {
             if (haveEmptyGroup) {
               return [];

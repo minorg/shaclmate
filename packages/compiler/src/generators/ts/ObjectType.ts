@@ -371,6 +371,9 @@ export class ObjectType extends DeclaredType {
         SnippetDeclarations.RdfVocabularies(this.dataFactoryVariable),
       );
     }
+    if (this.features.has("sparql") && this.fromRdfType.isJust()) {
+      snippetDeclarations.push(SnippetDeclarations.sparqlInstancesOfPattern);
+    }
     if (
       (this.features.has("json") || this.features.has("rdf")) &&
       this.parentObjectTypes.length > 0
@@ -383,40 +386,38 @@ export class ObjectType extends DeclaredType {
     return snippetDeclarations;
   }
 
-  override sparqlConstructTemplateTriples({
-    context,
-    variables,
-  }: Parameters<Type["sparqlConstructTemplateTriples"]>[0]): readonly string[] {
-    switch (context) {
-      case "property":
-        return super.sparqlConstructTemplateTriples({ context, variables });
-      case "type":
+  override sparqlConstructTemplateTriples(
+    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
+  ): readonly string[] {
+    switch (parameters.context) {
+      case "object":
+        return super.sparqlConstructTemplateTriples(parameters);
+      case "subject":
         return [
           `...${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTemplateTriples(${objectInitializer(
             {
-              ignoreRdfType: true, // Can ignore the rdf:type when the object is nested
-              subject: variables.subject,
-              variablePrefix: variables.variablePrefix,
+              ignoreRdfType: parameters.allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
+              subject: parameters.variables.subject,
+              variablePrefix: parameters.variables.variablePrefix,
             },
           )})`,
         ];
     }
   }
 
-  override sparqlWherePatterns({
-    context,
-    variables,
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly string[] {
-    switch (context) {
-      case "property":
-        return super.sparqlWherePatterns({ context, variables });
-      case "type":
+  override sparqlWherePatterns(
+    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+  ): readonly string[] {
+    switch (parameters.context) {
+      case "object":
+        return super.sparqlWherePatterns(parameters);
+      case "subject":
         return [
           `...${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
             {
-              ignoreRdfType: true, // Can ignore the rdf:type when the object is nested
-              subject: variables.subject,
-              variablePrefix: variables.variablePrefix,
+              ignoreRdfType: parameters.allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
+              subject: parameters.variables.subject,
+              variablePrefix: parameters.variables.variablePrefix,
             },
           )})`,
         ];

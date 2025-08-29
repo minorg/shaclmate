@@ -1,3 +1,4 @@
+import type { TsFeature } from "enums/TsFeature.js";
 import type { Maybe } from "purify-ts";
 import type { CompositeType } from "./CompositeType.js";
 import type { Name } from "./Name.js";
@@ -13,6 +14,13 @@ export interface ObjectCompositeType extends CompositeType<ObjectType> {
   readonly comment: Maybe<string>;
 
   /**
+   * Should generated code derived from this type be visible outside its module?
+   *
+   * Defaults to true.
+   */
+  readonly export: boolean;
+
+  /**
    * Human-readable label from rdfs:label.
    */
   readonly label: Maybe<string>;
@@ -21,4 +29,9 @@ export interface ObjectCompositeType extends CompositeType<ObjectType> {
    * Name of this type, usually derived from sh:name or shaclmate:name.
    */
   readonly name: Name;
+
+  /**
+   * TypeScript features to generate.
+   */
+  readonly tsFeatures: Set<TsFeature>;
 }

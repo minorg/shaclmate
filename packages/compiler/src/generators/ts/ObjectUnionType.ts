@@ -694,38 +694,36 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
     return `${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
   }
 
-  override sparqlConstructTemplateTriples({
-    context,
-    variables,
-  }: Parameters<Type["sparqlConstructTemplateTriples"]>[0]): readonly string[] {
-    switch (context) {
-      case "property":
-        return super.sparqlConstructTemplateTriples({ context, variables });
-      case "type":
+  override sparqlConstructTemplateTriples(
+    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
+  ): readonly string[] {
+    switch (parameters.context) {
+      case "object":
+        return super.sparqlConstructTemplateTriples(parameters);
+      case "subject":
         return [
           `...${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTemplateTriples(${objectInitializer(
             {
-              subject: variables.subject,
-              variablePrefix: variables.variablePrefix,
+              subject: parameters.variables.subject,
+              variablePrefix: parameters.variables.variablePrefix,
             },
           )})`,
         ];
     }
   }
 
-  override sparqlWherePatterns({
-    context,
-    variables,
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly string[] {
-    switch (context) {
-      case "property":
-        return super.sparqlWherePatterns({ context, variables });
-      case "type":
+  override sparqlWherePatterns(
+    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+  ): readonly string[] {
+    switch (parameters.context) {
+      case "object":
+        return super.sparqlWherePatterns(parameters);
+      case "subject":
         return [
           `...${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
             {
-              subject: variables.subject,
-              variablePrefix: variables.variablePrefix,
+              subject: parameters.variables.subject,
+              variablePrefix: parameters.variables.variablePrefix,
             },
           )})`,
         ];

@@ -145,17 +145,19 @@ export abstract class Type {
    * An array of SPARQL.js CONSTRUCT template triples for a value of this type, as strings (so they can incorporate runtime calls).
    *
    * This method is called in two contexts:
-   * (1) By an ObjectType.Property. The property expects a basic graph pattern (subject, property path, property object). The property calls this method to get additional triples in which the propertyObject is the subject. For example, if the type is a nested object, it would include (propertyObject, nestedPredicate, nestedObject) triples.
-   * (2) By another Type. For example, ListType calls this method to with the item variable as a subject in order to chain additional patterns on items.
-   *
-   * Term types with no additional properties should return an empty array.
+   * (1) When an instance of the type is an "object" of a property.
+   *     This method should return a BGP (variables.subject, variables.predicate, variables.object) and recursively call itself with the variables.object as a "subject" context.
+   * (2) When an instance of the type is a "subject".
+   *     For example, ListType calls this method to with the item variable as a subject in order to chain additional patterns on items. Term types with no additional patterns should return an empty array.
    */
   sparqlConstructTemplateTriples({
+    allowIgnoreRdfType,
     context,
     variables,
   }:
     | {
-        context: "property";
+        allowIgnoreRdfType: boolean;
+        context: "object";
         variables: {
           object: string;
           predicate: string;
@@ -164,14 +166,15 @@ export abstract class Type {
         };
       }
     | {
-        context: "type";
+        allowIgnoreRdfType: boolean;
+        context: "subject";
         variables: {
           subject: string;
           variablePrefix: string;
         };
       }): readonly string[] {
     switch (context) {
-      case "property": {
+      case "object": {
         const objectPrefix = `${this.dataFactoryVariable}.variable!(`;
         const objectSuffix = ")";
         invariant(variables.object.startsWith(objectPrefix));
@@ -184,7 +187,8 @@ export abstract class Type {
           }),
         ].concat(
           this.sparqlConstructTemplateTriples({
-            context: "type",
+            allowIgnoreRdfType,
+            context: "subject",
             variables: {
               subject: variables.object,
               variablePrefix: variables.object.substring(
@@ -195,7 +199,7 @@ export abstract class Type {
           }),
         );
       }
-      case "type":
+      case "subject":
         return [];
     }
   }
@@ -206,11 +210,13 @@ export abstract class Type {
    * See note in sparqlConstructTemplateTriples re: how this method is used.
    */
   sparqlWherePatterns({
+    allowIgnoreRdfType,
     context,
     variables,
   }:
     | {
-        context: "property";
+        allowIgnoreRdfType: boolean;
+        context: "object";
         variables: {
           object: string;
           predicate: string;
@@ -219,14 +225,15 @@ export abstract class Type {
         };
       }
     | {
-        context: "type";
+        allowIgnoreRdfType: boolean;
+        context: "subject";
         variables: {
           subject: string;
           variablePrefix: string;
         };
       }): readonly string[] {
     switch (context) {
-      case "property": {
+      case "object": {
         const objectPrefix = `${this.dataFactoryVariable}.variable!(`;
         const objectSuffix = ")";
         invariant(variables.object.startsWith(objectPrefix));
@@ -242,7 +249,8 @@ export abstract class Type {
           }),
         ].concat(
           this.sparqlWherePatterns({
-            context: "type",
+            allowIgnoreRdfType,
+            context: "subject",
             variables: {
               subject: variables.object,
               variablePrefix: variables.object.substring(
@@ -253,7 +261,7 @@ export abstract class Type {
           }),
         );
       }
-      case "type":
+      case "subject":
         return [];
     }
   }
