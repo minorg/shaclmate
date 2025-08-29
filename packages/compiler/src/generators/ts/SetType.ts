@@ -5,7 +5,6 @@ import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
-import { objectInitializer } from "./objectInitializer.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class SetType extends Type {
@@ -119,7 +118,7 @@ export class SetType extends Type {
     if (this._mutable || this.minCount === 0) {
       return arrayFromRdfExpression;
     }
-    return `${arrayFromRdfExpression}.chain(array => purify.NonEmptyList.fromArray(array).toEither(new rdfjsResource.Resource.ValueError(${objectInitializer({ focusResource: variables.resource, message: `\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} is empty\``, predicate: variables.predicate })})))`;
+    return `${arrayFromRdfExpression}.chain(array => purify.NonEmptyList.fromArray(array).toEither(new Error(\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} is an empty set\`)))`;
   }
 
   override hashStatements({

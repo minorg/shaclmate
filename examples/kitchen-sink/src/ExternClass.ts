@@ -77,7 +77,7 @@ export namespace ExternClass {
     languageIn?: readonly string[];
     ignoreRdfType?: boolean;
     resource: rdfjsResource.Resource;
-  }): Either<rdfjsResource.Resource.ValueError, ExternClass> {
+  }): Either<Error, ExternClass> {
     if (extra !== 1) {
       throw new Error("extra didn't come through");
     }

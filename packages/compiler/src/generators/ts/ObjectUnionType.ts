@@ -366,10 +366,10 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
           type: "{ [_index: string]: any; ignoreRdfType?: boolean; resource: rdfjsResource.Resource; }",
         },
       ],
-      returnType: `purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>`,
+      returnType: `purify.Either<Error, ${this.name}>`,
       statements: [
         `return ${this.memberTypes.reduce((expression, memberType) => {
-          const memberTypeExpression = `(${memberType.staticModuleName}.${syntheticNamePrefix}fromRdf({ ...context, resource }) as purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>)`;
+          const memberTypeExpression = `(${memberType.staticModuleName}.${syntheticNamePrefix}fromRdf({ ...context, resource }) as purify.Either<Error, ${this.name}>)`;
           return expression.length > 0
             ? `${expression}.altLazy(() => ${memberTypeExpression})`
             : memberTypeExpression;

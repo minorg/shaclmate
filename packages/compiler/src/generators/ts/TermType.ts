@@ -345,9 +345,9 @@ export class TermType<
         (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("NamedNode")),
       "IdentifierType and LiteralType should override",
     );
-    let expression = `purify.Either.of<rdfjsResource.Resource.ValueError, rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>(${variables.resourceValue}.toTerm())`;
+    let expression = `purify.Either.of<Error, rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>(${variables.resourceValue}.toTerm())`;
     if (this.nodeKinds.size < 3) {
-      const eitherTypeParameters = `<rdfjsResource.Resource.ValueError, ${this.name}>`;
+      const eitherTypeParameters = `<Error, ${this.name}>`;
       expression = `${expression}.chain(term => {
   switch (term.termType) {
   ${[...this.nodeKinds].map((nodeKind) => `case "${nodeKind}":`).join("\n")} return purify.Either.of${eitherTypeParameters}(term);

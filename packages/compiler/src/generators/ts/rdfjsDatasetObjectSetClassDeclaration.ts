@@ -31,7 +31,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
     } satisfies OptionalKind<TypeParameterDeclarationStructure>,
   };
 
-  const fromRdfFunctionType = `(parameters: { resource: rdfjsResource.Resource }) => purify.Either<rdfjsResource.Resource.ValueError, ${typeParameters.ObjectT.name}>`;
+  const fromRdfFunctionType = `(parameters: { resource: rdfjsResource.Resource }) => purify.Either<Error, ${typeParameters.ObjectT.name}>`;
 
   const reusableMethodDeclarations: MethodDeclarationStructure[] = [];
   if (objectTypes.length > 0) {

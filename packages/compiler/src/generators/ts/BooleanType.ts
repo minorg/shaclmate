@@ -55,7 +55,7 @@ export class BooleanType extends PrimitiveType<boolean> {
   >[0]): string {
     let expression = `${variables.resourceValue}.toBoolean()`;
     if (this.primitiveIn.length === 1) {
-      const eitherTypeParameters = `<rdfjsResource.Resource.ValueError, ${this.name}>`;
+      const eitherTypeParameters = `<Error, ${this.name}>`;
       expression = `${expression}.chain(value => value === ${this.primitiveIn[0]} ? purify.Either.of${eitherTypeParameters}(value) : purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: "rdfLiteral.toRdf(value)", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})))`;
     }
     return expression;

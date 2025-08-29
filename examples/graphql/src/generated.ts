@@ -5,9 +5,6 @@ import * as purify from "purify-ts";
 import * as rdfjsResource from "rdfjs-resource";
 export namespace $RdfVocabularies {
   export namespace rdf {
-    export const comment = dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#comment",
-    );
     export const first = dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
     );
@@ -172,7 +169,7 @@ export namespace UnionMember2 {
     languageIn?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       optionalStringProperty: purify.Maybe<string>;
@@ -184,18 +181,16 @@ export namespace UnionMember2 {
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember2)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember2)`,
+            ),
           ),
         );
     }
 
     const $identifier: UnionMember2.$Identifier = _resource.identifier;
     const _optionalStringPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
     > = _resource
       .values($properties.optionalStringProperty["identifier"], {
@@ -219,7 +214,7 @@ export namespace UnionMember2 {
 
   export function $fromRdf(
     parameters: Parameters<typeof UnionMember2.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, UnionMember2> {
+  ): purify.Either<Error, UnionMember2> {
     return UnionMember2.$propertiesFromRdf(parameters).map(
       (properties) => new UnionMember2(properties),
     );
@@ -358,7 +353,7 @@ export namespace UnionMember1 {
     languageIn?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       optionalNumberProperty: purify.Maybe<number>;
@@ -370,18 +365,16 @@ export namespace UnionMember1 {
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember1)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember1)`,
+            ),
           ),
         );
     }
 
     const $identifier: UnionMember1.$Identifier = _resource.identifier;
     const _optionalNumberPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<number>
     > = _resource
       .values($properties.optionalNumberProperty["identifier"], {
@@ -405,7 +398,7 @@ export namespace UnionMember1 {
 
   export function $fromRdf(
     parameters: Parameters<typeof UnionMember1.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, UnionMember1> {
+  ): purify.Either<Error, UnionMember1> {
     return UnionMember1.$propertiesFromRdf(parameters).map(
       (properties) => new UnionMember1(properties),
     );
@@ -586,7 +579,7 @@ export namespace Nested {
     languageIn?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       optionalNumberProperty: purify.Maybe<number>;
@@ -600,18 +593,16 @@ export namespace Nested {
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Nested)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Nested)`,
+            ),
           ),
         );
     }
 
     const $identifier: Nested.$Identifier = _resource.identifier;
     const _optionalNumberPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<number>
     > = _resource
       .values($properties.optionalNumberProperty["identifier"], {
@@ -631,7 +622,7 @@ export namespace Nested {
 
     const optionalNumberProperty = _optionalNumberPropertyEither.unsafeCoerce();
     const _optionalStringPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
     > = _resource
       .values($properties.optionalStringProperty["identifier"], {
@@ -650,15 +641,13 @@ export namespace Nested {
     }
 
     const optionalStringProperty = _optionalStringPropertyEither.unsafeCoerce();
-    const _requiredStringPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      string
-    > = _resource
-      .values($properties.requiredStringProperty["identifier"], {
-        unique: true,
-      })
-      .head()
-      .chain((value) => value.toString());
+    const _requiredStringPropertyEither: purify.Either<Error, string> =
+      _resource
+        .values($properties.requiredStringProperty["identifier"], {
+          unique: true,
+        })
+        .head()
+        .chain((value) => value.toString());
     if (_requiredStringPropertyEither.isLeft()) {
       return _requiredStringPropertyEither;
     }
@@ -674,7 +663,7 @@ export namespace Nested {
 
   export function $fromRdf(
     parameters: Parameters<typeof Nested.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, Nested> {
+  ): purify.Either<Error, Nested> {
     return Nested.$propertiesFromRdf(parameters).map(
       (properties) => new Nested(properties),
     );
@@ -819,7 +808,7 @@ export namespace ConcreteParentStatic {
     languageIn?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     { $identifier: rdfjs.NamedNode; parentStringProperty: purify.Maybe<string> }
   > {
     if (!_ignoreRdfType && !_resource.isInstanceOf($fromRdfType)) {
@@ -828,11 +817,9 @@ export namespace ConcreteParentStatic {
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteParent)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteParent)`,
+            ),
           ),
         );
     }
@@ -850,7 +837,7 @@ export namespace ConcreteParentStatic {
 
     const $identifier: ConcreteParentStatic.$Identifier = _resource.identifier;
     const _parentStringPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
     > = _resource
       .values($properties.parentStringProperty["identifier"], { unique: true })
@@ -872,11 +859,11 @@ export namespace ConcreteParentStatic {
 
   export function $fromRdf(
     parameters: Parameters<typeof ConcreteParentStatic.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, ConcreteParent> {
+  ): purify.Either<Error, ConcreteParent> {
     const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters;
     return (
       ConcreteChild.$fromRdf(otherParameters) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         ConcreteParent
       >
     ).altLazy(() =>
@@ -1068,7 +1055,7 @@ export namespace ConcreteChild {
     languageIn?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
-    rdfjsResource.Resource.ValueError,
+    Error,
     {
       $identifier: rdfjs.NamedNode;
       childStringProperty: purify.Maybe<string>;
@@ -1094,11 +1081,9 @@ export namespace ConcreteChild {
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) =>
           purify.Left(
-            new rdfjsResource.Resource.ValueError({
-              focusResource: _resource,
-              message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteChild)`,
-              predicate: $RdfVocabularies.rdf.type,
-            }),
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteChild)`,
+            ),
           ),
         );
     }
@@ -1116,7 +1101,7 @@ export namespace ConcreteChild {
 
     const $identifier: ConcreteChild.$Identifier = _resource.identifier;
     const _childStringPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
     > = _resource
       .values($properties.childStringProperty["identifier"], { unique: true })
@@ -1134,7 +1119,7 @@ export namespace ConcreteChild {
 
     const childStringProperty = _childStringPropertyEither.unsafeCoerce();
     const _optionalNestedObjectPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<Nested>
     > = _resource
       .values($properties.optionalNestedObjectProperty["identifier"], {
@@ -1163,7 +1148,7 @@ export namespace ConcreteChild {
     const optionalNestedObjectProperty =
       _optionalNestedObjectPropertyEither.unsafeCoerce();
     const _optionalStringPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
+      Error,
       purify.Maybe<string>
     > = _resource
       .values($properties.optionalStringProperty["identifier"], {
@@ -1182,15 +1167,13 @@ export namespace ConcreteChild {
     }
 
     const optionalStringProperty = _optionalStringPropertyEither.unsafeCoerce();
-    const _requiredStringPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      string
-    > = _resource
-      .values($properties.requiredStringProperty["identifier"], {
-        unique: true,
-      })
-      .head()
-      .chain((value) => value.toString());
+    const _requiredStringPropertyEither: purify.Either<Error, string> =
+      _resource
+        .values($properties.requiredStringProperty["identifier"], {
+          unique: true,
+        })
+        .head()
+        .chain((value) => value.toString());
     if (_requiredStringPropertyEither.isLeft()) {
       return _requiredStringPropertyEither;
     }
@@ -1208,7 +1191,7 @@ export namespace ConcreteChild {
 
   export function $fromRdf(
     parameters: Parameters<typeof ConcreteChild.$propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, ConcreteChild> {
+  ): purify.Either<Error, ConcreteChild> {
     return ConcreteChild.$propertiesFromRdf(parameters).map(
       (properties) => new ConcreteChild(properties),
     );
@@ -1252,16 +1235,16 @@ export namespace Union {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     resource: rdfjsResource.Resource;
-  }): purify.Either<rdfjsResource.Resource.ValueError, Union> {
+  }): purify.Either<Error, Union> {
     return (
       UnionMember1.$fromRdf({ ...context, resource }) as purify.Either<
-        rdfjsResource.Resource.ValueError,
+        Error,
         Union
       >
     ).altLazy(
       () =>
         UnionMember2.$fromRdf({ ...context, resource }) as purify.Either<
-          rdfjsResource.Resource.ValueError,
+          Error,
           Union
         >,
     );
@@ -1775,7 +1758,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     objectType: {
       $fromRdf: (parameters: {
         resource: rdfjsResource.Resource;
-      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
@@ -1797,7 +1780,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     objectType: {
       $fromRdf: (parameters: {
         resource: rdfjsResource.Resource;
-      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
@@ -1859,7 +1842,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     objectType: {
       $fromRdf: (parameters: {
         resource: rdfjsResource.Resource;
-      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
@@ -1882,7 +1865,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     objectTypes: readonly {
       $fromRdf: (parameters: {
         resource: rdfjsResource.Resource;
-      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
@@ -1904,7 +1887,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     objectTypes: readonly {
       $fromRdf: (parameters: {
         resource: rdfjsResource.Resource;
-      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
@@ -1951,7 +1934,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objectType: {
         $fromRdf: (parameters: {
           resource: rdfjsResource.Resource;
-        }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+        }) => purify.Either<Error, ObjectT>;
         $fromRdfType?: rdfjs.NamedNode;
       };
       resource: rdfjsResource.Resource;
@@ -1996,7 +1979,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     objectTypes: readonly {
       $fromRdf: (parameters: {
         resource: rdfjsResource.Resource;
-      }) => purify.Either<rdfjsResource.Resource.ValueError, ObjectT>;
+      }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
