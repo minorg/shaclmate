@@ -1544,7 +1544,6 @@ export namespace UnionPropertiesClass {
     });
     triples.push(
       ...NonClass.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}UnrelatedTypesProperty`,
         ),
@@ -1625,7 +1624,6 @@ export namespace UnionPropertiesClass {
               {
                 patterns: [
                   ...NonClass.$sparqlWherePatterns({
-                    ignoreRdfType: true,
                     subject: dataFactory.variable!(
                       `${variablePrefix}UnrelatedTypesProperty`,
                     ),
