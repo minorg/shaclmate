@@ -2,6 +2,7 @@ import type { BlankNode, Literal, NamedNode, Variable } from "@rdfjs/types";
 
 import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
+
 import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
 import { rdfjsTermExpression } from "./_ObjectType/rdfjsTermExpression.js";
@@ -37,7 +38,7 @@ export abstract class Type {
   abstract readonly graphqlName: string;
 
   /**
-   * JSON-compatible version of the type.
+   * JSON-compatible version of the type in a nested type declaration.
    */
   abstract readonly jsonName: string;
 
@@ -62,6 +63,15 @@ export abstract class Type {
     dataFactoryVariable: string;
   }) {
     this.dataFactoryVariable = dataFactoryVariable;
+  }
+
+  get jsonPropertySignature(): {
+    readonly hasQuestionToken?: boolean;
+    readonly name: string;
+  } {
+    return {
+      name: this.jsonName,
+    };
   }
 
   /**

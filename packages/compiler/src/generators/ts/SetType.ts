@@ -77,7 +77,19 @@ export class SetType extends Type {
 
   @Memoize()
   override get jsonName(): string {
-    return `readonly (${this.itemType.jsonName})[]`;
+    let name = `readonly (${this.itemType.jsonName})[]`;
+    if (this.minCount === 0) {
+      name = `${name} | undefined`;
+    }
+    return name;
+  }
+
+  @Memoize()
+  override get jsonPropertySignature() {
+    return {
+      hasQuestionToken: this.minCount === 0,
+      name: `readonly (${this.itemType.jsonName})[]`,
+    };
   }
 
   override get mutable(): boolean {
@@ -158,6 +170,8 @@ export class SetType extends Type {
     let schema = `${this.itemType.jsonZodSchema(parameters)}.array()`;
     if (this.minCount > 0) {
       schema = `${schema}.nonempty().min(${this.minCount})`;
+    } else {
+      schema = `${schema}.default(() => [])`;
     }
     return schema;
   }

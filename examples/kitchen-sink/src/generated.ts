@@ -4053,7 +4053,7 @@ export namespace PropertyCardinalitiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "PropertyCardinalitiesClass";
-    readonly emptyStringSetProperty: readonly string[];
+    readonly emptyStringSetProperty?: readonly string[];
     readonly nonEmptyStringSetProperty: readonly string[];
     readonly optionalStringProperty?: string;
     readonly requiredStringProperty: string;
@@ -4156,6 +4156,7 @@ export namespace PropertyCardinalitiesClass {
       emptyStringSetProperty: zod
         .string()
         .array()
+        .default(() => [])
         .describe("Set: minCount implicitly=0, no maxCount or maxCount > 1"),
       nonEmptyStringSetProperty: zod
         .string()
@@ -5644,7 +5645,7 @@ export namespace MutablePropertiesClass {
     readonly "@id": string;
     readonly $type: "MutablePropertiesClass";
     readonly mutableListProperty?: readonly string[];
-    readonly mutableSetProperty: readonly string[];
+    readonly mutableSetProperty?: readonly string[];
     readonly mutableStringProperty?: string;
   };
 
@@ -5745,6 +5746,7 @@ export namespace MutablePropertiesClass {
       mutableSetProperty: zod
         .string()
         .array()
+        .default(() => [])
         .describe(
           "Set-valued property that can't be reassigned but whose value can be mutated",
         ),
@@ -14041,12 +14043,8 @@ export namespace IndirectRecursiveHelperClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("IndirectRecursiveHelperClass"),
-      indirectRecursiveProperty: zod
-        .lazy(
-          (): zod.ZodType<IndirectRecursiveClass.$Json> =>
-            IndirectRecursiveClass.$jsonZodSchema(),
-        )
-        .optional(),
+      indirectRecursiveProperty:
+        IndirectRecursiveClass.$jsonZodSchema().optional(),
     }) satisfies zod.ZodType<$Json>;
   }
 
@@ -14493,12 +14491,8 @@ export namespace IndirectRecursiveClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("IndirectRecursiveClass"),
-      indirectRecursiveHelperProperty: zod
-        .lazy(
-          (): zod.ZodType<IndirectRecursiveHelperClass.$Json> =>
-            IndirectRecursiveHelperClass.$jsonZodSchema(),
-        )
-        .optional(),
+      indirectRecursiveHelperProperty:
+        IndirectRecursiveHelperClass.$jsonZodSchema().optional(),
     }) satisfies zod.ZodType<$Json>;
   }
 
@@ -14930,9 +14924,7 @@ export namespace DirectRecursiveClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("DirectRecursiveClass"),
-      directRecursiveProperty: zod
-        .lazy((): zod.ZodType<$Json> => DirectRecursiveClass.$jsonZodSchema())
-        .optional(),
+      directRecursiveProperty: DirectRecursiveClass.$jsonZodSchema().optional(),
     }) satisfies zod.ZodType<$Json>;
   }
 

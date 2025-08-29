@@ -1,5 +1,6 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
@@ -61,6 +62,14 @@ export class OptionType extends Type {
   @Memoize()
   override get jsonName(): string {
     return `(${this.itemType.jsonName}) | undefined`;
+  }
+
+  @Memoize()
+  override get jsonPropertySignature() {
+    return {
+      hasQuestionToken: true,
+      name: this.itemType.jsonName,
+    };
   }
 
   override get mutable(): boolean {

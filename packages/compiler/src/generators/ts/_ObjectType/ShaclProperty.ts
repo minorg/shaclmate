@@ -11,7 +11,6 @@ import type {
 import { Memoize } from "typescript-memoize";
 import type { IdentifierType } from "../IdentifierType.js";
 import type { Import } from "../Import.js";
-import { OptionType } from "../OptionType.js";
 import type { Type } from "../Type.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { tsComment } from "../tsComment.js";
@@ -120,13 +119,10 @@ export class ShaclProperty extends Property<Type> {
     OptionalKind<PropertySignatureStructure>
   > {
     return Maybe.of({
-      hasQuestionToken: this.type instanceof OptionType,
+      hasQuestionToken: this.type.jsonPropertySignature.hasQuestionToken,
       isReadonly: true,
       name: this.name,
-      type:
-        this.type instanceof OptionType
-          ? this.type.itemType.jsonName
-          : this.type.jsonName,
+      type: this.type.jsonPropertySignature.name,
     });
   }
 
