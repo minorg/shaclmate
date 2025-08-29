@@ -138,11 +138,12 @@ export class IdentifierProperty extends Property<IdentifierType> {
     if (this.identifierMintingStrategy.isJust()) {
       // Mutable _identifier property that will be lazily initialized by the getter to mint the identifier
       return Maybe.of({
+        hasQuestionToken: true,
         name: `_${this.name}`,
         scope: this.classPropertyDeclarationVisibility
           .map(Property.visibilityToScope)
           .unsafeCoerce(),
-        type: `${this.typeAlias} | undefined`,
+        type: `${this.typeAlias}`,
       });
     }
 

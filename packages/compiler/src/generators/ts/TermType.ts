@@ -131,7 +131,7 @@ export class TermType<
       .map((nodeKind) => `"${nodeKind}"`)
       .join(
         " | ",
-      )} } | { readonly "@language": string | undefined, readonly "@type": string | undefined, readonly "@value": string, readonly termType: "Literal" }`;
+      )} } | { readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string, readonly termType: "Literal" }`;
   }
 
   @Memoize()

@@ -279,7 +279,7 @@ type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
  * A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.
  */
 export class UuidV4IriClass {
-  private _$identifier: UuidV4IriClass.$Identifier | undefined;
+  private _$identifier?: UuidV4IriClass.$Identifier;
   protected readonly _$identifierPrefix?: string;
   readonly $type = "UuidV4IriClass";
   readonly uuidV4IriProperty: string;
@@ -472,7 +472,7 @@ export namespace UuidV4IriClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -507,7 +507,7 @@ export namespace UuidV4IriClass {
       "@id": zod.string().min(1),
       $type: zod.literal("UuidV4IriClass"),
       uuidV4IriProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -661,7 +661,7 @@ export namespace UuidV4IriClass {
  * Shape with sh:xone properties.
  */
 export class UnionPropertiesClass {
-  private _$identifier: UnionPropertiesClass.$Identifier | undefined;
+  private _$identifier?: UnionPropertiesClass.$Identifier;
   readonly $type = "UnionPropertiesClass";
   readonly narrowLiteralsProperty: purify.Maybe<number | string>;
   readonly unrelatedTypesProperty: purify.Maybe<number | NonClass>;
@@ -1091,29 +1091,26 @@ export namespace UnionPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "UnionPropertiesClass";
-    readonly narrowLiteralsProperty: (number | string) | undefined;
-    readonly unrelatedTypesProperty: (number | NonClass.$Json) | undefined;
-    readonly widenedLiteralsProperty:
+    readonly narrowLiteralsProperty?: number | string;
+    readonly unrelatedTypesProperty?: number | NonClass.$Json;
+    readonly widenedLiteralsProperty?: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+    readonly widenedTermsProperty?:
+      | { readonly "@id": string; readonly termType: "NamedNode" }
       | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
+          readonly "@language"?: string;
+          readonly "@type"?: string;
           readonly "@value": string;
-        }
-      | undefined;
-    readonly widenedTermsProperty:
-      | (
-          | { readonly "@id": string; readonly termType: "NamedNode" }
-          | {
-              readonly "@language": string | undefined;
-              readonly "@type": string | undefined;
-              readonly "@value": string;
-              readonly termType: "Literal";
-            }
-        )
-      | undefined;
+          readonly termType: "Literal";
+        };
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -1187,7 +1184,7 @@ export namespace UnionPropertiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -1260,7 +1257,7 @@ export namespace UnionPropertiesClass {
           }),
         ])
         .optional(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -1696,7 +1693,7 @@ export namespace UnionPropertiesClass {
  * Shape with properties that are not nested objects
  */
 export class TermPropertiesClass {
-  private _$identifier: TermPropertiesClass.$Identifier | undefined;
+  private _$identifier?: TermPropertiesClass.$Identifier;
   readonly $type = "TermPropertiesClass";
   readonly booleanTermProperty: purify.Maybe<boolean>;
   readonly dateTermProperty: purify.Maybe<Date>;
@@ -2195,36 +2192,30 @@ export namespace TermPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "TermPropertiesClass";
-    readonly booleanTermProperty: boolean | undefined;
-    readonly dateTermProperty: string | undefined;
-    readonly dateTimeTermProperty: string | undefined;
-    readonly iriTermProperty: { readonly "@id": string } | undefined;
-    readonly literalTermProperty:
+    readonly booleanTermProperty?: boolean;
+    readonly dateTermProperty?: string;
+    readonly dateTimeTermProperty?: string;
+    readonly iriTermProperty?: { readonly "@id": string };
+    readonly literalTermProperty?: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+    readonly numberTermProperty?: number;
+    readonly stringTermProperty?: string;
+    readonly termProperty?:
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
       | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
+          readonly "@language"?: string;
+          readonly "@type"?: string;
           readonly "@value": string;
-        }
-      | undefined;
-    readonly numberTermProperty: number | undefined;
-    readonly stringTermProperty: string | undefined;
-    readonly termProperty:
-      | (
-          | {
-              readonly "@id": string;
-              readonly termType: "BlankNode" | "NamedNode";
-            }
-          | {
-              readonly "@language": string | undefined;
-              readonly "@type": string | undefined;
-              readonly "@value": string;
-              readonly termType: "Literal";
-            }
-        )
-      | undefined;
+          readonly termType: "Literal";
+        };
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2320,7 +2311,7 @@ export namespace TermPropertiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -2407,7 +2398,7 @@ export namespace TermPropertiesClass {
           }),
         ])
         .optional(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -2939,7 +2930,7 @@ export namespace TermPropertiesClass {
  * A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied.
  */
 export class Sha256IriClass {
-  private _$identifier: Sha256IriClass.$Identifier | undefined;
+  private _$identifier?: Sha256IriClass.$Identifier;
   protected readonly _$identifierPrefix?: string;
   readonly $type = "Sha256IriClass";
   readonly sha256IriProperty: string;
@@ -3132,7 +3123,7 @@ export namespace Sha256IriClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -3167,7 +3158,7 @@ export namespace Sha256IriClass {
       "@id": zod.string().min(1),
       $type: zod.literal("Sha256IriClass"),
       sha256IriProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -3321,7 +3312,7 @@ export namespace Sha256IriClass {
  * Shape with properties that have visibility modifiers (private, protected, public)
  */
 export class PropertyVisibilitiesClass {
-  private _$identifier: PropertyVisibilitiesClass.$Identifier | undefined;
+  private _$identifier?: PropertyVisibilitiesClass.$Identifier;
   readonly $type = "PropertyVisibilitiesClass";
   private readonly privateProperty: string;
   protected readonly protectedProperty: string;
@@ -3504,7 +3495,9 @@ export namespace PropertyVisibilitiesClass {
     readonly publicProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3545,7 +3538,7 @@ export namespace PropertyVisibilitiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -3584,7 +3577,7 @@ export namespace PropertyVisibilitiesClass {
       privateProperty: zod.string(),
       protectedProperty: zod.string(),
       publicProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -3812,7 +3805,7 @@ export namespace PropertyVisibilitiesClass {
  * Shape that has properties with different cardinalities
  */
 export class PropertyCardinalitiesClass {
-  private _$identifier: PropertyCardinalitiesClass.$Identifier | undefined;
+  private _$identifier?: PropertyCardinalitiesClass.$Identifier;
   readonly $type = "PropertyCardinalitiesClass";
   /**
    * Set: minCount implicitly=0, no maxCount or maxCount > 1
@@ -4068,11 +4061,13 @@ export namespace PropertyCardinalitiesClass {
     readonly $type: "PropertyCardinalitiesClass";
     readonly emptyStringSetProperty: readonly string[];
     readonly nonEmptyStringSetProperty: readonly string[];
-    readonly optionalStringProperty: string | undefined;
+    readonly optionalStringProperty?: string;
     readonly requiredStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4120,7 +4115,7 @@ export namespace PropertyCardinalitiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -4169,7 +4164,6 @@ export namespace PropertyCardinalitiesClass {
       emptyStringSetProperty: zod
         .string()
         .array()
-        .default(() => [])
         .describe("Set: minCount implicitly=0, no maxCount or maxCount > 1"),
       nonEmptyStringSetProperty: zod
         .string()
@@ -4184,7 +4178,7 @@ export namespace PropertyCardinalitiesClass {
       requiredStringProperty: zod
         .string()
         .describe("Required: maxCount=minCount=1"),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -4526,7 +4520,7 @@ export namespace PropertyCardinalitiesClass {
  * Shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.
  */
 export class OrderedPropertiesClass {
-  private _$identifier: OrderedPropertiesClass.$Identifier | undefined;
+  private _$identifier?: OrderedPropertiesClass.$Identifier;
   readonly $type = "OrderedPropertiesClass";
   readonly orderedPropertyC: string;
   readonly orderedPropertyB: string;
@@ -4709,7 +4703,9 @@ export namespace OrderedPropertiesClass {
     readonly orderedPropertyA: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4750,7 +4746,7 @@ export namespace OrderedPropertiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -4795,7 +4791,7 @@ export namespace OrderedPropertiesClass {
       orderedPropertyC: zod.string(),
       orderedPropertyB: zod.string(),
       orderedPropertyA: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -5012,7 +5008,7 @@ export namespace OrderedPropertiesClass {
  * Node shape that isn't an rdfs:Class.
  */
 export class NonClass {
-  private _$identifier: NonClass.$Identifier | undefined;
+  private _$identifier?: NonClass.$Identifier;
   readonly $type = "NonClass";
   readonly nonClassProperty: string;
 
@@ -5184,7 +5180,7 @@ export namespace NonClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -5219,7 +5215,7 @@ export namespace NonClass {
       "@id": zod.string().min(1),
       $type: zod.literal("NonClass"),
       nonClassProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -5356,7 +5352,7 @@ export namespace NonClass {
  * Shape with shaclmate:mutable properties.
  */
 export class MutablePropertiesClass {
-  private _$identifier: MutablePropertiesClass.$Identifier | undefined;
+  private _$identifier?: MutablePropertiesClass.$Identifier;
   protected readonly _$identifierPrefix?: string;
   readonly $type = "MutablePropertiesClass";
   /**
@@ -5657,12 +5653,14 @@ export namespace MutablePropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "MutablePropertiesClass";
-    readonly mutableListProperty: readonly string[] | undefined;
+    readonly mutableListProperty?: readonly string[];
     readonly mutableSetProperty: readonly string[];
-    readonly mutableStringProperty: string | undefined;
+    readonly mutableStringProperty?: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5707,7 +5705,7 @@ export namespace MutablePropertiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -5759,7 +5757,6 @@ export namespace MutablePropertiesClass {
       mutableSetProperty: zod
         .string()
         .array()
-        .default(() => [])
         .describe(
           "Set-valued property that can't be reassigned but whose value can be mutated",
         ),
@@ -5767,7 +5764,7 @@ export namespace MutablePropertiesClass {
         .string()
         .optional()
         .describe("String-valued property that can be re-assigned"),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -6170,7 +6167,7 @@ export namespace MutablePropertiesClass {
  * Shape that uses the list shapes in properties.
  */
 export class ListPropertiesClass {
-  private _$identifier: ListPropertiesClass.$Identifier | undefined;
+  private _$identifier?: ListPropertiesClass.$Identifier;
   readonly $type = "ListPropertiesClass";
   readonly objectListProperty: purify.Maybe<readonly NonClass[]>;
   readonly stringListProperty: purify.Maybe<readonly string[]>;
@@ -6465,11 +6462,13 @@ export namespace ListPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "ListPropertiesClass";
-    readonly objectListProperty: readonly NonClass.$Json[] | undefined;
-    readonly stringListProperty: readonly string[] | undefined;
+    readonly objectListProperty?: readonly NonClass.$Json[];
+    readonly stringListProperty?: readonly string[];
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6513,7 +6512,7 @@ export namespace ListPropertiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -6552,7 +6551,7 @@ export namespace ListPropertiesClass {
       $type: zod.literal("ListPropertiesClass"),
       objectListProperty: NonClass.$jsonZodSchema().array().optional(),
       stringListProperty: zod.string().array().optional(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -7065,7 +7064,7 @@ export namespace ListPropertiesClass {
  * Shape that uses the StringList in a property.
  */
 export class LanguageInPropertiesClass {
-  private _$identifier: LanguageInPropertiesClass.$Identifier | undefined;
+  private _$identifier?: LanguageInPropertiesClass.$Identifier;
   readonly $type = "LanguageInPropertiesClass";
   readonly languageInPropertiesLanguageInProperty: purify.Maybe<rdfjs.Literal>;
   /**
@@ -7372,23 +7371,21 @@ export namespace LanguageInPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "LanguageInPropertiesClass";
-    readonly languageInPropertiesLanguageInProperty:
-      | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
-          readonly "@value": string;
-        }
-      | undefined;
-    readonly languageInPropertiesLiteralProperty:
-      | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
-          readonly "@value": string;
-        }
-      | undefined;
+    readonly languageInPropertiesLanguageInProperty?: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+    readonly languageInPropertiesLiteralProperty?: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -7448,7 +7445,7 @@ export namespace LanguageInPropertiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -7501,7 +7498,7 @@ export namespace LanguageInPropertiesClass {
         })
         .optional()
         .describe("literal property for testing runtime languageIn"),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -7901,7 +7898,7 @@ export namespace IriClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -7931,7 +7928,7 @@ export namespace IriClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("IriClass"),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -8110,7 +8107,9 @@ export namespace InterfaceUnionMember2b {
     readonly interfaceUnionMember2bProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8147,7 +8146,7 @@ export namespace InterfaceUnionMember2b {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -8198,7 +8197,7 @@ export namespace InterfaceUnionMember2b {
       "@id": zod.string().min(1),
       $type: zod.literal("InterfaceUnionMember2b"),
       interfaceUnionMember2bProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $hash<
@@ -8504,7 +8503,9 @@ export namespace InterfaceUnionMember2a {
     readonly interfaceUnionMember2aProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8541,7 +8542,7 @@ export namespace InterfaceUnionMember2a {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -8592,7 +8593,7 @@ export namespace InterfaceUnionMember2a {
       "@id": zod.string().min(1),
       $type: zod.literal("InterfaceUnionMember2a"),
       interfaceUnionMember2aProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $hash<
@@ -8898,7 +8899,9 @@ export namespace InterfaceUnionMember1 {
     readonly interfaceUnionMember1Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8935,7 +8938,7 @@ export namespace InterfaceUnionMember1 {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -8986,7 +8989,7 @@ export namespace InterfaceUnionMember1 {
       "@id": zod.string().min(1),
       $type: zod.literal("InterfaceUnionMember1"),
       interfaceUnionMember1Property: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $hash<
@@ -9280,7 +9283,9 @@ export namespace Interface {
     readonly interfaceProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9312,7 +9317,7 @@ export namespace Interface {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -9360,7 +9365,7 @@ export namespace Interface {
       "@id": zod.string().min(1),
       $type: zod.literal("Interface"),
       interfaceProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $hash<
@@ -9541,7 +9546,7 @@ export namespace Interface {
  * Shape with sh:in properties.
  */
 export class InPropertiesClass {
-  private _$identifier: InPropertiesClass.$Identifier | undefined;
+  private _$identifier?: InPropertiesClass.$Identifier;
   readonly $type = "InPropertiesClass";
   readonly inBooleansProperty: purify.Maybe<true>;
   readonly inDateTimesProperty: purify.Maybe<Date>;
@@ -9859,20 +9864,20 @@ export namespace InPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "InPropertiesClass";
-    readonly inBooleansProperty: true | undefined;
-    readonly inDateTimesProperty: string | undefined;
-    readonly inIrisProperty:
-      | {
-          readonly "@id":
-            | "http://example.com/InPropertiesIri1"
-            | "http://example.com/InPropertiesIri2";
-        }
-      | undefined;
-    readonly inNumbersProperty: (1 | 2) | undefined;
-    readonly inStringsProperty: ("text" | "html") | undefined;
+    readonly inBooleansProperty?: true;
+    readonly inDateTimesProperty?: string;
+    readonly inIrisProperty?: {
+      readonly "@id":
+        | "http://example.com/InPropertiesIri1"
+        | "http://example.com/InPropertiesIri2";
+    };
+    readonly inNumbersProperty?: 1 | 2;
+    readonly inStringsProperty?: "text" | "html";
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9934,7 +9939,7 @@ export namespace InPropertiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -9993,7 +9998,7 @@ export namespace InPropertiesClass {
         .optional(),
       inNumbersProperty: zod.union([zod.literal(1), zod.literal(2)]).optional(),
       inStringsProperty: zod.enum(["text", "html"]).optional(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -10031,21 +10036,23 @@ export namespace InPropertiesClass {
       .values($properties.inBooleansProperty["identifier"], { unique: true })
       .head()
       .chain((value) =>
-        value.toBoolean().chain((value) =>
-          value === true
-            ? purify.Either.of<Error, true>(value)
-            : purify.Left<Error, true>(
-                new rdfjsResource.Resource.MistypedValueError({
-                  actualValue: rdfLiteral.toRdf(value),
-                  expectedValueType: "true",
-                  focusResource: _resource,
-                  predicate:
-                    InPropertiesClass.$properties.inBooleansProperty[
-                      "identifier"
-                    ],
-                }),
-              ),
-        ),
+        value
+          .toBoolean()
+          .chain((value) =>
+            value === true
+              ? purify.Either.of<Error, true>(value)
+              : purify.Left<Error, true>(
+                  new rdfjsResource.Resource.MistypedValueError({
+                    actualValue: rdfLiteral.toRdf(value),
+                    expectedValueType: "true",
+                    focusResource: _resource,
+                    predicate:
+                      InPropertiesClass.$properties.inBooleansProperty[
+                        "identifier"
+                      ],
+                  }),
+                ),
+          ),
       )
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
@@ -10660,10 +10667,12 @@ export namespace InIdentifierClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "InIdentifierClass";
-    readonly inIdentifierProperty: string | undefined;
+    readonly inIdentifierProperty?: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.NamedNode<
@@ -10698,7 +10707,7 @@ export namespace InIdentifierClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -10736,7 +10745,7 @@ export namespace InIdentifierClass {
       ]),
       $type: zod.literal("InIdentifierClass"),
       inIdentifierProperty: zod.string().optional(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -10929,7 +10938,7 @@ export namespace InIdentifierClass {
  * Shape with sh:hasValue properties.
  */
 export class HasValuePropertiesClass {
-  private _$identifier: HasValuePropertiesClass.$Identifier | undefined;
+  private _$identifier?: HasValuePropertiesClass.$Identifier;
   readonly $type = "HasValuePropertiesClass";
   readonly hasIriValueProperty: purify.Maybe<rdfjs.NamedNode>;
   readonly hasLiteralValueProperty: purify.Maybe<string>;
@@ -11127,11 +11136,13 @@ export namespace HasValuePropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "HasValuePropertiesClass";
-    readonly hasIriValueProperty: { readonly "@id": string } | undefined;
-    readonly hasLiteralValueProperty: string | undefined;
+    readonly hasIriValueProperty?: { readonly "@id": string };
+    readonly hasLiteralValueProperty?: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11173,7 +11184,7 @@ export namespace HasValuePropertiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -11215,7 +11226,7 @@ export namespace HasValuePropertiesClass {
         .object({ "@id": zod.string().min(1) })
         .optional(),
       hasLiteralValueProperty: zod.string().optional(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -11456,9 +11467,7 @@ export namespace HasValuePropertiesClass {
   }
 }
 export class ExternPropertiesInlineNestedClass {
-  private _$identifier:
-    | ExternPropertiesInlineNestedClass.$Identifier
-    | undefined;
+  private _$identifier?: ExternPropertiesInlineNestedClass.$Identifier;
   readonly $type = "ExternPropertiesInlineNestedClass";
   readonly externPropertiesInlineNestedStringProperty: string;
 
@@ -11603,7 +11612,9 @@ export namespace ExternPropertiesInlineNestedClass {
     readonly externPropertiesInlineNestedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11639,7 +11650,7 @@ export namespace ExternPropertiesInlineNestedClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -11674,7 +11685,7 @@ export namespace ExternPropertiesInlineNestedClass {
       "@id": zod.string().min(1),
       $type: zod.literal("ExternPropertiesInlineNestedClass"),
       externPropertiesInlineNestedStringProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -11848,9 +11859,7 @@ export namespace ExternPropertiesInlineNestedClass {
   }
 }
 export class ExternPropertiesExternNestedClass {
-  private _$identifier:
-    | ExternPropertiesExternNestedClass.$Identifier
-    | undefined;
+  private _$identifier?: ExternPropertiesExternNestedClass.$Identifier;
   readonly $type = "ExternPropertiesExternNestedClass";
   readonly externPropertiesExternNestedStringProperty: string;
 
@@ -11995,7 +12004,9 @@ export namespace ExternPropertiesExternNestedClass {
     readonly externPropertiesExternNestedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12031,7 +12042,7 @@ export namespace ExternPropertiesExternNestedClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -12066,7 +12077,7 @@ export namespace ExternPropertiesExternNestedClass {
       "@id": zod.string().min(1),
       $type: zod.literal("ExternPropertiesExternNestedClass"),
       externPropertiesExternNestedStringProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -12243,7 +12254,7 @@ export namespace ExternPropertiesExternNestedClass {
  * Node shape that inlines/nests another node shape and externs/references another.
  */
 export class ExternPropertiesClass {
-  private _$identifier: ExternPropertiesClass.$Identifier | undefined;
+  private _$identifier?: ExternPropertiesClass.$Identifier;
   readonly $type = "ExternPropertiesClass";
   readonly externClassProperty: purify.Maybe<ExternClass>;
   readonly externNestedProperty: purify.Maybe<
@@ -12499,14 +12510,14 @@ export namespace ExternPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "ExternPropertiesClass";
-    readonly externClassProperty: ExternClass.$Json | undefined;
-    readonly externNestedProperty: { readonly "@id": string } | undefined;
-    readonly inlineNestedProperty:
-      | ExternPropertiesInlineNestedClass.$Json
-      | undefined;
+    readonly externClassProperty?: ExternClass.$Json;
+    readonly externNestedProperty?: { readonly "@id": string };
+    readonly inlineNestedProperty?: ExternPropertiesInlineNestedClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12559,7 +12570,7 @@ export namespace ExternPropertiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -12605,7 +12616,7 @@ export namespace ExternPropertiesClass {
         .optional(),
       inlineNestedProperty:
         ExternPropertiesInlineNestedClass.$jsonZodSchema().optional(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -12927,7 +12938,7 @@ export namespace ExternPropertiesClass {
  * The shaclmate:rdfType is expected on deserialization and added on serialization.
  */
 export class ExplicitRdfTypeClass {
-  private _$identifier: ExplicitRdfTypeClass.$Identifier | undefined;
+  private _$identifier?: ExplicitRdfTypeClass.$Identifier;
   readonly $type = "ExplicitRdfTypeClass";
   readonly explicitRdfTypeProperty: string;
 
@@ -13080,7 +13091,9 @@ export namespace ExplicitRdfTypeClass {
     readonly explicitRdfTypeProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13112,7 +13125,7 @@ export namespace ExplicitRdfTypeClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -13147,7 +13160,7 @@ export namespace ExplicitRdfTypeClass {
       "@id": zod.string().min(1),
       $type: zod.literal("ExplicitRdfTypeClass"),
       explicitRdfTypeProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -13374,7 +13387,7 @@ export namespace ExplicitRdfTypeClass {
  * shaclmate:toRdfType's are added an serialization.
  */
 export class ExplicitFromToRdfTypesClass {
-  private _$identifier: ExplicitFromToRdfTypesClass.$Identifier | undefined;
+  private _$identifier?: ExplicitFromToRdfTypesClass.$Identifier;
   readonly $type = "ExplicitFromToRdfTypesClass";
   readonly explicitFromToRdfTypesProperty: string;
 
@@ -13534,7 +13547,9 @@ export namespace ExplicitFromToRdfTypesClass {
     readonly explicitFromToRdfTypesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13567,7 +13582,7 @@ export namespace ExplicitFromToRdfTypesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -13602,7 +13617,7 @@ export namespace ExplicitFromToRdfTypesClass {
       "@id": zod.string().min(1),
       $type: zod.literal("ExplicitFromToRdfTypesClass"),
       explicitFromToRdfTypesProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -13834,7 +13849,7 @@ export namespace ExplicitFromToRdfTypesClass {
   }
 }
 export class IndirectRecursiveHelperClass {
-  private _$identifier: IndirectRecursiveHelperClass.$Identifier | undefined;
+  private _$identifier?: IndirectRecursiveHelperClass.$Identifier;
   readonly $type = "IndirectRecursiveHelperClass";
   readonly indirectRecursiveProperty: purify.Maybe<IndirectRecursiveClass>;
 
@@ -13998,12 +14013,12 @@ export namespace IndirectRecursiveHelperClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "IndirectRecursiveHelperClass";
-    readonly indirectRecursiveProperty:
-      | IndirectRecursiveClass.$Json
-      | undefined;
+    readonly indirectRecursiveProperty?: IndirectRecursiveClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14037,7 +14052,7 @@ export namespace IndirectRecursiveHelperClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -14072,7 +14087,7 @@ export namespace IndirectRecursiveHelperClass {
       $type: zod.literal("IndirectRecursiveHelperClass"),
       indirectRecursiveProperty:
         IndirectRecursiveClass.$jsonZodSchema().optional(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -14278,7 +14293,7 @@ export namespace IndirectRecursiveHelperClass {
   }
 }
 export class IndirectRecursiveClass {
-  private _$identifier: IndirectRecursiveClass.$Identifier | undefined;
+  private _$identifier?: IndirectRecursiveClass.$Identifier;
   readonly $type = "IndirectRecursiveClass";
   readonly indirectRecursiveHelperProperty: purify.Maybe<IndirectRecursiveHelperClass>;
 
@@ -14446,12 +14461,12 @@ export namespace IndirectRecursiveClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "IndirectRecursiveClass";
-    readonly indirectRecursiveHelperProperty:
-      | IndirectRecursiveHelperClass.$Json
-      | undefined;
+    readonly indirectRecursiveHelperProperty?: IndirectRecursiveHelperClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14487,7 +14502,7 @@ export namespace IndirectRecursiveClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -14522,7 +14537,7 @@ export namespace IndirectRecursiveClass {
       $type: zod.literal("IndirectRecursiveClass"),
       indirectRecursiveHelperProperty:
         IndirectRecursiveHelperClass.$jsonZodSchema().optional(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -14721,7 +14736,7 @@ export namespace IndirectRecursiveClass {
   }
 }
 export class DirectRecursiveClass {
-  private _$identifier: DirectRecursiveClass.$Identifier | undefined;
+  private _$identifier?: DirectRecursiveClass.$Identifier;
   readonly $type = "DirectRecursiveClass";
   readonly directRecursiveProperty: purify.Maybe<DirectRecursiveClass>;
 
@@ -14883,10 +14898,12 @@ export namespace DirectRecursiveClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "DirectRecursiveClass";
-    readonly directRecursiveProperty: DirectRecursiveClass.$Json | undefined;
+    readonly directRecursiveProperty?: DirectRecursiveClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14920,7 +14937,7 @@ export namespace DirectRecursiveClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -14954,7 +14971,7 @@ export namespace DirectRecursiveClass {
       "@id": zod.string().min(1),
       $type: zod.literal("DirectRecursiveClass"),
       directRecursiveProperty: DirectRecursiveClass.$jsonZodSchema().optional(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -15152,7 +15169,7 @@ export namespace DirectRecursiveClass {
  * Shape with sh:defaultValue properties.
  */
 export class DefaultValuePropertiesClass {
-  private _$identifier: DefaultValuePropertiesClass.$Identifier | undefined;
+  private _$identifier?: DefaultValuePropertiesClass.$Identifier;
   protected readonly _$identifierPrefix?: string;
   readonly $type = "DefaultValuePropertiesClass";
   readonly dateDefaultValueProperty: Date;
@@ -15515,7 +15532,9 @@ export namespace DefaultValuePropertiesClass {
     readonly trueBooleanDefaultValueProperty: boolean;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15573,7 +15592,7 @@ export namespace DefaultValuePropertiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -15633,7 +15652,7 @@ export namespace DefaultValuePropertiesClass {
       numberDefaultValueProperty: zod.number(),
       stringDefaultValueProperty: zod.string(),
       trueBooleanDefaultValueProperty: zod.boolean(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -16230,7 +16249,9 @@ export namespace BaseInterfaceWithPropertiesStatic {
     readonly baseInterfaceWithPropertiesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16276,7 +16297,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -16332,7 +16353,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
         "ConcreteParentInterface",
       ]),
       baseInterfaceWithPropertiesProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $hash<
@@ -16692,7 +16713,9 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export const $Identifier = BaseInterfaceWithPropertiesStatic.$Identifier;
   export type $Json = BaseInterfaceWithPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16739,7 +16762,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -16772,7 +16795,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
           "ConcreteParentInterface",
         ]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $hash<
@@ -17114,7 +17137,9 @@ export namespace ConcreteParentInterfaceStatic {
     readonly concreteParentInterfaceProperty: string;
   } & BaseInterfaceWithoutPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17168,7 +17193,7 @@ export namespace ConcreteParentInterfaceStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -17204,7 +17229,7 @@ export namespace ConcreteParentInterfaceStatic {
         $type: zod.enum(["ConcreteParentInterface", "ConcreteChildInterface"]),
         concreteParentInterfaceProperty: zod.string(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $hash<
@@ -17605,7 +17630,9 @@ export namespace ConcreteChildInterface {
     readonly concreteChildInterfaceProperty: string;
   } & ConcreteParentInterfaceStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17652,7 +17679,7 @@ export namespace ConcreteChildInterface {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -17686,7 +17713,7 @@ export namespace ConcreteChildInterface {
         $type: zod.literal("ConcreteChildInterface"),
         concreteChildInterfaceProperty: zod.string(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $hash<
@@ -18170,7 +18197,9 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     readonly abstractBaseClassWithPropertiesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18206,7 +18235,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -18241,7 +18270,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       "@id": zod.string().min(1),
       $type: zod.enum(["ConcreteChildClass", "ConcreteParentClass"]),
       abstractBaseClassWithPropertiesProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -18507,7 +18536,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -18524,7 +18553,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
         "@id": zod.string().min(1),
         $type: zod.enum(["ConcreteChildClass", "ConcreteParentClass"]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -18678,7 +18707,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
  * Class node shape that inherits the abstract base class and is the parent of the ConcreteChildClass.
  */
 export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
-  protected _$identifier: ConcreteParentClassStatic.$Identifier | undefined;
+  protected _$identifier?: ConcreteParentClassStatic.$Identifier;
   override readonly $type: "ConcreteParentClass" | "ConcreteChildClass" =
     "ConcreteParentClass";
   readonly concreteParentClassProperty: string;
@@ -18719,18 +18748,20 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
   }
 
   override $equals(other: ConcreteParentClass): $EqualsResult {
-    return super.$equals(other).chain(() =>
-      $strictEquals(
-        this.concreteParentClassProperty,
-        other.concreteParentClassProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "concreteParentClassProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .$equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.concreteParentClassProperty,
+          other.concreteParentClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "concreteParentClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override $hash<
@@ -18810,7 +18841,9 @@ export namespace ConcreteParentClassStatic {
     readonly concreteParentClassProperty: string;
   } & AbstractBaseClassWithoutPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18865,7 +18898,7 @@ export namespace ConcreteParentClassStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -18887,7 +18920,7 @@ export namespace ConcreteParentClassStatic {
         $type: zod.enum(["ConcreteParentClass", "ConcreteChildClass"]),
         concreteParentClassProperty: zod.string(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -19191,18 +19224,20 @@ export class ConcreteChildClass extends ConcreteParentClass {
   }
 
   override $equals(other: ConcreteChildClass): $EqualsResult {
-    return super.$equals(other).chain(() =>
-      $strictEquals(
-        this.concreteChildClassProperty,
-        other.concreteChildClassProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "concreteChildClassProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .$equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.concreteChildClassProperty,
+          other.concreteChildClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "concreteChildClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override $hash<
@@ -19278,7 +19313,9 @@ export namespace ConcreteChildClass {
     readonly concreteChildClassProperty: string;
   } & ConcreteParentClassStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19324,7 +19361,7 @@ export namespace ConcreteChildClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -19346,7 +19383,7 @@ export namespace ConcreteChildClass {
         $type: zod.literal("ConcreteChildClass"),
         concreteChildClassProperty: zod.string(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -19602,7 +19639,7 @@ export namespace ConcreteChildClass {
   }
 }
 export class ClassUnionMember2 {
-  private _$identifier: ClassUnionMember2.$Identifier | undefined;
+  private _$identifier?: ClassUnionMember2.$Identifier;
   readonly $type = "ClassUnionMember2";
   readonly classUnionMember2Property: string;
 
@@ -19755,7 +19792,9 @@ export namespace ClassUnionMember2 {
     readonly classUnionMember2Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19787,7 +19826,7 @@ export namespace ClassUnionMember2 {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -19822,7 +19861,7 @@ export namespace ClassUnionMember2 {
       "@id": zod.string().min(1),
       $type: zod.literal("ClassUnionMember2"),
       classUnionMember2Property: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -20041,7 +20080,7 @@ export namespace ClassUnionMember2 {
   }
 }
 export class ClassUnionMember1 {
-  private _$identifier: ClassUnionMember1.$Identifier | undefined;
+  private _$identifier?: ClassUnionMember1.$Identifier;
   readonly $type = "ClassUnionMember1";
   readonly classUnionMember1Property: string;
 
@@ -20194,7 +20233,9 @@ export namespace ClassUnionMember1 {
     readonly classUnionMember1Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -20226,7 +20267,7 @@ export namespace ClassUnionMember1 {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -20261,7 +20302,7 @@ export namespace ClassUnionMember1 {
       "@id": zod.string().min(1),
       $type: zod.literal("ClassUnionMember1"),
       classUnionMember1Property: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -20483,7 +20524,7 @@ export namespace ClassUnionMember1 {
  * Shape that can have a blank node or IRI as an identifier
  */
 export class BlankClass {
-  private _$identifier: BlankClass.$Identifier | undefined;
+  private _$identifier?: BlankClass.$Identifier;
   readonly $type = "BlankClass";
 
   constructor(parameters: {
@@ -20629,7 +20670,7 @@ export namespace BlankClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -20659,7 +20700,7 @@ export namespace BlankClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("BlankClass"),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -20872,7 +20913,9 @@ export namespace AbstractBaseClassForExternClassStatic {
     readonly abstractBaseClassForExternClassProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -20909,7 +20952,7 @@ export namespace AbstractBaseClassForExternClassStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -20944,7 +20987,7 @@ export namespace AbstractBaseClassForExternClassStatic {
       "@id": zod.string().min(1),
       $type: zod.literal("ExternClass"),
       abstractBaseClassForExternClassProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
