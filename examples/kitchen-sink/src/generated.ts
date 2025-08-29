@@ -7126,7 +7126,7 @@ export namespace ListPropertiesClass {
   }
 }
 /**
- * Shape that uses the StringListShape in a property.
+ * Shape that uses the StringList in a property.
  */
 export class LanguageInPropertiesClass {
   private _$identifier: LanguageInPropertiesClass.$Identifier | undefined;
