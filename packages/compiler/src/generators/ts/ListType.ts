@@ -140,14 +140,14 @@ export class ListType extends Type {
     return snippetDeclarations;
   }
 
-  override sparqlConstructTemplateTriples({
-    variables,
-    context,
-  }: Parameters<Type["sparqlConstructTemplateTriples"]>[0]): readonly string[] {
-    switch (context) {
-      case "property":
-        return super.sparqlConstructTemplateTriples({ context, variables });
-      case "type": {
+  override sparqlConstructTemplateTriples(
+    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
+  ): readonly string[] {
+    switch (parameters.context) {
+      case "object":
+        return super.sparqlConstructTemplateTriples(parameters);
+      case "subject": {
+        const { variables } = parameters;
         const triples: string[] = [];
         const listVariable = variables.subject;
         const variable = (suffix: string) =>
@@ -165,7 +165,8 @@ export class ListType extends Type {
               object: item0Variable,
             }),
             ...this.itemType.sparqlConstructTemplateTriples({
-              context: "type",
+              allowIgnoreRdfType: true,
+              context: "subject",
               variables: {
                 subject: item0Variable,
                 variablePrefix: variablePrefix("Item0"),
@@ -199,7 +200,8 @@ export class ListType extends Type {
               object: itemNVariable,
             }),
             ...this.itemType.sparqlConstructTemplateTriples({
-              context: "type",
+              allowIgnoreRdfType: true,
+              context: "subject",
               variables: {
                 subject: itemNVariable,
                 variablePrefix: variablePrefix("ItemN"),
@@ -222,19 +224,19 @@ export class ListType extends Type {
     }
   }
 
-  override sparqlWherePatterns({
-    variables,
-    context,
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly string[] {
+  override sparqlWherePatterns(
+    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+  ): readonly string[] {
     // Need to handle two cases:
     // (1) (?s, ?p, ?list) where ?list binds to rdf:nil
     // (2) (?s, ?p, ?list) (?list, rdf:first, "element") (?list, rdf:rest, rdf:nil) etc. where list binds to the head of a list
     // Case (2) is case (1) with OPTIONAL graph patterns to handle actual list elements.
 
-    switch (context) {
-      case "property":
-        return super.sparqlWherePatterns({ context, variables });
-      case "type": {
+    switch (parameters.context) {
+      case "object":
+        return super.sparqlWherePatterns(parameters);
+      case "subject": {
+        const { variables } = parameters;
         const patterns: string[] = [];
         const listVariable = variables.subject;
         const variable = (suffix: string) =>
@@ -252,7 +254,8 @@ export class ListType extends Type {
               object: item0Variable,
             })}] }`,
             ...this.itemType.sparqlWherePatterns({
-              context: "type",
+              allowIgnoreRdfType: true,
+              context: "subject",
               variables: {
                 subject: item0Variable,
                 variablePrefix: variablePrefix("Item0"),
@@ -295,7 +298,8 @@ export class ListType extends Type {
               object: itemNVariable,
             })}] }`,
             ...this.itemType.sparqlWherePatterns({
-              context: "type",
+              allowIgnoreRdfType: true,
+              context: "subject",
               variables: {
                 subject: itemNVariable,
                 variablePrefix: variablePrefix("ItemN"),

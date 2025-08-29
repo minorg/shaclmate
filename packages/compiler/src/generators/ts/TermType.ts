@@ -257,7 +257,7 @@ export class TermType<
     parameters: Parameters<Type["sparqlWherePatterns"]>[0],
   ): readonly string[] {
     switch (parameters.context) {
-      case "property":
+      case "object":
         return this.defaultValue
           .map(
             () =>
@@ -266,7 +266,7 @@ export class TermType<
               ] as readonly string[],
           )
           .orDefault(super.sparqlWherePatterns(parameters));
-      case "type":
+      case "subject":
         return super.sparqlWherePatterns(parameters);
     }
   }

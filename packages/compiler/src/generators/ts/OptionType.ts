@@ -134,35 +134,30 @@ export class OptionType extends Type {
     return snippetDeclarations;
   }
 
-  override sparqlConstructTemplateTriples({
-    context,
-    variables,
-  }: Parameters<Type["sparqlConstructTemplateTriples"]>[0]): readonly string[] {
-    switch (context) {
-      case "property":
-        return super.sparqlConstructTemplateTriples({ context, variables });
-      case "type":
-        return this.itemType.sparqlConstructTemplateTriples({
-          context,
-          variables,
-        });
+  override sparqlConstructTemplateTriples(
+    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
+  ): readonly string[] {
+    switch (parameters.context) {
+      case "object":
+        return super.sparqlConstructTemplateTriples(parameters);
+      case "subject":
+        return this.itemType.sparqlConstructTemplateTriples(parameters);
     }
   }
 
-  override sparqlWherePatterns({
-    context,
-    variables,
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly string[] {
-    switch (context) {
-      case "property": {
-        const patterns = super.sparqlWherePatterns({ context, variables });
+  override sparqlWherePatterns(
+    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+  ): readonly string[] {
+    switch (parameters.context) {
+      case "object": {
+        const patterns = super.sparqlWherePatterns(parameters);
         if (patterns.length === 0) {
           return [];
         }
         return [`{ patterns: [${patterns.join(", ")}], type: "optional" }`];
       }
-      case "type": {
-        return this.itemType.sparqlWherePatterns({ context, variables });
+      case "subject": {
+        return this.itemType.sparqlWherePatterns(parameters);
       }
     }
   }
