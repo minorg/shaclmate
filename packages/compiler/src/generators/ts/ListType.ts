@@ -94,7 +94,7 @@ export class ListType extends Type {
   override fromJsonExpression({
     variables,
   }: Parameters<Type["fromJsonExpression"]>[0]): string {
-    return `${variables.value}.map(_item => (${this.itemType.fromJsonExpression({ variables: { value: "_item" } })}))`;
+    return `${variables.value}.map(item => (${this.itemType.fromJsonExpression({ variables: { value: "item" } })}))`;
   }
 
   override fromRdfExpression({
@@ -114,7 +114,7 @@ export class ListType extends Type {
     variables,
   }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
     return [
-      `for (const _element${depth} of ${variables.value}) { ${this.itemType.hashStatements({ depth: depth + 1, variables: { ...variables, value: `_element${depth}` } }).join("\n")} }`,
+      `for (const item${depth} of ${variables.value}) { ${this.itemType.hashStatements({ depth: depth + 1, variables: { ...variables, value: `item${depth}` } }).join("\n")} }`,
     ];
   }
 
@@ -332,13 +332,13 @@ export class ListType extends Type {
   }: Parameters<Type["toJsonExpression"]>[0]): string {
     let expression = variables.value;
     const itemFromJsonExpression = this.itemType.fromJsonExpression({
-      variables: { value: "_item" },
+      variables: { value: "item" },
     });
-    if (itemFromJsonExpression !== "_item") {
-      expression = `${expression}.map(_item => (${itemFromJsonExpression}))`;
+    if (itemFromJsonExpression !== "item") {
+      expression = `${expression}.map(item => (${itemFromJsonExpression}))`;
     }
 
-    return `${variables.value}.map(_item => (${this.itemType.toJsonExpression({ variables: { value: "_item" } })}))`;
+    return `${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: "item" } })}))`;
   }
 
   override toRdfExpression({
@@ -362,9 +362,9 @@ export class ListType extends Type {
             throw new RangeError(this.identifierMintingStrategy);
           case "sha256":
             listIdentifier = `${this.dataFactoryVariable}.namedNode(\`urn:shaclmate:list:\${${variables.value}.reduce(
-        (_hasher, _item) => {
-          ${this.itemType.hashStatements({ depth: 0, variables: { hasher: "_hasher", value: "_item" } }).join("\n")}
-          return _hasher;
+        (hasher, item) => {
+          ${this.itemType.hashStatements({ depth: 0, variables: { hasher: "hasher", value: "item" } }).join("\n")}
+          return hasher;
         },
         sha256.create(),
       )}\`)`;

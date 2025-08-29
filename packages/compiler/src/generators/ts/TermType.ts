@@ -180,7 +180,7 @@ export class TermType<
     // Have an rdfjsResource.Resource.Values here
     if (this.hasValues.length === 1) {
       chain.push(
-        `find(_value => _value.toTerm().equals(${this.rdfjsTermExpression(this.hasValues[0])}))`,
+        `find(value => value.toTerm().equals(${this.rdfjsTermExpression(this.hasValues[0])}))`,
       );
     } else {
       chain.push("head()");
@@ -194,11 +194,11 @@ export class TermType<
     });
     // Last step: convert the rdfjsResource.Resource.Value to the type
     chain.push(
-      `chain(_value => ${this.propertyFromRdfResourceValueExpression({
+      `chain(value => ${this.propertyFromRdfResourceValueExpression({
         variables: {
           predicate: variables.predicate,
           resource: variables.resource,
-          resourceValue: "_value",
+          resourceValue: "value",
         },
       })})`,
     );

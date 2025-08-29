@@ -102,11 +102,11 @@ export class SetType extends Type {
       expression = `purify.NonEmptyList.fromArray(${expression}).unsafeCoerce()`;
     }
     const itemFromJsonExpression = this.itemType.fromJsonExpression({
-      variables: { value: "_item" },
+      variables: { value: "item" },
     });
-    return itemFromJsonExpression === "_item"
+    return itemFromJsonExpression === "item"
       ? expression
-      : `${expression}.map(_item => (${itemFromJsonExpression}))`;
+      : `${expression}.map(item => (${itemFromJsonExpression}))`;
   }
 
   override fromRdfExpression({
@@ -115,7 +115,7 @@ export class SetType extends Type {
     const itemFromRdfExpression = this.itemType.fromRdfExpression({
       variables: { ...variables, resourceValues: "item.toValues()" },
     });
-const arrayFromRdfExpression = `purify.Either.sequence(${variables.resourceValues}.map(item => ${itemFromRdfExpression}))`;
+    const arrayFromRdfExpression = `purify.Either.sequence(${variables.resourceValues}.map(item => ${itemFromRdfExpression}))`;
     if (this._mutable || this.minCount === 0) {
       return arrayFromRdfExpression;
     }
@@ -127,12 +127,12 @@ const arrayFromRdfExpression = `purify.Either.sequence(${variables.resourceValue
     variables,
   }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
     return [
-      `for (const _item${depth} of ${variables.value}) { ${this.itemType
+      `for (const item${depth} of ${variables.value}) { ${this.itemType
         .hashStatements({
           depth: depth + 1,
           variables: {
             hasher: variables.hasher,
-            value: `_item${depth}`,
+            value: `item${depth}`,
           },
         })
         .join("\n")} }`,
@@ -200,14 +200,14 @@ const arrayFromRdfExpression = `purify.Either.sequence(${variables.resourceValue
   override toJsonExpression({
     variables,
   }: Parameters<Type["toJsonExpression"]>[0]): string {
-    return `${variables.value}.map(_item => (${this.itemType.toJsonExpression({ variables: { value: "_item" } })}))`;
+    return `${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: "item" } })}))`;
   }
 
   override toRdfExpression({
     variables,
   }: Parameters<Type["toRdfExpression"]>[0]): string {
-    return `${variables.value}.map((_item) => ${this.itemType.toRdfExpression({
-      variables: { ...variables, value: "_item" },
+    return `${variables.value}.map((item) => ${this.itemType.toRdfExpression({
+      variables: { ...variables, value: "item" },
     })})`;
   }
 

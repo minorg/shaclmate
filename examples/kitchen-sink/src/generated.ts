@@ -4199,20 +4199,18 @@ export namespace PropertyCardinalitiesClass {
     const _emptyStringSetPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       readonly string[]
-    > = purify.Either.of([
-      ..._resource
+    > = purify.Either.sequence(
+      _resource
         .values($properties.emptyStringSetProperty["identifier"], {
           unique: true,
         })
-        .flatMap((_item) =>
+        .map((_item) =>
           _item
             .toValues()
             .head()
-            .chain((_value) => _value.toString())
-            .toMaybe()
-            .toList(),
+            .chain((_value) => _value.toString()),
         ),
-    ]);
+    );
     if (_emptyStringSetPropertyEither.isLeft()) {
       return _emptyStringSetPropertyEither;
     }
@@ -4221,28 +4219,28 @@ export namespace PropertyCardinalitiesClass {
     const _nonEmptyStringSetPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       purify.NonEmptyList<string>
-    > = purify.NonEmptyList.fromArray([
-      ..._resource
+    > = purify.Either.sequence(
+      _resource
         .values($properties.nonEmptyStringSetProperty["identifier"], {
           unique: true,
         })
-        .flatMap((_item) =>
+        .map((_item) =>
           _item
             .toValues()
             .head()
-            .chain((_value) => _value.toString())
-            .toMaybe()
-            .toList(),
+            .chain((_value) => _value.toString()),
         ),
-    ]).toEither(
-      new rdfjsResource.Resource.ValueError({
-        focusResource: _resource,
-        message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} is empty`,
-        predicate:
-          PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
-            "identifier"
-          ],
-      }),
+    ).chain((_array) =>
+      purify.NonEmptyList.fromArray(_array).toEither(
+        new rdfjsResource.Resource.ValueError({
+          focusResource: _resource,
+          message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} is empty`,
+          predicate:
+            PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
+              "identifier"
+            ],
+        }),
+      ),
     );
     if (_nonEmptyStringSetPropertyEither.isLeft()) {
       return _nonEmptyStringSetPropertyEither;
@@ -5827,18 +5825,16 @@ export namespace MutablePropertiesClass {
     const _mutableSetPropertyEither: purify.Either<
       rdfjsResource.Resource.ValueError,
       string[]
-    > = purify.Either.of([
-      ..._resource
+    > = purify.Either.sequence(
+      _resource
         .values($properties.mutableSetProperty["identifier"], { unique: true })
-        .flatMap((_item) =>
+        .map((_item) =>
           _item
             .toValues()
             .head()
-            .chain((_value) => _value.toString())
-            .toMaybe()
-            .toList(),
+            .chain((_value) => _value.toString()),
         ),
-    ]);
+    );
     if (_mutableSetPropertyEither.isLeft()) {
       return _mutableSetPropertyEither;
     }

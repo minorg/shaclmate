@@ -76,11 +76,11 @@ export class OptionType extends Type {
   }: Parameters<Type["fromJsonExpression"]>[0]): string {
     const expression = `purify.Maybe.fromNullable(${variables.value})`;
     const itemFromJsonExpression = this.itemType.fromJsonExpression({
-      variables: { value: "_item" },
+      variables: { value: "item" },
     });
-    return itemFromJsonExpression === "_item"
+    return itemFromJsonExpression === "item"
       ? expression
-      : `${expression}.map(_item => (${itemFromJsonExpression}))`;
+      : `${expression}.map(item => (${itemFromJsonExpression}))`;
   }
 
   override fromRdfExpression(
@@ -100,12 +100,12 @@ export class OptionType extends Type {
     variables,
   }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
     return [
-      `${variables.value}.ifJust((_value${depth}) => { ${this.itemType
+      `${variables.value}.ifJust((value${depth}) => { ${this.itemType
         .hashStatements({
           depth: depth + 1,
           variables: {
             hasher: variables.hasher,
-            value: `_value${depth}`,
+            value: `value${depth}`,
           },
         })
         .join("\n")} })`,
@@ -165,19 +165,19 @@ export class OptionType extends Type {
   override toJsonExpression({
     variables,
   }: Parameters<Type["toJsonExpression"]>[0]): string {
-    return `${variables.value}.map(_item => (${this.itemType.toJsonExpression({ variables: { value: "_item" } })})).extract()`;
+    return `${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: "item" } })})).extract()`;
   }
 
   override toRdfExpression({
     variables,
   }: Parameters<Type["toRdfExpression"]>[0]): string {
     const itemTypeToRdfExpression = this.itemType.toRdfExpression({
-      variables: { ...variables, value: "_value" },
+      variables: { ...variables, value: "value" },
     });
-    if (itemTypeToRdfExpression === "_value") {
+    if (itemTypeToRdfExpression === "value") {
       return variables.value;
     }
-    return `${variables.value}.map((_value) => ${itemTypeToRdfExpression})`;
+    return `${variables.value}.map((value) => ${itemTypeToRdfExpression})`;
   }
 
   override useImports(features: Set<TsFeature>): readonly Import[] {

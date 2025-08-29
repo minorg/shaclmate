@@ -207,6 +207,7 @@ export function ${syntheticNamePrefix}maybeEquals<T>(
   export const RdfVocabularies = (dataFactoryVariable: string) => `\
 export namespace ${syntheticNamePrefix}RdfVocabularies {
   export namespace rdf {
+    export const comment = ${dataFactoryVariable}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#comment");
     export const first = ${dataFactoryVariable}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#first");
     export const nil = ${dataFactoryVariable}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
     export const rest = ${dataFactoryVariable}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#rest");
