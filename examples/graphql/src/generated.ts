@@ -5,6 +5,9 @@ import * as purify from "purify-ts";
 import * as rdfjsResource from "rdfjs-resource";
 export namespace $RdfVocabularies {
   export namespace rdf {
+    export const comment = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#comment",
+    );
     export const first = dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
     );
@@ -200,7 +203,7 @@ export namespace UnionMember2 {
           unique: true,
         })
         .head()
-        .chain((_value) => _value.toString())
+        .chain((value) => value.toString())
         .toMaybe(),
     );
     if (_optionalStringPropertyEither.isLeft()) {
@@ -383,7 +386,7 @@ export namespace UnionMember1 {
           unique: true,
         })
         .head()
-        .chain((_value) => _value.toNumber())
+        .chain((value) => value.toNumber())
         .toMaybe(),
     );
     if (_optionalNumberPropertyEither.isLeft()) {
@@ -610,7 +613,7 @@ export namespace Nested {
           unique: true,
         })
         .head()
-        .chain((_value) => _value.toNumber())
+        .chain((value) => value.toNumber())
         .toMaybe(),
     );
     if (_optionalNumberPropertyEither.isLeft()) {
@@ -627,7 +630,7 @@ export namespace Nested {
           unique: true,
         })
         .head()
-        .chain((_value) => _value.toString())
+        .chain((value) => value.toString())
         .toMaybe(),
     );
     if (_optionalStringPropertyEither.isLeft()) {
@@ -643,7 +646,7 @@ export namespace Nested {
         unique: true,
       })
       .head()
-      .chain((_value) => _value.toString());
+      .chain((value) => value.toString());
     if (_requiredStringPropertyEither.isLeft()) {
       return _requiredStringPropertyEither;
     }
@@ -843,7 +846,7 @@ export namespace ConcreteParentStatic {
           unique: true,
         })
         .head()
-        .chain((_value) => _value.toString())
+        .chain((value) => value.toString())
         .toMaybe(),
     );
     if (_parentStringPropertyEither.isLeft()) {
@@ -982,8 +985,8 @@ export class ConcreteChild extends ConcreteParent {
     );
     _resource.add(
       ConcreteChild.$properties.optionalNestedObjectProperty["identifier"],
-      this.optionalNestedObjectProperty.map((_value) =>
-        _value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      this.optionalNestedObjectProperty.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
@@ -1106,7 +1109,7 @@ export namespace ConcreteChild {
       _resource
         .values($properties.childStringProperty["identifier"], { unique: true })
         .head()
-        .chain((_value) => _value.toString())
+        .chain((value) => value.toString())
         .toMaybe(),
     );
     if (_childStringPropertyEither.isLeft()) {
@@ -1149,7 +1152,7 @@ export namespace ConcreteChild {
           unique: true,
         })
         .head()
-        .chain((_value) => _value.toString())
+        .chain((value) => value.toString())
         .toMaybe(),
     );
     if (_optionalStringPropertyEither.isLeft()) {
@@ -1165,7 +1168,7 @@ export namespace ConcreteChild {
         unique: true,
       })
       .head()
-      .chain((_value) => _value.toString());
+      .chain((value) => value.toString());
     if (_requiredStringPropertyEither.isLeft()) {
       return _requiredStringPropertyEither;
     }
