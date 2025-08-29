@@ -104,7 +104,7 @@ export class ListType extends Type {
     chain.push("head()");
     chain.push("chain(value => value.toList())");
     chain.push(
-      `map(values => values.flatMap(_value => ${this.itemType.fromRdfExpression({ variables: { ...variables, resourceValues: "_value.toValues()" } })}.toMaybe().toList()))`,
+      `chain(values => purify.Either.sequence(values.map(value => ${this.itemType.fromRdfExpression({ variables: { ...variables, resourceValues: "value.toValues()" } })})))`,
     );
     return chain.join(".");
   }

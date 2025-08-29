@@ -113,12 +113,13 @@ export class SetType extends Type {
     variables,
   }: Parameters<Type["fromRdfExpression"]>[0]): string {
     const itemFromRdfExpression = this.itemType.fromRdfExpression({
-      variables: { ...variables, resourceValues: "_item.toValues()" },
+      variables: { ...variables, resourceValues: "item.toValues()" },
     });
+const arrayFromRdfExpression = `purify.Either.sequence(${variables.resourceValues}.map(item => ${itemFromRdfExpression}))`;
     if (this._mutable || this.minCount === 0) {
-      return `purify.Either.of([...${variables.resourceValues}.flatMap(_item => ${itemFromRdfExpression}.toMaybe().toList())])`;
+      return arrayFromRdfExpression;
     }
-    return `purify.NonEmptyList.fromArray([...${variables.resourceValues}.flatMap(_item => ${itemFromRdfExpression}.toMaybe().toList())]).toEither(new rdfjsResource.Resource.ValueError(${objectInitializer({ focusResource: variables.resource, message: `\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} is empty\``, predicate: variables.predicate })}))`;
+    return `${arrayFromRdfExpression}.chain(array => purify.NonEmptyList.fromArray(array).toEither(new rdfjsResource.Resource.ValueError(${objectInitializer({ focusResource: variables.resource, message: `\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} is empty\``, predicate: variables.predicate })})))`;
   }
 
   override hashStatements({
