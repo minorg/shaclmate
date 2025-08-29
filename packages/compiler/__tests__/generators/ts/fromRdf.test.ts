@@ -152,7 +152,7 @@ describe("fromRdf", () => {
     expect(instance.hasLiteralValueProperty.isNothing()).toStrictEqual(true);
   });
 
-  it("ignore invalid identifier values (sh:in)", ({ expect }) => {
+  it("reject invalid identifier values (sh:in)", ({ expect }) => {
     const dataset = new N3.Store();
     const identifier = dataFactory.namedNode(
       "http://example.com/InvalidIdentifier",
