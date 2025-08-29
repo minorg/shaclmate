@@ -28,7 +28,7 @@
     "@types/n3": "^1.21.1",
     "oxigraph": "0.4.11",
     "n3": "^1.21.3",
-    "rdfjs-resource": "1.0.19"
+    "rdfjs-resource": "1.0.20"
   },
   "exports": {
     ".": {
