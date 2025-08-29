@@ -2,19 +2,18 @@ import type * as rdfjs from "@rdfjs/types";
 import { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
 import * as rdfjsResource from "rdfjs-resource";
-import * as sparqljs from "sparqljs";
 import { z as zod } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
-export type EqualsResult = purify.Either<EqualsResult.Unequal, true>;
+export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
 
-export namespace EqualsResult {
-  export const Equal: EqualsResult = purify.Either.of<Unequal, true>(true);
+export namespace $EqualsResult {
+  export const Equal: $EqualsResult = purify.Either.of<Unequal, true>(true);
 
   export function fromBooleanEqualsResult(
     left: any,
     right: any,
-    equalsResult: boolean | EqualsResult,
-  ): EqualsResult {
+    equalsResult: boolean | $EqualsResult,
+  ): $EqualsResult {
     if (typeof equalsResult !== "boolean") {
       return equalsResult;
     }
@@ -22,11 +21,8 @@ export namespace EqualsResult {
     if (equalsResult) {
       return Equal;
     }
-    return purify.Left({
-      left,
-      right,
-      type: "BooleanEquals",
-    });
+
+    return purify.Left({ left, right, type: "BooleanEquals" });
   }
 
   export type Unequal =
@@ -67,8 +63,8 @@ export namespace EqualsResult {
         readonly type: "Primitive";
       }
     | {
-        readonly left: object;
-        readonly right: object;
+        readonly left: any;
+        readonly right: any;
         readonly propertyName: string;
         readonly propertyValuesUnequal: Unequal;
         readonly type: "Property";
@@ -83,29 +79,69 @@ export namespace EqualsResult {
         readonly type: "RightNull";
       };
 }
-/**
- * Compare two objects with equals(other: T): boolean methods and return an EqualsResult.
- */
-export function booleanEquals<T extends { equals: (other: T) => boolean }>(
-  left: T,
-  right: T,
-): EqualsResult {
-  return EqualsResult.fromBooleanEqualsResult(left, right, left.equals(right));
+export namespace $RdfVocabularies {
+  export namespace rdf {
+    export const first = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
+    );
+    export const nil = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+    );
+    export const rest = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+    );
+    export const subject = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+    );
+    export const type = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    );
+  }
+
+  export namespace rdfs {
+    export const subClassOf = dataFactory.namedNode(
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+    );
+  }
+
+  export namespace xsd {
+    export const boolean = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#boolean",
+    );
+    export const date = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#date",
+    );
+    export const dateTime = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#dateTime",
+    );
+    export const integer = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#integer",
+    );
+  }
 }
 /**
- * Compare two values for strict equality (===), returning an EqualsResult rather than a boolean.
+ * Compare two objects with equals(other: T): boolean methods and return an $EqualsResult.
  */
-export function strictEquals<T extends bigint | boolean | number | string>(
+export function $booleanEquals<T extends { equals: (other: T) => boolean }>(
   left: T,
   right: T,
-): EqualsResult {
-  return EqualsResult.fromBooleanEqualsResult(left, right, left === right);
+): $EqualsResult {
+  return $EqualsResult.fromBooleanEqualsResult(left, right, left.equals(right));
 }
-export function arrayEquals<T>(
+/**
+ * Compare two values for strict equality (===), returning an $EqualsResult rather than a boolean.
+ */
+export function $strictEquals<T extends bigint | boolean | number | string>(
+  left: T,
+  right: T,
+): $EqualsResult {
+  return $EqualsResult.fromBooleanEqualsResult(left, right, left === right);
+}
+export function $arrayEquals<T>(
   leftArray: readonly T[],
   rightArray: readonly T[],
-  elementEquals: (left: T, right: T) => boolean | EqualsResult,
-): EqualsResult {
+  elementEquals: (left: T, right: T) => boolean | $EqualsResult,
+): $EqualsResult {
   if (leftArray.length !== rightArray.length) {
     return purify.Left({
       left: leftArray,
@@ -121,7 +157,7 @@ export function arrayEquals<T>(
   ) {
     const leftElement = leftArray[leftElementIndex];
 
-    const rightUnequals: EqualsResult.Unequal[] = [];
+    const rightUnequals: $EqualsResult.Unequal[] = [];
     for (
       let rightElementIndex = 0;
       rightElementIndex < rightArray.length;
@@ -130,7 +166,7 @@ export function arrayEquals<T>(
       const rightElement = rightArray[rightElementIndex];
 
       const leftElementEqualsRightElement =
-        EqualsResult.fromBooleanEqualsResult(
+        $EqualsResult.fromBooleanEqualsResult(
           leftElement,
           rightElement,
           elementEquals(leftElement, rightElement),
@@ -139,7 +175,7 @@ export function arrayEquals<T>(
         break; // left element === right element, break out of the right iteration
       }
       rightUnequals.push(
-        leftElementEqualsRightElement.extract() as EqualsResult.Unequal,
+        leftElementEqualsRightElement.extract() as $EqualsResult.Unequal,
       );
     }
 
@@ -161,16 +197,16 @@ export function arrayEquals<T>(
     // Else there was a right element equal to the left element, continue to the next left element
   }
 
-  return EqualsResult.Equal;
+  return $EqualsResult.Equal;
 }
-export function maybeEquals<T>(
+export function $maybeEquals<T>(
   leftMaybe: purify.Maybe<T>,
   rightMaybe: purify.Maybe<T>,
-  valueEquals: (left: T, right: T) => boolean | EqualsResult,
-): EqualsResult {
+  valueEquals: (left: T, right: T) => boolean | $EqualsResult,
+): $EqualsResult {
   if (leftMaybe.isJust()) {
     if (rightMaybe.isJust()) {
-      return EqualsResult.fromBooleanEqualsResult(
+      return $EqualsResult.fromBooleanEqualsResult(
         leftMaybe,
         rightMaybe,
         valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
@@ -189,11 +225,11 @@ export function maybeEquals<T>(
     });
   }
 
-  return EqualsResult.Equal;
+  return $EqualsResult.Equal;
 }
 export interface NestedNodeShape {
-  readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-  readonly type: "NestedNodeShape";
+  readonly $identifier: NestedNodeShape.$Identifier;
+  readonly $type: "NestedNodeShape";
   /**
    * Required string
    */
@@ -201,49 +237,49 @@ export interface NestedNodeShape {
 }
 
 export namespace NestedNodeShape {
-  export function create(parameters: {
-    readonly identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+  export function $create(parameters: {
+    readonly $identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly requiredStringProperty: string;
   }): NestedNodeShape {
-    let identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-    if (typeof parameters.identifier === "object") {
-      identifier = parameters.identifier;
-    } else if (typeof parameters.identifier === "string") {
-      identifier = dataFactory.namedNode(parameters.identifier);
+    let $identifier: NestedNodeShape.$Identifier;
+    if (typeof parameters.$identifier === "object") {
+      $identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      $identifier = dataFactory.namedNode(parameters.$identifier);
     } else {
-      identifier = parameters.identifier as never;
+      $identifier = parameters.$identifier satisfies never;
     }
 
-    const type = "NestedNodeShape" as const;
+    const $type = "NestedNodeShape" as const;
     const requiredStringProperty = parameters.requiredStringProperty;
-    return { identifier, type, requiredStringProperty };
+    return { $identifier, $type, requiredStringProperty };
   }
 
-  export function equals(
+  export function $equals(
     left: NestedNodeShape,
     right: NestedNodeShape,
-  ): EqualsResult {
-    return booleanEquals(left.identifier, right.identifier)
+  ): $EqualsResult {
+    return $booleanEquals(left.$identifier, right.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
-        propertyName: "identifier",
+        propertyName: "$identifier",
         propertyValuesUnequal,
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(left.type, right.type).mapLeft(
+        $strictEquals(left.$type, right.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: left,
             right: right,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
         ),
       )
       .chain(() =>
-        strictEquals(
+        $strictEquals(
           left.requiredStringProperty,
           right.requiredStringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -256,84 +292,63 @@ export namespace NestedNodeShape {
       );
   }
 
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory: dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NestedNodeShape";
+    readonly requiredStringProperty: string;
+  };
+
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "NestedNodeShape";
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      $type: "NestedNodeShape";
       requiredStringProperty: string;
     }
   > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = _jsonObject["@id"].startsWith("_:")
+    const _jsonObject = $jsonSafeParseResult.data;
+    const $identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    const type = "NestedNodeShape" as const;
+    const $type = "NestedNodeShape" as const;
     const requiredStringProperty = _jsonObject["requiredStringProperty"];
-    return purify.Either.of({ identifier, type, requiredStringProperty });
+    return purify.Either.of({ $identifier, $type, requiredStringProperty });
   }
 
-  export function fromJson(
+  export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, NestedNodeShape> {
-    return NestedNodeShape._propertiesFromJson(json);
+    return $propertiesFromJson(json);
   }
 
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "NestedNodeShape";
-      requiredStringProperty: string;
-    }
-  > {
-    const identifier = _resource.identifier;
-    const type = "NestedNodeShape" as const;
-    const _requiredStringPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      string
-    > = _resource
-      .values(
-        dataFactory.namedNode("http://example.com/requiredStringProperty"),
-        { unique: true },
-      )
-      .head()
-      .chain((_value) => _value.toString());
-    if (_requiredStringPropertyEither.isLeft()) {
-      return _requiredStringPropertyEither;
-    }
-
-    const requiredStringProperty = _requiredStringPropertyEither.unsafeCoerce();
-    return purify.Either.of({ identifier, type, requiredStringProperty });
+  export function $jsonSchema() {
+    return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function fromRdf(
-    parameters: Parameters<typeof NestedNodeShape._propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, NestedNodeShape> {
-    return NestedNodeShape._propertiesFromRdf(parameters);
-  }
-
-  export function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -346,11 +361,11 @@ export namespace NestedNodeShape {
           rule: {
             condition: {
               schema: { const: "NestedNodeShape" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -364,26 +379,41 @@ export namespace NestedNodeShape {
     };
   }
 
-  export function jsonZodSchema() {
+  export function $toJson(
+    _nestedNodeShape: NestedNodeShape,
+  ): NestedNodeShape.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _nestedNodeShape.$identifier.termType === "BlankNode"
+            ? `_:${_nestedNodeShape.$identifier.value}`
+            : _nestedNodeShape.$identifier.value,
+        $type: _nestedNodeShape.$type,
+        requiredStringProperty: _nestedNodeShape.requiredStringProperty,
+      } satisfies NestedNodeShape.$Json),
+    );
+  }
+
+  export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("NestedNodeShape"),
+      $type: zod.literal("NestedNodeShape"),
       requiredStringProperty: zod.string(),
     });
   }
 
-  export function hash<
+  export function $hash<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_nestedNodeShape: NestedNodeShape, _hasher: HasherT): HasherT {
-    _hasher.update(_nestedNodeShape.identifier.value);
-    _hasher.update(_nestedNodeShape.type);
-    NestedNodeShape._hashShaclProperties(_nestedNodeShape, _hasher);
+    _hasher.update(_nestedNodeShape.$identifier.value);
+    _hasher.update(_nestedNodeShape.$type);
+    NestedNodeShape.$hashShaclProperties(_nestedNodeShape, _hasher);
     return _hasher;
   }
 
-  export function _hashShaclProperties<
+  export function $hashShaclProperties<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
@@ -392,114 +422,49 @@ export namespace NestedNodeShape {
     return _hasher;
   }
 
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        NestedNodeShape.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        NestedNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      NestedNodeShape.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
+  export function $propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("nestedNodeShape");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "nestedNodeShape");
-    return [
-      {
-        object: dataFactory.variable!(
-          `${variablePrefix}RequiredStringProperty`,
-        ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/requiredStringProperty",
-        ),
-        subject,
-      },
-    ];
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      $type: "NestedNodeShape";
+      requiredStringProperty: string;
+    }
+  > {
+    const $identifier: NestedNodeShape.$Identifier = _resource.identifier;
+    const $type = "NestedNodeShape" as const;
+    const _requiredStringPropertyEither: purify.Either<Error, string> =
+      _resource
+        .values($properties.requiredStringProperty["identifier"], {
+          unique: true,
+        })
+        .head()
+        .chain((value) => value.toString());
+    if (_requiredStringPropertyEither.isLeft()) {
+      return _requiredStringPropertyEither;
+    }
+
+    const requiredStringProperty = _requiredStringPropertyEither.unsafeCoerce();
+    return purify.Either.of({ $identifier, $type, requiredStringProperty });
   }
 
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("nestedNodeShape");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "nestedNodeShape");
-    return [
-      {
-        triples: [
-          {
-            object: dataFactory.variable!(
-              `${variablePrefix}RequiredStringProperty`,
-            ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/requiredStringProperty",
-            ),
-            subject,
-          },
-        ],
-        type: "bgp",
-      },
-    ];
+  export function $fromRdf(
+    parameters: Parameters<typeof NestedNodeShape.$propertiesFromRdf>[0],
+  ): purify.Either<Error, NestedNodeShape> {
+    return NestedNodeShape.$propertiesFromRdf(parameters);
   }
 
-  export function toJson(_nestedNodeShape: NestedNodeShape): {
-    readonly "@id": string;
-    readonly type: "NestedNodeShape";
-    readonly requiredStringProperty: string;
-  } {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _nestedNodeShape.identifier.termType === "BlankNode"
-            ? `_:${_nestedNodeShape.identifier.value}`
-            : _nestedNodeShape.identifier.value,
-        type: _nestedNodeShape.type,
-        requiredStringProperty: _nestedNodeShape.requiredStringProperty,
-      } satisfies ReturnType<typeof NestedNodeShape.toJson>),
-    );
-  }
-
-  export function toRdf(
+  export function $toRdf(
     _nestedNodeShape: NestedNodeShape,
     {
       mutateGraph,
@@ -510,22 +475,31 @@ export namespace NestedNodeShape {
       resourceSet: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(_nestedNodeShape.identifier, {
-      mutateGraph,
-    });
+    const _resource = resourceSet.mutableResource(
+      _nestedNodeShape.$identifier,
+      { mutateGraph },
+    );
     _resource.add(
-      dataFactory.namedNode("http://example.com/requiredStringProperty"),
+      NestedNodeShape.$properties.requiredStringProperty["identifier"],
       _nestedNodeShape.requiredStringProperty,
     );
     return _resource;
   }
+
+  export const $properties = {
+    requiredStringProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/requiredStringProperty",
+      ),
+    },
+  };
 }
 /**
  * Form
  */
 export interface FormNodeShape {
-  readonly identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-  readonly type: "FormNodeShape";
+  readonly $identifier: FormNodeShape.$Identifier;
+  readonly $type: "FormNodeShape";
   /**
    * Empty string set
    */
@@ -553,8 +527,8 @@ export interface FormNodeShape {
 }
 
 export namespace FormNodeShape {
-  export function create(parameters: {
-    readonly identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+  export function $create(parameters: {
+    readonly $identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly emptyStringSetProperty?: readonly string[];
     readonly nestedObjectProperty: NestedNodeShape;
     readonly nonEmptyStringSetProperty: purify.NonEmptyList<string>;
@@ -562,23 +536,24 @@ export namespace FormNodeShape {
     readonly requiredIntegerProperty: number;
     readonly requiredStringProperty: string;
   }): FormNodeShape {
-    let identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-    if (typeof parameters.identifier === "object") {
-      identifier = parameters.identifier;
-    } else if (typeof parameters.identifier === "string") {
-      identifier = dataFactory.namedNode(parameters.identifier);
+    let $identifier: FormNodeShape.$Identifier;
+    if (typeof parameters.$identifier === "object") {
+      $identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      $identifier = dataFactory.namedNode(parameters.$identifier);
     } else {
-      identifier = parameters.identifier as never;
+      $identifier = parameters.$identifier satisfies never;
     }
 
-    const type = "FormNodeShape" as const;
+    const $type = "FormNodeShape" as const;
     let emptyStringSetProperty: readonly string[];
     if (typeof parameters.emptyStringSetProperty === "undefined") {
       emptyStringSetProperty = [];
-    } else if (Array.isArray(parameters.emptyStringSetProperty)) {
+    } else if (typeof parameters.emptyStringSetProperty === "object") {
       emptyStringSetProperty = parameters.emptyStringSetProperty;
     } else {
-      emptyStringSetProperty = parameters.emptyStringSetProperty as never;
+      emptyStringSetProperty =
+        parameters.emptyStringSetProperty satisfies never;
     }
 
     const nestedObjectProperty = parameters.nestedObjectProperty;
@@ -593,14 +568,15 @@ export namespace FormNodeShape {
     } else if (typeof parameters.optionalStringProperty === "undefined") {
       optionalStringProperty = purify.Maybe.empty();
     } else {
-      optionalStringProperty = parameters.optionalStringProperty as never;
+      optionalStringProperty =
+        parameters.optionalStringProperty satisfies never;
     }
 
     const requiredIntegerProperty = parameters.requiredIntegerProperty;
     const requiredStringProperty = parameters.requiredStringProperty;
     return {
-      identifier,
-      type,
+      $identifier,
+      $type,
       emptyStringSetProperty,
       nestedObjectProperty,
       nonEmptyStringSetProperty,
@@ -610,31 +586,31 @@ export namespace FormNodeShape {
     };
   }
 
-  export function equals(
+  export function $equals(
     left: FormNodeShape,
     right: FormNodeShape,
-  ): EqualsResult {
-    return booleanEquals(left.identifier, right.identifier)
+  ): $EqualsResult {
+    return $booleanEquals(left.$identifier, right.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
-        propertyName: "identifier",
+        propertyName: "$identifier",
         propertyValuesUnequal,
         type: "Property" as const,
       }))
       .chain(() =>
-        strictEquals(left.type, right.type).mapLeft(
+        $strictEquals(left.$type, right.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: left,
             right: right,
-            propertyName: "type",
+            propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
           }),
         ),
       )
       .chain(() =>
-        ((left, right) => arrayEquals(left, right, strictEquals))(
+        ((left, right) => $arrayEquals(left, right, $strictEquals))(
           left.emptyStringSetProperty,
           right.emptyStringSetProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -646,7 +622,7 @@ export namespace FormNodeShape {
         })),
       )
       .chain(() =>
-        NestedNodeShape.equals(
+        NestedNodeShape.$equals(
           left.nestedObjectProperty,
           right.nestedObjectProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -658,7 +634,7 @@ export namespace FormNodeShape {
         })),
       )
       .chain(() =>
-        ((left, right) => arrayEquals(left, right, strictEquals))(
+        ((left, right) => $arrayEquals(left, right, $strictEquals))(
           left.nonEmptyStringSetProperty,
           right.nonEmptyStringSetProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -670,7 +646,7 @@ export namespace FormNodeShape {
         })),
       )
       .chain(() =>
-        ((left, right) => maybeEquals(left, right, strictEquals))(
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
           left.optionalStringProperty,
           right.optionalStringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -682,7 +658,7 @@ export namespace FormNodeShape {
         })),
       )
       .chain(() =>
-        strictEquals(
+        $strictEquals(
           left.requiredIntegerProperty,
           right.requiredIntegerProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -694,7 +670,7 @@ export namespace FormNodeShape {
         })),
       )
       .chain(() =>
-        strictEquals(
+        $strictEquals(
           left.requiredStringProperty,
           right.requiredStringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -707,11 +683,40 @@ export namespace FormNodeShape {
       );
   }
 
-  export function _propertiesFromJson(_json: unknown): purify.Either<
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory: dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "FormNodeShape";
+    readonly emptyStringSetProperty: readonly string[];
+    readonly nestedObjectProperty: NestedNodeShape.$Json;
+    readonly nonEmptyStringSetProperty: readonly string[];
+    readonly optionalStringProperty: string | undefined;
+    readonly requiredIntegerProperty: number;
+    readonly requiredStringProperty: string;
+  };
+
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "FormNodeShape";
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      $type: "FormNodeShape";
       emptyStringSetProperty: readonly string[];
       nestedObjectProperty: NestedNodeShape;
       nonEmptyStringSetProperty: purify.NonEmptyList<string>;
@@ -720,18 +725,18 @@ export namespace FormNodeShape {
       requiredStringProperty: string;
     }
   > {
-    const _jsonSafeParseResult = jsonZodSchema().safeParse(_json);
-    if (!_jsonSafeParseResult.success) {
-      return purify.Left(_jsonSafeParseResult.error);
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = _jsonSafeParseResult.data;
-    const identifier = _jsonObject["@id"].startsWith("_:")
+    const _jsonObject = $jsonSafeParseResult.data;
+    const $identifier = _jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
       : dataFactory.namedNode(_jsonObject["@id"]);
-    const type = "FormNodeShape" as const;
+    const $type = "FormNodeShape" as const;
     const emptyStringSetProperty = _jsonObject["emptyStringSetProperty"];
-    const nestedObjectProperty = NestedNodeShape.fromJson(
+    const nestedObjectProperty = NestedNodeShape.$fromJson(
       _jsonObject["nestedObjectProperty"],
     ).unsafeCoerce();
     const nonEmptyStringSetProperty = purify.NonEmptyList.fromArray(
@@ -743,8 +748,8 @@ export namespace FormNodeShape {
     const requiredIntegerProperty = _jsonObject["requiredIntegerProperty"];
     const requiredStringProperty = _jsonObject["requiredStringProperty"];
     return purify.Either.of({
-      identifier,
-      type,
+      $identifier,
+      $type,
       emptyStringSetProperty,
       nestedObjectProperty,
       nonEmptyStringSetProperty,
@@ -754,188 +759,17 @@ export namespace FormNodeShape {
     });
   }
 
-  export function fromJson(
+  export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, FormNodeShape> {
-    return FormNodeShape._propertiesFromJson(json);
+    return $propertiesFromJson(json);
   }
 
-  export function _propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    rdfjsResource.Resource.ValueError,
-    {
-      identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      type: "FormNodeShape";
-      emptyStringSetProperty: readonly string[];
-      nestedObjectProperty: NestedNodeShape;
-      nonEmptyStringSetProperty: purify.NonEmptyList<string>;
-      optionalStringProperty: purify.Maybe<string>;
-      requiredIntegerProperty: number;
-      requiredStringProperty: string;
-    }
-  > {
-    const identifier = _resource.identifier;
-    const type = "FormNodeShape" as const;
-    const _emptyStringSetPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      readonly string[]
-    > = purify.Either.of([
-      ..._resource
-        .values(
-          dataFactory.namedNode("http://example.com/emptyStringSetProperty"),
-          { unique: true },
-        )
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((_value) => _value.toString())
-            .toMaybe()
-            .toList(),
-        ),
-    ]);
-    if (_emptyStringSetPropertyEither.isLeft()) {
-      return _emptyStringSetPropertyEither;
-    }
-
-    const emptyStringSetProperty = _emptyStringSetPropertyEither.unsafeCoerce();
-    const _nestedObjectPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      NestedNodeShape
-    > = _resource
-      .values(
-        dataFactory.namedNode("http://example.com/nestedObjectProperty"),
-        { unique: true },
-      )
-      .head()
-      .chain((value) => value.toResource())
-      .chain((_resource) =>
-        NestedNodeShape.fromRdf({
-          ..._context,
-          ignoreRdfType: true,
-          languageIn: _languageIn,
-          resource: _resource,
-        }),
-      );
-    if (_nestedObjectPropertyEither.isLeft()) {
-      return _nestedObjectPropertyEither;
-    }
-
-    const nestedObjectProperty = _nestedObjectPropertyEither.unsafeCoerce();
-    const _nonEmptyStringSetPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.NonEmptyList<string>
-    > = purify.NonEmptyList.fromArray([
-      ..._resource
-        .values(
-          dataFactory.namedNode("http://example.com/nonEmptyStringSetProperty"),
-          { unique: true },
-        )
-        .flatMap((_item) =>
-          _item
-            .toValues()
-            .head()
-            .chain((_value) => _value.toString())
-            .toMaybe()
-            .toList(),
-        ),
-    ]).toEither(
-      new rdfjsResource.Resource.ValueError({
-        focusResource: _resource,
-        message: `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} is empty`,
-        predicate: dataFactory.namedNode(
-          "http://example.com/nonEmptyStringSetProperty",
-        ),
-      }),
-    );
-    if (_nonEmptyStringSetPropertyEither.isLeft()) {
-      return _nonEmptyStringSetPropertyEither;
-    }
-
-    const nonEmptyStringSetProperty =
-      _nonEmptyStringSetPropertyEither.unsafeCoerce();
-    const _optionalStringPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      purify.Maybe<string>
-    > = purify.Either.of(
-      _resource
-        .values(
-          dataFactory.namedNode("http://example.com/optionalStringProperty"),
-          { unique: true },
-        )
-        .head()
-        .chain((_value) => _value.toString())
-        .toMaybe(),
-    );
-    if (_optionalStringPropertyEither.isLeft()) {
-      return _optionalStringPropertyEither;
-    }
-
-    const optionalStringProperty = _optionalStringPropertyEither.unsafeCoerce();
-    const _requiredIntegerPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      number
-    > = _resource
-      .values(
-        dataFactory.namedNode("http://example.com/requiredIntegerProperty"),
-        { unique: true },
-      )
-      .head()
-      .chain((_value) => _value.toNumber());
-    if (_requiredIntegerPropertyEither.isLeft()) {
-      return _requiredIntegerPropertyEither;
-    }
-
-    const requiredIntegerProperty =
-      _requiredIntegerPropertyEither.unsafeCoerce();
-    const _requiredStringPropertyEither: purify.Either<
-      rdfjsResource.Resource.ValueError,
-      string
-    > = _resource
-      .values(
-        dataFactory.namedNode("http://example.com/requiredStringProperty"),
-        { unique: true },
-      )
-      .head()
-      .chain((_value) => _value.toString());
-    if (_requiredStringPropertyEither.isLeft()) {
-      return _requiredStringPropertyEither;
-    }
-
-    const requiredStringProperty = _requiredStringPropertyEither.unsafeCoerce();
-    return purify.Either.of({
-      identifier,
-      type,
-      emptyStringSetProperty,
-      nestedObjectProperty,
-      nonEmptyStringSetProperty,
-      optionalStringProperty,
-      requiredIntegerProperty,
-      requiredStringProperty,
-    });
+  export function $jsonSchema() {
+    return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function fromRdf(
-    parameters: Parameters<typeof FormNodeShape._propertiesFromRdf>[0],
-  ): purify.Either<rdfjsResource.Resource.ValueError, FormNodeShape> {
-    return FormNodeShape._propertiesFromRdf(parameters);
-  }
-
-  export function jsonSchema() {
-    return zodToJsonSchema(jsonZodSchema());
-  }
-
-  export function jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -948,11 +782,11 @@ export namespace FormNodeShape {
           rule: {
             condition: {
               schema: { const: "FormNodeShape" },
-              scope: `${scopePrefix}/properties/type`,
+              scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
           },
-          scope: `${scopePrefix}/properties/type`,
+          scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
         {
@@ -960,7 +794,7 @@ export namespace FormNodeShape {
           scope: `${scopePrefix}/properties/emptyStringSetProperty`,
           type: "Control",
         },
-        NestedNodeShape.jsonUiSchema({
+        NestedNodeShape.$jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/nestedObjectProperty`,
         }),
         {
@@ -989,12 +823,41 @@ export namespace FormNodeShape {
     };
   }
 
-  export function jsonZodSchema() {
+  export function $toJson(_formNodeShape: FormNodeShape): FormNodeShape.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _formNodeShape.$identifier.termType === "BlankNode"
+            ? `_:${_formNodeShape.$identifier.value}`
+            : _formNodeShape.$identifier.value,
+        $type: _formNodeShape.$type,
+        emptyStringSetProperty: _formNodeShape.emptyStringSetProperty.map(
+          (item) => item,
+        ),
+        nestedObjectProperty: NestedNodeShape.$toJson(
+          _formNodeShape.nestedObjectProperty,
+        ),
+        nonEmptyStringSetProperty: _formNodeShape.nonEmptyStringSetProperty.map(
+          (item) => item,
+        ),
+        optionalStringProperty: _formNodeShape.optionalStringProperty
+          .map((item) => item)
+          .extract(),
+        requiredIntegerProperty: _formNodeShape.requiredIntegerProperty,
+        requiredStringProperty: _formNodeShape.requiredStringProperty,
+      } satisfies FormNodeShape.$Json),
+    );
+  }
+
+  export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      type: zod.literal("FormNodeShape"),
-      emptyStringSetProperty: zod.string().array(),
-      nestedObjectProperty: NestedNodeShape.jsonZodSchema(),
+      $type: zod.literal("FormNodeShape"),
+      emptyStringSetProperty: zod
+        .string()
+        .array()
+        .default(() => []),
+      nestedObjectProperty: NestedNodeShape.$jsonZodSchema(),
       nonEmptyStringSetProperty: zod.string().array().nonempty().min(1),
       optionalStringProperty: zod.string().optional(),
       requiredIntegerProperty: zod.number(),
@@ -1002,298 +865,196 @@ export namespace FormNodeShape {
     });
   }
 
-  export function hash<
+  export function $hash<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_formNodeShape: FormNodeShape, _hasher: HasherT): HasherT {
-    _hasher.update(_formNodeShape.identifier.value);
-    _hasher.update(_formNodeShape.type);
-    FormNodeShape._hashShaclProperties(_formNodeShape, _hasher);
+    _hasher.update(_formNodeShape.$identifier.value);
+    _hasher.update(_formNodeShape.$type);
+    FormNodeShape.$hashShaclProperties(_formNodeShape, _hasher);
     return _hasher;
   }
 
-  export function _hashShaclProperties<
+  export function $hashShaclProperties<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_formNodeShape: FormNodeShape, _hasher: HasherT): HasherT {
-    for (const _item0 of _formNodeShape.emptyStringSetProperty) {
-      _hasher.update(_item0);
+    for (const item0 of _formNodeShape.emptyStringSetProperty) {
+      _hasher.update(item0);
     }
 
-    NestedNodeShape.hash(_formNodeShape.nestedObjectProperty, _hasher);
-    for (const _item0 of _formNodeShape.nonEmptyStringSetProperty) {
-      _hasher.update(_item0);
+    NestedNodeShape.$hash(_formNodeShape.nestedObjectProperty, _hasher);
+    for (const item0 of _formNodeShape.nonEmptyStringSetProperty) {
+      _hasher.update(item0);
     }
 
-    _formNodeShape.optionalStringProperty.ifJust((_value0) => {
-      _hasher.update(_value0);
+    _formNodeShape.optionalStringProperty.ifJust((value0) => {
+      _hasher.update(value0);
     });
     _hasher.update(_formNodeShape.requiredIntegerProperty.toString());
     _hasher.update(_formNodeShape.requiredStringProperty);
     return _hasher;
   }
 
-  export function sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        FormNodeShape.sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        FormNodeShape.sparqlWherePatterns({ ignoreRdfType, subject }),
-      ),
-    };
-  }
-
-  export function sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      FormNodeShape.sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function sparqlConstructTemplateTriples(parameters?: {
+  export function $propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
     ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("formNodeShape");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "formNodeShape");
-    return [
-      {
-        object: dataFactory.variable!(
-          `${variablePrefix}EmptyStringSetProperty`,
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      $type: "FormNodeShape";
+      emptyStringSetProperty: readonly string[];
+      nestedObjectProperty: NestedNodeShape;
+      nonEmptyStringSetProperty: purify.NonEmptyList<string>;
+      optionalStringProperty: purify.Maybe<string>;
+      requiredIntegerProperty: number;
+      requiredStringProperty: string;
+    }
+  > {
+    const $identifier: FormNodeShape.$Identifier = _resource.identifier;
+    const $type = "FormNodeShape" as const;
+    const _emptyStringSetPropertyEither: purify.Either<
+      Error,
+      readonly string[]
+    > = purify.Either.sequence(
+      _resource
+        .values($properties.emptyStringSetProperty["identifier"], {
+          unique: true,
+        })
+        .map((item) =>
+          item
+            .toValues()
+            .head()
+            .chain((value) => value.toString()),
         ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/emptyStringSetProperty",
-        ),
-        subject,
-      },
-      {
-        object: dataFactory.variable!(`${variablePrefix}NestedObjectProperty`),
-        predicate: dataFactory.namedNode(
-          "http://example.com/nestedObjectProperty",
-        ),
-        subject,
-      },
-      ...NestedNodeShape.sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(`${variablePrefix}NestedObjectProperty`),
-        variablePrefix: `${variablePrefix}NestedObjectProperty`,
-      }),
-      {
-        object: dataFactory.variable!(
-          `${variablePrefix}NonEmptyStringSetProperty`,
-        ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/nonEmptyStringSetProperty",
-        ),
-        subject,
-      },
-      {
-        object: dataFactory.variable!(
-          `${variablePrefix}OptionalStringProperty`,
-        ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/optionalStringProperty",
-        ),
-        subject,
-      },
-      {
-        object: dataFactory.variable!(
-          `${variablePrefix}RequiredIntegerProperty`,
-        ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/requiredIntegerProperty",
-        ),
-        subject,
-      },
-      {
-        object: dataFactory.variable!(
-          `${variablePrefix}RequiredStringProperty`,
-        ),
-        predicate: dataFactory.namedNode(
-          "http://example.com/requiredStringProperty",
-        ),
-        subject,
-      },
-    ];
-  }
-
-  export function sparqlWherePatterns(parameters: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("formNodeShape");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "formNodeShape");
-    return [
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}EmptyStringSetProperty`,
-                ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/emptyStringSetProperty",
-                ),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-        ],
-        type: "optional",
-      },
-      {
-        triples: [
-          {
-            object: dataFactory.variable!(
-              `${variablePrefix}NestedObjectProperty`,
-            ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/nestedObjectProperty",
-            ),
-            subject,
-          },
-        ],
-        type: "bgp",
-      },
-      ...NestedNodeShape.sparqlWherePatterns({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(`${variablePrefix}NestedObjectProperty`),
-        variablePrefix: `${variablePrefix}NestedObjectProperty`,
-      }),
-      {
-        triples: [
-          {
-            object: dataFactory.variable!(
-              `${variablePrefix}NonEmptyStringSetProperty`,
-            ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/nonEmptyStringSetProperty",
-            ),
-            subject,
-          },
-        ],
-        type: "bgp",
-      },
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}OptionalStringProperty`,
-                ),
-                predicate: dataFactory.namedNode(
-                  "http://example.com/optionalStringProperty",
-                ),
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-        ],
-        type: "optional",
-      },
-      {
-        triples: [
-          {
-            object: dataFactory.variable!(
-              `${variablePrefix}RequiredIntegerProperty`,
-            ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/requiredIntegerProperty",
-            ),
-            subject,
-          },
-        ],
-        type: "bgp",
-      },
-      {
-        triples: [
-          {
-            object: dataFactory.variable!(
-              `${variablePrefix}RequiredStringProperty`,
-            ),
-            predicate: dataFactory.namedNode(
-              "http://example.com/requiredStringProperty",
-            ),
-            subject,
-          },
-        ],
-        type: "bgp",
-      },
-    ];
-  }
-
-  export function toJson(_formNodeShape: FormNodeShape): {
-    readonly "@id": string;
-    readonly type: "FormNodeShape";
-    readonly emptyStringSetProperty: readonly string[];
-    readonly nestedObjectProperty: ReturnType<typeof NestedNodeShape.toJson>;
-    readonly nonEmptyStringSetProperty: readonly string[];
-    readonly optionalStringProperty: string | undefined;
-    readonly requiredIntegerProperty: number;
-    readonly requiredStringProperty: string;
-  } {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _formNodeShape.identifier.termType === "BlankNode"
-            ? `_:${_formNodeShape.identifier.value}`
-            : _formNodeShape.identifier.value,
-        type: _formNodeShape.type,
-        emptyStringSetProperty: _formNodeShape.emptyStringSetProperty.map(
-          (_item) => _item,
-        ),
-        nestedObjectProperty: NestedNodeShape.toJson(
-          _formNodeShape.nestedObjectProperty,
-        ),
-        nonEmptyStringSetProperty: _formNodeShape.nonEmptyStringSetProperty.map(
-          (_item) => _item,
-        ),
-        optionalStringProperty: _formNodeShape.optionalStringProperty
-          .map((_item) => _item)
-          .extract(),
-        requiredIntegerProperty: _formNodeShape.requiredIntegerProperty,
-        requiredStringProperty: _formNodeShape.requiredStringProperty,
-      } satisfies ReturnType<typeof FormNodeShape.toJson>),
     );
+    if (_emptyStringSetPropertyEither.isLeft()) {
+      return _emptyStringSetPropertyEither;
+    }
+
+    const emptyStringSetProperty = _emptyStringSetPropertyEither.unsafeCoerce();
+    const _nestedObjectPropertyEither: purify.Either<Error, NestedNodeShape> =
+      _resource
+        .values($properties.nestedObjectProperty["identifier"], {
+          unique: true,
+        })
+        .head()
+        .chain((value) => value.toResource())
+        .chain((_resource) =>
+          NestedNodeShape.$fromRdf({
+            ..._context,
+            ignoreRdfType: true,
+            languageIn: _languageIn,
+            resource: _resource,
+          }),
+        );
+    if (_nestedObjectPropertyEither.isLeft()) {
+      return _nestedObjectPropertyEither;
+    }
+
+    const nestedObjectProperty = _nestedObjectPropertyEither.unsafeCoerce();
+    const _nonEmptyStringSetPropertyEither: purify.Either<
+      Error,
+      purify.NonEmptyList<string>
+    > = purify.Either.sequence(
+      _resource
+        .values($properties.nonEmptyStringSetProperty["identifier"], {
+          unique: true,
+        })
+        .map((item) =>
+          item
+            .toValues()
+            .head()
+            .chain((value) => value.toString()),
+        ),
+    ).chain((array) =>
+      purify.NonEmptyList.fromArray(array).toEither(
+        new Error(
+          `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} is an empty set`,
+        ),
+      ),
+    );
+    if (_nonEmptyStringSetPropertyEither.isLeft()) {
+      return _nonEmptyStringSetPropertyEither;
+    }
+
+    const nonEmptyStringSetProperty =
+      _nonEmptyStringSetPropertyEither.unsafeCoerce();
+    const _optionalStringPropertyEither: purify.Either<
+      Error,
+      purify.Maybe<string>
+    > = _resource
+      .values($properties.optionalStringProperty["identifier"], {
+        unique: true,
+      })
+      .head()
+      .chain((value) => value.toString())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
+    if (_optionalStringPropertyEither.isLeft()) {
+      return _optionalStringPropertyEither;
+    }
+
+    const optionalStringProperty = _optionalStringPropertyEither.unsafeCoerce();
+    const _requiredIntegerPropertyEither: purify.Either<Error, number> =
+      _resource
+        .values($properties.requiredIntegerProperty["identifier"], {
+          unique: true,
+        })
+        .head()
+        .chain((value) => value.toNumber());
+    if (_requiredIntegerPropertyEither.isLeft()) {
+      return _requiredIntegerPropertyEither;
+    }
+
+    const requiredIntegerProperty =
+      _requiredIntegerPropertyEither.unsafeCoerce();
+    const _requiredStringPropertyEither: purify.Either<Error, string> =
+      _resource
+        .values($properties.requiredStringProperty["identifier"], {
+          unique: true,
+        })
+        .head()
+        .chain((value) => value.toString());
+    if (_requiredStringPropertyEither.isLeft()) {
+      return _requiredStringPropertyEither;
+    }
+
+    const requiredStringProperty = _requiredStringPropertyEither.unsafeCoerce();
+    return purify.Either.of({
+      $identifier,
+      $type,
+      emptyStringSetProperty,
+      nestedObjectProperty,
+      nonEmptyStringSetProperty,
+      optionalStringProperty,
+      requiredIntegerProperty,
+      requiredStringProperty,
+    });
   }
 
-  export function toRdf(
+  export function $fromRdf(
+    parameters: Parameters<typeof FormNodeShape.$propertiesFromRdf>[0],
+  ): purify.Either<Error, FormNodeShape> {
+    return FormNodeShape.$propertiesFromRdf(parameters);
+  }
+
+  export function $toRdf(
     _formNodeShape: FormNodeShape,
     {
       mutateGraph,
@@ -1304,36 +1065,352 @@ export namespace FormNodeShape {
       resourceSet: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(_formNodeShape.identifier, {
+    const _resource = resourceSet.mutableResource(_formNodeShape.$identifier, {
       mutateGraph,
     });
     _resource.add(
-      dataFactory.namedNode("http://example.com/emptyStringSetProperty"),
-      _formNodeShape.emptyStringSetProperty.map((_item) => _item),
+      FormNodeShape.$properties.emptyStringSetProperty["identifier"],
+      _formNodeShape.emptyStringSetProperty.map((item) => item),
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/nestedObjectProperty"),
-      NestedNodeShape.toRdf(_formNodeShape.nestedObjectProperty, {
+      FormNodeShape.$properties.nestedObjectProperty["identifier"],
+      NestedNodeShape.$toRdf(_formNodeShape.nestedObjectProperty, {
         mutateGraph: mutateGraph,
         resourceSet: resourceSet,
       }),
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/nonEmptyStringSetProperty"),
-      _formNodeShape.nonEmptyStringSetProperty.map((_item) => _item),
+      FormNodeShape.$properties.nonEmptyStringSetProperty["identifier"],
+      _formNodeShape.nonEmptyStringSetProperty.map((item) => item),
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/optionalStringProperty"),
+      FormNodeShape.$properties.optionalStringProperty["identifier"],
       _formNodeShape.optionalStringProperty,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/requiredIntegerProperty"),
+      FormNodeShape.$properties.requiredIntegerProperty["identifier"],
       _formNodeShape.requiredIntegerProperty,
     );
     _resource.add(
-      dataFactory.namedNode("http://example.com/requiredStringProperty"),
+      FormNodeShape.$properties.requiredStringProperty["identifier"],
       _formNodeShape.requiredStringProperty,
     );
     return _resource;
+  }
+
+  export const $properties = {
+    emptyStringSetProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/emptyStringSetProperty",
+      ),
+    },
+    nestedObjectProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/nestedObjectProperty",
+      ),
+    },
+    nonEmptyStringSetProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/nonEmptyStringSetProperty",
+      ),
+    },
+    optionalStringProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/optionalStringProperty",
+      ),
+    },
+    requiredIntegerProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/requiredIntegerProperty",
+      ),
+    },
+    requiredStringProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/requiredStringProperty",
+      ),
+    },
+  };
+}
+export interface $ObjectSet {
+  formNodeShape(
+    identifier: FormNodeShape.$Identifier,
+  ): Promise<purify.Either<Error, FormNodeShape>>;
+  formNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<FormNodeShape.$Identifier>,
+  ): Promise<purify.Either<Error, readonly FormNodeShape.$Identifier[]>>;
+  formNodeShapes(
+    query?: $ObjectSet.Query<FormNodeShape.$Identifier>,
+  ): Promise<readonly purify.Either<Error, FormNodeShape>[]>;
+  formNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<FormNodeShape.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  nestedNodeShape(
+    identifier: NestedNodeShape.$Identifier,
+  ): Promise<purify.Either<Error, NestedNodeShape>>;
+  nestedNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<NestedNodeShape.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NestedNodeShape.$Identifier[]>>;
+  nestedNodeShapes(
+    query?: $ObjectSet.Query<NestedNodeShape.$Identifier>,
+  ): Promise<readonly purify.Either<Error, NestedNodeShape>[]>;
+  nestedNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<NestedNodeShape.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+}
+
+export namespace $ObjectSet {
+  export type Query<
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  > = {
+    readonly limit?: number;
+    readonly offset?: number;
+    readonly where?: Where<ObjectIdentifierT>;
+  };
+  export type Where<
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  > = {
+    readonly identifiers: readonly ObjectIdentifierT[];
+    readonly type: "identifiers";
+  };
+}
+
+export class $RdfjsDatasetObjectSet implements $ObjectSet {
+  readonly resourceSet: rdfjsResource.ResourceSet;
+
+  constructor({ dataset }: { dataset: rdfjs.DatasetCore }) {
+    this.resourceSet = new rdfjsResource.ResourceSet({ dataset });
+  }
+
+  async formNodeShape(
+    identifier: FormNodeShape.$Identifier,
+  ): Promise<purify.Either<Error, FormNodeShape>> {
+    return this.formNodeShapeSync(identifier);
+  }
+
+  formNodeShapeSync(
+    identifier: FormNodeShape.$Identifier,
+  ): purify.Either<Error, FormNodeShape> {
+    return this.formNodeShapesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async formNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<FormNodeShape.$Identifier>,
+  ): Promise<purify.Either<Error, readonly FormNodeShape.$Identifier[]>> {
+    return this.formNodeShapeIdentifiersSync(query);
+  }
+
+  formNodeShapeIdentifiersSync(
+    query?: $ObjectSet.Query<FormNodeShape.$Identifier>,
+  ): purify.Either<Error, readonly FormNodeShape.$Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<FormNodeShape, FormNodeShape.$Identifier>(
+        { ...FormNodeShape, $fromRdfType: undefined },
+        query,
+      ),
+    ]);
+  }
+
+  async formNodeShapes(
+    query?: $ObjectSet.Query<FormNodeShape.$Identifier>,
+  ): Promise<readonly purify.Either<Error, FormNodeShape>[]> {
+    return this.formNodeShapesSync(query);
+  }
+
+  formNodeShapesSync(
+    query?: $ObjectSet.Query<FormNodeShape.$Identifier>,
+  ): readonly purify.Either<Error, FormNodeShape>[] {
+    return [
+      ...this.$objectsSync<FormNodeShape, FormNodeShape.$Identifier>(
+        { ...FormNodeShape, $fromRdfType: undefined },
+        query,
+      ),
+    ];
+  }
+
+  async formNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<FormNodeShape.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.formNodeShapesCountSync(query);
+  }
+
+  formNodeShapesCountSync(
+    query?: Pick<$ObjectSet.Query<FormNodeShape.$Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<FormNodeShape, FormNodeShape.$Identifier>(
+      { ...FormNodeShape, $fromRdfType: undefined },
+      query,
+    );
+  }
+
+  async nestedNodeShape(
+    identifier: NestedNodeShape.$Identifier,
+  ): Promise<purify.Either<Error, NestedNodeShape>> {
+    return this.nestedNodeShapeSync(identifier);
+  }
+
+  nestedNodeShapeSync(
+    identifier: NestedNodeShape.$Identifier,
+  ): purify.Either<Error, NestedNodeShape> {
+    return this.nestedNodeShapesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async nestedNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<NestedNodeShape.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NestedNodeShape.$Identifier[]>> {
+    return this.nestedNodeShapeIdentifiersSync(query);
+  }
+
+  nestedNodeShapeIdentifiersSync(
+    query?: $ObjectSet.Query<NestedNodeShape.$Identifier>,
+  ): purify.Either<Error, readonly NestedNodeShape.$Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        NestedNodeShape,
+        NestedNodeShape.$Identifier
+      >({ ...NestedNodeShape, $fromRdfType: undefined }, query),
+    ]);
+  }
+
+  async nestedNodeShapes(
+    query?: $ObjectSet.Query<NestedNodeShape.$Identifier>,
+  ): Promise<readonly purify.Either<Error, NestedNodeShape>[]> {
+    return this.nestedNodeShapesSync(query);
+  }
+
+  nestedNodeShapesSync(
+    query?: $ObjectSet.Query<NestedNodeShape.$Identifier>,
+  ): readonly purify.Either<Error, NestedNodeShape>[] {
+    return [
+      ...this.$objectsSync<NestedNodeShape, NestedNodeShape.$Identifier>(
+        { ...NestedNodeShape, $fromRdfType: undefined },
+        query,
+      ),
+    ];
+  }
+
+  async nestedNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<NestedNodeShape.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.nestedNodeShapesCountSync(query);
+  }
+
+  nestedNodeShapesCountSync(
+    query?: Pick<$ObjectSet.Query<NestedNodeShape.$Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<NestedNodeShape, NestedNodeShape.$Identifier>(
+      { ...NestedNodeShape, $fromRdfType: undefined },
+      query,
+    );
+  }
+
+  protected *$objectIdentifiersSync<
+    ObjectT extends { readonly $identifier: ObjectIdentifierT },
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  >(
+    objectType: {
+      $fromRdf: (parameters: {
+        resource: rdfjsResource.Resource;
+      }) => purify.Either<Error, ObjectT>;
+      $fromRdfType?: rdfjs.NamedNode;
+    },
+    query?: $ObjectSet.Query<ObjectIdentifierT>,
+  ): Generator<ObjectIdentifierT> {
+    for (const object of this.$objectsSync<ObjectT, ObjectIdentifierT>(
+      objectType,
+      query,
+    )) {
+      if (object.isRight()) {
+        yield object.unsafeCoerce().$identifier;
+      }
+    }
+  }
+
+  protected *$objectsSync<
+    ObjectT extends { readonly $identifier: ObjectIdentifierT },
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  >(
+    objectType: {
+      $fromRdf: (parameters: {
+        resource: rdfjsResource.Resource;
+      }) => purify.Either<Error, ObjectT>;
+      $fromRdfType?: rdfjs.NamedNode;
+    },
+    query?: $ObjectSet.Query<ObjectIdentifierT>,
+  ): Generator<purify.Either<Error, ObjectT>> {
+    const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return;
+    }
+
+    let offset = query?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    if (query?.where) {
+      for (const identifier of query.where.identifiers.slice(
+        offset,
+        offset + limit,
+      )) {
+        yield objectType.$fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        });
+      }
+      return;
+    }
+
+    if (!objectType.$fromRdfType) {
+      return;
+    }
+
+    const resources = [
+      ...this.resourceSet.instancesOf(objectType.$fromRdfType),
+    ];
+    // Sort resources by identifier so limit and offset are deterministic
+    resources.sort((left, right) =>
+      left.identifier.value.localeCompare(right.identifier.value),
+    );
+
+    let objectCount = 0;
+    let objectI = 0;
+    for (const resource of resources) {
+      const object = objectType.$fromRdf({ resource });
+      if (object.isLeft()) {
+        continue;
+      }
+      if (objectI++ >= offset) {
+        yield object;
+        if (++objectCount === limit) {
+          return;
+        }
+      }
+    }
+  }
+
+  protected $objectsCountSync<
+    ObjectT extends { readonly $identifier: ObjectIdentifierT },
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  >(
+    objectType: {
+      $fromRdf: (parameters: {
+        resource: rdfjsResource.Resource;
+      }) => purify.Either<Error, ObjectT>;
+      $fromRdfType?: rdfjs.NamedNode;
+    },
+    query?: $ObjectSet.Query<ObjectIdentifierT>,
+  ): purify.Either<Error, number> {
+    let count = 0;
+    for (const _ of this.$objectIdentifiersSync<ObjectT, ObjectIdentifierT>(
+      objectType,
+      query,
+    )) {
+      count++;
+    }
+
+    return purify.Either.of(count);
   }
 }

@@ -12,7 +12,7 @@ format_rdf() {
 
 # Forms
 # format_rdf $PWD/examples/forms/src/forms.shaclmate.ttl
-# ./packages/cli/dist/cli.js generate $PWD/examples/forms/src/forms.shaclmate.ttl >examples/forms/src/generated.ts
+./packages/cli/dist/cli.js generate $PWD/examples/forms/src/forms.shaclmate.ttl >examples/forms/src/generated.ts
 
 # GraphQL
 # format_rdf $PWD/examples/graphql/src/graphql.shaclmate.ttl

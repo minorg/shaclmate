@@ -38,11 +38,11 @@ const classes = {
   },
 };
 
-const initialData = generated.FormNodeShape.toJson(
-  generated.FormNodeShape.create({
-    identifier: dataFactory.namedNode("http://example.com/form"),
-    nestedObjectProperty: generated.NestedNodeShape.create({
-      identifier: dataFactory.namedNode("http://example.com/nested"),
+const initialData = generated.FormNodeShape.$toJson(
+  generated.FormNodeShape.$create({
+    $identifier: dataFactory.namedNode("http://example.com/form"),
+    nestedObjectProperty: generated.NestedNodeShape.$create({
+      $identifier: dataFactory.namedNode("http://example.com/nested"),
       requiredStringProperty: "required/nested",
     }),
     nonEmptyStringSetProperty: NonEmptyList.fromArray(["test"]).unsafeCoerce(),
@@ -51,9 +51,9 @@ const initialData = generated.FormNodeShape.toJson(
   }),
 );
 
-const jsonSchema = generated.FormNodeShape.jsonSchema();
+const jsonSchema = generated.FormNodeShape.$jsonSchema();
 const jsonSchemaString = JSON.stringify(jsonSchema, null, 2);
-const jsonUiSchema = generated.FormNodeShape.jsonUiSchema();
+const jsonUiSchema = generated.FormNodeShape.$jsonUiSchema();
 const jsonUiSchemaString = JSON.stringify(jsonUiSchema, null, 2);
 
 const renderers = materialRenderers;
@@ -63,11 +63,11 @@ const App: FC = () => {
   const dataJsonString = useMemo(() => JSON.stringify(data, null, 2), [data]);
   const dataRdfString = useMemo(
     () =>
-      generated.FormNodeShape.fromJson(data)
+      generated.FormNodeShape.$fromJson(data)
         .mapLeft((error) => error.toString())
         .map((instance) => {
           const store = new N3.Store();
-          generated.FormNodeShape.toRdf(instance, {
+          generated.FormNodeShape.$toRdf(instance, {
             mutateGraph: dataFactory.defaultGraph(),
             resourceSet: new MutableResourceSet({
               dataFactory,
