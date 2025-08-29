@@ -326,7 +326,7 @@ export const harnesses = {
       unrelatedTypesProperty: new kitchenSink.NonClass({
         nonClassProperty: "test",
       }),
-      widenedLiteralsProperty: new Date(),
+      widenedLiteralsProperty: new Date(1756428530982),
       widenedTermsProperty: dataFactory.literal("test"),
     }),
     kitchenSink.UnionPropertiesClass,
