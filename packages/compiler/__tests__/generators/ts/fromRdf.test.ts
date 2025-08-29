@@ -3,7 +3,7 @@ import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 
 import N3, { DataFactory as dataFactory } from "n3";
-import { MutableResourceSet } from "rdfjs-resource";
+import { MutableResourceSet, Resource } from "rdfjs-resource";
 import { describe, it } from "vitest";
 
 import { harnesses } from "./harnesses.js"; // Must be imported before kitchenSink
@@ -59,11 +59,10 @@ describe("fromRdf", () => {
   });
 
   it("explicit fromRdfType ignore default rdf:type", ({ expect }) => {
-    const resourceSet = new MutableResourceSet({
+    const resource = new MutableResourceSet({
       dataFactory,
       dataset: new N3.Store(),
-    });
-    const resource = resourceSet.mutableResource(dataFactory.blankNode());
+    }).mutableResource(dataFactory.blankNode());
     resource.add(
       rdf.type,
       dataFactory.namedNode("http://example.com/ExplicitFromToRdfTypes"),
@@ -81,11 +80,10 @@ describe("fromRdf", () => {
   });
 
   it("explicit fromRdfType accept non-default rdf:type", ({ expect }) => {
-    const resourceSet = new MutableResourceSet({
+    const resource = new MutableResourceSet({
       dataFactory,
       dataset: new N3.Store(),
-    });
-    const resource = resourceSet.mutableResource(dataFactory.blankNode());
+    }).mutableResource(dataFactory.blankNode());
     resource.add(
       rdf.type,
       dataFactory.namedNode("http://example.com/FromRdfType"),
@@ -154,7 +152,7 @@ describe("fromRdf", () => {
     expect(instance.hasLiteralValueProperty.isNothing()).toStrictEqual(true);
   });
 
-  it("ignore invalid identifier values (sh:in)", ({ expect }) => {
+  it("reject invalid identifier values (sh:in)", ({ expect }) => {
     const dataset = new N3.Store();
     const identifier = dataFactory.namedNode(
       "http://example.com/InvalidIdentifier",
@@ -176,7 +174,7 @@ describe("fromRdf", () => {
     expect(instance).toBeInstanceOf(Error);
   });
 
-  it("ignore invalid IRI property values (sh:in)", ({ expect }) => {
+  it("reject invalid IRI property values (sh:in)", ({ expect }) => {
     const dataset = new N3.Store();
     const identifier = dataFactory.blankNode();
     dataset.add(
@@ -186,16 +184,17 @@ describe("fromRdf", () => {
         dataFactory.namedNode("http://example.com/WithInPropertiesIriInvalid"),
       ),
     );
-    const instance = kitchenSink.InPropertiesClass.$fromRdf({
+    const result = kitchenSink.InPropertiesClass.$fromRdf({
       resource: new MutableResourceSet({
         dataFactory,
         dataset: dataset,
       }).resource(identifier),
-    }).unsafeCoerce();
-    expect(instance.inIrisProperty.isNothing()).toStrictEqual(true);
+    });
+    expect(result.isLeft()).toBe(true);
+    expect(result.extract()).toBeInstanceOf(Resource.MistypedValueError);
   });
 
-  it("ignore invalid literal property values (sh:in)", ({ expect }) => {
+  it("reject invalid literal property values (sh:in)", ({ expect }) => {
     const dataset = new N3.Store();
     const identifier = dataFactory.blankNode();
     const object = dataFactory.literal("somethingelse");
@@ -206,13 +205,14 @@ describe("fromRdf", () => {
         object,
       ),
     );
-    const instance = kitchenSink.InPropertiesClass.$fromRdf({
+    const result = kitchenSink.InPropertiesClass.$fromRdf({
       resource: new MutableResourceSet({
         dataFactory,
         dataset: dataset,
       }).resource(identifier),
-    }).unsafeCoerce();
-    expect(instance.inStringsProperty.isNothing()).toStrictEqual(true);
+    });
+    expect(result.isLeft()).toBe(true);
+    expect(result.extract()).toBeInstanceOf(Resource.MistypedValueError);
   });
 
   it("runtime languageIn", ({ expect }) => {
@@ -348,5 +348,66 @@ describe("fromRdf", () => {
           .add(rdf.type, dataFactory.namedNode("http://example.com/type")),
       }).isLeft(),
     ).toBe(true);
+  });
+
+  it("reject malformed list", ({ expect }) => {
+    const resourceSet = new MutableResourceSet({
+      dataFactory,
+      dataset: new N3.Store(),
+    });
+    const instanceResource = resourceSet.mutableResource(
+      dataFactory.blankNode(),
+    );
+    instanceResource.add(
+      kitchenSink.ListPropertiesClass.$properties.stringListProperty.identifier,
+      resourceSet.mutableResource(dataFactory.blankNode()),
+    );
+    const result = kitchenSink.ListPropertiesClass.$fromRdf({
+      resource: instanceResource,
+    });
+    expect(result.isLeft()).toBe(true);
+    expect(result.extract()).toBeInstanceOf(Resource.ListStructureError);
+  });
+
+  it("reject mistyped list", ({ expect }) => {
+    const resourceSet = new MutableResourceSet({
+      dataFactory,
+      dataset: new N3.Store(),
+    });
+    const instanceResource = resourceSet.mutableResource(
+      dataFactory.blankNode(),
+    );
+    const listResource = resourceSet.mutableResource(dataFactory.blankNode());
+    instanceResource.add(
+      kitchenSink.ListPropertiesClass.$properties.stringListProperty.identifier,
+      listResource,
+    );
+    listResource.add(rdf.first, dataFactory.blankNode());
+    listResource.add(rdf.rest, rdf.nil);
+    const result = kitchenSink.ListPropertiesClass.$fromRdf({
+      resource: instanceResource,
+    });
+    expect(result.isLeft()).toBe(true);
+    expect(result.extract()).toBeInstanceOf(Resource.MistypedValueError);
+  });
+
+  it("reject mistyped set", ({ expect }) => {
+    const resourceSet = new MutableResourceSet({
+      dataFactory,
+      dataset: new N3.Store(),
+    });
+    const instanceResource = resourceSet.mutableResource(
+      dataFactory.blankNode(),
+    );
+    instanceResource.add(
+      kitchenSink.PropertyCardinalitiesClass.$properties.emptyStringSetProperty
+        .identifier,
+      resourceSet.mutableResource(dataFactory.blankNode()),
+    );
+    const result = kitchenSink.PropertyCardinalitiesClass.$fromRdf({
+      resource: instanceResource,
+    });
+    expect(result.isLeft()).toBe(true);
+    expect(result.extract()).toBeInstanceOf(Resource.MistypedValueError);
   });
 });

@@ -180,7 +180,7 @@ export class TermType<
     // Have an rdfjsResource.Resource.Values here
     if (this.hasValues.length === 1) {
       chain.push(
-        `find(_value => _value.toTerm().equals(${this.rdfjsTermExpression(this.hasValues[0])}))`,
+        `find(value => value.toTerm().equals(${this.rdfjsTermExpression(this.hasValues[0])}))`,
       );
     } else {
       chain.push("head()");
@@ -194,11 +194,11 @@ export class TermType<
     });
     // Last step: convert the rdfjsResource.Resource.Value to the type
     chain.push(
-      `chain(_value => ${this.propertyFromRdfResourceValueExpression({
+      `chain(value => ${this.propertyFromRdfResourceValueExpression({
         variables: {
           predicate: variables.predicate,
           resource: variables.resource,
-          resourceValue: "_value",
+          resourceValue: "value",
         },
       })})`,
     );
@@ -345,12 +345,13 @@ export class TermType<
         (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("NamedNode")),
       "IdentifierType and LiteralType should override",
     );
-    let expression = `purify.Either.of(${variables.resourceValue}.toTerm())`;
+    let expression = `purify.Either.of<Error, rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>(${variables.resourceValue}.toTerm())`;
     if (this.nodeKinds.size < 3) {
+      const eitherTypeParameters = `<Error, ${this.name}>`;
       expression = `${expression}.chain(term => {
   switch (term.termType) {
-  ${[...this.nodeKinds].map((nodeKind) => `case "${nodeKind}":`).join("\n")} return purify.Either.of(term);
-  default: return purify.Left(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: "term", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })}));         
+  ${[...this.nodeKinds].map((nodeKind) => `case "${nodeKind}":`).join("\n")} return purify.Either.of${eitherTypeParameters}(term);
+  default: return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: "term", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })}));         
 }})`;
     }
     return expression;

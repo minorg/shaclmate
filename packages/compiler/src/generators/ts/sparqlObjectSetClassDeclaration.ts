@@ -39,7 +39,7 @@ export function sparqlObjectSetClassDeclaration({
     constructObjectType: {
       name: "objectType",
       type: `{\
-  ${syntheticNamePrefix}fromRdf: (parameters: { resource: rdfjsResource.Resource }) => purify.Either<rdfjsResource.Resource.ValueError, ${typeParameters.ObjectT.name}>;
+  ${syntheticNamePrefix}fromRdf: (parameters: { resource: rdfjsResource.Resource }) => purify.Either<Error, ${typeParameters.ObjectT.name}>;
   ${syntheticNamePrefix}sparqlConstructQueryString: (parameters?: { subject?: sparqljs.Triple["subject"]; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> & sparqljs.GeneratorOptions) => string;
   ${syntheticNamePrefix}sparqlWherePatterns: ${sparqlWherePatternsFunctionType};
 }`,

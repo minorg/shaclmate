@@ -2,7 +2,6 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
-import { objectInitializer } from "../objectInitializer.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { toRdfFunctionOrMethodDeclaration } from "./toRdfFunctionOrMethodDeclaration.js";
 
@@ -31,7 +30,7 @@ function fromRdfFunctionDeclarations(
     propertiesFromRdfStatements.push(
       `\
 if (!${variables.ignoreRdfType} && !${variables.resource}.isInstanceOf(${syntheticNamePrefix}fromRdfType)) {
-  return ${variables.resource}.value(${predicate}).chain(actualRdfType => actualRdfType.toIri()).chain((actualRdfType) => purify.Left(new rdfjsResource.Resource.ValueError(${objectInitializer({ focusResource: variables.resource, message: `\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} has unexpected RDF type (actual: \${actualRdfType.value}, expected: ${rdfType.value})\``, predicate })})));
+  return ${variables.resource}.value(${predicate}).chain(actualRdfType => actualRdfType.toIri()).chain((actualRdfType) => purify.Left(new Error(\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} has unexpected RDF type (actual: \${actualRdfType.value}, expected: ${rdfType.value})\`)));
 }`,
     );
   });
@@ -74,7 +73,7 @@ if (!${variables.ignoreRdfType} && !${variables.resource}.isInstanceOf(${synthet
         type: "{ [_index: string]: any; ignoreRdfType?: boolean; languageIn?: readonly string[]; resource: rdfjsResource.Resource; }",
       },
     ],
-    returnType: `purify.Either<rdfjsResource.Resource.ValueError, ${propertiesFromRdfReturnType.join(" & ")}>`,
+    returnType: `purify.Either<Error, ${propertiesFromRdfReturnType.join(" & ")}>`,
     statements: propertiesFromRdfStatements,
   });
 
@@ -89,7 +88,7 @@ if (!${variables.ignoreRdfType} && !${variables.resource}.isInstanceOf(${synthet
       // Similar to an object union type, alt-chain the fromRdf of the different concrete subclasses together
       fromRdfReturnStatement = `return ${this.childObjectTypes.reduce(
         (expression, childObjectType) => {
-          const childObjectTypeExpression = `(${childObjectType.staticModuleName}.${syntheticNamePrefix}fromRdf(otherParameters) as purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>)`;
+          const childObjectTypeExpression = `(${childObjectType.staticModuleName}.${syntheticNamePrefix}fromRdf(otherParameters) as purify.Either<Error, ${this.name}>)`;
           return expression.length > 0
             ? `${expression}.altLazy(() => ${childObjectTypeExpression})`
             : childObjectTypeExpression;
@@ -115,7 +114,7 @@ if (!${variables.ignoreRdfType} && !${variables.resource}.isInstanceOf(${synthet
       );
       fromRdfReturnStatement = `${this.childObjectTypes.reduce(
         (expression, childObjectType) => {
-          const childObjectTypeExpression = `(${childObjectType.staticModuleName}.${syntheticNamePrefix}fromRdf(otherParameters) as purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>)`;
+          const childObjectTypeExpression = `(${childObjectType.staticModuleName}.${syntheticNamePrefix}fromRdf(otherParameters) as purify.Either<Error, ${this.name}>)`;
           return expression.length > 0
             ? `${expression}.altLazy(() => ${childObjectTypeExpression})`
             : childObjectTypeExpression;
@@ -143,7 +142,7 @@ if (!${variables.ignoreRdfType} && !${variables.resource}.isInstanceOf(${synthet
           type: `Parameters<typeof ${this.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf>[0]`,
         },
       ],
-      returnType: `purify.Either<rdfjsResource.Resource.ValueError, ${this.name}>`,
+      returnType: `purify.Either<Error, ${this.name}>`,
       statements: fromRdfStatements,
     });
   }

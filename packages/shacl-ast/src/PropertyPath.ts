@@ -57,7 +57,7 @@ export namespace PropertyPath {
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
     resource: Resource;
-  }): Either<Resource.ValueError, PropertyPath> {
+  }): Either<Error, PropertyPath> {
     // Predicate path
     // sh:path ex:parent
     if (resource.identifier.termType === "NamedNode") {
@@ -68,18 +68,16 @@ export namespace PropertyPath {
 
     const getPropertyPathList = (
       listResource: Resource,
-    ): Either<Resource.ValueError, readonly PropertyPath[]> => {
+    ): Either<Error, readonly PropertyPath[]> => {
       return listResource.toList().chain((values) => {
         const members: PropertyPath[] = [];
         for (const value of values) {
           const memberResource = value.toResource().toMaybe();
           if (memberResource.isNothing()) {
             return Left(
-              new Resource.ValueError({
-                focusResource: resource,
-                message: "non-identifier in property path list",
-                predicate: rdf.subject,
-              }),
+              new Error(
+                `non-identifier in property path list ${Resource.Identifier.toString(listResource.identifier)}`,
+              ),
             );
           }
           const member = PropertyPath.$fromRdf({
@@ -106,11 +104,9 @@ export namespace PropertyPath {
           break;
         default:
           return Left(
-            new Resource.ValueError({
-              focusResource: resource,
-              message: `non-BlankNode/NamedNode property path object on path ${resource.identifier.value}: ${quad.object.termType} ${quad.object.value}`,
-              predicate: quad.predicate as NamedNode,
-            }),
+            new Error(
+              `non-BlankNode/NamedNode property path object on path ${Resource.Identifier.toString(resource.identifier)}: ${quad.object.termType} ${quad.object.value}`,
+            ),
           );
       }
       const objectResource = new Resource({
@@ -178,11 +174,9 @@ export namespace PropertyPath {
     }
 
     return Left(
-      new Resource.ValueError({
-        focusResource: resource,
-        message: `unrecognized or ill-formed SHACL property path ${resource.identifier.value}`,
-        predicate: rdf.subject,
-      }),
+      new Error(
+        `unrecognized or ill-formed SHACL property path ${Resource.Identifier.toString(resource.identifier)}`,
+      ),
     );
   }
 

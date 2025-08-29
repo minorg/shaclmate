@@ -7,7 +7,7 @@
     "@types/rdfjs__term-map": "^2.0.10",
     "@types/rdfjs__term-set": "^2.0.9",
     "purify-ts": "^2.1.0",
-    "rdfjs-resource": "1.0.19"
+    "rdfjs-resource": "1.0.20"
   },
   "devDependencies": {
     "@types/n3": "^1.21.1",

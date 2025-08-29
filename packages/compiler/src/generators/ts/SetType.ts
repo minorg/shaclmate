@@ -5,7 +5,6 @@ import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
-import { objectInitializer } from "./objectInitializer.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class SetType extends Type {
@@ -102,23 +101,24 @@ export class SetType extends Type {
       expression = `purify.NonEmptyList.fromArray(${expression}).unsafeCoerce()`;
     }
     const itemFromJsonExpression = this.itemType.fromJsonExpression({
-      variables: { value: "_item" },
+      variables: { value: "item" },
     });
-    return itemFromJsonExpression === "_item"
+    return itemFromJsonExpression === "item"
       ? expression
-      : `${expression}.map(_item => (${itemFromJsonExpression}))`;
+      : `${expression}.map(item => (${itemFromJsonExpression}))`;
   }
 
   override fromRdfExpression({
     variables,
   }: Parameters<Type["fromRdfExpression"]>[0]): string {
     const itemFromRdfExpression = this.itemType.fromRdfExpression({
-      variables: { ...variables, resourceValues: "_item.toValues()" },
+      variables: { ...variables, resourceValues: "item.toValues()" },
     });
+    const arrayFromRdfExpression = `purify.Either.sequence(${variables.resourceValues}.map(item => ${itemFromRdfExpression}))`;
     if (this._mutable || this.minCount === 0) {
-      return `purify.Either.of([...${variables.resourceValues}.flatMap(_item => ${itemFromRdfExpression}.toMaybe().toList())])`;
+      return arrayFromRdfExpression;
     }
-    return `purify.NonEmptyList.fromArray([...${variables.resourceValues}.flatMap(_item => ${itemFromRdfExpression}.toMaybe().toList())]).toEither(new rdfjsResource.Resource.ValueError(${objectInitializer({ focusResource: variables.resource, message: `\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} is empty\``, predicate: variables.predicate })}))`;
+    return `${arrayFromRdfExpression}.chain(array => purify.NonEmptyList.fromArray(array).toEither(new Error(\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} is an empty set\`)))`;
   }
 
   override hashStatements({
@@ -126,12 +126,12 @@ export class SetType extends Type {
     variables,
   }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
     return [
-      `for (const _item${depth} of ${variables.value}) { ${this.itemType
+      `for (const item${depth} of ${variables.value}) { ${this.itemType
         .hashStatements({
           depth: depth + 1,
           variables: {
             hasher: variables.hasher,
-            value: `_item${depth}`,
+            value: `item${depth}`,
           },
         })
         .join("\n")} }`,
@@ -199,14 +199,14 @@ export class SetType extends Type {
   override toJsonExpression({
     variables,
   }: Parameters<Type["toJsonExpression"]>[0]): string {
-    return `${variables.value}.map(_item => (${this.itemType.toJsonExpression({ variables: { value: "_item" } })}))`;
+    return `${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: "item" } })}))`;
   }
 
   override toRdfExpression({
     variables,
   }: Parameters<Type["toRdfExpression"]>[0]): string {
-    return `${variables.value}.map((_item) => ${this.itemType.toRdfExpression({
-      variables: { ...variables, value: "_item" },
+    return `${variables.value}.map((item) => ${this.itemType.toRdfExpression({
+      variables: { ...variables, value: "item" },
     })})`;
   }
 

@@ -375,7 +375,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :LanguageInPropertiesClass
     a sh:NodeShape ;
-    rdfs:comment "Shape that uses the StringListShape in a property." ;
+    rdfs:comment "Shape that uses the StringList in a property." ;
     sh:property [
         sh:languageIn ("en"
             "fr"
@@ -394,11 +394,11 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     rdfs:comment "Shape that uses the list shapes in properties." ;
     sh:property [
         sh:maxCount 1 ;
-        sh:node :ObjectListShape ;
+        sh:node :ObjectList ;
         sh:path :objectListProperty
     ], [
         sh:maxCount 1 ;
-        sh:node :StringListShape ;
+        sh:node :StringList ;
         sh:path :stringListProperty
     ] .
 
@@ -415,7 +415,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ], [
         sh:description "List-valued property that can't be reassigned but whose value can be mutated" ;
         sh:maxCount 1 ;
-        sh:node :MutableStringListShape ;
+        sh:node :MutableStringList ;
         sh:path :mutableListProperty
     ], [
         shaclmate:mutable true ;
@@ -424,27 +424,27 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :mutableSetProperty
     ] .
 
-:MutableStringListShape
+:MutableStringList
     shaclmate:mutable true ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf rdf:List ;
     sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:property :MutableStringListShape-first, :MutableStringListShape-rest .
+    sh:property :MutableStringList-first, :MutableStringList-rest .
 
-:MutableStringListShape-first
+:MutableStringList-first
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
     sh:minCount 1 ;
     sh:path rdf:first .
 
-:MutableStringListShape-rest
+:MutableStringList-rest
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:minCount 1 ;
     sh:path rdf:rest ;
     sh:xone ([
-            sh:class :MutableStringListShape
+            sh:class :MutableStringList
         ]
         [
             sh:hasValue ( )
@@ -461,27 +461,27 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :nonClassProperty
     ] .
 
-:ObjectListShape
+:ObjectList
     a owl:Class, sh:NodeShape ;
     rdfs:comment "A node shape that models an RDF list. Should be transformed into a list data structure when used as a property instead of surfacing the RDF list structure in code." ;
     rdfs:subClassOf rdf:List ;
     sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:property :ObjectListShape-first, :ObjectListShape-rest .
+    sh:property :ObjectList-first, :ObjectList-rest .
 
-:ObjectListShape-first
+:ObjectList-first
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:minCount 1 ;
     sh:node :NonClass ;
     sh:path rdf:first .
 
-:ObjectListShape-rest
+:ObjectList-rest
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:minCount 1 ;
     sh:path rdf:rest ;
     sh:xone ([
-            sh:class :ObjectListShape
+            sh:class :ObjectList
         ]
         [
             sh:hasValue ( )
@@ -572,27 +572,27 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :sha256IriProperty
     ] .
 
-:StringListShape
+:StringList
     a owl:Class, sh:NodeShape ;
     rdfs:comment "A node shape that models an RDF list. Should be transformed into a list data structure when used as a property instead of surfacing the RDF list structure in code." ;
     rdfs:subClassOf rdf:List ;
     sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:property :StringListShape-first, :StringListShape-rest .
+    sh:property :StringList-first, :StringList-rest .
 
-:StringListShape-first
+:StringList-first
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
     sh:minCount 1 ;
     sh:path rdf:first .
 
-:StringListShape-rest
+:StringList-rest
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:minCount 1 ;
     sh:path rdf:rest ;
     sh:xone ([
-            sh:class :StringListShape
+            sh:class :StringList
         ]
         [
             sh:hasValue ( )
