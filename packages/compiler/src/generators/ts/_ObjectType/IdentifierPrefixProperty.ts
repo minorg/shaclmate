@@ -7,6 +7,7 @@ import {
   type PropertySignatureStructure,
   Scope,
 } from "ts-morph";
+
 import type { IdentifierType } from "../IdentifierType.js";
 import type { Import } from "../Import.js";
 import { SnippetDeclarations } from "../SnippetDeclarations.js";
@@ -15,11 +16,10 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { Property } from "./Property.js";
 
 export class IdentifierPrefixProperty extends Property<StringType> {
-  readonly equalsFunction = `${syntheticNamePrefix}strictEquals`;
-  readonly mutable = false;
   private readonly own: boolean;
 
   override readonly declarationImports: readonly Import[] = [];
+  readonly equalsFunction = `${syntheticNamePrefix}strictEquals`;
   override readonly graphqlField: Property<StringType>["graphqlField"] =
     Maybe.empty();
   override readonly interfacePropertySignature: Maybe<
@@ -28,6 +28,7 @@ export class IdentifierPrefixProperty extends Property<StringType> {
   override readonly jsonPropertySignature: Maybe<
     OptionalKind<PropertySignatureStructure>
   > = Maybe.empty();
+  readonly mutable = false;
 
   constructor({
     own,
@@ -79,14 +80,6 @@ export class IdentifierPrefixProperty extends Property<StringType> {
     });
   }
 
-  override get snippetDeclarations(): readonly string[] {
-    const snippetDeclarations: string[] = [];
-    if (this.objectType.features.has("equals")) {
-      snippetDeclarations.push(SnippetDeclarations.strictEquals);
-    }
-    return snippetDeclarations;
-  }
-
   override classConstructorStatements({
     variables,
   }: Parameters<
@@ -123,6 +116,14 @@ export class IdentifierPrefixProperty extends Property<StringType> {
     Property<IdentifierType>["jsonZodSchema"]
   > {
     return Maybe.empty();
+  }
+
+  override snippetDeclarations(): readonly string[] {
+    const snippetDeclarations: string[] = [];
+    if (this.objectType.features.has("equals")) {
+      snippetDeclarations.push(SnippetDeclarations.strictEquals);
+    }
+    return snippetDeclarations;
   }
 
   override sparqlConstructTemplateTriples(): readonly string[] {

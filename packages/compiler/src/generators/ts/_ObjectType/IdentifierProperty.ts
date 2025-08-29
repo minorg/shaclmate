@@ -1,4 +1,5 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
+
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type {
@@ -8,6 +9,7 @@ import type {
   PropertySignatureStructure,
   Scope,
 } from "ts-morph";
+
 import type {
   IdentifierMintingStrategy,
   PropertyVisibility,
@@ -19,15 +21,16 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { Property } from "./Property.js";
 
 export class IdentifierProperty extends Property<IdentifierType> {
-  readonly abstract: boolean;
-  readonly equalsFunction = `${syntheticNamePrefix}booleanEquals`;
-  readonly mutable = false;
   private readonly classGetAccessorScope: Maybe<Scope>;
   private readonly classPropertyDeclarationVisibility: Maybe<PropertyVisibility>;
   private readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
   private readonly identifierPrefixPropertyName: string;
   private readonly override: boolean;
   private readonly typeAlias: string;
+
+  readonly abstract: boolean;
+  readonly equalsFunction = `${syntheticNamePrefix}booleanEquals`;
+  readonly mutable = false;
 
   constructor({
     abstract,
@@ -226,14 +229,6 @@ export class IdentifierProperty extends Property<IdentifierType> {
     });
   }
 
-  override get snippetDeclarations(): readonly string[] {
-    const snippetDeclarations: string[] = [];
-    if (this.objectType.features.has("equals")) {
-      snippetDeclarations.push(SnippetDeclarations.booleanEquals);
-    }
-    return snippetDeclarations;
-  }
-
   override classConstructorStatements({
     variables,
   }: Parameters<
@@ -370,6 +365,14 @@ export class IdentifierProperty extends Property<IdentifierType> {
       key: this.jsonPropertySignature.unsafeCoerce().name,
       schema,
     });
+  }
+
+  override snippetDeclarations(): readonly string[] {
+    const snippetDeclarations: string[] = [];
+    if (this.objectType.features.has("equals")) {
+      snippetDeclarations.push(SnippetDeclarations.booleanEquals);
+    }
+    return snippetDeclarations;
   }
 
   override sparqlConstructTemplateTriples(): readonly string[] {

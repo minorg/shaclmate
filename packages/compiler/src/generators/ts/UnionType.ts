@@ -2,7 +2,6 @@ import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
-import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
 import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
@@ -115,6 +114,12 @@ class MemberType {
     }
   }
 
+  snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): readonly string[] {
+    return this.delegate.snippetDeclarations(parameters);
+  }
+
   sparqlConstructTemplateTriples(
     parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
   ) {
@@ -133,8 +138,8 @@ class MemberType {
     return this.delegate.toRdfExpression(parameters);
   }
 
-  useImports(features: Set<TsFeature>) {
-    return this.delegate.useImports(features);
+  useImports(parameters: Parameters<Type["useImports"]>[0]) {
+    return this.delegate.useImports(parameters);
   }
 }
 
@@ -371,6 +376,10 @@ ${this.memberTypes
     ];
   }
 
+  override jsonUiSchemaElement(): Maybe<string> {
+    return Maybe.empty();
+  }
+
   override jsonZodSchema({
     variables,
   }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
@@ -393,6 +402,21 @@ ${this.memberTypes
       default:
         throw this._discriminator satisfies never;
     }
+  }
+
+  override snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): readonly string[] {
+    const { recursionStack } = parameters;
+    if (recursionStack.some((type) => Object.is(type, this))) {
+      return [];
+    }
+    recursionStack.push(this);
+    const result = this.memberTypes.flatMap((memberType) =>
+      memberType.snippetDeclarations(parameters),
+    );
+    invariant(Object.is(recursionStack.pop(), this));
+    return result;
   }
 
   override sparqlConstructTemplateTriples(
@@ -486,10 +510,22 @@ ${this.memberTypes
     });
   }
 
-  override useImports(features: Set<TsFeature>): readonly Import[] {
+  override useImports(
+    parameters: Parameters<Type["useImports"]>[0],
+  ): readonly Import[] {
     return this.memberTypes.flatMap((memberType) =>
-      memberType.useImports(features),
+      memberType.useImports(parameters),
     );
+  }
+
+  private discriminatorVariable(variableValue: string) {
+    switch (this._discriminator.kind) {
+      case "sharedProperty":
+      case "syntheticProperty":
+        return `${variableValue}.${this._discriminator.name}`;
+      case "typeof":
+        return `(typeof ${variableValue})`;
+    }
   }
 
   private ternaryExpression({
@@ -511,31 +547,26 @@ ${this.memberTypes
         .join(" || ")}) ? ${memberTypeExpression(memberType)} : ${expression}`;
     }, "");
   }
-
-  private discriminatorVariable(variableValue: string) {
-    switch (this._discriminator.kind) {
-      case "sharedProperty":
-      case "syntheticProperty":
-        return `${variableValue}.${this._discriminator.name}`;
-      case "typeof":
-        return `(typeof ${variableValue})`;
-    }
-  }
 }
 
-type SharedPropertyDiscriminator = {
-  kind: "sharedProperty";
-} & Type.DiscriminatorProperty;
-type SyntheticPropertyDiscriminator = {
-  kind: "syntheticProperty";
-} & Type.DiscriminatorProperty;
-type TypeofDiscriminator = { kind: "typeof" };
 type Discriminator =
   | SharedPropertyDiscriminator
   | SyntheticPropertyDiscriminator
   | TypeofDiscriminator;
 
 type DiscriminatorKind = Discriminator["kind"];
+
+type SharedPropertyDiscriminator = {
+  kind: "sharedProperty";
+} & Type.DiscriminatorProperty;
+
+type SyntheticPropertyDiscriminator = {
+  kind: "syntheticProperty";
+} & Type.DiscriminatorProperty;
+
+type TypeofDiscriminator = {
+  kind: "typeof";
+};
 
 function sharedDiscriminatorProperty(memberTypes: readonly Type[]):
   | (Omit<Type.DiscriminatorProperty, "descendantValues" | "ownValues"> & {

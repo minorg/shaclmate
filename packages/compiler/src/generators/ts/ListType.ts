@@ -4,10 +4,7 @@ import { Maybe } from "purify-ts";
 
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
-import type {
-  IdentifierMintingStrategy,
-  TsFeature,
-} from "../../enums/index.js";
+import type { IdentifierMintingStrategy } from "../../enums/index.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
@@ -109,6 +106,12 @@ export class ListType extends Type {
     return chain.join(".");
   }
 
+  override graphqlResolveExpression({
+    variables,
+  }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
+    return variables.value;
+  }
+
   override hashStatements({
     depth,
     variables,
@@ -130,11 +133,13 @@ export class ListType extends Type {
     return `${this.itemType.jsonZodSchema(parameters)}.array()`;
   }
 
-  override snippetDeclarations(features: Set<TsFeature>): readonly string[] {
+  override snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): readonly string[] {
     const snippetDeclarations: string[] = this.itemType
-      .snippetDeclarations(features)
+      .snippetDeclarations(parameters)
       .concat();
-    if (features.has("equals")) {
+    if (parameters.features.has("equals")) {
       snippetDeclarations.push(SnippetDeclarations.arrayEquals);
     }
     return snippetDeclarations;
@@ -418,9 +423,14 @@ export class ListType extends Type {
 ).listResource.identifier : ${this.rdfjsTermExpression(rdf.nil)}`;
   }
 
-  override useImports(features: Set<TsFeature>): readonly Import[] {
-    const imports: Import[] = this.itemType.useImports(features).concat();
-    if (features.has("hash") && this.identifierNodeKind === "NamedNode") {
+  override useImports(
+    parameters: Parameters<Type["useImports"]>[0],
+  ): readonly Import[] {
+    const imports: Import[] = this.itemType.useImports(parameters).concat();
+    if (
+      parameters.features.has("hash") &&
+      this.identifierNodeKind === "NamedNode"
+    ) {
       imports.push(Import.SHA256);
     }
     return imports;

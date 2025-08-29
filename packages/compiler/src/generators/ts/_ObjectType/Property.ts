@@ -76,16 +76,6 @@ export abstract class Property<
   readonly name: string;
 
   /**
-   * Reusable function, type, and other declarations that are not particular to this property but that property-specific code
-   * relies on. For example, the equals function/method of ObjectType has a custom return type that's the same across all
-   * ObjectType's. Instead of re-declaring the return type anonymously on every equals function, declare a named type
-   * as a snippet and reference it.
-   *
-   * The generator deduplicates snippet declarations across all types before adding them to the source.
-   */
-  abstract readonly snippetDeclarations: readonly string[];
-
-  /**
    * Property type
 .   */
   readonly type: TypeT;
@@ -196,6 +186,18 @@ export abstract class Property<
     readonly key: string;
     readonly schema: string;
   }>;
+
+  /**
+   * Reusable function, type, and other declarations that are not particular to this property but that property-specific code
+   * relies on. For example, the equals function/method of ObjectType has a custom return type that's the same across all
+   * ObjectType's. Instead of re-declaring the return type anonymously on every equals function, declare a named type
+   * as a snippet and reference it.
+   *
+   * The generator deduplicates snippet declarations across all types before adding them to the source.
+   */
+  abstract snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): readonly string[];
 
   /**
    * An array of SPARQL.js CONSTRUCT template triples for this property as strings (so they can incorporate runtime calls).

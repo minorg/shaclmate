@@ -5,7 +5,6 @@ import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
-import type { TsFeature } from "../../enums/index.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
@@ -220,6 +219,10 @@ export class TermType<
     ];
   }
 
+  override jsonUiSchemaElement(): Maybe<string> {
+    return Maybe.empty();
+  }
+
   override jsonZodSchema({
     variables,
   }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
@@ -245,7 +248,9 @@ export class TermType<
       .join(", ")}])`;
   }
 
-  override snippetDeclarations(features: Set<TsFeature>): readonly string[] {
+  override snippetDeclarations({
+    features,
+  }: Parameters<Type["snippetDeclarations"]>[0]): readonly string[] {
     const snippetDeclarations: string[] = [];
     if (features.has("equals")) {
       snippetDeclarations.push(SnippetDeclarations.booleanEquals);

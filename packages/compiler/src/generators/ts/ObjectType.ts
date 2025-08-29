@@ -11,9 +11,11 @@ import {
   StructureKind,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
+
+import * as _ObjectType from "./_ObjectType/index.js";
+
 import type {
   IdentifierMintingStrategy,
-  TsFeature,
   TsObjectDeclarationType,
 } from "../../enums/index.js";
 import { DeclaredType } from "./DeclaredType.js";
@@ -21,7 +23,6 @@ import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import type { Type } from "./Type.js";
-import * as _ObjectType from "./_ObjectType/index.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -225,6 +226,11 @@ export class ObjectType extends DeclaredType {
   }
 
   @Memoize()
+  get graphqlName(): string {
+    return `${this.staticModuleName}.${syntheticNamePrefix}GraphQL`;
+  }
+
+  @Memoize()
   get identifierProperty(): ObjectType.IdentifierProperty {
     const identifierProperty = this.properties.find(
       (property) => property instanceof ObjectType.IdentifierProperty,
@@ -241,11 +247,6 @@ export class ObjectType extends DeclaredType {
   @Memoize()
   get identifierTypeAlias(): string {
     return `${this.staticModuleName}.${syntheticNamePrefix}Identifier`;
-  }
-
-  @Memoize()
-  get graphqlName(): string {
-    return `${this.staticModuleName}.${syntheticNamePrefix}GraphQL`;
   }
 
   @Memoize()
@@ -299,6 +300,15 @@ export class ObjectType extends DeclaredType {
   }
 
   @Memoize()
+  get toRdfjsResourceType(): string {
+    if (this.parentObjectTypes.length > 0) {
+      return this.parentObjectTypes[0].toRdfjsResourceType;
+    }
+
+    return `rdfjsResource.MutableResource${this.identifierType.isNamedNodeKind ? "<rdfjs.NamedNode>" : ""}`;
+  }
+
+  @Memoize()
   protected get thisVariable(): string {
     switch (this.declarationType) {
       case "class":
@@ -312,20 +322,26 @@ export class ObjectType extends DeclaredType {
 
   override fromJsonExpression({
     variables,
-  }: Parameters<Type["fromJsonExpression"]>[0]): string {
+  }: Parameters<DeclaredType["fromJsonExpression"]>[0]): string {
     // Assumes the JSON object has been recursively validated already.
     return `${this.staticModuleName}.${syntheticNamePrefix}fromJson(${variables.value}).unsafeCoerce()`;
   }
 
   override fromRdfExpression({
     variables,
-  }: Parameters<Type["fromRdfExpression"]>[0]): string {
+  }: Parameters<DeclaredType["fromRdfExpression"]>[0]): string {
     return `${variables.resourceValues}.head().chain(value => value.toResource()).chain(_resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf({ ...${variables.context}, ${variables.ignoreRdfType ? "ignoreRdfType: true, " : ""}languageIn: ${variables.languageIn}, resource: _resource }))`;
+  }
+
+  override graphqlResolveExpression({
+    variables,
+  }: { variables: { value: string } }): string {
+    return variables.value;
   }
 
   override hashStatements({
     variables,
-  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<DeclaredType["hashStatements"]>[0]): readonly string[] {
     switch (this.declarationType) {
       case "class":
         return [
@@ -340,28 +356,25 @@ export class ObjectType extends DeclaredType {
 
   override jsonUiSchemaElement({
     variables,
-  }: { variables: { scopePrefix: string } }): Maybe<string> {
+  }: Parameters<DeclaredType["jsonUiSchemaElement"]>[0]): Maybe<string> {
     return Maybe.of(
       `${this.staticModuleName}.${syntheticNamePrefix}jsonUiSchema({ scopePrefix: ${variables.scopePrefix} })`,
     );
   }
 
   override jsonZodSchema(
-    _parameters: Parameters<Type["jsonZodSchema"]>[0],
-  ): ReturnType<Type["jsonZodSchema"]> {
+    _parameters: Parameters<DeclaredType["jsonZodSchema"]>[0],
+  ): ReturnType<DeclaredType["jsonZodSchema"]> {
     return `${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
   }
 
-  @Memoize()
-  get toRdfjsResourceType(): string {
-    if (this.parentObjectTypes.length > 0) {
-      return this.parentObjectTypes[0].toRdfjsResourceType;
+  override snippetDeclarations({
+    recursionStack,
+  }: Parameters<DeclaredType["snippetDeclarations"]>[0]): readonly string[] {
+    if (recursionStack.some((type) => Object.is(type, this))) {
+      return [];
     }
 
-    return `rdfjsResource.MutableResource${this.identifierType.isNamedNodeKind ? "<rdfjs.NamedNode>" : ""}`;
-  }
-
-  override snippetDeclarations(): readonly string[] {
     const snippetDeclarations: string[] = [];
     if (this.features.has("equals")) {
       snippetDeclarations.push(SnippetDeclarations.EqualsResult);
@@ -380,14 +393,21 @@ export class ObjectType extends DeclaredType {
     ) {
       snippetDeclarations.push(SnippetDeclarations.UnwrapR);
     }
+    recursionStack.push(this);
     for (const property of this.ownProperties) {
-      snippetDeclarations.push(...property.snippetDeclarations);
+      snippetDeclarations.push(
+        ...property.snippetDeclarations({
+          features: this.features,
+          recursionStack,
+        }),
+      );
     }
+    invariant(Object.is(recursionStack.pop(), this));
     return snippetDeclarations;
   }
 
   override sparqlConstructTemplateTriples(
-    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
+    parameters: Parameters<DeclaredType["sparqlConstructTemplateTriples"]>[0],
   ): readonly string[] {
     switch (parameters.context) {
       case "object":
@@ -406,7 +426,7 @@ export class ObjectType extends DeclaredType {
   }
 
   override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+    parameters: Parameters<DeclaredType["sparqlWherePatterns"]>[0],
   ): readonly string[] {
     switch (parameters.context) {
       case "object":
@@ -426,7 +446,7 @@ export class ObjectType extends DeclaredType {
 
   override toJsonExpression({
     variables,
-  }: Parameters<Type["toJsonExpression"]>[0]): string {
+  }: Parameters<DeclaredType["toJsonExpression"]>[0]): string {
     switch (this.declarationType) {
       case "class":
         return `${variables.value}.${syntheticNamePrefix}toJson()`;
@@ -437,7 +457,7 @@ export class ObjectType extends DeclaredType {
 
   override toRdfExpression({
     variables,
-  }: Parameters<Type["toRdfExpression"]>[0]): string {
+  }: Parameters<DeclaredType["toRdfExpression"]>[0]): string {
     switch (this.declarationType) {
       case "class":
         return `${variables.value}.${syntheticNamePrefix}toRdf({ mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} })`;
@@ -446,7 +466,8 @@ export class ObjectType extends DeclaredType {
     }
   }
 
-  override useImports(_features: Set<TsFeature>): readonly Import[] {
+  @Memoize()
+  override useImports(): readonly Import[] {
     return this.imports;
   }
 

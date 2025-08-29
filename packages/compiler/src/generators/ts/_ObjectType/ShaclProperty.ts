@@ -9,7 +9,6 @@ import type {
   PropertySignatureStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
-
 import type { IdentifierType } from "../IdentifierType.js";
 import type { Import } from "../Import.js";
 import type { Type } from "../Type.js";
@@ -89,7 +88,7 @@ export class ShaclProperty extends Property<Type> {
   }
 
   override get declarationImports(): readonly Import[] {
-    return this.type.useImports(this.objectType.features);
+    return this.type.useImports({ features: this.objectType.features });
   }
 
   override get equalsFunction(): string {
@@ -126,8 +125,10 @@ export class ShaclProperty extends Property<Type> {
     });
   }
 
-  override get snippetDeclarations(): readonly string[] {
-    return this.type.snippetDeclarations(this.objectType.features);
+  override snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): readonly string[] {
+    return this.type.snippetDeclarations(parameters);
   }
 
   private get declarationComment(): string | undefined {

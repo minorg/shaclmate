@@ -1,7 +1,7 @@
+import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
-import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
@@ -11,6 +11,8 @@ export class SetType extends Type {
   private readonly _mutable: boolean;
   private readonly minCount: number;
 
+  override readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty> =
+    Maybe.empty();
   readonly itemType: Type;
   readonly kind = "SetType";
   readonly typeof = "object";
@@ -121,6 +123,12 @@ export class SetType extends Type {
     return `${arrayFromRdfExpression}.chain(array => purify.NonEmptyList.fromArray(array).toEither(new Error(\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} is an empty set\`)))`;
   }
 
+  override graphqlResolveExpression({
+    variables,
+  }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
+    return variables.value;
+  }
+
   override hashStatements({
     depth,
     variables,
@@ -156,11 +164,13 @@ export class SetType extends Type {
     return schema;
   }
 
-  override snippetDeclarations(features: Set<TsFeature>): readonly string[] {
+  override snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): readonly string[] {
     const snippetDeclarations: string[] = this.itemType
-      .snippetDeclarations(features)
+      .snippetDeclarations(parameters)
       .concat();
-    if (features.has("equals")) {
+    if (parameters.features.has("equals")) {
       snippetDeclarations.push(SnippetDeclarations.arrayEquals);
     }
     return snippetDeclarations;
@@ -210,7 +220,9 @@ export class SetType extends Type {
     })})`;
   }
 
-  override useImports(features: Set<TsFeature>): readonly Import[] {
-    return this.itemType.useImports(features);
+  override useImports(
+    parameters: Parameters<Type["useImports"]>[0],
+  ): readonly Import[] {
+    return this.itemType.useImports(parameters);
   }
 }

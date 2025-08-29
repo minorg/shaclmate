@@ -7,6 +7,7 @@ import type {
   PropertySignatureStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
+
 import type { Import } from "../Import.js";
 import { SnippetDeclarations } from "../SnippetDeclarations.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
@@ -22,10 +23,10 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
   override readonly constructorParametersPropertySignature: Maybe<
     OptionalKind<PropertySignatureStructure>
   > = Maybe.empty();
-  override readonly graphqlField: Property<TypeDiscriminatorProperty.Type>["graphqlField"] =
-    Maybe.empty();
   override readonly declarationImports: readonly Import[] = [];
   override readonly equalsFunction = `${syntheticNamePrefix}strictEquals`;
+  override readonly graphqlField: Property<TypeDiscriminatorProperty.Type>["graphqlField"] =
+    Maybe.empty();
   readonly initializer: string;
   override readonly mutable = false;
 
@@ -88,14 +89,6 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
     });
   }
 
-  override get snippetDeclarations(): readonly string[] {
-    const snippetDeclarations: string[] = [];
-    if (this.objectType.features.has("equals")) {
-      snippetDeclarations.push(SnippetDeclarations.strictEquals);
-    }
-    return snippetDeclarations;
-  }
-
   override classConstructorStatements(): readonly string[] {
     return [];
   }
@@ -147,6 +140,14 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
           ? `${variables.zod}.enum(${JSON.stringify(this.type.values)})`
           : `${variables.zod}.literal("${this.type.values[0]}")`,
     });
+  }
+
+  override snippetDeclarations(): readonly string[] {
+    const snippetDeclarations: string[] = [];
+    if (this.objectType.features.has("equals")) {
+      snippetDeclarations.push(SnippetDeclarations.strictEquals);
+    }
+    return snippetDeclarations;
   }
 
   override sparqlConstructTemplateTriples(): readonly string[] {

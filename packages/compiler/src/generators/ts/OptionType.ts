@@ -1,12 +1,13 @@
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
-import type { TsFeature } from "../../enums/index.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class OptionType extends Type {
+  override readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty> =
+    Maybe.empty();
   readonly itemType: Type;
   readonly kind = "OptionType";
   readonly typeof = "object";
@@ -124,11 +125,13 @@ export class OptionType extends Type {
     return `${this.itemType.jsonZodSchema(parameters)}.optional()`;
   }
 
-  override snippetDeclarations(features: Set<TsFeature>): readonly string[] {
+  override snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): readonly string[] {
     const snippetDeclarations: string[] = this.itemType
-      .snippetDeclarations(features)
+      .snippetDeclarations(parameters)
       .concat();
-    if (features.has("equals")) {
+    if (parameters.features.has("equals")) {
       snippetDeclarations.push(SnippetDeclarations.maybeEquals);
     }
     return snippetDeclarations;
@@ -180,7 +183,9 @@ export class OptionType extends Type {
     return `${variables.value}.map((value) => ${itemTypeToRdfExpression})`;
   }
 
-  override useImports(features: Set<TsFeature>): readonly Import[] {
-    return [...this.itemType.useImports(features), Import.PURIFY];
+  override useImports(
+    parameters: Parameters<Type["useImports"]>[0],
+  ): readonly Import[] {
+    return [...this.itemType.useImports(parameters), Import.PURIFY];
   }
 }
