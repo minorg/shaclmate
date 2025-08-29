@@ -10220,7 +10220,13 @@ export namespace InPropertiesClass {
                 >
               >(iri as rdfjs.NamedNode<"http://example.com/InPropertiesIri2">);
             default:
-              return purify.Left(
+              return purify.Left<
+                rdfjsResource.Resource.ValueError,
+                rdfjs.NamedNode<
+                  | "http://example.com/InPropertiesIri1"
+                  | "http://example.com/InPropertiesIri2"
+                >
+              >(
                 new rdfjsResource.Resource.MistypedValueError({
                   actualValue: iri,
                   expectedValueType:
