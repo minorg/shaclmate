@@ -94,6 +94,12 @@ export const harnesses = {
     }),
     kitchenSink.DefaultValuePropertiesClass,
   ),
+  directRecursive: new ClassHarness(
+    new kitchenSink.DirectRecursiveClass({
+      directRecursiveProperty: new kitchenSink.DirectRecursiveClass({}),
+    }),
+    kitchenSink.DirectRecursiveClass,
+  ),
   emptyListPropertiesClass: new ClassHarness(
     new kitchenSink.ListPropertiesClass({
       $identifier,
@@ -129,6 +135,15 @@ export const harnesses = {
       }),
     }),
     kitchenSink.ExternPropertiesClass,
+  ),
+  indirectRecursive: new ClassHarness(
+    new kitchenSink.IndirectRecursiveClass({
+      indirectRecursiveHelperProperty:
+        new kitchenSink.IndirectRecursiveHelperClass({
+          indirectRecursiveProperty: new kitchenSink.IndirectRecursiveClass({}),
+        }),
+    }),
+    kitchenSink.IndirectRecursiveClass,
   ),
   hasIriValuePropertiesClass: new ClassHarness(
     new kitchenSink.HasValuePropertiesClass({
