@@ -16,7 +16,7 @@ export abstract class Harness<
   readonly fromRdf: (parameters: {
     [_index: string]: any;
     resource: Resource<IdentifierT>;
-  }) => Either<Resource.ValueError, T>;
+  }) => Either<Error, T>;
   readonly sparqlConstructQueryString: () => string;
 
   constructor(
