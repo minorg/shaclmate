@@ -312,6 +312,40 @@ export function transformNodeShapeToAstType(
   );
 
   // Populate properties
+  // Check whether a type refers to this ObjectType
+  const isPropertyRecursive = (astType: ast.Type): boolean => {
+    switch (astType.kind) {
+      case "IdentifierType":
+      case "LiteralType":
+      case "PlaceholderType":
+      case "TermType":
+        return false;
+      case "ObjectType":
+        if (astType.name === objectType.name) {
+          return true;
+        }
+        for (const property of astType.properties) {
+          if (isPropertyRecursive(property.type)) {
+            return true;
+          }
+        }
+        return false;
+      case "IntersectionType":
+      case "ObjectIntersectionType":
+      case "ObjectUnionType":
+      case "UnionType":
+        for (const memberType of astType.memberTypes) {
+          if (isPropertyRecursive(memberType)) {
+            return true;
+          }
+        }
+        return false;
+      case "ListType":
+      case "OptionType":
+      case "SetType":
+        return isPropertyRecursive(astType.itemType);
+    }
+  };
   for (const propertyShape of nodeShape.constraints.properties) {
     const propertyEither =
       this.transformPropertyShapeToAstObjectTypeProperty(propertyShape);
@@ -325,7 +359,11 @@ export function transformNodeShapeToAstType(
       continue;
       // return property;
     }
-    objectType.properties.push(propertyEither.unsafeCoerce());
+    const property = propertyEither.unsafeCoerce();
+    objectType.properties.push({
+      ...property,
+      recursive: isPropertyRecursive(property.type),
+    });
   }
 
   objectType.properties.sort((left, right) => {
