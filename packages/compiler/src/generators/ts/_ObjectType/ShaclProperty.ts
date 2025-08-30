@@ -22,6 +22,7 @@ export class ShaclProperty extends Property<Type> {
   private readonly label: Maybe<string>;
 
   override readonly mutable: boolean;
+  override readonly recursive: boolean;
   readonly path: rdfjs.NamedNode;
 
   constructor({
@@ -29,6 +30,7 @@ export class ShaclProperty extends Property<Type> {
     description,
     label,
     mutable,
+    recursive,
     path,
     ...superParameters
   }: {
@@ -37,6 +39,7 @@ export class ShaclProperty extends Property<Type> {
     label: Maybe<string>;
     mutable: boolean;
     path: rdfjs.NamedNode;
+    recursive: boolean;
     type: Type;
   } & ConstructorParameters<typeof Property>[0]) {
     super(superParameters);
@@ -45,6 +48,7 @@ export class ShaclProperty extends Property<Type> {
     this.label = label;
     this.mutable = mutable;
     this.path = path;
+    this.recursive = recursive;
   }
 
   override get classGetAccessorDeclaration(): Maybe<
@@ -236,7 +240,10 @@ export class ShaclProperty extends Property<Type> {
   override jsonZodSchema(
     parameters: Parameters<Property<Type>["jsonZodSchema"]>[0],
   ): ReturnType<Property<Type>["jsonZodSchema"]> {
-    let schema = this.type.jsonZodSchema(parameters);
+    let schema = this.type.jsonZodSchema({
+      ...parameters,
+      context: "property",
+    });
     this.comment.alt(this.description).ifJust((description) => {
       schema = `${schema}.describe(${JSON.stringify(description)})`;
     });

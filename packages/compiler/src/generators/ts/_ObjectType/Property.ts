@@ -76,6 +76,11 @@ export abstract class Property<
   readonly name: string;
 
   /**
+   * Is the property's type the ObjectType or does its type indirectly reference the ObjectType?
+   */
+  abstract readonly recursive: boolean;
+
+  /**
    * Property type
 .   */
   readonly type: TypeT;

@@ -184,7 +184,7 @@ function jsonZodSchemaFunctionDeclaration(
   const mergeZodObjectSchemas: string[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     mergeZodObjectSchemas.push(
-      `${parentObjectType.jsonZodSchema({ variables })}`,
+      `${parentObjectType.jsonZodSchema({ context: "type", variables })}`,
     );
   }
   if (this.properties.length > 0) {

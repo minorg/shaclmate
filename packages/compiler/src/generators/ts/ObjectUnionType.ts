@@ -502,7 +502,7 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
       isExported: true,
       kind: StructureKind.Function,
       name: `${syntheticNamePrefix}jsonZodSchema`,
-      statements: `return ${variables.zod}.discriminatedUnion("${this._discriminatorProperty.name}", [${this.memberTypes.map((memberType) => memberType.jsonZodSchema({ variables })).join(", ")}]);`,
+      statements: `return ${variables.zod}.discriminatedUnion("${this._discriminatorProperty.name}", [${this.memberTypes.map((memberType) => memberType.jsonZodSchema({ context: "type", variables })).join(", ")}]);`,
     });
   }
 

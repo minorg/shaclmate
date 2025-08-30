@@ -29,6 +29,7 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
     Maybe.empty();
   readonly initializer: string;
   override readonly mutable = false;
+  override readonly recursive = false;
 
   constructor({
     abstract,

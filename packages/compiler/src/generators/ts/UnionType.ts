@@ -386,18 +386,22 @@ ${this.memberTypes
     switch (this._discriminator.kind) {
       case "sharedProperty":
         return `${variables.zod}.discriminatedUnion("${this._discriminator.name}", [${this.memberTypes
-          .map((memberType) => memberType.jsonZodSchema({ variables }))
+          .map((memberType) =>
+            memberType.jsonZodSchema({ context: "type", variables }),
+          )
           .join(", ")}])`;
       case "syntheticProperty":
         return `${variables.zod}.discriminatedUnion("${this._discriminator.name}", [${this.memberTypes
           .map(
             (memberType) =>
-              `${variables.zod}.object({ ${(this._discriminator as SyntheticPropertyDiscriminator).name}: ${variables.zod}.literal("${memberType.discriminatorValues[0]}"), value: ${memberType.jsonZodSchema({ variables })} })`,
+              `${variables.zod}.object({ ${(this._discriminator as SyntheticPropertyDiscriminator).name}: ${variables.zod}.literal("${memberType.discriminatorValues[0]}"), value: ${memberType.jsonZodSchema({ context: "type", variables })} })`,
           )
           .join(", ")}])`;
       case "typeof":
         return `${variables.zod}.union([${this.memberTypes
-          .map((memberType) => memberType.jsonZodSchema({ variables }))
+          .map((memberType) =>
+            memberType.jsonZodSchema({ context: "type", variables }),
+          )
           .join(", ")}])`;
       default:
         throw this._discriminator satisfies never;

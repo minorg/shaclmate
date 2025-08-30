@@ -362,10 +362,20 @@ export class ObjectType extends DeclaredType {
     );
   }
 
-  override jsonZodSchema(
-    _parameters: Parameters<DeclaredType["jsonZodSchema"]>[0],
-  ): ReturnType<DeclaredType["jsonZodSchema"]> {
-    return `${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
+  override jsonZodSchema({
+    context,
+    variables,
+  }: Parameters<DeclaredType["jsonZodSchema"]>[0]): ReturnType<
+    DeclaredType["jsonZodSchema"]
+  > {
+    let expression = `${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
+    if (
+      context === "property" &&
+      this.properties.some((property) => property.recursive)
+    ) {
+      expression = `${variables.zod}.lazy((): ${variables.zod}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
+    }
+    return expression;
   }
 
   override snippetDeclarations({

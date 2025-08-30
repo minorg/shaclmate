@@ -127,8 +127,17 @@ export abstract class Type {
 
   /**
    * Zod schema for the JSON type of this type.
+   *
+   * This method is called in two contexts:
+   * "property": from a ShaclProperty, while generating the z.object properties of an ObjectType
+   * "type": from another Type e.g., an OptionType or UnionType
+   *
+   * z.lazy() should only be returned for "property".
    */
-  abstract jsonZodSchema(parameters: { variables: { zod: string } }): string;
+  abstract jsonZodSchema(parameters: {
+    context: "property" | "type";
+    variables: { zod: string };
+  }): string;
 
   /**
    * Reusable function, type, and other declarations that are not particular to this type but that type-specific code

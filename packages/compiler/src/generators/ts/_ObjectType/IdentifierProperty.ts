@@ -31,6 +31,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
   readonly abstract: boolean;
   readonly equalsFunction = `${syntheticNamePrefix}booleanEquals`;
   readonly mutable = false;
+  readonly recursive = false;
 
   constructor({
     abstract,

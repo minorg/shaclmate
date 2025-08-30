@@ -28,7 +28,8 @@ export class IdentifierPrefixProperty extends Property<StringType> {
   override readonly jsonPropertySignature: Maybe<
     OptionalKind<PropertySignatureStructure>
   > = Maybe.empty();
-  readonly mutable = false;
+  override readonly mutable = false;
+  override readonly recursive = false;
 
   constructor({
     own,

@@ -14043,8 +14043,12 @@ export namespace IndirectRecursiveHelperClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("IndirectRecursiveHelperClass"),
-      indirectRecursiveProperty:
-        IndirectRecursiveClass.$jsonZodSchema().optional(),
+      indirectRecursiveProperty: zod
+        .lazy(
+          (): zod.ZodType<IndirectRecursiveClass.$Json> =>
+            IndirectRecursiveClass.$jsonZodSchema(),
+        )
+        .optional(),
     }) satisfies zod.ZodType<$Json>;
   }
 
@@ -14924,7 +14928,12 @@ export namespace DirectRecursiveClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("DirectRecursiveClass"),
-      directRecursiveProperty: DirectRecursiveClass.$jsonZodSchema().optional(),
+      directRecursiveProperty: zod
+        .lazy(
+          (): zod.ZodType<DirectRecursiveClass.$Json> =>
+            DirectRecursiveClass.$jsonZodSchema(),
+        )
+        .optional(),
     }) satisfies zod.ZodType<$Json>;
   }
 
