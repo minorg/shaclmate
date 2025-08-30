@@ -1,6 +1,6 @@
 import type { BlankNode, Literal, NamedNode, Variable } from "@rdfjs/types";
 
-import { Maybe } from "purify-ts";
+import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 
 import type { TsFeature } from "../../enums/index.js";
@@ -22,6 +22,11 @@ export abstract class Type {
   abstract readonly conversions: readonly Type.Conversion[];
 
   /**
+   * A property that discriminates sub-types of this type e.g., termType on RDF/JS terms.
+   */
+  abstract readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty>;
+
+  /**
    * A function (reference or declaration) that compares two property values of this type, returning a
    * $EqualsResult.
    */
@@ -33,7 +38,7 @@ export abstract class Type {
   abstract readonly graphqlName: string;
 
   /**
-   * JSON-compatible version of the type.
+   * JSON-compatible version of the type in a nested type declaration.
    */
   abstract readonly jsonName: string;
 
@@ -60,11 +65,13 @@ export abstract class Type {
     this.dataFactoryVariable = dataFactoryVariable;
   }
 
-  /**
-   * A property that discriminates sub-types of this type e.g., termType on RDF/JS terms.
-   */
-  get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
-    return Maybe.empty();
+  get jsonPropertySignature(): {
+    readonly hasQuestionToken?: boolean;
+    readonly name: string;
+  } {
+    return {
+      name: this.jsonName,
+    };
   }
 
   /**
@@ -94,15 +101,11 @@ export abstract class Type {
   /**
    * An expression that resolves a value of this type in the GraphQL server.
    */
-  graphqlResolveExpression({
-    variables,
-  }: {
+  abstract graphqlResolveExpression(parameters: {
     variables: {
       value: string;
     };
-  }): string {
-    return variables.value;
-  }
+  }): string;
 
   /**
    * Statements that use hasher.update to hash a property value of this type.
@@ -118,16 +121,23 @@ export abstract class Type {
   /**
    * Element object for a JSON Forms UI schema.
    */
-  jsonUiSchemaElement(_parameters: {
+  abstract jsonUiSchemaElement(parameters: {
     variables: { scopePrefix: string };
-  }): Maybe<string> {
-    return Maybe.empty();
-  }
+  }): Maybe<string>;
 
   /**
    * Zod schema for the JSON type of this type.
+   *
+   * This method is called in two contexts:
+   * "property": from a ShaclProperty, while generating the z.object properties of an ObjectType
+   * "type": from another Type e.g., an OptionType or UnionType
+   *
+   * z.lazy() should only be returned for "property".
    */
-  abstract jsonZodSchema(parameters: { variables: { zod: string } }): string;
+  abstract jsonZodSchema(parameters: {
+    context: "property" | "type";
+    variables: { zod: string };
+  }): string;
 
   /**
    * Reusable function, type, and other declarations that are not particular to this type but that type-specific code
@@ -137,9 +147,10 @@ export abstract class Type {
    *
    * The generator deduplicates snippet declarations across all types before adding them to the source.
    */
-  snippetDeclarations(_features: Set<TsFeature>): readonly string[] {
-    return [];
-  }
+  abstract snippetDeclarations(parameters: {
+    features: Set<TsFeature>;
+    recursionStack: Type[];
+  }): readonly string[];
 
   /**
    * An array of SPARQL.js CONSTRUCT template triples for a value of this type, as strings (so they can incorporate runtime calls).
@@ -293,9 +304,9 @@ export abstract class Type {
   /**
    * Imports necessary to use this type.
    */
-  useImports(_features: Set<TsFeature>): readonly Import[] {
-    return [];
-  }
+  abstract useImports(parameters: {
+    features: Set<TsFeature>;
+  }): readonly Import[];
 
   protected rdfjsTermExpression(
     rdfjsTerm:

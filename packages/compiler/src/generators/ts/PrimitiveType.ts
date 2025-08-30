@@ -1,5 +1,4 @@
 import { Maybe } from "purify-ts";
-import type { TsFeature } from "../../enums/index.js";
 import { LiteralType } from "./LiteralType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import type { Type } from "./Type.js";
@@ -52,7 +51,9 @@ export abstract class PrimitiveType<
     return [`${variables.hasher}.update(${variables.value}.toString());`];
   }
 
-  override snippetDeclarations(features: Set<TsFeature>): readonly string[] {
+  override snippetDeclarations({
+    features,
+  }: Parameters<Type["snippetDeclarations"]>[0]): readonly string[] {
     const snippetDeclarations: string[] = [];
     if (features.has("equals")) {
       snippetDeclarations.push(SnippetDeclarations.strictEquals);

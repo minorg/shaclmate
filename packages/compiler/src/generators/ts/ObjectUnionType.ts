@@ -12,7 +12,6 @@ import {
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 
-import type { TsFeature } from "../../enums/TsFeature.js";
 import { DeclaredType } from "./DeclaredType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { Import } from "./Import.js";
@@ -109,12 +108,18 @@ class MemberType {
     return this.delegate.toRdfjsResourceType;
   }
 
-  jsonZodSchema(parameters: Parameters<ObjectType["jsonZodSchema"]>[0]) {
+  jsonZodSchema(parameters: Parameters<DeclaredType["jsonZodSchema"]>[0]) {
     return this.delegate.jsonZodSchema(parameters);
   }
 
-  useImports(features: Set<TsFeature>) {
-    return this.delegate.useImports(features);
+  snippetDeclarations(
+    parameters: Parameters<DeclaredType["snippetDeclarations"]>[0],
+  ): readonly string[] {
+    return this.delegate.snippetDeclarations(parameters);
+  }
+
+  useImports() {
+    return this.delegate.useImports();
   }
 }
 
@@ -196,9 +201,7 @@ export class ObjectUnionType extends DeclaredType {
   }
 
   override get declarationImports(): readonly Import[] {
-    return this.memberTypes.flatMap((memberType) =>
-      memberType.useImports(this.features),
-    );
+    return this.memberTypes.flatMap((memberType) => memberType.useImports());
   }
 
   get declarations() {
@@ -499,7 +502,7 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
       isExported: true,
       kind: StructureKind.Function,
       name: `${syntheticNamePrefix}jsonZodSchema`,
-      statements: `return ${variables.zod}.discriminatedUnion("${this._discriminatorProperty.name}", [${this.memberTypes.map((memberType) => memberType.jsonZodSchema({ variables })).join(", ")}]);`,
+      statements: `return ${variables.zod}.discriminatedUnion("${this._discriminatorProperty.name}", [${this.memberTypes.map((memberType) => memberType.jsonZodSchema({ context: "type", variables })).join(", ")}]);`,
     });
   }
 
@@ -675,6 +678,12 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
     return `${variables.resourceValues}.head().chain(value => value.toResource()).chain(_resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf({ ...${variables.context}, languageIn: ${variables.languageIn}, resource: _resource }))`;
   }
 
+  override graphqlResolveExpression({
+    variables,
+  }: { variables: { value: string } }): string {
+    return variables.value;
+  }
+
   override hashStatements({
     variables,
   }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
@@ -690,8 +699,27 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
     }
   }
 
+  override jsonUiSchemaElement(): Maybe<string> {
+    return Maybe.empty();
+  }
+
   override jsonZodSchema(): ReturnType<Type["jsonZodSchema"]> {
     return `${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
+  }
+
+  override snippetDeclarations(
+    parameters: Parameters<DeclaredType["snippetDeclarations"]>[0],
+  ): readonly string[] {
+    const { recursionStack } = parameters;
+    if (recursionStack.some((type) => Object.is(type, this))) {
+      return [];
+    }
+    recursionStack.push(this);
+    const result = this.memberTypes.flatMap((memberType) =>
+      memberType.snippetDeclarations(parameters),
+    );
+    invariant(Object.is(recursionStack.pop(), this));
+    return result;
   }
 
   override sparqlConstructTemplateTriples(

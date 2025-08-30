@@ -20,7 +20,7 @@ export class LiteralType extends TermType<Literal, Literal> {
   }
 
   override get jsonName(): string {
-    return '{ readonly "@language": string | undefined, readonly "@type": string | undefined, readonly "@value": string }';
+    return '{ readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string }';
   }
 
   override fromJsonExpression({

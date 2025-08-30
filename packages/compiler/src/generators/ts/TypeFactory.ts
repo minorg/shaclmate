@@ -469,6 +469,7 @@ export class TypeFactory {
       objectType,
       name: tsName(astObjectTypeProperty.name),
       path: astObjectTypeProperty.path.iri,
+      recursive: !!astObjectTypeProperty.recursive,
       type: this.createTypeFromAstType(astObjectTypeProperty.type),
       visibility: astObjectTypeProperty.visibility,
     });

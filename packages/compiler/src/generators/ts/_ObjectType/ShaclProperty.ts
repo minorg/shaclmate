@@ -9,7 +9,6 @@ import type {
   PropertySignatureStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
-
 import type { IdentifierType } from "../IdentifierType.js";
 import type { Import } from "../Import.js";
 import type { Type } from "../Type.js";
@@ -23,6 +22,7 @@ export class ShaclProperty extends Property<Type> {
   private readonly label: Maybe<string>;
 
   override readonly mutable: boolean;
+  override readonly recursive: boolean;
   readonly path: rdfjs.NamedNode;
 
   constructor({
@@ -30,6 +30,7 @@ export class ShaclProperty extends Property<Type> {
     description,
     label,
     mutable,
+    recursive,
     path,
     ...superParameters
   }: {
@@ -38,6 +39,7 @@ export class ShaclProperty extends Property<Type> {
     label: Maybe<string>;
     mutable: boolean;
     path: rdfjs.NamedNode;
+    recursive: boolean;
     type: Type;
   } & ConstructorParameters<typeof Property>[0]) {
     super(superParameters);
@@ -46,6 +48,7 @@ export class ShaclProperty extends Property<Type> {
     this.label = label;
     this.mutable = mutable;
     this.path = path;
+    this.recursive = recursive;
   }
 
   override get classGetAccessorDeclaration(): Maybe<
@@ -89,7 +92,7 @@ export class ShaclProperty extends Property<Type> {
   }
 
   override get declarationImports(): readonly Import[] {
-    return this.type.useImports(this.objectType.features);
+    return this.type.useImports({ features: this.objectType.features });
   }
 
   override get equalsFunction(): string {
@@ -120,14 +123,17 @@ export class ShaclProperty extends Property<Type> {
     OptionalKind<PropertySignatureStructure>
   > {
     return Maybe.of({
+      hasQuestionToken: this.type.jsonPropertySignature.hasQuestionToken,
       isReadonly: true,
       name: this.name,
-      type: this.type.jsonName,
+      type: this.type.jsonPropertySignature.name,
     });
   }
 
-  override get snippetDeclarations(): readonly string[] {
-    return this.type.snippetDeclarations(this.objectType.features);
+  override snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): readonly string[] {
+    return this.type.snippetDeclarations(parameters);
   }
 
   private get declarationComment(): string | undefined {
@@ -234,7 +240,10 @@ export class ShaclProperty extends Property<Type> {
   override jsonZodSchema(
     parameters: Parameters<Property<Type>["jsonZodSchema"]>[0],
   ): ReturnType<Property<Type>["jsonZodSchema"]> {
-    let schema = this.type.jsonZodSchema(parameters);
+    let schema = this.type.jsonZodSchema({
+      ...parameters,
+      context: "property",
+    });
     this.comment.alt(this.description).ifJust((description) => {
       schema = `${schema}.describe(${JSON.stringify(description)})`;
     });

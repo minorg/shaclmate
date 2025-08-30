@@ -21,7 +21,7 @@ export function jsonTypeAliasDeclaration(
         .flatMap((property) => property.jsonPropertySignature.toList())
         .map(
           (propertySignature) =>
-            `readonly "${propertySignature.name}": ${propertySignature.type}`,
+            `readonly "${propertySignature.name}"${propertySignature.hasQuestionToken ? "?" : ""}: ${propertySignature.type}`,
         )
         .join("; ")} }`,
     );

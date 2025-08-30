@@ -1,7 +1,6 @@
 import type { NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
-import type { TsFeature } from "../../enums/index.js";
 import { PrimitiveType } from "./PrimitiveType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import type { Type } from "./Type.js";
@@ -82,7 +81,11 @@ export class DateTimeType extends PrimitiveType<Date> {
     return expression;
   }
 
-  override snippetDeclarations(features: Set<TsFeature>): readonly string[] {
+  override snippetDeclarations({
+    features,
+  }: Parameters<
+    PrimitiveType<Date>["snippetDeclarations"]
+  >[0]): readonly string[] {
     const snippetDeclarations: string[] = [];
     if (features.has("equals")) {
       snippetDeclarations.push(SnippetDeclarations.dateEquals);

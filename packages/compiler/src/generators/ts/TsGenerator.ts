@@ -97,9 +97,10 @@ export class TsGenerator implements Generator {
     // Deduplicate and add snippet declarations
     const addedSnippetDeclarations = new Set<string>();
     for (const declaredType of declaredTypes) {
-      for (const snippetDeclaration of declaredType.snippetDeclarations(
-        declaredType.features,
-      )) {
+      for (const snippetDeclaration of declaredType.snippetDeclarations({
+        features: declaredType.features,
+        recursionStack: [],
+      })) {
         if (!addedSnippetDeclarations.has(snippetDeclaration)) {
           sourceFile.addStatements([snippetDeclaration]);
           addedSnippetDeclarations.add(snippetDeclaration);

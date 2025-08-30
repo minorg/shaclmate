@@ -169,6 +169,7 @@ function jsonUiSchemaFunctionDeclaration(
         type: "{ scopePrefix?: string }",
       },
     ],
+    returnType: "any",
     statements: [
       'const scopePrefix = parameters?.scopePrefix ?? "#";',
       `return { "elements": [ ${elements.join(", ")} ], label: "${this.label.orDefault(this.name)}", type: "Group" }`,
@@ -183,7 +184,7 @@ function jsonZodSchemaFunctionDeclaration(
   const mergeZodObjectSchemas: string[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     mergeZodObjectSchemas.push(
-      `${parentObjectType.jsonZodSchema({ variables })}`,
+      `${parentObjectType.jsonZodSchema({ context: "type", variables })}`,
     );
   }
   if (this.properties.length > 0) {
@@ -209,7 +210,7 @@ function jsonZodSchemaFunctionDeclaration(
               return `${merged}.merge(${zodObjectSchema})`;
             }, "")
           : `${variables.zod}.object()`
-      };`,
+      } satisfies zod.ZodType<${syntheticNamePrefix}Json>;`,
     ],
   };
 }

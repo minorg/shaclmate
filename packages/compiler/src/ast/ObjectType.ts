@@ -184,6 +184,11 @@ export namespace ObjectType {
     readonly path: PredicatePath;
 
     /**
+     * Does the property directly or indirectly reference the ObjectType itself?
+     */
+    readonly recursive?: boolean;
+
+    /**
      * Type of this property.
      */
     readonly type: Type;

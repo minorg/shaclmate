@@ -279,7 +279,7 @@ type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
  * A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.
  */
 export class UuidV4IriClass {
-  private _$identifier: UuidV4IriClass.$Identifier | undefined;
+  private _$identifier?: UuidV4IriClass.$Identifier;
   protected readonly _$identifierPrefix?: string;
   readonly $type = "UuidV4IriClass";
   readonly uuidV4IriProperty: string;
@@ -472,7 +472,7 @@ export namespace UuidV4IriClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -507,7 +507,7 @@ export namespace UuidV4IriClass {
       "@id": zod.string().min(1),
       $type: zod.literal("UuidV4IriClass"),
       uuidV4IriProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -661,7 +661,7 @@ export namespace UuidV4IriClass {
  * Shape with sh:xone properties.
  */
 export class UnionPropertiesClass {
-  private _$identifier: UnionPropertiesClass.$Identifier | undefined;
+  private _$identifier?: UnionPropertiesClass.$Identifier;
   readonly $type = "UnionPropertiesClass";
   readonly narrowLiteralsProperty: purify.Maybe<number | string>;
   readonly unrelatedTypesProperty: purify.Maybe<number | NonClass>;
@@ -1091,26 +1091,21 @@ export namespace UnionPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "UnionPropertiesClass";
-    readonly narrowLiteralsProperty: (number | string) | undefined;
-    readonly unrelatedTypesProperty: (number | NonClass.$Json) | undefined;
-    readonly widenedLiteralsProperty:
+    readonly narrowLiteralsProperty?: number | string;
+    readonly unrelatedTypesProperty?: number | NonClass.$Json;
+    readonly widenedLiteralsProperty?: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+    readonly widenedTermsProperty?:
+      | { readonly "@id": string; readonly termType: "NamedNode" }
       | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
+          readonly "@language"?: string;
+          readonly "@type"?: string;
           readonly "@value": string;
-        }
-      | undefined;
-    readonly widenedTermsProperty:
-      | (
-          | { readonly "@id": string; readonly termType: "NamedNode" }
-          | {
-              readonly "@language": string | undefined;
-              readonly "@type": string | undefined;
-              readonly "@value": string;
-              readonly termType: "Literal";
-            }
-        )
-      | undefined;
+          readonly termType: "Literal";
+        };
   };
 
   export function $propertiesFromJson(_json: unknown): purify.Either<
@@ -1187,7 +1182,7 @@ export namespace UnionPropertiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -1260,7 +1255,7 @@ export namespace UnionPropertiesClass {
           }),
         ])
         .optional(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -1696,7 +1691,7 @@ export namespace UnionPropertiesClass {
  * Shape with properties that are not nested objects
  */
 export class TermPropertiesClass {
-  private _$identifier: TermPropertiesClass.$Identifier | undefined;
+  private _$identifier?: TermPropertiesClass.$Identifier;
   readonly $type = "TermPropertiesClass";
   readonly booleanTermProperty: purify.Maybe<boolean>;
   readonly dateTermProperty: purify.Maybe<Date>;
@@ -2195,33 +2190,25 @@ export namespace TermPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "TermPropertiesClass";
-    readonly booleanTermProperty: boolean | undefined;
-    readonly dateTermProperty: string | undefined;
-    readonly dateTimeTermProperty: string | undefined;
-    readonly iriTermProperty: { readonly "@id": string } | undefined;
-    readonly literalTermProperty:
+    readonly booleanTermProperty?: boolean;
+    readonly dateTermProperty?: string;
+    readonly dateTimeTermProperty?: string;
+    readonly iriTermProperty?: { readonly "@id": string };
+    readonly literalTermProperty?: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+    readonly numberTermProperty?: number;
+    readonly stringTermProperty?: string;
+    readonly termProperty?:
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
       | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
+          readonly "@language"?: string;
+          readonly "@type"?: string;
           readonly "@value": string;
-        }
-      | undefined;
-    readonly numberTermProperty: number | undefined;
-    readonly stringTermProperty: string | undefined;
-    readonly termProperty:
-      | (
-          | {
-              readonly "@id": string;
-              readonly termType: "BlankNode" | "NamedNode";
-            }
-          | {
-              readonly "@language": string | undefined;
-              readonly "@type": string | undefined;
-              readonly "@value": string;
-              readonly termType: "Literal";
-            }
-        )
-      | undefined;
+          readonly termType: "Literal";
+        };
   };
 
   export function $propertiesFromJson(_json: unknown): purify.Either<
@@ -2320,7 +2307,7 @@ export namespace TermPropertiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -2407,7 +2394,7 @@ export namespace TermPropertiesClass {
           }),
         ])
         .optional(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -2939,7 +2926,7 @@ export namespace TermPropertiesClass {
  * A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied.
  */
 export class Sha256IriClass {
-  private _$identifier: Sha256IriClass.$Identifier | undefined;
+  private _$identifier?: Sha256IriClass.$Identifier;
   protected readonly _$identifierPrefix?: string;
   readonly $type = "Sha256IriClass";
   readonly sha256IriProperty: string;
@@ -3132,7 +3119,7 @@ export namespace Sha256IriClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -3167,7 +3154,7 @@ export namespace Sha256IriClass {
       "@id": zod.string().min(1),
       $type: zod.literal("Sha256IriClass"),
       sha256IriProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -3321,7 +3308,7 @@ export namespace Sha256IriClass {
  * Shape with properties that have visibility modifiers (private, protected, public)
  */
 export class PropertyVisibilitiesClass {
-  private _$identifier: PropertyVisibilitiesClass.$Identifier | undefined;
+  private _$identifier?: PropertyVisibilitiesClass.$Identifier;
   readonly $type = "PropertyVisibilitiesClass";
   private readonly privateProperty: string;
   protected readonly protectedProperty: string;
@@ -3545,7 +3532,7 @@ export namespace PropertyVisibilitiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -3584,7 +3571,7 @@ export namespace PropertyVisibilitiesClass {
       privateProperty: zod.string(),
       protectedProperty: zod.string(),
       publicProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -3812,7 +3799,7 @@ export namespace PropertyVisibilitiesClass {
  * Shape that has properties with different cardinalities
  */
 export class PropertyCardinalitiesClass {
-  private _$identifier: PropertyCardinalitiesClass.$Identifier | undefined;
+  private _$identifier?: PropertyCardinalitiesClass.$Identifier;
   readonly $type = "PropertyCardinalitiesClass";
   /**
    * Set: minCount implicitly=0, no maxCount or maxCount > 1
@@ -4066,9 +4053,9 @@ export namespace PropertyCardinalitiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "PropertyCardinalitiesClass";
-    readonly emptyStringSetProperty: readonly string[];
+    readonly emptyStringSetProperty?: readonly string[];
     readonly nonEmptyStringSetProperty: readonly string[];
-    readonly optionalStringProperty: string | undefined;
+    readonly optionalStringProperty?: string;
     readonly requiredStringProperty: string;
   };
 
@@ -4120,7 +4107,7 @@ export namespace PropertyCardinalitiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -4184,7 +4171,7 @@ export namespace PropertyCardinalitiesClass {
       requiredStringProperty: zod
         .string()
         .describe("Required: maxCount=minCount=1"),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -4526,7 +4513,7 @@ export namespace PropertyCardinalitiesClass {
  * Shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.
  */
 export class OrderedPropertiesClass {
-  private _$identifier: OrderedPropertiesClass.$Identifier | undefined;
+  private _$identifier?: OrderedPropertiesClass.$Identifier;
   readonly $type = "OrderedPropertiesClass";
   readonly orderedPropertyC: string;
   readonly orderedPropertyB: string;
@@ -4750,7 +4737,7 @@ export namespace OrderedPropertiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -4795,7 +4782,7 @@ export namespace OrderedPropertiesClass {
       orderedPropertyC: zod.string(),
       orderedPropertyB: zod.string(),
       orderedPropertyA: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -5012,7 +4999,7 @@ export namespace OrderedPropertiesClass {
  * Node shape that isn't an rdfs:Class.
  */
 export class NonClass {
-  private _$identifier: NonClass.$Identifier | undefined;
+  private _$identifier?: NonClass.$Identifier;
   readonly $type = "NonClass";
   readonly nonClassProperty: string;
 
@@ -5184,7 +5171,7 @@ export namespace NonClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -5219,7 +5206,7 @@ export namespace NonClass {
       "@id": zod.string().min(1),
       $type: zod.literal("NonClass"),
       nonClassProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -5356,7 +5343,7 @@ export namespace NonClass {
  * Shape with shaclmate:mutable properties.
  */
 export class MutablePropertiesClass {
-  private _$identifier: MutablePropertiesClass.$Identifier | undefined;
+  private _$identifier?: MutablePropertiesClass.$Identifier;
   protected readonly _$identifierPrefix?: string;
   readonly $type = "MutablePropertiesClass";
   /**
@@ -5657,9 +5644,9 @@ export namespace MutablePropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "MutablePropertiesClass";
-    readonly mutableListProperty: readonly string[] | undefined;
-    readonly mutableSetProperty: readonly string[];
-    readonly mutableStringProperty: string | undefined;
+    readonly mutableListProperty?: readonly string[];
+    readonly mutableSetProperty?: readonly string[];
+    readonly mutableStringProperty?: string;
   };
 
   export function $propertiesFromJson(_json: unknown): purify.Either<
@@ -5707,7 +5694,7 @@ export namespace MutablePropertiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -5767,7 +5754,7 @@ export namespace MutablePropertiesClass {
         .string()
         .optional()
         .describe("String-valued property that can be re-assigned"),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -6170,7 +6157,7 @@ export namespace MutablePropertiesClass {
  * Shape that uses the list shapes in properties.
  */
 export class ListPropertiesClass {
-  private _$identifier: ListPropertiesClass.$Identifier | undefined;
+  private _$identifier?: ListPropertiesClass.$Identifier;
   readonly $type = "ListPropertiesClass";
   readonly objectListProperty: purify.Maybe<readonly NonClass[]>;
   readonly stringListProperty: purify.Maybe<readonly string[]>;
@@ -6465,8 +6452,8 @@ export namespace ListPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "ListPropertiesClass";
-    readonly objectListProperty: readonly NonClass.$Json[] | undefined;
-    readonly stringListProperty: readonly string[] | undefined;
+    readonly objectListProperty?: readonly NonClass.$Json[];
+    readonly stringListProperty?: readonly string[];
   };
 
   export function $propertiesFromJson(_json: unknown): purify.Either<
@@ -6513,7 +6500,7 @@ export namespace ListPropertiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -6552,7 +6539,7 @@ export namespace ListPropertiesClass {
       $type: zod.literal("ListPropertiesClass"),
       objectListProperty: NonClass.$jsonZodSchema().array().optional(),
       stringListProperty: zod.string().array().optional(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -7065,7 +7052,7 @@ export namespace ListPropertiesClass {
  * Shape that uses the StringList in a property.
  */
 export class LanguageInPropertiesClass {
-  private _$identifier: LanguageInPropertiesClass.$Identifier | undefined;
+  private _$identifier?: LanguageInPropertiesClass.$Identifier;
   readonly $type = "LanguageInPropertiesClass";
   readonly languageInPropertiesLanguageInProperty: purify.Maybe<rdfjs.Literal>;
   /**
@@ -7372,20 +7359,16 @@ export namespace LanguageInPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "LanguageInPropertiesClass";
-    readonly languageInPropertiesLanguageInProperty:
-      | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
-          readonly "@value": string;
-        }
-      | undefined;
-    readonly languageInPropertiesLiteralProperty:
-      | {
-          readonly "@language": string | undefined;
-          readonly "@type": string | undefined;
-          readonly "@value": string;
-        }
-      | undefined;
+    readonly languageInPropertiesLanguageInProperty?: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+    readonly languageInPropertiesLiteralProperty?: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
   };
 
   export function $propertiesFromJson(_json: unknown): purify.Either<
@@ -7448,7 +7431,7 @@ export namespace LanguageInPropertiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -7501,7 +7484,7 @@ export namespace LanguageInPropertiesClass {
         })
         .optional()
         .describe("literal property for testing runtime languageIn"),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -7901,7 +7884,7 @@ export namespace IriClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -7931,7 +7914,7 @@ export namespace IriClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("IriClass"),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -8147,7 +8130,7 @@ export namespace InterfaceUnionMember2b {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -8198,7 +8181,7 @@ export namespace InterfaceUnionMember2b {
       "@id": zod.string().min(1),
       $type: zod.literal("InterfaceUnionMember2b"),
       interfaceUnionMember2bProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $hash<
@@ -8541,7 +8524,7 @@ export namespace InterfaceUnionMember2a {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -8592,7 +8575,7 @@ export namespace InterfaceUnionMember2a {
       "@id": zod.string().min(1),
       $type: zod.literal("InterfaceUnionMember2a"),
       interfaceUnionMember2aProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $hash<
@@ -8935,7 +8918,7 @@ export namespace InterfaceUnionMember1 {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -8986,7 +8969,7 @@ export namespace InterfaceUnionMember1 {
       "@id": zod.string().min(1),
       $type: zod.literal("InterfaceUnionMember1"),
       interfaceUnionMember1Property: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $hash<
@@ -9312,7 +9295,7 @@ export namespace Interface {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -9360,7 +9343,7 @@ export namespace Interface {
       "@id": zod.string().min(1),
       $type: zod.literal("Interface"),
       interfaceProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $hash<
@@ -9541,7 +9524,7 @@ export namespace Interface {
  * Shape with sh:in properties.
  */
 export class InPropertiesClass {
-  private _$identifier: InPropertiesClass.$Identifier | undefined;
+  private _$identifier?: InPropertiesClass.$Identifier;
   readonly $type = "InPropertiesClass";
   readonly inBooleansProperty: purify.Maybe<true>;
   readonly inDateTimesProperty: purify.Maybe<Date>;
@@ -9859,17 +9842,15 @@ export namespace InPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "InPropertiesClass";
-    readonly inBooleansProperty: true | undefined;
-    readonly inDateTimesProperty: string | undefined;
-    readonly inIrisProperty:
-      | {
-          readonly "@id":
-            | "http://example.com/InPropertiesIri1"
-            | "http://example.com/InPropertiesIri2";
-        }
-      | undefined;
-    readonly inNumbersProperty: (1 | 2) | undefined;
-    readonly inStringsProperty: ("text" | "html") | undefined;
+    readonly inBooleansProperty?: true;
+    readonly inDateTimesProperty?: string;
+    readonly inIrisProperty?: {
+      readonly "@id":
+        | "http://example.com/InPropertiesIri1"
+        | "http://example.com/InPropertiesIri2";
+    };
+    readonly inNumbersProperty?: 1 | 2;
+    readonly inStringsProperty?: "text" | "html";
   };
 
   export function $propertiesFromJson(_json: unknown): purify.Either<
@@ -9934,7 +9915,7 @@ export namespace InPropertiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -9993,7 +9974,7 @@ export namespace InPropertiesClass {
         .optional(),
       inNumbersProperty: zod.union([zod.literal(1), zod.literal(2)]).optional(),
       inStringsProperty: zod.enum(["text", "html"]).optional(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -10660,7 +10641,7 @@ export namespace InIdentifierClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "InIdentifierClass";
-    readonly inIdentifierProperty: string | undefined;
+    readonly inIdentifierProperty?: string;
   };
 
   export function $propertiesFromJson(_json: unknown): purify.Either<
@@ -10698,7 +10679,7 @@ export namespace InIdentifierClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -10736,7 +10717,7 @@ export namespace InIdentifierClass {
       ]),
       $type: zod.literal("InIdentifierClass"),
       inIdentifierProperty: zod.string().optional(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -10929,7 +10910,7 @@ export namespace InIdentifierClass {
  * Shape with sh:hasValue properties.
  */
 export class HasValuePropertiesClass {
-  private _$identifier: HasValuePropertiesClass.$Identifier | undefined;
+  private _$identifier?: HasValuePropertiesClass.$Identifier;
   readonly $type = "HasValuePropertiesClass";
   readonly hasIriValueProperty: purify.Maybe<rdfjs.NamedNode>;
   readonly hasLiteralValueProperty: purify.Maybe<string>;
@@ -11127,8 +11108,8 @@ export namespace HasValuePropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "HasValuePropertiesClass";
-    readonly hasIriValueProperty: { readonly "@id": string } | undefined;
-    readonly hasLiteralValueProperty: string | undefined;
+    readonly hasIriValueProperty?: { readonly "@id": string };
+    readonly hasLiteralValueProperty?: string;
   };
 
   export function $propertiesFromJson(_json: unknown): purify.Either<
@@ -11173,7 +11154,7 @@ export namespace HasValuePropertiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -11215,7 +11196,7 @@ export namespace HasValuePropertiesClass {
         .object({ "@id": zod.string().min(1) })
         .optional(),
       hasLiteralValueProperty: zod.string().optional(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -11456,9 +11437,7 @@ export namespace HasValuePropertiesClass {
   }
 }
 export class ExternPropertiesInlineNestedClass {
-  private _$identifier:
-    | ExternPropertiesInlineNestedClass.$Identifier
-    | undefined;
+  private _$identifier?: ExternPropertiesInlineNestedClass.$Identifier;
   readonly $type = "ExternPropertiesInlineNestedClass";
   readonly externPropertiesInlineNestedStringProperty: string;
 
@@ -11639,7 +11618,7 @@ export namespace ExternPropertiesInlineNestedClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -11674,7 +11653,7 @@ export namespace ExternPropertiesInlineNestedClass {
       "@id": zod.string().min(1),
       $type: zod.literal("ExternPropertiesInlineNestedClass"),
       externPropertiesInlineNestedStringProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -11848,9 +11827,7 @@ export namespace ExternPropertiesInlineNestedClass {
   }
 }
 export class ExternPropertiesExternNestedClass {
-  private _$identifier:
-    | ExternPropertiesExternNestedClass.$Identifier
-    | undefined;
+  private _$identifier?: ExternPropertiesExternNestedClass.$Identifier;
   readonly $type = "ExternPropertiesExternNestedClass";
   readonly externPropertiesExternNestedStringProperty: string;
 
@@ -12031,7 +12008,7 @@ export namespace ExternPropertiesExternNestedClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -12066,7 +12043,7 @@ export namespace ExternPropertiesExternNestedClass {
       "@id": zod.string().min(1),
       $type: zod.literal("ExternPropertiesExternNestedClass"),
       externPropertiesExternNestedStringProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -12243,7 +12220,7 @@ export namespace ExternPropertiesExternNestedClass {
  * Node shape that inlines/nests another node shape and externs/references another.
  */
 export class ExternPropertiesClass {
-  private _$identifier: ExternPropertiesClass.$Identifier | undefined;
+  private _$identifier?: ExternPropertiesClass.$Identifier;
   readonly $type = "ExternPropertiesClass";
   readonly externClassProperty: purify.Maybe<ExternClass>;
   readonly externNestedProperty: purify.Maybe<
@@ -12499,11 +12476,9 @@ export namespace ExternPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "ExternPropertiesClass";
-    readonly externClassProperty: ExternClass.$Json | undefined;
-    readonly externNestedProperty: { readonly "@id": string } | undefined;
-    readonly inlineNestedProperty:
-      | ExternPropertiesInlineNestedClass.$Json
-      | undefined;
+    readonly externClassProperty?: ExternClass.$Json;
+    readonly externNestedProperty?: { readonly "@id": string };
+    readonly inlineNestedProperty?: ExternPropertiesInlineNestedClass.$Json;
   };
 
   export function $propertiesFromJson(_json: unknown): purify.Either<
@@ -12559,7 +12534,7 @@ export namespace ExternPropertiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -12605,7 +12580,7 @@ export namespace ExternPropertiesClass {
         .optional(),
       inlineNestedProperty:
         ExternPropertiesInlineNestedClass.$jsonZodSchema().optional(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -12927,7 +12902,7 @@ export namespace ExternPropertiesClass {
  * The shaclmate:rdfType is expected on deserialization and added on serialization.
  */
 export class ExplicitRdfTypeClass {
-  private _$identifier: ExplicitRdfTypeClass.$Identifier | undefined;
+  private _$identifier?: ExplicitRdfTypeClass.$Identifier;
   readonly $type = "ExplicitRdfTypeClass";
   readonly explicitRdfTypeProperty: string;
 
@@ -13112,7 +13087,7 @@ export namespace ExplicitRdfTypeClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -13147,7 +13122,7 @@ export namespace ExplicitRdfTypeClass {
       "@id": zod.string().min(1),
       $type: zod.literal("ExplicitRdfTypeClass"),
       explicitRdfTypeProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -13374,7 +13349,7 @@ export namespace ExplicitRdfTypeClass {
  * shaclmate:toRdfType's are added an serialization.
  */
 export class ExplicitFromToRdfTypesClass {
-  private _$identifier: ExplicitFromToRdfTypesClass.$Identifier | undefined;
+  private _$identifier?: ExplicitFromToRdfTypesClass.$Identifier;
   readonly $type = "ExplicitFromToRdfTypesClass";
   readonly explicitFromToRdfTypesProperty: string;
 
@@ -13567,7 +13542,7 @@ export namespace ExplicitFromToRdfTypesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -13602,7 +13577,7 @@ export namespace ExplicitFromToRdfTypesClass {
       "@id": zod.string().min(1),
       $type: zod.literal("ExplicitFromToRdfTypesClass"),
       explicitFromToRdfTypesProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -13833,11 +13808,1331 @@ export namespace ExplicitFromToRdfTypesClass {
     return requiredPatterns.concat(optionalPatterns);
   }
 }
+export class IndirectRecursiveHelperClass {
+  private _$identifier?: IndirectRecursiveHelperClass.$Identifier;
+  readonly $type = "IndirectRecursiveHelperClass";
+  readonly indirectRecursiveProperty: purify.Maybe<IndirectRecursiveClass>;
+
+  constructor(parameters: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly indirectRecursiveProperty?:
+      | IndirectRecursiveClass
+      | purify.Maybe<IndirectRecursiveClass>;
+  }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.indirectRecursiveProperty)) {
+      this.indirectRecursiveProperty = parameters.indirectRecursiveProperty;
+    } else if (
+      typeof parameters.indirectRecursiveProperty === "object" &&
+      parameters.indirectRecursiveProperty instanceof IndirectRecursiveClass
+    ) {
+      this.indirectRecursiveProperty = purify.Maybe.of(
+        parameters.indirectRecursiveProperty,
+      );
+    } else if (typeof parameters.indirectRecursiveProperty === "undefined") {
+      this.indirectRecursiveProperty = purify.Maybe.empty();
+    } else {
+      this.indirectRecursiveProperty =
+        parameters.indirectRecursiveProperty satisfies never;
+    }
+  }
+
+  get $identifier(): IndirectRecursiveHelperClass.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: IndirectRecursiveHelperClass): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.$equals(right)))(
+          this.indirectRecursiveProperty,
+          other.indirectRecursiveProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "indirectRecursiveProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.indirectRecursiveProperty.ifJust((value0) => {
+      value0.$hash(_hasher);
+    });
+    return _hasher;
+  }
+
+  $toJson(): IndirectRecursiveHelperClass.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        indirectRecursiveProperty: this.indirectRecursiveProperty
+          .map((item) => item.$toJson())
+          .extract(),
+      } satisfies IndirectRecursiveHelperClass.$Json),
+    );
+  }
+
+  $toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.$identifier, {
+      mutateGraph,
+    });
+    _resource.add(
+      IndirectRecursiveHelperClass.$properties.indirectRecursiveProperty[
+        "identifier"
+      ],
+      this.indirectRecursiveProperty.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    return _resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace IndirectRecursiveHelperClass {
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory: dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "IndirectRecursiveHelperClass";
+    readonly indirectRecursiveProperty?: IndirectRecursiveClass.$Json;
+  };
+
+  export function $propertiesFromJson(_json: unknown): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      indirectRecursiveProperty: purify.Maybe<IndirectRecursiveClass>;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = $jsonSafeParseResult.data;
+    const $identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const indirectRecursiveProperty = purify.Maybe.fromNullable(
+      _jsonObject["indirectRecursiveProperty"],
+    ).map((item) => IndirectRecursiveClass.$fromJson(item).unsafeCoerce());
+    return purify.Either.of({ $identifier, indirectRecursiveProperty });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, IndirectRecursiveHelperClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new IndirectRecursiveHelperClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zodToJsonSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "IndirectRecursiveHelperClass" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        IndirectRecursiveClass.$jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/indirectRecursiveProperty`,
+        }),
+      ],
+      label: "IndirectRecursiveHelperClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("IndirectRecursiveHelperClass"),
+      indirectRecursiveProperty: zod
+        .lazy(
+          (): zod.ZodType<IndirectRecursiveClass.$Json> =>
+            IndirectRecursiveClass.$jsonZodSchema(),
+        )
+        .optional(),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      indirectRecursiveProperty: purify.Maybe<IndirectRecursiveClass>;
+    }
+  > {
+    const $identifier: IndirectRecursiveHelperClass.$Identifier =
+      _resource.identifier;
+    const _indirectRecursivePropertyEither: purify.Either<
+      Error,
+      purify.Maybe<IndirectRecursiveClass>
+    > = _resource
+      .values($properties.indirectRecursiveProperty["identifier"], {
+        unique: true,
+      })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        IndirectRecursiveClass.$fromRdf({
+          ..._context,
+          ignoreRdfType: true,
+          languageIn: _languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
+    if (_indirectRecursivePropertyEither.isLeft()) {
+      return _indirectRecursivePropertyEither;
+    }
+
+    const indirectRecursiveProperty =
+      _indirectRecursivePropertyEither.unsafeCoerce();
+    return purify.Either.of({ $identifier, indirectRecursiveProperty });
+  }
+
+  export function $fromRdf(
+    parameters: Parameters<
+      typeof IndirectRecursiveHelperClass.$propertiesFromRdf
+    >[0],
+  ): purify.Either<Error, IndirectRecursiveHelperClass> {
+    return IndirectRecursiveHelperClass.$propertiesFromRdf(parameters).map(
+      (properties) => new IndirectRecursiveHelperClass(properties),
+    );
+  }
+
+  export const $properties = {
+    indirectRecursiveProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/indirectRecursiveProperty",
+      ),
+    },
+  };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        IndirectRecursiveHelperClass.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        IndirectRecursiveHelperClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      IndirectRecursiveHelperClass.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("indirectRecursiveHelperClass");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "indirectRecursiveHelperClass");
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}IndirectRecursiveProperty`,
+      ),
+      predicate:
+        IndirectRecursiveHelperClass.$properties.indirectRecursiveProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push(
+      ...IndirectRecursiveClass.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(
+          `${variablePrefix}IndirectRecursiveProperty`,
+        ),
+        variablePrefix: `${variablePrefix}IndirectRecursiveProperty`,
+      }),
+    );
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("indirectRecursiveHelperClass");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "indirectRecursiveHelperClass");
+    const propertyPatterns: readonly sparqljs.Pattern[] = [
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}IndirectRecursiveProperty`,
+                ),
+                predicate:
+                  IndirectRecursiveHelperClass.$properties
+                    .indirectRecursiveProperty["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...IndirectRecursiveClass.$sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(
+              `${variablePrefix}IndirectRecursiveProperty`,
+            ),
+            variablePrefix: `${variablePrefix}IndirectRecursiveProperty`,
+          }),
+        ],
+        type: "optional",
+      },
+    ];
+    for (const pattern of propertyPatterns) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+export class IndirectRecursiveClass {
+  private _$identifier?: IndirectRecursiveClass.$Identifier;
+  readonly $type = "IndirectRecursiveClass";
+  readonly indirectRecursiveHelperProperty: purify.Maybe<IndirectRecursiveHelperClass>;
+
+  constructor(parameters: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly indirectRecursiveHelperProperty?:
+      | IndirectRecursiveHelperClass
+      | purify.Maybe<IndirectRecursiveHelperClass>;
+  }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.indirectRecursiveHelperProperty)) {
+      this.indirectRecursiveHelperProperty =
+        parameters.indirectRecursiveHelperProperty;
+    } else if (
+      typeof parameters.indirectRecursiveHelperProperty === "object" &&
+      parameters.indirectRecursiveHelperProperty instanceof
+        IndirectRecursiveHelperClass
+    ) {
+      this.indirectRecursiveHelperProperty = purify.Maybe.of(
+        parameters.indirectRecursiveHelperProperty,
+      );
+    } else if (
+      typeof parameters.indirectRecursiveHelperProperty === "undefined"
+    ) {
+      this.indirectRecursiveHelperProperty = purify.Maybe.empty();
+    } else {
+      this.indirectRecursiveHelperProperty =
+        parameters.indirectRecursiveHelperProperty satisfies never;
+    }
+  }
+
+  get $identifier(): IndirectRecursiveClass.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: IndirectRecursiveClass): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.$equals(right)))(
+          this.indirectRecursiveHelperProperty,
+          other.indirectRecursiveHelperProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "indirectRecursiveHelperProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.indirectRecursiveHelperProperty.ifJust((value0) => {
+      value0.$hash(_hasher);
+    });
+    return _hasher;
+  }
+
+  $toJson(): IndirectRecursiveClass.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        indirectRecursiveHelperProperty: this.indirectRecursiveHelperProperty
+          .map((item) => item.$toJson())
+          .extract(),
+      } satisfies IndirectRecursiveClass.$Json),
+    );
+  }
+
+  $toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.$identifier, {
+      mutateGraph,
+    });
+    _resource.add(
+      IndirectRecursiveClass.$properties.indirectRecursiveHelperProperty[
+        "identifier"
+      ],
+      this.indirectRecursiveHelperProperty.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    return _resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace IndirectRecursiveClass {
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory: dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "IndirectRecursiveClass";
+    readonly indirectRecursiveHelperProperty?: IndirectRecursiveHelperClass.$Json;
+  };
+
+  export function $propertiesFromJson(_json: unknown): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      indirectRecursiveHelperProperty: purify.Maybe<IndirectRecursiveHelperClass>;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = $jsonSafeParseResult.data;
+    const $identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const indirectRecursiveHelperProperty = purify.Maybe.fromNullable(
+      _jsonObject["indirectRecursiveHelperProperty"],
+    ).map((item) =>
+      IndirectRecursiveHelperClass.$fromJson(item).unsafeCoerce(),
+    );
+    return purify.Either.of({ $identifier, indirectRecursiveHelperProperty });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, IndirectRecursiveClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new IndirectRecursiveClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zodToJsonSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "IndirectRecursiveClass" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        IndirectRecursiveHelperClass.$jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/indirectRecursiveHelperProperty`,
+        }),
+      ],
+      label: "IndirectRecursiveClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("IndirectRecursiveClass"),
+      indirectRecursiveHelperProperty:
+        IndirectRecursiveHelperClass.$jsonZodSchema().optional(),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      indirectRecursiveHelperProperty: purify.Maybe<IndirectRecursiveHelperClass>;
+    }
+  > {
+    const $identifier: IndirectRecursiveClass.$Identifier =
+      _resource.identifier;
+    const _indirectRecursiveHelperPropertyEither: purify.Either<
+      Error,
+      purify.Maybe<IndirectRecursiveHelperClass>
+    > = _resource
+      .values($properties.indirectRecursiveHelperProperty["identifier"], {
+        unique: true,
+      })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        IndirectRecursiveHelperClass.$fromRdf({
+          ..._context,
+          ignoreRdfType: true,
+          languageIn: _languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
+    if (_indirectRecursiveHelperPropertyEither.isLeft()) {
+      return _indirectRecursiveHelperPropertyEither;
+    }
+
+    const indirectRecursiveHelperProperty =
+      _indirectRecursiveHelperPropertyEither.unsafeCoerce();
+    return purify.Either.of({ $identifier, indirectRecursiveHelperProperty });
+  }
+
+  export function $fromRdf(
+    parameters: Parameters<typeof IndirectRecursiveClass.$propertiesFromRdf>[0],
+  ): purify.Either<Error, IndirectRecursiveClass> {
+    return IndirectRecursiveClass.$propertiesFromRdf(parameters).map(
+      (properties) => new IndirectRecursiveClass(properties),
+    );
+  }
+
+  export const $properties = {
+    indirectRecursiveHelperProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/indirectRecursiveHelperProperty",
+      ),
+    },
+  };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        IndirectRecursiveClass.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        IndirectRecursiveClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      IndirectRecursiveClass.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("indirectRecursiveClass");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "indirectRecursiveClass");
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}IndirectRecursiveHelperProperty`,
+      ),
+      predicate:
+        IndirectRecursiveClass.$properties.indirectRecursiveHelperProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push(
+      ...IndirectRecursiveHelperClass.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(
+          `${variablePrefix}IndirectRecursiveHelperProperty`,
+        ),
+        variablePrefix: `${variablePrefix}IndirectRecursiveHelperProperty`,
+      }),
+    );
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("indirectRecursiveClass");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "indirectRecursiveClass");
+    const propertyPatterns: readonly sparqljs.Pattern[] = [
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}IndirectRecursiveHelperProperty`,
+                ),
+                predicate:
+                  IndirectRecursiveClass.$properties
+                    .indirectRecursiveHelperProperty["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...IndirectRecursiveHelperClass.$sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(
+              `${variablePrefix}IndirectRecursiveHelperProperty`,
+            ),
+            variablePrefix: `${variablePrefix}IndirectRecursiveHelperProperty`,
+          }),
+        ],
+        type: "optional",
+      },
+    ];
+    for (const pattern of propertyPatterns) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+export class DirectRecursiveClass {
+  private _$identifier?: DirectRecursiveClass.$Identifier;
+  readonly $type = "DirectRecursiveClass";
+  readonly directRecursiveProperty: purify.Maybe<DirectRecursiveClass>;
+
+  constructor(parameters: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly directRecursiveProperty?:
+      | DirectRecursiveClass
+      | purify.Maybe<DirectRecursiveClass>;
+  }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.directRecursiveProperty)) {
+      this.directRecursiveProperty = parameters.directRecursiveProperty;
+    } else if (
+      typeof parameters.directRecursiveProperty === "object" &&
+      parameters.directRecursiveProperty instanceof DirectRecursiveClass
+    ) {
+      this.directRecursiveProperty = purify.Maybe.of(
+        parameters.directRecursiveProperty,
+      );
+    } else if (typeof parameters.directRecursiveProperty === "undefined") {
+      this.directRecursiveProperty = purify.Maybe.empty();
+    } else {
+      this.directRecursiveProperty =
+        parameters.directRecursiveProperty satisfies never;
+    }
+  }
+
+  get $identifier(): DirectRecursiveClass.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: DirectRecursiveClass): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) => left.$equals(right)))(
+          this.directRecursiveProperty,
+          other.directRecursiveProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "directRecursiveProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.directRecursiveProperty.ifJust((value0) => {
+      value0.$hash(_hasher);
+    });
+    return _hasher;
+  }
+
+  $toJson(): DirectRecursiveClass.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        directRecursiveProperty: this.directRecursiveProperty
+          .map((item) => item.$toJson())
+          .extract(),
+      } satisfies DirectRecursiveClass.$Json),
+    );
+  }
+
+  $toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.$identifier, {
+      mutateGraph,
+    });
+    _resource.add(
+      DirectRecursiveClass.$properties.directRecursiveProperty["identifier"],
+      this.directRecursiveProperty.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    return _resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace DirectRecursiveClass {
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory: dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "DirectRecursiveClass";
+    readonly directRecursiveProperty?: DirectRecursiveClass.$Json;
+  };
+
+  export function $propertiesFromJson(_json: unknown): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      directRecursiveProperty: purify.Maybe<DirectRecursiveClass>;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const _jsonObject = $jsonSafeParseResult.data;
+    const $identifier = _jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
+      : dataFactory.namedNode(_jsonObject["@id"]);
+    const directRecursiveProperty = purify.Maybe.fromNullable(
+      _jsonObject["directRecursiveProperty"],
+    ).map((item) => DirectRecursiveClass.$fromJson(item).unsafeCoerce());
+    return purify.Either.of({ $identifier, directRecursiveProperty });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, DirectRecursiveClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new DirectRecursiveClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zodToJsonSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "DirectRecursiveClass" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        DirectRecursiveClass.$jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/directRecursiveProperty`,
+        }),
+      ],
+      label: "DirectRecursiveClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("DirectRecursiveClass"),
+      directRecursiveProperty: zod
+        .lazy(
+          (): zod.ZodType<DirectRecursiveClass.$Json> =>
+            DirectRecursiveClass.$jsonZodSchema(),
+        )
+        .optional(),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: _ignoreRdfType,
+    languageIn: _languageIn,
+    resource: _resource,
+    // @ts-ignore
+    ..._context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      directRecursiveProperty: purify.Maybe<DirectRecursiveClass>;
+    }
+  > {
+    const $identifier: DirectRecursiveClass.$Identifier = _resource.identifier;
+    const _directRecursivePropertyEither: purify.Either<
+      Error,
+      purify.Maybe<DirectRecursiveClass>
+    > = _resource
+      .values($properties.directRecursiveProperty["identifier"], {
+        unique: true,
+      })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        DirectRecursiveClass.$fromRdf({
+          ..._context,
+          ignoreRdfType: true,
+          languageIn: _languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
+    if (_directRecursivePropertyEither.isLeft()) {
+      return _directRecursivePropertyEither;
+    }
+
+    const directRecursiveProperty =
+      _directRecursivePropertyEither.unsafeCoerce();
+    return purify.Either.of({ $identifier, directRecursiveProperty });
+  }
+
+  export function $fromRdf(
+    parameters: Parameters<typeof DirectRecursiveClass.$propertiesFromRdf>[0],
+  ): purify.Either<Error, DirectRecursiveClass> {
+    return DirectRecursiveClass.$propertiesFromRdf(parameters).map(
+      (properties) => new DirectRecursiveClass(properties),
+    );
+  }
+
+  export const $properties = {
+    directRecursiveProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/directRecursiveProperty",
+      ),
+    },
+  };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        DirectRecursiveClass.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        DirectRecursiveClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      DirectRecursiveClass.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("directRecursiveClass");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "directRecursiveClass");
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}DirectRecursiveProperty`),
+      predicate:
+        DirectRecursiveClass.$properties.directRecursiveProperty["identifier"],
+      subject,
+    });
+    triples.push(
+      ...DirectRecursiveClass.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(
+          `${variablePrefix}DirectRecursiveProperty`,
+        ),
+        variablePrefix: `${variablePrefix}DirectRecursiveProperty`,
+      }),
+    );
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("directRecursiveClass");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "directRecursiveClass");
+    const propertyPatterns: readonly sparqljs.Pattern[] = [
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}DirectRecursiveProperty`,
+                ),
+                predicate:
+                  DirectRecursiveClass.$properties.directRecursiveProperty[
+                    "identifier"
+                  ],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...DirectRecursiveClass.$sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(
+              `${variablePrefix}DirectRecursiveProperty`,
+            ),
+            variablePrefix: `${variablePrefix}DirectRecursiveProperty`,
+          }),
+        ],
+        type: "optional",
+      },
+    ];
+    for (const pattern of propertyPatterns) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
 /**
  * Shape with sh:defaultValue properties.
  */
 export class DefaultValuePropertiesClass {
-  private _$identifier: DefaultValuePropertiesClass.$Identifier | undefined;
+  private _$identifier?: DefaultValuePropertiesClass.$Identifier;
   protected readonly _$identifierPrefix?: string;
   readonly $type = "DefaultValuePropertiesClass";
   readonly dateDefaultValueProperty: Date;
@@ -14258,7 +15553,7 @@ export namespace DefaultValuePropertiesClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -14318,7 +15613,7 @@ export namespace DefaultValuePropertiesClass {
       numberDefaultValueProperty: zod.number(),
       stringDefaultValueProperty: zod.string(),
       trueBooleanDefaultValueProperty: zod.boolean(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -14961,7 +16256,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -15017,7 +16312,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
         "ConcreteParentInterface",
       ]),
       baseInterfaceWithPropertiesProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $hash<
@@ -15424,7 +16719,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -15457,7 +16752,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
           "ConcreteParentInterface",
         ]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $hash<
@@ -15853,7 +17148,7 @@ export namespace ConcreteParentInterfaceStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -15889,7 +17184,7 @@ export namespace ConcreteParentInterfaceStatic {
         $type: zod.enum(["ConcreteParentInterface", "ConcreteChildInterface"]),
         concreteParentInterfaceProperty: zod.string(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $hash<
@@ -16337,7 +17632,7 @@ export namespace ConcreteChildInterface {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -16371,7 +17666,7 @@ export namespace ConcreteChildInterface {
         $type: zod.literal("ConcreteChildInterface"),
         concreteChildInterfaceProperty: zod.string(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $hash<
@@ -16891,7 +18186,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -16926,7 +18221,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       "@id": zod.string().min(1),
       $type: zod.enum(["ConcreteChildClass", "ConcreteParentClass"]),
       abstractBaseClassWithPropertiesProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -17192,7 +18487,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -17209,7 +18504,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
         "@id": zod.string().min(1),
         $type: zod.enum(["ConcreteChildClass", "ConcreteParentClass"]),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -17363,7 +18658,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
  * Class node shape that inherits the abstract base class and is the parent of the ConcreteChildClass.
  */
 export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
-  protected _$identifier: ConcreteParentClassStatic.$Identifier | undefined;
+  protected _$identifier?: ConcreteParentClassStatic.$Identifier;
   override readonly $type: "ConcreteParentClass" | "ConcreteChildClass" =
     "ConcreteParentClass";
   readonly concreteParentClassProperty: string;
@@ -17550,7 +18845,7 @@ export namespace ConcreteParentClassStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -17572,7 +18867,7 @@ export namespace ConcreteParentClassStatic {
         $type: zod.enum(["ConcreteParentClass", "ConcreteChildClass"]),
         concreteParentClassProperty: zod.string(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -18009,7 +19304,7 @@ export namespace ConcreteChildClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -18031,7 +19326,7 @@ export namespace ConcreteChildClass {
         $type: zod.literal("ConcreteChildClass"),
         concreteChildClassProperty: zod.string(),
       }),
-    );
+    ) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -18287,7 +19582,7 @@ export namespace ConcreteChildClass {
   }
 }
 export class ClassUnionMember2 {
-  private _$identifier: ClassUnionMember2.$Identifier | undefined;
+  private _$identifier?: ClassUnionMember2.$Identifier;
   readonly $type = "ClassUnionMember2";
   readonly classUnionMember2Property: string;
 
@@ -18472,7 +19767,7 @@ export namespace ClassUnionMember2 {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -18507,7 +19802,7 @@ export namespace ClassUnionMember2 {
       "@id": zod.string().min(1),
       $type: zod.literal("ClassUnionMember2"),
       classUnionMember2Property: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -18726,7 +20021,7 @@ export namespace ClassUnionMember2 {
   }
 }
 export class ClassUnionMember1 {
-  private _$identifier: ClassUnionMember1.$Identifier | undefined;
+  private _$identifier?: ClassUnionMember1.$Identifier;
   readonly $type = "ClassUnionMember1";
   readonly classUnionMember1Property: string;
 
@@ -18911,7 +20206,7 @@ export namespace ClassUnionMember1 {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -18946,7 +20241,7 @@ export namespace ClassUnionMember1 {
       "@id": zod.string().min(1),
       $type: zod.literal("ClassUnionMember1"),
       classUnionMember1Property: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -19168,7 +20463,7 @@ export namespace ClassUnionMember1 {
  * Shape that can have a blank node or IRI as an identifier
  */
 export class BlankClass {
-  private _$identifier: BlankClass.$Identifier | undefined;
+  private _$identifier?: BlankClass.$Identifier;
   readonly $type = "BlankClass";
 
   constructor(parameters: {
@@ -19314,7 +20609,7 @@ export namespace BlankClass {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -19344,7 +20639,7 @@ export namespace BlankClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("BlankClass"),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -19594,7 +20889,7 @@ export namespace AbstractBaseClassForExternClassStatic {
     return zodToJsonSchema($jsonZodSchema());
   }
 
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }) {
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
     const scopePrefix = parameters?.scopePrefix ?? "#";
     return {
       elements: [
@@ -19629,7 +20924,7 @@ export namespace AbstractBaseClassForExternClassStatic {
       "@id": zod.string().min(1),
       $type: zod.literal("ExternClass"),
       abstractBaseClassForExternClassProperty: zod.string(),
-    });
+    }) satisfies zod.ZodType<$Json>;
   }
 
   export function $propertiesFromRdf({
@@ -20748,6 +22043,18 @@ export interface $ObjectSet {
       "where"
     >,
   ): Promise<purify.Either<Error, number>>;
+  directRecursiveClass(
+    identifier: DirectRecursiveClass.$Identifier,
+  ): Promise<purify.Either<Error, DirectRecursiveClass>>;
+  directRecursiveClassIdentifiers(
+    query?: $ObjectSet.Query<DirectRecursiveClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly DirectRecursiveClass.$Identifier[]>>;
+  directRecursiveClasses(
+    query?: $ObjectSet.Query<DirectRecursiveClass.$Identifier>,
+  ): Promise<readonly purify.Either<Error, DirectRecursiveClass>[]>;
+  directRecursiveClassesCount(
+    query?: Pick<$ObjectSet.Query<DirectRecursiveClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
   explicitFromToRdfTypesClass(
     identifier: ExplicitFromToRdfTypesClass.$Identifier,
   ): Promise<purify.Either<Error, ExplicitFromToRdfTypesClass>>;
@@ -20849,6 +22156,37 @@ export interface $ObjectSet {
   hasValuePropertiesClassesCount(
     query?: Pick<
       $ObjectSet.Query<HasValuePropertiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
+  indirectRecursiveClass(
+    identifier: IndirectRecursiveClass.$Identifier,
+  ): Promise<purify.Either<Error, IndirectRecursiveClass>>;
+  indirectRecursiveClassIdentifiers(
+    query?: $ObjectSet.Query<IndirectRecursiveClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IndirectRecursiveClass.$Identifier[]>
+  >;
+  indirectRecursiveClasses(
+    query?: $ObjectSet.Query<IndirectRecursiveClass.$Identifier>,
+  ): Promise<readonly purify.Either<Error, IndirectRecursiveClass>[]>;
+  indirectRecursiveClassesCount(
+    query?: Pick<$ObjectSet.Query<IndirectRecursiveClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  indirectRecursiveHelperClass(
+    identifier: IndirectRecursiveHelperClass.$Identifier,
+  ): Promise<purify.Either<Error, IndirectRecursiveHelperClass>>;
+  indirectRecursiveHelperClassIdentifiers(
+    query?: $ObjectSet.Query<IndirectRecursiveHelperClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IndirectRecursiveHelperClass.$Identifier[]>
+  >;
+  indirectRecursiveHelperClasses(
+    query?: $ObjectSet.Query<IndirectRecursiveHelperClass.$Identifier>,
+  ): Promise<readonly purify.Either<Error, IndirectRecursiveHelperClass>[]>;
+  indirectRecursiveHelperClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<IndirectRecursiveHelperClass.$Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>>;
@@ -21843,6 +23181,71 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >({ ...DefaultValuePropertiesClass, $fromRdfType: undefined }, query);
   }
 
+  async directRecursiveClass(
+    identifier: DirectRecursiveClass.$Identifier,
+  ): Promise<purify.Either<Error, DirectRecursiveClass>> {
+    return this.directRecursiveClassSync(identifier);
+  }
+
+  directRecursiveClassSync(
+    identifier: DirectRecursiveClass.$Identifier,
+  ): purify.Either<Error, DirectRecursiveClass> {
+    return this.directRecursiveClassesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async directRecursiveClassIdentifiers(
+    query?: $ObjectSet.Query<DirectRecursiveClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly DirectRecursiveClass.$Identifier[]>
+  > {
+    return this.directRecursiveClassIdentifiersSync(query);
+  }
+
+  directRecursiveClassIdentifiersSync(
+    query?: $ObjectSet.Query<DirectRecursiveClass.$Identifier>,
+  ): purify.Either<Error, readonly DirectRecursiveClass.$Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        DirectRecursiveClass,
+        DirectRecursiveClass.$Identifier
+      >({ ...DirectRecursiveClass, $fromRdfType: undefined }, query),
+    ]);
+  }
+
+  async directRecursiveClasses(
+    query?: $ObjectSet.Query<DirectRecursiveClass.$Identifier>,
+  ): Promise<readonly purify.Either<Error, DirectRecursiveClass>[]> {
+    return this.directRecursiveClassesSync(query);
+  }
+
+  directRecursiveClassesSync(
+    query?: $ObjectSet.Query<DirectRecursiveClass.$Identifier>,
+  ): readonly purify.Either<Error, DirectRecursiveClass>[] {
+    return [
+      ...this.$objectsSync<
+        DirectRecursiveClass,
+        DirectRecursiveClass.$Identifier
+      >({ ...DirectRecursiveClass, $fromRdfType: undefined }, query),
+    ];
+  }
+
+  async directRecursiveClassesCount(
+    query?: Pick<$ObjectSet.Query<DirectRecursiveClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.directRecursiveClassesCountSync(query);
+  }
+
+  directRecursiveClassesCountSync(
+    query?: Pick<$ObjectSet.Query<DirectRecursiveClass.$Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      DirectRecursiveClass,
+      DirectRecursiveClass.$Identifier
+    >({ ...DirectRecursiveClass, $fromRdfType: undefined }, query);
+  }
+
   async explicitFromToRdfTypesClass(
     identifier: ExplicitFromToRdfTypesClass.$Identifier,
   ): Promise<purify.Either<Error, ExplicitFromToRdfTypesClass>> {
@@ -22283,6 +23686,142 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       HasValuePropertiesClass,
       HasValuePropertiesClass.$Identifier
     >({ ...HasValuePropertiesClass, $fromRdfType: undefined }, query);
+  }
+
+  async indirectRecursiveClass(
+    identifier: IndirectRecursiveClass.$Identifier,
+  ): Promise<purify.Either<Error, IndirectRecursiveClass>> {
+    return this.indirectRecursiveClassSync(identifier);
+  }
+
+  indirectRecursiveClassSync(
+    identifier: IndirectRecursiveClass.$Identifier,
+  ): purify.Either<Error, IndirectRecursiveClass> {
+    return this.indirectRecursiveClassesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async indirectRecursiveClassIdentifiers(
+    query?: $ObjectSet.Query<IndirectRecursiveClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IndirectRecursiveClass.$Identifier[]>
+  > {
+    return this.indirectRecursiveClassIdentifiersSync(query);
+  }
+
+  indirectRecursiveClassIdentifiersSync(
+    query?: $ObjectSet.Query<IndirectRecursiveClass.$Identifier>,
+  ): purify.Either<Error, readonly IndirectRecursiveClass.$Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        IndirectRecursiveClass,
+        IndirectRecursiveClass.$Identifier
+      >({ ...IndirectRecursiveClass, $fromRdfType: undefined }, query),
+    ]);
+  }
+
+  async indirectRecursiveClasses(
+    query?: $ObjectSet.Query<IndirectRecursiveClass.$Identifier>,
+  ): Promise<readonly purify.Either<Error, IndirectRecursiveClass>[]> {
+    return this.indirectRecursiveClassesSync(query);
+  }
+
+  indirectRecursiveClassesSync(
+    query?: $ObjectSet.Query<IndirectRecursiveClass.$Identifier>,
+  ): readonly purify.Either<Error, IndirectRecursiveClass>[] {
+    return [
+      ...this.$objectsSync<
+        IndirectRecursiveClass,
+        IndirectRecursiveClass.$Identifier
+      >({ ...IndirectRecursiveClass, $fromRdfType: undefined }, query),
+    ];
+  }
+
+  async indirectRecursiveClassesCount(
+    query?: Pick<$ObjectSet.Query<IndirectRecursiveClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.indirectRecursiveClassesCountSync(query);
+  }
+
+  indirectRecursiveClassesCountSync(
+    query?: Pick<$ObjectSet.Query<IndirectRecursiveClass.$Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      IndirectRecursiveClass,
+      IndirectRecursiveClass.$Identifier
+    >({ ...IndirectRecursiveClass, $fromRdfType: undefined }, query);
+  }
+
+  async indirectRecursiveHelperClass(
+    identifier: IndirectRecursiveHelperClass.$Identifier,
+  ): Promise<purify.Either<Error, IndirectRecursiveHelperClass>> {
+    return this.indirectRecursiveHelperClassSync(identifier);
+  }
+
+  indirectRecursiveHelperClassSync(
+    identifier: IndirectRecursiveHelperClass.$Identifier,
+  ): purify.Either<Error, IndirectRecursiveHelperClass> {
+    return this.indirectRecursiveHelperClassesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    })[0];
+  }
+
+  async indirectRecursiveHelperClassIdentifiers(
+    query?: $ObjectSet.Query<IndirectRecursiveHelperClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IndirectRecursiveHelperClass.$Identifier[]>
+  > {
+    return this.indirectRecursiveHelperClassIdentifiersSync(query);
+  }
+
+  indirectRecursiveHelperClassIdentifiersSync(
+    query?: $ObjectSet.Query<IndirectRecursiveHelperClass.$Identifier>,
+  ): purify.Either<Error, readonly IndirectRecursiveHelperClass.$Identifier[]> {
+    return purify.Either.of([
+      ...this.$objectIdentifiersSync<
+        IndirectRecursiveHelperClass,
+        IndirectRecursiveHelperClass.$Identifier
+      >({ ...IndirectRecursiveHelperClass, $fromRdfType: undefined }, query),
+    ]);
+  }
+
+  async indirectRecursiveHelperClasses(
+    query?: $ObjectSet.Query<IndirectRecursiveHelperClass.$Identifier>,
+  ): Promise<readonly purify.Either<Error, IndirectRecursiveHelperClass>[]> {
+    return this.indirectRecursiveHelperClassesSync(query);
+  }
+
+  indirectRecursiveHelperClassesSync(
+    query?: $ObjectSet.Query<IndirectRecursiveHelperClass.$Identifier>,
+  ): readonly purify.Either<Error, IndirectRecursiveHelperClass>[] {
+    return [
+      ...this.$objectsSync<
+        IndirectRecursiveHelperClass,
+        IndirectRecursiveHelperClass.$Identifier
+      >({ ...IndirectRecursiveHelperClass, $fromRdfType: undefined }, query),
+    ];
+  }
+
+  async indirectRecursiveHelperClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<IndirectRecursiveHelperClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.indirectRecursiveHelperClassesCountSync(query);
+  }
+
+  indirectRecursiveHelperClassesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<IndirectRecursiveHelperClass.$Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      IndirectRecursiveHelperClass,
+      IndirectRecursiveHelperClass.$Identifier
+    >({ ...IndirectRecursiveHelperClass, $fromRdfType: undefined }, query);
   }
 
   async inIdentifierClass(
@@ -24355,6 +25894,48 @@ export class $SparqlObjectSet implements $ObjectSet {
     );
   }
 
+  async directRecursiveClass(
+    identifier: DirectRecursiveClass.$Identifier,
+  ): Promise<purify.Either<Error, DirectRecursiveClass>> {
+    return (
+      await this.directRecursiveClasses({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async directRecursiveClassIdentifiers(
+    query?: $SparqlObjectSet.Query<DirectRecursiveClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly DirectRecursiveClass.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<DirectRecursiveClass.$Identifier>(
+      DirectRecursiveClass,
+      query,
+    );
+  }
+
+  async directRecursiveClasses(
+    query?: $SparqlObjectSet.Query<DirectRecursiveClass.$Identifier>,
+  ): Promise<readonly purify.Either<Error, DirectRecursiveClass>[]> {
+    return this.$objects<
+      DirectRecursiveClass,
+      DirectRecursiveClass.$Identifier
+    >(DirectRecursiveClass, query);
+  }
+
+  async directRecursiveClassesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<DirectRecursiveClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<DirectRecursiveClass.$Identifier>(
+      DirectRecursiveClass,
+      query,
+    );
+  }
+
   async explicitFromToRdfTypesClass(
     identifier: ExplicitFromToRdfTypesClass.$Identifier,
   ): Promise<purify.Either<Error, ExplicitFromToRdfTypesClass>> {
@@ -24613,6 +26194,90 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<HasValuePropertiesClass.$Identifier>(
       HasValuePropertiesClass,
+      query,
+    );
+  }
+
+  async indirectRecursiveClass(
+    identifier: IndirectRecursiveClass.$Identifier,
+  ): Promise<purify.Either<Error, IndirectRecursiveClass>> {
+    return (
+      await this.indirectRecursiveClasses({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async indirectRecursiveClassIdentifiers(
+    query?: $SparqlObjectSet.Query<IndirectRecursiveClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IndirectRecursiveClass.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<IndirectRecursiveClass.$Identifier>(
+      IndirectRecursiveClass,
+      query,
+    );
+  }
+
+  async indirectRecursiveClasses(
+    query?: $SparqlObjectSet.Query<IndirectRecursiveClass.$Identifier>,
+  ): Promise<readonly purify.Either<Error, IndirectRecursiveClass>[]> {
+    return this.$objects<
+      IndirectRecursiveClass,
+      IndirectRecursiveClass.$Identifier
+    >(IndirectRecursiveClass, query);
+  }
+
+  async indirectRecursiveClassesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<IndirectRecursiveClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<IndirectRecursiveClass.$Identifier>(
+      IndirectRecursiveClass,
+      query,
+    );
+  }
+
+  async indirectRecursiveHelperClass(
+    identifier: IndirectRecursiveHelperClass.$Identifier,
+  ): Promise<purify.Either<Error, IndirectRecursiveHelperClass>> {
+    return (
+      await this.indirectRecursiveHelperClasses({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    )[0];
+  }
+
+  async indirectRecursiveHelperClassIdentifiers(
+    query?: $SparqlObjectSet.Query<IndirectRecursiveHelperClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IndirectRecursiveHelperClass.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<IndirectRecursiveHelperClass.$Identifier>(
+      IndirectRecursiveHelperClass,
+      query,
+    );
+  }
+
+  async indirectRecursiveHelperClasses(
+    query?: $SparqlObjectSet.Query<IndirectRecursiveHelperClass.$Identifier>,
+  ): Promise<readonly purify.Either<Error, IndirectRecursiveHelperClass>[]> {
+    return this.$objects<
+      IndirectRecursiveHelperClass,
+      IndirectRecursiveHelperClass.$Identifier
+    >(IndirectRecursiveHelperClass, query);
+  }
+
+  async indirectRecursiveHelperClassesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<IndirectRecursiveHelperClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<IndirectRecursiveHelperClass.$Identifier>(
+      IndirectRecursiveHelperClass,
       query,
     );
   }
