@@ -23,4 +23,4 @@ format_rdf() {
 #./packages/cli/dist/cli.js show-ast-json $PWD/examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl >examples/kitchen-sink/src/ast.json
 ./packages/cli/dist/cli.js generate $PWD/examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl >examples/kitchen-sink/src/generated.ts
 
-npm exec biome -- check --write --unsafe $PWD/examples
+npm run check:write

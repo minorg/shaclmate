@@ -50,19 +50,13 @@ export function rdfjsDatasetObjectSetClassDeclaration({
     reusableMethodDeclarations.push(
       {
         kind: StructureKind.Method,
-        isGenerator: true,
         name: `${syntheticNamePrefix}objectIdentifiersSync`,
         parameters: [parameters.objectType, parameters.query],
-        returnType: `Generator<${typeParameters.ObjectIdentifierT.name}>`,
+        returnType: `purify.Either<Error, readonly ${typeParameters.ObjectIdentifierT.name}[]>`,
         scope: Scope.Protected,
         statements: [
           `\
-for (const object of this.${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectType.name}, ${parameters.query.name})) {
-  if (object.isRight()) {
-    yield object.unsafeCoerce().${syntheticNamePrefix}identifier;
-  }
-}
-`,
+return this.${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectType.name}, ${parameters.query.name}).map(objects => objects.map(object => object.${syntheticNamePrefix}identifier));`,
         ],
         typeParameters: [
           typeParameters.ObjectT,
@@ -70,49 +64,55 @@ for (const object of this.${syntheticNamePrefix}objectsSync<${typeParameters.Obj
         ],
       },
       {
-        isGenerator: true,
         kind: StructureKind.Method,
         name: `${syntheticNamePrefix}objectsSync`,
         parameters: [parameters.objectType, parameters.query],
-        returnType: `Generator<purify.Either<Error, ${typeParameters.ObjectT.name}>>`,
+        returnType: `purify.Either<Error, readonly ${typeParameters.ObjectT.name}[]>`,
         scope: Scope.Protected,
         statements: [
           `\
 const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
-if (limit <= 0) { return; }
+if (limit <= 0) { return purify.Either.of([]); }
 
 let offset = query?.offset ?? 0;
 if (offset < 0) { offset = 0; }
 
 if (query?.where) {
+  const objects: ${typeParameters.ObjectT.name}[] = [];
   for (const identifier of query.where.identifiers.slice(offset, offset + limit)) {
-    yield objectType.${syntheticNamePrefix}fromRdf({ resource: this.resourceSet.resource(identifier) });
+    const either = objectType.${syntheticNamePrefix}fromRdf({ resource: this.resourceSet.resource(identifier) });
+    if (either.isLeft()) {
+      return either;
+    }
+    objects.push(either.unsafeCoerce());
   }
-  return;
+  return purify.Either.of(objects);
 }
 
 if (!objectType.${syntheticNamePrefix}fromRdfType) {
-  return;
+  return purify.Either.of([]);
 }
 
 const resources = [...this.resourceSet.instancesOf(objectType.${syntheticNamePrefix}fromRdfType)];
 // Sort resources by identifier so limit and offset are deterministic
 resources.sort((left, right) => left.identifier.value.localeCompare(right.identifier.value));
 
-let objectCount = 0;
+const objects: ${typeParameters.ObjectT.name}[] = [];
 let objectI = 0;
 for (const resource of resources) {
-  const object = objectType.${syntheticNamePrefix}fromRdf({ resource });
-  if (object.isLeft()) {
-    continue;
+  const either = objectType.${syntheticNamePrefix}fromRdf({ resource });
+  if (either.isLeft()) {
+    return either;
   }
   if (objectI++ >= offset) {
-     yield object;
-     if (++objectCount === limit) {
-       return;
+     objects.push(either.unsafeCoerce());
+     if (objects.length === limit) {
+      return purify.Either.of(objects);
      }
   }
-}`,
+}
+return purify.Either.of(objects);
+`,
         ],
         typeParameters: [
           typeParameters.ObjectT,
@@ -126,9 +126,7 @@ for (const resource of resources) {
         returnType: "purify.Either<Error, number>",
         scope: Scope.Protected,
         statements: [
-          "let count = 0;",
-          `for (const _ of this.${syntheticNamePrefix}objectIdentifiersSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectType.name}, ${parameters.query.name})) { count++; }`,
-          "return purify.Either.of(count);",
+          `return this.${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectType.name}, ${parameters.query.name}).map(objects => objects.length);`,
         ],
         typeParameters: [
           typeParameters.ObjectT,
@@ -156,19 +154,12 @@ for (const resource of resources) {
     reusableMethodDeclarations.push(
       {
         kind: StructureKind.Method,
-        isGenerator: true,
         name: `${syntheticNamePrefix}objectUnionIdentifiersSync`,
         parameters: [parameters.objectTypes, parameters.query],
-        returnType: `Generator<${typeParameters.ObjectIdentifierT.name}>`,
+        returnType: `purify.Either<Error, readonly ${typeParameters.ObjectIdentifierT.name}[]>`,
         scope: Scope.Protected,
         statements: [
-          `\
-for (const object of this.${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectTypes.name}, ${parameters.query.name})) {
-  if (object.isRight()) {
-    yield object.unsafeCoerce().$identifier;
-  }
-}
-`,
+          `return this.${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectTypes.name}, ${parameters.query.name}).map(objects => objects.map(object => object.${syntheticNamePrefix}identifier));`,
         ],
         typeParameters: [
           typeParameters.ObjectT,
@@ -176,44 +167,40 @@ for (const object of this.${syntheticNamePrefix}objectUnionsSync<${typeParameter
         ],
       },
       {
-        isGenerator: true,
         kind: StructureKind.Method,
         name: `${syntheticNamePrefix}objectUnionsSync`,
         parameters: [parameters.objectTypes, parameters.query],
-        returnType: `Generator<purify.Either<Error, ${typeParameters.ObjectT.name}>>`,
+        returnType: `purify.Either<Error, readonly ${typeParameters.ObjectT.name}[]>`,
         scope: Scope.Protected,
         statements: [
           `\
 const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
-if (limit <= 0) { return; }
+if (limit <= 0) { return purify.Either.of([]); }
 
 let offset = query?.offset ?? 0;
 if (offset < 0) { offset = 0; }
 
 if (query?.where) {
   // Figure out which object type the identifiers belong to
+  const objects: ${typeParameters.ObjectT.name}[] = [];
   for (const identifier of query.where.identifiers.slice(offset, offset + limit)) {
     const resource = this.resourceSet.resource(identifier);
     const lefts: purify.Either<Error, ${typeParameters.ObjectT.name}>[] = [];
     for (const objectType of objectTypes) {
-      const object = objectType.${syntheticNamePrefix}fromRdf({ resource });
-      if (object.isRight()) {
-         yield object;
+      const either = objectType.${syntheticNamePrefix}fromRdf({ resource });
+      if (either.isRight()) {
+         objects.push(either.unsafeCoerce());
          break;
       }
-      lefts.push(object);
+      lefts.push(either);
     }
     // Doesn't appear to belong to any of the known object types, just assume the first
     if (lefts.length === objectTypes.length) {
-      yield lefts[0];
+      return lefts[0] as unknown as purify.Either<Error, readonly ${typeParameters.ObjectT.name}[]>;
     }
   }
-
-  return;
+  return purify.Either.of(objects);
 }
-
-let objectCount = 0;
-let objectI = 0;
 
 const resources: { objectType: ${objectTypeType}, resource: rdfjsResource.Resource }[] = [];
 for (const objectType of objectTypes) {
@@ -229,18 +216,22 @@ for (const objectType of objectTypes) {
 // Sort resources by identifier so limit and offset are deterministic
 resources.sort((left, right) => left.resource.identifier.value.localeCompare(right.resource.identifier.value));
 
+let objectI = 0;
+const objects: ${typeParameters.ObjectT.name}[] = [];
 for (const { objectType, resource } of resources) {
-  const object = objectType.${syntheticNamePrefix}fromRdf({ resource });
-  if (object.isLeft()) {
-    continue;
+  const either = objectType.${syntheticNamePrefix}fromRdf({ resource });
+  if (either.isLeft()) {
+    return either;
   }
   if (objectI++ >= offset) {
-    yield object;
-    if (++objectCount === limit) {
-      return;
+    objects.push(either.unsafeCoerce());
+    if (objects.length === limit) {
+      return purify.Either.of(objects);
     }
   }
-}`,
+}
+return purify.Either.of(objects);
+`,
         ],
         typeParameters: [
           typeParameters.ObjectT,
@@ -253,9 +244,7 @@ for (const { objectType, resource } of resources) {
         parameters: [parameters.objectTypes, parameters.query],
         returnType: "purify.Either<Error, number>",
         statements: [
-          "let count = 0;",
-          `for (const _ of this.${syntheticNamePrefix}objectUnionIdentifiersSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectTypes.name}, ${parameters.query.name})) { count++; }`,
-          "return purify.Either.of(count);",
+          `return this.${syntheticNamePrefix}objectUnionIdentifiersSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectTypes.name}, ${parameters.query.name}).map(objects => objects.length);`,
         ],
         typeParameters: [
           typeParameters.ObjectT,
@@ -325,7 +314,7 @@ for (const { objectType, resource } of resources) {
             name: `${methodSignatures.object.name}Sync`,
             returnType: `purify.Either<Error, ${objectType.name}>`,
             statements: [
-              `return this.${methodSignatures.objects.name}Sync({ where: { identifiers: [identifier], type: "identifiers" } })[0];`,
+              `return this.${methodSignatures.objects.name}Sync({ where: { identifiers: [identifier], type: "identifiers" } }).map(objects => objects[0]);`,
             ],
           },
           {
@@ -341,7 +330,7 @@ for (const { objectType, resource } of resources) {
             kind: StructureKind.Method,
             name: `${methodSignatures.objectIdentifiers.name}Sync`,
             returnType: `purify.Either<Error, readonly ${objectType.identifierTypeAlias}[]>`,
-            statements: `return purify.Either.of([...this.${syntheticNamePrefix}object${objectType.kind === "ObjectUnionType" ? "Union" : ""}IdentifiersSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query)]);`,
+            statements: `return this.${syntheticNamePrefix}object${objectType.kind === "ObjectUnionType" ? "Union" : ""}IdentifiersSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
           },
           {
             ...methodSignatures.objects,
@@ -355,9 +344,9 @@ for (const { objectType, resource } of resources) {
             ...methodSignatures.objects,
             kind: StructureKind.Method,
             name: `${methodSignatures.objects.name}Sync`,
-            returnType: `readonly purify.Either<Error, ${objectType.name}>[]`,
+            returnType: `purify.Either<Error, readonly ${objectType.name}[]>`,
             statements: [
-              `return [...this.${syntheticNamePrefix}object${objectType.kind === "ObjectUnionType" ? "Union" : ""}sSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query)];`,
+              `return this.${syntheticNamePrefix}object${objectType.kind === "ObjectUnionType" ? "Union" : ""}sSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
             ],
           },
           {

@@ -176,7 +176,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
           type: "identifiers",
         },
       })
-    ).map((either) => either.unsafeCoerce());
+    ).unsafeCoerce();
     expect(actualObjects).toHaveLength(testData.concreteChildClasses.length);
     for (const expectedObject of testData.concreteChildClasses) {
       expect(
@@ -198,7 +198,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
           type: "identifiers",
         },
       })
-    ).map((either) => either.unsafeCoerce());
+    ).unsafeCoerce();
     expect(actualObjects).toHaveLength(
       testData.concreteChildClasses.slice(sliceStart).length,
     );
@@ -275,7 +275,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
           type: "identifiers",
         },
       })
-    ).map((either) => either.unsafeCoerce());
+    ).unsafeCoerce();
     expect(actualObjects).toHaveLength(testData.concreteChildClasses.length);
     for (const expectedObject of testData.interfaceUnions) {
       expect(
@@ -300,7 +300,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
           type: "identifiers",
         },
       })
-    ).map((either) => either.unsafeCoerce());
+    ).unsafeCoerce();
     expect(actualObjects).toHaveLength(
       testData.classClassUnions.slice(sliceStart).length,
     );

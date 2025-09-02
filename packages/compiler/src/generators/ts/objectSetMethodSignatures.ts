@@ -48,7 +48,7 @@ export function objectSetMethodSignatures(parameters: {
           type: `${queryT}<${objectType.identifierTypeAlias}>`,
         },
       ],
-      returnType: `Promise<readonly purify.Either<Error, ${objectType.name}>[]>`,
+      returnType: `Promise<purify.Either<Error, readonly ${objectType.name}[]>>`,
     },
     objectsCount: {
       name: methodNames.objectsCount,

@@ -101,7 +101,7 @@ export function sparqlObjectSetClassDeclaration({
               kind: StructureKind.Method,
               isAsync: true,
               statements: [
-                `return (await this.${methodSignatures.objects.name}({ where: { identifiers: [identifier], type: "identifiers" } }))[0];`,
+                `return (await this.${methodSignatures.objects.name}({ where: { identifiers: [identifier], type: "identifiers" } })).map(objects => objects[0]);`,
               ],
             },
             {
@@ -249,16 +249,16 @@ return purify.EitherAsync(async () =>
           kind: StructureKind.Method,
           name: `${syntheticNamePrefix}objects`,
           parameters: [parameters.constructObjectType, parameters.query],
-          returnType: `Promise<readonly purify.Either<Error, ${typeParameters.ObjectT.name}>[]>`,
+          returnType: `Promise<purify.Either<Error, readonly ${typeParameters.ObjectT.name}[]>>`,
           statements: [
             `\
 const identifiersEither = await this.${syntheticNamePrefix}objectIdentifiers<${typeParameters.ObjectIdentifierT.name}>(objectType, query);
 if (identifiersEither.isLeft()) {
-  return [identifiersEither];
+  return identifiersEither;
 }
 const identifiers = identifiersEither.unsafeCoerce();
 if (identifiers.length === 0) {
-  return [];
+  return purify.Either.of([]);
 }
 
 const constructQueryString = objectType.${syntheticNamePrefix}sparqlConstructQueryString({
@@ -277,18 +277,21 @@ let quads: readonly rdfjs.Quad[];
 try {
   quads = await this.${syntheticNamePrefix}sparqlClient.queryQuads(constructQueryString);
 } catch (e) {
-  const left = purify.Left<Error, ${typeParameters.ObjectT.name}>(e as Error);
-  return identifiers.map(() => left);
+  return purify.Left(e as Error);
 }
 
 const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-return identifiers.map((identifier) =>
-  objectType.${syntheticNamePrefix}fromRdf({
+const objects: ${typeParameters.ObjectT.name}[] = [];
+for (const identifier of identifiers) {
+  const objectEither = objectType.${syntheticNamePrefix}fromRdf({
     resource: new rdfjsResource.Resource<rdfjs.NamedNode>({ dataset, identifier: identifier as rdfjs.NamedNode })
-  })
-);
-`,
+  });
+  if (objectEither.isLeft()) {
+    return objectEither;
+  }
+  objects.push(objectEither.unsafeCoerce());
+}
+return purify.Either.of(objects);`,
           ],
           typeParameters: [
             typeParameters.ObjectT,
