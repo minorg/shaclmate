@@ -197,8 +197,9 @@ const packages: readonly Package[] = [
     scripts: {
       build: "tsc && vite build",
       clean: "rimraf dist",
-      dev: "vite --port 3000",
-      start: "vite preview --port 3000",
+      dev: "tsc -w --preserveWatchOutput",
+      "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
+      start: "vite dev --port 3000",
     },
   },
   {
