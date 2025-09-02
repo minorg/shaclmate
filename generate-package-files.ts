@@ -198,7 +198,6 @@ const packages: readonly Package[] = [
       build: "tsc && vite build",
       clean: "rimraf dist",
       dev: "vite --port 3000",
-      rebuild: "run-s clean build",
       start: "vite preview --port 3000",
     },
   },
@@ -225,7 +224,6 @@ const packages: readonly Package[] = [
       clean: "rimraf dist",
       dev: "tsc -w --preserveWatchOutput",
       "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
-      rebuild: "run-s clean build",
       start: "NODE_ENV=development tsx src/server.ts",
       test: "biome check && vitest run",
       "test:coverage": "biome check && vitest run --coverage",
@@ -303,6 +301,7 @@ for (const package_ of packages) {
         files: files.size > 0 ? [...files].sort() : undefined,
         license: "Apache-2.0",
         name: `@shaclmate/${package_.name}${package_.directory === "examples" ? "-example" : ""}`,
+        packageManager: "npm@10.9.0",
         peerDependencies: package_.peerDependencies?.external,
         private: package_.directory !== "packages" ? true : undefined,
         repository: {
@@ -317,17 +316,17 @@ for (const package_ of packages) {
                   .join(" && ")}`
               : ""
           }`,
+          "build:noEmit": "tsc --noEmit",
           check: "biome check",
           "check:write": "biome check --write",
           "check:write:unsafe": "biome check --write --unsafe",
           clean: "rimraf dist",
           dev: "tsc -w --preserveWatchOutput",
           "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
-          rebuild: "run-s clean build",
           "link-dependencies": "npm link rdfjs-resource",
           test: "biome check && vitest run",
-          "test:coverage": "biome check && vitest run --coverage",
-          "test:watch": "biome check && vitest watch",
+          // "test:coverage": "biome check && vitest run --coverage",
+          // "test:watch": "biome check && vitest watch",
           unlink: `npm unlink -g @shaclmate/${package_.name}`,
         },
         type: "module",
@@ -359,11 +358,11 @@ fs.writeFileSync(
         "@tsconfig/strictest": "^2.0.5",
         "@types/node": "^22",
         "@vitest/coverage-v8": "^3.0.1",
-        "npm-run-all": "^4.1.5",
         rimraf: "^6.0.1",
         tsx: "^4.16.2",
-        typescript: "~5.6",
-        vitest: "^3.0.1",
+        turbo: "^2.5.5",
+        typescript: "5.8.2",
+        vitest: "^3.2.4",
         yaml: "^2.5.0",
       },
       name: "shaclmate",
@@ -371,29 +370,29 @@ fs.writeFileSync(
         "@biomejs/cli-linux-x64": "1.9.4",
         "@rollup/rollup-linux-x64-gnu": "4.24.0",
       },
+      packageManager: "npm@10.9.0",
       private: true,
       scripts: {
-        build: "npm run build --workspaces",
+        build: "turbo run build",
+        "build:packages": 'turbo run --filter "./packages/*" build',
+        "build:noEmit": "turbo run build:noEmit",
         check: "biome check",
         "check:write": "biome check --write",
         "check:write:unsafe": "biome check --write --unsafe",
-        clean: "npm run clean --workspaces",
-        "generate-package-files": "tsx generate-package-files.ts",
+        dev: "turbo run dev",
+        "dev:noEmit": "turbo run dev:noEmit",
         link: "npm link --workspaces",
-        "link-dependencies": "npm run link-dependencies --workspaces",
-        rebuild: "npm run rebuild --workspaces",
-        test: "npm run test --if-present --workspaces",
-        "test:coverage": "npm run test:coverage --if-present --workspaces",
-        unlink: "npm run unlink --workspaces",
-        watch: "run-p watch:*",
-        ...packages.reduce(
-          (watchEntries, package_) => {
-            watchEntries[`watch:${package_.name}`] =
-              `npm run watch -w @shaclmate/${package_.name}`;
-            return watchEntries;
-          },
-          {} as Record<string, string>,
-        ),
+        "link-dependencies": "turbo run link-dependencies",
+        test: "turbo run test",
+        unlink: "turbo run unlink",
+        // ...packages.reduce(
+        //   (watchEntries, package_) => {
+        //     watchEntries[`watch:${package_.name}`] =
+        //       `npm run watch -w @shaclmate/${package_.name}`;
+        //     return watchEntries;
+        //   },
+        //   {} as Record<string, string>,
+        // ),
       },
       workspaces: packages.map(
         (package_) => `${package_.directory}/${package_.name}`,

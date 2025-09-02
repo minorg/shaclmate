@@ -24,23 +24,22 @@
   ],
   "license": "Apache-2.0",
   "name": "@shaclmate/cli",
+  "packageManager": "npm@10.9.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/minorg/shaclmate"
   },
   "scripts": {
     "build": "tsc -b && chmod +x dist/cli.js",
+    "build:noEmit": "tsc --noEmit",
     "check": "biome check",
     "check:write": "biome check --write",
     "check:write:unsafe": "biome check --write --unsafe",
     "clean": "rimraf dist",
     "dev": "tsc -w --preserveWatchOutput",
     "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
-    "rebuild": "run-s clean build",
     "link-dependencies": "npm link rdfjs-resource",
     "test": "biome check && vitest run",
-    "test:coverage": "biome check && vitest run --coverage",
-    "test:watch": "biome check && vitest watch",
     "unlink": "npm unlink -g @shaclmate/cli"
   },
   "type": "module",
