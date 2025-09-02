@@ -22,6 +22,7 @@
   ],
   "license": "Apache-2.0",
   "name": "@shaclmate/graphql-example",
+  "packageManager": "npm@10.9.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -31,7 +32,7 @@
     "build": "tsc",
     "clean": "rimraf dist",
     "dev": "tsc -w --preserveWatchOutput",
-    "rebuild": "run-s clean build",
+    "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
     "start": "NODE_ENV=development tsx src/server.ts",
     "test": "biome check && vitest run",
     "test:coverage": "biome check && vitest run --coverage",

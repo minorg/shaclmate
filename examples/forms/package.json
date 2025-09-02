@@ -19,6 +19,7 @@
   },
   "license": "Apache-2.0",
   "name": "@shaclmate/forms-example",
+  "packageManager": "npm@10.9.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -28,7 +29,6 @@
     "build": "tsc && vite build",
     "clean": "rimraf dist",
     "dev": "vite --port 3000",
-    "rebuild": "run-s clean build",
     "start": "vite preview --port 3000"
   },
   "type": "module",
