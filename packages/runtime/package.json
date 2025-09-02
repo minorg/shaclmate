@@ -47,6 +47,8 @@
     "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
     "link-dependencies": "npm link rdfjs-resource",
     "test": "biome check && vitest run",
+    "test:coverage": "biome check && vitest run --coverage",
+    "test:watch": "biome check && vitest watch",
     "unlink": "npm unlink -g @shaclmate/runtime"
   },
   "type": "module",

@@ -16,11 +16,18 @@
       "cache": false,
       "persistent": true
     },
+    "dev:noEmit": {
+      "cache": false,
+      "persistent": true
+    },
     "link-dependencies": {
       "cache": false
     },
     "test": {
       "dependsOn": ["^test"]
+    },
+    "test:coverage": {
+      "dependsOn": ["^test:coverage"]
     },
     "unlink": {
       "cache": false

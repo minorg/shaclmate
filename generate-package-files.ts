@@ -325,8 +325,8 @@ for (const package_ of packages) {
           "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
           "link-dependencies": "npm link rdfjs-resource",
           test: "biome check && vitest run",
-          // "test:coverage": "biome check && vitest run --coverage",
-          // "test:watch": "biome check && vitest watch",
+          "test:coverage": "biome check && vitest run --coverage",
+          "test:watch": "biome check && vitest watch",
           unlink: `npm unlink -g @shaclmate/${package_.name}`,
         },
         type: "module",
@@ -357,7 +357,7 @@ fs.writeFileSync(
         "@tsconfig/node18": "^18.2.4",
         "@tsconfig/strictest": "^2.0.5",
         "@types/node": "^22",
-        "@vitest/coverage-v8": "^3.0.1",
+        "@vitest/coverage-v8": "^3.2.4",
         rimraf: "^6.0.1",
         tsx: "^4.16.2",
         turbo: "^2.5.5",
@@ -384,6 +384,7 @@ fs.writeFileSync(
         link: "npm link --workspaces",
         "link-dependencies": "turbo run link-dependencies",
         test: "turbo run test",
+        "test:coverage": "turbo run test:coverage",
         unlink: "turbo run unlink",
         // ...packages.reduce(
         //   (watchEntries, package_) => {
