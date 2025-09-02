@@ -25284,7 +25284,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         }
         // Doesn't appear to belong to any of the known object types, just assume the first
         if (lefts.length === objectTypes.length) {
-          return lefts[0];
+          return lefts[0] as unknown as purify.Either<
+            Error,
+            readonly ObjectT[]
+          >;
         }
       }
       return purify.Either.of(objects);
@@ -25383,7 +25386,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.baseInterfaceWithoutPropertieses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async baseInterfaceWithoutPropertiesIdentifiers(
@@ -25428,7 +25431,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.baseInterfaceWithPropertieses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async baseInterfaceWithPropertiesIdentifiers(
@@ -25473,7 +25476,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.blankClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async blankClassIdentifiers(
@@ -25501,7 +25504,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.classUnionMember1s({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async classUnionMember1Identifiers(
@@ -25541,7 +25544,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.classUnionMember2s({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async classUnionMember2Identifiers(
@@ -25581,7 +25584,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.concreteChildClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async concreteChildClassIdentifiers(
@@ -25621,7 +25624,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.concreteChildInterfaces({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async concreteChildInterfaceIdentifiers(
@@ -25663,7 +25666,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.concreteParentClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async concreteParentClassIdentifiers(
@@ -25705,7 +25708,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.concreteParentInterfaces({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async concreteParentInterfaceIdentifiers(
@@ -25747,7 +25750,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.defaultValuePropertiesClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async defaultValuePropertiesClassIdentifiers(
@@ -25789,7 +25792,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.directRecursiveClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async directRecursiveClassIdentifiers(
@@ -25831,7 +25834,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.explicitFromToRdfTypesClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async explicitFromToRdfTypesClassIdentifiers(
@@ -25873,7 +25876,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.explicitRdfTypeClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async explicitRdfTypeClassIdentifiers(
@@ -25915,7 +25918,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.externPropertiesClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async externPropertiesClassIdentifiers(
@@ -25957,7 +25960,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.externPropertiesExternNestedClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async externPropertiesExternNestedClassIdentifiers(
@@ -26004,7 +26007,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.externPropertiesInlineNestedClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async externPropertiesInlineNestedClassIdentifiers(
@@ -26051,7 +26054,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.hasValuePropertiesClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async hasValuePropertiesClassIdentifiers(
@@ -26093,7 +26096,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.indirectRecursiveClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async indirectRecursiveClassIdentifiers(
@@ -26135,7 +26138,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.indirectRecursiveHelperClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async indirectRecursiveHelperClassIdentifiers(
@@ -26177,7 +26180,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.inIdentifierClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async inIdentifierClassIdentifiers(
@@ -26217,7 +26220,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.inPropertiesClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async inPropertiesClassIdentifiers(
@@ -26257,7 +26260,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.interfaces({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async interfaceIdentifiers(
@@ -26285,7 +26288,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.interfaceUnionMember1s({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async interfaceUnionMember1Identifiers(
@@ -26327,7 +26330,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.interfaceUnionMember2as({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async interfaceUnionMember2aIdentifiers(
@@ -26369,7 +26372,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.interfaceUnionMember2bs({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async interfaceUnionMember2bIdentifiers(
@@ -26411,7 +26414,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.iriClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async iriClassIdentifiers(
@@ -26439,7 +26442,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.languageInPropertiesClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async languageInPropertiesClassIdentifiers(
@@ -26481,7 +26484,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.listPropertiesClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async listPropertiesClassIdentifiers(
@@ -26521,7 +26524,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.mutablePropertiesClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async mutablePropertiesClassIdentifiers(
@@ -26563,7 +26566,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.nonClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async nonClassIdentifiers(
@@ -26591,7 +26594,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.orderedPropertiesClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async orderedPropertiesClassIdentifiers(
@@ -26633,7 +26636,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.propertyCardinalitiesClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async propertyCardinalitiesClassIdentifiers(
@@ -26675,7 +26678,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.propertyVisibilitiesClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async propertyVisibilitiesClassIdentifiers(
@@ -26717,7 +26720,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.sha256IriClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async sha256IriClassIdentifiers(
@@ -26754,7 +26757,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.termPropertiesClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async termPropertiesClassIdentifiers(
@@ -26794,7 +26797,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.unionPropertiesClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async unionPropertiesClassIdentifiers(
@@ -26836,7 +26839,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.uuidV4IriClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async uuidV4IriClassIdentifiers(
@@ -26873,7 +26876,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.classUnions({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async classUnionIdentifiers(
@@ -26901,7 +26904,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.interfaceUnions({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async interfaceUnionIdentifiers(
@@ -26938,7 +26941,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.interfaceUnionMember2s({
         where: { identifiers: [identifier], type: "identifiers" },
       })
-    )[0];
+    ).map((objects) => objects[0]);
   }
 
   async interfaceUnionMember2Identifiers(
@@ -27092,17 +27095,17 @@ export class $SparqlObjectSet implements $ObjectSet {
       }) => readonly sparqljs.Pattern[];
     },
     query?: $SparqlObjectSet.Query<ObjectIdentifierT>,
-  ): Promise<readonly purify.Either<Error, ObjectT>[]> {
+  ): Promise<purify.Either<Error, readonly ObjectT[]>> {
     const identifiersEither = await this.$objectIdentifiers<ObjectIdentifierT>(
       objectType,
       query,
     );
     if (identifiersEither.isLeft()) {
-      return [identifiersEither];
+      return identifiersEither;
     }
     const identifiers = identifiersEither.unsafeCoerce();
     if (identifiers.length === 0) {
-      return [];
+      return purify.Either.of([]);
     }
 
     const constructQueryString = objectType.$sparqlConstructQueryString({
@@ -27123,20 +27126,24 @@ export class $SparqlObjectSet implements $ObjectSet {
     try {
       quads = await this.$sparqlClient.queryQuads(constructQueryString);
     } catch (e) {
-      const left = purify.Left<Error, ObjectT>(e as Error);
-      return identifiers.map(() => left);
+      return purify.Left(e as Error);
     }
 
     const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
-
-    return identifiers.map((identifier) =>
-      objectType.$fromRdf({
+    const objects: ObjectT[] = [];
+    for (const identifier of identifiers) {
+      const objectEither = objectType.$fromRdf({
         resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
           dataset,
           identifier: identifier as rdfjs.NamedNode,
         }),
-      }),
-    );
+      });
+      if (objectEither.isLeft()) {
+        return objectEither;
+      }
+      objects.push(objectEither.unsafeCoerce());
+    }
+    return purify.Either.of(objects);
   }
 
   protected async $objectsCount<

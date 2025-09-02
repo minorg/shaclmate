@@ -196,7 +196,7 @@ if (query?.where) {
     }
     // Doesn't appear to belong to any of the known object types, just assume the first
     if (lefts.length === objectTypes.length) {
-      return lefts[0];
+      return lefts[0] as unknown as purify.Either<Error, readonly ${typeParameters.ObjectT.name}[]>;
     }
   }
   return purify.Either.of(objects);
