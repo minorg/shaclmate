@@ -68,11 +68,7 @@ async (_source, args: { identifiers: readonly string[] | null; limit: number | n
     }
     where = { identifiers, type: "identifiers" };
   }
-  const objects: ${objectType.name}[] = [];
-  for (const objectEither of await objectSet.${objectType.objectSetMethodNames.objects}({ limit: args.limit !== null ? args.limit : undefined, offset: args.offset !== null ? args.offset : undefined, where })) {
-    objects.push(await liftEither(objectEither));
-  }
-  return objects;
+  return await liftEither(await objectSet.${objectType.objectSetMethodNames.objects}({ limit: args.limit !== null ? args.limit : undefined, offset: args.offset !== null ? args.offset : undefined, where }));
 })).unsafeCoerce()`,
           type: `new graphql.GraphQLNonNull(new graphql.GraphQLList(new graphql.GraphQLNonNull(${objectType.graphqlName})))`,
         });
