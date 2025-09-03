@@ -42,6 +42,20 @@ const testData = {
       }),
   ) satisfies readonly kitchenSink.ConcreteChildClass[],
 
+  directRecursiveClasses: [...new Array(4)].map(
+    (_, i) =>
+      new kitchenSink.DirectRecursiveClass({
+        directRecursiveProperty: new kitchenSink.DirectRecursiveClass({
+          $identifier: N3.DataFactory.namedNode(
+            `http://example.com/directRecursiveClass${i}/directRecursiveProperty/value`,
+          ),
+        }),
+        $identifier: N3.DataFactory.namedNode(
+          `http://example.com/directRecursiveClass${i}`,
+        ),
+      }),
+  ) satisfies readonly kitchenSink.DirectRecursiveClass[],
+
   interfaceUnions: [...new Array(4)].map((_, i) => {
     switch (i % 3) {
       case 0:
@@ -89,6 +103,9 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
       object.$toRdf({ resourceSet, mutateGraph });
     }
     for (const object of testData.concreteChildClasses) {
+      object.$toRdf({ resourceSet, mutateGraph });
+    }
+    for (const object of testData.directRecursiveClasses) {
       object.$toRdf({ resourceSet, mutateGraph });
     }
     for (const object of testData.interfaceUnions) {
@@ -163,6 +180,28 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     ).toStrictEqual([
       testData.concreteChildClasses[1].$identifier.value,
       testData.concreteChildClasses[2].$identifier.value,
+    ]);
+  });
+
+  it("objectIdentifiers (triple-objects)", async ({ expect }) => {
+    expect(
+      (
+        await objectSet.directRecursiveClassIdentifiers({
+          where: {
+            subject: testData.directRecursiveClasses[0].$identifier,
+            predicate:
+              kitchenSink.DirectRecursiveClass.$properties
+                .directRecursiveProperty.identifier,
+            type: "triple-objects",
+          },
+        })
+      )
+        .unsafeCoerce()
+        .map((identifier) => identifier.value)
+        .sort(),
+    ).toStrictEqual([
+      testData.directRecursiveClasses[0].directRecursiveProperty.unsafeCoerce()
+        .$identifier.value,
     ]);
   });
 

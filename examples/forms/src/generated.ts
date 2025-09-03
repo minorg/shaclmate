@@ -316,7 +316,9 @@ export namespace NestedNodeShape {
     readonly requiredStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -712,7 +714,9 @@ export namespace FormNodeShape {
     readonly requiredStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -1345,20 +1349,53 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     if (query?.where) {
-      const objects: ObjectT[] = [];
-      for (const identifier of query.where.identifiers.slice(
-        offset,
-        offset + limit,
-      )) {
-        const either = objectType.$fromRdf({
-          resource: this.resourceSet.resource(identifier),
-        });
-        if (either.isLeft()) {
-          return either;
+      switch (query.where.type) {
+        case "identifiers": {
+          const objects: ObjectT[] = [];
+          for (const identifier of query.where.identifiers.slice(
+            offset,
+            offset + limit,
+          )) {
+            const either = objectType.$fromRdf({
+              resource: this.resourceSet.resource(identifier),
+            });
+            if (either.isLeft()) {
+              return either;
+            }
+            objects.push(either.unsafeCoerce());
+          }
+          return purify.Either.of(objects);
         }
-        objects.push(either.unsafeCoerce());
+        case "triple-objects": {
+          const objects: ObjectT[] = [];
+          for (const quad of this.resourceSet.dataset.match(
+            query.where.subject,
+            query.where.predicate,
+            null,
+          )) {
+            switch (quad.object.termType) {
+              case "BlankNode":
+              case "NamedNode": {
+                const either = objectType.$fromRdf({
+                  resource: this.resourceSet.resource(quad.object),
+                });
+                if (either.isLeft()) {
+                  return either;
+                }
+                objects.push(either.unsafeCoerce());
+                break;
+              }
+              default:
+                return purify.Left(
+                  new Error(
+                    `subject=${query.where.subject.value} predicate=${query.where.predicate.value} pattern matches non-identifier (${quad.object.termType}) triple`,
+                  ),
+                );
+            }
+          }
+          return purify.Either.of(objects);
+        }
       }
-      return purify.Either.of(objects);
     }
 
     if (!objectType.$fromRdfType) {

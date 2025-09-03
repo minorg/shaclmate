@@ -78,15 +78,38 @@ let offset = query?.offset ?? 0;
 if (offset < 0) { offset = 0; }
 
 if (query?.where) {
-  const objects: ${typeParameters.ObjectT.name}[] = [];
-  for (const identifier of query.where.identifiers.slice(offset, offset + limit)) {
-    const either = objectType.${syntheticNamePrefix}fromRdf({ resource: this.resourceSet.resource(identifier) });
-    if (either.isLeft()) {
-      return either;
+  switch (query.where.type) {
+    case "identifiers": {
+      const objects: ${typeParameters.ObjectT.name}[] = [];
+      for (const identifier of query.where.identifiers.slice(offset, offset + limit)) {
+        const either = objectType.${syntheticNamePrefix}fromRdf({ resource: this.resourceSet.resource(identifier) });
+        if (either.isLeft()) {
+          return either;
+        }
+        objects.push(either.unsafeCoerce());
+      }
+      return purify.Either.of(objects);
     }
-    objects.push(either.unsafeCoerce());
+    case "triple-objects": {
+      const objects: ${typeParameters.ObjectT.name}[] = [];
+      for (const quad of this.resourceSet.dataset.match(query.where.subject, query.where.predicate, null)) {
+        switch (quad.object.termType) {
+          case "BlankNode":
+          case "NamedNode": {
+            const either = objectType.${syntheticNamePrefix}fromRdf({ resource: this.resourceSet.resource(quad.object) });
+            if (either.isLeft()) {
+              return either;
+            }
+            objects.push(either.unsafeCoerce());
+            break;
+          }
+          default:
+            return purify.Left(new Error(\`subject=\${query.where.subject.value} predicate=\${query.where.predicate.value} pattern matches non-identifier (\${quad.object.termType}) triple\`));
+        }
+      }
+      return purify.Either.of(objects);
+    }
   }
-  return purify.Either.of(objects);
 }
 
 if (!objectType.${syntheticNamePrefix}fromRdfType) {
