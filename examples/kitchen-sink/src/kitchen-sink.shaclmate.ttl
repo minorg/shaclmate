@@ -185,22 +185,6 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:path :directRecursiveProperty
     ] .
 
-:IndirectRecursiveClass
-    a sh:NodeShape ;
-    sh:property [
-        sh:maxCount 1;
-        sh:node :IndirectRecursiveHelperClass ;
-        sh:path :indirectRecursiveHelperProperty
-    ] .
-
-:IndirectRecursiveHelperClass
-    a sh:NodeShape ;
-    sh:property [
-        sh:maxCount 1 ;
-        sh:node :IndirectRecursiveClass ;
-        sh:path :indirectRecursiveProperty
-    ] .
-
 :ExplicitFromToRdfTypesClass
     shaclmate:fromRdfType :FromRdfType ;
     shaclmate:toRdfType :ToRdfType ;
@@ -333,6 +317,22 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ) ;
         sh:maxCount 1 ;
         sh:path :inStringsProperty
+    ] .
+
+:IndirectRecursiveClass
+    a sh:NodeShape ;
+    sh:property [
+        sh:maxCount 1 ;
+        sh:node :IndirectRecursiveHelperClass ;
+        sh:path :indirectRecursiveHelperProperty
+    ] .
+
+:IndirectRecursiveHelperClass
+    a sh:NodeShape ;
+    sh:property [
+        sh:maxCount 1 ;
+        sh:node :IndirectRecursiveClass ;
+        sh:path :indirectRecursiveProperty
     ] .
 
 :Interface
