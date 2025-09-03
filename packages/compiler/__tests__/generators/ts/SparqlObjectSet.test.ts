@@ -5,7 +5,7 @@ import * as oxigraph from "oxigraph";
 import { describe } from "vitest";
 import { behavesLikeObjectSet } from "./behavesLikeObjectSet.js";
 
-describe("SparqlDatasetObjectSet", () => {
+describe("SparqlObjectSet", () => {
   const oxigraphStore = new oxigraph.Store();
   const objectSet = new kitchenSink.$SparqlObjectSet({
     sparqlClient: new OxigraphSparqlClient({

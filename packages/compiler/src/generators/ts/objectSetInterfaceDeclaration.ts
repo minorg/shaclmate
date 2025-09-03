@@ -57,7 +57,10 @@ export function objectSetInterfaceDeclaration({
           kind: StructureKind.TypeAlias,
           isExported: true,
           name: "Where",
-          type: `{ readonly identifiers: readonly ${typeParameters.ObjectIdentifierT.name}[]; readonly type: "identifiers" }`,
+          type: [
+            `{ readonly identifiers: readonly ${typeParameters.ObjectIdentifierT.name}[]; readonly type: "identifiers" } `,
+            `{ readonly predicate: rdfjs.NamedNode; readonly subject: rdfjs.BlankNode | rdfjs.NamedNode; readonly type: "triple-objects" } `,
+          ].join(" | "),
           typeParameters: [typeParameters.ObjectIdentifierT],
         },
       ],
