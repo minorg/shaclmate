@@ -359,7 +359,7 @@ if (where) {
   let wherePatterns: readonly sparqljs.Pattern[];
   switch (where.type) {
     case "identifiers": {
-      const valuePatternRowKey = \`?\${this.${syntheticNamePrefix}objectVariable}\`;
+      const valuePatternRowKey = \`?\${this.${syntheticNamePrefix}objectVariable.value}\`;
       wherePatterns = [{
         type: "values" as const,
         values: where.identifiers.map((identifier) => {

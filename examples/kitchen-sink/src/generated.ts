@@ -27144,7 +27144,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       let wherePatterns: readonly sparqljs.Pattern[];
       switch (where.type) {
         case "identifiers": {
-          const valuePatternRowKey = `?${this.$objectVariable}`;
+          const valuePatternRowKey = `?${this.$objectVariable.value}`;
           wherePatterns = [
             {
               type: "values" as const,
