@@ -460,7 +460,7 @@ export class TypeFactory {
       }
     }
 
-    const property = new ObjectType.ShaclProperty({
+    const property = new ObjectType.EagerShaclProperty({
       comment: astObjectTypeProperty.comment,
       dataFactoryVariable: this.dataFactoryVariable,
       description: astObjectTypeProperty.description,

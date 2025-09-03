@@ -2,6 +2,8 @@ export * from "./classDeclaration.js";
 
 export * from "./createFunctionDeclaration.js";
 
+export * from "./EagerShaclProperty.js";
+
 export * from "./equalsFunctionDeclaration.js";
 
 export * from "./fromRdfTypeVariableStatement.js";

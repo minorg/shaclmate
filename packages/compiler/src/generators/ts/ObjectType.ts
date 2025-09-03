@@ -503,6 +503,8 @@ export class ObjectType extends DeclaredType {
 }
 
 export namespace ObjectType {
+  export const EagerShaclProperty = _ObjectType.EagerShaclProperty;
+  export type EagerShaclProperty = _ObjectType.EagerShaclProperty;
   export const IdentifierPrefixProperty = _ObjectType.IdentifierPrefixProperty;
   export type IdentifierPrefixProperty = _ObjectType.IdentifierPrefixProperty;
   export const IdentifierProperty = _ObjectType.IdentifierProperty;
