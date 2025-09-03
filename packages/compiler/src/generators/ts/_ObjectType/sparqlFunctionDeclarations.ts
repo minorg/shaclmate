@@ -99,6 +99,10 @@ if (!parameters?.ignoreRdfType) {
 
   const propertySparqlWherePatterns: string[] = [];
   for (const property of this.ownProperties) {
+    if (property.recursive) {
+      continue;
+    }
+
     for (const triple of property.sparqlConstructTemplateTriples({
       variables,
     })) {

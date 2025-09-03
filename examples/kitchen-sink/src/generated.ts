@@ -10347,92 +10347,20 @@ export namespace IndirectRecursiveClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTemplateTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("indirectRecursiveClass");
-    const triples: sparqljs.Triple[] = [];
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "indirectRecursiveClass");
-    triples.push({
-      object: dataFactory.variable!(
-        `${variablePrefix}IndirectRecursiveHelperProperty`,
-      ),
-      predicate:
-        IndirectRecursiveClass.$properties.indirectRecursiveHelperProperty[
-          "identifier"
-        ],
-      subject,
-    });
-    triples.push(
-      ...IndirectRecursiveHelperClass.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${variablePrefix}IndirectRecursiveHelperProperty`,
-        ),
-        variablePrefix: `${variablePrefix}IndirectRecursiveHelperProperty`,
-      }),
-    );
-    return triples;
+    return [];
   }
 
-  export function $sparqlWherePatterns(parameters?: {
+  export function $sparqlWherePatterns(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("indirectRecursiveClass");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "indirectRecursiveClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}IndirectRecursiveHelperProperty`,
-                ),
-                predicate:
-                  IndirectRecursiveClass.$properties
-                    .indirectRecursiveHelperProperty["identifier"],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...IndirectRecursiveHelperClass.$sparqlWherePatterns({
-            ignoreRdfType: true,
-            subject: dataFactory.variable!(
-              `${variablePrefix}IndirectRecursiveHelperProperty`,
-            ),
-            variablePrefix: `${variablePrefix}IndirectRecursiveHelperProperty`,
-          }),
-        ],
-        type: "optional",
-      },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+    return [];
   }
 }
 /**
@@ -15091,89 +15019,20 @@ export namespace DirectRecursiveClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTemplateTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("directRecursiveClass");
-    const triples: sparqljs.Triple[] = [];
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "directRecursiveClass");
-    triples.push({
-      object: dataFactory.variable!(`${variablePrefix}DirectRecursiveProperty`),
-      predicate:
-        DirectRecursiveClass.$properties.directRecursiveProperty["identifier"],
-      subject,
-    });
-    triples.push(
-      ...DirectRecursiveClass.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${variablePrefix}DirectRecursiveProperty`,
-        ),
-        variablePrefix: `${variablePrefix}DirectRecursiveProperty`,
-      }),
-    );
-    return triples;
+    return [];
   }
 
-  export function $sparqlWherePatterns(parameters?: {
+  export function $sparqlWherePatterns(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("directRecursiveClass");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "directRecursiveClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}DirectRecursiveProperty`,
-                ),
-                predicate:
-                  DirectRecursiveClass.$properties.directRecursiveProperty[
-                    "identifier"
-                  ],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...DirectRecursiveClass.$sparqlWherePatterns({
-            ignoreRdfType: true,
-            subject: dataFactory.variable!(
-              `${variablePrefix}DirectRecursiveProperty`,
-            ),
-            variablePrefix: `${variablePrefix}DirectRecursiveProperty`,
-          }),
-        ],
-        type: "optional",
-      },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+    return [];
   }
 }
 /**
