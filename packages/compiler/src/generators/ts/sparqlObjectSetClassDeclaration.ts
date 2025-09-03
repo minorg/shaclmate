@@ -355,21 +355,38 @@ const patterns: sparqljs.Pattern[] = [];
 // Patterns should be most to least specific.
 
 if (where) {
+  // Assign a separate variable so the compiler catches any missing cases
+  let wherePatterns: readonly sparqljs.Pattern[];
   switch (where.type) {
-    case "identifiers":
-      patterns.push({
+    case "identifiers": {
+      const valuePatternRowKey = \`?\${this.${syntheticNamePrefix}objectVariable}\`;
+      wherePatterns = [{
         type: "values" as const,
         values: where.identifiers.map((identifier) => {
           const valuePatternRow: sparqljs.ValuePatternRow = {};
-          valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
+          valuePatternRow[valuePatternRowKey] = identifier as rdfjs.NamedNode;
           return valuePatternRow;
         }),
-      });
+      }];
       break;
-    case "patterns":
-      patterns.push(...where.patterns(this.${syntheticNamePrefix}objectVariable));
+    }
+    case "sparql-patterns": {
+      wherePatterns = where.sparqlPatterns(this.${syntheticNamePrefix}objectVariable);
       break;
+    }
+    case "triple-objects": {
+      wherePatterns = [{
+        triples: [{
+          subject: where.subject,
+          predicate: where.predicate,
+          object: this.${syntheticNamePrefix}objectVariable
+        }],
+        type: "bgp"
+      }];
+      break;
+    }
   }
+  patterns.push(...wherePatterns);
 }
 
 patterns.push(...objectType.${syntheticNamePrefix}sparqlWherePatterns({ subject: this.${syntheticNamePrefix}objectVariable }));
@@ -422,7 +439,7 @@ return patterns;`,
           kind: StructureKind.TypeAlias,
           isExported: true,
           name: "Where",
-          type: `${syntheticNamePrefix}ObjectSet.Where<${typeParameters.ObjectIdentifierT.name}> | { readonly patterns: (objectVariable: rdfjs.Variable) => readonly sparqljs.Pattern[]; readonly type: "patterns" }`,
+          type: `${syntheticNamePrefix}ObjectSet.Where<${typeParameters.ObjectIdentifierT.name}> | { readonly sparqlPatterns: (objectVariable: rdfjs.Variable) => readonly sparqljs.Pattern[]; readonly type: "sparql-patterns" }`,
           typeParameters: [typeParameters.ObjectIdentifierT],
         },
       ],

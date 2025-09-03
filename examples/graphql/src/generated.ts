@@ -1778,53 +1778,54 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     if (query?.where) {
+      // Assign identifiers in each case block so the compiler will catch missing cases.
+      let identifiers: rdfjsResource.Resource.Identifier[];
       switch (query.where.type) {
         case "identifiers": {
-          const objects: ObjectT[] = [];
-          for (const identifier of query.where.identifiers.slice(
-            offset,
-            offset + limit,
-          )) {
-            const either = objectType.$fromRdf({
-              resource: this.resourceSet.resource(identifier),
-            });
-            if (either.isLeft()) {
-              return either;
-            }
-            objects.push(either.unsafeCoerce());
-          }
-          return purify.Either.of(objects);
+          identifiers = query.where.identifiers.slice(offset, offset + limit);
+          break;
         }
         case "triple-objects": {
-          const objects: ObjectT[] = [];
+          let identifierI = 0;
+          identifiers = [];
           for (const quad of this.resourceSet.dataset.match(
             query.where.subject,
             query.where.predicate,
             null,
           )) {
-            switch (quad.object.termType) {
-              case "BlankNode":
-              case "NamedNode": {
-                const either = objectType.$fromRdf({
-                  resource: this.resourceSet.resource(quad.object),
-                });
-                if (either.isLeft()) {
-                  return either;
+            if (
+              quad.object.termType === "BlankNode" ||
+              quad.object.termType === "NamedNode"
+            ) {
+              if (++identifierI >= offset) {
+                identifiers.push(quad.object);
+                if (identifiers.length === limit) {
+                  break;
                 }
-                objects.push(either.unsafeCoerce());
-                break;
               }
-              default:
-                return purify.Left(
-                  new Error(
-                    `subject=${query.where.subject.value} predicate=${query.where.predicate.value} pattern matches non-identifier (${quad.object.termType}) triple`,
-                  ),
-                );
+            } else {
+              return purify.Left(
+                new Error(
+                  `subject=${query.where.subject.value} predicate=${query.where.predicate.value} pattern matches non-identifier (${quad.object.termType}) triple`,
+                ),
+              );
             }
           }
-          return purify.Either.of(objects);
+          break;
         }
       }
+
+      const objects: ObjectT[] = [];
+      for (const identifier of identifiers) {
+        const either = objectType.$fromRdf({
+          resource: this.resourceSet.resource(identifier),
+        });
+        if (either.isLeft()) {
+          return either;
+        }
+        objects.push(either.unsafeCoerce());
+      }
+      return purify.Either.of(objects);
     }
 
     if (!objectType.$fromRdfType) {
@@ -1914,12 +1915,45 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     if (query?.where) {
-      // Figure out which object type the identifiers belong to
+      // Assign identifiers in each case block so the compiler will catch missing cases.
+      let identifiers: rdfjsResource.Resource.Identifier[];
+      switch (query.where.type) {
+        case "identifiers": {
+          identifiers = query.where.identifiers.slice(offset, offset + limit);
+          break;
+        }
+        case "triple-objects": {
+          let identifierI = 0;
+          identifiers = [];
+          for (const quad of this.resourceSet.dataset.match(
+            query.where.subject,
+            query.where.predicate,
+            null,
+          )) {
+            if (
+              quad.object.termType === "BlankNode" ||
+              quad.object.termType === "NamedNode"
+            ) {
+              if (++identifierI >= offset) {
+                identifiers.push(quad.object);
+                if (identifiers.length === limit) {
+                  break;
+                }
+              }
+            } else {
+              return purify.Left(
+                new Error(
+                  `subject=${query.where.subject.value} predicate=${query.where.predicate.value} pattern matches non-identifier (${quad.object.termType}) triple`,
+                ),
+              );
+            }
+          }
+          break;
+        }
+      }
+
       const objects: ObjectT[] = [];
-      for (const identifier of query.where.identifiers.slice(
-        offset,
-        offset + limit,
-      )) {
+      for (const identifier of identifiers) {
         const resource = this.resourceSet.resource(identifier);
         const lefts: purify.Either<Error, ObjectT>[] = [];
         for (const objectType of objectTypes) {
