@@ -17,10 +17,11 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     }
   }
 
-  const type = this.transformPropertyShapeToAstType(propertyShape, null);
-  if (type.isLeft()) {
-    return type;
+  const typeEither = this.transformPropertyShapeToAstType(propertyShape, null);
+  if (typeEither.isLeft()) {
+    return typeEither;
   }
+  const type = typeEither.unsafeCoerce();
 
   const path = propertyShape.path;
   if (path.kind !== "PredicatePath") {
@@ -37,11 +38,12 @@ export function transformPropertyShapeToAstObjectTypeProperty(
       (literal) => literal.value,
     ),
     label: pickLiteral(propertyShape.labels).map((literal) => literal.value),
+    lazy: propertyShape.lazy,
     mutable: propertyShape.mutable,
     name: this.shapeAstName(propertyShape),
     order: propertyShape.order.orDefault(0),
     path,
-    type: type.extract() as ast.Type,
+    type,
     visibility: propertyShape.visibility,
   };
   this.astObjectTypePropertiesByIdentifier.set(

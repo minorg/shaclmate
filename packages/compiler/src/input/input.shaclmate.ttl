@@ -10,7 +10,7 @@ shaclmate:ShaclmateNodeShape
     shaclmate:rdfType sh:NodeShape ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf shaclmate:ShaclCoreNodeShape ;
-    sh:property shaclmate:ShaclmateNodeShape-abstract, shaclmate:ShaclmateNodeShape-export, shaclmate:ShaclmateNodeShape-fromRdfType, shaclmate:ShaclmateNodeShape-identifierMintingStrategy, shaclmate:ShaclmateNodeShape-rdfType, shaclmate:ShaclmateNodeShape-toRdfTypes, shaclmate:ShaclmateShape-extern, shaclmate:ShaclmateShape-mutable, shaclmate:ShaclmateShape-name, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
+    sh:property shaclmate:ShaclmateNodeShape-abstract, shaclmate:ShaclmateNodeShape-export, shaclmate:ShaclmateNodeShape-extern, shaclmate:ShaclmateNodeShape-fromRdfType, shaclmate:ShaclmateNodeShape-identifierMintingStrategy, shaclmate:ShaclmateNodeShape-rdfType, shaclmate:ShaclmateNodeShape-toRdfTypes, shaclmate:ShaclmateShape-mutable, shaclmate:ShaclmateShape-name, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
 
 shaclmate:ShaclmateNodeShape-abstract
     a sh:PropertyShape ;
@@ -24,6 +24,12 @@ shaclmate:ShaclmateNodeShape-export
     sh:datatype xsd:boolean ;
     sh:maxCount 1 ;
     sh:path shaclmate:export .
+
+shaclmate:ShaclmateNodeShape-extern
+    a sh:PropertyShape ;
+    sh:datatype xsd:boolean ;
+    sh:maxCount 1 ;
+    sh:path shaclmate:extern .
 
 shaclmate:ShaclmateNodeShape-fromRdfType
     a sh:PropertyShape ;
@@ -68,7 +74,13 @@ shaclmate:ShaclmatePropertyShape
     shaclmate:rdfType sh:PropertyShape ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf shaclmate:ShaclCorePropertyShape ;
-    sh:property shaclmate:ShaclmatePropertyShape-visibility, shaclmate:ShaclmatePropertyShape-widen, shaclmate:ShaclmateShape-extern, shaclmate:ShaclmateShape-mutable, shaclmate:ShaclmateShape-name .
+    sh:property shaclmate:ShaclmatePropertyShape-lazy, shaclmate:ShaclmatePropertyShape-visibility, shaclmate:ShaclmatePropertyShape-widen, shaclmate:ShaclmateShape-mutable, shaclmate:ShaclmateShape-name .
+
+shaclmate:ShaclmatePropertyShape-lazy
+    a sh:PropertyShape ;
+    sh:datatype xsd:boolean ;
+    sh:maxCount 1 ;
+    sh:path shaclmate:lazy .
 
 shaclmate:ShaclmatePropertyShape-visibility
     a sh:PropertyShape ;
@@ -90,12 +102,6 @@ shaclmate:ShaclmateShape
     sh:xone (shaclmate:ShaclmateNodeShape
         shaclmate:ShaclCorePropertyShape
     ) .
-
-shaclmate:ShaclmateShape-extern
-    a sh:PropertyShape ;
-    sh:datatype xsd:boolean ;
-    sh:maxCount 1 ;
-    sh:path shaclmate:extern .
 
 shaclmate:ShaclmateShape-mutable
     a sh:PropertyShape ;

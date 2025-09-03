@@ -1756,7 +1756,7 @@ export namespace ShaclCorePropertyShapeStatic {
 export interface ShaclmatePropertyShape extends ShaclCorePropertyShape {
   readonly $identifier: ShaclmatePropertyShape.$Identifier;
   readonly $type: "ShaclmatePropertyShape";
-  readonly extern: purify.Maybe<boolean>;
+  readonly lazy: purify.Maybe<boolean>;
   readonly mutable: purify.Maybe<boolean>;
   readonly name: purify.Maybe<string>;
   readonly visibility: purify.Maybe<
@@ -1792,7 +1792,7 @@ export namespace ShaclmatePropertyShape {
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       $type: "ShaclmatePropertyShape";
-      extern: purify.Maybe<boolean>;
+      lazy: purify.Maybe<boolean>;
       mutable: purify.Maybe<boolean>;
       name: purify.Maybe<string>;
       visibility: purify.Maybe<
@@ -1834,8 +1834,8 @@ export namespace ShaclmatePropertyShape {
     const $identifier: ShaclmatePropertyShape.$Identifier =
       _resource.identifier;
     const $type = "ShaclmatePropertyShape" as const;
-    const _externEither: purify.Either<Error, purify.Maybe<boolean>> = _resource
-      .values($properties.extern["identifier"], { unique: true })
+    const _lazyEither: purify.Either<Error, purify.Maybe<boolean>> = _resource
+      .values($properties.lazy["identifier"], { unique: true })
       .head()
       .chain((value) => value.toBoolean())
       .map((value) => purify.Maybe.of(value))
@@ -1844,11 +1844,11 @@ export namespace ShaclmatePropertyShape {
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
-    if (_externEither.isLeft()) {
-      return _externEither;
+    if (_lazyEither.isLeft()) {
+      return _lazyEither;
     }
 
-    const extern = _externEither.unsafeCoerce();
+    const lazy = _lazyEither.unsafeCoerce();
     const _mutableEither: purify.Either<
       Error,
       purify.Maybe<boolean>
@@ -1981,7 +1981,7 @@ export namespace ShaclmatePropertyShape {
       ...$super0,
       $identifier,
       $type,
-      extern,
+      lazy,
       mutable,
       name,
       visibility,
@@ -2021,8 +2021,8 @@ export namespace ShaclmatePropertyShape {
     }
 
     _resource.add(
-      ShaclmateNodeShape.$properties.extern["identifier"],
-      _shaclmatePropertyShape.extern,
+      ShaclmatePropertyShape.$properties.lazy["identifier"],
+      _shaclmatePropertyShape.lazy,
     );
     _resource.add(
       ShaclmateNodeShape.$properties.mutable["identifier"],
@@ -2045,9 +2045,9 @@ export namespace ShaclmatePropertyShape {
 
   export const $properties = {
     ...ShaclCorePropertyShapeStatic.$properties,
-    extern: {
+    lazy: {
       identifier: dataFactory.namedNode(
-        "http://purl.org/shaclmate/ontology#extern",
+        "http://purl.org/shaclmate/ontology#lazy",
       ),
     },
     mutable: {

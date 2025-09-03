@@ -1108,7 +1108,9 @@ export namespace UnionPropertiesClass {
         };
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2211,7 +2213,9 @@ export namespace TermPropertiesClass {
         };
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3491,7 +3495,9 @@ export namespace PropertyVisibilitiesClass {
     readonly publicProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4059,7 +4065,9 @@ export namespace PropertyCardinalitiesClass {
     readonly requiredStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4696,7 +4704,9 @@ export namespace OrderedPropertiesClass {
     readonly orderedPropertyA: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5649,7 +5659,9 @@ export namespace MutablePropertiesClass {
     readonly mutableStringProperty?: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6456,7 +6468,9 @@ export namespace ListPropertiesClass {
     readonly stringListProperty?: readonly string[];
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -7371,7 +7385,9 @@ export namespace LanguageInPropertiesClass {
     };
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8093,7 +8109,9 @@ export namespace InterfaceUnionMember2b {
     readonly interfaceUnionMember2bProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8487,7 +8505,9 @@ export namespace InterfaceUnionMember2a {
     readonly interfaceUnionMember2aProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8881,7 +8901,9 @@ export namespace InterfaceUnionMember1 {
     readonly interfaceUnionMember1Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9263,7 +9285,9 @@ export namespace Interface {
     readonly interfaceProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9688,7 +9712,9 @@ export namespace IndirectRecursiveHelperClass {
     readonly indirectRecursiveProperty?: IndirectRecursiveClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -10138,7 +10164,9 @@ export namespace IndirectRecursiveClass {
     readonly indirectRecursiveHelperProperty?: IndirectRecursiveHelperClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -10668,7 +10696,9 @@ export namespace InPropertiesClass {
     readonly inStringsProperty?: "text" | "html";
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -10827,21 +10857,23 @@ export namespace InPropertiesClass {
       .values($properties.inBooleansProperty["identifier"], { unique: true })
       .head()
       .chain((value) =>
-        value.toBoolean().chain((value) =>
-          value === true
-            ? purify.Either.of<Error, true>(value)
-            : purify.Left<Error, true>(
-                new rdfjsResource.Resource.MistypedValueError({
-                  actualValue: rdfLiteral.toRdf(value),
-                  expectedValueType: "true",
-                  focusResource: _resource,
-                  predicate:
-                    InPropertiesClass.$properties.inBooleansProperty[
-                      "identifier"
-                    ],
-                }),
-              ),
-        ),
+        value
+          .toBoolean()
+          .chain((value) =>
+            value === true
+              ? purify.Either.of<Error, true>(value)
+              : purify.Left<Error, true>(
+                  new rdfjsResource.Resource.MistypedValueError({
+                    actualValue: rdfLiteral.toRdf(value),
+                    expectedValueType: "true",
+                    focusResource: _resource,
+                    predicate:
+                      InPropertiesClass.$properties.inBooleansProperty[
+                        "identifier"
+                      ],
+                  }),
+                ),
+          ),
       )
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
@@ -11459,7 +11491,9 @@ export namespace InIdentifierClass {
     readonly inIdentifierProperty?: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.NamedNode<
@@ -11927,7 +11961,9 @@ export namespace HasValuePropertiesClass {
     readonly hasLiteralValueProperty?: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12251,808 +12287,17 @@ export namespace HasValuePropertiesClass {
     return requiredPatterns.concat(optionalPatterns);
   }
 }
-export class ExternPropertiesInlineNestedClass {
-  private _$identifier?: ExternPropertiesInlineNestedClass.$Identifier;
-  readonly $type = "ExternPropertiesInlineNestedClass";
-  readonly externPropertiesInlineNestedStringProperty: string;
-
-  constructor(parameters: {
-    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly externPropertiesInlineNestedStringProperty: string;
-  }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
-    } else {
-      this._$identifier = parameters.$identifier satisfies never;
-    }
-
-    this.externPropertiesInlineNestedStringProperty =
-      parameters.externPropertiesInlineNestedStringProperty;
-  }
-
-  get $identifier(): ExternPropertiesInlineNestedClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
-  $equals(other: ExternPropertiesInlineNestedClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
-      .mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        $strictEquals(
-          this.externPropertiesInlineNestedStringProperty,
-          other.externPropertiesInlineNestedStringProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "externPropertiesInlineNestedStringProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
-  }
-
-  $hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    _hasher.update(this.$identifier.value);
-    _hasher.update(this.$type);
-    this.$hashShaclProperties(_hasher);
-    return _hasher;
-  }
-
-  protected $hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    _hasher.update(this.externPropertiesInlineNestedStringProperty);
-    return _hasher;
-  }
-
-  $toJson(): ExternPropertiesInlineNestedClass.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
-        $type: this.$type,
-        externPropertiesInlineNestedStringProperty:
-          this.externPropertiesInlineNestedStringProperty,
-      } satisfies ExternPropertiesInlineNestedClass.$Json),
-    );
-  }
-
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
-      mutateGraph,
-    });
-    _resource.add(
-      ExternPropertiesInlineNestedClass.$properties
-        .externPropertiesInlineNestedStringProperty["identifier"],
-      this.externPropertiesInlineNestedStringProperty,
-    );
-    return _resource;
-  }
-
-  toString(): string {
-    return JSON.stringify(this.$toJson());
-  }
-}
-
-export namespace ExternPropertiesInlineNestedClass {
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory: dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
-      toString = rdfjsResource.Resource.Identifier.toString;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ExternPropertiesInlineNestedClass";
-    readonly externPropertiesInlineNestedStringProperty: string;
-  };
-
-  export function $propertiesFromJson(_json: unknown): purify.Either<
-    zod.ZodError,
-    {
-      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      externPropertiesInlineNestedStringProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return purify.Left($jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const externPropertiesInlineNestedStringProperty =
-      _jsonObject["externPropertiesInlineNestedStringProperty"];
-    return purify.Either.of({
-      $identifier,
-      externPropertiesInlineNestedStringProperty,
-    });
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, ExternPropertiesInlineNestedClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new ExternPropertiesInlineNestedClass(properties),
-    );
-  }
-
-  export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "ExternPropertiesInlineNestedClass" },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/externPropertiesInlineNestedStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "ExternPropertiesInlineNestedClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      $type: zod.literal("ExternPropertiesInlineNestedClass"),
-      externPropertiesInlineNestedStringProperty: zod.string(),
-    }) satisfies zod.ZodType<$Json>;
-  }
-
-  export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    Error,
-    {
-      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      externPropertiesInlineNestedStringProperty: string;
-    }
-  > {
-    const $identifier: ExternPropertiesInlineNestedClass.$Identifier =
-      _resource.identifier;
-    const _externPropertiesInlineNestedStringPropertyEither: purify.Either<
-      Error,
-      string
-    > = _resource
-      .values(
-        $properties.externPropertiesInlineNestedStringProperty["identifier"],
-        { unique: true },
-      )
-      .head()
-      .chain((value) => value.toString());
-    if (_externPropertiesInlineNestedStringPropertyEither.isLeft()) {
-      return _externPropertiesInlineNestedStringPropertyEither;
-    }
-
-    const externPropertiesInlineNestedStringProperty =
-      _externPropertiesInlineNestedStringPropertyEither.unsafeCoerce();
-    return purify.Either.of({
-      $identifier,
-      externPropertiesInlineNestedStringProperty,
-    });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<
-      typeof ExternPropertiesInlineNestedClass.$propertiesFromRdf
-    >[0],
-  ): purify.Either<Error, ExternPropertiesInlineNestedClass> {
-    return ExternPropertiesInlineNestedClass.$propertiesFromRdf(parameters).map(
-      (properties) => new ExternPropertiesInlineNestedClass(properties),
-    );
-  }
-
-  export const $properties = {
-    externPropertiesInlineNestedStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/externPropertiesInlineNestedStringProperty",
-      ),
-    },
-  };
-
-  export function $sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        ExternPropertiesInlineNestedClass.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        ExternPropertiesInlineNestedClass.$sparqlWherePatterns({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      ExternPropertiesInlineNestedClass.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function $sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
-      dataFactory.variable!("externPropertiesInlineNestedClass");
-    const triples: sparqljs.Triple[] = [];
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "externPropertiesInlineNestedClass");
-    triples.push({
-      object: dataFactory.variable!(
-        `${variablePrefix}ExternPropertiesInlineNestedStringProperty`,
-      ),
-      predicate:
-        ExternPropertiesInlineNestedClass.$properties
-          .externPropertiesInlineNestedStringProperty["identifier"],
-      subject,
-    });
-    return triples;
-  }
-
-  export function $sparqlWherePatterns(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
-    const subject =
-      parameters?.subject ??
-      dataFactory.variable!("externPropertiesInlineNestedClass");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "externPropertiesInlineNestedClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
-      {
-        triples: [
-          {
-            object: dataFactory.variable!(
-              `${variablePrefix}ExternPropertiesInlineNestedStringProperty`,
-            ),
-            predicate:
-              ExternPropertiesInlineNestedClass.$properties
-                .externPropertiesInlineNestedStringProperty["identifier"],
-            subject,
-          },
-        ],
-        type: "bgp",
-      },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
-  }
-}
-export class ExternPropertiesExternNestedClass {
-  private _$identifier?: ExternPropertiesExternNestedClass.$Identifier;
-  readonly $type = "ExternPropertiesExternNestedClass";
-  readonly externPropertiesExternNestedStringProperty: string;
-
-  constructor(parameters: {
-    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly externPropertiesExternNestedStringProperty: string;
-  }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
-    } else {
-      this._$identifier = parameters.$identifier satisfies never;
-    }
-
-    this.externPropertiesExternNestedStringProperty =
-      parameters.externPropertiesExternNestedStringProperty;
-  }
-
-  get $identifier(): ExternPropertiesExternNestedClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
-  $equals(other: ExternPropertiesExternNestedClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
-      .mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        $strictEquals(
-          this.externPropertiesExternNestedStringProperty,
-          other.externPropertiesExternNestedStringProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "externPropertiesExternNestedStringProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
-  }
-
-  $hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    _hasher.update(this.$identifier.value);
-    _hasher.update(this.$type);
-    this.$hashShaclProperties(_hasher);
-    return _hasher;
-  }
-
-  protected $hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    _hasher.update(this.externPropertiesExternNestedStringProperty);
-    return _hasher;
-  }
-
-  $toJson(): ExternPropertiesExternNestedClass.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
-        $type: this.$type,
-        externPropertiesExternNestedStringProperty:
-          this.externPropertiesExternNestedStringProperty,
-      } satisfies ExternPropertiesExternNestedClass.$Json),
-    );
-  }
-
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
-      mutateGraph,
-    });
-    _resource.add(
-      ExternPropertiesExternNestedClass.$properties
-        .externPropertiesExternNestedStringProperty["identifier"],
-      this.externPropertiesExternNestedStringProperty,
-    );
-    return _resource;
-  }
-
-  toString(): string {
-    return JSON.stringify(this.$toJson());
-  }
-}
-
-export namespace ExternPropertiesExternNestedClass {
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory: dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
-      toString = rdfjsResource.Resource.Identifier.toString;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ExternPropertiesExternNestedClass";
-    readonly externPropertiesExternNestedStringProperty: string;
-  };
-
-  export function $propertiesFromJson(_json: unknown): purify.Either<
-    zod.ZodError,
-    {
-      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      externPropertiesExternNestedStringProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return purify.Left($jsonSafeParseResult.error);
-    }
-
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
-    const externPropertiesExternNestedStringProperty =
-      _jsonObject["externPropertiesExternNestedStringProperty"];
-    return purify.Either.of({
-      $identifier,
-      externPropertiesExternNestedStringProperty,
-    });
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, ExternPropertiesExternNestedClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new ExternPropertiesExternNestedClass(properties),
-    );
-  }
-
-  export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "ExternPropertiesExternNestedClass" },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/externPropertiesExternNestedStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "ExternPropertiesExternNestedClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      $type: zod.literal("ExternPropertiesExternNestedClass"),
-      externPropertiesExternNestedStringProperty: zod.string(),
-    }) satisfies zod.ZodType<$Json>;
-  }
-
-  export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
-    // @ts-ignore
-    ..._context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    Error,
-    {
-      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      externPropertiesExternNestedStringProperty: string;
-    }
-  > {
-    const $identifier: ExternPropertiesExternNestedClass.$Identifier =
-      _resource.identifier;
-    const _externPropertiesExternNestedStringPropertyEither: purify.Either<
-      Error,
-      string
-    > = _resource
-      .values(
-        $properties.externPropertiesExternNestedStringProperty["identifier"],
-        { unique: true },
-      )
-      .head()
-      .chain((value) => value.toString());
-    if (_externPropertiesExternNestedStringPropertyEither.isLeft()) {
-      return _externPropertiesExternNestedStringPropertyEither;
-    }
-
-    const externPropertiesExternNestedStringProperty =
-      _externPropertiesExternNestedStringPropertyEither.unsafeCoerce();
-    return purify.Either.of({
-      $identifier,
-      externPropertiesExternNestedStringProperty,
-    });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<
-      typeof ExternPropertiesExternNestedClass.$propertiesFromRdf
-    >[0],
-  ): purify.Either<Error, ExternPropertiesExternNestedClass> {
-    return ExternPropertiesExternNestedClass.$propertiesFromRdf(parameters).map(
-      (properties) => new ExternPropertiesExternNestedClass(properties),
-    );
-  }
-
-  export const $properties = {
-    externPropertiesExternNestedStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/externPropertiesExternNestedStringProperty",
-      ),
-    },
-  };
-
-  export function $sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        ExternPropertiesExternNestedClass.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        ExternPropertiesExternNestedClass.$sparqlWherePatterns({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      ExternPropertiesExternNestedClass.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function $sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
-      dataFactory.variable!("externPropertiesExternNestedClass");
-    const triples: sparqljs.Triple[] = [];
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "externPropertiesExternNestedClass");
-    triples.push({
-      object: dataFactory.variable!(
-        `${variablePrefix}ExternPropertiesExternNestedStringProperty`,
-      ),
-      predicate:
-        ExternPropertiesExternNestedClass.$properties
-          .externPropertiesExternNestedStringProperty["identifier"],
-      subject,
-    });
-    return triples;
-  }
-
-  export function $sparqlWherePatterns(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
-    const subject =
-      parameters?.subject ??
-      dataFactory.variable!("externPropertiesExternNestedClass");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "externPropertiesExternNestedClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
-      {
-        triples: [
-          {
-            object: dataFactory.variable!(
-              `${variablePrefix}ExternPropertiesExternNestedStringProperty`,
-            ),
-            predicate:
-              ExternPropertiesExternNestedClass.$properties
-                .externPropertiesExternNestedStringProperty["identifier"],
-            subject,
-          },
-        ],
-        type: "bgp",
-      },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
-  }
-}
 /**
- * Node shape that inlines/nests another node shape and externs/references another.
+ * Node shape that references the ExternClass in a property.
  */
-export class ExternPropertiesClass {
-  private _$identifier?: ExternPropertiesClass.$Identifier;
-  readonly $type = "ExternPropertiesClass";
+export class ExternClassPropertyClass {
+  private _$identifier?: ExternClassPropertyClass.$Identifier;
+  readonly $type = "ExternClassPropertyClass";
   readonly externClassProperty: purify.Maybe<ExternClass>;
-  readonly externNestedProperty: purify.Maybe<
-    rdfjs.BlankNode | rdfjs.NamedNode
-  >;
-  readonly inlineNestedProperty: purify.Maybe<ExternPropertiesInlineNestedClass>;
 
   constructor(parameters: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly externClassProperty?: ExternClass | purify.Maybe<ExternClass>;
-    readonly externNestedProperty?:
-      | (rdfjs.BlankNode | rdfjs.NamedNode)
-      | purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>
-      | string;
-    readonly inlineNestedProperty?:
-      | ExternPropertiesInlineNestedClass
-      | purify.Maybe<ExternPropertiesInlineNestedClass>;
   }) {
     if (typeof parameters.$identifier === "object") {
       this._$identifier = parameters.$identifier;
@@ -13077,50 +12322,16 @@ export class ExternPropertiesClass {
     } else {
       this.externClassProperty = parameters.externClassProperty satisfies never;
     }
-
-    if (purify.Maybe.isMaybe(parameters.externNestedProperty)) {
-      this.externNestedProperty = parameters.externNestedProperty;
-    } else if (typeof parameters.externNestedProperty === "object") {
-      this.externNestedProperty = purify.Maybe.of(
-        parameters.externNestedProperty,
-      );
-    } else if (typeof parameters.externNestedProperty === "string") {
-      this.externNestedProperty = purify.Maybe.of(
-        dataFactory.namedNode(parameters.externNestedProperty),
-      );
-    } else if (typeof parameters.externNestedProperty === "undefined") {
-      this.externNestedProperty = purify.Maybe.empty();
-    } else {
-      this.externNestedProperty =
-        parameters.externNestedProperty satisfies never;
-    }
-
-    if (purify.Maybe.isMaybe(parameters.inlineNestedProperty)) {
-      this.inlineNestedProperty = parameters.inlineNestedProperty;
-    } else if (
-      typeof parameters.inlineNestedProperty === "object" &&
-      parameters.inlineNestedProperty instanceof
-        ExternPropertiesInlineNestedClass
-    ) {
-      this.inlineNestedProperty = purify.Maybe.of(
-        parameters.inlineNestedProperty,
-      );
-    } else if (typeof parameters.inlineNestedProperty === "undefined") {
-      this.inlineNestedProperty = purify.Maybe.empty();
-    } else {
-      this.inlineNestedProperty =
-        parameters.inlineNestedProperty satisfies never;
-    }
   }
 
-  get $identifier(): ExternPropertiesClass.$Identifier {
+  get $identifier(): ExternClassPropertyClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
 
-  $equals(other: ExternPropertiesClass): $EqualsResult {
+  $equals(other: ExternClassPropertyClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
@@ -13152,31 +12363,6 @@ export class ExternPropertiesClass {
           propertyValuesUnequal,
           type: "Property" as const,
         })),
-      )
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
-          this.externNestedProperty,
-          other.externNestedProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "externNestedProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(left, right, (left, right) => left.$equals(right)))(
-          this.inlineNestedProperty,
-          other.inlineNestedProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "inlineNestedProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
       );
   }
 
@@ -13199,17 +12385,10 @@ export class ExternPropertiesClass {
     this.externClassProperty.ifJust((value0) => {
       value0.$hash(_hasher);
     });
-    this.externNestedProperty.ifJust((value0) => {
-      _hasher.update(value0.termType);
-      _hasher.update(value0.value);
-    });
-    this.inlineNestedProperty.ifJust((value0) => {
-      value0.$hash(_hasher);
-    });
     return _hasher;
   }
 
-  $toJson(): ExternPropertiesClass.$Json {
+  $toJson(): ExternClassPropertyClass.$Json {
     return JSON.parse(
       JSON.stringify({
         "@id":
@@ -13220,17 +12399,7 @@ export class ExternPropertiesClass {
         externClassProperty: this.externClassProperty
           .map((item) => item.$toJson())
           .extract(),
-        externNestedProperty: this.externNestedProperty
-          .map((item) =>
-            item.termType === "BlankNode"
-              ? { "@id": `_:${item.value}` }
-              : { "@id": item.value },
-          )
-          .extract(),
-        inlineNestedProperty: this.inlineNestedProperty
-          .map((item) => item.$toJson())
-          .extract(),
-      } satisfies ExternPropertiesClass.$Json),
+      } satisfies ExternClassPropertyClass.$Json),
     );
   }
 
@@ -13246,18 +12415,8 @@ export class ExternPropertiesClass {
       mutateGraph,
     });
     _resource.add(
-      ExternPropertiesClass.$properties.externClassProperty["identifier"],
+      ExternClassPropertyClass.$properties.externClassProperty["identifier"],
       this.externClassProperty.map((value) =>
-        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    _resource.add(
-      ExternPropertiesClass.$properties.externNestedProperty["identifier"],
-      this.externNestedProperty,
-    );
-    _resource.add(
-      ExternPropertiesClass.$properties.inlineNestedProperty["identifier"],
-      this.inlineNestedProperty.map((value) =>
         value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
@@ -13269,7 +12428,7 @@ export class ExternPropertiesClass {
   }
 }
 
-export namespace ExternPropertiesClass {
+export namespace ExternClassPropertyClass {
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -13290,19 +12449,17 @@ export namespace ExternPropertiesClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly $type: "ExternPropertiesClass";
+    readonly $type: "ExternClassPropertyClass";
     readonly externClassProperty?: ExternClass.$Json;
-    readonly externNestedProperty?: { readonly "@id": string };
-    readonly inlineNestedProperty?: ExternPropertiesInlineNestedClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       externClassProperty: purify.Maybe<ExternClass>;
-      externNestedProperty: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>;
-      inlineNestedProperty: purify.Maybe<ExternPropertiesInlineNestedClass>;
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -13317,31 +12474,14 @@ export namespace ExternPropertiesClass {
     const externClassProperty = purify.Maybe.fromNullable(
       _jsonObject["externClassProperty"],
     ).map((item) => ExternClass.$fromJson(item).unsafeCoerce());
-    const externNestedProperty = purify.Maybe.fromNullable(
-      _jsonObject["externNestedProperty"],
-    ).map((item) =>
-      item["@id"].startsWith("_:")
-        ? dataFactory.blankNode(item["@id"].substring(2))
-        : dataFactory.namedNode(item["@id"]),
-    );
-    const inlineNestedProperty = purify.Maybe.fromNullable(
-      _jsonObject["inlineNestedProperty"],
-    ).map((item) =>
-      ExternPropertiesInlineNestedClass.$fromJson(item).unsafeCoerce(),
-    );
-    return purify.Either.of({
-      $identifier,
-      externClassProperty,
-      externNestedProperty,
-      inlineNestedProperty,
-    });
+    return purify.Either.of({ $identifier, externClassProperty });
   }
 
   export function $fromJson(
     json: unknown,
-  ): purify.Either<zod.ZodError, ExternPropertiesClass> {
+  ): purify.Either<zod.ZodError, ExternClassPropertyClass> {
     return $propertiesFromJson(json).map(
-      (properties) => new ExternPropertiesClass(properties),
+      (properties) => new ExternClassPropertyClass(properties),
     );
   }
 
@@ -13361,7 +12501,7 @@ export namespace ExternPropertiesClass {
         {
           rule: {
             condition: {
-              schema: { const: "ExternPropertiesClass" },
+              schema: { const: "ExternClassPropertyClass" },
               scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
@@ -13372,15 +12512,8 @@ export namespace ExternPropertiesClass {
         ExternClass.$jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/externClassProperty`,
         }),
-        {
-          scope: `${scopePrefix}/properties/externNestedProperty`,
-          type: "Control",
-        },
-        ExternPropertiesInlineNestedClass.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/inlineNestedProperty`,
-        }),
       ],
-      label: "ExternPropertiesClass",
+      label: "ExternClassPropertyClass",
       type: "Group",
     };
   }
@@ -13388,13 +12521,8 @@ export namespace ExternPropertiesClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      $type: zod.literal("ExternPropertiesClass"),
+      $type: zod.literal("ExternClassPropertyClass"),
       externClassProperty: ExternClass.$jsonZodSchema().optional(),
-      externNestedProperty: zod
-        .object({ "@id": zod.string().min(1) })
-        .optional(),
-      inlineNestedProperty:
-        ExternPropertiesInlineNestedClass.$jsonZodSchema().optional(),
     }) satisfies zod.ZodType<$Json>;
   }
 
@@ -13414,11 +12542,10 @@ export namespace ExternPropertiesClass {
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       externClassProperty: purify.Maybe<ExternClass>;
-      externNestedProperty: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>;
-      inlineNestedProperty: purify.Maybe<ExternPropertiesInlineNestedClass>;
     }
   > {
-    const $identifier: ExternPropertiesClass.$Identifier = _resource.identifier;
+    const $identifier: ExternClassPropertyClass.$Identifier =
+      _resource.identifier;
     const _externClassPropertyEither: purify.Either<
       Error,
       purify.Maybe<ExternClass>
@@ -13445,63 +12572,16 @@ export namespace ExternPropertiesClass {
     }
 
     const externClassProperty = _externClassPropertyEither.unsafeCoerce();
-    const _externNestedPropertyEither: purify.Either<
-      Error,
-      purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>
-    > = _resource
-      .values($properties.externNestedProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toIdentifier())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
-    if (_externNestedPropertyEither.isLeft()) {
-      return _externNestedPropertyEither;
-    }
-
-    const externNestedProperty = _externNestedPropertyEither.unsafeCoerce();
-    const _inlineNestedPropertyEither: purify.Either<
-      Error,
-      purify.Maybe<ExternPropertiesInlineNestedClass>
-    > = _resource
-      .values($properties.inlineNestedProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toResource())
-      .chain((_resource) =>
-        ExternPropertiesInlineNestedClass.$fromRdf({
-          ..._context,
-          ignoreRdfType: true,
-          languageIn: _languageIn,
-          resource: _resource,
-        }),
-      )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
-    if (_inlineNestedPropertyEither.isLeft()) {
-      return _inlineNestedPropertyEither;
-    }
-
-    const inlineNestedProperty = _inlineNestedPropertyEither.unsafeCoerce();
-    return purify.Either.of({
-      $identifier,
-      externClassProperty,
-      externNestedProperty,
-      inlineNestedProperty,
-    });
+    return purify.Either.of({ $identifier, externClassProperty });
   }
 
   export function $fromRdf(
-    parameters: Parameters<typeof ExternPropertiesClass.$propertiesFromRdf>[0],
-  ): purify.Either<Error, ExternPropertiesClass> {
-    return ExternPropertiesClass.$propertiesFromRdf(parameters).map(
-      (properties) => new ExternPropertiesClass(properties),
+    parameters: Parameters<
+      typeof ExternClassPropertyClass.$propertiesFromRdf
+    >[0],
+  ): purify.Either<Error, ExternClassPropertyClass> {
+    return ExternClassPropertyClass.$propertiesFromRdf(parameters).map(
+      (properties) => new ExternClassPropertyClass(properties),
     );
   }
 
@@ -13509,16 +12589,6 @@ export namespace ExternPropertiesClass {
     externClassProperty: {
       identifier: dataFactory.namedNode(
         "http://example.com/externClassProperty",
-      ),
-    },
-    externNestedProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/externNestedProperty",
-      ),
-    },
-    inlineNestedProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/inlineNestedProperty",
       ),
     },
   };
@@ -13537,14 +12607,17 @@ export namespace ExternPropertiesClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ExternPropertiesClass.$sparqlConstructTemplateTriples({
+        ExternClassPropertyClass.$sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ExternPropertiesClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        ExternClassPropertyClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          subject,
+        }),
       ),
     };
   }
@@ -13558,7 +12631,7 @@ export namespace ExternPropertiesClass {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ExternPropertiesClass.$sparqlConstructQuery(parameters),
+      ExternClassPropertyClass.$sparqlConstructQuery(parameters),
     );
   }
 
@@ -13568,17 +12641,17 @@ export namespace ExternPropertiesClass {
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     const subject =
-      parameters?.subject ?? dataFactory.variable!("externPropertiesClass");
+      parameters?.subject ?? dataFactory.variable!("externClassPropertyClass");
     const triples: sparqljs.Triple[] = [];
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable"
         ? subject.value
-        : "externPropertiesClass");
+        : "externClassPropertyClass");
     triples.push({
       object: dataFactory.variable!(`${variablePrefix}ExternClassProperty`),
       predicate:
-        ExternPropertiesClass.$properties.externClassProperty["identifier"],
+        ExternClassPropertyClass.$properties.externClassProperty["identifier"],
       subject,
     });
     triples.push(
@@ -13586,25 +12659,6 @@ export namespace ExternPropertiesClass {
         ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}ExternClassProperty`),
         variablePrefix: `${variablePrefix}ExternClassProperty`,
-      }),
-    );
-    triples.push({
-      object: dataFactory.variable!(`${variablePrefix}ExternNestedProperty`),
-      predicate:
-        ExternPropertiesClass.$properties.externNestedProperty["identifier"],
-      subject,
-    });
-    triples.push({
-      object: dataFactory.variable!(`${variablePrefix}InlineNestedProperty`),
-      predicate:
-        ExternPropertiesClass.$properties.inlineNestedProperty["identifier"],
-      subject,
-    });
-    triples.push(
-      ...ExternPropertiesInlineNestedClass.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(`${variablePrefix}InlineNestedProperty`),
-        variablePrefix: `${variablePrefix}InlineNestedProperty`,
       }),
     );
     return triples;
@@ -13618,12 +12672,12 @@ export namespace ExternPropertiesClass {
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
-      parameters?.subject ?? dataFactory.variable!("externPropertiesClass");
+      parameters?.subject ?? dataFactory.variable!("externClassPropertyClass");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable"
         ? subject.value
-        : "externPropertiesClass");
+        : "externClassPropertyClass");
     const propertyPatterns: readonly sparqljs.Pattern[] = [
       {
         patterns: [
@@ -13634,7 +12688,7 @@ export namespace ExternPropertiesClass {
                   `${variablePrefix}ExternClassProperty`,
                 ),
                 predicate:
-                  ExternPropertiesClass.$properties.externClassProperty[
+                  ExternClassPropertyClass.$properties.externClassProperty[
                     "identifier"
                   ],
                 subject,
@@ -13648,53 +12702,6 @@ export namespace ExternPropertiesClass {
               `${variablePrefix}ExternClassProperty`,
             ),
             variablePrefix: `${variablePrefix}ExternClassProperty`,
-          }),
-        ],
-        type: "optional",
-      },
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}ExternNestedProperty`,
-                ),
-                predicate:
-                  ExternPropertiesClass.$properties.externNestedProperty[
-                    "identifier"
-                  ],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-        ],
-        type: "optional",
-      },
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}InlineNestedProperty`,
-                ),
-                predicate:
-                  ExternPropertiesClass.$properties.inlineNestedProperty[
-                    "identifier"
-                  ],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...ExternPropertiesInlineNestedClass.$sparqlWherePatterns({
-            ignoreRdfType: true,
-            subject: dataFactory.variable!(
-              `${variablePrefix}InlineNestedProperty`,
-            ),
-            variablePrefix: `${variablePrefix}InlineNestedProperty`,
           }),
         ],
         type: "optional",
@@ -13870,7 +12877,9 @@ export namespace ExplicitRdfTypeClass {
     readonly explicitRdfTypeProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14324,7 +13333,9 @@ export namespace ExplicitFromToRdfTypesClass {
     readonly explicitFromToRdfTypesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14789,7 +13800,9 @@ export namespace DirectRecursiveClass {
     readonly directRecursiveProperty?: DirectRecursiveClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15354,7 +14367,9 @@ export namespace DefaultValuePropertiesClass {
     readonly trueBooleanDefaultValueProperty: boolean;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16069,7 +15084,9 @@ export namespace BaseInterfaceWithPropertiesStatic {
     readonly baseInterfaceWithPropertiesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16531,7 +15548,9 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export const $Identifier = BaseInterfaceWithPropertiesStatic.$Identifier;
   export type $Json = BaseInterfaceWithPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16953,7 +15972,9 @@ export namespace ConcreteParentInterfaceStatic {
     readonly concreteParentInterfaceProperty: string;
   } & BaseInterfaceWithoutPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17444,7 +16465,9 @@ export namespace ConcreteChildInterface {
     readonly concreteChildInterfaceProperty: string;
   } & ConcreteParentInterfaceStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18009,7 +17032,9 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     readonly abstractBaseClassWithPropertiesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18558,18 +17583,20 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
   }
 
   override $equals(other: ConcreteParentClass): $EqualsResult {
-    return super.$equals(other).chain(() =>
-      $strictEquals(
-        this.concreteParentClassProperty,
-        other.concreteParentClassProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "concreteParentClassProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .$equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.concreteParentClassProperty,
+          other.concreteParentClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "concreteParentClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override $hash<
@@ -18649,7 +17676,9 @@ export namespace ConcreteParentClassStatic {
     readonly concreteParentClassProperty: string;
   } & AbstractBaseClassWithoutPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19030,18 +18059,20 @@ export class ConcreteChildClass extends ConcreteParentClass {
   }
 
   override $equals(other: ConcreteChildClass): $EqualsResult {
-    return super.$equals(other).chain(() =>
-      $strictEquals(
-        this.concreteChildClassProperty,
-        other.concreteChildClassProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "concreteChildClassProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .$equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.concreteChildClassProperty,
+          other.concreteChildClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "concreteChildClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override $hash<
@@ -19117,7 +18148,9 @@ export namespace ConcreteChildClass {
     readonly concreteChildClassProperty: string;
   } & ConcreteParentClassStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19594,7 +18627,9 @@ export namespace ClassUnionMember2 {
     readonly classUnionMember2Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -20033,7 +19068,9 @@ export namespace ClassUnionMember1 {
     readonly classUnionMember1Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -20711,7 +19748,9 @@ export namespace AbstractBaseClassForExternClassStatic {
     readonly abstractBaseClassForExternClassProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -21943,61 +20982,20 @@ export interface $ObjectSet {
   explicitRdfTypeClassesCount(
     query?: Pick<$ObjectSet.Query<ExplicitRdfTypeClass.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
-  externPropertiesClass(
-    identifier: ExternPropertiesClass.$Identifier,
-  ): Promise<purify.Either<Error, ExternPropertiesClass>>;
-  externPropertiesClassIdentifiers(
-    query?: $ObjectSet.Query<ExternPropertiesClass.$Identifier>,
+  externClassPropertyClass(
+    identifier: ExternClassPropertyClass.$Identifier,
+  ): Promise<purify.Either<Error, ExternClassPropertyClass>>;
+  externClassPropertyClassIdentifiers(
+    query?: $ObjectSet.Query<ExternClassPropertyClass.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly ExternPropertiesClass.$Identifier[]>
+    purify.Either<Error, readonly ExternClassPropertyClass.$Identifier[]>
   >;
-  externPropertiesClasses(
-    query?: $ObjectSet.Query<ExternPropertiesClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly ExternPropertiesClass[]>>;
-  externPropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<ExternPropertiesClass.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>>;
-  externPropertiesExternNestedClass(
-    identifier: ExternPropertiesExternNestedClass.$Identifier,
-  ): Promise<purify.Either<Error, ExternPropertiesExternNestedClass>>;
-  externPropertiesExternNestedClassIdentifiers(
-    query?: $ObjectSet.Query<ExternPropertiesExternNestedClass.$Identifier>,
-  ): Promise<
-    purify.Either<
-      Error,
-      readonly ExternPropertiesExternNestedClass.$Identifier[]
-    >
-  >;
-  externPropertiesExternNestedClasses(
-    query?: $ObjectSet.Query<ExternPropertiesExternNestedClass.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly ExternPropertiesExternNestedClass[]>
-  >;
-  externPropertiesExternNestedClassesCount(
+  externClassPropertyClasses(
+    query?: $ObjectSet.Query<ExternClassPropertyClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ExternClassPropertyClass[]>>;
+  externClassPropertyClassesCount(
     query?: Pick<
-      $ObjectSet.Query<ExternPropertiesExternNestedClass.$Identifier>,
-      "where"
-    >,
-  ): Promise<purify.Either<Error, number>>;
-  externPropertiesInlineNestedClass(
-    identifier: ExternPropertiesInlineNestedClass.$Identifier,
-  ): Promise<purify.Either<Error, ExternPropertiesInlineNestedClass>>;
-  externPropertiesInlineNestedClassIdentifiers(
-    query?: $ObjectSet.Query<ExternPropertiesInlineNestedClass.$Identifier>,
-  ): Promise<
-    purify.Either<
-      Error,
-      readonly ExternPropertiesInlineNestedClass.$Identifier[]
-    >
-  >;
-  externPropertiesInlineNestedClasses(
-    query?: $ObjectSet.Query<ExternPropertiesInlineNestedClass.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly ExternPropertiesInlineNestedClass[]>
-  >;
-  externPropertiesInlineNestedClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<ExternPropertiesInlineNestedClass.$Identifier>,
+      $ObjectSet.Query<ExternClassPropertyClass.$Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>>;
@@ -23195,215 +22193,71 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >(ExplicitRdfTypeClass, query);
   }
 
-  async externPropertiesClass(
-    identifier: ExternPropertiesClass.$Identifier,
-  ): Promise<purify.Either<Error, ExternPropertiesClass>> {
-    return this.externPropertiesClassSync(identifier);
+  async externClassPropertyClass(
+    identifier: ExternClassPropertyClass.$Identifier,
+  ): Promise<purify.Either<Error, ExternClassPropertyClass>> {
+    return this.externClassPropertyClassSync(identifier);
   }
 
-  externPropertiesClassSync(
-    identifier: ExternPropertiesClass.$Identifier,
-  ): purify.Either<Error, ExternPropertiesClass> {
-    return this.externPropertiesClassesSync({
+  externClassPropertyClassSync(
+    identifier: ExternClassPropertyClass.$Identifier,
+  ): purify.Either<Error, ExternClassPropertyClass> {
+    return this.externClassPropertyClassesSync({
       where: { identifiers: [identifier], type: "identifiers" },
     }).map((objects) => objects[0]);
   }
 
-  async externPropertiesClassIdentifiers(
-    query?: $ObjectSet.Query<ExternPropertiesClass.$Identifier>,
+  async externClassPropertyClassIdentifiers(
+    query?: $ObjectSet.Query<ExternClassPropertyClass.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly ExternPropertiesClass.$Identifier[]>
+    purify.Either<Error, readonly ExternClassPropertyClass.$Identifier[]>
   > {
-    return this.externPropertiesClassIdentifiersSync(query);
+    return this.externClassPropertyClassIdentifiersSync(query);
   }
 
-  externPropertiesClassIdentifiersSync(
-    query?: $ObjectSet.Query<ExternPropertiesClass.$Identifier>,
-  ): purify.Either<Error, readonly ExternPropertiesClass.$Identifier[]> {
+  externClassPropertyClassIdentifiersSync(
+    query?: $ObjectSet.Query<ExternClassPropertyClass.$Identifier>,
+  ): purify.Either<Error, readonly ExternClassPropertyClass.$Identifier[]> {
     return this.$objectIdentifiersSync<
-      ExternPropertiesClass,
-      ExternPropertiesClass.$Identifier
-    >({ ...ExternPropertiesClass, $fromRdfType: undefined }, query);
+      ExternClassPropertyClass,
+      ExternClassPropertyClass.$Identifier
+    >({ ...ExternClassPropertyClass, $fromRdfType: undefined }, query);
   }
 
-  async externPropertiesClasses(
-    query?: $ObjectSet.Query<ExternPropertiesClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly ExternPropertiesClass[]>> {
-    return this.externPropertiesClassesSync(query);
+  async externClassPropertyClasses(
+    query?: $ObjectSet.Query<ExternClassPropertyClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ExternClassPropertyClass[]>> {
+    return this.externClassPropertyClassesSync(query);
   }
 
-  externPropertiesClassesSync(
-    query?: $ObjectSet.Query<ExternPropertiesClass.$Identifier>,
-  ): purify.Either<Error, readonly ExternPropertiesClass[]> {
+  externClassPropertyClassesSync(
+    query?: $ObjectSet.Query<ExternClassPropertyClass.$Identifier>,
+  ): purify.Either<Error, readonly ExternClassPropertyClass[]> {
     return this.$objectsSync<
-      ExternPropertiesClass,
-      ExternPropertiesClass.$Identifier
-    >({ ...ExternPropertiesClass, $fromRdfType: undefined }, query);
+      ExternClassPropertyClass,
+      ExternClassPropertyClass.$Identifier
+    >({ ...ExternClassPropertyClass, $fromRdfType: undefined }, query);
   }
 
-  async externPropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<ExternPropertiesClass.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.externPropertiesClassesCountSync(query);
-  }
-
-  externPropertiesClassesCountSync(
-    query?: Pick<$ObjectSet.Query<ExternPropertiesClass.$Identifier>, "where">,
-  ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      ExternPropertiesClass,
-      ExternPropertiesClass.$Identifier
-    >({ ...ExternPropertiesClass, $fromRdfType: undefined }, query);
-  }
-
-  async externPropertiesExternNestedClass(
-    identifier: ExternPropertiesExternNestedClass.$Identifier,
-  ): Promise<purify.Either<Error, ExternPropertiesExternNestedClass>> {
-    return this.externPropertiesExternNestedClassSync(identifier);
-  }
-
-  externPropertiesExternNestedClassSync(
-    identifier: ExternPropertiesExternNestedClass.$Identifier,
-  ): purify.Either<Error, ExternPropertiesExternNestedClass> {
-    return this.externPropertiesExternNestedClassesSync({
-      where: { identifiers: [identifier], type: "identifiers" },
-    }).map((objects) => objects[0]);
-  }
-
-  async externPropertiesExternNestedClassIdentifiers(
-    query?: $ObjectSet.Query<ExternPropertiesExternNestedClass.$Identifier>,
-  ): Promise<
-    purify.Either<
-      Error,
-      readonly ExternPropertiesExternNestedClass.$Identifier[]
-    >
-  > {
-    return this.externPropertiesExternNestedClassIdentifiersSync(query);
-  }
-
-  externPropertiesExternNestedClassIdentifiersSync(
-    query?: $ObjectSet.Query<ExternPropertiesExternNestedClass.$Identifier>,
-  ): purify.Either<
-    Error,
-    readonly ExternPropertiesExternNestedClass.$Identifier[]
-  > {
-    return this.$objectIdentifiersSync<
-      ExternPropertiesExternNestedClass,
-      ExternPropertiesExternNestedClass.$Identifier
-    >({ ...ExternPropertiesExternNestedClass, $fromRdfType: undefined }, query);
-  }
-
-  async externPropertiesExternNestedClasses(
-    query?: $ObjectSet.Query<ExternPropertiesExternNestedClass.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly ExternPropertiesExternNestedClass[]>
-  > {
-    return this.externPropertiesExternNestedClassesSync(query);
-  }
-
-  externPropertiesExternNestedClassesSync(
-    query?: $ObjectSet.Query<ExternPropertiesExternNestedClass.$Identifier>,
-  ): purify.Either<Error, readonly ExternPropertiesExternNestedClass[]> {
-    return this.$objectsSync<
-      ExternPropertiesExternNestedClass,
-      ExternPropertiesExternNestedClass.$Identifier
-    >({ ...ExternPropertiesExternNestedClass, $fromRdfType: undefined }, query);
-  }
-
-  async externPropertiesExternNestedClassesCount(
+  async externClassPropertyClassesCount(
     query?: Pick<
-      $ObjectSet.Query<ExternPropertiesExternNestedClass.$Identifier>,
+      $ObjectSet.Query<ExternClassPropertyClass.$Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.externPropertiesExternNestedClassesCountSync(query);
+    return this.externClassPropertyClassesCountSync(query);
   }
 
-  externPropertiesExternNestedClassesCountSync(
+  externClassPropertyClassesCountSync(
     query?: Pick<
-      $ObjectSet.Query<ExternPropertiesExternNestedClass.$Identifier>,
+      $ObjectSet.Query<ExternClassPropertyClass.$Identifier>,
       "where"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
-      ExternPropertiesExternNestedClass,
-      ExternPropertiesExternNestedClass.$Identifier
-    >({ ...ExternPropertiesExternNestedClass, $fromRdfType: undefined }, query);
-  }
-
-  async externPropertiesInlineNestedClass(
-    identifier: ExternPropertiesInlineNestedClass.$Identifier,
-  ): Promise<purify.Either<Error, ExternPropertiesInlineNestedClass>> {
-    return this.externPropertiesInlineNestedClassSync(identifier);
-  }
-
-  externPropertiesInlineNestedClassSync(
-    identifier: ExternPropertiesInlineNestedClass.$Identifier,
-  ): purify.Either<Error, ExternPropertiesInlineNestedClass> {
-    return this.externPropertiesInlineNestedClassesSync({
-      where: { identifiers: [identifier], type: "identifiers" },
-    }).map((objects) => objects[0]);
-  }
-
-  async externPropertiesInlineNestedClassIdentifiers(
-    query?: $ObjectSet.Query<ExternPropertiesInlineNestedClass.$Identifier>,
-  ): Promise<
-    purify.Either<
-      Error,
-      readonly ExternPropertiesInlineNestedClass.$Identifier[]
-    >
-  > {
-    return this.externPropertiesInlineNestedClassIdentifiersSync(query);
-  }
-
-  externPropertiesInlineNestedClassIdentifiersSync(
-    query?: $ObjectSet.Query<ExternPropertiesInlineNestedClass.$Identifier>,
-  ): purify.Either<
-    Error,
-    readonly ExternPropertiesInlineNestedClass.$Identifier[]
-  > {
-    return this.$objectIdentifiersSync<
-      ExternPropertiesInlineNestedClass,
-      ExternPropertiesInlineNestedClass.$Identifier
-    >({ ...ExternPropertiesInlineNestedClass, $fromRdfType: undefined }, query);
-  }
-
-  async externPropertiesInlineNestedClasses(
-    query?: $ObjectSet.Query<ExternPropertiesInlineNestedClass.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly ExternPropertiesInlineNestedClass[]>
-  > {
-    return this.externPropertiesInlineNestedClassesSync(query);
-  }
-
-  externPropertiesInlineNestedClassesSync(
-    query?: $ObjectSet.Query<ExternPropertiesInlineNestedClass.$Identifier>,
-  ): purify.Either<Error, readonly ExternPropertiesInlineNestedClass[]> {
-    return this.$objectsSync<
-      ExternPropertiesInlineNestedClass,
-      ExternPropertiesInlineNestedClass.$Identifier
-    >({ ...ExternPropertiesInlineNestedClass, $fromRdfType: undefined }, query);
-  }
-
-  async externPropertiesInlineNestedClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<ExternPropertiesInlineNestedClass.$Identifier>,
-      "where"
-    >,
-  ): Promise<purify.Either<Error, number>> {
-    return this.externPropertiesInlineNestedClassesCountSync(query);
-  }
-
-  externPropertiesInlineNestedClassesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<ExternPropertiesInlineNestedClass.$Identifier>,
-      "where"
-    >,
-  ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      ExternPropertiesInlineNestedClass,
-      ExternPropertiesInlineNestedClass.$Identifier
-    >({ ...ExternPropertiesInlineNestedClass, $fromRdfType: undefined }, query);
+      ExternClassPropertyClass,
+      ExternClassPropertyClass.$Identifier
+    >({ ...ExternClassPropertyClass, $fromRdfType: undefined }, query);
   }
 
   async hasValuePropertiesClass(
@@ -25769,138 +24623,44 @@ export class $SparqlObjectSet implements $ObjectSet {
     );
   }
 
-  async externPropertiesClass(
-    identifier: ExternPropertiesClass.$Identifier,
-  ): Promise<purify.Either<Error, ExternPropertiesClass>> {
+  async externClassPropertyClass(
+    identifier: ExternClassPropertyClass.$Identifier,
+  ): Promise<purify.Either<Error, ExternClassPropertyClass>> {
     return (
-      await this.externPropertiesClasses({
+      await this.externClassPropertyClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
     ).map((objects) => objects[0]);
   }
 
-  async externPropertiesClassIdentifiers(
-    query?: $SparqlObjectSet.Query<ExternPropertiesClass.$Identifier>,
+  async externClassPropertyClassIdentifiers(
+    query?: $SparqlObjectSet.Query<ExternClassPropertyClass.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly ExternPropertiesClass.$Identifier[]>
+    purify.Either<Error, readonly ExternClassPropertyClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<ExternPropertiesClass.$Identifier>(
-      ExternPropertiesClass,
+    return this.$objectIdentifiers<ExternClassPropertyClass.$Identifier>(
+      ExternClassPropertyClass,
       query,
     );
   }
 
-  async externPropertiesClasses(
-    query?: $SparqlObjectSet.Query<ExternPropertiesClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly ExternPropertiesClass[]>> {
+  async externClassPropertyClasses(
+    query?: $SparqlObjectSet.Query<ExternClassPropertyClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ExternClassPropertyClass[]>> {
     return this.$objects<
-      ExternPropertiesClass,
-      ExternPropertiesClass.$Identifier
-    >(ExternPropertiesClass, query);
+      ExternClassPropertyClass,
+      ExternClassPropertyClass.$Identifier
+    >(ExternClassPropertyClass, query);
   }
 
-  async externPropertiesClassesCount(
+  async externClassPropertyClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<ExternPropertiesClass.$Identifier>,
+      $SparqlObjectSet.Query<ExternClassPropertyClass.$Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<ExternPropertiesClass.$Identifier>(
-      ExternPropertiesClass,
-      query,
-    );
-  }
-
-  async externPropertiesExternNestedClass(
-    identifier: ExternPropertiesExternNestedClass.$Identifier,
-  ): Promise<purify.Either<Error, ExternPropertiesExternNestedClass>> {
-    return (
-      await this.externPropertiesExternNestedClasses({
-        where: { identifiers: [identifier], type: "identifiers" },
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async externPropertiesExternNestedClassIdentifiers(
-    query?: $SparqlObjectSet.Query<ExternPropertiesExternNestedClass.$Identifier>,
-  ): Promise<
-    purify.Either<
-      Error,
-      readonly ExternPropertiesExternNestedClass.$Identifier[]
-    >
-  > {
-    return this.$objectIdentifiers<ExternPropertiesExternNestedClass.$Identifier>(
-      ExternPropertiesExternNestedClass,
-      query,
-    );
-  }
-
-  async externPropertiesExternNestedClasses(
-    query?: $SparqlObjectSet.Query<ExternPropertiesExternNestedClass.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly ExternPropertiesExternNestedClass[]>
-  > {
-    return this.$objects<
-      ExternPropertiesExternNestedClass,
-      ExternPropertiesExternNestedClass.$Identifier
-    >(ExternPropertiesExternNestedClass, query);
-  }
-
-  async externPropertiesExternNestedClassesCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<ExternPropertiesExternNestedClass.$Identifier>,
-      "where"
-    >,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<ExternPropertiesExternNestedClass.$Identifier>(
-      ExternPropertiesExternNestedClass,
-      query,
-    );
-  }
-
-  async externPropertiesInlineNestedClass(
-    identifier: ExternPropertiesInlineNestedClass.$Identifier,
-  ): Promise<purify.Either<Error, ExternPropertiesInlineNestedClass>> {
-    return (
-      await this.externPropertiesInlineNestedClasses({
-        where: { identifiers: [identifier], type: "identifiers" },
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async externPropertiesInlineNestedClassIdentifiers(
-    query?: $SparqlObjectSet.Query<ExternPropertiesInlineNestedClass.$Identifier>,
-  ): Promise<
-    purify.Either<
-      Error,
-      readonly ExternPropertiesInlineNestedClass.$Identifier[]
-    >
-  > {
-    return this.$objectIdentifiers<ExternPropertiesInlineNestedClass.$Identifier>(
-      ExternPropertiesInlineNestedClass,
-      query,
-    );
-  }
-
-  async externPropertiesInlineNestedClasses(
-    query?: $SparqlObjectSet.Query<ExternPropertiesInlineNestedClass.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly ExternPropertiesInlineNestedClass[]>
-  > {
-    return this.$objects<
-      ExternPropertiesInlineNestedClass,
-      ExternPropertiesInlineNestedClass.$Identifier
-    >(ExternPropertiesInlineNestedClass, query);
-  }
-
-  async externPropertiesInlineNestedClassesCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<ExternPropertiesInlineNestedClass.$Identifier>,
-      "where"
-    >,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<ExternPropertiesInlineNestedClass.$Identifier>(
-      ExternPropertiesInlineNestedClass,
+    return this.$objectsCount<ExternClassPropertyClass.$Identifier>(
+      ExternClassPropertyClass,
       query,
     );
   }

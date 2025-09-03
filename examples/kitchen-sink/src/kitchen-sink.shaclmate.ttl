@@ -221,44 +221,14 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     rdfs:comment "An extern object type in TypeScript" ;
     rdfs:subClassOf :AbstractBaseClassForExternClass .
 
-:ExternPropertiesClass
+:ExternClassPropertyClass
     a sh:NodeShape ;
-    rdfs:comment "Node shape that inlines/nests another node shape and externs/references another." ;
+    rdfs:comment "Node shape that references the ExternClass in a property." ;
     sh:property [
         sh:maxCount 1 ;
         sh:minCount 0 ;
         sh:node :ExternClass ;
         sh:path :externClassProperty
-    ], [
-        shaclmate:extern true ;
-        sh:maxCount 1 ;
-        sh:minCount 0 ;
-        sh:node :ExternPropertiesExternNestedClass ;
-        sh:path :externNestedProperty
-    ], [
-        shaclmate:extern false ;
-        sh:maxCount 1 ;
-        sh:minCount 0 ;
-        sh:node :ExternPropertiesInlineNestedClass ;
-        sh:path :inlineNestedProperty
-    ] .
-
-:ExternPropertiesExternNestedClass
-    a sh:NodeShape ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :externPropertiesExternNestedStringProperty
-    ] .
-
-:ExternPropertiesInlineNestedClass
-    a sh:NodeShape ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :externPropertiesInlineNestedStringProperty
     ] .
 
 :HasValuePropertiesClass
@@ -663,16 +633,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:xone properties." ;
     sh:property [
-        sh:maxCount 1 ;
-        sh:path :unrelatedTypesProperty ;
-        sh:xone ([
-                sh:datatype xsd:integer
-            ]
-            [
-                sh:node :NonClass
-            ]
-        )
-    ], [
         shaclmate:widen false ;
         sh:maxCount 1 ;
         sh:path :narrowLiteralsProperty ;
@@ -701,6 +661,16 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
             [
                 sh:nodeKind sh:IRI
+            ]
+        )
+    ], [
+        sh:maxCount 1 ;
+        sh:path :unrelatedTypesProperty ;
+        sh:xone ([
+                sh:datatype xsd:integer
+            ]
+            [
+                sh:node :NonClass
             ]
         )
     ] .
