@@ -184,25 +184,27 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
   });
 
   it("objectIdentifiers (triple-objects)", async ({ expect }) => {
-    expect(
-      (
-        await objectSet.directRecursiveClassIdentifiers({
-          where: {
-            subject: testData.directRecursiveClasses[0].$identifier,
-            predicate:
-              kitchenSink.DirectRecursiveClass.$properties
-                .directRecursiveProperty.identifier,
-            type: "triple-objects",
-          },
-        })
-      )
-        .unsafeCoerce()
-        .map((identifier) => identifier.value)
-        .sort(),
-    ).toStrictEqual([
-      testData.directRecursiveClasses[0].directRecursiveProperty.unsafeCoerce()
-        .$identifier.value,
-    ]);
+    for (const directRecursiveClass of testData.directRecursiveClasses) {
+      expect(
+        (
+          await objectSet.directRecursiveClassIdentifiers({
+            where: {
+              subject: directRecursiveClass.$identifier,
+              predicate:
+                kitchenSink.DirectRecursiveClass.$properties
+                  .directRecursiveProperty.identifier,
+              type: "triple-objects",
+            },
+          })
+        )
+          .unsafeCoerce()
+          .map((identifier) => identifier.value)
+          .sort(),
+      ).toStrictEqual([
+        directRecursiveClass.directRecursiveProperty.unsafeCoerce().$identifier
+          .value,
+      ]);
+    }
   });
 
   it("objects (all identifiers)", async ({ expect }) => {
