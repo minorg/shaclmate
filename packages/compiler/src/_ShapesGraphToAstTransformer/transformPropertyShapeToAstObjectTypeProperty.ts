@@ -23,6 +23,19 @@ export function transformPropertyShapeToAstObjectTypeProperty(
   }
   const type = typeEither.unsafeCoerce();
 
+  if (propertyShape.lazy.orDefault(false)) {
+    switch (type.kind) {
+      case "ObjectIntersectionType":
+      case "ObjectType":
+      case "ObjectUnionType":
+        break;
+      default:
+        return Left(
+          new Error(`${propertyShape} marked lazy but has ${type.kind}`),
+        );
+    }
+  }
+
   const path = propertyShape.path;
   if (path.kind !== "PredicatePath") {
     return Left(
