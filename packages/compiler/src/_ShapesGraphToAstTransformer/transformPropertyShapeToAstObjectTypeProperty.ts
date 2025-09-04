@@ -29,6 +29,22 @@ export function transformPropertyShapeToAstObjectTypeProperty(
       case "ObjectType":
       case "ObjectUnionType":
         break;
+      case "OptionType":
+      case "SetType": {
+        switch (type.itemType.kind) {
+          case "ObjectIntersectionType":
+          case "ObjectType":
+          case "ObjectUnionType":
+            break;
+          default:
+            return Left(
+              new Error(
+                `${propertyShape} marked lazy but has ${type.kind} of ${type.itemType.kind}`,
+              ),
+            );
+        }
+        break;
+      }
       default:
         return Left(
           new Error(`${propertyShape} marked lazy but has ${type.kind}`),
