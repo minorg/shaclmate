@@ -383,6 +383,30 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :languageInPropertiesLiteralProperty
     ] .
 
+:LazyPropertiesClass
+    a sh:NodeShape ;
+    rdfs:comment "Node shape that has lazy properties." ;
+    sh:property [
+        shaclmate:lazy true ;
+        sh:class :NonClass ;
+        sh:maxCount 1 ;
+        sh:minCount 0 ;
+        sh:path :explicitLazyOptionalProperty
+    ], [
+        sh:class :NonClass ;
+        sh:maxCount 1 ;
+        sh:minCount 0 ;
+        sh:path :implicitLazyOptionalProperty
+    ], [
+        sh:class :NonClass ;
+        sh:path :implicitLazySetProperty
+    ], [
+        sh:class :NonClass ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :implicitLazyRequiredProperty
+    ] .
+
 :ListPropertiesClass
     a sh:NodeShape ;
     rdfs:comment "Shape that uses the list shapes in properties." ;
