@@ -6,17 +6,17 @@ import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export class OptionType extends Type {
+export class OptionType<ItemTypeT extends Type = Type> extends Type {
   override readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty> =
     Maybe.empty();
-  readonly itemType: Type;
+  readonly itemType: ItemTypeT;
   readonly kind = "OptionType";
   readonly typeof = "object";
 
   constructor({
     itemType,
     ...superParameters
-  }: ConstructorParameters<typeof Type>[0] & { itemType: Type }) {
+  }: ConstructorParameters<typeof Type>[0] & { itemType: ItemTypeT }) {
     super(superParameters);
     this.itemType = itemType;
   }

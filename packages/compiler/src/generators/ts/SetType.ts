@@ -7,13 +7,13 @@ import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export class SetType extends Type {
+export class SetType<ItemTypeT extends Type = Type> extends Type {
   private readonly _mutable: boolean;
   private readonly minCount: number;
 
   override readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty> =
     Maybe.empty();
-  readonly itemType: Type;
+  readonly itemType: ItemTypeT;
   readonly kind = "SetType";
   readonly typeof = "object";
 
@@ -23,7 +23,7 @@ export class SetType extends Type {
     mutable,
     ...superParameters
   }: ConstructorParameters<typeof Type>[0] & {
-    itemType: Type;
+    itemType: ItemTypeT;
     mutable: boolean;
     minCount: number;
   }) {
