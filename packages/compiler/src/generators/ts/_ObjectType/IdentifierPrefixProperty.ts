@@ -22,7 +22,7 @@ export class IdentifierPrefixProperty extends Property<StringType> {
   readonly equalsFunction = `${syntheticNamePrefix}strictEquals`;
   override readonly graphqlField: Property<StringType>["graphqlField"] =
     Maybe.empty();
-  override readonly interfacePropertySignature: Maybe<
+  override readonly propertySignature: Maybe<
     OptionalKind<PropertySignatureStructure>
   > = Maybe.empty();
   override readonly jsonPropertySignature: Maybe<
@@ -43,7 +43,43 @@ export class IdentifierPrefixProperty extends Property<StringType> {
     this.own = own;
   }
 
-  override get classGetAccessorDeclaration(): Maybe<
+  override get constructorParametersPropertySignature(): Maybe<
+    OptionalKind<PropertySignatureStructure>
+  > {
+    return Maybe.of({
+      hasQuestionToken: true,
+      isReadonly: true,
+      name: this.name,
+      type: this.type.name,
+    });
+  }
+
+  override constructorStatements({
+    variables,
+  }: Parameters<
+    Property<IdentifierType>["constructorStatements"]
+  >[0]): readonly string[] {
+    switch (this.objectType.declarationType) {
+      case "class":
+        return this.propertyDeclaration
+          .map((propertyDeclaration) => [
+            `this.${propertyDeclaration.name} = ${variables.parameter};`,
+          ])
+          .orDefault([]);
+      case "interface":
+        return [];
+    }
+  }
+
+  override fromJsonStatements(): readonly string[] {
+    return [];
+  }
+
+  override fromRdfStatements(): readonly string[] {
+    return [];
+  }
+
+  override get getAccessorDeclaration(): Maybe<
     OptionalKind<GetAccessorDeclarationStructure>
   > {
     return Maybe.of({
@@ -56,56 +92,7 @@ export class IdentifierPrefixProperty extends Property<StringType> {
     } satisfies OptionalKind<GetAccessorDeclarationStructure>);
   }
 
-  override get classPropertyDeclaration(): Maybe<
-    OptionalKind<PropertyDeclarationStructure>
-  > {
-    return this.own
-      ? Maybe.of({
-          hasQuestionToken: true,
-          isReadonly: true,
-          name: `_${this.name}`,
-          scope: Scope.Protected,
-          type: this.type.name,
-        })
-      : Maybe.empty();
-  }
-
-  override get constructorParametersPropertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    return Maybe.of({
-      hasQuestionToken: true,
-      isReadonly: true,
-      name: this.name,
-      type: this.type.name,
-    });
-  }
-
-  override classConstructorStatements({
-    variables,
-  }: Parameters<
-    Property<IdentifierType>["classConstructorStatements"]
-  >[0]): readonly string[] {
-    return this.classPropertyDeclaration
-      .map((classPropertyDeclaration) => [
-        `this.${classPropertyDeclaration.name} = ${variables.parameter};`,
-      ])
-      .orDefault([]);
-  }
-
-  override fromJsonStatements(): readonly string[] {
-    return [];
-  }
-
-  override fromRdfStatements(): readonly string[] {
-    return [];
-  }
-
   override hashStatements(): readonly string[] {
-    return [];
-  }
-
-  override interfaceConstructorStatements(): readonly string[] {
     return [];
   }
 
@@ -117,6 +104,20 @@ export class IdentifierPrefixProperty extends Property<StringType> {
     Property<IdentifierType>["jsonZodSchema"]
   > {
     return Maybe.empty();
+  }
+
+  override get propertyDeclaration(): Maybe<
+    OptionalKind<PropertyDeclarationStructure>
+  > {
+    return this.own
+      ? Maybe.of({
+          hasQuestionToken: true,
+          isReadonly: true,
+          name: `_${this.name}`,
+          scope: Scope.Protected,
+          type: this.type.name,
+        })
+      : Maybe.empty();
   }
 
   override snippetDeclarations(): readonly string[] {

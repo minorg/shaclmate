@@ -17,20 +17,6 @@ export abstract class Property<
   TypeT extends { readonly mutable: boolean; readonly name: string },
 > {
   /**
-   * Optional get accessor to include in a class declaration of the object type.
-   */
-  abstract readonly classGetAccessorDeclaration: Maybe<
-    OptionalKind<GetAccessorDeclarationStructure>
-  >;
-
-  /**
-   * Optional property declaration to include in a class declaration of the object type.
-   */
-  abstract readonly classPropertyDeclaration: Maybe<
-    OptionalKind<PropertyDeclarationStructure>
-  >;
-
-  /**
    * Optional property to include in the parameters object of a class constructor.
    */
   abstract readonly constructorParametersPropertySignature: Maybe<
@@ -43,6 +29,13 @@ export abstract class Property<
   abstract readonly equalsFunction: string;
 
   /**
+   * Optional get accessor to include in a class declaration of the object type.
+   */
+  abstract readonly getAccessorDeclaration: Maybe<
+    OptionalKind<GetAccessorDeclarationStructure>
+  >;
+
+  /**
    * GraphQL.js field definition.
    */
   abstract readonly graphqlField: Maybe<{
@@ -50,13 +43,6 @@ export abstract class Property<
     description?: string;
     type: string;
   }>;
-
-  /**
-   * Signature of the property in an interface version of the object.
-   */
-  abstract readonly interfacePropertySignature: Maybe<
-    OptionalKind<PropertySignatureStructure>
-  >;
 
   /**
    * Signature of the property when serialized to JSON (the type of toJsonObjectMember).
@@ -74,6 +60,20 @@ export abstract class Property<
    * TypeScript identifier-safe name of the property.
    */
   readonly name: string;
+
+  /**
+   * Optional property declaration to include in a class declaration of the object type.
+   */
+  abstract readonly propertyDeclaration: Maybe<
+    OptionalKind<PropertyDeclarationStructure>
+  >;
+
+  /**
+   * Signature of the property in an interface version of the object.
+   */
+  abstract readonly propertySignature: Maybe<
+    OptionalKind<PropertySignatureStructure>
+  >;
 
   /**
    * Is the property's type the ObjectType or does its type indirectly reference the ObjectType?
@@ -133,9 +133,9 @@ export abstract class Property<
   }
 
   /**
-   * Statements to assign the parameter of described by constructorParametersPropertySignature to a class member.
+   * Statements to assign the parameter of described by constructorParametersPropertySignature to a class or interface member.
    */
-  abstract classConstructorStatements(parameters: {
+  abstract constructorStatements(parameters: {
     variables: {
       parameter: string;
     };
@@ -167,15 +167,6 @@ export abstract class Property<
   abstract hashStatements(
     parameters: Parameters<Type["hashStatements"]>[0],
   ): readonly string[];
-
-  /**
-   * Companion to classConstructorStatements with a similar purpose in an interface's create() function.
-   */
-  abstract interfaceConstructorStatements(parameters: {
-    variables: {
-      parameter: string;
-    };
-  }): readonly string[];
 
   /**
    * Element object (usually a control https://jsonforms.io/docs/uischema/controls) for a JSON Forms UI schema.

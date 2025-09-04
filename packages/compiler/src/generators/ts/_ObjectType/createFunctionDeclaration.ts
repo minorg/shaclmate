@@ -47,7 +47,7 @@ export function createFunctionDeclaration(
     );
   }
   for (const property of this.properties) {
-    const thisPropertyStatements = property.interfaceConstructorStatements({
+    const thisPropertyStatements = property.constructorStatements({
       variables: { parameter: `parameters.${property.name}` },
     });
     if (thisPropertyStatements.length > 0) {

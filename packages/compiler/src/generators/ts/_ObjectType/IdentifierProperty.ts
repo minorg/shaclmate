@@ -64,98 +64,6 @@ export class IdentifierProperty extends Property<IdentifierType> {
     this.typeAlias = typeAlias;
   }
 
-  override get classGetAccessorDeclaration(): Maybe<
-    OptionalKind<GetAccessorDeclarationStructure>
-  > {
-    if (this.classGetAccessorScope.isNothing()) {
-      return Maybe.empty();
-    }
-
-    invariant(this.classGetAccessorScope.unsafeCoerce() === "public");
-
-    if (this.identifierMintingStrategy.isJust()) {
-      let memoizeMintedIdentifier: boolean;
-      let mintIdentifier: string;
-      switch (this.identifierMintingStrategy.unsafeCoerce()) {
-        case "blankNode":
-          memoizeMintedIdentifier = true;
-          mintIdentifier = "dataFactory.blankNode()";
-          break;
-        case "sha256":
-          // If the object is mutable don't memoize the minted identifier, since the hash will change if the object mutates.
-          memoizeMintedIdentifier = !this.objectType.mutable;
-          mintIdentifier = `dataFactory.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${this.${syntheticNamePrefix}hashShaclProperties(sha256.create())}\`)`;
-          break;
-        case "uuidv4":
-          memoizeMintedIdentifier = true;
-          mintIdentifier = `dataFactory.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${uuid.v4()}\`)`;
-          break;
-      }
-
-      return Maybe.of({
-        leadingTrivia: this.override ? "override " : undefined,
-        name: this.name,
-        returnType: this.typeAlias,
-        statements: [
-          memoizeMintedIdentifier
-            ? `if (typeof this._${this.name} === "undefined") { this._${this.name} = ${mintIdentifier}; } return this._${this.name};`
-            : `return (typeof this._${this.name} !== "undefined") ? this._${this.name} : ${mintIdentifier}`,
-        ],
-      } satisfies OptionalKind<GetAccessorDeclarationStructure>);
-    }
-
-    invariant(this.classPropertyDeclaration.isNothing());
-    return Maybe.of({
-      leadingTrivia: this.override ? "override " : undefined,
-      name: this.name,
-      returnType: this.typeAlias,
-      statements: [`return super.${this.name} as ${this.typeAlias}`],
-    } satisfies OptionalKind<GetAccessorDeclarationStructure>);
-  }
-
-  override get classPropertyDeclaration(): Maybe<
-    OptionalKind<PropertyDeclarationStructure>
-  > {
-    if (this.abstract) {
-      // Abstract version of the accessor
-      // Work around a ts-morph bug that puts the override keyword before the abstract keyword
-      return Maybe.of({
-        hasOverrideKeyword:
-          this.abstract && this.override ? undefined : this.override,
-        isAbstract: this.abstract && this.override ? undefined : this.abstract,
-        isReadonly: true,
-        leadingTrivia:
-          this.abstract && this.override ? "abstract override " : undefined,
-        name: this.name,
-        type: this.typeAlias,
-      });
-    }
-
-    // See note in TypeFactory re: the logic of whether to declare the identifier in the class or not.
-    if (!this.classPropertyDeclarationVisibility.isJust()) {
-      return Maybe.empty();
-    }
-
-    if (this.identifierMintingStrategy.isJust()) {
-      // Mutable _identifier property that will be lazily initialized by the getter to mint the identifier
-      return Maybe.of({
-        hasQuestionToken: true,
-        name: `_${this.name}`,
-        scope: this.classPropertyDeclarationVisibility
-          .map(Property.visibilityToScope)
-          .unsafeCoerce(),
-        type: `${this.typeAlias}`,
-      });
-    }
-
-    // Immutable, public identifier property, no getter
-    return Maybe.of({
-      isReadonly: true,
-      name: this.name,
-      type: this.typeAlias,
-    });
-  }
-
   override get constructorParametersPropertySignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {
@@ -202,22 +110,61 @@ export class IdentifierProperty extends Property<IdentifierType> {
     return imports;
   }
 
+  override get getAccessorDeclaration(): Maybe<
+    OptionalKind<GetAccessorDeclarationStructure>
+  > {
+    if (this.classGetAccessorScope.isNothing()) {
+      return Maybe.empty();
+    }
+
+    invariant(this.classGetAccessorScope.unsafeCoerce() === "public");
+
+    if (this.identifierMintingStrategy.isJust()) {
+      let memoizeMintedIdentifier: boolean;
+      let mintIdentifier: string;
+      switch (this.identifierMintingStrategy.unsafeCoerce()) {
+        case "blankNode":
+          memoizeMintedIdentifier = true;
+          mintIdentifier = "dataFactory.blankNode()";
+          break;
+        case "sha256":
+          // If the object is mutable don't memoize the minted identifier, since the hash will change if the object mutates.
+          memoizeMintedIdentifier = !this.objectType.mutable;
+          mintIdentifier = `dataFactory.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${this.${syntheticNamePrefix}hashShaclProperties(sha256.create())}\`)`;
+          break;
+        case "uuidv4":
+          memoizeMintedIdentifier = true;
+          mintIdentifier = `dataFactory.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${uuid.v4()}\`)`;
+          break;
+      }
+
+      return Maybe.of({
+        leadingTrivia: this.override ? "override " : undefined,
+        name: this.name,
+        returnType: this.typeAlias,
+        statements: [
+          memoizeMintedIdentifier
+            ? `if (typeof this._${this.name} === "undefined") { this._${this.name} = ${mintIdentifier}; } return this._${this.name};`
+            : `return (typeof this._${this.name} !== "undefined") ? this._${this.name} : ${mintIdentifier}`,
+        ],
+      } satisfies OptionalKind<GetAccessorDeclarationStructure>);
+    }
+
+    invariant(this.propertyDeclaration.isNothing());
+    return Maybe.of({
+      leadingTrivia: this.override ? "override " : undefined,
+      name: this.name,
+      returnType: this.typeAlias,
+      statements: [`return super.${this.name} as ${this.typeAlias}`],
+    } satisfies OptionalKind<GetAccessorDeclarationStructure>);
+  }
+
   override get graphqlField(): Property<IdentifierType>["graphqlField"] {
     invariant(this.name.startsWith(syntheticNamePrefix));
     return Maybe.of({
       name: `_${this.name.substring(syntheticNamePrefix.length)}`,
       resolve: `(source) => ${this.typeAlias}.toString(source.${this.name})`,
       type: this.type.graphqlName,
-    });
-  }
-
-  override get interfacePropertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    return Maybe.of({
-      isReadonly: true,
-      name: this.name,
-      type: this.typeAlias,
     });
   }
 
@@ -231,42 +178,46 @@ export class IdentifierProperty extends Property<IdentifierType> {
     });
   }
 
-  override classConstructorStatements({
+  override constructorStatements({
     variables,
   }: Parameters<
-    Property<IdentifierType>["classConstructorStatements"]
+    Property<IdentifierType>["constructorStatements"]
   >[0]): readonly string[] {
-    if (this.abstract) {
-      return [];
+    let lhs: string;
+    switch (this.objectType.declarationType) {
+      case "class": {
+        if (this.abstract) {
+          return [];
+        }
+        if (this.propertyDeclaration.isNothing()) {
+          return [];
+        }
+        lhs = `this.${this.propertyDeclaration.unsafeCoerce().name}`;
+        break;
+      }
+      case "interface":
+        lhs = this.name;
+        break;
     }
-    if (this.classPropertyDeclaration.isNothing()) {
-      return [];
-    }
-    const classPropertyDeclaration =
-      this.classPropertyDeclaration.unsafeCoerce();
 
     const typeConversions = this.type.conversions;
     if (typeConversions.length === 1) {
-      return [
-        `this.${classPropertyDeclaration.name} = ${variables.parameter};`,
-      ];
+      return [`${lhs} = ${variables.parameter};`];
     }
     const statements: string[] = [];
     for (const conversion of this.type.conversions) {
       invariant(conversion.sourceTypeName !== "undefined");
       statements.push(
-        `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { this.${classPropertyDeclaration.name} = ${conversion.conversionExpression(variables.parameter)}; }`,
+        `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = ${conversion.conversionExpression(variables.parameter)}; }`,
       );
     }
 
-    if (classPropertyDeclaration.name.startsWith("_")) {
+    if (lhs.startsWith("_")) {
       statements.push(`if (typeof ${variables.parameter} === "undefined") { }`);
     }
 
     // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
-    statements.push(
-      `{ this.${classPropertyDeclaration.name} =( ${variables.parameter}) satisfies never;\n }`,
-    );
+    statements.push(`{ ${lhs} = (${variables.parameter}) satisfies never;\n }`);
 
     return [statements.join(" else ")];
   }
@@ -315,30 +266,6 @@ export class IdentifierProperty extends Property<IdentifierType> {
     return [`${variables.hasher}.update(${variables.value}.value);`];
   }
 
-  override interfaceConstructorStatements({
-    variables,
-  }: Parameters<
-    Property<IdentifierType>["interfaceConstructorStatements"]
-  >[0]): readonly string[] {
-    const typeConversions = this.type.conversions;
-    if (typeConversions.length === 1) {
-      return [`const ${this.name} = ${variables.parameter};`];
-    }
-    const statements: string[] = [`let ${this.name}: ${this.typeAlias};`];
-    const conversionBranches: string[] = [];
-    for (const conversion of this.type.conversions) {
-      conversionBranches.push(
-        `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${this.name} = ${conversion.conversionExpression(variables.parameter)}; }`,
-      );
-    }
-    // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
-    conversionBranches.push(
-      `{ ${this.name} =( ${variables.parameter}) satisfies never;\n }`,
-    );
-    statements.push(conversionBranches.join(" else "));
-    return statements;
-  }
-
   override jsonUiSchemaElement({
     variables,
   }: Parameters<
@@ -366,6 +293,59 @@ export class IdentifierProperty extends Property<IdentifierType> {
     return Maybe.of({
       key: this.jsonPropertySignature.unsafeCoerce().name,
       schema,
+    });
+  }
+
+  override get propertyDeclaration(): Maybe<
+    OptionalKind<PropertyDeclarationStructure>
+  > {
+    if (this.abstract) {
+      // Abstract version of the accessor
+      // Work around a ts-morph bug that puts the override keyword before the abstract keyword
+      return Maybe.of({
+        hasOverrideKeyword:
+          this.abstract && this.override ? undefined : this.override,
+        isAbstract: this.abstract && this.override ? undefined : this.abstract,
+        isReadonly: true,
+        leadingTrivia:
+          this.abstract && this.override ? "abstract override " : undefined,
+        name: this.name,
+        type: this.typeAlias,
+      });
+    }
+
+    // See note in TypeFactory re: the logic of whether to declare the identifier in the class or not.
+    if (!this.classPropertyDeclarationVisibility.isJust()) {
+      return Maybe.empty();
+    }
+
+    if (this.identifierMintingStrategy.isJust()) {
+      // Mutable _identifier property that will be lazily initialized by the getter to mint the identifier
+      return Maybe.of({
+        hasQuestionToken: true,
+        name: `_${this.name}`,
+        scope: this.classPropertyDeclarationVisibility
+          .map(Property.visibilityToScope)
+          .unsafeCoerce(),
+        type: `${this.typeAlias}`,
+      });
+    }
+
+    // Immutable, public identifier property, no getter
+    return Maybe.of({
+      isReadonly: true,
+      name: this.name,
+      type: this.typeAlias,
+    });
+  }
+
+  override get propertySignature(): Maybe<
+    OptionalKind<PropertySignatureStructure>
+  > {
+    return Maybe.of({
+      isReadonly: true,
+      name: this.name,
+      type: this.typeAlias,
     });
   }
 
