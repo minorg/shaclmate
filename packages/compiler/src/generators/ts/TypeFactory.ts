@@ -8,6 +8,7 @@ import { fromRdf } from "rdf-literal";
 
 import type * as ast from "../../ast/index.js";
 
+import { invariant } from "ts-invariant";
 import { Scope } from "ts-morph";
 import { logger } from "../../logger.js";
 import { BooleanType } from "./BooleanType.js";
@@ -460,19 +461,49 @@ export class TypeFactory {
       }
     }
 
-    const property = new ObjectType.EagerShaclProperty({
-      comment: astObjectTypeProperty.comment,
-      dataFactoryVariable: this.dataFactoryVariable,
-      description: astObjectTypeProperty.description,
-      label: astObjectTypeProperty.label,
-      mutable: astObjectTypeProperty.mutable.orDefault(false),
-      objectType,
-      name: tsName(astObjectTypeProperty.name),
-      path: astObjectTypeProperty.path.iri,
-      recursive: !!astObjectTypeProperty.recursive,
-      type: this.createTypeFromAstType(astObjectTypeProperty.type),
-      visibility: astObjectTypeProperty.visibility,
-    });
+    let property: ObjectType.Property;
+
+    if (astObjectTypeProperty.lazy) {
+      const type = this.createTypeFromAstType(astObjectTypeProperty.type);
+      if (type instanceof OptionType || type instanceof SetType) {
+        invariant(
+          type.itemType instanceof ObjectType ||
+            type.itemType instanceof ObjectUnionType,
+          `lazy property of ${type.kind} has ${type.itemType.kind} items`,
+        );
+      } else {
+        invariant(
+          type instanceof ObjectType || type instanceof ObjectUnionType,
+          `lazy property has ${(type as any).kind}`,
+        );
+      }
+
+      property = new ObjectType.LazyShaclProperty({
+        comment: astObjectTypeProperty.comment,
+        dataFactoryVariable: this.dataFactoryVariable,
+        description: astObjectTypeProperty.description,
+        label: astObjectTypeProperty.label,
+        objectType,
+        name: tsName(astObjectTypeProperty.name),
+        path: astObjectTypeProperty.path.iri,
+        type,
+        visibility: astObjectTypeProperty.visibility,
+      });
+    } else {
+      property = new ObjectType.EagerShaclProperty({
+        comment: astObjectTypeProperty.comment,
+        dataFactoryVariable: this.dataFactoryVariable,
+        description: astObjectTypeProperty.description,
+        label: astObjectTypeProperty.label,
+        mutable: astObjectTypeProperty.mutable.orDefault(false),
+        objectType,
+        name: tsName(astObjectTypeProperty.name),
+        path: astObjectTypeProperty.path.iri,
+        recursive: !!astObjectTypeProperty.recursive,
+        type: this.createTypeFromAstType(astObjectTypeProperty.type),
+        visibility: astObjectTypeProperty.visibility,
+      });
+    }
     this.cachedObjectTypePropertiesByIdentifier.set(
       astObjectTypeProperty.name.identifier,
       property,

@@ -24,6 +24,8 @@ export * from "./jsonFunctionDeclarations.js";
 
 export * from "./jsonTypeAliasDeclaration.js";
 
+export * from "./LazyShaclProperty.js";
+
 export * from "./objectSetMethodNames.js";
 
 export * from "./propertiesVariableStatement.js";

@@ -2,21 +2,17 @@ import { Maybe } from "purify-ts";
 import type { OptionalKind, PropertySignatureStructure } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 
-import { SetType } from "generators/ts/SetType.js";
 import { Import } from "../Import.js";
 import type { ObjectType } from "../ObjectType.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
 import type { OptionType } from "../OptionType.js";
+import { SetType } from "../SetType.js";
 import { SnippetDeclarations } from "../SnippetDeclarations.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { ShaclProperty } from "./ShaclProperty.js";
 
 export class LazyShaclProperty<
-  TypeT extends
-    | ObjectType
-    | ObjectUnionType
-    | OptionType<ObjectType | ObjectUnionType>
-    | SetType<ObjectType | ObjectUnionType>,
+  TypeT extends LazyShaclProperty.Type,
 > extends ShaclProperty<TypeT> {
   override readonly mutable = false;
   override readonly recursive = false;
@@ -50,15 +46,56 @@ export class LazyShaclProperty<
   @Memoize()
   protected override get typeName(): string {
     if (this.type instanceof SetType) {
-      return `(parameters: {limit: number; offset: number}) => Promise<Either<Error, ${this.type.name}>>`;
+      return `(parameters: { limit: number; offset: number }) => Promise<Either<Error, ${this.type.name}>>`;
     }
     return `() => Promise<Either<Error, ${this.type.name}>>`;
+  }
+
+  override constructorStatements({
+    variables,
+  }: Parameters<
+    ShaclProperty<TypeT>["constructorStatements"]
+  >[0]): readonly string[] {
+    let lhs: string;
+    switch (this.objectType.declarationType) {
+      case "class":
+        lhs = `this.${this.name}`;
+        break;
+      case "interface":
+        lhs = this.name;
+        break;
+    }
+
+    const statements: string[] = [];
+    if (this.objectType.declarationType === "interface") {
+      statements.push(`let ${this.name}: ${this.type.name};`);
+    }
+    const conversionBranches: string[] = [
+      `if (typeof ${variables.parameter} === "function") { ${lhs} = ${variables.parameter}; }`,
+    ];
+    for (const conversion of this.type.conversions) {
+      conversionBranches.push(
+        `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = async () => ${conversion.conversionExpression(variables.parameter)}; }`,
+      );
+    }
+    // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
+    conversionBranches.push(
+      `{ ${lhs} = (${variables.parameter}) satisfies never; }`,
+    );
+    statements.push(conversionBranches.join(" else "));
+    return statements;
   }
 
   override fromJsonStatements(): readonly string[] {
     return [
       `const ${this.name} = () => Promise.resolve(purify.Left<Error, ${this.type.name}>(new Error("cannot deserialize lazy properties from JSON"));`,
     ];
+  }
+
+  override fromRdfStatements(
+    _parameters: Parameters<ShaclProperty<TypeT>["fromRdfStatements"]>[0],
+  ): readonly string[] {
+    return [];
   }
 
   override hashStatements(): readonly string[] {
@@ -96,4 +133,12 @@ export class LazyShaclProperty<
   override toRdfStatements(): readonly string[] {
     return [];
   }
+}
+
+export namespace LazyShaclProperty {
+  export type Type =
+    | ObjectType
+    | ObjectUnionType
+    | OptionType<ObjectType | ObjectUnionType>
+    | SetType<ObjectType | ObjectUnionType>;
 }

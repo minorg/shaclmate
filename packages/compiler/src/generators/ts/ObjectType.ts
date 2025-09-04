@@ -510,6 +510,10 @@ export namespace ObjectType {
   export type IdentifierPrefixProperty = _ObjectType.IdentifierPrefixProperty;
   export const IdentifierProperty = _ObjectType.IdentifierProperty;
   export type IdentifierProperty = _ObjectType.IdentifierProperty;
+  export const LazyShaclProperty = _ObjectType.LazyShaclProperty;
+  export type LazyShaclProperty<
+    TypeT extends _ObjectType.LazyShaclProperty.Type,
+  > = _ObjectType.LazyShaclProperty<TypeT>;
   export type ObjectSetMethodNames = {
     readonly object: string;
     readonly objectsCount: string;
