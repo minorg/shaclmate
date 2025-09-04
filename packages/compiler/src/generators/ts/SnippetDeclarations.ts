@@ -2,7 +2,21 @@ import { xsd } from "@tpluscode/rdf-ns-builders";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export namespace SnippetDeclarations {
+  export const alwaysEquals = `\
+/**
+ * A no-op equals implementation that always returns ${syntheticNamePrefix}EqualsResult.Equal.
+ */
+export function ${syntheticNamePrefix}alwaysEquals<T>(
+  left: T,
+  right: T,
+): ${syntheticNamePrefix}EqualsResult {
+  return ${syntheticNamePrefix}EqualsResult.Equal;
+}`;
+
   export const arrayEquals = `\
+/**
+ * Compare two arrays element-wise with the provided elementEquals function.
+ */  
 export function ${syntheticNamePrefix}arrayEquals<T>(
   leftArray: readonly T[],
   rightArray: readonly T[],
