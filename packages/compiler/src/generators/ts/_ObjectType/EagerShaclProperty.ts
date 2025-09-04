@@ -1,6 +1,7 @@
 import { pascalCase } from "change-case";
 import { Maybe } from "purify-ts";
 import type { OptionalKind, PropertySignatureStructure } from "ts-morph";
+
 import type { Type } from "../Type.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { ShaclProperty } from "./ShaclProperty.js";
@@ -53,18 +54,19 @@ export class EagerShaclProperty<
   }: Parameters<
     ShaclProperty<TypeT>["constructorStatements"]
   >[0]): readonly string[] {
-    const assignmentStatement = (rhs: string): string => {
-      switch (this.objectType.declarationType) {
-        case "class":
-          return `this.${this.name} = ${rhs};`;
-        case "interface":
-          return `${this.name} = ${rhs};`;
-      }
-    };
+    let lhs: string;
+    switch (this.objectType.declarationType) {
+      case "class":
+        lhs = `this.${this.name}`;
+        break;
+      case "interface":
+        lhs = this.name;
+        break;
+    }
 
     const typeConversions = this.type.conversions;
     if (typeConversions.length === 1) {
-      return [assignmentStatement(variables.parameter)];
+      return [`${lhs} = ${variables.parameter};`];
     }
     const statements: string[] = [];
     if (this.objectType.declarationType === "interface") {
@@ -73,12 +75,12 @@ export class EagerShaclProperty<
     const conversionBranches: string[] = [];
     for (const conversion of this.type.conversions) {
       conversionBranches.push(
-        `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${assignmentStatement(conversion.conversionExpression(variables.parameter))} }`,
+        `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = ${conversion.conversionExpression(variables.parameter)}; }`,
       );
     }
     // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
     conversionBranches.push(
-      `{ ${assignmentStatement(`${variables.parameter}) satisfies never`)} }`,
+      `{ ${lhs} = (${variables.parameter}) satisfies never; }`,
     );
     statements.push(conversionBranches.join(" else "));
     return statements;

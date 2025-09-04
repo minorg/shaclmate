@@ -31,6 +31,16 @@ export class LazyShaclProperty<
     return `${syntheticNamePrefix}alwaysEquals`;
   }
 
+  override get graphqlField(): ShaclProperty<TypeT>["graphqlField"] {
+    return Maybe.of({
+      description: this.comment.map(JSON.stringify).extract(),
+      name: this.name,
+      // TODO: this probably won't work
+      resolve: `(source) => ${this.type.graphqlResolveExpression({ variables: { value: `source.${this.name}` } })}`,
+      type: this.type.graphqlName,
+    });
+  }
+
   override get jsonPropertySignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {
