@@ -18,6 +18,30 @@ export class LazyShaclProperty<
   override readonly recursive = false;
 
   @Memoize()
+  override get constructorParametersPropertySignature(): Maybe<
+    OptionalKind<PropertySignatureStructure>
+  > {
+    let hasQuestionToken = false;
+    const typeNames = new Set<string>(); // Remove duplicates with a set
+    typeNames.add(this.typeName);
+    for (const conversion of this.type.conversions) {
+      if (conversion.sourceTypeName === "undefined") {
+        hasQuestionToken = true;
+      } else {
+        typeNames.add(conversion.sourceTypeName);
+      }
+    }
+
+    return Maybe.of({
+      hasQuestionToken,
+      isReadonly: true,
+      leadingTrivia: this.declarationComment,
+      name: this.name,
+      type: [...typeNames].sort().join(" | "),
+    });
+  }
+
+  @Memoize()
   override get declarationImports(): readonly Import[] {
     return super.declarationImports.concat(Import.PURIFY);
   }
@@ -56,20 +80,28 @@ export class LazyShaclProperty<
   }: Parameters<
     ShaclProperty<TypeT>["constructorStatements"]
   >[0]): readonly string[] {
+    const typeConversions = this.type.conversions;
+    if (typeConversions.length === 1) {
+      switch (this.objectType.declarationType) {
+        case "class":
+          return [`this.${this.name} = ${variables.parameter};`];
+        case "interface":
+          return [`const ${this.name} = ${variables.parameter};`];
+      }
+    }
+
     let lhs: string;
+    const statements: string[] = [];
     switch (this.objectType.declarationType) {
       case "class":
         lhs = `this.${this.name}`;
         break;
       case "interface":
         lhs = this.name;
+        statements.push(`let ${this.name}: ${this.type.name};`);
         break;
     }
 
-    const statements: string[] = [];
-    if (this.objectType.declarationType === "interface") {
-      statements.push(`let ${this.name}: ${this.type.name};`);
-    }
     const conversionBranches: string[] = [
       `if (typeof ${variables.parameter} === "function") { ${lhs} = ${variables.parameter}; }`,
     ];
@@ -83,6 +115,7 @@ export class LazyShaclProperty<
       `{ ${lhs} = (${variables.parameter}) satisfies never; }`,
     );
     statements.push(conversionBranches.join(" else "));
+
     return statements;
   }
 

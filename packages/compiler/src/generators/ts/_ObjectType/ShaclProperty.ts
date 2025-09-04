@@ -41,35 +41,13 @@ export abstract class ShaclProperty<
     this.path = path;
   }
 
-  override get constructorParametersPropertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    let hasQuestionToken = false;
-    const typeNames = new Set<string>(); // Remove duplicates with a set
-    typeNames.add(this.typeName);
-    for (const conversion of this.type.conversions) {
-      if (conversion.sourceTypeName === "undefined") {
-        hasQuestionToken = true;
-      } else {
-        typeNames.add(conversion.sourceTypeName);
-      }
-    }
-
-    return Maybe.of({
-      hasQuestionToken,
-      isReadonly: true,
-      leadingTrivia: this.declarationComment,
-      name: this.name,
-      type: [...typeNames].sort().join(" | "),
-    });
-  }
-
   override get getAccessorDeclaration(): Maybe<
     OptionalKind<GetAccessorDeclarationStructure>
   > {
     return Maybe.empty();
   }
 
+  @Memoize()
   override get propertyDeclaration(): Maybe<
     OptionalKind<PropertyDeclarationStructure>
   > {
@@ -87,6 +65,7 @@ export abstract class ShaclProperty<
     return this.type.useImports({ features: this.objectType.features });
   }
 
+  @Memoize()
   override get propertySignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {

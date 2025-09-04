@@ -634,16 +634,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     rdfs:comment "Shape with sh:xone properties." ;
     sh:property [
         sh:maxCount 1 ;
-        sh:path :widenedTermsProperty ;
-        sh:xone ([
-                sh:nodeKind sh:Literal
-            ]
-            [
-                sh:nodeKind sh:IRI
-            ]
-        )
-    ], [
-        sh:maxCount 1 ;
         sh:path :unrelatedTypesProperty ;
         sh:xone ([
                 sh:datatype xsd:integer
@@ -671,6 +661,16 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
             [
                 sh:datatype xsd:string
+            ]
+        )
+    ], [
+        sh:maxCount 1 ;
+        sh:path :widenedTermsProperty ;
+        sh:xone ([
+                sh:nodeKind sh:Literal
+            ]
+            [
+                sh:nodeKind sh:IRI
             ]
         )
     ] .

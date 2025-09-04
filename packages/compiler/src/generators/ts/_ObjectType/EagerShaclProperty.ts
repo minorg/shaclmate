@@ -2,6 +2,7 @@ import { pascalCase } from "change-case";
 import { Maybe } from "purify-ts";
 import type { OptionalKind, PropertySignatureStructure } from "ts-morph";
 
+import { Memoize } from "typescript-memoize";
 import type { Type } from "../Type.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { ShaclProperty } from "./ShaclProperty.js";
@@ -25,10 +26,34 @@ export class EagerShaclProperty<
     this.recursive = recursive;
   }
 
+  @Memoize()
+  override get constructorParametersPropertySignature(): Maybe<
+    OptionalKind<PropertySignatureStructure>
+  > {
+    let hasQuestionToken = false;
+    const typeNames = new Set<string>(); // Remove duplicates with a set
+    for (const conversion of this.type.conversions) {
+      if (conversion.sourceTypeName === "undefined") {
+        hasQuestionToken = true;
+      } else {
+        typeNames.add(conversion.sourceTypeName);
+      }
+    }
+
+    return Maybe.of({
+      hasQuestionToken,
+      isReadonly: true,
+      leadingTrivia: this.declarationComment,
+      name: this.name,
+      type: [...typeNames].sort().join(" | "),
+    });
+  }
+
   override get equalsFunction(): string {
     return this.type.equalsFunction;
   }
 
+  @Memoize()
   override get graphqlField(): ShaclProperty<TypeT>["graphqlField"] {
     return Maybe.of({
       description: this.comment.map(JSON.stringify).extract(),
@@ -38,6 +63,7 @@ export class EagerShaclProperty<
     });
   }
 
+  @Memoize()
   override get jsonPropertySignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {
@@ -54,26 +80,30 @@ export class EagerShaclProperty<
   }: Parameters<
     ShaclProperty<TypeT>["constructorStatements"]
   >[0]): readonly string[] {
+    const typeConversions = this.type.conversions;
+    if (typeConversions.length === 1) {
+      switch (this.objectType.declarationType) {
+        case "class":
+          return [`this.${this.name} = ${variables.parameter};`];
+        case "interface":
+          return [`const ${this.name} = ${variables.parameter};`];
+      }
+    }
+
     let lhs: string;
+    const statements: string[] = [];
     switch (this.objectType.declarationType) {
       case "class":
         lhs = `this.${this.name}`;
         break;
       case "interface":
         lhs = this.name;
+        statements.push(`let ${this.name}: ${this.type.name};`);
         break;
     }
 
-    const typeConversions = this.type.conversions;
-    if (typeConversions.length === 1) {
-      return [`${lhs} = ${variables.parameter};`];
-    }
-    const statements: string[] = [];
-    if (this.objectType.declarationType === "interface") {
-      statements.push(`let ${this.name}: ${this.type.name};`);
-    }
     const conversionBranches: string[] = [];
-    for (const conversion of this.type.conversions) {
+    for (const conversion of typeConversions) {
       conversionBranches.push(
         `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = ${conversion.conversionExpression(variables.parameter)}; }`,
       );
@@ -83,6 +113,7 @@ export class EagerShaclProperty<
       `{ ${lhs} = (${variables.parameter}) satisfies never; }`,
     );
     statements.push(conversionBranches.join(" else "));
+
     return statements;
   }
 

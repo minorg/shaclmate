@@ -184,6 +184,8 @@ export class IdentifierProperty extends Property<IdentifierType> {
     Property<IdentifierType>["constructorStatements"]
   >[0]): readonly string[] {
     let lhs: string;
+    const statements: string[] = [];
+    const typeConversions = this.type.conversions;
     switch (this.objectType.declarationType) {
       case "class": {
         if (this.abstract) {
@@ -192,34 +194,41 @@ export class IdentifierProperty extends Property<IdentifierType> {
         if (this.propertyDeclaration.isNothing()) {
           return [];
         }
-        lhs = `this.${this.propertyDeclaration.unsafeCoerce().name}`;
+        const propertyDeclaration = this.propertyDeclaration.unsafeCoerce();
+        if (typeConversions.length === 1) {
+          return [`this.${propertyDeclaration.name} = ${variables.parameter};`];
+        }
+        lhs = `this.${propertyDeclaration.name}`;
         break;
       }
       case "interface":
+        if (typeConversions.length === 1) {
+          return [`const ${this.name} = ${variables.parameter};`];
+        }
         lhs = this.name;
+        statements.push(`let ${this.name}: ${this.typeAlias};`);
         break;
     }
 
-    const typeConversions = this.type.conversions;
-    if (typeConversions.length === 1) {
-      return [`${lhs} = ${variables.parameter};`];
-    }
-    const statements: string[] = [];
-    for (const conversion of this.type.conversions) {
+    const conversionBranches: string[] = [];
+    for (const conversion of typeConversions) {
       invariant(conversion.sourceTypeName !== "undefined");
-      statements.push(
+      conversionBranches.push(
         `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = ${conversion.conversionExpression(variables.parameter)}; }`,
       );
     }
-
-    if (lhs.startsWith("_")) {
-      statements.push(`if (typeof ${variables.parameter} === "undefined") { }`);
+    if (lhs.startsWith("this._")) {
+      conversionBranches.push(
+        `if (typeof ${variables.parameter} === "undefined") { }`,
+      );
     }
-
     // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
-    statements.push(`{ ${lhs} = (${variables.parameter}) satisfies never;\n }`);
+    conversionBranches.push(
+      `{ ${lhs} = (${variables.parameter}) satisfies never;\n }`,
+    );
+    statements.push(conversionBranches.join(" else "));
 
-    return [statements.join(" else ")];
+    return statements;
   }
 
   override fromJsonStatements({

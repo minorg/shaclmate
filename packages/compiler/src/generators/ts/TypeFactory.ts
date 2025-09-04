@@ -463,18 +463,20 @@ export class TypeFactory {
 
     let property: ObjectType.Property;
 
-    if (astObjectTypeProperty.lazy) {
+    const name = tsName(astObjectTypeProperty.name);
+
+    if (astObjectTypeProperty.lazy.orDefault(false)) {
       const type = this.createTypeFromAstType(astObjectTypeProperty.type);
       if (type instanceof OptionType || type instanceof SetType) {
         invariant(
           type.itemType instanceof ObjectType ||
             type.itemType instanceof ObjectUnionType,
-          `lazy property of ${type.kind} has ${type.itemType.kind} items`,
+          `lazy property ${name} on ${objectType.name} of ${type.kind} has ${type.itemType.kind} items`,
         );
       } else {
         invariant(
           type instanceof ObjectType || type instanceof ObjectUnionType,
-          `lazy property has ${(type as any).kind}`,
+          `lazy property ${name} on ${objectType.name} has ${(type as any).kind}`,
         );
       }
 
@@ -484,7 +486,7 @@ export class TypeFactory {
         description: astObjectTypeProperty.description,
         label: astObjectTypeProperty.label,
         objectType,
-        name: tsName(astObjectTypeProperty.name),
+        name,
         path: astObjectTypeProperty.path.iri,
         type,
         visibility: astObjectTypeProperty.visibility,
@@ -497,7 +499,7 @@ export class TypeFactory {
         label: astObjectTypeProperty.label,
         mutable: astObjectTypeProperty.mutable.orDefault(false),
         objectType,
-        name: tsName(astObjectTypeProperty.name),
+        name,
         path: astObjectTypeProperty.path.iri,
         recursive: !!astObjectTypeProperty.recursive,
         type: this.createTypeFromAstType(astObjectTypeProperty.type),

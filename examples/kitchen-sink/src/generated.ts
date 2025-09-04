@@ -180,6 +180,9 @@ export function $dateEquals(left: Date, right: Date): $EqualsResult {
     left.getTime() === right.getTime(),
   );
 }
+/**
+ * Compare two arrays element-wise with the provided elementEquals function.
+ */
 export function $arrayEquals<T>(
   leftArray: readonly T[],
   rightArray: readonly T[],

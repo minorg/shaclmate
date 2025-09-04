@@ -1035,7 +1035,9 @@ export namespace ConcreteChild {
       requiredStringProperty: {
         description: "Required string property",
         resolve: (source) => source.requiredStringProperty,
-        type: new graphql.GraphQLNonNull(graphql.GraphQLString),
+        type: new graphql.GraphQLNonNull(
+          new graphql.GraphQLNonNull(graphql.GraphQLString),
+        ),
       },
     }),
     name: "ConcreteChild",
