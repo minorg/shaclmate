@@ -1,21 +1,13 @@
-import type * as rdfjs from "@rdfjs/types";
-
 import { pascalCase } from "change-case";
 import { Maybe } from "purify-ts";
-import type {
-  GetAccessorDeclarationStructure,
-  OptionalKind,
-  PropertyDeclarationStructure,
-  PropertySignatureStructure,
-} from "ts-morph";
-import type { IdentifierType } from "../IdentifierType.js";
-import type { Import } from "../Import.js";
+import type { OptionalKind, PropertySignatureStructure } from "ts-morph";
 import type { Type } from "../Type.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
-import { Property } from "./Property.js";
 import { ShaclProperty } from "./ShaclProperty.js";
 
-export class EagerShaclProperty extends ShaclProperty {
+export class EagerShaclProperty<
+  TypeT extends Type,
+> extends ShaclProperty<TypeT> {
   override readonly mutable: boolean;
   override readonly recursive: boolean;
 
@@ -24,84 +16,24 @@ export class EagerShaclProperty extends ShaclProperty {
     recursive,
     ...superParameters
   }: {
-    comment: Maybe<string>;
-    description: Maybe<string>;
-    label: Maybe<string>;
     mutable: boolean;
-    path: rdfjs.NamedNode;
     recursive: boolean;
-    type: Type;
-  } & ConstructorParameters<typeof ShaclProperty>[0]) {
+  } & ConstructorParameters<typeof ShaclProperty<TypeT>>[0]) {
     super(superParameters);
     this.mutable = mutable;
     this.recursive = recursive;
-  }
-
-  override get classGetAccessorDeclaration(): Maybe<
-    OptionalKind<GetAccessorDeclarationStructure>
-  > {
-    return Maybe.empty();
-  }
-
-  override get classPropertyDeclaration(): Maybe<
-    OptionalKind<PropertyDeclarationStructure>
-  > {
-    return Maybe.of({
-      isReadonly: !this.mutable,
-      leadingTrivia: this.declarationComment,
-      name: this.name,
-      scope: Property.visibilityToScope(this.visibility),
-      type: this.type.name,
-    });
-  }
-
-  override get constructorParametersPropertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    let hasQuestionToken = false;
-    const typeNames = new Set<string>(); // Remove duplicates with a set
-    for (const conversion of this.type.conversions) {
-      if (conversion.sourceTypeName === "undefined") {
-        hasQuestionToken = true;
-      } else {
-        typeNames.add(conversion.sourceTypeName);
-      }
-    }
-
-    return Maybe.of({
-      hasQuestionToken,
-      isReadonly: true,
-      leadingTrivia: this.declarationComment,
-      name: this.name,
-      type: [...typeNames].sort().join(" | "),
-    });
-  }
-
-  override get declarationImports(): readonly Import[] {
-    return this.type.useImports({ features: this.objectType.features });
   }
 
   override get equalsFunction(): string {
     return this.type.equalsFunction;
   }
 
-  override get graphqlField(): Property<Type>["graphqlField"] {
+  override get graphqlField(): ShaclProperty<TypeT>["graphqlField"] {
     return Maybe.of({
       description: this.comment.map(JSON.stringify).extract(),
       name: this.name,
       resolve: `(source) => ${this.type.graphqlResolveExpression({ variables: { value: `source.${this.name}` } })}`,
       type: this.type.graphqlName,
-    });
-  }
-
-  override get interfacePropertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    return Maybe.of({
-      isReadonly: !this.mutable,
-      leadingTrivia: this.declarationComment,
-      name: this.name,
-      type: this.type.name,
     });
   }
 
@@ -116,38 +48,46 @@ export class EagerShaclProperty extends ShaclProperty {
     });
   }
 
-  override snippetDeclarations(
-    parameters: Parameters<Type["snippetDeclarations"]>[0],
-  ): readonly string[] {
-    return this.type.snippetDeclarations(parameters);
-  }
-
-  override classConstructorStatements({
+  override constructorStatements({
     variables,
   }: Parameters<
-    Property<Type>["classConstructorStatements"]
+    ShaclProperty<TypeT>["constructorStatements"]
   >[0]): readonly string[] {
+    const assignmentStatement = (rhs: string): string => {
+      switch (this.objectType.declarationType) {
+        case "class":
+          return `this.${this.name} = ${rhs};`;
+        case "interface":
+          return `${this.name} = ${rhs};`;
+      }
+    };
+
     const typeConversions = this.type.conversions;
     if (typeConversions.length === 1) {
-      return [`this.${this.name} = ${variables.parameter};`];
+      return [assignmentStatement(variables.parameter)];
     }
     const statements: string[] = [];
+    if (this.objectType.declarationType === "interface") {
+      statements.push(`let ${this.name}: ${this.type.name};`);
+    }
+    const conversionBranches: string[] = [];
     for (const conversion of this.type.conversions) {
-      statements.push(
-        `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { this.${this.name} = ${conversion.conversionExpression(variables.parameter)}; }`,
+      conversionBranches.push(
+        `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${assignmentStatement(conversion.conversionExpression(variables.parameter))} }`,
       );
     }
     // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
-    statements.push(
-      `{ this.${this.name} =( ${variables.parameter}) satisfies never;\n }`,
+    conversionBranches.push(
+      `{ ${assignmentStatement(`${variables.parameter}) satisfies never`)} }`,
     );
-    return [statements.join(" else ")];
+    statements.push(conversionBranches.join(" else "));
+    return statements;
   }
 
   override fromJsonStatements({
     variables,
   }: Parameters<
-    Property<IdentifierType>["fromJsonStatements"]
+    ShaclProperty<TypeT>["fromJsonStatements"]
   >[0]): readonly string[] {
     return [
       `const ${this.name} = ${this.type.fromJsonExpression({ variables: { value: `${variables.jsonObject}["${this.name}"]` } })};`,
@@ -156,7 +96,9 @@ export class EagerShaclProperty extends ShaclProperty {
 
   override fromRdfStatements({
     variables,
-  }: Parameters<Property<Type>["fromRdfStatements"]>[0]): readonly string[] {
+  }: Parameters<
+    ShaclProperty<TypeT>["fromRdfStatements"]
+  >[0]): readonly string[] {
     // Assume the property has the correct range and ignore the object's RDF type.
     // This also accommodates the case where the object of a property is a dangling identifier that's not the
     // subject of any statements.
@@ -168,38 +110,16 @@ export class EagerShaclProperty extends ShaclProperty {
   }
 
   override hashStatements(
-    parameters: Parameters<Property<Type>["hashStatements"]>[0],
+    parameters: Parameters<ShaclProperty<TypeT>["hashStatements"]>[0],
   ): readonly string[] {
     return this.type.hashStatements(parameters);
   }
 
-  override interfaceConstructorStatements({
-    variables,
-  }: Parameters<
-    Property<Type>["interfaceConstructorStatements"]
-  >[0]): readonly string[] {
-    const typeConversions = this.type.conversions;
-    if (typeConversions.length === 1) {
-      return [`const ${this.name} = ${variables.parameter};`];
-    }
-    const statements: string[] = [`let ${this.name}: ${this.type.name};`];
-    const conversionBranches: string[] = [];
-    for (const conversion of this.type.conversions) {
-      conversionBranches.push(
-        `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${this.name} = ${conversion.conversionExpression(variables.parameter)}; }`,
-      );
-    }
-    // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
-    conversionBranches.push(
-      `{ ${this.name} =( ${variables.parameter}) satisfies never;\n }`,
-    );
-    statements.push(conversionBranches.join(" else "));
-    return statements;
-  }
-
   jsonUiSchemaElement({
     variables,
-  }: Parameters<Property<Type>["jsonUiSchemaElement"]>[0]): Maybe<string> {
+  }: Parameters<
+    ShaclProperty<TypeT>["jsonUiSchemaElement"]
+  >[0]): Maybe<string> {
     const scope = `\`\${${variables.scopePrefix}}/properties/${this.name}\``;
     return this.type
       .jsonUiSchemaElement({ variables: { scopePrefix: scope } })
@@ -211,8 +131,8 @@ export class EagerShaclProperty extends ShaclProperty {
   }
 
   override jsonZodSchema(
-    parameters: Parameters<Property<Type>["jsonZodSchema"]>[0],
-  ): ReturnType<Property<Type>["jsonZodSchema"]> {
+    parameters: Parameters<ShaclProperty<TypeT>["jsonZodSchema"]>[0],
+  ): ReturnType<ShaclProperty<TypeT>["jsonZodSchema"]> {
     let schema = this.type.jsonZodSchema({
       ...parameters,
       context: "property",
@@ -229,7 +149,7 @@ export class EagerShaclProperty extends ShaclProperty {
   sparqlConstructTemplateTriples({
     variables,
   }: Parameters<
-    Property<Type>["sparqlConstructTemplateTriples"]
+    ShaclProperty<TypeT>["sparqlConstructTemplateTriples"]
   >[0]): readonly string[] {
     const objectString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
     return this.type.sparqlConstructTemplateTriples({
@@ -246,7 +166,9 @@ export class EagerShaclProperty extends ShaclProperty {
 
   sparqlWherePatterns({
     variables,
-  }: Parameters<Property<Type>["sparqlWherePatterns"]>[0]): readonly string[] {
+  }: Parameters<
+    ShaclProperty<TypeT>["sparqlWherePatterns"]
+  >[0]): readonly string[] {
     const objectString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
     return this.type.sparqlWherePatterns({
       allowIgnoreRdfType: true,
@@ -261,14 +183,16 @@ export class EagerShaclProperty extends ShaclProperty {
   }
 
   override toJsonObjectMember(
-    parameters: Parameters<Property<Type>["toJsonObjectMember"]>[0],
+    parameters: Parameters<ShaclProperty<TypeT>["toJsonObjectMember"]>[0],
   ): Maybe<string> {
     return Maybe.of(`${this.name}: ${this.type.toJsonExpression(parameters)}`);
   }
 
   override toRdfStatements({
     variables,
-  }: Parameters<Property<Type>["toRdfStatements"]>[0]): readonly string[] {
+  }: Parameters<
+    ShaclProperty<TypeT>["toRdfStatements"]
+  >[0]): readonly string[] {
     return [
       `${variables.resource}.add(${this.predicate}, ${this.type.toRdfExpression(
         {
