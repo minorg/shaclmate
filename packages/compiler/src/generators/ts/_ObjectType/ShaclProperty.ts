@@ -18,6 +18,7 @@ export abstract class ShaclProperty<
     Type,
     | "conversions"
     | "equalsFunction"
+    | "fromJsonExpression"
     | "mutable"
     | "name"
     | "useImports"
@@ -74,6 +75,14 @@ export abstract class ShaclProperty<
       name: this.name,
       type: [...typeNames].sort().join(" | "),
     });
+  }
+
+  override fromJsonStatements({
+    variables,
+  }: Parameters<Property<TypeT>["fromJsonStatements"]>[0]): readonly string[] {
+    return [
+      `const ${this.name} = ${this.type.fromJsonExpression({ variables: { value: `${variables.jsonObject}["${this.name}"]` } })};`,
+    ];
   }
 
   override get getAccessorDeclaration(): Maybe<

@@ -8,6 +8,7 @@ import { fromRdf } from "rdf-literal";
 
 import type * as ast from "../../ast/index.js";
 
+import { LazyShaclProperty } from "generators/ts/_ObjectType/LazyShaclProperty.js";
 import { invariant } from "ts-invariant";
 import { Scope } from "ts-morph";
 import { logger } from "../../logger.js";
@@ -466,18 +467,26 @@ export class TypeFactory {
     const name = tsName(astObjectTypeProperty.name);
 
     if (astObjectTypeProperty.lazy.orDefault(false)) {
-      const type = this.createTypeFromAstType(astObjectTypeProperty.type);
-      if (type instanceof OptionType || type instanceof SetType) {
+      const eagerType = this.createTypeFromAstType(astObjectTypeProperty.type);
+      let lazyType: LazyShaclProperty.Type<LazyShaclProperty.Type.EagerType>;
+      if (eagerType instanceof OptionType || eagerType instanceof SetType) {
         invariant(
-          type.itemType instanceof ObjectType ||
-            type.itemType instanceof ObjectUnionType,
-          `lazy property ${name} on ${objectType.name} of ${type.kind} has ${type.itemType.kind} items`,
+          eagerType.itemType instanceof ObjectType ||
+            eagerType.itemType instanceof ObjectUnionType,
+          `lazy property ${name} on ${objectType.name} of ${eagerType.kind} has ${eagerType.itemType.kind} items`,
         );
+        if (eagerType instanceof OptionType) {
+          lazyType = new LazyShaclProperty.ObjectOptionType(eagerType);
+        } else {
+          lazyType = new LazyShaclProperty.ObjectSetType(eagerType);
+        }
       } else {
         invariant(
-          type instanceof ObjectType || type instanceof ObjectUnionType,
-          `lazy property ${name} on ${objectType.name} has ${(type as any).kind}`,
+          eagerType instanceof ObjectType ||
+            eagerType instanceof ObjectUnionType,
+          `lazy property ${name} on ${objectType.name} has ${(eagerType as any).kind}`,
         );
+        lazyType = new LazyShaclProperty.ObjectType(eagerType);
       }
 
       property = new ObjectType.LazyShaclProperty({
@@ -488,7 +497,7 @@ export class TypeFactory {
         objectType,
         name,
         path: astObjectTypeProperty.path.iri,
-        type: new ObjectType.LazyShaclProperty.Type(type),
+        type: lazyType,
         visibility: astObjectTypeProperty.visibility,
       });
     } else {

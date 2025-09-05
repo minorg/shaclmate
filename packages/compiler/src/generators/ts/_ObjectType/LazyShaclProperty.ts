@@ -2,24 +2,27 @@ import { Maybe } from "purify-ts";
 import type { OptionalKind, PropertySignatureStructure } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 import type { TsFeature } from "../../../enums/TsFeature.js";
+import type { IdentifierType as _IdentifierType } from "../IdentifierType.js";
 import { Import } from "../Import.js";
-import type { ObjectType } from "../ObjectType.js";
-import type { ObjectUnionType } from "../ObjectUnionType.js";
-import type { OptionType } from "../OptionType.js";
-import { SetType } from "../SetType.js";
+import type { ObjectType as ResultObjectType } from "../ObjectType.js";
+import type { ObjectUnionType as ResultObjectUnionType } from "../ObjectUnionType.js";
+import { OptionType } from "../OptionType.js";
+import type { SetType } from "../SetType.js";
 import { SnippetDeclarations } from "../SnippetDeclarations.js";
 import type { Type as AbcType } from "../Type.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { ShaclProperty } from "./ShaclProperty.js";
 
 export class LazyShaclProperty<
-  EagerTypeT extends LazyShaclProperty.Type.EagerType,
-> extends ShaclProperty<LazyShaclProperty.Type<EagerTypeT>> {
+  IdentifierTypeT extends LazyShaclProperty.Type.IdentifierType,
+  LazyTypeT extends LazyShaclProperty.Type<IdentifierTypeT, ResultTypeT>,
+  ResultTypeT extends LazyShaclProperty.Type.ResultType,
+> extends ShaclProperty<LazyTypeT> {
   override readonly mutable = false;
   override readonly recursive = false;
 
   override get graphqlField(): ShaclProperty<
-    LazyShaclProperty.Type<EagerTypeT>
+    LazyShaclProperty.Type<ResultTypeT>
   >["graphqlField"] {
     return Maybe.of({
       description: this.comment.map(JSON.stringify).extract(),
@@ -39,7 +42,7 @@ export class LazyShaclProperty<
   override constructorStatements({
     variables,
   }: Parameters<
-    ShaclProperty<LazyShaclProperty.Type<EagerTypeT>>["constructorStatements"]
+    ShaclProperty<LazyShaclProperty.Type<ResultTypeT>>["constructorStatements"]
   >[0]): readonly string[] {
     const typeConversions = this.type.conversions;
     if (typeConversions.length === 1) {
@@ -79,15 +82,9 @@ export class LazyShaclProperty<
     return statements;
   }
 
-  override fromJsonStatements(): readonly string[] {
-    return [
-      `const ${this.name} = () => Promise.resolve(purify.Left<Error, ${this.type.eagerType.name}>(new Error("cannot deserialize lazy properties from JSON")));`,
-    ];
-  }
-
   override fromRdfStatements(
     _parameters: Parameters<
-      ShaclProperty<LazyShaclProperty.Type<EagerTypeT>>["fromRdfStatements"]
+      ShaclProperty<LazyShaclProperty.Type<ResultTypeT>>["fromRdfStatements"]
     >[0],
   ): readonly string[] {
     return [];
@@ -102,7 +99,7 @@ export class LazyShaclProperty<
   }
 
   override jsonZodSchema(): ReturnType<
-    ShaclProperty<LazyShaclProperty.Type<EagerTypeT>>["jsonZodSchema"]
+    ShaclProperty<LazyShaclProperty.Type<ResultTypeT>>["jsonZodSchema"]
   > {
     return Maybe.empty();
   }
@@ -125,21 +122,42 @@ export class LazyShaclProperty<
 }
 
 export namespace LazyShaclProperty {
-  export class Type<EagerTypeT extends Type.EagerType> {
+  export abstract class Type<
+    IdentifierTypeT extends Type.IdentifierType,
+    ResultTypeT extends Type.ResultType,
+  > {
     readonly mutable = false;
 
-    constructor(readonly eagerType: EagerTypeT) {}
+    readonly identifierType: IdentifierTypeT;
+    readonly resultType: ResultTypeT;
+    readonly runtimeClass: {
+      readonly name: string;
+      readonly snippetDeclaration: string;
+    };
+
+    constructor({
+      identifierType,
+      resultType,
+      runtimeClass,
+    }: {
+      identifierType: IdentifierTypeT;
+      resultType: ResultTypeT;
+      runtimeClass: Type<IdentifierTypeT, ResultTypeT>["runtimeClass"];
+    }) {
+      this.identifierType = identifierType;
+      this.resultType = resultType;
+      this.runtimeClass = runtimeClass;
+    }
 
     get conversions(): readonly AbcType.Conversion[] {
-      const conversions: AbcType.Conversion[] = [
+      return [
         {
           conversionExpression: (value) => value,
           sourceTypeCheckExpression: (value) =>
-            `typeof ${value} === "function"`,
+            `typeof ${value} === "object" && ${value} instanceof ${this.runtimeClass.name}`,
           sourceTypeName: this.name,
-        },
-      ];
-      return conversions.concat(this.eagerType.conversions);
+        } satisfies AbcType.Conversion,
+      ].concat(this.resultType.conversions);
     }
 
     @Memoize()
@@ -148,45 +166,94 @@ export namespace LazyShaclProperty {
     }
 
     get graphqlName(): string {
-      return this.eagerType.graphqlName;
+      return this.resultType.graphqlName;
     }
 
     graphqlResolveExpression(
       parameters: Parameters<AbcType["graphqlResolveExpression"]>[0],
     ): string {
-      return this.eagerType.graphqlResolveExpression(parameters);
+      return this.resultType.graphqlResolveExpression(parameters);
     }
 
     @Memoize()
     get name(): string {
-      // Use extra parentheses so the function type can be safely |'d with other types. Without the parentheses the | associates with the return type of the function,
-      // not the function as a whole.
-      if (this.eagerType instanceof SetType) {
-        return `((parameters?: { limit?: number; offset?: number }) => Promise<purify.Either<Error, ${this.eagerType.name}>>)`;
-      }
-      return `(() => Promise<purify.Either<Error, ${this.eagerType.name}>>)`;
+      return this.runtimeClass.name;
     }
 
     snippetDeclarations(
       parameters: Parameters<AbcType["snippetDeclarations"]>[0],
     ): readonly string[] {
-      return this.eagerType
+      return this.resultType
         .snippetDeclarations(parameters)
-        .concat(SnippetDeclarations.alwaysEquals);
+        .concat(
+          SnippetDeclarations.alwaysEquals,
+          this.runtimeClass.snippetDeclaration,
+        );
     }
 
     useImports(parameters: {
       features: Set<TsFeature>;
     }): readonly Import[] {
-      return this.eagerType.useImports(parameters).concat(Import.PURIFY);
+      return this.resultType.useImports(parameters).concat(Import.PURIFY);
     }
   }
 
   export namespace Type {
-    export type EagerType =
-      | ObjectType
-      | ObjectUnionType
-      | OptionType<ObjectType | ObjectUnionType>
-      | SetType<ObjectType | ObjectUnionType>;
+    export type IdentifierType =
+      | _IdentifierType
+      | OptionType<_IdentifierType>
+      | SetType<_IdentifierType>;
+
+    export type ResultType =
+      | ResultObjectType
+      | ResultObjectUnionType
+      | OptionType<ResultObjectType | ResultObjectUnionType>
+      | SetType<ResultObjectType | ResultObjectUnionType>;
+  }
+
+  export class ObjectType<
+    ResultTypeT extends ResultObjectType | ResultObjectUnionType,
+  > extends Type<_IdentifierType, ResultTypeT> {
+    constructor(resultType: ResultTypeT) {
+      super({
+        identifierType: resultType.identifierType,
+        resultType,
+        runtimeClass: {
+          name: `${syntheticNamePrefix}LazyObject`,
+          snippetDeclaration: SnippetDeclarations.LazyObject,
+        },
+      });
+    }
+  }
+
+  export class ObjectOptionType<
+    ResultTypeT extends OptionType<ResultObjectType | ResultObjectUnionType>,
+  > extends Type<ResultTypeT> {
+    constructor(resultType: ResultTypeT) {
+      super({
+        identifierType: new OptionType({
+          itemType: resultType.itemType.identifierType,
+        }),
+        resultType,
+        runtimeClass: {
+          name: `${syntheticNamePrefix}LazyObjectOption`,
+          snippetDeclaration: SnippetDeclarations.LazyObjectOption,
+        },
+      });
+    }
+  }
+
+  export class ObjectSetType<
+    ResultTypeT extends SetType<ResultObjectType | ResultObjectUnionType>,
+  > extends Type<ResultTypeT> {
+    constructor(resultType: ResultTypeT) {
+      super({
+        resultType,
+        runtimeClass: {
+          name: `${syntheticNamePrefix}LazyObjectSet`,
+          snippetDeclaration: SnippetDeclarations.LazyObjectSet,
+        },
+      });
+    }
   }
 }

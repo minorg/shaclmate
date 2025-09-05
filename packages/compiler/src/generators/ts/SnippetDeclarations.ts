@@ -1,4 +1,3 @@
-import { xsd } from "@tpluscode/rdf-ns-builders";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export namespace SnippetDeclarations {
@@ -214,9 +213,58 @@ export function ${syntheticNamePrefix}maybeEquals<T>(
   }
 
   return ${syntheticNamePrefix}EqualsResult.Equal;
-}
-`;
-  xsd;
+}`;
+
+  export const LazyObject = `\
+/**
+ * Type of lazy properties that return a single required object. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ */
+export class ${syntheticNamePrefix}LazyObject<ObjectT, ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode> {
+  constructor({ identifier, object }: {
+    identifier: ObjectIdentifierT,
+    object: () => Promise<purify.Either<Error, ObjectT>>
+  }) {
+    this.identifier = identifier;
+    this.object = object;
+  }
+
+  readonly identifier: ObjectIdentifierT;
+  readonly object: () => Promise<purify.Either<Error, ObjectT>>;
+}`;
+
+  export const LazyObjectOption = `\
+/**
+ * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ */
+export class ${syntheticNamePrefix}LazyObjectOption<ObjectT, ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode> {
+  constructor({ identifier, object }: {
+    identifier: purify.Maybe<ObjectIdentifierT>,
+    object: () => Promise<purify.Either<Error, purify.Maybe<ObjectT>>>
+  }) {
+    this.identifier = identifier;
+    this.object = object;
+  }
+
+  readonly identifier: purify.Maybe<ObjectIdentifierT>;
+  readonly object: () => Promise<purify.Either<Error, purify.Maybe<ObjectT>>>;
+}`;
+
+  export const LazyObjectSet = `\
+/**
+ * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ */
+export class ${syntheticNamePrefix}LazyObjectSet<ObjectT, ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode> {
+  constructor({ identifiers, objects }: {
+    identifiers: readonly ObjectIdentifierT[],
+    objects: () => Promise<purify.Either<Error, readonly ObjectT[]>>
+  }) {
+    this.identifiers = identifiers;
+    this.objects = objects;
+  }
+
+  readonly identifiers: readonly ObjectIdentifierT[];
+  readonly objects: () => Promise<purify.Either<Error, readonly ObjectT[]>>;
+}`;
 
   export const RdfVocabularies = (dataFactoryVariable: string) => `\
 export namespace ${syntheticNamePrefix}RdfVocabularies {
