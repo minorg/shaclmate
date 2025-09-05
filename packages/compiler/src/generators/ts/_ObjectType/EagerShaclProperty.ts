@@ -1,6 +1,5 @@
-import { pascalCase } from "change-case";
 import { Maybe } from "purify-ts";
-import type { OptionalKind, PropertySignatureStructure } from "ts-morph";
+import type {} from "ts-morph";
 
 import { Memoize } from "typescript-memoize";
 import type { Type } from "../Type.js";
@@ -33,18 +32,6 @@ export class EagerShaclProperty<
       name: this.name,
       resolve: `(source) => ${this.type.graphqlResolveExpression({ variables: { value: `source.${this.name}` } })}`,
       type: this.type.graphqlName,
-    });
-  }
-
-  @Memoize()
-  override get jsonPropertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    return Maybe.of({
-      hasQuestionToken: this.type.jsonPropertySignature.hasQuestionToken,
-      isReadonly: true,
-      name: this.name,
-      type: this.type.jsonPropertySignature.name,
     });
   }
 
@@ -101,99 +88,6 @@ export class EagerShaclProperty<
       `const _${this.name}Either: purify.Either<Error, ${this.type.name}> = ${this.type.fromRdfExpression({ variables: { ...variables, ignoreRdfType: true, predicate: this.predicate, resourceValues: `${variables.resource}.values(${syntheticNamePrefix}properties.${this.name}["identifier"], { unique: true })` } })};`,
       `if (_${this.name}Either.isLeft()) { return _${this.name}Either; }`,
       `const ${this.name} = _${this.name}Either.unsafeCoerce();`,
-    ];
-  }
-
-  override hashStatements(
-    parameters: Parameters<ShaclProperty<TypeT>["hashStatements"]>[0],
-  ): readonly string[] {
-    return this.type.hashStatements(parameters);
-  }
-
-  jsonUiSchemaElement({
-    variables,
-  }: Parameters<
-    ShaclProperty<TypeT>["jsonUiSchemaElement"]
-  >[0]): Maybe<string> {
-    const scope = `\`\${${variables.scopePrefix}}/properties/${this.name}\``;
-    return this.type
-      .jsonUiSchemaElement({ variables: { scopePrefix: scope } })
-      .altLazy(() =>
-        Maybe.of(
-          `{ ${this.label.isJust() ? `label: "${this.label.unsafeCoerce()}", ` : ""}scope: ${scope}, type: "Control" }`,
-        ),
-      );
-  }
-
-  override jsonZodSchema(
-    parameters: Parameters<ShaclProperty<TypeT>["jsonZodSchema"]>[0],
-  ): ReturnType<ShaclProperty<TypeT>["jsonZodSchema"]> {
-    let schema = this.type.jsonZodSchema({
-      ...parameters,
-      context: "property",
-    });
-    this.comment.alt(this.description).ifJust((description) => {
-      schema = `${schema}.describe(${JSON.stringify(description)})`;
-    });
-    return Maybe.of({
-      key: this.name,
-      schema,
-    });
-  }
-
-  sparqlConstructTemplateTriples({
-    variables,
-  }: Parameters<
-    ShaclProperty<TypeT>["sparqlConstructTemplateTriples"]
-  >[0]): readonly string[] {
-    const objectString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
-    return this.type.sparqlConstructTemplateTriples({
-      allowIgnoreRdfType: true,
-      context: "object",
-      variables: {
-        object: `dataFactory.variable!(${objectString})`,
-        predicate: this.predicate,
-        subject: variables.subject,
-        variablePrefix: objectString,
-      },
-    });
-  }
-
-  sparqlWherePatterns({
-    variables,
-  }: Parameters<
-    ShaclProperty<TypeT>["sparqlWherePatterns"]
-  >[0]): readonly string[] {
-    const objectString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
-    return this.type.sparqlWherePatterns({
-      allowIgnoreRdfType: true,
-      context: "object",
-      variables: {
-        object: `dataFactory.variable!(${objectString})`,
-        predicate: this.predicate,
-        subject: variables.subject,
-        variablePrefix: objectString,
-      },
-    });
-  }
-
-  override toJsonObjectMember(
-    parameters: Parameters<ShaclProperty<TypeT>["toJsonObjectMember"]>[0],
-  ): Maybe<string> {
-    return Maybe.of(`${this.name}: ${this.type.toJsonExpression(parameters)}`);
-  }
-
-  override toRdfStatements({
-    variables,
-  }: Parameters<
-    ShaclProperty<TypeT>["toRdfStatements"]
-  >[0]): readonly string[] {
-    return [
-      `${variables.resource}.add(${this.predicate}, ${this.type.toRdfExpression(
-        {
-          variables: { ...variables, predicate: this.predicate },
-        },
-      )});`,
     ];
   }
 }

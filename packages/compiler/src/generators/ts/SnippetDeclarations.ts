@@ -1,17 +1,6 @@
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export namespace SnippetDeclarations {
-  export const alwaysEquals = `\
-/**
- * A no-op equals implementation that always returns ${syntheticNamePrefix}EqualsResult.Equal.
- */
-export function ${syntheticNamePrefix}alwaysEquals<T>(
-  _left: T,
-  _right: T,
-): ${syntheticNamePrefix}EqualsResult {
-  return ${syntheticNamePrefix}EqualsResult.Equal;
-}`;
-
   export const arrayEquals = `\
 /**
  * Compare two arrays element-wise with the provided elementEquals function.

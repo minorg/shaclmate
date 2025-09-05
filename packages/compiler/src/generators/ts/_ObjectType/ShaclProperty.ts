@@ -1,4 +1,5 @@
 import type * as rdfjs from "@rdfjs/types";
+import { pascalCase } from "change-case";
 import { Maybe } from "purify-ts";
 import type {
   GetAccessorDeclarationStructure,
@@ -14,16 +15,7 @@ import { tsComment } from "../tsComment.js";
 import { Property } from "./Property.js";
 
 export abstract class ShaclProperty<
-  TypeT extends Pick<
-    Type,
-    | "conversions"
-    | "equalsFunction"
-    | "fromJsonExpression"
-    | "mutable"
-    | "name"
-    | "useImports"
-    | "snippetDeclarations"
-  >,
+  TypeT extends Type,
 > extends Property<TypeT> {
   protected readonly comment: Maybe<string>;
   protected readonly description: Maybe<string>;
@@ -91,6 +83,53 @@ export abstract class ShaclProperty<
     return Maybe.empty();
   }
 
+  override hashStatements(
+    parameters: Parameters<Property<TypeT>["hashStatements"]>[0],
+  ): readonly string[] {
+    return this.type.hashStatements(parameters);
+  }
+
+  @Memoize()
+  override get jsonPropertySignature(): Maybe<
+    OptionalKind<PropertySignatureStructure>
+  > {
+    return Maybe.of({
+      hasQuestionToken: this.type.jsonPropertySignature.hasQuestionToken,
+      isReadonly: true,
+      name: this.name,
+      type: this.type.jsonPropertySignature.name,
+    });
+  }
+
+  jsonUiSchemaElement({
+    variables,
+  }: Parameters<Property<TypeT>["jsonUiSchemaElement"]>[0]): Maybe<string> {
+    const scope = `\`\${${variables.scopePrefix}}/properties/${this.name}\``;
+    return this.type
+      .jsonUiSchemaElement({ variables: { scopePrefix: scope } })
+      .altLazy(() =>
+        Maybe.of(
+          `{ ${this.label.isJust() ? `label: "${this.label.unsafeCoerce()}", ` : ""}scope: ${scope}, type: "Control" }`,
+        ),
+      );
+  }
+
+  override jsonZodSchema(
+    parameters: Parameters<Property<TypeT>["jsonZodSchema"]>[0],
+  ): ReturnType<Property<TypeT>["jsonZodSchema"]> {
+    let schema = this.type.jsonZodSchema({
+      ...parameters,
+      context: "property",
+    });
+    this.comment.alt(this.description).ifJust((description) => {
+      schema = `${schema}.describe(${JSON.stringify(description)})`;
+    });
+    return Maybe.of({
+      key: this.name,
+      schema,
+    });
+  }
+
   @Memoize()
   override get propertyDeclaration(): Maybe<
     OptionalKind<PropertyDeclarationStructure>
@@ -125,6 +164,58 @@ export abstract class ShaclProperty<
     parameters: Parameters<Property<Type>["snippetDeclarations"]>[0],
   ): readonly string[] {
     return this.type.snippetDeclarations(parameters);
+  }
+
+  sparqlConstructTemplateTriples({
+    variables,
+  }: Parameters<
+    Property<TypeT>["sparqlConstructTemplateTriples"]
+  >[0]): readonly string[] {
+    const objectString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
+    return this.type.sparqlConstructTemplateTriples({
+      allowIgnoreRdfType: true,
+      context: "object",
+      variables: {
+        object: `dataFactory.variable!(${objectString})`,
+        predicate: this.predicate,
+        subject: variables.subject,
+        variablePrefix: objectString,
+      },
+    });
+  }
+
+  sparqlWherePatterns({
+    variables,
+  }: Parameters<Property<TypeT>["sparqlWherePatterns"]>[0]): readonly string[] {
+    const objectString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
+    return this.type.sparqlWherePatterns({
+      allowIgnoreRdfType: true,
+      context: "object",
+      variables: {
+        object: `dataFactory.variable!(${objectString})`,
+        predicate: this.predicate,
+        subject: variables.subject,
+        variablePrefix: objectString,
+      },
+    });
+  }
+
+  override toJsonObjectMember(
+    parameters: Parameters<Property<TypeT>["toJsonObjectMember"]>[0],
+  ): Maybe<string> {
+    return Maybe.of(`${this.name}: ${this.type.toJsonExpression(parameters)}`);
+  }
+
+  override toRdfStatements({
+    variables,
+  }: Parameters<Property<TypeT>["toRdfStatements"]>[0]): readonly string[] {
+    return [
+      `${variables.resource}.add(${this.predicate}, ${this.type.toRdfExpression(
+        {
+          variables: { ...variables, predicate: this.predicate },
+        },
+      )});`,
+    ];
   }
 
   protected get declarationComment(): string | undefined {

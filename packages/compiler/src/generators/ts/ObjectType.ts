@@ -510,8 +510,13 @@ export namespace ObjectType {
   export type IdentifierProperty = _ObjectType.IdentifierProperty;
   export const LazyShaclProperty = _ObjectType.LazyShaclProperty;
   export type LazyShaclProperty<
-    EagerTypeT extends _ObjectType.LazyShaclProperty.Type.EagerType,
-  > = _ObjectType.LazyShaclProperty<EagerTypeT>;
+    IdentifierTypeT extends _ObjectType.LazyShaclProperty.Type.IdentifierType,
+    LazyTypeT extends _ObjectType.LazyShaclProperty.Type<
+      IdentifierTypeT,
+      ResultTypeT
+    >,
+    ResultTypeT extends _ObjectType.LazyShaclProperty.Type.ResultType,
+  > = _ObjectType.LazyShaclProperty<IdentifierTypeT, LazyTypeT, ResultTypeT>;
   export type ObjectSetMethodNames = {
     readonly object: string;
     readonly objectsCount: string;

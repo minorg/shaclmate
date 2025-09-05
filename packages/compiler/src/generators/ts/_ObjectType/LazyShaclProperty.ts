@@ -1,15 +1,16 @@
 import { Maybe } from "purify-ts";
-import type { OptionalKind, PropertySignatureStructure } from "ts-morph";
+import "ts-morph";
 import { Memoize } from "typescript-memoize";
+
 import type { TsFeature } from "../../../enums/TsFeature.js";
 import type { IdentifierType as _IdentifierType } from "../IdentifierType.js";
 import { Import } from "../Import.js";
 import type { ObjectType as ResultObjectType } from "../ObjectType.js";
 import type { ObjectUnionType as ResultObjectUnionType } from "../ObjectUnionType.js";
 import { OptionType } from "../OptionType.js";
-import type { SetType } from "../SetType.js";
+import { SetType } from "../SetType.js";
 import { SnippetDeclarations } from "../SnippetDeclarations.js";
-import type { Type as AbcType } from "../Type.js";
+import { Type as _Type } from "../Type.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { ShaclProperty } from "./ShaclProperty.js";
 
@@ -22,7 +23,7 @@ export class LazyShaclProperty<
   override readonly recursive = false;
 
   override get graphqlField(): ShaclProperty<
-    LazyShaclProperty.Type<ResultTypeT>
+    LazyShaclProperty.Type<IdentifierTypeT, ResultTypeT>
   >["graphqlField"] {
     return Maybe.of({
       description: this.comment.map(JSON.stringify).extract(),
@@ -33,16 +34,12 @@ export class LazyShaclProperty<
     });
   }
 
-  override get jsonPropertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    return Maybe.empty();
-  }
-
   override constructorStatements({
     variables,
   }: Parameters<
-    ShaclProperty<LazyShaclProperty.Type<ResultTypeT>>["constructorStatements"]
+    ShaclProperty<
+      LazyShaclProperty.Type<IdentifierTypeT, ResultTypeT>
+    >["constructorStatements"]
   >[0]): readonly string[] {
     const typeConversions = this.type.conversions;
     if (typeConversions.length === 1) {
@@ -84,39 +81,11 @@ export class LazyShaclProperty<
 
   override fromRdfStatements(
     _parameters: Parameters<
-      ShaclProperty<LazyShaclProperty.Type<ResultTypeT>>["fromRdfStatements"]
+      ShaclProperty<
+        LazyShaclProperty.Type<IdentifierTypeT, ResultTypeT>
+      >["fromRdfStatements"]
     >[0],
   ): readonly string[] {
-    return [];
-  }
-
-  override hashStatements(): readonly string[] {
-    return [];
-  }
-
-  override jsonUiSchemaElement(): Maybe<string> {
-    return Maybe.empty();
-  }
-
-  override jsonZodSchema(): ReturnType<
-    ShaclProperty<LazyShaclProperty.Type<ResultTypeT>>["jsonZodSchema"]
-  > {
-    return Maybe.empty();
-  }
-
-  override sparqlConstructTemplateTriples(): readonly string[] {
-    return [];
-  }
-
-  override sparqlWherePatterns(): readonly string[] {
-    return [];
-  }
-
-  override toJsonObjectMember(): Maybe<string> {
-    return Maybe.empty();
-  }
-
-  override toRdfStatements(): readonly string[] {
     return [];
   }
 }
@@ -125,14 +94,18 @@ export namespace LazyShaclProperty {
   export abstract class Type<
     IdentifierTypeT extends Type.IdentifierType,
     ResultTypeT extends Type.ResultType,
-  > {
-    readonly mutable = false;
+  > extends _Type {
+    override readonly discriminatorProperty: _Type["discriminatorProperty"] =
+      Maybe.empty();
+    override readonly mutable = false;
+    override readonly typeof = "object";
 
-    readonly identifierType: IdentifierTypeT;
-    readonly resultType: ResultTypeT;
-    readonly runtimeClass: {
+    protected readonly identifierType: IdentifierTypeT;
+    protected readonly resultType: ResultTypeT;
+    private readonly runtimeClass: {
+      readonly identifierPropertyName: string;
       readonly name: string;
-      readonly snippetDeclaration: string;
+      readonly objectMethodName: string;
     };
 
     constructor({
@@ -144,54 +117,101 @@ export namespace LazyShaclProperty {
       resultType: ResultTypeT;
       runtimeClass: Type<IdentifierTypeT, ResultTypeT>["runtimeClass"];
     }) {
+      super();
       this.identifierType = identifierType;
       this.resultType = resultType;
       this.runtimeClass = runtimeClass;
     }
 
-    get conversions(): readonly AbcType.Conversion[] {
+    override get conversions(): readonly _Type.Conversion[] {
       return [
         {
           conversionExpression: (value) => value,
           sourceTypeCheckExpression: (value) =>
             `typeof ${value} === "object" && ${value} instanceof ${this.runtimeClass.name}`,
           sourceTypeName: this.name,
-        } satisfies AbcType.Conversion,
+        } satisfies _Type.Conversion,
       ].concat(this.resultType.conversions);
     }
 
     @Memoize()
-    get equalsFunction(): string {
-      return `${syntheticNamePrefix}alwaysEquals`;
+    override get equalsFunction(): string {
+      return `((left, right) => ${this.identifierType.equalsFunction}(left.${this.runtimeClass.identifierPropertyName}, right.${this.runtimeClass.identifierPropertyName}))`;
     }
 
-    get graphqlName(): string {
+    override get graphqlName(): string {
       return this.resultType.graphqlName;
     }
 
-    graphqlResolveExpression(
-      parameters: Parameters<AbcType["graphqlResolveExpression"]>[0],
-    ): string {
-      return this.resultType.graphqlResolveExpression(parameters);
+    override graphqlResolveExpression({
+      variables,
+    }: Parameters<_Type["graphqlResolveExpression"]>[0]): string {
+      return `${variables.value}.${this.runtimeClass.objectMethodName}()`;
     }
 
-    @Memoize()
-    get name(): string {
+    override hashStatements({
+      depth,
+      variables,
+    }: Parameters<_Type["hashStatements"]>[0]): readonly string[] {
+      return this.identifierType.hashStatements({
+        depth: depth + 1,
+        variables: {
+          ...variables,
+          value: `${variables.value}.${this.runtimeClass.identifierPropertyName}`,
+        },
+      });
+    }
+
+    override get jsonName(): string {
+      return this.identifierType.jsonName;
+    }
+
+    override jsonUiSchemaElement(
+      parameters: Parameters<_Type["jsonUiSchemaElement"]>[0],
+    ): Maybe<string> {
+      return this.identifierType.jsonUiSchemaElement(parameters);
+    }
+
+    override jsonZodSchema(
+      parameters: Parameters<_Type["jsonZodSchema"]>[0],
+    ): string {
+      return this.identifierType.jsonZodSchema(parameters);
+    }
+
+    override get name(): string {
       return this.runtimeClass.name;
     }
 
-    snippetDeclarations(
-      parameters: Parameters<AbcType["snippetDeclarations"]>[0],
+    override snippetDeclarations(
+      parameters: Parameters<_Type["snippetDeclarations"]>[0],
     ): readonly string[] {
-      return this.resultType
+      return this.identifierType
         .snippetDeclarations(parameters)
-        .concat(
-          SnippetDeclarations.alwaysEquals,
-          this.runtimeClass.snippetDeclaration,
-        );
+        .concat(this.resultType.snippetDeclarations(parameters));
     }
 
-    useImports(parameters: {
+    override toJsonExpression({
+      variables,
+    }: Parameters<_Type["toJsonExpression"]>[0]): string {
+      return this.identifierType.toJsonExpression({
+        variables: {
+          value: `${variables.value}.${this.runtimeClass.identifierPropertyName}`,
+        },
+      });
+    }
+
+    override toRdfExpression({
+      variables,
+    }: Parameters<_Type["toRdfExpression"]>[0]): string {
+      return this.identifierType.toRdfExpression({
+        variables: {
+          ...variables,
+          value: `${variables.value}.${this.runtimeClass.identifierPropertyName}`,
+        },
+      });
+    }
+
+    override useImports(parameters: {
       features: Set<TsFeature>;
     }): readonly Import[] {
       return this.resultType.useImports(parameters).concat(Import.PURIFY);
@@ -219,16 +239,25 @@ export namespace LazyShaclProperty {
         identifierType: resultType.identifierType,
         resultType,
         runtimeClass: {
+          identifierPropertyName: "identifier",
           name: `${syntheticNamePrefix}LazyObject`,
-          snippetDeclaration: SnippetDeclarations.LazyObject,
+          objectMethodName: "object",
         },
       });
+    }
+
+    override snippetDeclarations(
+      parameters: Parameters<_Type["snippetDeclarations"]>[0],
+    ): readonly string[] {
+      return super
+        .snippetDeclarations(parameters)
+        .concat(SnippetDeclarations.LazyObject);
     }
   }
 
   export class ObjectOptionType<
     ResultTypeT extends OptionType<ResultObjectType | ResultObjectUnionType>,
-  > extends Type<ResultTypeT> {
+  > extends Type<OptionType<_IdentifierType>, ResultTypeT> {
     constructor(resultType: ResultTypeT) {
       super({
         identifierType: new OptionType({
@@ -236,24 +265,47 @@ export namespace LazyShaclProperty {
         }),
         resultType,
         runtimeClass: {
+          identifierPropertyName: "identifier",
           name: `${syntheticNamePrefix}LazyObjectOption`,
-          snippetDeclaration: SnippetDeclarations.LazyObjectOption,
+          objectMethodName: "object",
         },
       });
+    }
+
+    override snippetDeclarations(
+      parameters: Parameters<_Type["snippetDeclarations"]>[0],
+    ): readonly string[] {
+      return super
+        .snippetDeclarations(parameters)
+        .concat(SnippetDeclarations.LazyObjectOption);
     }
   }
 
   export class ObjectSetType<
     ResultTypeT extends SetType<ResultObjectType | ResultObjectUnionType>,
-  > extends Type<ResultTypeT> {
+  > extends Type<SetType<_IdentifierType>, ResultTypeT> {
     constructor(resultType: ResultTypeT) {
       super({
+        identifierType: new SetType({
+          itemType: resultType.itemType.identifierType,
+          minCount: 0,
+          mutable: false,
+        }),
         resultType,
         runtimeClass: {
+          identifierPropertyName: "identifiers",
           name: `${syntheticNamePrefix}LazyObjectSet`,
-          snippetDeclaration: SnippetDeclarations.LazyObjectSet,
+          objectMethodName: "objects",
         },
       });
+    }
+
+    override snippetDeclarations(
+      parameters: Parameters<_Type["snippetDeclarations"]>[0],
+    ): readonly string[] {
+      return super
+        .snippetDeclarations(parameters)
+        .concat(SnippetDeclarations.LazyObjectSet);
     }
   }
 }

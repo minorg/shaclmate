@@ -445,7 +445,10 @@ export class TypeFactory {
 
     if (astObjectTypeProperty.lazy.orDefault(false)) {
       const eagerType = this.createTypeFromAstType(astObjectTypeProperty.type);
-      let lazyType: LazyShaclProperty.Type<LazyShaclProperty.Type.EagerType>;
+      let lazyType: LazyShaclProperty.Type<
+        LazyShaclProperty.Type.IdentifierType,
+        LazyShaclProperty.Type.ResultType
+      >;
       if (eagerType instanceof OptionType || eagerType instanceof SetType) {
         invariant(
           eagerType.itemType instanceof ObjectType ||
