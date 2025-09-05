@@ -7,7 +7,6 @@ import type {
   PropertySignatureStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
-import type { TsFeature } from "../../../enums/index.js";
 import type { Import } from "../Import.js";
 import type { Type } from "../Type.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
@@ -15,19 +14,15 @@ import { tsComment } from "../tsComment.js";
 import { Property } from "./Property.js";
 
 export abstract class ShaclProperty<
-  TypeT extends {
-    readonly conversions: readonly Type.Conversion[];
-    readonly equalsFunction: string;
-    readonly mutable: boolean;
-    readonly name: string;
-    useImports: (parameters: {
-      features: Set<TsFeature>;
-    }) => readonly Import[];
-    snippetDeclarations: (parameters: {
-      features: Set<TsFeature>;
-      recursionStack: Type[];
-    }) => readonly string[];
-  },
+  TypeT extends Pick<
+    Type,
+    | "conversions"
+    | "equalsFunction"
+    | "mutable"
+    | "name"
+    | "useImports"
+    | "snippetDeclarations"
+  >,
 > extends Property<TypeT> {
   protected readonly comment: Maybe<string>;
   protected readonly description: Maybe<string>;

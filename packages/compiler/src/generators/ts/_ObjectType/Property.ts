@@ -13,9 +13,7 @@ import type { ObjectType } from "../ObjectType.js";
 import type { Type } from "../Type.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 
-export abstract class Property<
-  TypeT extends { readonly mutable: boolean; readonly name: string },
-> {
+export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
   /**
    * Optional property to include in the parameters object of a class constructor.
    */

@@ -115,6 +115,12 @@ export class EagerShaclProperty<
     ];
   }
 
+  override hashStatements(
+    parameters: Parameters<ShaclProperty<TypeT>["hashStatements"]>[0],
+  ): readonly string[] {
+    return this.type.hashStatements(parameters);
+  }
+
   jsonUiSchemaElement({
     variables,
   }: Parameters<
