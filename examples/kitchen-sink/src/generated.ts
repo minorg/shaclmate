@@ -248,7 +248,7 @@ export function $arrayEquals<T>(
 /**
  * A no-op equals implementation that always returns $EqualsResult.Equal.
  */
-export function $alwaysEquals<T>(left: T, right: T): $EqualsResult {
+export function $alwaysEquals<T>(_left: T, _right: T): $EqualsResult {
   return $EqualsResult.Equal;
 }
 /**
@@ -7107,23 +7107,23 @@ export class LazyPropertiesClass {
       this.explicitLazyOptionalProperty =
         parameters.explicitLazyOptionalProperty;
     } else if (purify.Maybe.isMaybe(parameters.explicitLazyOptionalProperty)) {
-      const _explicitLazyOptionalPropertyCapture =
+      const $explicitLazyOptionalPropertyCapture =
         parameters.explicitLazyOptionalProperty;
       this.explicitLazyOptionalProperty = async () =>
-        purify.Either.of(_explicitLazyOptionalPropertyCapture);
+        purify.Either.of($explicitLazyOptionalPropertyCapture);
     } else if (
       typeof parameters.explicitLazyOptionalProperty === "object" &&
       parameters.explicitLazyOptionalProperty instanceof NonClass
     ) {
-      const _explicitLazyOptionalPropertyCapture = purify.Maybe.of(
+      const $explicitLazyOptionalPropertyCapture = purify.Maybe.of(
         parameters.explicitLazyOptionalProperty,
       );
       this.explicitLazyOptionalProperty = async () =>
-        purify.Either.of(_explicitLazyOptionalPropertyCapture);
+        purify.Either.of($explicitLazyOptionalPropertyCapture);
     } else if (typeof parameters.explicitLazyOptionalProperty === "undefined") {
-      const _explicitLazyOptionalPropertyCapture = purify.Maybe.empty();
+      const $explicitLazyOptionalPropertyCapture = purify.Maybe.empty();
       this.explicitLazyOptionalProperty = async () =>
-        purify.Either.of(_explicitLazyOptionalPropertyCapture);
+        purify.Either.of($explicitLazyOptionalPropertyCapture);
     } else {
       this.explicitLazyOptionalProperty =
         parameters.explicitLazyOptionalProperty satisfies never;
@@ -7358,7 +7358,9 @@ export namespace LazyPropertiesClass {
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      explicitLazyOptionalProperty: purify.Maybe<NonClass>;
+      explicitLazyOptionalProperty: () => Promise<
+        purify.Either<Error, purify.Maybe<NonClass>>
+      >;
       implicitLazyOptionalProperty: purify.Maybe<NonClass>;
       implicitLazyRequiredProperty: NonClass;
       implicitLazySetProperty: readonly NonClass[];

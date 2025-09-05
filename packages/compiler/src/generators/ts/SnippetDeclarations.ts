@@ -7,8 +7,8 @@ export namespace SnippetDeclarations {
  * A no-op equals implementation that always returns ${syntheticNamePrefix}EqualsResult.Equal.
  */
 export function ${syntheticNamePrefix}alwaysEquals<T>(
-  left: T,
-  right: T,
+  _left: T,
+  _right: T,
 ): ${syntheticNamePrefix}EqualsResult {
   return ${syntheticNamePrefix}EqualsResult.Equal;
 }`;

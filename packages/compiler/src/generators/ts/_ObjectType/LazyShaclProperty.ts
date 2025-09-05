@@ -1,7 +1,6 @@
 import { Maybe } from "purify-ts";
 import type { OptionalKind, PropertySignatureStructure } from "ts-morph";
 import { Memoize } from "typescript-memoize";
-
 import type { TsFeature } from "../../../enums/TsFeature.js";
 import { Import } from "../Import.js";
 import type { ObjectType } from "../ObjectType.js";
@@ -9,6 +8,7 @@ import type { ObjectUnionType } from "../ObjectUnionType.js";
 import type { OptionType } from "../OptionType.js";
 import { SetType } from "../SetType.js";
 import { SnippetDeclarations } from "../SnippetDeclarations.js";
+import type { Type as AbcType } from "../Type.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { ShaclProperty } from "./ShaclProperty.js";
 
@@ -63,26 +63,25 @@ export class LazyShaclProperty<
         break;
     }
 
-    const conversionBranches: string[] = [
-      `if (typeof ${variables.parameter} === "function") { ${lhs} = ${variables.parameter}; }`,
-    ];
-    for (const conversion of this.type.conversions) {
-      conversionBranches.push(
-        `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { const ${syntheticNamePrefix}${this.name}Capture = ${conversion.conversionExpression(variables.parameter)}; ${lhs} = async () => purify.Either.of(${syntheticNamePrefix}${this.name}Capture); }`,
-      );
-    }
-    // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
-    conversionBranches.push(
-      `{ ${lhs} = (${variables.parameter}) satisfies never; }`,
+    statements.push(
+      typeConversions
+        .map((conversion, conversionI) => {
+          if (conversionI === 0) {
+            return `if (typeof ${variables.parameter} === "function") { ${lhs} = ${variables.parameter}; }`;
+          }
+          return `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { const ${syntheticNamePrefix}${this.name}Capture = ${conversion.conversionExpression(variables.parameter)}; ${lhs} = async () => purify.Either.of(${syntheticNamePrefix}${this.name}Capture); }`;
+        })
+        // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
+        .concat(`{ ${lhs} = (${variables.parameter}) satisfies never; }`)
+        .join(" else "),
     );
-    statements.push(conversionBranches.join(" else "));
 
     return statements;
   }
 
   override fromJsonStatements(): readonly string[] {
     return [
-      `const ${this.name} = () => Promise.resolve(purify.Left<Error, ${this.type.name}>(new Error("cannot deserialize lazy properties from JSON")));`,
+      `const ${this.name} = () => Promise.resolve(purify.Left<Error, ${this.type.eagerType.name}>(new Error("cannot deserialize lazy properties from JSON")));`,
     ];
   }
 
@@ -128,18 +127,19 @@ export class LazyShaclProperty<
 export namespace LazyShaclProperty {
   export class Type<EagerTypeT extends Type.EagerType> {
     readonly mutable = false;
-    readonly eagerType: EagerTypeT;
 
-    constructor({
-      eagerType,
-    }: {
-      eagerType: EagerTypeT;
-    }) {
-      this.eagerType = eagerType;
-    }
+    constructor(readonly eagerType: EagerTypeT) {}
 
-    get conversions() {
-      return this.eagerType.conversions;
+    get conversions(): readonly AbcType.Conversion[] {
+      const conversions: AbcType.Conversion[] = [
+        {
+          conversionExpression: (value) => value,
+          sourceTypeCheckExpression: (value) =>
+            `typeof ${value} === "function"`,
+          sourceTypeName: this.name,
+        },
+      ];
+      return conversions.concat(this.eagerType.conversions);
     }
 
     @Memoize()
@@ -147,18 +147,28 @@ export namespace LazyShaclProperty {
       return `${syntheticNamePrefix}alwaysEquals`;
     }
 
+    get graphqlName(): string {
+      return this.eagerType.graphqlName;
+    }
+
+    graphqlResolveExpression(
+      parameters: Parameters<AbcType["graphqlResolveExpression"]>[0],
+    ): string {
+      return this.eagerType.graphqlResolveExpression(parameters);
+    }
+
     @Memoize()
     get name(): string {
       // Use extra parentheses so the function type can be safely |'d with other types. Without the parentheses the | associates with the return type of the function,
       // not the function as a whole.
       if (this.eagerType instanceof SetType) {
-        return `((parameters: { limit: number; offset: number }) => Promise<purify.Either<Error, ${this.eagerType.name}>>)`;
+        return `((parameters?: { limit?: number; offset?: number }) => Promise<purify.Either<Error, ${this.eagerType.name}>>)`;
       }
       return `(() => Promise<purify.Either<Error, ${this.eagerType.name}>>)`;
     }
 
     snippetDeclarations(
-      parameters: Parameters<EagerTypeT["snippetDeclarations"]>[0],
+      parameters: Parameters<AbcType["snippetDeclarations"]>[0],
     ): readonly string[] {
       return this.eagerType
         .snippetDeclarations(parameters)

@@ -75,17 +75,16 @@ export class EagerShaclProperty<
         break;
     }
 
-    const conversionBranches: string[] = [];
-    for (const conversion of typeConversions) {
-      conversionBranches.push(
-        `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = ${conversion.conversionExpression(variables.parameter)}; }`,
-      );
-    }
-    // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
-    conversionBranches.push(
-      `{ ${lhs} = (${variables.parameter}) satisfies never; }`,
+    statements.push(
+      typeConversions
+        .map(
+          (conversion) =>
+            `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = ${conversion.conversionExpression(variables.parameter)}; }`,
+        )
+        // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
+        .concat(`{ ${lhs} = (${variables.parameter}) satisfies never; }`)
+        .join(" else "),
     );
-    statements.push(conversionBranches.join(" else "));
 
     return statements;
   }

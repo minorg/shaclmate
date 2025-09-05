@@ -488,7 +488,7 @@ export class TypeFactory {
         objectType,
         name,
         path: astObjectTypeProperty.path.iri,
-        type,
+        type: new ObjectType.LazyShaclProperty.Type(type),
         visibility: astObjectTypeProperty.visibility,
       });
     } else {
