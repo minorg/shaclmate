@@ -456,7 +456,7 @@ export class TypeFactory {
           `lazy property ${name} on ${objectType.name} of ${eagerType.kind} has ${eagerType.itemType.kind} items`,
         );
         if (eagerType instanceof OptionType) {
-          lazyType = new LazyShaclProperty.ObjectOptionType(eagerType);
+          lazyType = new LazyShaclProperty.OptionalObjectType(eagerType);
         } else {
           lazyType = new LazyShaclProperty.ObjectSetType(eagerType);
         }
@@ -466,7 +466,7 @@ export class TypeFactory {
             eagerType instanceof ObjectUnionType,
           `lazy property ${name} on ${objectType.name} has ${(eagerType as any).kind}`,
         );
-        lazyType = new LazyShaclProperty.ObjectType(eagerType);
+        lazyType = new LazyShaclProperty.RequiredObjectType(eagerType);
       }
 
       property = new ObjectType.LazyShaclProperty({

@@ -102,10 +102,11 @@ export namespace LazyShaclProperty {
 
     protected readonly identifierType: IdentifierTypeT;
     protected readonly resultType: ResultTypeT;
-    private readonly runtimeClass: {
+    protected readonly runtimeClass: {
       readonly identifierPropertyName: string;
       readonly name: string;
       readonly objectMethodName: string;
+      readonly snippetDeclaration: string;
     };
 
     constructor({
@@ -141,6 +142,12 @@ export namespace LazyShaclProperty {
 
     override get graphqlName(): string {
       return this.resultType.graphqlName;
+    }
+
+    override fromJsonExpression(
+      parameters: Parameters<_Type["fromJsonExpression"]>[0],
+    ): string {
+      return `new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: ${this.identifierType.fromJsonExpression(parameters)}, ${this.runtimeClass.objectMethodName}: (identifier) => Promise.resolve(purify.Left<Error, ${this.resultType.name}>(new Error(\`unable to resolve identifier \${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON\`)) })`;
     }
 
     override graphqlResolveExpression({
@@ -187,7 +194,8 @@ export namespace LazyShaclProperty {
     ): readonly string[] {
       return this.identifierType
         .snippetDeclarations(parameters)
-        .concat(this.resultType.snippetDeclarations(parameters));
+        .concat(this.resultType.snippetDeclarations(parameters))
+        .concat(this.runtimeClass.snippetDeclaration);
     }
 
     override toJsonExpression({
@@ -231,7 +239,7 @@ export namespace LazyShaclProperty {
       | SetType<ResultObjectType | ResultObjectUnionType>;
   }
 
-  export class ObjectType<
+  export class RequiredObjectType<
     ResultTypeT extends ResultObjectType | ResultObjectUnionType,
   > extends Type<_IdentifierType, ResultTypeT> {
     constructor(resultType: ResultTypeT) {
@@ -240,22 +248,15 @@ export namespace LazyShaclProperty {
         resultType,
         runtimeClass: {
           identifierPropertyName: "identifier",
-          name: `${syntheticNamePrefix}LazyObject`,
+          name: `${syntheticNamePrefix}LazyRequiredObject`,
           objectMethodName: "object",
+          snippetDeclaration: SnippetDeclarations.LazyRequiredObject,
         },
       });
     }
-
-    override snippetDeclarations(
-      parameters: Parameters<_Type["snippetDeclarations"]>[0],
-    ): readonly string[] {
-      return super
-        .snippetDeclarations(parameters)
-        .concat(SnippetDeclarations.LazyObject);
-    }
   }
 
-  export class ObjectOptionType<
+  export class OptionalObjectType<
     ResultTypeT extends OptionType<ResultObjectType | ResultObjectUnionType>,
   > extends Type<OptionType<_IdentifierType>, ResultTypeT> {
     constructor(resultType: ResultTypeT) {
@@ -266,18 +267,11 @@ export namespace LazyShaclProperty {
         resultType,
         runtimeClass: {
           identifierPropertyName: "identifier",
-          name: `${syntheticNamePrefix}LazyObjectOption`,
+          name: `${syntheticNamePrefix}LazyOptionalObject`,
           objectMethodName: "object",
+          snippetDeclaration: SnippetDeclarations.LazyOptionalObject,
         },
       });
-    }
-
-    override snippetDeclarations(
-      parameters: Parameters<_Type["snippetDeclarations"]>[0],
-    ): readonly string[] {
-      return super
-        .snippetDeclarations(parameters)
-        .concat(SnippetDeclarations.LazyObjectOption);
     }
   }
 
@@ -296,16 +290,15 @@ export namespace LazyShaclProperty {
           identifierPropertyName: "identifiers",
           name: `${syntheticNamePrefix}LazyObjectSet`,
           objectMethodName: "objects",
+          snippetDeclaration: SnippetDeclarations.LazyObjectSet,
         },
       });
     }
 
-    override snippetDeclarations(
-      parameters: Parameters<_Type["snippetDeclarations"]>[0],
-    ): readonly string[] {
-      return super
-        .snippetDeclarations(parameters)
-        .concat(SnippetDeclarations.LazyObjectSet);
+    override fromJsonExpression(
+      parameters: Parameters<_Type["fromJsonExpression"]>[0],
+    ): string {
+      return `new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: ${this.identifierType.fromJsonExpression(parameters)}, ${this.runtimeClass.objectMethodName}: (identifiers) => Promise.resolve(purify.Left<Error, ${this.resultType.name}>(new Error(\`unable to resolve identifiers deserialized from JSON\`)) })`;
     }
   }
 }

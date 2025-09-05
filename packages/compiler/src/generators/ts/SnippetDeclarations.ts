@@ -204,38 +204,51 @@ export function ${syntheticNamePrefix}maybeEquals<T>(
   return ${syntheticNamePrefix}EqualsResult.Equal;
 }`;
 
-  export const LazyObject = `\
+  export const LazyRequiredObject = `\
 /**
  * Type of lazy properties that return a single required object. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
-export class ${syntheticNamePrefix}LazyObject<ObjectT, ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode> {
+export class ${syntheticNamePrefix}LazyRequiredObject<ObjectT, ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode> {
+  private readonly #object: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ObjectT>>;
+  readonly identifier: ObjectIdentifierT;
+
   constructor({ identifier, object }: {
     identifier: ObjectIdentifierT,
-    object: () => Promise<purify.Either<Error, ObjectT>>
+    object: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ObjectT>>
   }) {
     this.identifier = identifier;
-    this.object = object;
+    this.#object = object;
   }
 
-  readonly identifier: ObjectIdentifierT;
-  readonly object: () => Promise<purify.Either<Error, ObjectT>>;
+  object(): Promise<purify.Either<Error, ObjectT> {
+    return this.#object(this.identifier);
+  }
 }`;
 
-  export const LazyObjectOption = `\
+  export const LazyOptionalObject = `\
 /**
  * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
-export class ${syntheticNamePrefix}LazyObjectOption<ObjectT, ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode> {
+export class ${syntheticNamePrefix}LazyOptionalObject<ObjectT, ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode> {
+  private readonly #object: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ObjectT>>;
+  private static readonly empty: purify.Either<Error, purify.Maybe<ObjectT>> = purify.Either.of(purify.Maybe.empty());
+  readonly identifier: purify.Maybe<ObjectIdentifierT>;
+
   constructor({ identifier, object }: {
     identifier: purify.Maybe<ObjectIdentifierT>,
-    object: () => Promise<purify.Either<Error, purify.Maybe<ObjectT>>>
+    object: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ObjectT>>
   }) {
     this.identifier = identifier;
-    this.object = object;
+    this.#object = object;
   }
 
-  readonly identifier: purify.Maybe<ObjectIdentifierT>;
-  readonly object: () => Promise<purify.Either<Error, purify.Maybe<ObjectT>>>;
+  async object(): Promise<purify.Either<Error, purify.Maybe<ObjectT>> {
+    const identifier = this.identifier.extract();
+    if (!identifier) {
+      return ${syntheticNamePrefix}LazyOptionalObject.empty;
+    }
+    return (await this.#object(identifier)).map(purify.Maybe.of);
+  }
 }`;
 
   export const LazyObjectSet = `\
@@ -243,16 +256,24 @@ export class ${syntheticNamePrefix}LazyObjectOption<ObjectT, ObjectIdentifierT e
  * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
 export class ${syntheticNamePrefix}LazyObjectSet<ObjectT, ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode> {
+  private readonly #objects: (identifiers: readonly ObjectIdentifierT[]) => Promise<purify.Either<Error, readonly ObjectT[]>>;
+  private static readonly empty: purify.Either<Error, readonly ObjectT[]> = purify.Either.of([]);
+  readonly identifiers: readonly ObjectIdentifierT[];
+
   constructor({ identifiers, objects }: {
     identifiers: readonly ObjectIdentifierT[],
-    objects: () => Promise<purify.Either<Error, readonly ObjectT[]>>
+    objects: (identifiers: readonly ObjectIdentifierT[]) => Promise<purify.Either<Error, readonly ObjectT[]>>;
   }) {
     this.identifiers = identifiers;
-    this.objects = objects;
+    this.#objects = objects;
   }
 
-  readonly identifiers: readonly ObjectIdentifierT[];
-  readonly objects: () => Promise<purify.Either<Error, readonly ObjectT[]>>;
+  async objects(): Promise<purify.Either<Error, readonly ObjectT[]> {
+    if (this.identifiers.length === 0) {
+      return empty;
+    }
+    return await this.#objects(this.identifiers);
+  }
 }`;
 
   export const RdfVocabularies = `\
