@@ -155,12 +155,11 @@ export class UnionType extends Type {
   constructor({
     memberTypes,
     name,
-    ...superParameters
-  }: ConstructorParameters<typeof Type>[0] & {
+  }: {
     memberTypes: readonly Type[];
     name?: string;
   }) {
-    super(superParameters);
+    super();
     invariant(memberTypes.length >= 2);
     this._name = name;
 

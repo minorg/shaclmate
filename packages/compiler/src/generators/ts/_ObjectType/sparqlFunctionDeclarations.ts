@@ -3,6 +3,7 @@ import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import type { ObjectType } from "../ObjectType.js";
+import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { sparqlConstructQueryFunctionDeclaration } from "./sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "./sparqlConstructQueryStringFunctionDeclaration.js";
@@ -19,13 +20,13 @@ export function sparqlFunctionDeclarations(
   }
 
   const variables = { subject: "subject", variablePrefix: "variablePrefix" };
-  const rdfClassVariable = `${this.dataFactoryVariable}.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
-  const rdfTypeVariable = `${this.dataFactoryVariable}.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
+  const rdfClassVariable = `dataFactory.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
+  const rdfTypeVariable = `dataFactory.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
 
   const subjectDefault = camelCase(this.name);
 
   const sparqlConstructTemplateTriplesStatements = [
-    `const subject = parameters?.subject ?? ${this.dataFactoryVariable}.variable!("${subjectDefault}");`,
+    `const subject = parameters?.subject ?? dataFactory.variable!("${subjectDefault}");`,
     "const triples: sparqljs.Triple[] = []",
     `const variablePrefix = parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "${subjectDefault}");`,
   ];
@@ -34,7 +35,7 @@ export function sparqlFunctionDeclarations(
   const sparqlWherePatternsStatements = [
     "const optionalPatterns: sparqljs.OptionalPattern[] = [];",
     "const requiredPatterns: sparqljs.Pattern[] = [];",
-    `const subject = parameters?.subject ?? ${this.dataFactoryVariable}.variable!("${subjectDefault}");`,
+    `const subject = parameters?.subject ?? dataFactory.variable!("${subjectDefault}");`,
     `const variablePrefix = parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "${subjectDefault}");`,
   ];
 
@@ -57,8 +58,8 @@ for (const pattern of ${parentObjectType.staticModuleName}.${syntheticNamePrefix
     sparqlConstructTemplateTriplesStatements.push(`\
 if (!parameters?.ignoreRdfType) {
   triples.push(
-    { subject, predicate: ${this.rdfjsTermExpression(rdf.type)}, object: ${rdfTypeVariable} },
-    { subject: ${rdfTypeVariable}, predicate: ${this.rdfjsTermExpression(rdfs.subClassOf)}, object: ${rdfClassVariable} }
+    { subject, predicate: ${rdfjsTermExpression(rdf.type)}, object: ${rdfTypeVariable} },
+    { subject: ${rdfTypeVariable}, predicate: ${rdfjsTermExpression(rdfs.subClassOf)}, object: ${rdfClassVariable} }
   );
 }`);
     sparqlWherePatternsStatements.push(`\
@@ -68,7 +69,7 @@ if (!parameters?.ignoreRdfType) {
     triples: [
       {
         subject,
-        predicate: ${this.rdfjsTermExpression(rdf.type)},
+        predicate: ${rdfjsTermExpression(rdf.type)},
         object: ${rdfTypeVariable}
       }
     ],
@@ -81,7 +82,7 @@ if (!parameters?.ignoreRdfType) {
           {
             subject: ${rdfTypeVariable},
             predicate: {
-              items: [${this.rdfjsTermExpression(rdfs.subClassOf)}],
+              items: [${rdfjsTermExpression(rdfs.subClassOf)}],
               pathType: "+" as const,
               type: "path" as const
             },

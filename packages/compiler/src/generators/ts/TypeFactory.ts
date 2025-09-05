@@ -51,8 +51,6 @@ const numberDatatypes = {
 };
 
 export class TypeFactory {
-  private readonly dataFactoryVariable: string;
-
   private cachedObjectTypePropertiesByIdentifier: TermMap<
     BlankNode | NamedNode,
     ObjectType.Property
@@ -66,15 +64,10 @@ export class TypeFactory {
     ObjectUnionType
   > = new TermMap();
 
-  constructor({ dataFactoryVariable }: { dataFactoryVariable: string }) {
-    this.dataFactoryVariable = dataFactoryVariable;
-  }
-
   createTypeFromAstType(astType: ast.Type): Type {
     switch (astType.kind) {
       case "IdentifierType":
         return new IdentifierType({
-          dataFactoryVariable: this.dataFactoryVariable,
           defaultValue: astType.defaultValue,
           hasValues: astType.hasValues,
           in_: astType.in_.filter((_) => _.termType === "NamedNode"),
@@ -84,7 +77,6 @@ export class TypeFactory {
         throw new Error("not implemented");
       case "ListType": {
         return new ListType({
-          dataFactoryVariable: this.dataFactoryVariable,
           identifierNodeKind: astType.identifierNodeKind,
           itemType: this.createTypeFromAstType(astType.itemType),
           mutable: astType.mutable.orDefault(false),
@@ -113,7 +105,6 @@ export class TypeFactory {
 
           if (datatype.equals(xsd.boolean)) {
             return new BooleanType({
-              dataFactoryVariable: this.dataFactoryVariable,
               defaultValue: astType.defaultValue,
               hasValues: astType.hasValues,
               languageIn: [],
@@ -129,7 +120,6 @@ export class TypeFactory {
 
           if (datatype.equals(xsd.date) || datatype.equals(xsd.dateTime)) {
             return new (datatype.equals(xsd.date) ? DateType : DateTimeType)({
-              dataFactoryVariable: this.dataFactoryVariable,
               defaultValue: astType.defaultValue,
               hasValues: astType.hasValues,
               in_: astType.in_,
@@ -153,7 +143,6 @@ export class TypeFactory {
             for (const numberDatatype of numberDatatypes_) {
               if (datatype.equals(numberDatatype)) {
                 return new (floatOrInt === "float" ? FloatType : IntType)({
-                  dataFactoryVariable: this.dataFactoryVariable,
                   defaultValue: astType.defaultValue,
                   hasValues: astType.hasValues,
                   in_: astType.in_,
@@ -171,7 +160,6 @@ export class TypeFactory {
 
           if (datatype.equals(xsd.anyURI) || datatype.equals(xsd.string)) {
             return new StringType({
-              dataFactoryVariable: this.dataFactoryVariable,
               defaultValue: astType.defaultValue,
               hasValues: astType.hasValues,
               languageIn: [],
@@ -198,7 +186,6 @@ export class TypeFactory {
         }
 
         return new LiteralType({
-          dataFactoryVariable: this.dataFactoryVariable,
           defaultValue: astType.defaultValue,
           hasValues: astType.hasValues,
           in_: astType.in_,
@@ -213,21 +200,18 @@ export class TypeFactory {
         return this.createObjectUnionTypeFromAstType(astType);
       case "OptionType":
         return new OptionType({
-          dataFactoryVariable: this.dataFactoryVariable,
           itemType: this.createTypeFromAstType(astType.itemType),
         });
       case "PlaceholderType":
         throw new Error(astType.kind);
       case "SetType":
         return new SetType({
-          dataFactoryVariable: this.dataFactoryVariable,
           itemType: this.createTypeFromAstType(astType.itemType),
           mutable: astType.mutable.orDefault(false),
           minCount: astType.minCount,
         });
       case "TermType":
         return new TermType({
-          dataFactoryVariable: this.dataFactoryVariable,
           defaultValue: astType["defaultValue"],
           hasValues: astType["hasValues"],
           in_: astType["in_"],
@@ -235,7 +219,6 @@ export class TypeFactory {
         });
       case "UnionType":
         return new UnionType({
-          dataFactoryVariable: this.dataFactoryVariable,
           memberTypes: astType.memberTypes.map((astType) =>
             this.createTypeFromAstType(astType),
           ),
@@ -254,7 +237,6 @@ export class TypeFactory {
     }
 
     const identifierType = new IdentifierType({
-      dataFactoryVariable: this.dataFactoryVariable,
       defaultValue: Maybe.empty(),
       hasValues: [],
       in_: astType.identifierIn,
@@ -269,7 +251,6 @@ export class TypeFactory {
     const objectType = new ObjectType({
       abstract: astType.abstract,
       comment: astType.comment,
-      dataFactoryVariable: this.dataFactoryVariable,
       declarationType: astType.tsObjectDeclarationType,
       export_: astType.export,
       extern: astType.extern,
@@ -332,7 +313,6 @@ export class TypeFactory {
             0,
             new ObjectType.TypeDiscriminatorProperty({
               abstract: astType.abstract,
-              dataFactoryVariable: this.dataFactoryVariable,
               name: `${syntheticNamePrefix}type`,
               initializer: objectType.discriminatorValue,
               objectType,
@@ -355,14 +335,12 @@ export class TypeFactory {
             0,
             0,
             new ObjectType.IdentifierPrefixProperty({
-              dataFactoryVariable: this.dataFactoryVariable,
               own: !astType.ancestorObjectTypes.some(
                 objectTypeNeedsIdentifierPrefixProperty,
               ),
               name: `${syntheticNamePrefix}identifierPrefix`,
               objectType,
               type: new StringType({
-                dataFactoryVariable: this.dataFactoryVariable,
                 defaultValue: Maybe.empty(),
                 hasValues: [],
                 in_: [],
@@ -423,7 +401,6 @@ export class TypeFactory {
 
               return Maybe.of("private");
             })(),
-            dataFactoryVariable: this.dataFactoryVariable,
             identifierMintingStrategy: astType.identifierMintingStrategy,
             identifierPrefixPropertyName: `${syntheticNamePrefix}identifierPrefix`,
             name: `${syntheticNamePrefix}identifier`,
@@ -491,7 +468,6 @@ export class TypeFactory {
 
       property = new ObjectType.LazyShaclProperty({
         comment: astObjectTypeProperty.comment,
-        dataFactoryVariable: this.dataFactoryVariable,
         description: astObjectTypeProperty.description,
         label: astObjectTypeProperty.label,
         objectType,
@@ -503,7 +479,6 @@ export class TypeFactory {
     } else {
       property = new ObjectType.EagerShaclProperty({
         comment: astObjectTypeProperty.comment,
-        dataFactoryVariable: this.dataFactoryVariable,
         description: astObjectTypeProperty.description,
         label: astObjectTypeProperty.label,
         mutable: astObjectTypeProperty.mutable.orDefault(false),
@@ -551,11 +526,9 @@ export class TypeFactory {
 
     const objectUnionType = new ObjectUnionType({
       comment: astType.comment,
-      dataFactoryVariable: this.dataFactoryVariable,
       export_: astType.export,
       features: astType.tsFeatures,
       identifierType: new IdentifierType({
-        dataFactoryVariable: this.dataFactoryVariable,
         defaultValue: Maybe.empty(),
         hasValues: [],
         in_: [...memberIdentifierTypesIn],

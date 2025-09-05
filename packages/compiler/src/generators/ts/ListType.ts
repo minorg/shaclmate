@@ -9,6 +9,7 @@ import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
+import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class ListType extends Type {
@@ -27,15 +28,14 @@ export class ListType extends Type {
     identifierMintingStrategy,
     mutable,
     toRdfTypes,
-    ...superParameters
   }: {
     identifierNodeKind: ListType["identifierNodeKind"];
     itemType: Type;
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     mutable: boolean;
     toRdfTypes: readonly NamedNode[];
-  } & ConstructorParameters<typeof Type>[0]) {
-    super(superParameters);
+  }) {
+    super();
     this.identifierNodeKind = identifierNodeKind;
     this.itemType = itemType;
     this.identifierMintingStrategy = identifierMintingStrategy.orDefault(
@@ -156,7 +156,7 @@ export class ListType extends Type {
         const triples: string[] = [];
         const listVariable = variables.subject;
         const variable = (suffix: string) =>
-          `${this.dataFactoryVariable}.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;
+          `dataFactory.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;
         const variablePrefix = (suffix: string) =>
           `\`\${${variables.variablePrefix}}${suffix}\``;
 
@@ -166,7 +166,7 @@ export class ListType extends Type {
           triples.push(
             objectInitializer({
               subject: listVariable,
-              predicate: this.rdfjsTermExpression(rdf.first),
+              predicate: rdfjsTermExpression(rdf.first),
               object: item0Variable,
             }),
             ...this.itemType.sparqlConstructTemplateTriples({
@@ -186,7 +186,7 @@ export class ListType extends Type {
           triples.push(
             objectInitializer({
               subject: listVariable,
-              predicate: this.rdfjsTermExpression(rdf.rest),
+              predicate: rdfjsTermExpression(rdf.rest),
               object: rest0Variable,
             }),
           );
@@ -201,7 +201,7 @@ export class ListType extends Type {
           triples.push(
             objectInitializer({
               subject: restNVariable,
-              predicate: this.rdfjsTermExpression(rdf.first),
+              predicate: rdfjsTermExpression(rdf.first),
               object: itemNVariable,
             }),
             ...this.itemType.sparqlConstructTemplateTriples({
@@ -219,7 +219,7 @@ export class ListType extends Type {
         triples.push(
           objectInitializer({
             subject: restNVariable,
-            predicate: this.rdfjsTermExpression(rdf.rest),
+            predicate: rdfjsTermExpression(rdf.rest),
             object: variable("RestNBasic"),
           }),
         );
@@ -245,7 +245,7 @@ export class ListType extends Type {
         const patterns: string[] = [];
         const listVariable = variables.subject;
         const variable = (suffix: string) =>
-          `${this.dataFactoryVariable}.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;
+          `dataFactory.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;
         const variablePrefix = (suffix: string) =>
           `\`\${${variables.variablePrefix}}${suffix}\``;
 
@@ -255,7 +255,7 @@ export class ListType extends Type {
           patterns.push(
             `{ type: "bgp", triples: [${objectInitializer({
               subject: listVariable,
-              predicate: this.rdfjsTermExpression(rdf.first),
+              predicate: rdfjsTermExpression(rdf.first),
               object: item0Variable,
             })}] }`,
             ...this.itemType.sparqlWherePatterns({
@@ -275,7 +275,7 @@ export class ListType extends Type {
           patterns.push(
             `{ type: "bgp", triples: [${objectInitializer({
               subject: listVariable,
-              predicate: this.rdfjsTermExpression(rdf.rest),
+              predicate: rdfjsTermExpression(rdf.rest),
               object: rest0Variable,
             })}] }`,
           );
@@ -288,7 +288,7 @@ export class ListType extends Type {
         optionalPatterns.push(
           `{ type: "bgp", triples: [${objectInitializer({
             subject: listVariable,
-            predicate: `{ type: "path", pathType: "*", items: [${this.rdfjsTermExpression(rdf.rest)}] }`,
+            predicate: `{ type: "path", pathType: "*", items: [${rdfjsTermExpression(rdf.rest)}] }`,
             object: restNVariable,
           })}] }`,
         );
@@ -299,7 +299,7 @@ export class ListType extends Type {
           optionalPatterns.push(
             `{ type: "bgp", triples: [${objectInitializer({
               subject: restNVariable,
-              predicate: this.rdfjsTermExpression(rdf.first),
+              predicate: rdfjsTermExpression(rdf.first),
               object: itemNVariable,
             })}] }`,
             ...this.itemType.sparqlWherePatterns({
@@ -317,7 +317,7 @@ export class ListType extends Type {
         optionalPatterns.push(
           `{ type: "bgp", triples: [${objectInitializer({
             subject: restNVariable,
-            predicate: this.rdfjsTermExpression(rdf.rest),
+            predicate: rdfjsTermExpression(rdf.rest),
             object: variable("RestNBasic"),
           })}] }`,
         );
@@ -355,8 +355,7 @@ export class ListType extends Type {
     let subListIdentifier: string;
     switch (this.identifierNodeKind) {
       case "BlankNode": {
-        listIdentifier =
-          subListIdentifier = `${this.dataFactoryVariable}.blankNode()`;
+        listIdentifier = subListIdentifier = "dataFactory.blankNode()";
         mutableResourceTypeName = "rdfjsResource.MutableResource";
         resourceSetMethodName = "mutableResource";
         break;
@@ -366,7 +365,7 @@ export class ListType extends Type {
           case "blankNode":
             throw new RangeError(this.identifierMintingStrategy);
           case "sha256":
-            listIdentifier = `${this.dataFactoryVariable}.namedNode(\`urn:shaclmate:list:\${${variables.value}.reduce(
+            listIdentifier = `dataFactory.namedNode(\`urn:shaclmate:list:\${${variables.value}.reduce(
         (hasher, item) => {
           ${this.itemType.hashStatements({ depth: 0, variables: { hasher: "hasher", value: "item" } }).join("\n")}
           return hasher;
@@ -375,13 +374,15 @@ export class ListType extends Type {
       )}\`)`;
             break;
           case "uuidv4":
-            listIdentifier = `${this.dataFactoryVariable}.namedNode(\`urn:shaclmate:list:\${uuid.v4()}\`)`;
+            listIdentifier =
+              "dataFactory.namedNode(`urn:shaclmate:list:${uuid.v4()}`)";
             break;
         }
         mutableResourceTypeName =
           "rdfjsResource.MutableResource<rdfjs.NamedNode>";
         resourceSetMethodName = "mutableNamedResource";
-        subListIdentifier = `${this.dataFactoryVariable}.namedNode(\`\${listResource.identifier.value}:\${itemIndex}\`)`;
+        subListIdentifier =
+          "dataFactory.namedNode(`${listResource.identifier.value}:${itemIndex}`)";
         break;
       }
     }
@@ -395,16 +396,16 @@ export class ListType extends Type {
           mutateGraph: variables.mutateGraph,
         },
       )});
-      currentSubListResource!.add(${this.rdfjsTermExpression(rdf.rest)}, newSubListResource.identifier);
+      currentSubListResource!.add(${rdfjsTermExpression(rdf.rest)}, newSubListResource.identifier);
       currentSubListResource = newSubListResource;
     }
     
-    ${this.toRdfTypes.map((rdfType) => `currentSubListResource.add(${this.rdfjsTermExpression(rdf.type)}, ${this.dataFactoryVariable}.namedNode("${rdfType.value}"))`).join("\n")}
+    ${this.toRdfTypes.map((rdfType) => `currentSubListResource.add(${rdfjsTermExpression(rdf.type)}, dataFactory.namedNode("${rdfType.value}"))`).join("\n")}
         
-    currentSubListResource.add(${this.rdfjsTermExpression(rdf.first)}, ${this.itemType.toRdfExpression({ variables: { mutateGraph: variables.mutateGraph, predicate: this.rdfjsTermExpression(rdf.first), resource: "currentSubListResource", resourceSet: variables.resourceSet, value: "item" } })});
+    currentSubListResource.add(${rdfjsTermExpression(rdf.first)}, ${this.itemType.toRdfExpression({ variables: { mutateGraph: variables.mutateGraph, predicate: rdfjsTermExpression(rdf.first), resource: "currentSubListResource", resourceSet: variables.resourceSet, value: "item" } })});
 
     if (itemIndex + 1 === list.length) {
-      currentSubListResource.add(${this.rdfjsTermExpression(rdf.rest)}, ${this.rdfjsTermExpression(rdf.nil)});
+      currentSubListResource.add(${rdfjsTermExpression(rdf.rest)}, ${rdfjsTermExpression(rdf.nil)});
     }
     
     return { currentSubListResource, listResource };
@@ -420,7 +421,7 @@ export class ListType extends Type {
     currentSubListResource: ${mutableResourceTypeName} | null;
     listResource: ${mutableResourceTypeName};
   },
-).listResource.identifier : ${this.rdfjsTermExpression(rdf.nil)}`;
+).listResource.identifier : ${rdfjsTermExpression(rdf.nil)}`;
   }
 
   override useImports(

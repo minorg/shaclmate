@@ -21,13 +21,12 @@ export class SetType<ItemTypeT extends Type = Type> extends Type {
     itemType,
     minCount,
     mutable,
-    ...superParameters
-  }: ConstructorParameters<typeof Type>[0] & {
+  }: {
     itemType: ItemTypeT;
     mutable: boolean;
     minCount: number;
   }) {
-    super(superParameters);
+    super();
     this.itemType = itemType;
     this.minCount = minCount;
     invariant(this.minCount >= 0);

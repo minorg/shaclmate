@@ -390,9 +390,7 @@ export class ObjectType extends DeclaredType {
       snippetDeclarations.push(SnippetDeclarations.EqualsResult);
     }
     if (this.features.has("rdf")) {
-      snippetDeclarations.push(
-        SnippetDeclarations.RdfVocabularies(this.dataFactoryVariable),
-      );
+      snippetDeclarations.push(SnippetDeclarations.RdfVocabularies);
     }
     if (this.features.has("sparql") && this.fromRdfType.isJust()) {
       snippetDeclarations.push(SnippetDeclarations.sparqlInstancesOfPattern);

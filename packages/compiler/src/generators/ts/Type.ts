@@ -1,11 +1,10 @@
-import type { BlankNode, Literal, NamedNode, Variable } from "@rdfjs/types";
+import type {} from "@rdfjs/types";
 
 import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 
 import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
-import { rdfjsTermExpression } from "./_ObjectType/rdfjsTermExpression.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 /**
@@ -14,8 +13,6 @@ import { objectInitializer } from "./objectInitializer.js";
  * Subclasses are used for both property types (c.f., property* methods) and node/object types.
  */
 export abstract class Type {
-  protected readonly dataFactoryVariable: string;
-
   /**
    * Expressions that convert a source type or types to this type. It should include the type itself.
    */
@@ -56,14 +53,6 @@ export abstract class Type {
    * JavaScript typeof the type.
    */
   abstract readonly typeof: "boolean" | "object" | "number" | "string";
-
-  constructor({
-    dataFactoryVariable,
-  }: {
-    dataFactoryVariable: string;
-  }) {
-    this.dataFactoryVariable = dataFactoryVariable;
-  }
 
   get jsonPropertySignature(): {
     readonly hasQuestionToken?: boolean;
@@ -186,7 +175,7 @@ export abstract class Type {
       }): readonly string[] {
     switch (context) {
       case "object": {
-        const objectPrefix = `${this.dataFactoryVariable}.variable!(`;
+        const objectPrefix = "dataFactory.variable!(";
         const objectSuffix = ")";
         invariant(variables.object.startsWith(objectPrefix));
         invariant(variables.object.endsWith(objectSuffix));
@@ -245,7 +234,7 @@ export abstract class Type {
       }): readonly string[] {
     switch (context) {
       case "object": {
-        const objectPrefix = `${this.dataFactoryVariable}.variable!(`;
+        const objectPrefix = "dataFactory.variable!(";
         const objectSuffix = ")";
         invariant(variables.object.startsWith(objectPrefix));
         invariant(variables.object.endsWith(objectSuffix));
@@ -307,19 +296,6 @@ export abstract class Type {
   abstract useImports(parameters: {
     features: Set<TsFeature>;
   }): readonly Import[];
-
-  protected rdfjsTermExpression(
-    rdfjsTerm:
-      | Omit<BlankNode, "equals">
-      | Omit<Literal, "equals">
-      | Omit<NamedNode, "equals">
-      | Omit<Variable, "equals">,
-  ): string {
-    return rdfjsTermExpression({
-      dataFactoryVariable: this.dataFactoryVariable,
-      rdfjsTerm,
-    });
-  }
 }
 
 export namespace Type {

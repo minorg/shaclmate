@@ -9,6 +9,7 @@ import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
+import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 /**
@@ -39,14 +40,13 @@ export class TermType<
     hasValues,
     in_,
     nodeKinds,
-    ...superParameters
   }: {
     defaultValue: Maybe<ConstantTermT>;
     hasValues: readonly ConstantTermT[];
     in_: readonly ConstantTermT[];
     nodeKinds: Set<RuntimeTermT["termType"]>;
-  } & ConstructorParameters<typeof Type>[0]) {
-    super(superParameters);
+  }) {
+    super();
     this.defaultValue = defaultValue;
     this.hasValues = hasValues;
     this.in_ = in_;
@@ -62,26 +62,25 @@ export class TermType<
       conversions.push(
         {
           conversionExpression: (value) =>
-            `rdfLiteral.toRdf(${value}, ${objectInitializer({ dataFactory: this.dataFactoryVariable })})`,
+            `rdfLiteral.toRdf(${value}, ${objectInitializer({ dataFactory: "dataFactory" })})`,
           sourceTypeCheckExpression: (value) => `typeof ${value} === "boolean"`,
           sourceTypeName: "boolean",
         },
         {
           conversionExpression: (value) =>
-            `rdfLiteral.toRdf(${value}, ${objectInitializer({ dataFactory: this.dataFactoryVariable })})`,
+            `rdfLiteral.toRdf(${value}, ${objectInitializer({ dataFactory: "dataFactory" })})`,
           sourceTypeCheckExpression: (value) =>
             `typeof ${value} === "object" && ${value} instanceof Date`,
           sourceTypeName: "Date",
         },
         {
           conversionExpression: (value) =>
-            `rdfLiteral.toRdf(${value}, ${objectInitializer({ dataFactory: this.dataFactoryVariable })})`,
+            `rdfLiteral.toRdf(${value}, ${objectInitializer({ dataFactory: "dataFactory" })})`,
           sourceTypeCheckExpression: (value) => `typeof ${value} === "number"`,
           sourceTypeName: "number",
         },
         {
-          conversionExpression: (value) =>
-            `${this.dataFactoryVariable}.literal(${value})`,
+          conversionExpression: (value) => `dataFactory.literal(${value})`,
           sourceTypeCheckExpression: (value) => `typeof ${value} === "string"`,
           sourceTypeName: "string",
         },
@@ -90,7 +89,7 @@ export class TermType<
 
     this.defaultValue.ifJust((defaultValue) => {
       conversions.push({
-        conversionExpression: () => this.rdfjsTermExpression(defaultValue),
+        conversionExpression: () => rdfjsTermExpression(defaultValue),
         sourceTypeCheckExpression: (value) => `typeof ${value} === "undefined"`,
         sourceTypeName: "undefined",
       });
@@ -153,13 +152,13 @@ export class TermType<
       let valueToNodeKind: string;
       switch (nodeKind) {
         case "BlankNode":
-          valueToNodeKind = `${this.dataFactoryVariable}.blankNode(${variables.value}["@id"].substring(2))`;
+          valueToNodeKind = `dataFactory.blankNode(${variables.value}["@id"].substring(2))`;
           break;
         case "Literal":
-          valueToNodeKind = `${this.dataFactoryVariable}.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? dataFactory.namedNode(${variables.value}["@type"]) : undefined))`;
+          valueToNodeKind = `dataFactory.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? dataFactory.namedNode(${variables.value}["@type"]) : undefined))`;
           break;
         case "NamedNode":
-          valueToNodeKind = `${this.dataFactoryVariable}.namedNode(${variables.value}["@id"])`;
+          valueToNodeKind = `dataFactory.namedNode(${variables.value}["@id"])`;
           break;
         default:
           throw new RangeError(nodeKind);
@@ -179,7 +178,7 @@ export class TermType<
     // Have an rdfjsResource.Resource.Values here
     if (this.hasValues.length === 1) {
       chain.push(
-        `find(value => value.toTerm().equals(${this.rdfjsTermExpression(this.hasValues[0])}))`,
+        `find(value => value.toTerm().equals(${rdfjsTermExpression(this.hasValues[0])}))`,
       );
     } else {
       chain.push("head()");
@@ -188,7 +187,7 @@ export class TermType<
     this.defaultValue.ifJust((defaultValue) => {
       // alt the default value before trying to convert the rdfjsResource.Resource.Value to the type
       chain.push(
-        `alt(purify.Either.of(new rdfjsResource.Resource.Value(${objectInitializer({ subject: variables.resource, predicate: variables.predicate, object: this.rdfjsTermExpression(defaultValue) })})))`,
+        `alt(purify.Either.of(new rdfjsResource.Resource.Value(${objectInitializer({ subject: variables.resource, predicate: variables.predicate, object: rdfjsTermExpression(defaultValue) })})))`,
       );
     });
     // Last step: convert the rdfjsResource.Resource.Value to the type
@@ -311,7 +310,7 @@ export class TermType<
     return this.defaultValue
       .map(
         (defaultValue) =>
-          `!${variables.value}.equals(${this.rdfjsTermExpression(defaultValue)}) ? ${variables.value} : undefined`,
+          `!${variables.value}.equals(${rdfjsTermExpression(defaultValue)}) ? ${variables.value} : undefined`,
       )
       .orDefault(variables.value);
   }

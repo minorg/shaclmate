@@ -89,16 +89,6 @@ export class EagerShaclProperty<
     return statements;
   }
 
-  override fromJsonStatements({
-    variables,
-  }: Parameters<
-    ShaclProperty<TypeT>["fromJsonStatements"]
-  >[0]): readonly string[] {
-    return [
-      `const ${this.name} = ${this.type.fromJsonExpression({ variables: { value: `${variables.jsonObject}["${this.name}"]` } })};`,
-    ];
-  }
-
   override fromRdfStatements({
     variables,
   }: Parameters<
@@ -161,7 +151,7 @@ export class EagerShaclProperty<
       allowIgnoreRdfType: true,
       context: "object",
       variables: {
-        object: `${this.dataFactoryVariable}.variable!(${objectString})`,
+        object: `dataFactory.variable!(${objectString})`,
         predicate: this.predicate,
         subject: variables.subject,
         variablePrefix: objectString,
@@ -179,7 +169,7 @@ export class EagerShaclProperty<
       allowIgnoreRdfType: true,
       context: "object",
       variables: {
-        object: `${this.dataFactoryVariable}.variable!(${objectString})`,
+        object: `dataFactory.variable!(${objectString})`,
         predicate: this.predicate,
         subject: variables.subject,
         variablePrefix: objectString,

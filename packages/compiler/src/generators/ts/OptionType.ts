@@ -13,11 +13,8 @@ export class OptionType<ItemTypeT extends Type = Type> extends Type {
   readonly kind = "OptionType";
   readonly typeof = "object";
 
-  constructor({
-    itemType,
-    ...superParameters
-  }: ConstructorParameters<typeof Type>[0] & { itemType: ItemTypeT }) {
-    super(superParameters);
+  constructor({ itemType }: { itemType: ItemTypeT }) {
+    super();
     this.itemType = itemType;
   }
 

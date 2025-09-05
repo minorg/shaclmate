@@ -18,8 +18,7 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
   override get conversions(): readonly Type.Conversion[] {
     return super.conversions.concat([
       {
-        conversionExpression: (value) =>
-          `${this.dataFactoryVariable}.namedNode(${value})`,
+        conversionExpression: (value) => `dataFactory.namedNode(${value})`,
         sourceTypeCheckExpression: (value) => `typeof ${value} === "string"`,
         sourceTypeName:
           this.in_.length > 0
@@ -49,13 +48,13 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
         ],
         returnType: "purify.Either<Error, rdfjsResource.Resource.Identifier>",
         statements: [
-          `return purify.Either.encase(() => rdfjsResource.Resource.Identifier.fromString({ dataFactory: ${this.dataFactoryVariable}, identifier }));`,
+          "return purify.Either.encase(() => rdfjsResource.Resource.Identifier.fromString({ dataFactory, identifier }));",
         ],
       };
     }
 
     const expressions: string[] = [
-      `purify.Either.encase(() => rdfjsResource.Resource.Identifier.fromString({ dataFactory: ${this.dataFactoryVariable}, identifier }))`,
+      "purify.Either.encase(() => rdfjsResource.Resource.Identifier.fromString({ dataFactory, identifier }))",
     ];
 
     if (this.isNamedNodeKind) {
@@ -145,8 +144,8 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
   }: Parameters<
     TermType<NamedNode, BlankNode | NamedNode>["fromJsonExpression"]
   >[0]): string {
-    const valueToBlankNode = `${this.dataFactoryVariable}.blankNode(${variables.value}["@id"].substring(2))`;
-    const valueToNamedNode = `${this.dataFactoryVariable}.namedNode(${variables.value}["@id"])`;
+    const valueToBlankNode = `dataFactory.blankNode(${variables.value}["@id"].substring(2))`;
+    const valueToNamedNode = `dataFactory.namedNode(${variables.value}["@id"])`;
 
     if (this.nodeKinds.size === 2) {
       return `(${variables.value}["@id"].startsWith("_:") ? ${valueToBlankNode} : ${valueToNamedNode})`;

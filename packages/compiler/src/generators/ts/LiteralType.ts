@@ -26,7 +26,7 @@ export class LiteralType extends TermType<Literal, Literal> {
   override fromJsonExpression({
     variables,
   }: Parameters<TermType<Literal, Literal>["fromJsonExpression"]>[0]): string {
-    return `${this.dataFactoryVariable}.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? dataFactory.namedNode(${variables.value}["@type"]) : undefined))`;
+    return `dataFactory.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? dataFactory.namedNode(${variables.value}["@type"]) : undefined))`;
   }
 
   override hashStatements({

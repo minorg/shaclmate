@@ -7,6 +7,7 @@ import {
 
 import type { ObjectType } from "../ObjectType.js";
 import { objectInitializer } from "../objectInitializer.js";
+import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { ShaclProperty } from "./ShaclProperty.js";
 
@@ -29,7 +30,7 @@ export function propertiesVariableStatement(
     }
     const propertyObject: Record<string, string> = {};
     if (this.features.has("rdf")) {
-      propertyObject["identifier"] = this.rdfjsTermExpression(property.path);
+      propertyObject["identifier"] = rdfjsTermExpression(property.path);
     }
     propertiesObject.push(
       `${property.name}: ${objectInitializer(propertyObject)}`,

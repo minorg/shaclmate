@@ -2,6 +2,7 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
+import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { toRdfFunctionOrMethodDeclaration } from "./toRdfFunctionOrMethodDeclaration.js";
 
@@ -26,7 +27,7 @@ function fromRdfFunctionDeclarations(
   });
 
   this.fromRdfType.ifJust((rdfType) => {
-    const predicate = this.rdfjsTermExpression(rdf.type);
+    const predicate = rdfjsTermExpression(rdf.type);
     propertiesFromRdfStatements.push(
       `\
 if (!${variables.ignoreRdfType} && !${variables.resource}.isInstanceOf(${syntheticNamePrefix}fromRdfType)) {

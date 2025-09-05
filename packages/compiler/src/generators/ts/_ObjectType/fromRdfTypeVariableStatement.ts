@@ -6,6 +6,7 @@ import {
 } from "ts-morph";
 
 import type { ObjectType } from "../ObjectType.js";
+import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function fromRdfTypeVariableStatement(
@@ -29,7 +30,7 @@ export function fromRdfTypeVariableStatement(
     declarations: [
       {
         name: `${syntheticNamePrefix}fromRdfType`,
-        initializer: this.rdfjsTermExpression(this.fromRdfType.unsafeCoerce()),
+        initializer: rdfjsTermExpression(this.fromRdfType.unsafeCoerce()),
         type: "rdfjs.NamedNode<string>",
       },
     ],

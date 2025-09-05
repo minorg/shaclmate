@@ -1,4 +1,4 @@
-import type { BlankNode, Literal, NamedNode, Variable } from "@rdfjs/types";
+import type {} from "@rdfjs/types";
 import type { Maybe } from "purify-ts";
 import {
   type GetAccessorDeclarationStructure,
@@ -11,7 +11,6 @@ import type { PropertyVisibility } from "../../../enums/index.js";
 import type { Import } from "../Import.js";
 import type { ObjectType } from "../ObjectType.js";
 import type { Type } from "../Type.js";
-import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 
 export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
   /**
@@ -89,23 +88,19 @@ export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
 
   readonly visibility: PropertyVisibility;
 
-  protected readonly dataFactoryVariable: string;
   protected readonly objectType: ObjectType;
 
   constructor({
-    dataFactoryVariable,
     name,
     objectType,
     type,
     visibility,
   }: {
-    dataFactoryVariable: string;
     name: string;
     objectType: ObjectType;
     type: TypeT;
     visibility: PropertyVisibility;
   }) {
-    this.dataFactoryVariable = dataFactoryVariable;
     this.name = name;
     this.objectType = objectType;
     this.type = type;
@@ -223,17 +218,4 @@ export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
       "predicate"
     >;
   }): readonly string[];
-
-  protected rdfjsTermExpression(
-    rdfjsTerm:
-      | Omit<BlankNode, "equals">
-      | Omit<Literal, "equals">
-      | Omit<NamedNode, "equals">
-      | Omit<Variable, "equals">,
-  ): string {
-    return rdfjsTermExpression({
-      dataFactoryVariable: this.dataFactoryVariable,
-      rdfjsTerm,
-    });
-  }
 }
