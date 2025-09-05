@@ -1,7 +1,7 @@
 import type { BlankNode, Literal, NamedNode, Variable } from "@rdfjs/types";
 import { rdf, rdfs, xsd } from "@tpluscode/rdf-ns-builders";
-import { logger } from "../../../logger.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { logger } from "../../logger.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export function rdfjsTermExpression({
   dataFactoryVariable,
