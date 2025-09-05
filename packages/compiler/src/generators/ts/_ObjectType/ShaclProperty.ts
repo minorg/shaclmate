@@ -7,6 +7,7 @@ import type {
   PropertySignatureStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
+import type { TsFeature } from "../../../enums/index.js";
 import type { Import } from "../Import.js";
 import type { Type } from "../Type.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
@@ -14,7 +15,19 @@ import { tsComment } from "../tsComment.js";
 import { Property } from "./Property.js";
 
 export abstract class ShaclProperty<
-  TypeT extends Type,
+  TypeT extends {
+    readonly conversions: readonly Type.Conversion[];
+    readonly equalsFunction: string;
+    readonly mutable: boolean;
+    readonly name: string;
+    useImports: (parameters: {
+      features: Set<TsFeature>;
+    }) => readonly Import[];
+    snippetDeclarations: (parameters: {
+      features: Set<TsFeature>;
+      recursionStack: Type[];
+    }) => readonly string[];
+  },
 > extends Property<TypeT> {
   protected readonly comment: Maybe<string>;
   protected readonly description: Maybe<string>;
@@ -41,6 +54,33 @@ export abstract class ShaclProperty<
     this.path = path;
   }
 
+  override get equalsFunction(): string {
+    return this.type.equalsFunction;
+  }
+
+  @Memoize()
+  override get constructorParametersPropertySignature(): Maybe<
+    OptionalKind<PropertySignatureStructure>
+  > {
+    let hasQuestionToken = false;
+    const typeNames = new Set<string>(); // Remove duplicates with a set
+    for (const conversion of this.type.conversions) {
+      if (conversion.sourceTypeName === "undefined") {
+        hasQuestionToken = true;
+      } else {
+        typeNames.add(conversion.sourceTypeName);
+      }
+    }
+
+    return Maybe.of({
+      hasQuestionToken,
+      isReadonly: true,
+      leadingTrivia: this.declarationComment,
+      name: this.name,
+      type: [...typeNames].sort().join(" | "),
+    });
+  }
+
   override get getAccessorDeclaration(): Maybe<
     OptionalKind<GetAccessorDeclarationStructure>
   > {
@@ -56,7 +96,7 @@ export abstract class ShaclProperty<
       leadingTrivia: this.declarationComment,
       name: this.name,
       scope: ShaclProperty.visibilityToScope(this.visibility),
-      type: this.typeName,
+      type: this.type.name,
     });
   }
 
@@ -73,7 +113,7 @@ export abstract class ShaclProperty<
       isReadonly: !this.mutable,
       leadingTrivia: this.declarationComment,
       name: this.name,
-      type: this.typeName,
+      type: this.type.name,
     });
   }
 
@@ -94,9 +134,5 @@ export abstract class ShaclProperty<
   @Memoize()
   protected get predicate(): string {
     return `${this.objectType.staticModuleName}.${syntheticNamePrefix}properties.${this.name}["identifier"]`;
-  }
-
-  protected get typeName(): string {
-    return this.type.name;
   }
 }

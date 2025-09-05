@@ -2,6 +2,7 @@ import { Maybe } from "purify-ts";
 import type { OptionalKind, PropertySignatureStructure } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 
+import type { TsFeature } from "../../../enums/TsFeature.js";
 import { Import } from "../Import.js";
 import type { ObjectType } from "../ObjectType.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
@@ -12,46 +13,14 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { ShaclProperty } from "./ShaclProperty.js";
 
 export class LazyShaclProperty<
-  TypeT extends LazyShaclProperty.Type,
-> extends ShaclProperty<TypeT> {
+  EagerTypeT extends LazyShaclProperty.Type.EagerType,
+> extends ShaclProperty<LazyShaclProperty.Type<EagerTypeT>> {
   override readonly mutable = false;
   override readonly recursive = false;
 
-  @Memoize()
-  override get constructorParametersPropertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    let hasQuestionToken = false;
-    const typeNames = new Set<string>(); // Remove duplicates with a set
-    typeNames.add(this.typeName);
-    for (const conversion of this.type.conversions) {
-      if (conversion.sourceTypeName === "undefined") {
-        hasQuestionToken = true;
-      } else {
-        typeNames.add(conversion.sourceTypeName);
-      }
-    }
-
-    return Maybe.of({
-      hasQuestionToken,
-      isReadonly: true,
-      leadingTrivia: this.declarationComment,
-      name: this.name,
-      type: [...typeNames].sort().join(" | "),
-    });
-  }
-
-  @Memoize()
-  override get declarationImports(): readonly Import[] {
-    return super.declarationImports.concat(Import.PURIFY);
-  }
-
-  @Memoize()
-  override get equalsFunction(): string {
-    return `${syntheticNamePrefix}alwaysEquals`;
-  }
-
-  override get graphqlField(): ShaclProperty<TypeT>["graphqlField"] {
+  override get graphqlField(): ShaclProperty<
+    LazyShaclProperty.Type<EagerTypeT>
+  >["graphqlField"] {
     return Maybe.of({
       description: this.comment.map(JSON.stringify).extract(),
       name: this.name,
@@ -67,18 +36,10 @@ export class LazyShaclProperty<
     return Maybe.empty();
   }
 
-  @Memoize()
-  protected override get typeName(): string {
-    if (this.type instanceof SetType) {
-      return `(parameters: { limit: number; offset: number }) => Promise<Either<Error, ${this.type.name}>>`;
-    }
-    return `() => Promise<Either<Error, ${this.type.name}>>`;
-  }
-
   override constructorStatements({
     variables,
   }: Parameters<
-    ShaclProperty<TypeT>["constructorStatements"]
+    ShaclProperty<LazyShaclProperty.Type<EagerTypeT>>["constructorStatements"]
   >[0]): readonly string[] {
     const typeConversions = this.type.conversions;
     if (typeConversions.length === 1) {
@@ -107,7 +68,7 @@ export class LazyShaclProperty<
     ];
     for (const conversion of this.type.conversions) {
       conversionBranches.push(
-        `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = async () => ${conversion.conversionExpression(variables.parameter)}; }`,
+        `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { const ${syntheticNamePrefix}${this.name}Capture = ${conversion.conversionExpression(variables.parameter)}; ${lhs} = async () => purify.Either.of(${syntheticNamePrefix}${this.name}Capture); }`,
       );
     }
     // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
@@ -121,12 +82,14 @@ export class LazyShaclProperty<
 
   override fromJsonStatements(): readonly string[] {
     return [
-      `const ${this.name} = () => Promise.resolve(purify.Left<Error, ${this.type.name}>(new Error("cannot deserialize lazy properties from JSON"));`,
+      `const ${this.name} = () => Promise.resolve(purify.Left<Error, ${this.type.name}>(new Error("cannot deserialize lazy properties from JSON")));`,
     ];
   }
 
   override fromRdfStatements(
-    _parameters: Parameters<ShaclProperty<TypeT>["fromRdfStatements"]>[0],
+    _parameters: Parameters<
+      ShaclProperty<LazyShaclProperty.Type<EagerTypeT>>["fromRdfStatements"]
+    >[0],
   ): readonly string[] {
     return [];
   }
@@ -139,16 +102,10 @@ export class LazyShaclProperty<
     return Maybe.empty();
   }
 
-  override jsonZodSchema(): ReturnType<ShaclProperty<TypeT>["jsonZodSchema"]> {
+  override jsonZodSchema(): ReturnType<
+    ShaclProperty<LazyShaclProperty.Type<EagerTypeT>>["jsonZodSchema"]
+  > {
     return Maybe.empty();
-  }
-
-  override snippetDeclarations(
-    parameters: Parameters<ShaclProperty<TypeT>["snippetDeclarations"]>[0],
-  ): readonly string[] {
-    return super
-      .snippetDeclarations(parameters)
-      .concat(SnippetDeclarations.alwaysEquals);
   }
 
   override sparqlConstructTemplateTriples(): readonly string[] {
@@ -169,9 +126,57 @@ export class LazyShaclProperty<
 }
 
 export namespace LazyShaclProperty {
-  export type Type =
-    | ObjectType
-    | ObjectUnionType
-    | OptionType<ObjectType | ObjectUnionType>
-    | SetType<ObjectType | ObjectUnionType>;
+  export class Type<EagerTypeT extends Type.EagerType> {
+    readonly mutable = false;
+    readonly eagerType: EagerTypeT;
+
+    constructor({
+      eagerType,
+    }: {
+      eagerType: EagerTypeT;
+    }) {
+      this.eagerType = eagerType;
+    }
+
+    get conversions() {
+      return this.eagerType.conversions;
+    }
+
+    @Memoize()
+    get equalsFunction(): string {
+      return `${syntheticNamePrefix}alwaysEquals`;
+    }
+
+    @Memoize()
+    get name(): string {
+      // Use extra parentheses so the function type can be safely |'d with other types. Without the parentheses the | associates with the return type of the function,
+      // not the function as a whole.
+      if (this.eagerType instanceof SetType) {
+        return `((parameters: { limit: number; offset: number }) => Promise<purify.Either<Error, ${this.eagerType.name}>>)`;
+      }
+      return `(() => Promise<purify.Either<Error, ${this.eagerType.name}>>)`;
+    }
+
+    snippetDeclarations(
+      parameters: Parameters<EagerTypeT["snippetDeclarations"]>[0],
+    ): readonly string[] {
+      return this.eagerType
+        .snippetDeclarations(parameters)
+        .concat(SnippetDeclarations.alwaysEquals);
+    }
+
+    useImports(parameters: {
+      features: Set<TsFeature>;
+    }): readonly Import[] {
+      return this.eagerType.useImports(parameters).concat(Import.PURIFY);
+    }
+  }
+
+  export namespace Type {
+    export type EagerType =
+      | ObjectType
+      | ObjectUnionType
+      | OptionType<ObjectType | ObjectUnionType>
+      | SetType<ObjectType | ObjectUnionType>;
+  }
 }

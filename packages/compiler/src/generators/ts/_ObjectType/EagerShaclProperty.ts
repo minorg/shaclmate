@@ -27,33 +27,6 @@ export class EagerShaclProperty<
   }
 
   @Memoize()
-  override get constructorParametersPropertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    let hasQuestionToken = false;
-    const typeNames = new Set<string>(); // Remove duplicates with a set
-    for (const conversion of this.type.conversions) {
-      if (conversion.sourceTypeName === "undefined") {
-        hasQuestionToken = true;
-      } else {
-        typeNames.add(conversion.sourceTypeName);
-      }
-    }
-
-    return Maybe.of({
-      hasQuestionToken,
-      isReadonly: true,
-      leadingTrivia: this.declarationComment,
-      name: this.name,
-      type: [...typeNames].sort().join(" | "),
-    });
-  }
-
-  override get equalsFunction(): string {
-    return this.type.equalsFunction;
-  }
-
-  @Memoize()
   override get graphqlField(): ShaclProperty<TypeT>["graphqlField"] {
     return Maybe.of({
       description: this.comment.map(JSON.stringify).extract(),
@@ -140,12 +113,6 @@ export class EagerShaclProperty<
       `if (_${this.name}Either.isLeft()) { return _${this.name}Either; }`,
       `const ${this.name} = _${this.name}Either.unsafeCoerce();`,
     ];
-  }
-
-  override hashStatements(
-    parameters: Parameters<ShaclProperty<TypeT>["hashStatements"]>[0],
-  ): readonly string[] {
-    return this.type.hashStatements(parameters);
   }
 
   jsonUiSchemaElement({
