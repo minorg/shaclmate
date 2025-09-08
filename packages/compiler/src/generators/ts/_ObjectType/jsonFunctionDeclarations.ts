@@ -253,5 +253,5 @@ export function jsonFunctionDeclarations(
 }
 
 const variables = {
-  jsonObject: "_jsonObject",
+  jsonObject: `${syntheticNamePrefix}jsonObject`,
 };

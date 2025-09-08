@@ -388,23 +388,18 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     rdfs:comment "Node shape that has lazy properties." ;
     sh:property [
         shaclmate:lazy true ;
-        sh:class :NonClass ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
-        sh:path :explicitLazyOptionalProperty
+        sh:node :NonClass ;
+        sh:path :lazyOptionalObjectProperty
     ], [
-        sh:class :NonClass ;
-        sh:maxCount 1 ;
-        sh:minCount 0 ;
-        sh:path :implicitLazyOptionalProperty
-    ], [
-        sh:class :NonClass ;
-        sh:path :implicitLazySetProperty
+        sh:node :NonClass ;
+        sh:path :lazyObjectSetProperty
     ], [
         sh:class :NonClass ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :implicitLazyRequiredProperty
+        sh:path :lazyRequiredObjectProperty
     ] .
 
 :ListPropertiesClass
@@ -462,7 +457,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:minCount 1 ;
     sh:path rdf:rest ;
     sh:xone ([
-            sh:node :MutableStringList
+            sh:class :MutableStringList
         ]
         [
             sh:hasValue ( )
@@ -499,7 +494,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:minCount 1 ;
     sh:path rdf:rest ;
     sh:xone ([
-            sh:node :ObjectList
+            sh:class :ObjectList
         ]
         [
             sh:hasValue ( )
@@ -610,7 +605,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:minCount 1 ;
     sh:path rdf:rest ;
     sh:xone ([
-            sh:node :StringList
+            sh:class :StringList
         ]
         [
             sh:hasValue ( )

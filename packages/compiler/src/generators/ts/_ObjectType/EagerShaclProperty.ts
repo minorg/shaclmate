@@ -3,7 +3,6 @@ import type {} from "ts-morph";
 
 import { Memoize } from "typescript-memoize";
 import type { Type } from "../Type.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { ShaclProperty } from "./ShaclProperty.js";
 
 export class EagerShaclProperty<
@@ -74,20 +73,5 @@ export class EagerShaclProperty<
     );
 
     return statements;
-  }
-
-  override fromRdfStatements({
-    variables,
-  }: Parameters<
-    ShaclProperty<TypeT>["fromRdfStatements"]
-  >[0]): readonly string[] {
-    // Assume the property has the correct range and ignore the object's RDF type.
-    // This also accommodates the case where the object of a property is a dangling identifier that's not the
-    // subject of any statements.
-    return [
-      `const _${this.name}Either: purify.Either<Error, ${this.type.name}> = ${this.type.fromRdfExpression({ variables: { ...variables, ignoreRdfType: true, predicate: this.predicate, resourceValues: `${variables.resource}.values(${syntheticNamePrefix}properties.${this.name}["identifier"], { unique: true })` } })};`,
-      `if (_${this.name}Either.isLeft()) { return _${this.name}Either; }`,
-      `const ${this.name} = _${this.name}Either.unsafeCoerce();`,
-    ];
   }
 }

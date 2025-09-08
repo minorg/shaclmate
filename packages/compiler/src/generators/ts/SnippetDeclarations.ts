@@ -204,61 +204,14 @@ export function ${syntheticNamePrefix}maybeEquals<T>(
   return ${syntheticNamePrefix}EqualsResult.Equal;
 }`;
 
-  export const LazyRequiredObject = `\
-/**
- * Type of lazy properties that return a single required object. This is a class instead of an interface so it can be instanceof'd elsewhere.
- */
-export class ${syntheticNamePrefix}LazyRequiredObject<ObjectT, ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode> {
-  private readonly #object: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ObjectT>>;
-  readonly identifier: ObjectIdentifierT;
-
-  constructor({ identifier, object }: {
-    identifier: ObjectIdentifierT,
-    object: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ObjectT>>
-  }) {
-    this.identifier = identifier;
-    this.#object = object;
-  }
-
-  object(): Promise<purify.Either<Error, ObjectT> {
-    return this.#object(this.identifier);
-  }
-}`;
-
-  export const LazyOptionalObject = `\
-/**
- * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
- */
-export class ${syntheticNamePrefix}LazyOptionalObject<ObjectT, ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode> {
-  private readonly #object: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ObjectT>>;
-  private static readonly empty: purify.Either<Error, purify.Maybe<ObjectT>> = purify.Either.of(purify.Maybe.empty());
-  readonly identifier: purify.Maybe<ObjectIdentifierT>;
-
-  constructor({ identifier, object }: {
-    identifier: purify.Maybe<ObjectIdentifierT>,
-    object: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ObjectT>>
-  }) {
-    this.identifier = identifier;
-    this.#object = object;
-  }
-
-  async object(): Promise<purify.Either<Error, purify.Maybe<ObjectT>> {
-    const identifier = this.identifier.extract();
-    if (!identifier) {
-      return ${syntheticNamePrefix}LazyOptionalObject.empty;
-    }
-    return (await this.#object(identifier)).map(purify.Maybe.of);
-  }
-}`;
-
   export const LazyObjectSet = `\
 /**
  * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
 export class ${syntheticNamePrefix}LazyObjectSet<ObjectT, ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode> {
-  private readonly #objects: (identifiers: readonly ObjectIdentifierT[]) => Promise<purify.Either<Error, readonly ObjectT[]>>;
-  private static readonly empty: purify.Either<Error, readonly ObjectT[]> = purify.Either.of([]);
+  private static readonly empty: purify.Either<Error, readonly object[]> = purify.Either.of([]);
   readonly identifiers: readonly ObjectIdentifierT[];
+  readonly #objects: (identifiers: readonly ObjectIdentifierT[]) => Promise<purify.Either<Error, readonly ObjectT[]>>;
 
   constructor({ identifiers, objects }: {
     identifiers: readonly ObjectIdentifierT[],
@@ -268,11 +221,58 @@ export class ${syntheticNamePrefix}LazyObjectSet<ObjectT, ObjectIdentifierT exte
     this.#objects = objects;
   }
 
-  async objects(): Promise<purify.Either<Error, readonly ObjectT[]> {
+  async objects(): Promise<purify.Either<Error, readonly ObjectT[]>> {
     if (this.identifiers.length === 0) {
-      return empty;
+      return empty as purify.Either<Error, readonly ObjectT[]>;
     }
-    return await this.#objects(this.identifiers);
+    return await this.#objects(this.identifiers as readonly ObjectIdentifierT[]);
+  }
+}`;
+
+  export const LazyOptionalObject = `\
+/**
+ * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ */
+export class ${syntheticNamePrefix}LazyOptionalObject<ObjectT, ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode> {
+  private static readonly empty: purify.Either<Error, purify.Maybe<object>> = purify.Either.of(purify.Maybe.empty());
+  readonly identifier: purify.Maybe<ObjectIdentifierT>;
+  readonly #object: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ObjectT>>;
+
+  constructor({ identifier, object }: {
+    identifier: purify.Maybe<ObjectIdentifierT>,
+    object: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ObjectT>>
+  }) {
+    this.identifier = identifier;
+    this.#object = object;
+  }
+
+  async object(): Promise<purify.Either<Error, purify.Maybe<ObjectT>>> {
+    const identifier = this.identifier.extract();
+    if (!identifier) {
+      return ${syntheticNamePrefix}LazyOptionalObject.empty as purify.Either<Error, purify.Maybe<ObjectT>>;
+    }
+    return (await this.#object(identifier as ObjectIdentifierT)).map(purify.Maybe.of);
+  }
+}`;
+
+  export const LazyRequiredObject = `\
+/**
+ * Type of lazy properties that return a single required object. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ */
+export class ${syntheticNamePrefix}LazyRequiredObject<ObjectT, ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode> {
+  readonly identifier: ObjectIdentifierT;
+  readonly #object: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ObjectT>>;
+
+  constructor({ identifier, object }: {
+    identifier: ObjectIdentifierT,
+    object: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ObjectT>>
+  }) {
+    this.identifier = identifier;
+    this.#object = object;
+  }
+
+  object(): Promise<purify.Either<Error, ObjectT>> {
+    return this.#object(this.identifier as ObjectIdentifierT);
   }
 }`;
 

@@ -8,7 +8,6 @@ import { fromRdf } from "rdf-literal";
 
 import type * as ast from "../../ast/index.js";
 
-import { LazyShaclProperty } from "generators/ts/_ObjectType/LazyShaclProperty.js";
 import { invariant } from "ts-invariant";
 import { Scope } from "ts-morph";
 import { logger } from "../../logger.js";
@@ -445,9 +444,9 @@ export class TypeFactory {
 
     if (astObjectTypeProperty.lazy.orDefault(false)) {
       const eagerType = this.createTypeFromAstType(astObjectTypeProperty.type);
-      let lazyType: LazyShaclProperty.Type<
-        LazyShaclProperty.Type.IdentifierType,
-        LazyShaclProperty.Type.ResultType
+      let lazyType: ObjectType.LazyShaclProperty.Type<
+        ObjectType.LazyShaclProperty.Type.IdentifierType,
+        ObjectType.LazyShaclProperty.Type.ResultType
       >;
       if (eagerType instanceof OptionType || eagerType instanceof SetType) {
         invariant(
@@ -456,9 +455,11 @@ export class TypeFactory {
           `lazy property ${name} on ${objectType.name} of ${eagerType.kind} has ${eagerType.itemType.kind} items`,
         );
         if (eagerType instanceof OptionType) {
-          lazyType = new LazyShaclProperty.OptionalObjectType(eagerType);
+          lazyType = new ObjectType.LazyShaclProperty.OptionalObjectType(
+            eagerType,
+          );
         } else {
-          lazyType = new LazyShaclProperty.ObjectSetType(eagerType);
+          lazyType = new ObjectType.LazyShaclProperty.ObjectSetType(eagerType);
         }
       } else {
         invariant(
@@ -466,7 +467,9 @@ export class TypeFactory {
             eagerType instanceof ObjectUnionType,
           `lazy property ${name} on ${objectType.name} has ${(eagerType as any).kind}`,
         );
-        lazyType = new LazyShaclProperty.RequiredObjectType(eagerType);
+        lazyType = new ObjectType.LazyShaclProperty.RequiredObjectType(
+          eagerType,
+        );
       }
 
       property = new ObjectType.LazyShaclProperty({

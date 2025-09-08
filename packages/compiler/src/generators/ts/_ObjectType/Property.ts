@@ -150,6 +150,7 @@ export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
     variables: {
       context: string;
       languageIn: string;
+      objectSet: string;
       resource: string;
     };
   }): readonly string[];

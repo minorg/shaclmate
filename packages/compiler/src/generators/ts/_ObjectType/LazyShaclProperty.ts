@@ -78,16 +78,6 @@ export class LazyShaclProperty<
 
     return statements;
   }
-
-  override fromRdfStatements(
-    _parameters: Parameters<
-      ShaclProperty<
-        LazyShaclProperty.Type<IdentifierTypeT, ResultTypeT>
-      >["fromRdfStatements"]
-    >[0],
-  ): readonly string[] {
-    return [];
-  }
 }
 
 export namespace LazyShaclProperty {
@@ -142,12 +132,6 @@ export namespace LazyShaclProperty {
 
     override get graphqlName(): string {
       return this.resultType.graphqlName;
-    }
-
-    override fromJsonExpression(
-      parameters: Parameters<_Type["fromJsonExpression"]>[0],
-    ): string {
-      return `new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: ${this.identifierType.fromJsonExpression(parameters)}, ${this.runtimeClass.objectMethodName}: (identifier) => Promise.resolve(purify.Left<Error, ${this.resultType.name}>(new Error(\`unable to resolve identifier \${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON\`)) })`;
     }
 
     override graphqlResolveExpression({
@@ -239,42 +223,6 @@ export namespace LazyShaclProperty {
       | SetType<ResultObjectType | ResultObjectUnionType>;
   }
 
-  export class RequiredObjectType<
-    ResultTypeT extends ResultObjectType | ResultObjectUnionType,
-  > extends Type<_IdentifierType, ResultTypeT> {
-    constructor(resultType: ResultTypeT) {
-      super({
-        identifierType: resultType.identifierType,
-        resultType,
-        runtimeClass: {
-          identifierPropertyName: "identifier",
-          name: `${syntheticNamePrefix}LazyRequiredObject`,
-          objectMethodName: "object",
-          snippetDeclaration: SnippetDeclarations.LazyRequiredObject,
-        },
-      });
-    }
-  }
-
-  export class OptionalObjectType<
-    ResultTypeT extends OptionType<ResultObjectType | ResultObjectUnionType>,
-  > extends Type<OptionType<_IdentifierType>, ResultTypeT> {
-    constructor(resultType: ResultTypeT) {
-      super({
-        identifierType: new OptionType({
-          itemType: resultType.itemType.identifierType,
-        }),
-        resultType,
-        runtimeClass: {
-          identifierPropertyName: "identifier",
-          name: `${syntheticNamePrefix}LazyOptionalObject`,
-          objectMethodName: "object",
-          snippetDeclaration: SnippetDeclarations.LazyOptionalObject,
-        },
-      });
-    }
-  }
-
   export class ObjectSetType<
     ResultTypeT extends SetType<ResultObjectType | ResultObjectUnionType>,
   > extends Type<SetType<_IdentifierType>, ResultTypeT> {
@@ -288,7 +236,7 @@ export namespace LazyShaclProperty {
         resultType,
         runtimeClass: {
           identifierPropertyName: "identifiers",
-          name: `${syntheticNamePrefix}LazyObjectSet`,
+          name: `${syntheticNamePrefix}LazyObjectSet<${resultType.itemType.name}, ${resultType.itemType.identifierTypeAlias}>`,
           objectMethodName: "objects",
           snippetDeclaration: SnippetDeclarations.LazyObjectSet,
         },
@@ -298,7 +246,81 @@ export namespace LazyShaclProperty {
     override fromJsonExpression(
       parameters: Parameters<_Type["fromJsonExpression"]>[0],
     ): string {
-      return `new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: ${this.identifierType.fromJsonExpression(parameters)}, ${this.runtimeClass.objectMethodName}: (identifiers) => Promise.resolve(purify.Left<Error, ${this.resultType.name}>(new Error(\`unable to resolve identifiers deserialized from JSON\`)) })`;
+      return `new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: ${this.identifierType.fromJsonExpression(parameters)}, ${this.runtimeClass.objectMethodName}: (identifiers) => Promise.resolve(purify.Left<Error, ${this.resultType.name}>(new Error(\`unable to resolve identifiers deserialized from JSON\`))) })`;
+    }
+
+    override fromRdfExpression(
+      parameters: Parameters<_Type["fromRdfExpression"]>[0],
+    ): string {
+      const { variables } = parameters;
+      return `${this.identifierType.fromRdfExpression(parameters)}.chain(identifiers => new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: identifiers, ${this.runtimeClass.objectMethodName}: (identifiers) => ${variables.objectSet}.${this.resultType.itemType.objectSetMethodNames.objects}({ where: { identifiers, type: "identifiers" }}) }))`;
+    }
+  }
+
+  abstract class SingleObjectType<
+    IdentifierTypeT extends Exclude<
+      Type.IdentifierType,
+      SetType<_IdentifierType>
+    >,
+    ResultTypeT extends Exclude<
+      Type.ResultType,
+      SetType<ResultObjectType | ResultObjectUnionType>
+    >,
+  > extends Type<IdentifierTypeT, ResultTypeT> {
+    override fromJsonExpression(
+      parameters: Parameters<_Type["fromJsonExpression"]>[0],
+    ): string {
+      return `new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: ${this.identifierType.fromJsonExpression(parameters)}, ${this.runtimeClass.objectMethodName}: (identifier) => Promise.resolve(purify.Left<Error, ${this.resultType.name}>(new Error(\`unable to resolve identifier \${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON\`))) })`;
+    }
+  }
+
+  export class OptionalObjectType<
+    ResultTypeT extends OptionType<ResultObjectType | ResultObjectUnionType>,
+  > extends SingleObjectType<OptionType<_IdentifierType>, ResultTypeT> {
+    constructor(resultType: ResultTypeT) {
+      super({
+        identifierType: new OptionType({
+          itemType: resultType.itemType.identifierType,
+        }),
+        resultType,
+        runtimeClass: {
+          identifierPropertyName: "identifier",
+          name: `${syntheticNamePrefix}LazyOptionalObject<${resultType.itemType.name}, ${resultType.itemType.identifierTypeAlias}>`,
+          objectMethodName: "object",
+          snippetDeclaration: SnippetDeclarations.LazyOptionalObject,
+        },
+      });
+    }
+
+    override fromRdfExpression(
+      parameters: Parameters<_Type["fromRdfExpression"]>[0],
+    ): string {
+      const { variables } = parameters;
+      return `${this.identifierType.fromRdfExpression(parameters)}.chain(identifier => new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: identifier, ${this.runtimeClass.objectMethodName}: (identifier) => ${variables.objectSet}.${this.resultType.itemType.objectSetMethodNames.object}(identifier) }))`;
+    }
+  }
+
+  export class RequiredObjectType<
+    ResultTypeT extends ResultObjectType | ResultObjectUnionType,
+  > extends SingleObjectType<_IdentifierType, ResultTypeT> {
+    constructor(resultType: ResultTypeT) {
+      super({
+        identifierType: resultType.identifierType,
+        resultType,
+        runtimeClass: {
+          identifierPropertyName: "identifier",
+          name: `${syntheticNamePrefix}LazyRequiredObject<${resultType.name}, ${resultType.identifierTypeAlias}>`,
+          objectMethodName: "object",
+          snippetDeclaration: SnippetDeclarations.LazyRequiredObject,
+        },
+      });
+    }
+
+    override fromRdfExpression(
+      parameters: Parameters<_Type["fromRdfExpression"]>[0],
+    ): string {
+      const { variables } = parameters;
+      return `${this.identifierType.fromRdfExpression(parameters)}.chain(identifier => new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: identifier, ${this.runtimeClass.objectMethodName}: (identifier) => ${variables.objectSet}.${this.resultType.objectSetMethodNames.object}(identifier) }))`;
     }
   }
 }

@@ -64,7 +64,8 @@ export abstract class Type {
   }
 
   /**
-   * An expression that converts this type's JSON type to a value of this type.
+   * An expression that converts this type's JSON type to a value of this type. It doesn't return a purify.Either because the JSON has
+   * already been validated and converted to the expected JSON type with Zod.
    */
   abstract fromJsonExpression(parameters: {
     variables: {
@@ -73,7 +74,7 @@ export abstract class Type {
   }): string;
 
   /**
-   * An expression that converts a rdfjsResource.Resource.Values to an Either of value/values
+   * An expression that converts a rdfjsResource.Resource.Values to a purify.Either of value/values
    * of this type for a property.
    */
   abstract fromRdfExpression(parameters: {
@@ -81,6 +82,7 @@ export abstract class Type {
       context: string;
       ignoreRdfType?: boolean;
       languageIn: string;
+      objectSet: string;
       predicate: string;
       resource: string;
       resourceValues: string;

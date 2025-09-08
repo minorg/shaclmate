@@ -303,7 +303,7 @@ export namespace NestedNodeShape {
     ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
-          dataFactory: dataFactory,
+          dataFactory,
           identifier,
         }),
       );
@@ -334,12 +334,12 @@ export namespace NestedNodeShape {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     const $type = "NestedNodeShape" as const;
-    const requiredStringProperty = _jsonObject["requiredStringProperty"];
+    const requiredStringProperty = $jsonObject["requiredStringProperty"];
     return purify.Either.of({ $identifier, $type, requiredStringProperty });
   }
 
@@ -428,15 +428,17 @@ export namespace NestedNodeShape {
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -446,10 +448,13 @@ export namespace NestedNodeShape {
       requiredStringProperty: string;
     }
   > {
-    const $identifier: NestedNodeShape.$Identifier = _resource.identifier;
+    const $objectSet =
+      $objectSetParameter ??
+      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
+    const $identifier: NestedNodeShape.$Identifier = $resource.identifier;
     const $type = "NestedNodeShape" as const;
     const _requiredStringPropertyEither: purify.Either<Error, string> =
-      _resource
+      $resource
         .values($properties.requiredStringProperty["identifier"], {
           unique: true,
         })
@@ -696,7 +701,7 @@ export namespace FormNodeShape {
     ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
-          dataFactory: dataFactory,
+          dataFactory,
           identifier,
         }),
       );
@@ -737,23 +742,23 @@ export namespace FormNodeShape {
       return purify.Left($jsonSafeParseResult.error);
     }
 
-    const _jsonObject = $jsonSafeParseResult.data;
-    const $identifier = _jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode(_jsonObject["@id"].substring(2))
-      : dataFactory.namedNode(_jsonObject["@id"]);
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
     const $type = "FormNodeShape" as const;
-    const emptyStringSetProperty = _jsonObject["emptyStringSetProperty"];
+    const emptyStringSetProperty = $jsonObject["emptyStringSetProperty"];
     const nestedObjectProperty = NestedNodeShape.$fromJson(
-      _jsonObject["nestedObjectProperty"],
+      $jsonObject["nestedObjectProperty"],
     ).unsafeCoerce();
     const nonEmptyStringSetProperty = purify.NonEmptyList.fromArray(
-      _jsonObject["nonEmptyStringSetProperty"],
+      $jsonObject["nonEmptyStringSetProperty"],
     ).unsafeCoerce();
     const optionalStringProperty = purify.Maybe.fromNullable(
-      _jsonObject["optionalStringProperty"],
+      $jsonObject["optionalStringProperty"],
     );
-    const requiredIntegerProperty = _jsonObject["requiredIntegerProperty"];
-    const requiredStringProperty = _jsonObject["requiredStringProperty"];
+    const requiredIntegerProperty = $jsonObject["requiredIntegerProperty"];
+    const requiredStringProperty = $jsonObject["requiredStringProperty"];
     return purify.Either.of({
       $identifier,
       $type,
@@ -906,15 +911,17 @@ export namespace FormNodeShape {
   }
 
   export function $propertiesFromRdf({
-    ignoreRdfType: _ignoreRdfType,
-    languageIn: _languageIn,
-    resource: _resource,
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
     // @ts-ignore
-    ..._context
+    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
     languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -929,13 +936,16 @@ export namespace FormNodeShape {
       requiredStringProperty: string;
     }
   > {
-    const $identifier: FormNodeShape.$Identifier = _resource.identifier;
+    const $objectSet =
+      $objectSetParameter ??
+      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
+    const $identifier: FormNodeShape.$Identifier = $resource.identifier;
     const $type = "FormNodeShape" as const;
     const _emptyStringSetPropertyEither: purify.Either<
       Error,
       readonly string[]
     > = purify.Either.sequence(
-      _resource
+      $resource
         .values($properties.emptyStringSetProperty["identifier"], {
           unique: true,
         })
@@ -952,7 +962,7 @@ export namespace FormNodeShape {
 
     const emptyStringSetProperty = _emptyStringSetPropertyEither.unsafeCoerce();
     const _nestedObjectPropertyEither: purify.Either<Error, NestedNodeShape> =
-      _resource
+      $resource
         .values($properties.nestedObjectProperty["identifier"], {
           unique: true,
         })
@@ -960,9 +970,9 @@ export namespace FormNodeShape {
         .chain((value) => value.toResource())
         .chain((_resource) =>
           NestedNodeShape.$fromRdf({
-            ..._context,
+            ...$context,
             ignoreRdfType: true,
-            languageIn: _languageIn,
+            languageIn: $languageIn,
             resource: _resource,
           }),
         );
@@ -975,7 +985,7 @@ export namespace FormNodeShape {
       Error,
       purify.NonEmptyList<string>
     > = purify.Either.sequence(
-      _resource
+      $resource
         .values($properties.nonEmptyStringSetProperty["identifier"], {
           unique: true,
         })
@@ -988,7 +998,7 @@ export namespace FormNodeShape {
     ).chain((array) =>
       purify.NonEmptyList.fromArray(array).toEither(
         new Error(
-          `${rdfjsResource.Resource.Identifier.toString(_resource.identifier)} is an empty set`,
+          `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} is an empty set`,
         ),
       ),
     );
@@ -1001,7 +1011,7 @@ export namespace FormNodeShape {
     const _optionalStringPropertyEither: purify.Either<
       Error,
       purify.Maybe<string>
-    > = _resource
+    > = $resource
       .values($properties.optionalStringProperty["identifier"], {
         unique: true,
       })
@@ -1019,7 +1029,7 @@ export namespace FormNodeShape {
 
     const optionalStringProperty = _optionalStringPropertyEither.unsafeCoerce();
     const _requiredIntegerPropertyEither: purify.Either<Error, number> =
-      _resource
+      $resource
         .values($properties.requiredIntegerProperty["identifier"], {
           unique: true,
         })
@@ -1032,7 +1042,7 @@ export namespace FormNodeShape {
     const requiredIntegerProperty =
       _requiredIntegerPropertyEither.unsafeCoerce();
     const _requiredStringPropertyEither: purify.Either<Error, string> =
-      _resource
+      $resource
         .values($properties.requiredStringProperty["identifier"], {
           unique: true,
         })
