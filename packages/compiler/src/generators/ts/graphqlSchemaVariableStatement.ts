@@ -70,7 +70,7 @@ async (_source, args: { identifiers: readonly string[] | null; limit: number | n
   }
   return await liftEither(await objectSet.${objectType.objectSetMethodNames.objects}({ limit: args.limit !== null ? args.limit : undefined, offset: args.offset !== null ? args.offset : undefined, where }));
 })).unsafeCoerce()`,
-          type: `new graphql.GraphQLNonNull(new graphql.GraphQLList(new graphql.GraphQLNonNull(${objectType.graphqlName})))`,
+          type: `new graphql.GraphQLNonNull(new graphql.GraphQLList(${objectType.graphqlName}))`,
         });
 
         fields[objectType.objectSetMethodNames.objectsCount] =

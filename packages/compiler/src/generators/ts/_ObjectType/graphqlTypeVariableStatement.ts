@@ -6,10 +6,8 @@ import {
 
 import { Maybe } from "purify-ts";
 import type { ObjectType } from "../ObjectType.js";
-import { OptionType } from "../OptionType.js";
 import { objectInitializer } from "../objectInitializer.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
-import { ShaclProperty } from "./ShaclProperty.js";
 
 export function graphqlTypeVariableStatement(
   this: ObjectType,
@@ -35,12 +33,6 @@ export function graphqlTypeVariableStatement(
               this.properties.reduce(
                 (fields, property) => {
                   property.graphqlField.ifJust((field) => {
-                    if (
-                      property instanceof ShaclProperty &&
-                      !(property.type instanceof OptionType)
-                    ) {
-                      field.type = `new graphql.GraphQLNonNull(${field.type})`;
-                    }
                     const { name: fieldName, ...fieldProps } = field;
                     fields[fieldName] = objectInitializer(fieldProps);
                   });

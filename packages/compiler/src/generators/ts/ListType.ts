@@ -72,7 +72,7 @@ export class ListType extends Type {
   @Memoize()
   override get graphqlName(): Type.GraphqlName {
     return new Type.GraphqlName(
-      `new graphql.GraphQLList(new graphql.GraphQLNonNull(${this.itemType.graphqlName}))`,
+      `new graphql.GraphQLList(${this.itemType.graphqlName})`,
     );
   }
 
