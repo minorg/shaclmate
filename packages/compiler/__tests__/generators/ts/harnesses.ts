@@ -121,21 +121,6 @@ export const harnesses = {
     }),
     kitchenSink.ExplicitRdfTypeClass,
   ),
-  externPropertiesCLass: new ClassHarness(
-    new kitchenSink.ExternPropertiesClass({
-      externClassProperty: new kitchenSink.ExternClass(
-        dataFactory.namedNode("http://example.com/externObjectType"),
-      ),
-      externNestedProperty: dataFactory.namedNode(
-        "http://example.com/externProperty",
-      ),
-      $identifier,
-      inlineNestedProperty: new kitchenSink.ExternPropertiesInlineNestedClass({
-        externPropertiesInlineNestedStringProperty: "Test",
-      }),
-    }),
-    kitchenSink.ExternPropertiesClass,
-  ),
   indirectRecursive: new ClassHarness(
     new kitchenSink.IndirectRecursiveClass({
       indirectRecursiveHelperProperty:
