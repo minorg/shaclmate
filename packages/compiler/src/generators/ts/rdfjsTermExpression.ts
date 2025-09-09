@@ -1,30 +1,26 @@
 import type { BlankNode, Literal, NamedNode, Variable } from "@rdfjs/types";
 import { rdf, rdfs, xsd } from "@tpluscode/rdf-ns-builders";
-import { logger } from "../../../logger.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { logger } from "../../logger.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export function rdfjsTermExpression({
-  dataFactoryVariable,
-  rdfjsTerm,
-}: {
-  dataFactoryVariable: string;
+export function rdfjsTermExpression(
   rdfjsTerm:
     | Omit<BlankNode, "equals">
     | Omit<Literal, "equals">
     | Omit<NamedNode, "equals">
-    | Omit<Variable, "equals">;
-}): string {
+    | Omit<Variable, "equals">,
+): string {
   switch (rdfjsTerm.termType) {
     case "BlankNode":
-      return `${dataFactoryVariable}.blankNode("${rdfjsTerm.value}")`;
+      return `dataFactory.blankNode("${rdfjsTerm.value}")`;
     case "Literal":
       if (rdfjsTerm.datatype.equals(xsd.string)) {
         if (rdfjsTerm.language.length === 0) {
-          return `${dataFactoryVariable}.literal("${rdfjsTerm.value}")`;
+          return `dataFactory.literal("${rdfjsTerm.value}")`;
         }
-        return `${dataFactoryVariable}.literal("${rdfjsTerm.value}", "${rdfjsTerm.language}")`;
+        return `dataFactory.literal("${rdfjsTerm.value}", "${rdfjsTerm.language}")`;
       }
-      return `${dataFactoryVariable}.literal("${rdfjsTerm.value}", ${rdfjsTermExpression({ dataFactoryVariable, rdfjsTerm: rdfjsTerm.datatype })})`;
+      return `dataFactory.literal("${rdfjsTerm.value}", ${rdfjsTermExpression(rdfjsTerm.datatype)})`;
     case "NamedNode": {
       if (rdfjsTerm.value.startsWith(rdf[""].value)) {
         const unqualifiedName = rdfjsTerm.value.substring(rdf[""].value.length);
@@ -61,9 +57,9 @@ export function rdfjsTermExpression({
         }
       }
 
-      return `${dataFactoryVariable}.namedNode("${rdfjsTerm.value}")`;
+      return `dataFactory.namedNode("${rdfjsTerm.value}")`;
     }
     case "Variable":
-      return `${dataFactoryVariable}.variable!("${rdfjsTerm.value}")`;
+      return `dataFactory.variable!("${rdfjsTerm.value}")`;
   }
 }

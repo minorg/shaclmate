@@ -27,8 +27,8 @@ export class PropertyShape extends ShaclCorePropertyShape<
     );
   }
 
-  get extern(): Maybe<boolean> {
-    return this.generatedShaclmatePropertyShape.extern;
+  get lazy(): Maybe<boolean> {
+    return this.generatedShaclmatePropertyShape.lazy;
   }
 
   get mutable(): Maybe<boolean> {

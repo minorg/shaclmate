@@ -1,11 +1,10 @@
-import type { BlankNode, Literal, NamedNode, Variable } from "@rdfjs/types";
+import type {} from "@rdfjs/types";
 
 import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 
 import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
-import { rdfjsTermExpression } from "./_ObjectType/rdfjsTermExpression.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 /**
@@ -14,8 +13,6 @@ import { objectInitializer } from "./objectInitializer.js";
  * Subclasses are used for both property types (c.f., property* methods) and node/object types.
  */
 export abstract class Type {
-  protected readonly dataFactoryVariable: string;
-
   /**
    * Expressions that convert a source type or types to this type. It should include the type itself.
    */
@@ -35,12 +32,12 @@ export abstract class Type {
   /**
    * GraphQL-compatible version of the type.
    */
-  abstract readonly graphqlName: string;
+  abstract readonly graphqlName: Type.GraphqlName;
 
   /**
-   * JSON-compatible version of the type in a nested type declaration.
+   * JSON-compatible version of the type.
    */
-  abstract readonly jsonName: string;
+  abstract readonly jsonName: Type.JsonName;
 
   /**
    * Is a value of this type mutable?
@@ -48,7 +45,7 @@ export abstract class Type {
   abstract readonly mutable: boolean;
 
   /**
-   * Name of the type.
+   * TypeScript name of the type.
    */
   abstract readonly name: string;
 
@@ -57,25 +54,9 @@ export abstract class Type {
    */
   abstract readonly typeof: "boolean" | "object" | "number" | "string";
 
-  constructor({
-    dataFactoryVariable,
-  }: {
-    dataFactoryVariable: string;
-  }) {
-    this.dataFactoryVariable = dataFactoryVariable;
-  }
-
-  get jsonPropertySignature(): {
-    readonly hasQuestionToken?: boolean;
-    readonly name: string;
-  } {
-    return {
-      name: this.jsonName,
-    };
-  }
-
   /**
-   * An expression that converts this type's JSON type to a value of this type.
+   * An expression that converts this type's JSON type to a value of this type. It doesn't return a purify.Either because the JSON has
+   * already been validated and converted to the expected JSON type with Zod.
    */
   abstract fromJsonExpression(parameters: {
     variables: {
@@ -84,7 +65,7 @@ export abstract class Type {
   }): string;
 
   /**
-   * An expression that converts a rdfjsResource.Resource.Values to an Either of value/values
+   * An expression that converts a rdfjsResource.Resource.Values to a purify.Either of value/values
    * of this type for a property.
    */
   abstract fromRdfExpression(parameters: {
@@ -92,6 +73,7 @@ export abstract class Type {
       context: string;
       ignoreRdfType?: boolean;
       languageIn: string;
+      objectSet: string;
       predicate: string;
       resource: string;
       resourceValues: string;
@@ -186,7 +168,7 @@ export abstract class Type {
       }): readonly string[] {
     switch (context) {
       case "object": {
-        const objectPrefix = `${this.dataFactoryVariable}.variable!(`;
+        const objectPrefix = "dataFactory.variable!(";
         const objectSuffix = ")";
         invariant(variables.object.startsWith(objectPrefix));
         invariant(variables.object.endsWith(objectSuffix));
@@ -245,7 +227,7 @@ export abstract class Type {
       }): readonly string[] {
     switch (context) {
       case "object": {
-        const objectPrefix = `${this.dataFactoryVariable}.variable!(`;
+        const objectPrefix = "dataFactory.variable!(";
         const objectSuffix = ")";
         invariant(variables.object.startsWith(objectPrefix));
         invariant(variables.object.endsWith(objectSuffix));
@@ -307,19 +289,6 @@ export abstract class Type {
   abstract useImports(parameters: {
     features: Set<TsFeature>;
   }): readonly Import[];
-
-  protected rdfjsTermExpression(
-    rdfjsTerm:
-      | Omit<BlankNode, "equals">
-      | Omit<Literal, "equals">
-      | Omit<NamedNode, "equals">
-      | Omit<Variable, "equals">,
-  ): string {
-    return rdfjsTermExpression({
-      dataFactoryVariable: this.dataFactoryVariable,
-      rdfjsTerm,
-    });
-  }
 }
 
 export namespace Type {
@@ -333,5 +302,56 @@ export namespace Type {
     readonly name: string;
     readonly ownValues: readonly string[];
     readonly descendantValues: readonly string[];
+  }
+
+  export class JsonName {
+    /**
+     * Is the type optional in JSON? Equivalent to ? in TypeScript or | undefined.
+     */
+    readonly optional: boolean;
+
+    /**
+     * The name of the type when it's required i.e. -- so it should never include "| undefined".
+     */
+    readonly requiredName: string;
+
+    constructor(
+      requiredName: string,
+      parameters?: {
+        optional: boolean;
+      },
+    ) {
+      this.optional = !!parameters?.optional;
+      this.requiredName = requiredName;
+    }
+
+    toString(): string {
+      return this.optional
+        ? `(${this.requiredName}) | undefined`
+        : this.requiredName;
+    }
+  }
+
+  export class GraphqlName {
+    /**
+     * Is the type nullable in GraphQL?
+     */
+    readonly nullable: boolean;
+
+    /**
+     * The name of the type when it's nullable -- so it should never include "new graphql.GraphQLNonNull(...)" around it.
+     */
+    readonly nullableName: string;
+
+    constructor(nullableName: string, parameters?: { nullable: boolean }) {
+      this.nullable = !!parameters?.nullable;
+      this.nullableName = nullableName;
+    }
+
+    toString(): string {
+      return this.nullable
+        ? this.nullableName
+        : `new graphql.GraphQLNonNull(${this.nullableName})`;
+    }
   }
 }

@@ -12,110 +12,136 @@ describe("graphqlSchema", () => {
     });
   };
 
-  it("concreteChild object", async ({ expect }) => {
+  it("lazy object", async ({ expect }) => {
     const result = await execute(
-      `query { concreteChild(identifier: "<http://example.com/concreteChild0>") { _identifier, childStringProperty } }`,
+      `query { child(identifier: "<http://example.com/child0>") { _identifier optionalLazyObjectProperty { _identifier } } }`,
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      concreteChild: {
-        _identifier: "<http://example.com/concreteChild0>",
+      child: {
+        _identifier: "<http://example.com/child0>",
+        optionalLazyObjectProperty: {
+          _identifier: "<http://example.com/child0/lazy>",
+        },
+      },
+    });
+  });
+
+  it("nested object", async ({ expect }) => {
+    const result = await execute(
+      `query { child(identifier: "<http://example.com/child0>") { _identifier optionalObjectProperty { _identifier } } }`,
+    );
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      child: {
+        _identifier: "<http://example.com/child0>",
+        optionalObjectProperty: {
+          _identifier: "<http://example.com/child0/nested>",
+        },
+      },
+    });
+  });
+
+  it("object", async ({ expect }) => {
+    const result = await execute(
+      `query { child(identifier: "<http://example.com/child0>") { _identifier, childStringProperty } }`,
+    );
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      child: {
+        _identifier: "<http://example.com/child0>",
         childStringProperty: "child string property",
       },
     });
   });
 
-  it("concreteChild object identifiers (all)", async ({ expect }) => {
-    const result = await execute("query { concreteChildIdentifiers }");
+  it("object identifiers (all)", async ({ expect }) => {
+    const result = await execute("query { childIdentifiers }");
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      concreteChildIdentifiers: [...new Array(4)].map(
-        (_, i) => `<http://example.com/concreteChild${i}>`,
+      childIdentifiers: [...new Array(4)].map(
+        (_, i) => `<http://example.com/child${i}>`,
       ),
     });
   });
 
-  it("concreteChild object identifiers (limit)", async ({ expect }) => {
-    const result = await execute(
-      "query { concreteChildIdentifiers(limit: 2) }",
-    );
+  it("object identifiers (limit)", async ({ expect }) => {
+    const result = await execute("query { childIdentifiers(limit: 2) }");
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      concreteChildIdentifiers: [...new Array(2)].map(
-        (_, i) => `<http://example.com/concreteChild${i}>`,
+      childIdentifiers: [...new Array(2)].map(
+        (_, i) => `<http://example.com/child${i}>`,
       ),
     });
   });
 
-  it("concreteChild object identifiers (offset)", async ({ expect }) => {
-    const result = await execute(
-      "query { concreteChildIdentifiers(offset: 1) }",
-    );
+  it("object identifiers (offset)", async ({ expect }) => {
+    const result = await execute("query { childIdentifiers(offset: 1) }");
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      concreteChildIdentifiers: [...new Array(3)].map(
-        (_, i) => `<http://example.com/concreteChild${i + 1}>`,
+      childIdentifiers: [...new Array(3)].map(
+        (_, i) => `<http://example.com/child${i + 1}>`,
       ),
     });
   });
 
-  it("concreteChild objects (all)", async ({ expect }) => {
+  it("objects (all)", async ({ expect }) => {
     const result = await execute(
-      "query { concreteChildren { _identifier, childStringProperty } }",
+      "query { children { _identifier, childStringProperty } }",
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      concreteChildren: [...new Array(4)].map((_, i) => ({
-        _identifier: `<http://example.com/concreteChild${i}>`,
+      children: [...new Array(4)].map((_, i) => ({
+        _identifier: `<http://example.com/child${i}>`,
         childStringProperty: "child string property",
       })),
     });
   });
 
-  it("concreteChild objects (identifiers)", async ({ expect }) => {
+  it("objects (identifiers)", async ({ expect }) => {
     const result = await execute(
-      `query { concreteChildren(identifiers: [${[...new Array(2)].map((_, i) => `"<http://example.com/concreteChild${i + 1}>"`).join(", ")}]) { _identifier, childStringProperty } }`,
+      `query { children(identifiers: [${[...new Array(2)].map((_, i) => `"<http://example.com/child${i + 1}>"`).join(", ")}]) { _identifier, childStringProperty } }`,
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      concreteChildren: [...new Array(2)].map((_, i) => ({
-        _identifier: `<http://example.com/concreteChild${i + 1}>`,
+      children: [...new Array(2)].map((_, i) => ({
+        _identifier: `<http://example.com/child${i + 1}>`,
         childStringProperty: "child string property",
       })),
     });
   });
 
-  it("concreteChild objects (limit)", async ({ expect }) => {
+  it("objects (limit)", async ({ expect }) => {
     const result = await execute(
-      "query { concreteChildren(limit: 2) { _identifier, childStringProperty } }",
+      "query { children(limit: 2) { _identifier, childStringProperty } }",
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      concreteChildren: [...new Array(2)].map((_, i) => ({
-        _identifier: `<http://example.com/concreteChild${i}>`,
+      children: [...new Array(2)].map((_, i) => ({
+        _identifier: `<http://example.com/child${i}>`,
         childStringProperty: "child string property",
       })),
     });
   });
 
-  it("concreteChild objects (offset)", async ({ expect }) => {
+  it("objects (offset)", async ({ expect }) => {
     const result = await execute(
-      "query { concreteChildren(offset: 1) { _identifier, childStringProperty } }",
+      "query { children(offset: 1) { _identifier, childStringProperty } }",
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      concreteChildren: [...new Array(3)].map((_, i) => ({
-        _identifier: `<http://example.com/concreteChild${i + 1}>`,
+      children: [...new Array(3)].map((_, i) => ({
+        _identifier: `<http://example.com/child${i + 1}>`,
         childStringProperty: "child string property",
       })),
     });
   });
 
-  it("concreteChild objectsCount", async ({ expect }) => {
-    const result = await execute("query { concreteChildrenCount }");
+  it("objectsCount", async ({ expect }) => {
+    const result = await execute("query { childrenCount }");
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
-      concreteChildrenCount: 4,
+      childrenCount: 4,
     });
   });
 

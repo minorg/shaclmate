@@ -2,7 +2,9 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
+import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { LazyShaclProperty } from "./LazyShaclProperty.js";
 import { toRdfFunctionOrMethodDeclaration } from "./toRdfFunctionOrMethodDeclaration.js";
 
 function fromRdfFunctionDeclarations(
@@ -26,7 +28,7 @@ function fromRdfFunctionDeclarations(
   });
 
   this.fromRdfType.ifJust((rdfType) => {
-    const predicate = this.rdfjsTermExpression(rdf.type);
+    const predicate = rdfjsTermExpression(rdf.type);
     propertiesFromRdfStatements.push(
       `\
 if (!${variables.ignoreRdfType} && !${variables.resource}.isInstanceOf(${syntheticNamePrefix}fromRdfType)) {
@@ -38,8 +40,16 @@ if (!${variables.ignoreRdfType} && !${variables.resource}.isInstanceOf(${synthet
   const propertyFromRdfVariables = {
     context: variables.context,
     languageIn: variables.languageIn,
+    objectSet: variables.objectSet,
     resource: variables.resource,
   };
+  if (
+    this.ownProperties.some((property) => property instanceof LazyShaclProperty)
+  ) {
+    propertiesFromRdfStatements.push(
+      `const ${syntheticNamePrefix}objectSet = ${syntheticNamePrefix}objectSetParameter ?? new ${syntheticNamePrefix}RdfjsDatasetObjectSet({ dataset: ${variables.resource}.dataset });`,
+    );
+  }
   for (const property of this.properties) {
     const propertyFromRdfStatements = property.fromRdfStatements({
       variables: propertyFromRdfVariables,
@@ -69,8 +79,8 @@ if (!${variables.ignoreRdfType} && !${variables.resource}.isInstanceOf(${synthet
     name: `${syntheticNamePrefix}propertiesFromRdf`,
     parameters: [
       {
-        name: `{ ignoreRdfType: ${variables.ignoreRdfType}, languageIn: ${variables.languageIn}, resource: ${variables.resource},\n// @ts-ignore\n...${variables.context} }`,
-        type: "{ [_index: string]: any; ignoreRdfType?: boolean; languageIn?: readonly string[]; resource: rdfjsResource.Resource; }",
+        name: `{ ignoreRdfType: ${variables.ignoreRdfType}, languageIn: ${variables.languageIn}, objectSet: ${syntheticNamePrefix}objectSetParameter, resource: ${variables.resource},\n// @ts-ignore\n...${variables.context} }`,
+        type: `{ [_index: string]: any; ignoreRdfType?: boolean; languageIn?: readonly string[]; objectSet?: ${syntheticNamePrefix}ObjectSet; resource: rdfjsResource.Resource; }`,
       },
     ],
     returnType: `purify.Either<Error, ${propertiesFromRdfReturnType.join(" & ")}>`,
@@ -83,7 +93,7 @@ if (!${variables.ignoreRdfType} && !${variables.resource}.isInstanceOf(${synthet
     if (this.childObjectTypes.length > 0) {
       // Can't ignore the RDF type if we're doing a union.
       fromRdfStatements.push(
-        "const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters",
+        "const { ignoreRdfType: _, ...otherParameters } = parameters;",
       );
       // Similar to an object union type, alt-chain the fromRdf of the different concrete subclasses together
       fromRdfReturnStatement = `return ${this.childObjectTypes.reduce(
@@ -110,7 +120,7 @@ if (!${variables.ignoreRdfType} && !${variables.resource}.isInstanceOf(${synthet
     if (this.childObjectTypes.length > 0) {
       // Can't ignore the RDF type if we're trying the child object type.
       fromRdfStatements.push(
-        "const { ignoreRdfType: _ignoreRdfType, ...otherParameters } = parameters",
+        "const { ignoreRdfType: _, ...otherParameters } = parameters;",
       );
       fromRdfReturnStatement = `${this.childObjectTypes.reduce(
         (expression, childObjectType) => {
@@ -184,8 +194,9 @@ function toRdfFunctionDeclaration(
 }
 
 const variables = {
-  context: "_context",
-  ignoreRdfType: "_ignoreRdfType",
-  languageIn: "_languageIn",
-  resource: "_resource",
+  context: `${syntheticNamePrefix}context`,
+  ignoreRdfType: `${syntheticNamePrefix}ignoreRdfType`,
+  languageIn: `${syntheticNamePrefix}languageIn`,
+  objectSet: `${syntheticNamePrefix}objectSet`,
+  resource: `${syntheticNamePrefix}resource`,
 };

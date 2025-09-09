@@ -17,14 +17,14 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
   private readonly abstract: boolean;
   private readonly override: boolean;
 
-  override readonly classGetAccessorDeclaration: Maybe<
-    OptionalKind<GetAccessorDeclarationStructure>
-  > = Maybe.empty();
   override readonly constructorParametersPropertySignature: Maybe<
     OptionalKind<PropertySignatureStructure>
   > = Maybe.empty();
   override readonly declarationImports: readonly Import[] = [];
   override readonly equalsFunction = `${syntheticNamePrefix}strictEquals`;
+  override readonly getAccessorDeclaration: Maybe<
+    OptionalKind<GetAccessorDeclarationStructure>
+  > = Maybe.empty();
   override readonly graphqlField: Property<TypeDiscriminatorProperty.Type>["graphqlField"] =
     Maybe.empty();
   readonly initializer: string;
@@ -50,36 +50,6 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
     this.override = override;
   }
 
-  override get classPropertyDeclaration(): Maybe<
-    OptionalKind<PropertyDeclarationStructure>
-  > {
-    return Maybe.of({
-      // Work around a ts-morph bug that puts the override keyword before the abstract keyword
-      isAbstract: this.abstract && this.override ? undefined : this.abstract,
-      hasOverrideKeyword:
-        this.abstract && this.override ? undefined : this.override,
-      initializer: !this.abstract ? `"${this.initializer}"` : undefined,
-      isReadonly: true,
-      leadingTrivia:
-        this.abstract && this.override ? "abstract override " : undefined,
-      name: this.name,
-      type:
-        !this.abstract && this.type.name === `"${this.initializer}"`
-          ? undefined
-          : this.type.name,
-    });
-  }
-
-  override get interfacePropertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    return Maybe.of({
-      isReadonly: true,
-      name: this.name,
-      type: this.type.name,
-    });
-  }
-
   override get jsonPropertySignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {
@@ -90,8 +60,16 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
     });
   }
 
-  override classConstructorStatements(): readonly string[] {
-    return [];
+  override constructorStatements(): readonly string[] {
+    switch (this.objectType.declarationType) {
+      case "class":
+        return [];
+      case "interface":
+        if (this.abstract) {
+          return [];
+        }
+        return [`const ${this.name} = "${this.initializer}" as const`];
+    }
   }
 
   override fromJsonStatements(): readonly string[] {
@@ -110,12 +88,6 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
     Property<TypeDiscriminatorProperty>["hashStatements"]
   >[0]): readonly string[] {
     return [`${variables.hasher}.update(${variables.value});`];
-  }
-
-  override interfaceConstructorStatements(): readonly string[] {
-    return !this.abstract
-      ? [`const ${this.name} = "${this.initializer}" as const`]
-      : [];
   }
 
   override jsonUiSchemaElement({
@@ -140,6 +112,36 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
         this.type.values.length > 1
           ? `${variables.zod}.enum(${JSON.stringify(this.type.values)})`
           : `${variables.zod}.literal("${this.type.values[0]}")`,
+    });
+  }
+
+  override get propertyDeclaration(): Maybe<
+    OptionalKind<PropertyDeclarationStructure>
+  > {
+    return Maybe.of({
+      // Work around a ts-morph bug that puts the override keyword before the abstract keyword
+      isAbstract: this.abstract && this.override ? undefined : this.abstract,
+      hasOverrideKeyword:
+        this.abstract && this.override ? undefined : this.override,
+      initializer: !this.abstract ? `"${this.initializer}"` : undefined,
+      isReadonly: true,
+      leadingTrivia:
+        this.abstract && this.override ? "abstract override " : undefined,
+      name: this.name,
+      type:
+        !this.abstract && this.type.name === `"${this.initializer}"`
+          ? undefined
+          : this.type.name,
+    });
+  }
+
+  override get propertySignature(): Maybe<
+    OptionalKind<PropertySignatureStructure>
+  > {
+    return Maybe.of({
+      isReadonly: true,
+      name: this.name,
+      type: this.type.name,
     });
   }
 

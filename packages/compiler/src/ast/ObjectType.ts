@@ -163,6 +163,11 @@ export namespace ObjectType {
     readonly label: Maybe<string>;
 
     /**
+     * The property value should be lazily accessed/deserialized rather than eagerly.
+     */
+    readonly lazy: Maybe<boolean>;
+
+    /**
      * The property should be mutable in generated code i.e., it should be re-assignable. The property value may or may
      * not be mutable.
      */

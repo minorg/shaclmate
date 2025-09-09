@@ -15,11 +15,9 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMethodDeclarations.js";
 
 export function sparqlObjectSetClassDeclaration({
-  dataFactoryVariable,
   objectTypes,
   objectUnionTypes,
 }: {
-  dataFactoryVariable: string;
   objectTypes: readonly ObjectType[];
   objectUnionTypes: readonly ObjectUnionType[];
 }): readonly (ClassDeclarationStructure | ModuleDeclarationStructure)[] {
@@ -398,13 +396,13 @@ return patterns;`,
       ),
       properties: [
         {
-          initializer: `${dataFactoryVariable}.variable!("count");`,
+          initializer: `dataFactory.variable!("count");`,
           isReadonly: true,
           name: `${syntheticNamePrefix}countVariable`,
           scope: Scope.Protected,
         },
         {
-          initializer: `${dataFactoryVariable}.variable!("object");`,
+          initializer: `dataFactory.variable!("object");`,
           isReadonly: true,
           name: `${syntheticNamePrefix}objectVariable`,
           scope: Scope.Protected,

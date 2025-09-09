@@ -16,7 +16,7 @@ import { DeclaredType } from "./DeclaredType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { Import } from "./Import.js";
 import type { ObjectType } from "./ObjectType.js";
-import type { Type } from "./Type.js";
+import { Type } from "./Type.js";
 import { hasherTypeConstraint } from "./_ObjectType/hashFunctionOrMethodDeclarations.js";
 import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
 import { sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/sparqlConstructQueryFunctionDeclaration.js";
@@ -247,8 +247,10 @@ export class ObjectUnionType extends DeclaredType {
   }
 
   @Memoize()
-  override get graphqlName(): string {
-    return `${this.staticModuleName}.${syntheticNamePrefix}GraphQL`;
+  override get graphqlName(): Type.GraphqlName {
+    return new Type.GraphqlName(
+      `${this.staticModuleName}.${syntheticNamePrefix}GraphQL`,
+    );
   }
 
   @Memoize()
@@ -257,10 +259,10 @@ export class ObjectUnionType extends DeclaredType {
   }
 
   @Memoize()
-  override get jsonName(): string {
-    return this.memberTypes
-      .map((memberType) => memberType.jsonName)
-      .join(" | ");
+  override get jsonName(): Type.JsonName {
+    return new Type.JsonName(
+      this.memberTypes.map((memberType) => memberType.jsonName).join(" | "),
+    );
   }
 
   @Memoize()
@@ -396,7 +398,7 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
             description: this.comment.map(JSON.stringify).extract(),
             name: `"${this.name}"`,
             resolveType: `function (value: ${this.name}) { return value.${syntheticNamePrefix}type; }`,
-            types: `[${this.memberTypes.map((memberType) => memberType.graphqlName).join(", ")}]`,
+            types: `[${this.memberTypes.map((memberType) => memberType.graphqlName.nullableName).join(", ")}]`,
           })})`,
         },
       ],
@@ -531,7 +533,7 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
           `return [${this.memberTypes
             .map(
               (memberType) =>
-                `...${memberType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTemplateTriples({ subject: parameters?.subject ?? ${this.dataFactoryVariable}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
+                `...${memberType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTemplateTriples({ subject: parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
             )
             .join(", ")}];`,
         ],
@@ -553,7 +555,7 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
           `return [{ patterns: [${this.memberTypes
             .map((memberType) =>
               objectInitializer({
-                patterns: `${memberType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ subject: parameters?.subject ?? ${this.dataFactoryVariable}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
+                patterns: `${memberType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ subject: parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
                 type: '"group"',
               }),
             )
@@ -594,7 +596,7 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
           type: this.name,
         },
       ],
-      returnType: this.jsonName,
+      returnType: this.jsonName.toString(),
       statements: `switch (${this.thisVariable}.${this._discriminatorProperty.name}) { ${caseBlocks.join(" ")} }`,
     });
   }

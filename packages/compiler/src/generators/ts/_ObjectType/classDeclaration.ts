@@ -51,7 +51,7 @@ function constructorDeclaration(
   }
 
   const propertyStatements = this.properties.flatMap((property) =>
-    property.classConstructorStatements({
+    property.constructorStatements({
       variables: { parameter: `parameters.${property.name}` },
     }),
   );
@@ -88,10 +88,10 @@ export function classDeclaration(
   const getAccessors: OptionalKind<GetAccessorDeclarationStructure>[] = [];
   const properties: OptionalKind<PropertyDeclarationStructure>[] = [];
   for (const property of this.properties) {
-    property.classPropertyDeclaration.ifJust((propertyDeclaration) =>
+    property.propertyDeclaration.ifJust((propertyDeclaration) =>
       properties.push(propertyDeclaration),
     );
-    property.classGetAccessorDeclaration.ifJust((getAccessor) =>
+    property.getAccessorDeclaration.ifJust((getAccessor) =>
       getAccessors.push(getAccessor),
     );
   }

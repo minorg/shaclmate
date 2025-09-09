@@ -1,23 +1,21 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
+import { invariant } from "ts-invariant";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export class OptionType extends Type {
+export class OptionType<ItemTypeT extends Type = Type> extends Type {
   override readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty> =
     Maybe.empty();
-  readonly itemType: Type;
+  readonly itemType: ItemTypeT;
   readonly kind = "OptionType";
   readonly typeof = "object";
 
-  constructor({
-    itemType,
-    ...superParameters
-  }: ConstructorParameters<typeof Type>[0] & { itemType: Type }) {
-    super(superParameters);
+  constructor({ itemType }: { itemType: ItemTypeT }) {
+    super();
     this.itemType = itemType;
   }
 
@@ -55,21 +53,20 @@ export class OptionType extends Type {
     return `((left, right) => ${syntheticNamePrefix}maybeEquals(left, right, ${this.itemType.equalsFunction}))`;
   }
 
-  override get graphqlName(): string {
-    return this.itemType.graphqlName; // Which is nullable by default
+  @Memoize()
+  override get graphqlName(): Type.GraphqlName {
+    invariant(!this.itemType.graphqlName.nullable);
+    return new Type.GraphqlName(this.itemType.graphqlName.toString(), {
+      nullable: true,
+    });
   }
 
   @Memoize()
-  override get jsonName(): string {
-    return `(${this.itemType.jsonName}) | undefined`;
-  }
-
-  @Memoize()
-  override get jsonPropertySignature() {
-    return {
-      hasQuestionToken: true,
-      name: this.itemType.jsonName,
-    };
+  override get jsonName(): Type.JsonName {
+    invariant(!this.itemType.jsonName.optional);
+    return new Type.JsonName(this.itemType.jsonName.toString(), {
+      optional: true,
+    });
   }
 
   override get mutable(): boolean {

@@ -1,7 +1,8 @@
 import { Maybe } from "purify-ts";
+import { Memoize } from "typescript-memoize";
 import { LiteralType } from "./LiteralType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
-import type { Type } from "./Type.js";
+import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export abstract class PrimitiveType<
@@ -29,8 +30,9 @@ export abstract class PrimitiveType<
     return Maybe.empty();
   }
 
-  override get jsonName(): string {
-    return this.name;
+  @Memoize()
+  override get jsonName(): Type.JsonName {
+    return new Type.JsonName(this.name);
   }
 
   override fromJsonExpression({

@@ -11,27 +11,16 @@
     shaclmate:tsFeatureInclude shaclmate:_TsFeature_Graphql ;
     a owl:Ontology .
 
-:ConcreteChild
+:Child
     a owl:Class, sh:NodeShape ;
-    rdfs:comment "Concrete child" ;
-    rdfs:subClassOf :ConcreteParent ;
+    rdfs:comment "Child" ;
+    rdfs:subClassOf :Parent ;
     sh:nodeKind sh:IRI ;
-    sh:property :optionalNestedObjectProperty, :optionalStringProperty, :requiredStringProperty, [
+    sh:property :optionalLazyObjectProperty, :optionalObjectProperty, :optionalStringProperty, :requiredStringProperty, [
         rdfs:comment "Child string property" ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:path :childStringProperty
-    ] .
-
-:ConcreteParent
-    a owl:Class, sh:NodeShape ;
-    rdfs:comment "Concrete parent" ;
-    sh:nodeKind sh:IRI ;
-    sh:property [
-        rdfs:comment "Parent string property" ;
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:path :parentStringProperty
     ] .
 
 :Nested
@@ -39,6 +28,17 @@
     rdfs:comment "Nested" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property :optionalNumberProperty, :optionalStringProperty, :requiredStringProperty .
+
+:Parent
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Parent" ;
+    sh:nodeKind sh:IRI ;
+    sh:property [
+        rdfs:comment "Parent string property" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :parentStringProperty
+    ] .
 
 :Union
     a owl:Class, sh:NodeShape ;
@@ -60,12 +60,13 @@
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property :optionalStringProperty .
 
-:optionalNestedObjectProperty
+:optionalLazyObjectProperty
+    shaclmate:lazy true ;
     a sh:PropertyShape ;
-    rdfs:comment "Optional nested object property" ;
+    rdfs:comment "Optional lazy object property" ;
     sh:maxCount 1 ;
     sh:node :Nested ;
-    sh:path :optionalNestedObjectProperty .
+    sh:path :optionalLazyObjectProperty .
 
 :optionalNumberProperty
     a sh:PropertyShape ;
@@ -73,6 +74,13 @@
     sh:datatype xsd:decimal ;
     sh:maxCount 1 ;
     sh:path :optionalNumberProperty .
+
+:optionalObjectProperty
+    a sh:PropertyShape ;
+    rdfs:comment "Optional object property" ;
+    sh:maxCount 1 ;
+    sh:node :Nested ;
+    sh:path :optionalObjectProperty .
 
 :optionalStringProperty
     a sh:PropertyShape ;

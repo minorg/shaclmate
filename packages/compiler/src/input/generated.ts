@@ -5,9 +5,6 @@ import * as rdfjsResource from "rdfjs-resource";
 import { PropertyPath } from "./PropertyPath.js";
 export namespace $RdfVocabularies {
   export namespace rdf {
-    export const comment = dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#comment",
-    );
     export const first = dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
     );
@@ -1759,7 +1756,7 @@ export namespace ShaclCorePropertyShapeStatic {
 export interface ShaclmatePropertyShape extends ShaclCorePropertyShape {
   readonly $identifier: ShaclmatePropertyShape.$Identifier;
   readonly $type: "ShaclmatePropertyShape";
-  readonly extern: purify.Maybe<boolean>;
+  readonly lazy: purify.Maybe<boolean>;
   readonly mutable: purify.Maybe<boolean>;
   readonly name: purify.Maybe<string>;
   readonly visibility: purify.Maybe<
@@ -1795,7 +1792,7 @@ export namespace ShaclmatePropertyShape {
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       $type: "ShaclmatePropertyShape";
-      extern: purify.Maybe<boolean>;
+      lazy: purify.Maybe<boolean>;
       mutable: purify.Maybe<boolean>;
       name: purify.Maybe<string>;
       visibility: purify.Maybe<
@@ -1837,8 +1834,8 @@ export namespace ShaclmatePropertyShape {
     const $identifier: ShaclmatePropertyShape.$Identifier =
       _resource.identifier;
     const $type = "ShaclmatePropertyShape" as const;
-    const _externEither: purify.Either<Error, purify.Maybe<boolean>> = _resource
-      .values($properties.extern["identifier"], { unique: true })
+    const _lazyEither: purify.Either<Error, purify.Maybe<boolean>> = _resource
+      .values($properties.lazy["identifier"], { unique: true })
       .head()
       .chain((value) => value.toBoolean())
       .map((value) => purify.Maybe.of(value))
@@ -1847,11 +1844,11 @@ export namespace ShaclmatePropertyShape {
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
-    if (_externEither.isLeft()) {
-      return _externEither;
+    if (_lazyEither.isLeft()) {
+      return _lazyEither;
     }
 
-    const extern = _externEither.unsafeCoerce();
+    const lazy = _lazyEither.unsafeCoerce();
     const _mutableEither: purify.Either<
       Error,
       purify.Maybe<boolean>
@@ -1984,7 +1981,7 @@ export namespace ShaclmatePropertyShape {
       ...$super0,
       $identifier,
       $type,
-      extern,
+      lazy,
       mutable,
       name,
       visibility,
@@ -2024,8 +2021,8 @@ export namespace ShaclmatePropertyShape {
     }
 
     _resource.add(
-      ShaclmateNodeShape.$properties.extern["identifier"],
-      _shaclmatePropertyShape.extern,
+      ShaclmatePropertyShape.$properties.lazy["identifier"],
+      _shaclmatePropertyShape.lazy,
     );
     _resource.add(
       ShaclmateNodeShape.$properties.mutable["identifier"],
@@ -2048,9 +2045,9 @@ export namespace ShaclmatePropertyShape {
 
   export const $properties = {
     ...ShaclCorePropertyShapeStatic.$properties,
-    extern: {
+    lazy: {
       identifier: dataFactory.namedNode(
-        "http://purl.org/shaclmate/ontology#extern",
+        "http://purl.org/shaclmate/ontology#lazy",
       ),
     },
     mutable: {
@@ -4716,7 +4713,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly OwlOntologyStatic.$Identifier[]>>;
   owlOntologies(
     query?: $ObjectSet.Query<OwlOntologyStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, OwlOntology>[]>;
+  ): Promise<purify.Either<Error, readonly OwlOntology[]>>;
   owlOntologiesCount(
     query?: Pick<$ObjectSet.Query<OwlOntologyStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -4730,7 +4727,7 @@ export interface $ObjectSet {
   >;
   shaclCoreNodeShapes(
     query?: $ObjectSet.Query<ShaclCoreNodeShapeStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ShaclCoreNodeShape>[]>;
+  ): Promise<purify.Either<Error, readonly ShaclCoreNodeShape[]>>;
   shaclCoreNodeShapesCount(
     query?: Pick<
       $ObjectSet.Query<ShaclCoreNodeShapeStatic.$Identifier>,
@@ -4747,7 +4744,7 @@ export interface $ObjectSet {
   >;
   shaclCorePropertyGroups(
     query?: $ObjectSet.Query<ShaclCorePropertyGroup.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ShaclCorePropertyGroup>[]>;
+  ): Promise<purify.Either<Error, readonly ShaclCorePropertyGroup[]>>;
   shaclCorePropertyGroupsCount(
     query?: Pick<$ObjectSet.Query<ShaclCorePropertyGroup.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -4761,7 +4758,7 @@ export interface $ObjectSet {
   >;
   shaclCorePropertyShapes(
     query?: $ObjectSet.Query<ShaclCorePropertyShapeStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ShaclCorePropertyShape>[]>;
+  ): Promise<purify.Either<Error, readonly ShaclCorePropertyShape[]>>;
   shaclCorePropertyShapesCount(
     query?: Pick<
       $ObjectSet.Query<ShaclCorePropertyShapeStatic.$Identifier>,
@@ -4776,7 +4773,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ShaclmateNodeShape.$Identifier[]>>;
   shaclmateNodeShapes(
     query?: $ObjectSet.Query<ShaclmateNodeShape.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ShaclmateNodeShape>[]>;
+  ): Promise<purify.Either<Error, readonly ShaclmateNodeShape[]>>;
   shaclmateNodeShapesCount(
     query?: Pick<$ObjectSet.Query<ShaclmateNodeShape.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -4788,7 +4785,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ShaclmateOntology.$Identifier[]>>;
   shaclmateOntologies(
     query?: $ObjectSet.Query<ShaclmateOntology.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ShaclmateOntology>[]>;
+  ): Promise<purify.Either<Error, readonly ShaclmateOntology[]>>;
   shaclmateOntologiesCount(
     query?: Pick<$ObjectSet.Query<ShaclmateOntology.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -4802,7 +4799,7 @@ export interface $ObjectSet {
   >;
   shaclmatePropertyShapes(
     query?: $ObjectSet.Query<ShaclmatePropertyShape.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ShaclmatePropertyShape>[]>;
+  ): Promise<purify.Either<Error, readonly ShaclmatePropertyShape[]>>;
   shaclmatePropertyShapesCount(
     query?: Pick<$ObjectSet.Query<ShaclmatePropertyShape.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -4814,7 +4811,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ShaclCoreShape.$Identifier[]>>;
   shaclCoreShapes(
     query?: $ObjectSet.Query<ShaclCoreShape.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ShaclCoreShape>[]>;
+  ): Promise<purify.Either<Error, readonly ShaclCoreShape[]>>;
   shaclCoreShapesCount(
     query?: Pick<$ObjectSet.Query<ShaclCoreShape.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -4826,7 +4823,7 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ShaclmateShape.$Identifier[]>>;
   shaclmateShapes(
     query?: $ObjectSet.Query<ShaclmateShape.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ShaclmateShape>[]>;
+  ): Promise<purify.Either<Error, readonly ShaclmateShape[]>>;
   shaclmateShapesCount(
     query?: Pick<$ObjectSet.Query<ShaclmateShape.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
@@ -4842,10 +4839,16 @@ export namespace $ObjectSet {
   };
   export type Where<
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  > = {
-    readonly identifiers: readonly ObjectIdentifierT[];
-    readonly type: "identifiers";
-  };
+  > =
+    | {
+        readonly identifiers: readonly ObjectIdentifierT[];
+        readonly type: "identifiers";
+      }
+    | {
+        readonly predicate: rdfjs.NamedNode;
+        readonly subject: rdfjs.BlankNode | rdfjs.NamedNode;
+        readonly type: "triple-objects";
+      };
 }
 
 export class $RdfjsDatasetObjectSet implements $ObjectSet {
@@ -4866,7 +4869,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, OwlOntology> {
     return this.owlOntologiesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async owlOntologyIdentifiers(
@@ -4878,29 +4881,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   owlOntologyIdentifiersSync(
     query?: $ObjectSet.Query<OwlOntologyStatic.$Identifier>,
   ): purify.Either<Error, readonly OwlOntologyStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        OwlOntology,
-        OwlOntologyStatic.$Identifier
-      >(OwlOntologyStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      OwlOntology,
+      OwlOntologyStatic.$Identifier
+    >(OwlOntologyStatic, query);
   }
 
   async owlOntologies(
     query?: $ObjectSet.Query<OwlOntologyStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, OwlOntology>[]> {
+  ): Promise<purify.Either<Error, readonly OwlOntology[]>> {
     return this.owlOntologiesSync(query);
   }
 
   owlOntologiesSync(
     query?: $ObjectSet.Query<OwlOntologyStatic.$Identifier>,
-  ): readonly purify.Either<Error, OwlOntology>[] {
-    return [
-      ...this.$objectsSync<OwlOntology, OwlOntologyStatic.$Identifier>(
-        OwlOntologyStatic,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly OwlOntology[]> {
+    return this.$objectsSync<OwlOntology, OwlOntologyStatic.$Identifier>(
+      OwlOntologyStatic,
+      query,
+    );
   }
 
   async owlOntologiesCount(
@@ -4929,7 +4928,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ShaclCoreNodeShape> {
     return this.shaclCoreNodeShapesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async shaclCoreNodeShapeIdentifiers(
@@ -4943,29 +4942,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   shaclCoreNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<ShaclCoreNodeShapeStatic.$Identifier>,
   ): purify.Either<Error, readonly ShaclCoreNodeShapeStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        ShaclCoreNodeShape,
-        ShaclCoreNodeShapeStatic.$Identifier
-      >(ShaclCoreNodeShapeStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      ShaclCoreNodeShape,
+      ShaclCoreNodeShapeStatic.$Identifier
+    >(ShaclCoreNodeShapeStatic, query);
   }
 
   async shaclCoreNodeShapes(
     query?: $ObjectSet.Query<ShaclCoreNodeShapeStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ShaclCoreNodeShape>[]> {
+  ): Promise<purify.Either<Error, readonly ShaclCoreNodeShape[]>> {
     return this.shaclCoreNodeShapesSync(query);
   }
 
   shaclCoreNodeShapesSync(
     query?: $ObjectSet.Query<ShaclCoreNodeShapeStatic.$Identifier>,
-  ): readonly purify.Either<Error, ShaclCoreNodeShape>[] {
-    return [
-      ...this.$objectsSync<
-        ShaclCoreNodeShape,
-        ShaclCoreNodeShapeStatic.$Identifier
-      >(ShaclCoreNodeShapeStatic, query),
-    ];
+  ): purify.Either<Error, readonly ShaclCoreNodeShape[]> {
+    return this.$objectsSync<
+      ShaclCoreNodeShape,
+      ShaclCoreNodeShapeStatic.$Identifier
+    >(ShaclCoreNodeShapeStatic, query);
   }
 
   async shaclCoreNodeShapesCount(
@@ -5000,7 +4995,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ShaclCorePropertyGroup> {
     return this.shaclCorePropertyGroupsSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async shaclCorePropertyGroupIdentifiers(
@@ -5014,29 +5009,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   shaclCorePropertyGroupIdentifiersSync(
     query?: $ObjectSet.Query<ShaclCorePropertyGroup.$Identifier>,
   ): purify.Either<Error, readonly ShaclCorePropertyGroup.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        ShaclCorePropertyGroup,
-        ShaclCorePropertyGroup.$Identifier
-      >(ShaclCorePropertyGroup, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      ShaclCorePropertyGroup,
+      ShaclCorePropertyGroup.$Identifier
+    >(ShaclCorePropertyGroup, query);
   }
 
   async shaclCorePropertyGroups(
     query?: $ObjectSet.Query<ShaclCorePropertyGroup.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ShaclCorePropertyGroup>[]> {
+  ): Promise<purify.Either<Error, readonly ShaclCorePropertyGroup[]>> {
     return this.shaclCorePropertyGroupsSync(query);
   }
 
   shaclCorePropertyGroupsSync(
     query?: $ObjectSet.Query<ShaclCorePropertyGroup.$Identifier>,
-  ): readonly purify.Either<Error, ShaclCorePropertyGroup>[] {
-    return [
-      ...this.$objectsSync<
-        ShaclCorePropertyGroup,
-        ShaclCorePropertyGroup.$Identifier
-      >(ShaclCorePropertyGroup, query),
-    ];
+  ): purify.Either<Error, readonly ShaclCorePropertyGroup[]> {
+    return this.$objectsSync<
+      ShaclCorePropertyGroup,
+      ShaclCorePropertyGroup.$Identifier
+    >(ShaclCorePropertyGroup, query);
   }
 
   async shaclCorePropertyGroupsCount(
@@ -5065,7 +5056,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ShaclCorePropertyShape> {
     return this.shaclCorePropertyShapesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async shaclCorePropertyShapeIdentifiers(
@@ -5079,29 +5070,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   shaclCorePropertyShapeIdentifiersSync(
     query?: $ObjectSet.Query<ShaclCorePropertyShapeStatic.$Identifier>,
   ): purify.Either<Error, readonly ShaclCorePropertyShapeStatic.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        ShaclCorePropertyShape,
-        ShaclCorePropertyShapeStatic.$Identifier
-      >(ShaclCorePropertyShapeStatic, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      ShaclCorePropertyShape,
+      ShaclCorePropertyShapeStatic.$Identifier
+    >(ShaclCorePropertyShapeStatic, query);
   }
 
   async shaclCorePropertyShapes(
     query?: $ObjectSet.Query<ShaclCorePropertyShapeStatic.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ShaclCorePropertyShape>[]> {
+  ): Promise<purify.Either<Error, readonly ShaclCorePropertyShape[]>> {
     return this.shaclCorePropertyShapesSync(query);
   }
 
   shaclCorePropertyShapesSync(
     query?: $ObjectSet.Query<ShaclCorePropertyShapeStatic.$Identifier>,
-  ): readonly purify.Either<Error, ShaclCorePropertyShape>[] {
-    return [
-      ...this.$objectsSync<
-        ShaclCorePropertyShape,
-        ShaclCorePropertyShapeStatic.$Identifier
-      >(ShaclCorePropertyShapeStatic, query),
-    ];
+  ): purify.Either<Error, readonly ShaclCorePropertyShape[]> {
+    return this.$objectsSync<
+      ShaclCorePropertyShape,
+      ShaclCorePropertyShapeStatic.$Identifier
+    >(ShaclCorePropertyShapeStatic, query);
   }
 
   async shaclCorePropertyShapesCount(
@@ -5136,7 +5123,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ShaclmateNodeShape> {
     return this.shaclmateNodeShapesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async shaclmateNodeShapeIdentifiers(
@@ -5148,29 +5135,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   shaclmateNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<ShaclmateNodeShape.$Identifier>,
   ): purify.Either<Error, readonly ShaclmateNodeShape.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        ShaclmateNodeShape,
-        ShaclmateNodeShape.$Identifier
-      >(ShaclmateNodeShape, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      ShaclmateNodeShape,
+      ShaclmateNodeShape.$Identifier
+    >(ShaclmateNodeShape, query);
   }
 
   async shaclmateNodeShapes(
     query?: $ObjectSet.Query<ShaclmateNodeShape.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ShaclmateNodeShape>[]> {
+  ): Promise<purify.Either<Error, readonly ShaclmateNodeShape[]>> {
     return this.shaclmateNodeShapesSync(query);
   }
 
   shaclmateNodeShapesSync(
     query?: $ObjectSet.Query<ShaclmateNodeShape.$Identifier>,
-  ): readonly purify.Either<Error, ShaclmateNodeShape>[] {
-    return [
-      ...this.$objectsSync<ShaclmateNodeShape, ShaclmateNodeShape.$Identifier>(
-        ShaclmateNodeShape,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly ShaclmateNodeShape[]> {
+    return this.$objectsSync<
+      ShaclmateNodeShape,
+      ShaclmateNodeShape.$Identifier
+    >(ShaclmateNodeShape, query);
   }
 
   async shaclmateNodeShapesCount(
@@ -5199,7 +5182,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ShaclmateOntology> {
     return this.shaclmateOntologiesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async shaclmateOntologyIdentifiers(
@@ -5211,29 +5194,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   shaclmateOntologyIdentifiersSync(
     query?: $ObjectSet.Query<ShaclmateOntology.$Identifier>,
   ): purify.Either<Error, readonly ShaclmateOntology.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        ShaclmateOntology,
-        ShaclmateOntology.$Identifier
-      >(ShaclmateOntology, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      ShaclmateOntology,
+      ShaclmateOntology.$Identifier
+    >(ShaclmateOntology, query);
   }
 
   async shaclmateOntologies(
     query?: $ObjectSet.Query<ShaclmateOntology.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ShaclmateOntology>[]> {
+  ): Promise<purify.Either<Error, readonly ShaclmateOntology[]>> {
     return this.shaclmateOntologiesSync(query);
   }
 
   shaclmateOntologiesSync(
     query?: $ObjectSet.Query<ShaclmateOntology.$Identifier>,
-  ): readonly purify.Either<Error, ShaclmateOntology>[] {
-    return [
-      ...this.$objectsSync<ShaclmateOntology, ShaclmateOntology.$Identifier>(
-        ShaclmateOntology,
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly ShaclmateOntology[]> {
+    return this.$objectsSync<ShaclmateOntology, ShaclmateOntology.$Identifier>(
+      ShaclmateOntology,
+      query,
+    );
   }
 
   async shaclmateOntologiesCount(
@@ -5262,7 +5241,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ShaclmatePropertyShape> {
     return this.shaclmatePropertyShapesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async shaclmatePropertyShapeIdentifiers(
@@ -5276,29 +5255,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   shaclmatePropertyShapeIdentifiersSync(
     query?: $ObjectSet.Query<ShaclmatePropertyShape.$Identifier>,
   ): purify.Either<Error, readonly ShaclmatePropertyShape.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectIdentifiersSync<
-        ShaclmatePropertyShape,
-        ShaclmatePropertyShape.$Identifier
-      >(ShaclmatePropertyShape, query),
-    ]);
+    return this.$objectIdentifiersSync<
+      ShaclmatePropertyShape,
+      ShaclmatePropertyShape.$Identifier
+    >(ShaclmatePropertyShape, query);
   }
 
   async shaclmatePropertyShapes(
     query?: $ObjectSet.Query<ShaclmatePropertyShape.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ShaclmatePropertyShape>[]> {
+  ): Promise<purify.Either<Error, readonly ShaclmatePropertyShape[]>> {
     return this.shaclmatePropertyShapesSync(query);
   }
 
   shaclmatePropertyShapesSync(
     query?: $ObjectSet.Query<ShaclmatePropertyShape.$Identifier>,
-  ): readonly purify.Either<Error, ShaclmatePropertyShape>[] {
-    return [
-      ...this.$objectsSync<
-        ShaclmatePropertyShape,
-        ShaclmatePropertyShape.$Identifier
-      >(ShaclmatePropertyShape, query),
-    ];
+  ): purify.Either<Error, readonly ShaclmatePropertyShape[]> {
+    return this.$objectsSync<
+      ShaclmatePropertyShape,
+      ShaclmatePropertyShape.$Identifier
+    >(ShaclmatePropertyShape, query);
   }
 
   async shaclmatePropertyShapesCount(
@@ -5327,7 +5302,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ShaclCoreShape> {
     return this.shaclCoreShapesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async shaclCoreShapeIdentifiers(
@@ -5339,29 +5314,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   shaclCoreShapeIdentifiersSync(
     query?: $ObjectSet.Query<ShaclCoreShape.$Identifier>,
   ): purify.Either<Error, readonly ShaclCoreShape.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectUnionIdentifiersSync<
-        ShaclCoreShape,
-        ShaclCoreShape.$Identifier
-      >([ShaclCoreNodeShapeStatic, ShaclCorePropertyShapeStatic], query),
-    ]);
+    return this.$objectUnionIdentifiersSync<
+      ShaclCoreShape,
+      ShaclCoreShape.$Identifier
+    >([ShaclCoreNodeShapeStatic, ShaclCorePropertyShapeStatic], query);
   }
 
   async shaclCoreShapes(
     query?: $ObjectSet.Query<ShaclCoreShape.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ShaclCoreShape>[]> {
+  ): Promise<purify.Either<Error, readonly ShaclCoreShape[]>> {
     return this.shaclCoreShapesSync(query);
   }
 
   shaclCoreShapesSync(
     query?: $ObjectSet.Query<ShaclCoreShape.$Identifier>,
-  ): readonly purify.Either<Error, ShaclCoreShape>[] {
-    return [
-      ...this.$objectUnionsSync<ShaclCoreShape, ShaclCoreShape.$Identifier>(
-        [ShaclCoreNodeShapeStatic, ShaclCorePropertyShapeStatic],
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly ShaclCoreShape[]> {
+    return this.$objectUnionsSync<ShaclCoreShape, ShaclCoreShape.$Identifier>(
+      [ShaclCoreNodeShapeStatic, ShaclCorePropertyShapeStatic],
+      query,
+    );
   }
 
   async shaclCoreShapesCount(
@@ -5390,7 +5361,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, ShaclmateShape> {
     return this.shaclmateShapesSync({
       where: { identifiers: [identifier], type: "identifiers" },
-    })[0];
+    }).map((objects) => objects[0]);
   }
 
   async shaclmateShapeIdentifiers(
@@ -5402,29 +5373,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   shaclmateShapeIdentifiersSync(
     query?: $ObjectSet.Query<ShaclmateShape.$Identifier>,
   ): purify.Either<Error, readonly ShaclmateShape.$Identifier[]> {
-    return purify.Either.of([
-      ...this.$objectUnionIdentifiersSync<
-        ShaclmateShape,
-        ShaclmateShape.$Identifier
-      >([ShaclmateNodeShape, ShaclCorePropertyShapeStatic], query),
-    ]);
+    return this.$objectUnionIdentifiersSync<
+      ShaclmateShape,
+      ShaclmateShape.$Identifier
+    >([ShaclmateNodeShape, ShaclCorePropertyShapeStatic], query);
   }
 
   async shaclmateShapes(
     query?: $ObjectSet.Query<ShaclmateShape.$Identifier>,
-  ): Promise<readonly purify.Either<Error, ShaclmateShape>[]> {
+  ): Promise<purify.Either<Error, readonly ShaclmateShape[]>> {
     return this.shaclmateShapesSync(query);
   }
 
   shaclmateShapesSync(
     query?: $ObjectSet.Query<ShaclmateShape.$Identifier>,
-  ): readonly purify.Either<Error, ShaclmateShape>[] {
-    return [
-      ...this.$objectUnionsSync<ShaclmateShape, ShaclmateShape.$Identifier>(
-        [ShaclmateNodeShape, ShaclCorePropertyShapeStatic],
-        query,
-      ),
-    ];
+  ): purify.Either<Error, readonly ShaclmateShape[]> {
+    return this.$objectUnionsSync<ShaclmateShape, ShaclmateShape.$Identifier>(
+      [ShaclmateNodeShape, ShaclCorePropertyShapeStatic],
+      query,
+    );
   }
 
   async shaclmateShapesCount(
@@ -5442,7 +5409,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >([ShaclmateNodeShape, ShaclCorePropertyShapeStatic], query);
   }
 
-  protected *$objectIdentifiersSync<
+  protected $objectIdentifiersSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
@@ -5453,18 +5420,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       $fromRdfType?: rdfjs.NamedNode;
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
-  ): Generator<ObjectIdentifierT> {
-    for (const object of this.$objectsSync<ObjectT, ObjectIdentifierT>(
-      objectType,
-      query,
-    )) {
-      if (object.isRight()) {
-        yield object.unsafeCoerce().$identifier;
-      }
-    }
+  ): purify.Either<Error, readonly ObjectIdentifierT[]> {
+    return this.$objectsSync<ObjectT, ObjectIdentifierT>(objectType, query).map(
+      (objects) => objects.map((object) => object.$identifier),
+    );
   }
 
-  protected *$objectsSync<
+  protected $objectsSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
@@ -5475,10 +5437,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       $fromRdfType?: rdfjs.NamedNode;
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
-  ): Generator<purify.Either<Error, ObjectT>> {
+  ): purify.Either<Error, readonly ObjectT[]> {
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
-      return;
+      return purify.Either.of([]);
     }
 
     let offset = query?.offset ?? 0;
@@ -5487,19 +5449,58 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     if (query?.where) {
-      for (const identifier of query.where.identifiers.slice(
-        offset,
-        offset + limit,
-      )) {
-        yield objectType.$fromRdf({
+      // Assign identifiers in each case block so the compiler will catch missing cases.
+      let identifiers: rdfjsResource.Resource.Identifier[];
+      switch (query.where.type) {
+        case "identifiers": {
+          identifiers = query.where.identifiers.slice(offset, offset + limit);
+          break;
+        }
+        case "triple-objects": {
+          let identifierI = 0;
+          identifiers = [];
+          for (const quad of this.resourceSet.dataset.match(
+            query.where.subject,
+            query.where.predicate,
+            null,
+          )) {
+            if (
+              quad.object.termType === "BlankNode" ||
+              quad.object.termType === "NamedNode"
+            ) {
+              if (++identifierI >= offset) {
+                identifiers.push(quad.object);
+                if (identifiers.length === limit) {
+                  break;
+                }
+              }
+            } else {
+              return purify.Left(
+                new Error(
+                  `subject=${query.where.subject.value} predicate=${query.where.predicate.value} pattern matches non-identifier (${quad.object.termType}) triple`,
+                ),
+              );
+            }
+          }
+          break;
+        }
+      }
+
+      const objects: ObjectT[] = [];
+      for (const identifier of identifiers) {
+        const either = objectType.$fromRdf({
           resource: this.resourceSet.resource(identifier),
         });
+        if (either.isLeft()) {
+          return either;
+        }
+        objects.push(either.unsafeCoerce());
       }
-      return;
+      return purify.Either.of(objects);
     }
 
     if (!objectType.$fromRdfType) {
-      return;
+      return purify.Either.of([]);
     }
 
     const resources = [
@@ -5510,20 +5511,21 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       left.identifier.value.localeCompare(right.identifier.value),
     );
 
-    let objectCount = 0;
+    const objects: ObjectT[] = [];
     let objectI = 0;
     for (const resource of resources) {
-      const object = objectType.$fromRdf({ resource });
-      if (object.isLeft()) {
-        continue;
+      const either = objectType.$fromRdf({ resource });
+      if (either.isLeft()) {
+        return either;
       }
       if (objectI++ >= offset) {
-        yield object;
-        if (++objectCount === limit) {
-          return;
+        objects.push(either.unsafeCoerce());
+        if (objects.length === limit) {
+          return purify.Either.of(objects);
         }
       }
     }
+    return purify.Either.of(objects);
   }
 
   protected $objectsCountSync<
@@ -5538,18 +5540,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, number> {
-    let count = 0;
-    for (const _ of this.$objectIdentifiersSync<ObjectT, ObjectIdentifierT>(
-      objectType,
-      query,
-    )) {
-      count++;
-    }
-
-    return purify.Either.of(count);
+    return this.$objectsSync<ObjectT, ObjectIdentifierT>(objectType, query).map(
+      (objects) => objects.length,
+    );
   }
 
-  protected *$objectUnionIdentifiersSync<
+  protected $objectUnionIdentifiersSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
@@ -5560,18 +5556,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       $fromRdfType?: rdfjs.NamedNode;
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
-  ): Generator<ObjectIdentifierT> {
-    for (const object of this.$objectUnionsSync<ObjectT, ObjectIdentifierT>(
+  ): purify.Either<Error, readonly ObjectIdentifierT[]> {
+    return this.$objectUnionsSync<ObjectT, ObjectIdentifierT>(
       objectTypes,
       query,
-    )) {
-      if (object.isRight()) {
-        yield object.unsafeCoerce().$identifier;
-      }
-    }
+    ).map((objects) => objects.map((object) => object.$identifier));
   }
 
-  protected *$objectUnionsSync<
+  protected $objectUnionsSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
@@ -5582,10 +5574,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       $fromRdfType?: rdfjs.NamedNode;
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
-  ): Generator<purify.Either<Error, ObjectT>> {
+  ): purify.Either<Error, readonly ObjectT[]> {
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
-      return;
+      return purify.Either.of([]);
     }
 
     let offset = query?.offset ?? 0;
@@ -5594,32 +5586,65 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
 
     if (query?.where) {
-      // Figure out which object type the identifiers belong to
-      for (const identifier of query.where.identifiers.slice(
-        offset,
-        offset + limit,
-      )) {
-        const resource = this.resourceSet.resource(identifier);
-        const lefts: purify.Either<Error, ObjectT>[] = [];
-        for (const objectType of objectTypes) {
-          const object = objectType.$fromRdf({ resource });
-          if (object.isRight()) {
-            yield object;
-            break;
-          }
-          lefts.push(object);
+      // Assign identifiers in each case block so the compiler will catch missing cases.
+      let identifiers: rdfjsResource.Resource.Identifier[];
+      switch (query.where.type) {
+        case "identifiers": {
+          identifiers = query.where.identifiers.slice(offset, offset + limit);
+          break;
         }
-        // Doesn't appear to belong to any of the known object types, just assume the first
-        if (lefts.length === objectTypes.length) {
-          yield lefts[0];
+        case "triple-objects": {
+          let identifierI = 0;
+          identifiers = [];
+          for (const quad of this.resourceSet.dataset.match(
+            query.where.subject,
+            query.where.predicate,
+            null,
+          )) {
+            if (
+              quad.object.termType === "BlankNode" ||
+              quad.object.termType === "NamedNode"
+            ) {
+              if (++identifierI >= offset) {
+                identifiers.push(quad.object);
+                if (identifiers.length === limit) {
+                  break;
+                }
+              }
+            } else {
+              return purify.Left(
+                new Error(
+                  `subject=${query.where.subject.value} predicate=${query.where.predicate.value} pattern matches non-identifier (${quad.object.termType}) triple`,
+                ),
+              );
+            }
+          }
+          break;
         }
       }
 
-      return;
+      const objects: ObjectT[] = [];
+      for (const identifier of identifiers) {
+        const resource = this.resourceSet.resource(identifier);
+        const lefts: purify.Either<Error, ObjectT>[] = [];
+        for (const objectType of objectTypes) {
+          const either = objectType.$fromRdf({ resource });
+          if (either.isRight()) {
+            objects.push(either.unsafeCoerce());
+            break;
+          }
+          lefts.push(either);
+        }
+        // Doesn't appear to belong to any of the known object types, just assume the first
+        if (lefts.length === objectTypes.length) {
+          return lefts[0] as unknown as purify.Either<
+            Error,
+            readonly ObjectT[]
+          >;
+        }
+      }
+      return purify.Either.of(objects);
     }
-
-    let objectCount = 0;
-    let objectI = 0;
 
     const resources: {
       objectType: {
@@ -5649,18 +5674,21 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ),
     );
 
+    let objectI = 0;
+    const objects: ObjectT[] = [];
     for (const { objectType, resource } of resources) {
-      const object = objectType.$fromRdf({ resource });
-      if (object.isLeft()) {
-        continue;
+      const either = objectType.$fromRdf({ resource });
+      if (either.isLeft()) {
+        return either;
       }
       if (objectI++ >= offset) {
-        yield object;
-        if (++objectCount === limit) {
-          return;
+        objects.push(either.unsafeCoerce());
+        if (objects.length === limit) {
+          return purify.Either.of(objects);
         }
       }
     }
+    return purify.Either.of(objects);
   }
 
   protected $objectUnionsCountSync<
@@ -5675,14 +5703,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, number> {
-    let count = 0;
-    for (const _ of this.$objectUnionIdentifiersSync<
-      ObjectT,
-      ObjectIdentifierT
-    >(objectTypes, query)) {
-      count++;
-    }
-
-    return purify.Either.of(count);
+    return this.$objectUnionIdentifiersSync<ObjectT, ObjectIdentifierT>(
+      objectTypes,
+      query,
+    ).map((objects) => objects.length);
   }
 }

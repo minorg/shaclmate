@@ -2,6 +2,8 @@ export * from "./classDeclaration.js";
 
 export * from "./createFunctionDeclaration.js";
 
+export * from "./EagerShaclProperty.js";
+
 export * from "./equalsFunctionDeclaration.js";
 
 export * from "./fromRdfTypeVariableStatement.js";
@@ -21,6 +23,8 @@ export * from "./interfaceDeclaration.js";
 export * from "./jsonFunctionDeclarations.js";
 
 export * from "./jsonTypeAliasDeclaration.js";
+
+export * from "./LazyShaclProperty.js";
 
 export * from "./objectSetMethodNames.js";
 

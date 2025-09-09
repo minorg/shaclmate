@@ -7,7 +7,6 @@ cd "$(dirname "$0")"
 format_rdf() {
   rapper -i turtle -o turtle -q $1 >temp.ttl
   mv -f temp.ttl $1
-  echo "formatted $1"
 }
 
 format_rdf $PWD/src/shacl-ast.shaclmate.ttl

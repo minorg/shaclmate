@@ -1,4 +1,4 @@
-import type { BlankNode, Literal, NamedNode, Variable } from "@rdfjs/types";
+import type {} from "@rdfjs/types";
 import type { Maybe } from "purify-ts";
 import {
   type GetAccessorDeclarationStructure,
@@ -11,25 +11,8 @@ import type { PropertyVisibility } from "../../../enums/index.js";
 import type { Import } from "../Import.js";
 import type { ObjectType } from "../ObjectType.js";
 import type { Type } from "../Type.js";
-import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 
-export abstract class Property<
-  TypeT extends { readonly mutable: boolean; readonly name: string },
-> {
-  /**
-   * Optional get accessor to include in a class declaration of the object type.
-   */
-  abstract readonly classGetAccessorDeclaration: Maybe<
-    OptionalKind<GetAccessorDeclarationStructure>
-  >;
-
-  /**
-   * Optional property declaration to include in a class declaration of the object type.
-   */
-  abstract readonly classPropertyDeclaration: Maybe<
-    OptionalKind<PropertyDeclarationStructure>
-  >;
-
+export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
   /**
    * Optional property to include in the parameters object of a class constructor.
    */
@@ -43,6 +26,13 @@ export abstract class Property<
   abstract readonly equalsFunction: string;
 
   /**
+   * Optional get accessor to include in a class declaration of the object type.
+   */
+  abstract readonly getAccessorDeclaration: Maybe<
+    OptionalKind<GetAccessorDeclarationStructure>
+  >;
+
+  /**
    * GraphQL.js field definition.
    */
   abstract readonly graphqlField: Maybe<{
@@ -50,13 +40,6 @@ export abstract class Property<
     description?: string;
     type: string;
   }>;
-
-  /**
-   * Signature of the property in an interface version of the object.
-   */
-  abstract readonly interfacePropertySignature: Maybe<
-    OptionalKind<PropertySignatureStructure>
-  >;
 
   /**
    * Signature of the property when serialized to JSON (the type of toJsonObjectMember).
@@ -76,6 +59,20 @@ export abstract class Property<
   readonly name: string;
 
   /**
+   * Optional property declaration to include in a class declaration of the object type.
+   */
+  abstract readonly propertyDeclaration: Maybe<
+    OptionalKind<PropertyDeclarationStructure>
+  >;
+
+  /**
+   * Signature of the property in an interface version of the object.
+   */
+  abstract readonly propertySignature: Maybe<
+    OptionalKind<PropertySignatureStructure>
+  >;
+
+  /**
    * Is the property's type the ObjectType or does its type indirectly reference the ObjectType?
    */
   abstract readonly recursive: boolean;
@@ -91,23 +88,19 @@ export abstract class Property<
 
   readonly visibility: PropertyVisibility;
 
-  protected readonly dataFactoryVariable: string;
   protected readonly objectType: ObjectType;
 
   constructor({
-    dataFactoryVariable,
     name,
     objectType,
     type,
     visibility,
   }: {
-    dataFactoryVariable: string;
     name: string;
     objectType: ObjectType;
     type: TypeT;
     visibility: PropertyVisibility;
   }) {
-    this.dataFactoryVariable = dataFactoryVariable;
     this.name = name;
     this.objectType = objectType;
     this.type = type;
@@ -133,9 +126,9 @@ export abstract class Property<
   }
 
   /**
-   * Statements to assign the parameter of described by constructorParametersPropertySignature to a class member.
+   * Statements to assign the parameter of described by constructorParametersPropertySignature to a class or interface member.
    */
-  abstract classConstructorStatements(parameters: {
+  abstract constructorStatements(parameters: {
     variables: {
       parameter: string;
     };
@@ -157,6 +150,7 @@ export abstract class Property<
     variables: {
       context: string;
       languageIn: string;
+      objectSet: string;
       resource: string;
     };
   }): readonly string[];
@@ -167,15 +161,6 @@ export abstract class Property<
   abstract hashStatements(
     parameters: Parameters<Type["hashStatements"]>[0],
   ): readonly string[];
-
-  /**
-   * Companion to classConstructorStatements with a similar purpose in an interface's create() function.
-   */
-  abstract interfaceConstructorStatements(parameters: {
-    variables: {
-      parameter: string;
-    };
-  }): readonly string[];
 
   /**
    * Element object (usually a control https://jsonforms.io/docs/uischema/controls) for a JSON Forms UI schema.
@@ -234,17 +219,4 @@ export abstract class Property<
       "predicate"
     >;
   }): readonly string[];
-
-  protected rdfjsTermExpression(
-    rdfjsTerm:
-      | Omit<BlankNode, "equals">
-      | Omit<Literal, "equals">
-      | Omit<NamedNode, "equals">
-      | Omit<Variable, "equals">,
-  ): string {
-    return rdfjsTermExpression({
-      dataFactoryVariable: this.dataFactoryVariable,
-      rdfjsTerm,
-    });
-  }
 }

@@ -7,13 +7,13 @@ import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export class SetType extends Type {
+export class SetType<ItemTypeT extends Type = Type> extends Type {
   private readonly _mutable: boolean;
   private readonly minCount: number;
 
   override readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty> =
     Maybe.empty();
-  readonly itemType: Type;
+  readonly itemType: ItemTypeT;
   readonly kind = "SetType";
   readonly typeof = "object";
 
@@ -21,13 +21,12 @@ export class SetType extends Type {
     itemType,
     minCount,
     mutable,
-    ...superParameters
-  }: ConstructorParameters<typeof Type>[0] & {
-    itemType: Type;
+  }: {
+    itemType: ItemTypeT;
     mutable: boolean;
     minCount: number;
   }) {
-    super(superParameters);
+    super();
     this.itemType = itemType;
     this.minCount = minCount;
     invariant(this.minCount >= 0);
@@ -71,25 +70,19 @@ export class SetType extends Type {
   }
 
   @Memoize()
-  override get graphqlName(): string {
-    return `new graphql.GraphQLList(new graphql.GraphQLNonNull(${this.itemType.graphqlName}))`;
+  override get graphqlName(): Type.GraphqlName {
+    return new Type.GraphqlName(
+      `new graphql.GraphQLList(${this.itemType.graphqlName})`,
+    );
   }
 
   @Memoize()
-  override get jsonName(): string {
-    let name = `readonly (${this.itemType.jsonName})[]`;
+  override get jsonName(): Type.JsonName {
+    const name = `readonly (${this.itemType.jsonName})[]`;
     if (this.minCount === 0) {
-      name = `${name} | undefined`;
+      return new Type.JsonName(name, { optional: true });
     }
-    return name;
-  }
-
-  @Memoize()
-  override get jsonPropertySignature() {
-    return {
-      hasQuestionToken: this.minCount === 0,
-      name: `readonly (${this.itemType.jsonName})[]`,
-    };
+    return new Type.JsonName(name);
   }
 
   override get mutable(): boolean {

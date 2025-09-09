@@ -155,12 +155,11 @@ export class UnionType extends Type {
   constructor({
     memberTypes,
     name,
-    ...superParameters
-  }: ConstructorParameters<typeof Type>[0] & {
+  }: {
     memberTypes: readonly Type[];
     name?: string;
   }) {
-    super(superParameters);
+    super();
     invariant(memberTypes.length >= 2);
     this._name = name;
 
@@ -262,20 +261,22 @@ ${this.memberTypes
 }`;
   }
 
-  override get graphqlName(): string {
+  override get graphqlName(): Type.GraphqlName {
     throw new Error("not implemented");
   }
 
   @Memoize()
-  override get jsonName(): string {
+  override get jsonName(): Type.JsonName {
     switch (this._discriminator.kind) {
       case "sharedProperty":
       case "typeof":
-        return this.memberTypes
-          .map((memberType) => memberType.jsonName)
-          .join(" | ");
+        return new Type.JsonName(
+          this.memberTypes.map((memberType) => memberType.jsonName).join(" | "),
+        );
       case "syntheticProperty":
-        return `(${this.memberTypes.map((memberType) => `{ ${(this._discriminator as SyntheticPropertyDiscriminator).name}: "${memberType.discriminatorValues[0]}", value: ${memberType.jsonName} }`).join(" | ")})`;
+        return new Type.JsonName(
+          `(${this.memberTypes.map((memberType) => `{ ${(this._discriminator as SyntheticPropertyDiscriminator).name}: "${memberType.discriminatorValues[0]}", value: ${memberType.jsonName} }`).join(" | ")})`,
+        );
       default:
         throw this._discriminator satisfies never;
     }

@@ -22,7 +22,7 @@ import { DeclaredType } from "./DeclaredType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
-import type { Type } from "./Type.js";
+import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -226,8 +226,10 @@ export class ObjectType extends DeclaredType {
   }
 
   @Memoize()
-  get graphqlName(): string {
-    return `${this.staticModuleName}.${syntheticNamePrefix}GraphQL`;
+  get graphqlName(): Type.GraphqlName {
+    return new Type.GraphqlName(
+      `${this.staticModuleName}.${syntheticNamePrefix}GraphQL`,
+    );
   }
 
   @Memoize()
@@ -250,8 +252,10 @@ export class ObjectType extends DeclaredType {
   }
 
   @Memoize()
-  override get jsonName(): string {
-    return `${this.staticModuleName}.${syntheticNamePrefix}Json`;
+  override get jsonName(): Type.JsonName {
+    return new Type.JsonName(
+      `${this.staticModuleName}.${syntheticNamePrefix}Json`,
+    );
   }
 
   @Memoize()
@@ -390,9 +394,7 @@ export class ObjectType extends DeclaredType {
       snippetDeclarations.push(SnippetDeclarations.EqualsResult);
     }
     if (this.features.has("rdf")) {
-      snippetDeclarations.push(
-        SnippetDeclarations.RdfVocabularies(this.dataFactoryVariable),
-      );
+      snippetDeclarations.push(SnippetDeclarations.RdfVocabularies);
     }
     if (this.features.has("sparql") && this.fromRdfType.isJust()) {
       snippetDeclarations.push(SnippetDeclarations.sparqlInstancesOfPattern);
@@ -503,10 +505,34 @@ export class ObjectType extends DeclaredType {
 }
 
 export namespace ObjectType {
+  export const EagerShaclProperty = _ObjectType.EagerShaclProperty;
+  export type EagerShaclProperty<TypeT extends Type = Type> =
+    _ObjectType.EagerShaclProperty<TypeT>;
   export const IdentifierPrefixProperty = _ObjectType.IdentifierPrefixProperty;
   export type IdentifierPrefixProperty = _ObjectType.IdentifierPrefixProperty;
   export const IdentifierProperty = _ObjectType.IdentifierProperty;
   export type IdentifierProperty = _ObjectType.IdentifierProperty;
+  export const LazyShaclProperty = _ObjectType.LazyShaclProperty;
+  export type LazyShaclProperty<
+    IdentifierTypeT extends _ObjectType.LazyShaclProperty.Type.IdentifierType,
+    LazyTypeT extends _ObjectType.LazyShaclProperty.Type<
+      IdentifierTypeT,
+      ResultTypeT
+    >,
+    ResultTypeT extends _ObjectType.LazyShaclProperty.Type.ResultType,
+  > = _ObjectType.LazyShaclProperty<IdentifierTypeT, LazyTypeT, ResultTypeT>;
+  export namespace LazyShaclProperty {
+    export type Type<
+      IdentifierTypeT extends _ObjectType.LazyShaclProperty.Type.IdentifierType,
+      ResultTypeT extends _ObjectType.LazyShaclProperty.Type.ResultType,
+    > = _ObjectType.LazyShaclProperty.Type<IdentifierTypeT, ResultTypeT>;
+
+    export namespace Type {
+      export type IdentifierType =
+        _ObjectType.LazyShaclProperty.Type.IdentifierType;
+      export type ResultType = _ObjectType.LazyShaclProperty.Type.ResultType;
+    }
+  }
   export type ObjectSetMethodNames = {
     readonly object: string;
     readonly objectsCount: string;
@@ -516,7 +542,8 @@ export namespace ObjectType {
   export const Property = _ObjectType.Property;
   export type Property = _ObjectType.Property<any>;
   export const ShaclProperty = _ObjectType.ShaclProperty;
-  export type ShaclProperty = _ObjectType.ShaclProperty;
+  export type ShaclProperty<TypeT extends Type> =
+    _ObjectType.ShaclProperty<TypeT>;
   export const TypeDiscriminatorProperty =
     _ObjectType.TypeDiscriminatorProperty;
   export type TypeDiscriminatorProperty = _ObjectType.TypeDiscriminatorProperty;

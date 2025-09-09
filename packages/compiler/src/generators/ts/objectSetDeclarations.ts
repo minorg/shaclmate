@@ -10,11 +10,9 @@ import { rdfjsDatasetObjectSetClassDeclaration } from "./rdfjsDatasetObjectSetCl
 import { sparqlObjectSetClassDeclaration } from "./sparqlObjectSetClassDeclaration.js";
 
 export function objectSetDeclarations({
-  dataFactoryVariable,
   objectUnionTypes,
   ...parameters
 }: {
-  dataFactoryVariable: string;
   objectTypes: readonly ObjectType[];
   objectUnionTypes: readonly ObjectUnionType[];
 }): readonly (
@@ -88,7 +86,6 @@ export function objectSetDeclarations({
   if (objectTypesWithSparqlFeatureCount > 0) {
     statements.push(
       ...sparqlObjectSetClassDeclaration({
-        dataFactoryVariable,
         objectTypes,
         objectUnionTypes,
       }),

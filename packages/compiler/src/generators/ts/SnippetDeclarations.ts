@@ -1,8 +1,10 @@
-import { xsd } from "@tpluscode/rdf-ns-builders";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export namespace SnippetDeclarations {
   export const arrayEquals = `\
+/**
+ * Compare two arrays element-wise with the provided elementEquals function.
+ */  
 export function ${syntheticNamePrefix}arrayEquals<T>(
   leftArray: readonly T[],
   rightArray: readonly T[],
@@ -200,29 +202,97 @@ export function ${syntheticNamePrefix}maybeEquals<T>(
   }
 
   return ${syntheticNamePrefix}EqualsResult.Equal;
-}
-`;
-  xsd;
+}`;
 
-  export const RdfVocabularies = (dataFactoryVariable: string) => `\
+  export const LazyObjectSet = `\
+/**
+ * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ */
+export class ${syntheticNamePrefix}LazyObjectSet<ObjectT, ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode> {
+  readonly identifiers: readonly ObjectIdentifierT[];
+  readonly #objects: (identifiers: readonly ObjectIdentifierT[]) => Promise<purify.Either<Error, readonly ObjectT[]>>;
+
+  constructor({ identifiers, objects }: {
+    identifiers: readonly ObjectIdentifierT[],
+    objects: (identifiers: readonly ObjectIdentifierT[]) => Promise<purify.Either<Error, readonly ObjectT[]>>;
+  }) {
+    this.identifiers = identifiers;
+    this.#objects = objects;
+  }
+
+  async objects(): Promise<purify.Either<Error, readonly ObjectT[]>> {
+    if (this.identifiers.length === 0) {
+      return purify.Either.of([]);
+    }
+    return await this.#objects(this.identifiers as readonly ObjectIdentifierT[]);
+  }
+}`;
+
+  export const LazyOptionalObject = `\
+/**
+ * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ */
+export class ${syntheticNamePrefix}LazyOptionalObject<ObjectT, ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode> {
+  readonly identifier: purify.Maybe<ObjectIdentifierT>;
+  readonly #object: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ObjectT>>;
+
+  constructor({ identifier, object }: {
+    identifier: purify.Maybe<ObjectIdentifierT>,
+    object: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ObjectT>>
+  }) {
+    this.identifier = identifier;
+    this.#object = object;
+  }
+
+  async object(): Promise<purify.Either<Error, purify.Maybe<ObjectT>>> {
+    const identifier = this.identifier.extract();
+    if (!identifier) {
+      return purify.Either.of(purify.Maybe.empty());
+    }
+    return (await this.#object(identifier as ObjectIdentifierT)).map(purify.Maybe.of);
+  }
+}`;
+
+  export const LazyRequiredObject = `\
+/**
+ * Type of lazy properties that return a single required object. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ */
+export class ${syntheticNamePrefix}LazyRequiredObject<ObjectT, ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode> {
+  readonly identifier: ObjectIdentifierT;
+  readonly #object: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ObjectT>>;
+
+  constructor({ identifier, object }: {
+    identifier: ObjectIdentifierT,
+    object: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ObjectT>>
+  }) {
+    this.identifier = identifier;
+    this.#object = object;
+  }
+
+  object(): Promise<purify.Either<Error, ObjectT>> {
+    return this.#object(this.identifier as ObjectIdentifierT);
+  }
+}`;
+
+  export const RdfVocabularies = `\
 export namespace ${syntheticNamePrefix}RdfVocabularies {
   export namespace rdf {
-    export const first = ${dataFactoryVariable}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#first");
-    export const nil = ${dataFactoryVariable}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
-    export const rest = ${dataFactoryVariable}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#rest");
-    export const subject = ${dataFactoryVariable}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#subject");
-    export const type = ${dataFactoryVariable}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+    export const first = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#first");
+    export const nil = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
+    export const rest = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#rest");
+    export const subject = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#subject");
+    export const type = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
   }
 
   export namespace rdfs {
-    export const subClassOf = ${dataFactoryVariable}.namedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf");
+    export const subClassOf = dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf");
   }
 
   export namespace xsd {
-    export const boolean = ${dataFactoryVariable}.namedNode("http://www.w3.org/2001/XMLSchema#boolean");
-    export const date = ${dataFactoryVariable}.namedNode("http://www.w3.org/2001/XMLSchema#date");
-    export const dateTime = ${dataFactoryVariable}.namedNode("http://www.w3.org/2001/XMLSchema#dateTime");
-    export const integer = ${dataFactoryVariable}.namedNode("http://www.w3.org/2001/XMLSchema#integer");
+    export const boolean = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#boolean");
+    export const date = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#date");
+    export const dateTime = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#dateTime");
+    export const integer = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#integer");
   }
 }`;
 

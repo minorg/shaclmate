@@ -21,12 +21,9 @@ export class TsGenerator implements Generator {
     });
     const sourceFile = project.createSourceFile("generated.ts");
 
-    const typeFactory = new TypeFactory({
-      dataFactoryVariable: ast_.tsDataFactoryVariable,
-    });
+    const typeFactory = new TypeFactory();
 
     this.addStatements({
-      dataFactoryVariable: ast_.tsDataFactoryVariable,
       objectTypes: ast.ObjectType.toposort(ast_.objectTypes).flatMap(
         (astObjectType) => {
           const type = typeFactory.createTypeFromAstType(astObjectType);
@@ -46,12 +43,10 @@ export class TsGenerator implements Generator {
   }
 
   private addStatements({
-    dataFactoryVariable,
     objectTypes,
     objectUnionTypes,
     sourceFile,
   }: {
-    dataFactoryVariable: string;
     objectTypes: readonly ObjectType[];
     objectUnionTypes: readonly ObjectUnionType[];
     sourceFile: SourceFile;
@@ -124,7 +119,6 @@ export class TsGenerator implements Generator {
 
     sourceFile.addStatements(
       objectSetDeclarations({
-        dataFactoryVariable,
         objectTypes: objectTypesSortedByName,
         objectUnionTypes: objectUnionTypesSortedByName,
       }),

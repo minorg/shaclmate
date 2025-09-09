@@ -121,21 +121,6 @@ export const harnesses = {
     }),
     kitchenSink.ExplicitRdfTypeClass,
   ),
-  externPropertiesCLass: new ClassHarness(
-    new kitchenSink.ExternPropertiesClass({
-      externClassProperty: new kitchenSink.ExternClass(
-        dataFactory.namedNode("http://example.com/externObjectType"),
-      ),
-      externNestedProperty: dataFactory.namedNode(
-        "http://example.com/externProperty",
-      ),
-      $identifier,
-      inlineNestedProperty: new kitchenSink.ExternPropertiesInlineNestedClass({
-        externPropertiesInlineNestedStringProperty: "Test",
-      }),
-    }),
-    kitchenSink.ExternPropertiesClass,
-  ),
   indirectRecursive: new ClassHarness(
     new kitchenSink.IndirectRecursiveClass({
       indirectRecursiveHelperProperty:
@@ -235,6 +220,36 @@ export const harnesses = {
       languageInPropertiesLiteralProperty: dataFactory.literal("envalue", "en"),
     }),
     kitchenSink.LanguageInPropertiesClass,
+  ),
+  lazyPropertiesClassEmpty: new ClassHarness(
+    new kitchenSink.LazyPropertiesClass({
+      $identifier,
+      // These nested objects won't be resolvable since they're not serialized with $toRdf.
+      // This harness is just intended to test the deserialization/deserialization of the identifiers.
+      lazyRequiredObjectProperty: new kitchenSink.NonClass({
+        nonClassProperty: "test required empty",
+      }),
+    }),
+    kitchenSink.LazyPropertiesClass,
+  ),
+  lazyPropertiesClassNonEmpty: new ClassHarness(
+    new kitchenSink.LazyPropertiesClass({
+      $identifier,
+      // These nested objects won't be resolvable since they're not serialized with $toRdf.
+      // This harness is just intended to test the deserialization/deserialization of the identifiers.
+      lazyObjectSetProperty: [
+        new kitchenSink.NonClass({
+          nonClassProperty: "test set",
+        }),
+      ],
+      lazyOptionalObjectProperty: new kitchenSink.NonClass({
+        nonClassProperty: "test optional",
+      }),
+      lazyRequiredObjectProperty: new kitchenSink.NonClass({
+        nonClassProperty: "test required",
+      }),
+    }),
+    kitchenSink.LazyPropertiesClass,
   ),
   mutablePropertiesClass: new ClassHarness(
     new kitchenSink.MutablePropertiesClass({
