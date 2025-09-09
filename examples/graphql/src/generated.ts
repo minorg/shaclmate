@@ -45,6 +45,41 @@ export namespace $RdfVocabularies {
 }
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 /**
+ * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ */
+export class $LazyOptionalObject<
+  ObjectT,
+  ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+> {
+  readonly identifier: purify.Maybe<ObjectIdentifierT>;
+  readonly #object: (
+    identifier: ObjectIdentifierT,
+  ) => Promise<purify.Either<Error, ObjectT>>;
+
+  constructor({
+    identifier,
+    object,
+  }: {
+    identifier: purify.Maybe<ObjectIdentifierT>;
+    object: (
+      identifier: ObjectIdentifierT,
+    ) => Promise<purify.Either<Error, ObjectT>>;
+  }) {
+    this.identifier = identifier;
+    this.#object = object;
+  }
+
+  async object(): Promise<purify.Either<Error, purify.Maybe<ObjectT>>> {
+    const identifier = this.identifier.extract();
+    if (!identifier) {
+      return purify.Either.of(purify.Maybe.empty());
+    }
+    return (await this.#object(identifier as ObjectIdentifierT)).map(
+      purify.Maybe.of,
+    );
+  }
+}
+/**
  * UnionMember1
  */
 export class UnionMember2 {
@@ -694,11 +729,11 @@ export namespace Nested {
   };
 }
 /**
- * Concrete parent
+ * Parent
  */
-export class ConcreteParent {
-  readonly $identifier: ConcreteParentStatic.$Identifier;
-  readonly $type: "ConcreteParent" | "ConcreteChild" = "ConcreteParent";
+export class Parent {
+  readonly $identifier: ParentStatic.$Identifier;
+  readonly $type: "Parent" | "Child" = "Parent";
   /**
    * Parent string property
    */
@@ -745,31 +780,31 @@ export class ConcreteParent {
     if (!ignoreRdfType) {
       _resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode("http://example.com/ConcreteParent"),
+        _resource.dataFactory.namedNode("http://example.com/Parent"),
       );
     }
 
     _resource.add(
-      ConcreteParentStatic.$properties.parentStringProperty["identifier"],
+      ParentStatic.$properties.parentStringProperty["identifier"],
       this.parentStringProperty,
     );
     return _resource;
   }
 }
 
-export namespace ConcreteParentStatic {
+export namespace ParentStatic {
   export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ConcreteParent",
+    "http://example.com/Parent",
   );
   export const $GraphQL = new graphql.GraphQLObjectType<
-    ConcreteParent,
+    Parent,
     { objectSet: $ObjectSet }
   >({
-    description: "Concrete parent",
+    description: "Parent",
     fields: () => ({
       _identifier: {
         resolve: (source) =>
-          ConcreteParentStatic.$Identifier.toString(source.$identifier),
+          ParentStatic.$Identifier.toString(source.$identifier),
         type: new graphql.GraphQLNonNull(graphql.GraphQLString),
       },
       parentStringProperty: {
@@ -778,7 +813,7 @@ export namespace ConcreteParentStatic {
         type: new graphql.GraphQLNonNull(graphql.GraphQLString),
       },
     }),
-    name: "ConcreteParent",
+    name: "Parent",
   });
   export type $Identifier = rdfjs.NamedNode;
 
@@ -826,7 +861,7 @@ export namespace ConcreteParentStatic {
         .chain((actualRdfType) =>
           purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteParent)`,
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Parent)`,
             ),
           ),
         );
@@ -843,7 +878,7 @@ export namespace ConcreteParentStatic {
       );
     }
 
-    const $identifier: ConcreteParentStatic.$Identifier = $resource.identifier;
+    const $identifier: ParentStatic.$Identifier = $resource.identifier;
     const _parentStringPropertyEither: purify.Either<
       Error,
       purify.Maybe<string>
@@ -866,17 +901,14 @@ export namespace ConcreteParentStatic {
   }
 
   export function $fromRdf(
-    parameters: Parameters<typeof ConcreteParentStatic.$propertiesFromRdf>[0],
-  ): purify.Either<Error, ConcreteParent> {
+    parameters: Parameters<typeof ParentStatic.$propertiesFromRdf>[0],
+  ): purify.Either<Error, Parent> {
     const { ignoreRdfType: _, ...otherParameters } = parameters;
     return (
-      ConcreteChild.$fromRdf(otherParameters) as purify.Either<
-        Error,
-        ConcreteParent
-      >
+      Child.$fromRdf(otherParameters) as purify.Either<Error, Parent>
     ).altLazy(() =>
-      ConcreteParentStatic.$propertiesFromRdf(parameters).map(
-        (properties) => new ConcreteParent(properties),
+      ParentStatic.$propertiesFromRdf(parameters).map(
+        (properties) => new Parent(properties),
       ),
     );
   }
@@ -890,14 +922,21 @@ export namespace ConcreteParentStatic {
   };
 }
 /**
- * Concrete child
+ * Child
  */
-export class ConcreteChild extends ConcreteParent {
-  override readonly $type = "ConcreteChild";
+export class Child extends Parent {
+  override readonly $type = "Child";
   /**
    * Child string property
    */
   readonly childStringProperty: purify.Maybe<string>;
+  /**
+   * Lazy nested object property
+   */
+  readonly lazyNestedObjectProperty: $LazyOptionalObject<
+    Nested,
+    Nested.$Identifier
+  >;
   /**
    * Optional nested object property
    */
@@ -915,10 +954,14 @@ export class ConcreteChild extends ConcreteParent {
     parameters: {
       readonly $identifier: rdfjs.NamedNode | string;
       readonly childStringProperty?: purify.Maybe<string> | string;
+      readonly lazyNestedObjectProperty?:
+        | $LazyOptionalObject<Nested, Nested.$Identifier>
+        | Nested
+        | purify.Maybe<Nested>;
       readonly optionalNestedObjectProperty?: Nested | purify.Maybe<Nested>;
       readonly optionalStringProperty?: purify.Maybe<string> | string;
       readonly requiredStringProperty: string;
-    } & ConstructorParameters<typeof ConcreteParent>[0],
+    } & ConstructorParameters<typeof Parent>[0],
   ) {
     super(parameters);
     if (purify.Maybe.isMaybe(parameters.childStringProperty)) {
@@ -931,6 +974,55 @@ export class ConcreteChild extends ConcreteParent {
       this.childStringProperty = purify.Maybe.empty();
     } else {
       this.childStringProperty = parameters.childStringProperty satisfies never;
+    }
+
+    if (
+      typeof parameters.lazyNestedObjectProperty === "object" &&
+      parameters.lazyNestedObjectProperty instanceof $LazyOptionalObject
+    ) {
+      this.lazyNestedObjectProperty = parameters.lazyNestedObjectProperty;
+    } else if (
+      typeof parameters.lazyNestedObjectProperty === "object" &&
+      parameters.lazyNestedObjectProperty instanceof Nested
+    ) {
+      this.lazyNestedObjectProperty = new $LazyOptionalObject<
+        Nested,
+        Nested.$Identifier
+      >({
+        identifier: purify.Maybe.of(
+          parameters.lazyNestedObjectProperty.$identifier,
+        ),
+        object: async () =>
+          purify.Either.of(parameters.lazyNestedObjectProperty as Nested),
+      });
+    } else if (purify.Maybe.isMaybe(parameters.lazyNestedObjectProperty)) {
+      this.lazyNestedObjectProperty = new $LazyOptionalObject<
+        Nested,
+        Nested.$Identifier
+      >({
+        identifier: parameters.lazyNestedObjectProperty.map(
+          (_) => _.$identifier,
+        ),
+        object: async () =>
+          purify.Either.of(
+            (
+              parameters.lazyNestedObjectProperty as purify.Maybe<Nested>
+            ).unsafeCoerce(),
+          ),
+      });
+    } else if (typeof parameters.lazyNestedObjectProperty === "undefined") {
+      this.lazyNestedObjectProperty = new $LazyOptionalObject<
+        Nested,
+        Nested.$Identifier
+      >({
+        identifier: purify.Maybe.empty(),
+        object: async () => {
+          throw new Error("should never be called");
+        },
+      });
+    } else {
+      this.lazyNestedObjectProperty =
+        parameters.lazyNestedObjectProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.optionalNestedObjectProperty)) {
@@ -983,16 +1075,20 @@ export class ConcreteChild extends ConcreteParent {
     if (!ignoreRdfType) {
       _resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode("http://example.com/ConcreteChild"),
+        _resource.dataFactory.namedNode("http://example.com/Child"),
       );
     }
 
     _resource.add(
-      ConcreteChild.$properties.childStringProperty["identifier"],
+      Child.$properties.childStringProperty["identifier"],
       this.childStringProperty,
     );
     _resource.add(
-      ConcreteChild.$properties.optionalNestedObjectProperty["identifier"],
+      Child.$properties.lazyNestedObjectProperty["identifier"],
+      this.lazyNestedObjectProperty.identifier,
+    );
+    _resource.add(
+      Child.$properties.optionalNestedObjectProperty["identifier"],
       this.optionalNestedObjectProperty.map((value) =>
         value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
@@ -1009,25 +1105,29 @@ export class ConcreteChild extends ConcreteParent {
   }
 }
 
-export namespace ConcreteChild {
+export namespace Child {
   export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ConcreteChild",
+    "http://example.com/Child",
   );
   export const $GraphQL = new graphql.GraphQLObjectType<
-    ConcreteChild,
+    Child,
     { objectSet: $ObjectSet }
   >({
-    description: "Concrete child",
+    description: "Child",
     fields: () => ({
       _identifier: {
-        resolve: (source) =>
-          ConcreteChild.$Identifier.toString(source.$identifier),
+        resolve: (source) => Child.$Identifier.toString(source.$identifier),
         type: new graphql.GraphQLNonNull(graphql.GraphQLString),
       },
       childStringProperty: {
         description: "Child string property",
         resolve: (source) => source.childStringProperty.extractNullable(),
         type: new graphql.GraphQLNonNull(graphql.GraphQLString),
+      },
+      lazyNestedObjectProperty: {
+        description: "Lazy nested object property",
+        resolve: (source) => source.lazyNestedObjectProperty.object(),
+        type: new graphql.GraphQLNonNull(Nested.$GraphQL),
       },
       optionalNestedObjectProperty: {
         description: "Optional nested object property",
@@ -1046,10 +1146,10 @@ export namespace ConcreteChild {
         type: new graphql.GraphQLNonNull(graphql.GraphQLString),
       },
     }),
-    name: "ConcreteChild",
+    name: "Child",
   });
-  export type $Identifier = ConcreteParentStatic.$Identifier;
-  export const $Identifier = ConcreteParentStatic.$Identifier;
+  export type $Identifier = ParentStatic.$Identifier;
+  export const $Identifier = ParentStatic.$Identifier;
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
@@ -1069,12 +1169,13 @@ export namespace ConcreteChild {
     {
       $identifier: rdfjs.NamedNode;
       childStringProperty: purify.Maybe<string>;
+      lazyNestedObjectProperty: $LazyOptionalObject<Nested, Nested.$Identifier>;
       optionalNestedObjectProperty: purify.Maybe<Nested>;
       optionalStringProperty: purify.Maybe<string>;
       requiredStringProperty: string;
-    } & $UnwrapR<ReturnType<typeof ConcreteParentStatic.$propertiesFromRdf>>
+    } & $UnwrapR<ReturnType<typeof ParentStatic.$propertiesFromRdf>>
   > {
-    const $super0Either = ConcreteParentStatic.$propertiesFromRdf({
+    const $super0Either = ParentStatic.$propertiesFromRdf({
       ...$context,
       ignoreRdfType: true,
       languageIn: $languageIn,
@@ -1092,12 +1193,15 @@ export namespace ConcreteChild {
         .chain((actualRdfType) =>
           purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteChild)`,
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Child)`,
             ),
           ),
         );
     }
 
+    const $objectSet =
+      $objectSetParameter ??
+      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if ($resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedValueError({
@@ -1109,7 +1213,7 @@ export namespace ConcreteChild {
       );
     }
 
-    const $identifier: ConcreteChild.$Identifier = $resource.identifier;
+    const $identifier: Child.$Identifier = $resource.identifier;
     const _childStringPropertyEither: purify.Either<
       Error,
       purify.Maybe<string>
@@ -1128,6 +1232,34 @@ export namespace ConcreteChild {
     }
 
     const childStringProperty = _childStringPropertyEither.unsafeCoerce();
+    const _lazyNestedObjectPropertyEither: purify.Either<
+      Error,
+      $LazyOptionalObject<Nested, Nested.$Identifier>
+    > = $resource
+      .values($properties.lazyNestedObjectProperty["identifier"], {
+        unique: true,
+      })
+      .head()
+      .chain((value) => value.toIdentifier())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      )
+      .map(
+        (identifier) =>
+          new $LazyOptionalObject<Nested, Nested.$Identifier>({
+            identifier: identifier,
+            object: (identifier) => $objectSet.nested(identifier),
+          }),
+      );
+    if (_lazyNestedObjectPropertyEither.isLeft()) {
+      return _lazyNestedObjectPropertyEither;
+    }
+
+    const lazyNestedObjectProperty =
+      _lazyNestedObjectPropertyEither.unsafeCoerce();
     const _optionalNestedObjectPropertyEither: purify.Either<
       Error,
       purify.Maybe<Nested>
@@ -1193,6 +1325,7 @@ export namespace ConcreteChild {
       ...$super0,
       $identifier,
       childStringProperty,
+      lazyNestedObjectProperty,
       optionalNestedObjectProperty,
       optionalStringProperty,
       requiredStringProperty,
@@ -1200,18 +1333,23 @@ export namespace ConcreteChild {
   }
 
   export function $fromRdf(
-    parameters: Parameters<typeof ConcreteChild.$propertiesFromRdf>[0],
-  ): purify.Either<Error, ConcreteChild> {
-    return ConcreteChild.$propertiesFromRdf(parameters).map(
-      (properties) => new ConcreteChild(properties),
+    parameters: Parameters<typeof Child.$propertiesFromRdf>[0],
+  ): purify.Either<Error, Child> {
+    return Child.$propertiesFromRdf(parameters).map(
+      (properties) => new Child(properties),
     );
   }
 
   export const $properties = {
-    ...ConcreteParentStatic.$properties,
+    ...ParentStatic.$properties,
     childStringProperty: {
       identifier: dataFactory.namedNode(
         "http://example.com/childStringProperty",
+      ),
+    },
+    lazyNestedObjectProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/lazyNestedObjectProperty",
       ),
     },
     optionalNestedObjectProperty: {
@@ -1303,29 +1441,15 @@ export namespace Union {
   }
 }
 export interface $ObjectSet {
-  concreteChild(
-    identifier: ConcreteChild.$Identifier,
-  ): Promise<purify.Either<Error, ConcreteChild>>;
-  concreteChildIdentifiers(
-    query?: $ObjectSet.Query<ConcreteChild.$Identifier>,
-  ): Promise<purify.Either<Error, readonly ConcreteChild.$Identifier[]>>;
-  concreteChildren(
-    query?: $ObjectSet.Query<ConcreteChild.$Identifier>,
-  ): Promise<purify.Either<Error, readonly ConcreteChild[]>>;
-  concreteChildrenCount(
-    query?: Pick<$ObjectSet.Query<ConcreteChild.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>>;
-  concreteParent(
-    identifier: ConcreteParentStatic.$Identifier,
-  ): Promise<purify.Either<Error, ConcreteParent>>;
-  concreteParentIdentifiers(
-    query?: $ObjectSet.Query<ConcreteParentStatic.$Identifier>,
-  ): Promise<purify.Either<Error, readonly ConcreteParentStatic.$Identifier[]>>;
-  concreteParents(
-    query?: $ObjectSet.Query<ConcreteParentStatic.$Identifier>,
-  ): Promise<purify.Either<Error, readonly ConcreteParent[]>>;
-  concreteParentsCount(
-    query?: Pick<$ObjectSet.Query<ConcreteParentStatic.$Identifier>, "where">,
+  child(identifier: Child.$Identifier): Promise<purify.Either<Error, Child>>;
+  childIdentifiers(
+    query?: $ObjectSet.Query<Child.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Child.$Identifier[]>>;
+  children(
+    query?: $ObjectSet.Query<Child.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Child[]>>;
+  childrenCount(
+    query?: Pick<$ObjectSet.Query<Child.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
   nested(identifier: Nested.$Identifier): Promise<purify.Either<Error, Nested>>;
   nestedIdentifiers(
@@ -1336,6 +1460,18 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly Nested[]>>;
   nestedsCount(
     query?: Pick<$ObjectSet.Query<Nested.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  parent(
+    identifier: ParentStatic.$Identifier,
+  ): Promise<purify.Either<Error, Parent>>;
+  parentIdentifiers(
+    query?: $ObjectSet.Query<ParentStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ParentStatic.$Identifier[]>>;
+  parents(
+    query?: $ObjectSet.Query<ParentStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Parent[]>>;
+  parentsCount(
+    query?: Pick<$ObjectSet.Query<ParentStatic.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
   unionMember1(
     identifier: UnionMember1.$Identifier,
@@ -1402,124 +1538,52 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     this.resourceSet = new rdfjsResource.ResourceSet({ dataset });
   }
 
-  async concreteChild(
-    identifier: ConcreteChild.$Identifier,
-  ): Promise<purify.Either<Error, ConcreteChild>> {
-    return this.concreteChildSync(identifier);
+  async child(
+    identifier: Child.$Identifier,
+  ): Promise<purify.Either<Error, Child>> {
+    return this.childSync(identifier);
   }
 
-  concreteChildSync(
-    identifier: ConcreteChild.$Identifier,
-  ): purify.Either<Error, ConcreteChild> {
-    return this.concreteChildrenSync({
+  childSync(identifier: Child.$Identifier): purify.Either<Error, Child> {
+    return this.childrenSync({
       where: { identifiers: [identifier], type: "identifiers" },
     }).map((objects) => objects[0]);
   }
 
-  async concreteChildIdentifiers(
-    query?: $ObjectSet.Query<ConcreteChild.$Identifier>,
-  ): Promise<purify.Either<Error, readonly ConcreteChild.$Identifier[]>> {
-    return this.concreteChildIdentifiersSync(query);
+  async childIdentifiers(
+    query?: $ObjectSet.Query<Child.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Child.$Identifier[]>> {
+    return this.childIdentifiersSync(query);
   }
 
-  concreteChildIdentifiersSync(
-    query?: $ObjectSet.Query<ConcreteChild.$Identifier>,
-  ): purify.Either<Error, readonly ConcreteChild.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      ConcreteChild,
-      ConcreteChild.$Identifier
-    >(ConcreteChild, query);
+  childIdentifiersSync(
+    query?: $ObjectSet.Query<Child.$Identifier>,
+  ): purify.Either<Error, readonly Child.$Identifier[]> {
+    return this.$objectIdentifiersSync<Child, Child.$Identifier>(Child, query);
   }
 
-  async concreteChildren(
-    query?: $ObjectSet.Query<ConcreteChild.$Identifier>,
-  ): Promise<purify.Either<Error, readonly ConcreteChild[]>> {
-    return this.concreteChildrenSync(query);
+  async children(
+    query?: $ObjectSet.Query<Child.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Child[]>> {
+    return this.childrenSync(query);
   }
 
-  concreteChildrenSync(
-    query?: $ObjectSet.Query<ConcreteChild.$Identifier>,
-  ): purify.Either<Error, readonly ConcreteChild[]> {
-    return this.$objectsSync<ConcreteChild, ConcreteChild.$Identifier>(
-      ConcreteChild,
-      query,
-    );
+  childrenSync(
+    query?: $ObjectSet.Query<Child.$Identifier>,
+  ): purify.Either<Error, readonly Child[]> {
+    return this.$objectsSync<Child, Child.$Identifier>(Child, query);
   }
 
-  async concreteChildrenCount(
-    query?: Pick<$ObjectSet.Query<ConcreteChild.$Identifier>, "where">,
+  async childrenCount(
+    query?: Pick<$ObjectSet.Query<Child.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
-    return this.concreteChildrenCountSync(query);
+    return this.childrenCountSync(query);
   }
 
-  concreteChildrenCountSync(
-    query?: Pick<$ObjectSet.Query<ConcreteChild.$Identifier>, "where">,
+  childrenCountSync(
+    query?: Pick<$ObjectSet.Query<Child.$Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<ConcreteChild, ConcreteChild.$Identifier>(
-      ConcreteChild,
-      query,
-    );
-  }
-
-  async concreteParent(
-    identifier: ConcreteParentStatic.$Identifier,
-  ): Promise<purify.Either<Error, ConcreteParent>> {
-    return this.concreteParentSync(identifier);
-  }
-
-  concreteParentSync(
-    identifier: ConcreteParentStatic.$Identifier,
-  ): purify.Either<Error, ConcreteParent> {
-    return this.concreteParentsSync({
-      where: { identifiers: [identifier], type: "identifiers" },
-    }).map((objects) => objects[0]);
-  }
-
-  async concreteParentIdentifiers(
-    query?: $ObjectSet.Query<ConcreteParentStatic.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly ConcreteParentStatic.$Identifier[]>
-  > {
-    return this.concreteParentIdentifiersSync(query);
-  }
-
-  concreteParentIdentifiersSync(
-    query?: $ObjectSet.Query<ConcreteParentStatic.$Identifier>,
-  ): purify.Either<Error, readonly ConcreteParentStatic.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      ConcreteParent,
-      ConcreteParentStatic.$Identifier
-    >(ConcreteParentStatic, query);
-  }
-
-  async concreteParents(
-    query?: $ObjectSet.Query<ConcreteParentStatic.$Identifier>,
-  ): Promise<purify.Either<Error, readonly ConcreteParent[]>> {
-    return this.concreteParentsSync(query);
-  }
-
-  concreteParentsSync(
-    query?: $ObjectSet.Query<ConcreteParentStatic.$Identifier>,
-  ): purify.Either<Error, readonly ConcreteParent[]> {
-    return this.$objectsSync<ConcreteParent, ConcreteParentStatic.$Identifier>(
-      ConcreteParentStatic,
-      query,
-    );
-  }
-
-  async concreteParentsCount(
-    query?: Pick<$ObjectSet.Query<ConcreteParentStatic.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.concreteParentsCountSync(query);
-  }
-
-  concreteParentsCountSync(
-    query?: Pick<$ObjectSet.Query<ConcreteParentStatic.$Identifier>, "where">,
-  ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      ConcreteParent,
-      ConcreteParentStatic.$Identifier
-    >(ConcreteParentStatic, query);
+    return this.$objectsCountSync<Child, Child.$Identifier>(Child, query);
   }
 
   async nested(
@@ -1571,6 +1635,65 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<Nested.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<Nested, Nested.$Identifier>(Nested, query);
+  }
+
+  async parent(
+    identifier: ParentStatic.$Identifier,
+  ): Promise<purify.Either<Error, Parent>> {
+    return this.parentSync(identifier);
+  }
+
+  parentSync(
+    identifier: ParentStatic.$Identifier,
+  ): purify.Either<Error, Parent> {
+    return this.parentsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async parentIdentifiers(
+    query?: $ObjectSet.Query<ParentStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ParentStatic.$Identifier[]>> {
+    return this.parentIdentifiersSync(query);
+  }
+
+  parentIdentifiersSync(
+    query?: $ObjectSet.Query<ParentStatic.$Identifier>,
+  ): purify.Either<Error, readonly ParentStatic.$Identifier[]> {
+    return this.$objectIdentifiersSync<Parent, ParentStatic.$Identifier>(
+      ParentStatic,
+      query,
+    );
+  }
+
+  async parents(
+    query?: $ObjectSet.Query<ParentStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Parent[]>> {
+    return this.parentsSync(query);
+  }
+
+  parentsSync(
+    query?: $ObjectSet.Query<ParentStatic.$Identifier>,
+  ): purify.Either<Error, readonly Parent[]> {
+    return this.$objectsSync<Parent, ParentStatic.$Identifier>(
+      ParentStatic,
+      query,
+    );
+  }
+
+  async parentsCount(
+    query?: Pick<$ObjectSet.Query<ParentStatic.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.parentsCountSync(query);
+  }
+
+  parentsCountSync(
+    query?: Pick<$ObjectSet.Query<ParentStatic.$Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<Parent, ParentStatic.$Identifier>(
+      ParentStatic,
+      query,
+    );
   }
 
   async unionMember1(
@@ -2053,7 +2176,7 @@ export const graphqlSchema = new graphql.GraphQLSchema({
   query: new graphql.GraphQLObjectType<null, { objectSet: $ObjectSet }>({
     name: "Query",
     fields: {
-      concreteChild: {
+      child: {
         args: {
           identifier: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
         },
@@ -2061,22 +2184,21 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           _source,
           args: { identifier: string },
           { objectSet },
-        ): Promise<ConcreteChild> =>
+        ): Promise<Child> =>
           (
-            await purify.EitherAsync<Error, ConcreteChild>(
-              async ({ liftEither }) =>
-                liftEither(
-                  await objectSet.concreteChild(
-                    await liftEither(
-                      ConcreteChild.$Identifier.fromString(args.identifier),
-                    ),
+            await purify.EitherAsync<Error, Child>(async ({ liftEither }) =>
+              liftEither(
+                await objectSet.child(
+                  await liftEither(
+                    Child.$Identifier.fromString(args.identifier),
                   ),
                 ),
+              ),
             )
           ).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(ConcreteChild.$GraphQL),
+        type: new graphql.GraphQLNonNull(Child.$GraphQL),
       },
-      concreteChildIdentifiers: {
+      childIdentifiers: {
         args: {
           limit: { type: graphql.GraphQLInt },
           offset: { type: graphql.GraphQLInt },
@@ -2087,18 +2209,18 @@ export const graphqlSchema = new graphql.GraphQLSchema({
           { objectSet },
         ): Promise<readonly string[]> =>
           (
-            await objectSet.concreteChildIdentifiers({
+            await objectSet.childIdentifiers({
               limit: args.limit !== null ? args.limit : undefined,
               offset: args.offset !== null ? args.offset : undefined,
             })
           )
             .unsafeCoerce()
-            .map(ConcreteChild.$Identifier.toString),
+            .map(Child.$Identifier.toString),
         type: new graphql.GraphQLNonNull(
           new graphql.GraphQLList(graphql.GraphQLString),
         ),
       },
-      concreteChildren: {
+      children: {
         args: {
           identifiers: {
             type: new graphql.GraphQLList(
@@ -2116,26 +2238,24 @@ export const graphqlSchema = new graphql.GraphQLSchema({
             offset: number | null;
           },
           { objectSet },
-        ): Promise<readonly ConcreteChild[]> =>
+        ): Promise<readonly Child[]> =>
           (
-            await purify.EitherAsync<Error, readonly ConcreteChild[]>(
+            await purify.EitherAsync<Error, readonly Child[]>(
               async ({ liftEither }) => {
-                let where:
-                  | $ObjectSet.Where<ConcreteChild.$Identifier>
-                  | undefined;
+                let where: $ObjectSet.Where<Child.$Identifier> | undefined;
                 if (args.identifiers) {
-                  const identifiers: ConcreteChild.$Identifier[] = [];
+                  const identifiers: Child.$Identifier[] = [];
                   for (const identifierArg of args.identifiers) {
                     identifiers.push(
                       await liftEither(
-                        ConcreteChild.$Identifier.fromString(identifierArg),
+                        Child.$Identifier.fromString(identifierArg),
                       ),
                     );
                   }
                   where = { identifiers, type: "identifiers" };
                 }
                 return await liftEither(
-                  await objectSet.concreteChildren({
+                  await objectSet.children({
                     limit: args.limit !== null ? args.limit : undefined,
                     offset: args.offset !== null ? args.offset : undefined,
                     where,
@@ -2145,120 +2265,12 @@ export const graphqlSchema = new graphql.GraphQLSchema({
             )
           ).unsafeCoerce(),
         type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(
-            new graphql.GraphQLNonNull(ConcreteChild.$GraphQL),
-          ),
+          new graphql.GraphQLList(new graphql.GraphQLNonNull(Child.$GraphQL)),
         ),
       },
-      concreteChildrenCount: {
+      childrenCount: {
         resolve: async (_source, _args, { objectSet }): Promise<number> =>
-          (await objectSet.concreteChildrenCount()).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLInt),
-      },
-      concreteParent: {
-        args: {
-          identifier: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
-        },
-        resolve: async (
-          _source,
-          args: { identifier: string },
-          { objectSet },
-        ): Promise<ConcreteParent> =>
-          (
-            await purify.EitherAsync<Error, ConcreteParent>(
-              async ({ liftEither }) =>
-                liftEither(
-                  await objectSet.concreteParent(
-                    await liftEither(
-                      ConcreteParentStatic.$Identifier.fromString(
-                        args.identifier,
-                      ),
-                    ),
-                  ),
-                ),
-            )
-          ).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(ConcreteParentStatic.$GraphQL),
-      },
-      concreteParentIdentifiers: {
-        args: {
-          limit: { type: graphql.GraphQLInt },
-          offset: { type: graphql.GraphQLInt },
-        },
-        resolve: async (
-          _source,
-          args: { limit: number | null; offset: number | null },
-          { objectSet },
-        ): Promise<readonly string[]> =>
-          (
-            await objectSet.concreteParentIdentifiers({
-              limit: args.limit !== null ? args.limit : undefined,
-              offset: args.offset !== null ? args.offset : undefined,
-            })
-          )
-            .unsafeCoerce()
-            .map(ConcreteParentStatic.$Identifier.toString),
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(graphql.GraphQLString),
-        ),
-      },
-      concreteParents: {
-        args: {
-          identifiers: {
-            type: new graphql.GraphQLList(
-              new graphql.GraphQLNonNull(graphql.GraphQLID),
-            ),
-          },
-          limit: { type: graphql.GraphQLInt },
-          offset: { type: graphql.GraphQLInt },
-        },
-        resolve: async (
-          _source,
-          args: {
-            identifiers: readonly string[] | null;
-            limit: number | null;
-            offset: number | null;
-          },
-          { objectSet },
-        ): Promise<readonly ConcreteParent[]> =>
-          (
-            await purify.EitherAsync<Error, readonly ConcreteParent[]>(
-              async ({ liftEither }) => {
-                let where:
-                  | $ObjectSet.Where<ConcreteParentStatic.$Identifier>
-                  | undefined;
-                if (args.identifiers) {
-                  const identifiers: ConcreteParentStatic.$Identifier[] = [];
-                  for (const identifierArg of args.identifiers) {
-                    identifiers.push(
-                      await liftEither(
-                        ConcreteParentStatic.$Identifier.fromString(
-                          identifierArg,
-                        ),
-                      ),
-                    );
-                  }
-                  where = { identifiers, type: "identifiers" };
-                }
-                return await liftEither(
-                  await objectSet.concreteParents({
-                    limit: args.limit !== null ? args.limit : undefined,
-                    offset: args.offset !== null ? args.offset : undefined,
-                    where,
-                  }),
-                );
-              },
-            )
-          ).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(
-            new graphql.GraphQLNonNull(ConcreteParentStatic.$GraphQL),
-          ),
-        ),
-      },
-      concreteParentsCount: {
-        resolve: async (_source, _args, { objectSet }): Promise<number> =>
-          (await objectSet.concreteParentsCount()).unsafeCoerce(),
+          (await objectSet.childrenCount()).unsafeCoerce(),
         type: new graphql.GraphQLNonNull(graphql.GraphQLInt),
       },
       nested: {
@@ -2356,6 +2368,107 @@ export const graphqlSchema = new graphql.GraphQLSchema({
       nestedsCount: {
         resolve: async (_source, _args, { objectSet }): Promise<number> =>
           (await objectSet.nestedsCount()).unsafeCoerce(),
+        type: new graphql.GraphQLNonNull(graphql.GraphQLInt),
+      },
+      parent: {
+        args: {
+          identifier: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
+        },
+        resolve: async (
+          _source,
+          args: { identifier: string },
+          { objectSet },
+        ): Promise<Parent> =>
+          (
+            await purify.EitherAsync<Error, Parent>(async ({ liftEither }) =>
+              liftEither(
+                await objectSet.parent(
+                  await liftEither(
+                    ParentStatic.$Identifier.fromString(args.identifier),
+                  ),
+                ),
+              ),
+            )
+          ).unsafeCoerce(),
+        type: new graphql.GraphQLNonNull(ParentStatic.$GraphQL),
+      },
+      parentIdentifiers: {
+        args: {
+          limit: { type: graphql.GraphQLInt },
+          offset: { type: graphql.GraphQLInt },
+        },
+        resolve: async (
+          _source,
+          args: { limit: number | null; offset: number | null },
+          { objectSet },
+        ): Promise<readonly string[]> =>
+          (
+            await objectSet.parentIdentifiers({
+              limit: args.limit !== null ? args.limit : undefined,
+              offset: args.offset !== null ? args.offset : undefined,
+            })
+          )
+            .unsafeCoerce()
+            .map(ParentStatic.$Identifier.toString),
+        type: new graphql.GraphQLNonNull(
+          new graphql.GraphQLList(graphql.GraphQLString),
+        ),
+      },
+      parents: {
+        args: {
+          identifiers: {
+            type: new graphql.GraphQLList(
+              new graphql.GraphQLNonNull(graphql.GraphQLID),
+            ),
+          },
+          limit: { type: graphql.GraphQLInt },
+          offset: { type: graphql.GraphQLInt },
+        },
+        resolve: async (
+          _source,
+          args: {
+            identifiers: readonly string[] | null;
+            limit: number | null;
+            offset: number | null;
+          },
+          { objectSet },
+        ): Promise<readonly Parent[]> =>
+          (
+            await purify.EitherAsync<Error, readonly Parent[]>(
+              async ({ liftEither }) => {
+                let where:
+                  | $ObjectSet.Where<ParentStatic.$Identifier>
+                  | undefined;
+                if (args.identifiers) {
+                  const identifiers: ParentStatic.$Identifier[] = [];
+                  for (const identifierArg of args.identifiers) {
+                    identifiers.push(
+                      await liftEither(
+                        ParentStatic.$Identifier.fromString(identifierArg),
+                      ),
+                    );
+                  }
+                  where = { identifiers, type: "identifiers" };
+                }
+                return await liftEither(
+                  await objectSet.parents({
+                    limit: args.limit !== null ? args.limit : undefined,
+                    offset: args.offset !== null ? args.offset : undefined,
+                    where,
+                  }),
+                );
+              },
+            )
+          ).unsafeCoerce(),
+        type: new graphql.GraphQLNonNull(
+          new graphql.GraphQLList(
+            new graphql.GraphQLNonNull(ParentStatic.$GraphQL),
+          ),
+        ),
+      },
+      parentsCount: {
+        resolve: async (_source, _args, { objectSet }): Promise<number> =>
+          (await objectSet.parentsCount()).unsafeCoerce(),
         type: new graphql.GraphQLNonNull(graphql.GraphQLInt),
       },
       unionMember1: {

@@ -11,27 +11,16 @@
     shaclmate:tsFeatureInclude shaclmate:_TsFeature_Graphql ;
     a owl:Ontology .
 
-:ConcreteChild
+:Child
     a owl:Class, sh:NodeShape ;
-    rdfs:comment "Concrete child" ;
-    rdfs:subClassOf :ConcreteParent ;
+    rdfs:comment "Child" ;
+    rdfs:subClassOf :Parent ;
     sh:nodeKind sh:IRI ;
-    sh:property :optionalNestedObjectProperty, :optionalStringProperty, :requiredStringProperty, [
+    sh:property :lazyNestedObjectProperty, :optionalNestedObjectProperty, :optionalStringProperty, :requiredStringProperty, [
         rdfs:comment "Child string property" ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:path :childStringProperty
-    ] .
-
-:ConcreteParent
-    a owl:Class, sh:NodeShape ;
-    rdfs:comment "Concrete parent" ;
-    sh:nodeKind sh:IRI ;
-    sh:property [
-        rdfs:comment "Parent string property" ;
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:path :parentStringProperty
     ] .
 
 :Nested
@@ -39,6 +28,17 @@
     rdfs:comment "Nested" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property :optionalNumberProperty, :optionalStringProperty, :requiredStringProperty .
+
+:Parent
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Parent" ;
+    sh:nodeKind sh:IRI ;
+    sh:property [
+        rdfs:comment "Parent string property" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:path :parentStringProperty
+    ] .
 
 :Union
     a owl:Class, sh:NodeShape ;
@@ -59,6 +59,14 @@
     rdfs:comment "UnionMember1" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property :optionalStringProperty .
+
+:lazyNestedObjectProperty
+    shaclmate:lazy true ;
+    a sh:PropertyShape ;
+    rdfs:comment "Lazy nested object property" ;
+    sh:maxCount 1 ;
+    sh:node :Nested ;
+    sh:path :lazyNestedObjectProperty .
 
 :optionalNestedObjectProperty
     a sh:PropertyShape ;

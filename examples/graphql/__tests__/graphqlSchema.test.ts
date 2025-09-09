@@ -12,7 +12,22 @@ describe("graphqlSchema", () => {
     });
   };
 
-  it("child object", async ({ expect }) => {
+  it("nested object", async ({ expect }) => {
+    const result = await execute(
+      `query { child(identifier: "<http://example.com/child0>") { _identifier optionalNestedObjectProperty { _identifier } } }`,
+    );
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      child: {
+        _identifier: "<http://example.com/child0>",
+        optionalNestedObjectProperty: {
+          _identifier: "<http://example.com/child0/nested>",
+        },
+      },
+    });
+  });
+
+  it("object", async ({ expect }) => {
     const result = await execute(
       `query { child(identifier: "<http://example.com/child0>") { _identifier, childStringProperty } }`,
     );
@@ -25,7 +40,7 @@ describe("graphqlSchema", () => {
     });
   });
 
-  it("child object identifiers (all)", async ({ expect }) => {
+  it("object identifiers (all)", async ({ expect }) => {
     const result = await execute("query { childIdentifiers }");
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
@@ -35,7 +50,7 @@ describe("graphqlSchema", () => {
     });
   });
 
-  it("child object identifiers (limit)", async ({ expect }) => {
+  it("object identifiers (limit)", async ({ expect }) => {
     const result = await execute("query { childIdentifiers(limit: 2) }");
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
@@ -45,7 +60,7 @@ describe("graphqlSchema", () => {
     });
   });
 
-  it("child object identifiers (offset)", async ({ expect }) => {
+  it("object identifiers (offset)", async ({ expect }) => {
     const result = await execute("query { childIdentifiers(offset: 1) }");
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
@@ -55,7 +70,7 @@ describe("graphqlSchema", () => {
     });
   });
 
-  it("child objects (all)", async ({ expect }) => {
+  it("objects (all)", async ({ expect }) => {
     const result = await execute(
       "query { children { _identifier, childStringProperty } }",
     );
@@ -68,7 +83,7 @@ describe("graphqlSchema", () => {
     });
   });
 
-  it("child objects (identifiers)", async ({ expect }) => {
+  it("objects (identifiers)", async ({ expect }) => {
     const result = await execute(
       `query { children(identifiers: [${[...new Array(2)].map((_, i) => `"<http://example.com/child${i + 1}>"`).join(", ")}]) { _identifier, childStringProperty } }`,
     );
@@ -81,7 +96,7 @@ describe("graphqlSchema", () => {
     });
   });
 
-  it("child objects (limit)", async ({ expect }) => {
+  it("objects (limit)", async ({ expect }) => {
     const result = await execute(
       "query { children(limit: 2) { _identifier, childStringProperty } }",
     );
@@ -94,7 +109,7 @@ describe("graphqlSchema", () => {
     });
   });
 
-  it("child objects (offset)", async ({ expect }) => {
+  it("objects (offset)", async ({ expect }) => {
     const result = await execute(
       "query { children(offset: 1) { _identifier, childStringProperty } }",
     );
@@ -107,7 +122,7 @@ describe("graphqlSchema", () => {
     });
   });
 
-  it("child objectsCount", async ({ expect }) => {
+  it("objectsCount", async ({ expect }) => {
     const result = await execute("query { childrenCount }");
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
