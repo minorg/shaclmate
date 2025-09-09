@@ -209,7 +209,6 @@ export function ${syntheticNamePrefix}maybeEquals<T>(
  * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
 export class ${syntheticNamePrefix}LazyObjectSet<ObjectT, ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode> {
-  private static readonly empty: purify.Either<Error, readonly object[]> = purify.Either.of([]);
   readonly identifiers: readonly ObjectIdentifierT[];
   readonly #objects: (identifiers: readonly ObjectIdentifierT[]) => Promise<purify.Either<Error, readonly ObjectT[]>>;
 
@@ -223,7 +222,7 @@ export class ${syntheticNamePrefix}LazyObjectSet<ObjectT, ObjectIdentifierT exte
 
   async objects(): Promise<purify.Either<Error, readonly ObjectT[]>> {
     if (this.identifiers.length === 0) {
-      return empty as purify.Either<Error, readonly ObjectT[]>;
+      return purify.Either.of([]);
     }
     return await this.#objects(this.identifiers as readonly ObjectIdentifierT[]);
   }
@@ -234,7 +233,6 @@ export class ${syntheticNamePrefix}LazyObjectSet<ObjectT, ObjectIdentifierT exte
  * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
 export class ${syntheticNamePrefix}LazyOptionalObject<ObjectT, ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode> {
-  private static readonly empty: purify.Either<Error, purify.Maybe<object>> = purify.Either.of(purify.Maybe.empty());
   readonly identifier: purify.Maybe<ObjectIdentifierT>;
   readonly #object: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ObjectT>>;
 
@@ -249,7 +247,7 @@ export class ${syntheticNamePrefix}LazyOptionalObject<ObjectT, ObjectIdentifierT
   async object(): Promise<purify.Either<Error, purify.Maybe<ObjectT>>> {
     const identifier = this.identifier.extract();
     if (!identifier) {
-      return ${syntheticNamePrefix}LazyOptionalObject.empty as purify.Either<Error, purify.Maybe<ObjectT>>;
+      return purify.Either.of(purify.Maybe.empty());
     }
     return (await this.#object(identifier as ObjectIdentifierT)).map(purify.Maybe.of);
   }

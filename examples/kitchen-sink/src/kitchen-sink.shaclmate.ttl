@@ -393,9 +393,11 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:node :NonClass ;
         sh:path :lazyOptionalObjectProperty
     ], [
+        shaclmate:lazy true ;
         sh:node :NonClass ;
         sh:path :lazyObjectSetProperty
     ], [
+        shaclmate:lazy true ;
         sh:class :NonClass ;
         sh:maxCount 1 ;
         sh:minCount 1 ;

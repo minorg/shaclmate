@@ -69,6 +69,47 @@ export abstract class ShaclProperty<
     });
   }
 
+  override constructorStatements({
+    variables,
+  }: Parameters<
+    Property<TypeT>["constructorStatements"]
+  >[0]): readonly string[] {
+    const typeConversions = this.type.conversions;
+    if (typeConversions.length === 1) {
+      switch (this.objectType.declarationType) {
+        case "class":
+          return [`this.${this.name} = ${variables.parameter};`];
+        case "interface":
+          return [`const ${this.name} = ${variables.parameter};`];
+      }
+    }
+
+    let lhs: string;
+    const statements: string[] = [];
+    switch (this.objectType.declarationType) {
+      case "class":
+        lhs = `this.${this.name}`;
+        break;
+      case "interface":
+        lhs = this.name;
+        statements.push(`let ${this.name}: ${this.type.name};`);
+        break;
+    }
+
+    statements.push(
+      typeConversions
+        .map(
+          (conversion) =>
+            `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = ${conversion.conversionExpression(variables.parameter)}; }`,
+        )
+        // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
+        .concat(`{ ${lhs} = (${variables.parameter}) satisfies never; }`)
+        .join(" else "),
+    );
+
+    return statements;
+  }
+
   override fromJsonStatements({
     variables,
   }: Parameters<Property<TypeT>["fromJsonStatements"]>[0]): readonly string[] {

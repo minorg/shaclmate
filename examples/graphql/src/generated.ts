@@ -190,9 +190,6 @@ export namespace UnionMember2 {
         );
     }
 
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: UnionMember2.$Identifier = $resource.identifier;
     const _optionalStringPropertyEither: purify.Either<
       Error,
@@ -379,9 +376,6 @@ export namespace UnionMember1 {
         );
     }
 
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: UnionMember1.$Identifier = $resource.identifier;
     const _optionalNumberPropertyEither: purify.Either<
       Error,
@@ -612,9 +606,6 @@ export namespace Nested {
         );
     }
 
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: Nested.$Identifier = $resource.identifier;
     const _optionalNumberPropertyEither: purify.Either<
       Error,
@@ -841,9 +832,6 @@ export namespace ConcreteParentStatic {
         );
     }
 
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if ($resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedValueError({
@@ -1112,9 +1100,6 @@ export namespace ConcreteChild {
         );
     }
 
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if ($resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedValueError({

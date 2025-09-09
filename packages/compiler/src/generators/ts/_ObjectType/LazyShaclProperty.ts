@@ -33,51 +33,6 @@ export class LazyShaclProperty<
       type: this.type.graphqlName,
     });
   }
-
-  override constructorStatements({
-    variables,
-  }: Parameters<
-    ShaclProperty<
-      LazyShaclProperty.Type<IdentifierTypeT, ResultTypeT>
-    >["constructorStatements"]
-  >[0]): readonly string[] {
-    const typeConversions = this.type.conversions;
-    if (typeConversions.length === 1) {
-      switch (this.objectType.declarationType) {
-        case "class":
-          return [`this.${this.name} = ${variables.parameter};`];
-        case "interface":
-          return [`const ${this.name} = ${variables.parameter};`];
-      }
-    }
-
-    let lhs: string;
-    const statements: string[] = [];
-    switch (this.objectType.declarationType) {
-      case "class":
-        lhs = `this.${this.name}`;
-        break;
-      case "interface":
-        lhs = this.name;
-        statements.push(`let ${this.name}: ${this.type.name};`);
-        break;
-    }
-
-    statements.push(
-      typeConversions
-        .map((conversion, conversionI) => {
-          if (conversionI === 0) {
-            return `if (typeof ${variables.parameter} === "function") { ${lhs} = ${variables.parameter}; }`;
-          }
-          return `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { const ${syntheticNamePrefix}${this.name}Capture = ${conversion.conversionExpression(variables.parameter)}; ${lhs} = async () => purify.Either.of(${syntheticNamePrefix}${this.name}Capture); }`;
-        })
-        // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
-        .concat(`{ ${lhs} = (${variables.parameter}) satisfies never; }`)
-        .join(" else "),
-    );
-
-    return statements;
-  }
 }
 
 export namespace LazyShaclProperty {
@@ -96,6 +51,7 @@ export namespace LazyShaclProperty {
       readonly identifierPropertyName: string;
       readonly name: string;
       readonly objectMethodName: string;
+      readonly rawName: string;
       readonly snippetDeclaration: string;
     };
 
@@ -119,10 +75,10 @@ export namespace LazyShaclProperty {
         {
           conversionExpression: (value) => value,
           sourceTypeCheckExpression: (value) =>
-            `typeof ${value} === "object" && ${value} instanceof ${this.runtimeClass.name}`,
+            `typeof ${value} === "object" && ${value} instanceof ${this.runtimeClass.rawName}`,
           sourceTypeName: this.name,
         } satisfies _Type.Conversion,
-      ].concat(this.resultType.conversions);
+      ];
     }
 
     @Memoize()
@@ -155,6 +111,10 @@ export namespace LazyShaclProperty {
 
     override get jsonName(): string {
       return this.identifierType.jsonName;
+    }
+
+    override get jsonPropertySignature() {
+      return this.identifierType.jsonPropertySignature;
     }
 
     override jsonUiSchemaElement(
@@ -238,6 +198,7 @@ export namespace LazyShaclProperty {
           identifierPropertyName: "identifiers",
           name: `${syntheticNamePrefix}LazyObjectSet<${resultType.itemType.name}, ${resultType.itemType.identifierTypeAlias}>`,
           objectMethodName: "objects",
+          rawName: `${syntheticNamePrefix}LazyObjectSet`,
           snippetDeclaration: SnippetDeclarations.LazyObjectSet,
         },
       });
@@ -246,14 +207,14 @@ export namespace LazyShaclProperty {
     override fromJsonExpression(
       parameters: Parameters<_Type["fromJsonExpression"]>[0],
     ): string {
-      return `new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: ${this.identifierType.fromJsonExpression(parameters)}, ${this.runtimeClass.objectMethodName}: (identifiers) => Promise.resolve(purify.Left<Error, ${this.resultType.name}>(new Error(\`unable to resolve identifiers deserialized from JSON\`))) })`;
+      return `new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: ${this.identifierType.fromJsonExpression(parameters)}, ${this.runtimeClass.objectMethodName}: () => Promise.resolve(purify.Left(new Error("unable to resolve identifiers deserialized from JSON"))) })`;
     }
 
     override fromRdfExpression(
       parameters: Parameters<_Type["fromRdfExpression"]>[0],
     ): string {
       const { variables } = parameters;
-      return `${this.identifierType.fromRdfExpression(parameters)}.chain(identifiers => new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: identifiers, ${this.runtimeClass.objectMethodName}: (identifiers) => ${variables.objectSet}.${this.resultType.itemType.objectSetMethodNames.objects}({ where: { identifiers, type: "identifiers" }}) }))`;
+      return `${this.identifierType.fromRdfExpression(parameters)}.map(identifiers => new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: identifiers, ${this.runtimeClass.objectMethodName}: (identifiers) => ${variables.objectSet}.${this.resultType.itemType.objectSetMethodNames.objects}({ where: { identifiers, type: "identifiers" }}) }))`;
     }
   }
 
@@ -270,7 +231,7 @@ export namespace LazyShaclProperty {
     override fromJsonExpression(
       parameters: Parameters<_Type["fromJsonExpression"]>[0],
     ): string {
-      return `new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: ${this.identifierType.fromJsonExpression(parameters)}, ${this.runtimeClass.objectMethodName}: (identifier) => Promise.resolve(purify.Left<Error, ${this.resultType.name}>(new Error(\`unable to resolve identifier \${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON\`))) })`;
+      return `new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: ${this.identifierType.fromJsonExpression(parameters)}, ${this.runtimeClass.objectMethodName}: (identifier) => Promise.resolve(purify.Left(new Error(\`unable to resolve identifier \${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON\`))) })`;
     }
   }
 
@@ -287,8 +248,20 @@ export namespace LazyShaclProperty {
           identifierPropertyName: "identifier",
           name: `${syntheticNamePrefix}LazyOptionalObject<${resultType.itemType.name}, ${resultType.itemType.identifierTypeAlias}>`,
           objectMethodName: "object",
+          rawName: `${syntheticNamePrefix}LazyOptionalObject`,
           snippetDeclaration: SnippetDeclarations.LazyOptionalObject,
         },
+      });
+    }
+
+    @Memoize()
+    override get conversions(): readonly _Type.Conversion[] {
+      return super.conversions.concat({
+        conversionExpression: (value) =>
+          `new ${this.runtimeClass.name}({ identifier: purify.Maybe.of(${value}.${syntheticNamePrefix}identifier), object: async () => purify.Either.of(${value} as ${this.resultType.itemType.name}) })`,
+        sourceTypeCheckExpression: (value) =>
+          `typeof ${value} === "object" && ${value} instanceof ${this.resultType.itemType.name}`,
+        sourceTypeName: this.resultType.itemType.name,
       });
     }
 
@@ -296,7 +269,7 @@ export namespace LazyShaclProperty {
       parameters: Parameters<_Type["fromRdfExpression"]>[0],
     ): string {
       const { variables } = parameters;
-      return `${this.identifierType.fromRdfExpression(parameters)}.chain(identifier => new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: identifier, ${this.runtimeClass.objectMethodName}: (identifier) => ${variables.objectSet}.${this.resultType.itemType.objectSetMethodNames.object}(identifier) }))`;
+      return `${this.identifierType.fromRdfExpression(parameters)}.map(identifier => new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: identifier, ${this.runtimeClass.objectMethodName}: (identifier) => ${variables.objectSet}.${this.resultType.itemType.objectSetMethodNames.object}(identifier) }))`;
     }
   }
 
@@ -311,8 +284,19 @@ export namespace LazyShaclProperty {
           identifierPropertyName: "identifier",
           name: `${syntheticNamePrefix}LazyRequiredObject<${resultType.name}, ${resultType.identifierTypeAlias}>`,
           objectMethodName: "object",
+          rawName: `${syntheticNamePrefix}LazyRequiredObject`,
           snippetDeclaration: SnippetDeclarations.LazyRequiredObject,
         },
+      });
+    }
+
+    override get conversions(): readonly _Type.Conversion[] {
+      return super.conversions.concat({
+        conversionExpression: (value) =>
+          `new ${this.runtimeClass.name}({ identifier: ${value}.${syntheticNamePrefix}identifier, object: async () => purify.Either.of(${value} as ${this.resultType.name}) })`,
+        sourceTypeCheckExpression: (value) =>
+          `typeof ${value} === "object" && ${value} instanceof ${this.resultType.name}`,
+        sourceTypeName: this.resultType.name,
       });
     }
 
@@ -320,7 +304,7 @@ export namespace LazyShaclProperty {
       parameters: Parameters<_Type["fromRdfExpression"]>[0],
     ): string {
       const { variables } = parameters;
-      return `${this.identifierType.fromRdfExpression(parameters)}.chain(identifier => new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: identifier, ${this.runtimeClass.objectMethodName}: (identifier) => ${variables.objectSet}.${this.resultType.objectSetMethodNames.object}(identifier) }))`;
+      return `${this.identifierType.fromRdfExpression(parameters)}.map(identifier => new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: identifier, ${this.runtimeClass.objectMethodName}: (identifier) => ${variables.objectSet}.${this.resultType.objectSetMethodNames.object}(identifier) }))`;
     }
   }
 }

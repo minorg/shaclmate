@@ -448,9 +448,6 @@ export namespace NestedNodeShape {
       requiredStringProperty: string;
     }
   > {
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: NestedNodeShape.$Identifier = $resource.identifier;
     const $type = "NestedNodeShape" as const;
     const _requiredStringPropertyEither: purify.Either<Error, string> =
@@ -936,9 +933,6 @@ export namespace FormNodeShape {
       requiredStringProperty: string;
     }
   > {
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: FormNodeShape.$Identifier = $resource.identifier;
     const $type = "FormNodeShape" as const;
     const _emptyStringSetPropertyEither: purify.Either<

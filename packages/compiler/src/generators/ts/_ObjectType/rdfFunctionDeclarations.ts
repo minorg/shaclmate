@@ -4,6 +4,7 @@ import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { LazyShaclProperty } from "./LazyShaclProperty.js";
 import { toRdfFunctionOrMethodDeclaration } from "./toRdfFunctionOrMethodDeclaration.js";
 
 function fromRdfFunctionDeclarations(
@@ -42,9 +43,13 @@ if (!${variables.ignoreRdfType} && !${variables.resource}.isInstanceOf(${synthet
     objectSet: variables.objectSet,
     resource: variables.resource,
   };
-  propertiesFromRdfStatements.push(
-    `const ${syntheticNamePrefix}objectSet = ${syntheticNamePrefix}objectSetParameter ?? new ${syntheticNamePrefix}RdfjsDatasetObjectSet({ dataset: ${variables.resource}.dataset });`,
-  );
+  if (
+    this.ownProperties.some((property) => property instanceof LazyShaclProperty)
+  ) {
+    propertiesFromRdfStatements.push(
+      `const ${syntheticNamePrefix}objectSet = ${syntheticNamePrefix}objectSetParameter ?? new ${syntheticNamePrefix}RdfjsDatasetObjectSet({ dataset: ${variables.resource}.dataset });`,
+    );
+  }
   for (const property of this.properties) {
     const propertyFromRdfStatements = property.fromRdfStatements({
       variables: propertyFromRdfVariables,
