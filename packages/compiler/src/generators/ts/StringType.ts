@@ -1,7 +1,7 @@
 import { Memoize } from "typescript-memoize";
 
 import { PrimitiveType } from "./PrimitiveType.js";
-import type { Type } from "./Type.js";
+import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 export class StringType extends PrimitiveType<string> {
@@ -27,8 +27,9 @@ export class StringType extends PrimitiveType<string> {
     return conversions;
   }
 
-  override get graphqlName(): string {
-    return "graphql.GraphQLString";
+  @Memoize()
+  override get graphqlName(): Type.GraphqlName {
+    return new Type.GraphqlName("graphql.GraphQLString");
   }
 
   @Memoize()

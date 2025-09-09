@@ -1,7 +1,9 @@
 import type { NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+import { Memoize } from "typescript-memoize";
 import { DateTimeType } from "./DateTimeType.js";
 import type { PrimitiveType } from "./PrimitiveType.js";
+import { Type } from "./Type.js";
 
 export class DateType extends DateTimeType {
   protected override readonly xsdDatatype: NamedNode = xsd.date;
@@ -9,8 +11,9 @@ export class DateType extends DateTimeType {
 
   override readonly kind = "DateType";
 
-  override get graphqlName(): string {
-    return "graphqlScalars.Date";
+  @Memoize()
+  override get graphqlName(): Type.GraphqlName {
+    return new Type.GraphqlName("graphqlScalars.Date");
   }
 
   override toJsonExpression({

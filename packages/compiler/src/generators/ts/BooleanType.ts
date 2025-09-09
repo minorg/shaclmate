@@ -1,7 +1,7 @@
 import { Memoize } from "typescript-memoize";
 
 import { PrimitiveType } from "./PrimitiveType.js";
-import type { Type } from "./Type.js";
+import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 export class BooleanType extends PrimitiveType<boolean> {
@@ -27,8 +27,8 @@ export class BooleanType extends PrimitiveType<boolean> {
     return conversions;
   }
 
-  override get graphqlName(): string {
-    return "graphql.GraphQLBoolean";
+  override get graphqlName(): Type.GraphqlName {
+    return new Type.GraphqlName("graphql.GraphQLBoolean");
   }
 
   @Memoize()

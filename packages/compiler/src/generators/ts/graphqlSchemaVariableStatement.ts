@@ -26,7 +26,7 @@ async (_source, args: { identifier: string }, { objectSet }): Promise<${objectTy
   (await purify.EitherAsync<Error, ${objectType.name}>(async ({ liftEither }) => 
     liftEither(await objectSet.${objectType.objectSetMethodNames.object}(await liftEither(${objectType.identifierTypeAlias}.fromString(args.identifier))))
   )).unsafeCoerce()`,
-          type: objectType.graphqlName,
+          type: objectType.graphqlName.toString(),
         });
 
         fields[objectType.objectSetMethodNames.objectIdentifiers] =

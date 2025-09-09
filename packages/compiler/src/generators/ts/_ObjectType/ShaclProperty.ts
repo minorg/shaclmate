@@ -135,10 +135,10 @@ export abstract class ShaclProperty<
     OptionalKind<PropertySignatureStructure>
   > {
     return Maybe.of({
-      hasQuestionToken: this.type.jsonPropertySignature.hasQuestionToken,
+      hasQuestionToken: this.type.jsonName.optional,
       isReadonly: true,
       name: this.name,
-      type: this.type.jsonPropertySignature.name,
+      type: this.type.jsonName.requiredName,
     });
   }
 

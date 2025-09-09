@@ -30,7 +30,7 @@ export class LazyShaclProperty<
       name: this.name,
       // TODO: this probably won't work
       resolve: `(source) => ${this.type.graphqlResolveExpression({ variables: { value: `source.${this.name}` } })}`,
-      type: this.type.graphqlName,
+      type: this.type.graphqlName.toString(),
     });
   }
 }
@@ -86,7 +86,7 @@ export namespace LazyShaclProperty {
       return `((left, right) => ${this.identifierType.equalsFunction}(left.${this.runtimeClass.identifierPropertyName}, right.${this.runtimeClass.identifierPropertyName}))`;
     }
 
-    override get graphqlName(): string {
+    override get graphqlName(): _Type.GraphqlName {
       return this.resultType.graphqlName;
     }
 
@@ -109,12 +109,8 @@ export namespace LazyShaclProperty {
       });
     }
 
-    override get jsonName(): string {
+    override get jsonName(): _Type.JsonName {
       return this.identifierType.jsonName;
-    }
-
-    override get jsonPropertySignature() {
-      return this.identifierType.jsonPropertySignature;
     }
 
     override jsonUiSchemaElement(

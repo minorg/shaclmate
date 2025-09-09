@@ -3,7 +3,7 @@ import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
 import { PrimitiveType } from "./PrimitiveType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
-import type { Type } from "./Type.js";
+import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -39,12 +39,14 @@ export class DateTimeType extends PrimitiveType<Date> {
     return conversions;
   }
 
-  override get graphqlName(): string {
-    return "graphqlScalars.DateTime";
+  @Memoize()
+  override get graphqlName(): Type.GraphqlName {
+    return new Type.GraphqlName("graphqlScalars.DateTime");
   }
 
-  override get jsonName(): string {
-    return "string";
+  @Memoize()
+  override get jsonName(): Type.JsonName {
+    return new Type.JsonName("string");
   }
 
   override get name(): string {

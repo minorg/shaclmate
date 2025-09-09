@@ -32,12 +32,12 @@ export abstract class Type {
   /**
    * GraphQL-compatible version of the type.
    */
-  abstract readonly graphqlName: string;
+  abstract readonly graphqlName: Type.GraphqlName;
 
   /**
-   * JSON-compatible version of the type in a nested type declaration.
+   * JSON-compatible version of the type.
    */
-  abstract readonly jsonName: string;
+  abstract readonly jsonName: Type.JsonName;
 
   /**
    * Is a value of this type mutable?
@@ -45,7 +45,7 @@ export abstract class Type {
   abstract readonly mutable: boolean;
 
   /**
-   * Name of the type.
+   * TypeScript name of the type.
    */
   abstract readonly name: string;
 
@@ -53,15 +53,6 @@ export abstract class Type {
    * JavaScript typeof the type.
    */
   abstract readonly typeof: "boolean" | "object" | "number" | "string";
-
-  get jsonPropertySignature(): {
-    readonly hasQuestionToken?: boolean;
-    readonly name: string;
-  } {
-    return {
-      name: this.jsonName,
-    };
-  }
 
   /**
    * An expression that converts this type's JSON type to a value of this type. It doesn't return a purify.Either because the JSON has
@@ -311,5 +302,56 @@ export namespace Type {
     readonly name: string;
     readonly ownValues: readonly string[];
     readonly descendantValues: readonly string[];
+  }
+
+  export class JsonName {
+    /**
+     * Is the type optional in JSON? Equivalent to ? in TypeScript or | undefined.
+     */
+    readonly optional: boolean;
+
+    /**
+     * The name of the type when it's required i.e. -- so it should never include "| undefined".
+     */
+    readonly requiredName: string;
+
+    constructor(
+      requiredName: string,
+      parameters?: {
+        optional: boolean;
+      },
+    ) {
+      this.optional = !!parameters?.optional;
+      this.requiredName = requiredName;
+    }
+
+    toString(): string {
+      return this.optional
+        ? `(${this.requiredName}) | undefined`
+        : this.requiredName;
+    }
+  }
+
+  export class GraphqlName {
+    /**
+     * Is the type nullable in GraphQL?
+     */
+    readonly nullable: boolean;
+
+    /**
+     * The name of the type when it's nullable -- so it should never include "new graphql.GraphQLNonNull(...)" around it.
+     */
+    readonly nullableName: string;
+
+    constructor(nullableName: string, parameters?: { nullable: boolean }) {
+      this.nullable = !!parameters?.nullable;
+      this.nullableName = nullableName;
+    }
+
+    toString(): string {
+      return this.nullable
+        ? this.nullableName
+        : `new graphql.GraphQLNonNull(${this.nullableName})`;
+    }
   }
 }

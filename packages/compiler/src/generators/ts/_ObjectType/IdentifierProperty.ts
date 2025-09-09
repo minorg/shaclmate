@@ -165,7 +165,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
     return Maybe.of({
       name: `_${this.name.substring(syntheticNamePrefix.length)}`,
       resolve: `(source) => ${this.typeAlias}.toString(source.${this.name})`,
-      type: this.type.graphqlName,
+      type: this.type.graphqlName.toString(),
     });
   }
 

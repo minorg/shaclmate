@@ -1,6 +1,8 @@
 import type { Literal } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+import { Memoize } from "typescript-memoize";
 import { TermType } from "./TermType.js";
+import { Type } from "./Type.js";
 
 export class LiteralType extends TermType<Literal, Literal> {
   private readonly languageIn: readonly string[];
@@ -19,8 +21,11 @@ export class LiteralType extends TermType<Literal, Literal> {
     this.languageIn = languageIn;
   }
 
-  override get jsonName(): string {
-    return '{ readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string }';
+  @Memoize()
+  override get jsonName(): Type.JsonName {
+    return new Type.JsonName(
+      '{ readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string }',
+    );
   }
 
   override fromJsonExpression({

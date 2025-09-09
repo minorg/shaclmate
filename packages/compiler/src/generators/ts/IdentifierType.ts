@@ -9,7 +9,7 @@ import {
 import { Memoize } from "typescript-memoize";
 
 import { TermType } from "./TermType.js";
-import type { Type } from "./Type.js";
+import { Type } from "./Type.js";
 
 export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
   readonly kind = "IdentifierType";
@@ -86,8 +86,9 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
     };
   }
 
-  override get graphqlName(): string {
-    return "graphql.GraphQLString";
+  @Memoize()
+  override get graphqlName(): Type.GraphqlName {
+    return new Type.GraphqlName("graphql.GraphQLString");
   }
 
   @Memoize()
@@ -96,14 +97,16 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
   }
 
   @Memoize()
-  override get jsonName(): string {
+  override get jsonName(): Type.JsonName {
     if (this.in_.length > 0 && this.isNamedNodeKind) {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      return `{ readonly "@id": ${this.in_.map((iri) => `"${iri.value}"`).join(" | ")} }`;
+      return new Type.JsonName(
+        `{ readonly "@id": ${this.in_.map((iri) => `"${iri.value}"`).join(" | ")} }`,
+      );
     }
 
-    return `{ readonly "@id": string }`;
+    return new Type.JsonName(`{ readonly "@id": string }`);
   }
 
   @Memoize()

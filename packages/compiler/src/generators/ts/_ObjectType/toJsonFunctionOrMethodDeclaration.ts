@@ -73,7 +73,7 @@ export function toJsonFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
   return Maybe.of({
     name: `${syntheticNamePrefix}toJson`,
     parameters,
-    returnType: this.jsonName,
+    returnType: this.jsonName.toString(),
     statements: [
       `return JSON.parse(JSON.stringify({ ${jsonObjectMembers.join(",")} } satisfies ${this.jsonName}));`,
     ],

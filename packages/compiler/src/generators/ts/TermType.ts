@@ -114,23 +114,25 @@ export class TermType<
     });
   }
 
-  override get graphqlName(): string {
+  override get graphqlName(): Type.GraphqlName {
     throw new Error("not implemented");
   }
 
   @Memoize()
-  get jsonName(): string {
+  get jsonName(): Type.JsonName {
     invariant(
       this.nodeKinds.has("Literal") &&
         (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("NamedNode")),
       "IdentifierType and LiteralType should override",
     );
-    return `{ readonly "@id": string, readonly termType: ${[...this.nodeKinds]
-      .filter((nodeKind) => nodeKind !== "Literal")
-      .map((nodeKind) => `"${nodeKind}"`)
-      .join(
-        " | ",
-      )} } | { readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string, readonly termType: "Literal" }`;
+    return new Type.JsonName(
+      `{ readonly "@id": string, readonly termType: ${[...this.nodeKinds]
+        .filter((nodeKind) => nodeKind !== "Literal")
+        .map((nodeKind) => `"${nodeKind}"`)
+        .join(
+          " | ",
+        )} } | { readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string, readonly termType: "Literal" }`,
+    );
   }
 
   @Memoize()

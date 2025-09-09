@@ -70,13 +70,15 @@ export class ListType extends Type {
   }
 
   @Memoize()
-  override get graphqlName(): string {
-    return `new graphql.GraphQLList(new graphql.GraphQLNonNull(${this.itemType.graphqlName}))`;
+  override get graphqlName(): Type.GraphqlName {
+    return new Type.GraphqlName(
+      `new graphql.GraphQLList(new graphql.GraphQLNonNull(${this.itemType.graphqlName}))`,
+    );
   }
 
   @Memoize()
-  override get jsonName(): string {
-    return `readonly (${this.itemType.jsonName})[]`;
+  override get jsonName(): Type.JsonName {
+    return new Type.JsonName(`readonly (${this.itemType.jsonName})[]`);
   }
 
   override get mutable(): boolean {

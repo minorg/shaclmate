@@ -70,25 +70,19 @@ export class SetType<ItemTypeT extends Type = Type> extends Type {
   }
 
   @Memoize()
-  override get graphqlName(): string {
-    return `new graphql.GraphQLList(new graphql.GraphQLNonNull(${this.itemType.graphqlName}))`;
+  override get graphqlName(): Type.GraphqlName {
+    return new Type.GraphqlName(
+      `new graphql.GraphQLList(${this.itemType.graphqlName})`,
+    );
   }
 
   @Memoize()
-  override get jsonName(): string {
-    let name = `readonly (${this.itemType.jsonName})[]`;
+  override get jsonName(): Type.JsonName {
+    const name = `readonly (${this.itemType.jsonName})[]`;
     if (this.minCount === 0) {
-      name = `${name} | undefined`;
+      return new Type.JsonName(name, { optional: true });
     }
-    return name;
-  }
-
-  @Memoize()
-  override get jsonPropertySignature() {
-    return {
-      hasQuestionToken: this.minCount === 0,
-      name: `readonly (${this.itemType.jsonName})[]`,
-    };
+    return new Type.JsonName(name);
   }
 
   override get mutable(): boolean {

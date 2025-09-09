@@ -30,7 +30,7 @@ export class EagerShaclProperty<
       description: this.comment.map(JSON.stringify).extract(),
       name: this.name,
       resolve: `(source) => ${this.type.graphqlResolveExpression({ variables: { value: `source.${this.name}` } })}`,
-      type: this.type.graphqlName,
+      type: this.type.graphqlName.toString(),
     });
   }
 }

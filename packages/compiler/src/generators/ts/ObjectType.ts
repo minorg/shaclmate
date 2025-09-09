@@ -22,7 +22,7 @@ import { DeclaredType } from "./DeclaredType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
-import type { Type } from "./Type.js";
+import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -226,8 +226,10 @@ export class ObjectType extends DeclaredType {
   }
 
   @Memoize()
-  get graphqlName(): string {
-    return `${this.staticModuleName}.${syntheticNamePrefix}GraphQL`;
+  get graphqlName(): Type.GraphqlName {
+    return new Type.GraphqlName(
+      `${this.staticModuleName}.${syntheticNamePrefix}GraphQL`,
+    );
   }
 
   @Memoize()
@@ -250,8 +252,10 @@ export class ObjectType extends DeclaredType {
   }
 
   @Memoize()
-  override get jsonName(): string {
-    return `${this.staticModuleName}.${syntheticNamePrefix}Json`;
+  override get jsonName(): Type.JsonName {
+    return new Type.JsonName(
+      `${this.staticModuleName}.${syntheticNamePrefix}Json`,
+    );
   }
 
   @Memoize()
