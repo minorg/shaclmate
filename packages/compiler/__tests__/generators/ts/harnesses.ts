@@ -221,6 +221,36 @@ export const harnesses = {
     }),
     kitchenSink.LanguageInPropertiesClass,
   ),
+  lazyPropertiesClassEmpty: new ClassHarness(
+    new kitchenSink.LazyPropertiesClass({
+      $identifier,
+      // These nested objects won't be resolvable since they're not serialized with $toRdf.
+      // This harness is just intended to test the deserialization/deserialization of the identifiers.
+      lazyRequiredObjectProperty: new kitchenSink.NonClass({
+        nonClassProperty: "test required empty",
+      }),
+    }),
+    kitchenSink.LazyPropertiesClass,
+  ),
+  lazyPropertiesClassNonEmpty: new ClassHarness(
+    new kitchenSink.LazyPropertiesClass({
+      $identifier,
+      // These nested objects won't be resolvable since they're not serialized with $toRdf.
+      // This harness is just intended to test the deserialization/deserialization of the identifiers.
+      lazyObjectSetProperty: [
+        new kitchenSink.NonClass({
+          nonClassProperty: "test set",
+        }),
+      ],
+      lazyOptionalObjectProperty: new kitchenSink.NonClass({
+        nonClassProperty: "test optional",
+      }),
+      lazyRequiredObjectProperty: new kitchenSink.NonClass({
+        nonClassProperty: "test required",
+      }),
+    }),
+    kitchenSink.LazyPropertiesClass,
+  ),
   mutablePropertiesClass: new ClassHarness(
     new kitchenSink.MutablePropertiesClass({
       $identifier,
