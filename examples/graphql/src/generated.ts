@@ -931,16 +931,16 @@ export class Child extends Parent {
    */
   readonly childStringProperty: purify.Maybe<string>;
   /**
-   * Lazy nested object property
+   * Optional lazy object property
    */
-  readonly lazyNestedObjectProperty: $LazyOptionalObject<
+  readonly optionalLazyObjectProperty: $LazyOptionalObject<
     Nested,
     Nested.$Identifier
   >;
   /**
-   * Optional nested object property
+   * Optional object property
    */
-  readonly optionalNestedObjectProperty: purify.Maybe<Nested>;
+  readonly optionalObjectProperty: purify.Maybe<Nested>;
   /**
    * Optional string property
    */
@@ -954,11 +954,11 @@ export class Child extends Parent {
     parameters: {
       readonly $identifier: rdfjs.NamedNode | string;
       readonly childStringProperty?: purify.Maybe<string> | string;
-      readonly lazyNestedObjectProperty?:
+      readonly optionalLazyObjectProperty?:
         | $LazyOptionalObject<Nested, Nested.$Identifier>
         | Nested
         | purify.Maybe<Nested>;
-      readonly optionalNestedObjectProperty?: Nested | purify.Maybe<Nested>;
+      readonly optionalObjectProperty?: Nested | purify.Maybe<Nested>;
       readonly optionalStringProperty?: purify.Maybe<string> | string;
       readonly requiredStringProperty: string;
     } & ConstructorParameters<typeof Parent>[0],
@@ -977,41 +977,41 @@ export class Child extends Parent {
     }
 
     if (
-      typeof parameters.lazyNestedObjectProperty === "object" &&
-      parameters.lazyNestedObjectProperty instanceof $LazyOptionalObject
+      typeof parameters.optionalLazyObjectProperty === "object" &&
+      parameters.optionalLazyObjectProperty instanceof $LazyOptionalObject
     ) {
-      this.lazyNestedObjectProperty = parameters.lazyNestedObjectProperty;
+      this.optionalLazyObjectProperty = parameters.optionalLazyObjectProperty;
     } else if (
-      typeof parameters.lazyNestedObjectProperty === "object" &&
-      parameters.lazyNestedObjectProperty instanceof Nested
+      typeof parameters.optionalLazyObjectProperty === "object" &&
+      parameters.optionalLazyObjectProperty instanceof Nested
     ) {
-      this.lazyNestedObjectProperty = new $LazyOptionalObject<
+      this.optionalLazyObjectProperty = new $LazyOptionalObject<
         Nested,
         Nested.$Identifier
       >({
         identifier: purify.Maybe.of(
-          parameters.lazyNestedObjectProperty.$identifier,
+          parameters.optionalLazyObjectProperty.$identifier,
         ),
         object: async () =>
-          purify.Either.of(parameters.lazyNestedObjectProperty as Nested),
+          purify.Either.of(parameters.optionalLazyObjectProperty as Nested),
       });
-    } else if (purify.Maybe.isMaybe(parameters.lazyNestedObjectProperty)) {
-      this.lazyNestedObjectProperty = new $LazyOptionalObject<
+    } else if (purify.Maybe.isMaybe(parameters.optionalLazyObjectProperty)) {
+      this.optionalLazyObjectProperty = new $LazyOptionalObject<
         Nested,
         Nested.$Identifier
       >({
-        identifier: parameters.lazyNestedObjectProperty.map(
+        identifier: parameters.optionalLazyObjectProperty.map(
           (_) => _.$identifier,
         ),
         object: async () =>
           purify.Either.of(
             (
-              parameters.lazyNestedObjectProperty as purify.Maybe<Nested>
+              parameters.optionalLazyObjectProperty as purify.Maybe<Nested>
             ).unsafeCoerce(),
           ),
       });
-    } else if (typeof parameters.lazyNestedObjectProperty === "undefined") {
-      this.lazyNestedObjectProperty = new $LazyOptionalObject<
+    } else if (typeof parameters.optionalLazyObjectProperty === "undefined") {
+      this.optionalLazyObjectProperty = new $LazyOptionalObject<
         Nested,
         Nested.$Identifier
       >({
@@ -1021,25 +1021,24 @@ export class Child extends Parent {
         },
       });
     } else {
-      this.lazyNestedObjectProperty =
-        parameters.lazyNestedObjectProperty satisfies never;
+      this.optionalLazyObjectProperty =
+        parameters.optionalLazyObjectProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.optionalNestedObjectProperty)) {
-      this.optionalNestedObjectProperty =
-        parameters.optionalNestedObjectProperty;
+    if (purify.Maybe.isMaybe(parameters.optionalObjectProperty)) {
+      this.optionalObjectProperty = parameters.optionalObjectProperty;
     } else if (
-      typeof parameters.optionalNestedObjectProperty === "object" &&
-      parameters.optionalNestedObjectProperty instanceof Nested
+      typeof parameters.optionalObjectProperty === "object" &&
+      parameters.optionalObjectProperty instanceof Nested
     ) {
-      this.optionalNestedObjectProperty = purify.Maybe.of(
-        parameters.optionalNestedObjectProperty,
+      this.optionalObjectProperty = purify.Maybe.of(
+        parameters.optionalObjectProperty,
       );
-    } else if (typeof parameters.optionalNestedObjectProperty === "undefined") {
-      this.optionalNestedObjectProperty = purify.Maybe.empty();
+    } else if (typeof parameters.optionalObjectProperty === "undefined") {
+      this.optionalObjectProperty = purify.Maybe.empty();
     } else {
-      this.optionalNestedObjectProperty =
-        parameters.optionalNestedObjectProperty satisfies never;
+      this.optionalObjectProperty =
+        parameters.optionalObjectProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.optionalStringProperty)) {
@@ -1084,12 +1083,12 @@ export class Child extends Parent {
       this.childStringProperty,
     );
     _resource.add(
-      Child.$properties.lazyNestedObjectProperty["identifier"],
-      this.lazyNestedObjectProperty.identifier,
+      Child.$properties.optionalLazyObjectProperty["identifier"],
+      this.optionalLazyObjectProperty.identifier,
     );
     _resource.add(
-      Child.$properties.optionalNestedObjectProperty["identifier"],
-      this.optionalNestedObjectProperty.map((value) =>
+      Child.$properties.optionalObjectProperty["identifier"],
+      this.optionalObjectProperty.map((value) =>
         value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
@@ -1124,15 +1123,17 @@ export namespace Child {
         resolve: (source) => source.childStringProperty.extractNullable(),
         type: new graphql.GraphQLNonNull(graphql.GraphQLString),
       },
-      lazyNestedObjectProperty: {
-        description: "Lazy nested object property",
-        resolve: (source) => source.lazyNestedObjectProperty.object(),
+      optionalLazyObjectProperty: {
+        description: "Optional lazy object property",
+        resolve: async (source) =>
+          (await source.optionalLazyObjectProperty.object())
+            .unsafeCoerce()
+            .extractNullable(),
         type: new graphql.GraphQLNonNull(Nested.$GraphQL),
       },
-      optionalNestedObjectProperty: {
-        description: "Optional nested object property",
-        resolve: (source) =>
-          source.optionalNestedObjectProperty.extractNullable(),
+      optionalObjectProperty: {
+        description: "Optional object property",
+        resolve: (source) => source.optionalObjectProperty.extractNullable(),
         type: new graphql.GraphQLNonNull(Nested.$GraphQL),
       },
       optionalStringProperty: {
@@ -1169,8 +1170,11 @@ export namespace Child {
     {
       $identifier: rdfjs.NamedNode;
       childStringProperty: purify.Maybe<string>;
-      lazyNestedObjectProperty: $LazyOptionalObject<Nested, Nested.$Identifier>;
-      optionalNestedObjectProperty: purify.Maybe<Nested>;
+      optionalLazyObjectProperty: $LazyOptionalObject<
+        Nested,
+        Nested.$Identifier
+      >;
+      optionalObjectProperty: purify.Maybe<Nested>;
       optionalStringProperty: purify.Maybe<string>;
       requiredStringProperty: string;
     } & $UnwrapR<ReturnType<typeof ParentStatic.$propertiesFromRdf>>
@@ -1232,11 +1236,11 @@ export namespace Child {
     }
 
     const childStringProperty = _childStringPropertyEither.unsafeCoerce();
-    const _lazyNestedObjectPropertyEither: purify.Either<
+    const _optionalLazyObjectPropertyEither: purify.Either<
       Error,
       $LazyOptionalObject<Nested, Nested.$Identifier>
     > = $resource
-      .values($properties.lazyNestedObjectProperty["identifier"], {
+      .values($properties.optionalLazyObjectProperty["identifier"], {
         unique: true,
       })
       .head()
@@ -1254,17 +1258,17 @@ export namespace Child {
             object: (identifier) => $objectSet.nested(identifier),
           }),
       );
-    if (_lazyNestedObjectPropertyEither.isLeft()) {
-      return _lazyNestedObjectPropertyEither;
+    if (_optionalLazyObjectPropertyEither.isLeft()) {
+      return _optionalLazyObjectPropertyEither;
     }
 
-    const lazyNestedObjectProperty =
-      _lazyNestedObjectPropertyEither.unsafeCoerce();
-    const _optionalNestedObjectPropertyEither: purify.Either<
+    const optionalLazyObjectProperty =
+      _optionalLazyObjectPropertyEither.unsafeCoerce();
+    const _optionalObjectPropertyEither: purify.Either<
       Error,
       purify.Maybe<Nested>
     > = $resource
-      .values($properties.optionalNestedObjectProperty["identifier"], {
+      .values($properties.optionalObjectProperty["identifier"], {
         unique: true,
       })
       .head()
@@ -1283,12 +1287,11 @@ export namespace Child {
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
-    if (_optionalNestedObjectPropertyEither.isLeft()) {
-      return _optionalNestedObjectPropertyEither;
+    if (_optionalObjectPropertyEither.isLeft()) {
+      return _optionalObjectPropertyEither;
     }
 
-    const optionalNestedObjectProperty =
-      _optionalNestedObjectPropertyEither.unsafeCoerce();
+    const optionalObjectProperty = _optionalObjectPropertyEither.unsafeCoerce();
     const _optionalStringPropertyEither: purify.Either<
       Error,
       purify.Maybe<string>
@@ -1325,8 +1328,8 @@ export namespace Child {
       ...$super0,
       $identifier,
       childStringProperty,
-      lazyNestedObjectProperty,
-      optionalNestedObjectProperty,
+      optionalLazyObjectProperty,
+      optionalObjectProperty,
       optionalStringProperty,
       requiredStringProperty,
     });
@@ -1347,14 +1350,14 @@ export namespace Child {
         "http://example.com/childStringProperty",
       ),
     },
-    lazyNestedObjectProperty: {
+    optionalLazyObjectProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/lazyNestedObjectProperty",
+        "http://example.com/optionalLazyObjectProperty",
       ),
     },
-    optionalNestedObjectProperty: {
+    optionalObjectProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/optionalNestedObjectProperty",
+        "http://example.com/optionalObjectProperty",
       ),
     },
     optionalStringProperty: {

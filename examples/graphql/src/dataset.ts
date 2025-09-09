@@ -14,10 +14,19 @@ const resourceSet = new MutableResourceSet({
   dataset,
 });
 for (let i = 0; i < 4; i++) {
+  const lazyObject = new Nested({
+    $identifier: N3.DataFactory.namedNode(`http://example.com/child${i}/lazy`),
+    optionalNumberProperty: 2,
+    optionalStringProperty: "optional string (nested)",
+    requiredStringProperty: "required string (nested)",
+  });
+  lazyObject.$toRdf({ resourceSet });
+
   new Child({
     $identifier: N3.DataFactory.namedNode(`http://example.com/child${i}`),
     childStringProperty: "child string property",
-    optionalNestedObjectProperty: new Nested({
+    optionalLazyObjectProperty: lazyObject,
+    optionalObjectProperty: new Nested({
       $identifier: N3.DataFactory.namedNode(
         `http://example.com/child${i}/nested`,
       ),

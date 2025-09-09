@@ -28,8 +28,7 @@ export class LazyShaclProperty<
     return Maybe.of({
       description: this.comment.map(JSON.stringify).extract(),
       name: this.name,
-      // TODO: this probably won't work
-      resolve: `(source) => ${this.type.graphqlResolveExpression({ variables: { value: `source.${this.name}` } })}`,
+      resolve: `async (source) => ${this.type.graphqlResolveExpression({ variables: { value: `source.${this.name}` } })}`,
       type: this.type.graphqlName.toString(),
     });
   }
@@ -93,7 +92,7 @@ export namespace LazyShaclProperty {
     override graphqlResolveExpression({
       variables,
     }: Parameters<_Type["graphqlResolveExpression"]>[0]): string {
-      return `${variables.value}.${this.runtimeClass.objectMethodName}()`;
+      return `(await ${variables.value}.${this.runtimeClass.objectMethodName}()).unsafeCoerce()`;
     }
 
     override hashStatements({
@@ -313,6 +312,12 @@ export namespace LazyShaclProperty {
     ): string {
       const { variables } = parameters;
       return `${this.identifierType.fromRdfExpression(parameters)}.map(identifier => new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: identifier, ${this.runtimeClass.objectMethodName}: (identifier) => ${variables.objectSet}.${this.resultType.itemType.objectSetMethodNames.object}(identifier) }))`;
+    }
+
+    override graphqlResolveExpression(
+      parameters: Parameters<_Type["graphqlResolveExpression"]>[0],
+    ): string {
+      return `${super.graphqlResolveExpression(parameters)}.extractNullable()`;
     }
   }
 

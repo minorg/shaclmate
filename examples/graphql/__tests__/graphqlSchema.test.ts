@@ -12,15 +12,30 @@ describe("graphqlSchema", () => {
     });
   };
 
-  it("nested object", async ({ expect }) => {
+  it("lazy object", async ({ expect }) => {
     const result = await execute(
-      `query { child(identifier: "<http://example.com/child0>") { _identifier optionalNestedObjectProperty { _identifier } } }`,
+      `query { child(identifier: "<http://example.com/child0>") { _identifier optionalLazyObjectProperty { _identifier } } }`,
     );
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
       child: {
         _identifier: "<http://example.com/child0>",
-        optionalNestedObjectProperty: {
+        optionalLazyObjectProperty: {
+          _identifier: "<http://example.com/child0/lazy>",
+        },
+      },
+    });
+  });
+
+  it("nested object", async ({ expect }) => {
+    const result = await execute(
+      `query { child(identifier: "<http://example.com/child0>") { _identifier optionalObjectProperty { _identifier } } }`,
+    );
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      child: {
+        _identifier: "<http://example.com/child0>",
+        optionalObjectProperty: {
           _identifier: "<http://example.com/child0/nested>",
         },
       },

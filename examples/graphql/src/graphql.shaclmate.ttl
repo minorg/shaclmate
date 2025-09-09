@@ -16,7 +16,7 @@
     rdfs:comment "Child" ;
     rdfs:subClassOf :Parent ;
     sh:nodeKind sh:IRI ;
-    sh:property :lazyNestedObjectProperty, :optionalNestedObjectProperty, :optionalStringProperty, :requiredStringProperty, [
+    sh:property :optionalLazyObjectProperty, :optionalObjectProperty, :optionalStringProperty, :requiredStringProperty, [
         rdfs:comment "Child string property" ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
@@ -60,20 +60,13 @@
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property :optionalStringProperty .
 
-:lazyNestedObjectProperty
+:optionalLazyObjectProperty
     shaclmate:lazy true ;
     a sh:PropertyShape ;
-    rdfs:comment "Lazy nested object property" ;
+    rdfs:comment "Optional lazy object property" ;
     sh:maxCount 1 ;
     sh:node :Nested ;
-    sh:path :lazyNestedObjectProperty .
-
-:optionalNestedObjectProperty
-    a sh:PropertyShape ;
-    rdfs:comment "Optional nested object property" ;
-    sh:maxCount 1 ;
-    sh:node :Nested ;
-    sh:path :optionalNestedObjectProperty .
+    sh:path :optionalLazyObjectProperty .
 
 :optionalNumberProperty
     a sh:PropertyShape ;
@@ -81,6 +74,13 @@
     sh:datatype xsd:decimal ;
     sh:maxCount 1 ;
     sh:path :optionalNumberProperty .
+
+:optionalObjectProperty
+    a sh:PropertyShape ;
+    rdfs:comment "Optional object property" ;
+    sh:maxCount 1 ;
+    sh:node :Nested ;
+    sh:path :optionalObjectProperty .
 
 :optionalStringProperty
     a sh:PropertyShape ;
