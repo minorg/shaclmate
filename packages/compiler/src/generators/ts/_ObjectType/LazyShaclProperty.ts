@@ -204,6 +204,16 @@ export namespace LazyShaclProperty {
       });
     }
 
+    @Memoize()
+    override get conversions(): readonly _Type.Conversion[] {
+      return super.conversions.concat({
+        conversionExpression: () =>
+          `new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: [], ${this.runtimeClass.objectMethodName}: async () => { throw new Error("should never be called"); } })`,
+        sourceTypeCheckExpression: (value) => `typeof ${value} === "undefined"`,
+        sourceTypeName: "undefined",
+      });
+    }
+
     override fromJsonExpression(
       parameters: Parameters<_Type["fromJsonExpression"]>[0],
     ): string {
@@ -256,13 +266,29 @@ export namespace LazyShaclProperty {
 
     @Memoize()
     override get conversions(): readonly _Type.Conversion[] {
-      return super.conversions.concat({
-        conversionExpression: (value) =>
-          `new ${this.runtimeClass.name}({ identifier: purify.Maybe.of(${value}.${syntheticNamePrefix}identifier), object: async () => purify.Either.of(${value} as ${this.resultType.itemType.name}) })`,
-        sourceTypeCheckExpression: (value) =>
-          `typeof ${value} === "object" && ${value} instanceof ${this.resultType.itemType.name}`,
-        sourceTypeName: this.resultType.itemType.name,
-      });
+      return super.conversions.concat(
+        {
+          conversionExpression: (value) =>
+            `new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: purify.Maybe.of(${value}.${syntheticNamePrefix}identifier), ${this.runtimeClass.objectMethodName}: async () => purify.Either.of(${value} as ${this.resultType.itemType.name}) })`,
+          sourceTypeCheckExpression: (value) =>
+            `typeof ${value} === "object" && ${value} instanceof ${this.resultType.itemType.name}`,
+          sourceTypeName: this.resultType.itemType.name,
+        },
+        {
+          conversionExpression: (value) =>
+            `new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: ${value}.map(_ => _.${syntheticNamePrefix}identifier), ${this.runtimeClass.objectMethodName}: async () => purify.Either.of((${value} as purify.Maybe<${this.resultType.itemType.name}>).unsafeCoerce()) })`,
+          sourceTypeCheckExpression: (value) =>
+            `purify.Maybe.isMaybe(${value})`,
+          sourceTypeName: `purify.Maybe<${this.resultType.itemType.name}>`,
+        },
+        {
+          conversionExpression: () =>
+            `new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: purify.Maybe.empty(), ${this.runtimeClass.objectMethodName}: async () => { throw new Error("should never be called"); } })`,
+          sourceTypeCheckExpression: (value) =>
+            `typeof ${value} === "undefined"`,
+          sourceTypeName: "undefined",
+        },
+      );
     }
 
     override fromRdfExpression(
@@ -293,7 +319,7 @@ export namespace LazyShaclProperty {
     override get conversions(): readonly _Type.Conversion[] {
       return super.conversions.concat({
         conversionExpression: (value) =>
-          `new ${this.runtimeClass.name}({ identifier: ${value}.${syntheticNamePrefix}identifier, object: async () => purify.Either.of(${value} as ${this.resultType.name}) })`,
+          `new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: ${value}.${syntheticNamePrefix}identifier, ${this.runtimeClass.objectMethodName}: async () => purify.Either.of(${value} as ${this.resultType.name}) })`,
         sourceTypeCheckExpression: (value) =>
           `typeof ${value} === "object" && ${value} instanceof ${this.resultType.name}`,
         sourceTypeName: this.resultType.name,

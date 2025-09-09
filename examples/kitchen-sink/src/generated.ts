@@ -7204,13 +7204,14 @@ export class LazyPropertiesClass {
 
   constructor(parameters: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly lazyObjectSetProperty: $LazyObjectSet<
+    readonly lazyObjectSetProperty?: $LazyObjectSet<
       NonClass,
       NonClass.$Identifier
     >;
-    readonly lazyOptionalObjectProperty:
+    readonly lazyOptionalObjectProperty?:
       | $LazyOptionalObject<NonClass, NonClass.$Identifier>
-      | NonClass;
+      | NonClass
+      | purify.Maybe<NonClass>;
     readonly lazyRequiredObjectProperty:
       | $LazyRequiredObject<NonClass, NonClass.$Identifier>
       | NonClass;
@@ -7224,7 +7225,26 @@ export class LazyPropertiesClass {
       this._$identifier = parameters.$identifier satisfies never;
     }
 
-    this.lazyObjectSetProperty = parameters.lazyObjectSetProperty;
+    if (
+      typeof parameters.lazyObjectSetProperty === "object" &&
+      parameters.lazyObjectSetProperty instanceof $LazyObjectSet
+    ) {
+      this.lazyObjectSetProperty = parameters.lazyObjectSetProperty;
+    } else if (typeof parameters.lazyObjectSetProperty === "undefined") {
+      this.lazyObjectSetProperty = new $LazyObjectSet<
+        NonClass,
+        NonClass.$Identifier
+      >({
+        identifiers: [],
+        objects: async () => {
+          throw new Error("should never be called");
+        },
+      });
+    } else {
+      this.lazyObjectSetProperty =
+        parameters.lazyObjectSetProperty satisfies never;
+    }
+
     if (
       typeof parameters.lazyOptionalObjectProperty === "object" &&
       parameters.lazyOptionalObjectProperty instanceof $LazyOptionalObject
@@ -7243,6 +7263,31 @@ export class LazyPropertiesClass {
         ),
         object: async () =>
           purify.Either.of(parameters.lazyOptionalObjectProperty as NonClass),
+      });
+    } else if (purify.Maybe.isMaybe(parameters.lazyOptionalObjectProperty)) {
+      this.lazyOptionalObjectProperty = new $LazyOptionalObject<
+        NonClass,
+        NonClass.$Identifier
+      >({
+        identifier: parameters.lazyOptionalObjectProperty.map(
+          (_) => _.$identifier,
+        ),
+        object: async () =>
+          purify.Either.of(
+            (
+              parameters.lazyOptionalObjectProperty as purify.Maybe<NonClass>
+            ).unsafeCoerce(),
+          ),
+      });
+    } else if (typeof parameters.lazyOptionalObjectProperty === "undefined") {
+      this.lazyOptionalObjectProperty = new $LazyOptionalObject<
+        NonClass,
+        NonClass.$Identifier
+      >({
+        identifier: purify.Maybe.empty(),
+        object: async () => {
+          throw new Error("should never be called");
+        },
       });
     } else {
       this.lazyOptionalObjectProperty =
