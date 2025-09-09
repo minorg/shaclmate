@@ -7204,10 +7204,9 @@ export class LazyPropertiesClass {
 
   constructor(parameters: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly lazyObjectSetProperty?: $LazyObjectSet<
-      NonClass,
-      NonClass.$Identifier
-    >;
+    readonly lazyObjectSetProperty?:
+      | $LazyObjectSet<NonClass, NonClass.$Identifier>
+      | readonly NonClass[];
     readonly lazyOptionalObjectProperty?:
       | $LazyOptionalObject<NonClass, NonClass.$Identifier>
       | NonClass
@@ -7230,6 +7229,17 @@ export class LazyPropertiesClass {
       parameters.lazyObjectSetProperty instanceof $LazyObjectSet
     ) {
       this.lazyObjectSetProperty = parameters.lazyObjectSetProperty;
+    } else if (typeof parameters.lazyObjectSetProperty === "object") {
+      this.lazyObjectSetProperty = new $LazyObjectSet<
+        NonClass,
+        NonClass.$Identifier
+      >({
+        identifiers: parameters.lazyObjectSetProperty.map((_) => _.$identifier),
+        objects: async () =>
+          purify.Either.of(
+            parameters.lazyObjectSetProperty as readonly NonClass[],
+          ),
+      });
     } else if (typeof parameters.lazyObjectSetProperty === "undefined") {
       this.lazyObjectSetProperty = new $LazyObjectSet<
         NonClass,

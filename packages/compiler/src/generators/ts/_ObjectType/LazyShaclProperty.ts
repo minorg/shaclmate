@@ -206,12 +206,21 @@ export namespace LazyShaclProperty {
 
     @Memoize()
     override get conversions(): readonly _Type.Conversion[] {
-      return super.conversions.concat({
-        conversionExpression: () =>
-          `new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: [], ${this.runtimeClass.objectMethodName}: async () => { throw new Error("should never be called"); } })`,
-        sourceTypeCheckExpression: (value) => `typeof ${value} === "undefined"`,
-        sourceTypeName: "undefined",
-      });
+      return super.conversions.concat(
+        {
+          conversionExpression: (value) =>
+            `new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: ${value}.map(_ => _.${syntheticNamePrefix}identifier), ${this.runtimeClass.objectMethodName}: async () => purify.Either.of(${value} as readonly ${this.resultType.itemType.name}[]) })`,
+          sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
+          sourceTypeName: `readonly ${this.resultType.itemType.name}[]`,
+        },
+        {
+          conversionExpression: () =>
+            `new ${this.runtimeClass.name}({ ${this.runtimeClass.identifierPropertyName}: [], ${this.runtimeClass.objectMethodName}: async () => { throw new Error("should never be called"); } })`,
+          sourceTypeCheckExpression: (value) =>
+            `typeof ${value} === "undefined"`,
+          sourceTypeName: "undefined",
+        },
+      );
     }
 
     override fromJsonExpression(
