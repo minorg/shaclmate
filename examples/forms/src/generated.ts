@@ -319,9 +319,7 @@ export namespace NestedNodeShape {
     readonly requiredStringProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -719,9 +717,7 @@ export namespace FormNodeShape {
     readonly requiredStringProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
