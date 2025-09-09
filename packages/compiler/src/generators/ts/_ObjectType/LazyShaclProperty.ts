@@ -138,6 +138,18 @@ export namespace LazyShaclProperty {
         .concat(this.runtimeClass.snippetDeclaration);
     }
 
+    override sparqlConstructTemplateTriples(
+      parameters: Parameters<_Type["sparqlConstructTemplateTriples"]>[0],
+    ): readonly string[] {
+      return this.identifierType.sparqlConstructTemplateTriples(parameters);
+    }
+
+    override sparqlWherePatterns(
+      parameters: Parameters<_Type["sparqlWherePatterns"]>[0],
+    ): readonly string[] {
+      return this.identifierType.sparqlWherePatterns(parameters);
+    }
+
     override toJsonExpression({
       variables,
     }: Parameters<_Type["toJsonExpression"]>[0]): string {

@@ -7895,34 +7895,44 @@ export namespace LazyPropertiesClass {
       (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass");
     const propertyPatterns: readonly sparqljs.Pattern[] = [
       {
-        triples: [
+        patterns: [
           {
-            object: dataFactory.variable!(
-              `${variablePrefix}LazyObjectSetProperty`,
-            ),
-            predicate:
-              LazyPropertiesClass.$properties.lazyObjectSetProperty[
-                "identifier"
-              ],
-            subject,
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}LazyObjectSetProperty`,
+                ),
+                predicate:
+                  LazyPropertiesClass.$properties.lazyObjectSetProperty[
+                    "identifier"
+                  ],
+                subject,
+              },
+            ],
+            type: "bgp",
           },
         ],
-        type: "bgp",
+        type: "optional",
       },
       {
-        triples: [
+        patterns: [
           {
-            object: dataFactory.variable!(
-              `${variablePrefix}LazyOptionalObjectProperty`,
-            ),
-            predicate:
-              LazyPropertiesClass.$properties.lazyOptionalObjectProperty[
-                "identifier"
-              ],
-            subject,
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}LazyOptionalObjectProperty`,
+                ),
+                predicate:
+                  LazyPropertiesClass.$properties.lazyOptionalObjectProperty[
+                    "identifier"
+                  ],
+                subject,
+              },
+            ],
+            type: "bgp",
           },
         ],
-        type: "bgp",
+        type: "optional",
       },
       {
         triples: [
