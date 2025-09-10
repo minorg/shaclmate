@@ -7,5 +7,5 @@ import type { TermType } from "./TermType.js";
 export interface IdentifierType
   extends TermType<NamedNode, BlankNode | NamedNode> {
   readonly kind: "IdentifierType";
-  readonly nodeKinds: Set<"BlankNode" | "NamedNode">;
+  readonly nodeKinds: Set<IdentifierKind>;
 }

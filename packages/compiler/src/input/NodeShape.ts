@@ -1,5 +1,8 @@
 import type { NamedNode } from "@rdfjs/types";
-import { NodeShape as ShaclCoreNodeShape } from "@shaclmate/shacl-ast";
+import {
+  type IdentifierKind,
+  NodeShape as ShaclCoreNodeShape,
+} from "@shaclmate/shacl-ast";
 
 import { Maybe } from "purify-ts";
 
@@ -123,14 +126,14 @@ export class NodeShape extends ShaclCoreNodeShape<
     return this.generatedShaclmateNodeShape.mutable;
   }
 
-  get nodeKinds(): Set<"BlankNode" | "NamedNode"> {
-    const thisNodeKinds = new Set<"BlankNode" | "NamedNode">(
+  get nodeKinds(): Set<IdentifierKind> {
+    const thisNodeKinds = new Set<IdentifierKind>(
       [...this.constraints.nodeKinds.orDefault(new Set())].filter(
         (nodeKind) => nodeKind !== "Literal",
-      ) as ("BlankNode" | "NamedNode")[],
+      ) as IdentifierKind[],
     );
 
-    const parentNodeKinds = new Set<"BlankNode" | "NamedNode">();
+    const parentNodeKinds = new Set<IdentifierKind>();
     for (const parentNodeShape of this.parentNodeShapes) {
       for (const parentNodeKind of parentNodeShape.nodeKinds) {
         parentNodeKinds.add(parentNodeKind);

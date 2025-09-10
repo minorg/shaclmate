@@ -1,5 +1,6 @@
 export * from "./defaultFactory.js";
 export * from "./Factory.js";
+export * from "./IdentifierKind.js";
 export * from "./NodeKind.js";
 export * from "./PropertyPath.js";
 export * from "./NodeShape.js";
