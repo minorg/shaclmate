@@ -52,4 +52,9 @@ export interface Name {
    * shaclmate:name.
    */
   readonly shaclmateName: Maybe<string>;
+
+  /**
+   * Synthesized in code.
+   */
+  readonly syntheticName: Maybe<string>;
 }

@@ -4,8 +4,11 @@ import {
   type SourceFile,
 } from "ts-morph";
 
+import N3 from "n3";
+import { Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import * as ast from "../../ast/index.js";
-
+import type { TsFeature } from "../../enums/TsFeature.js";
 import type { Generator } from "../Generator.js";
 import type { Import } from "./Import.js";
 import { ObjectType } from "./ObjectType.js";
@@ -13,25 +16,28 @@ import { ObjectUnionType } from "./ObjectUnionType.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class TsGenerator implements Generator {
+  private readonly typeFactory = new TypeFactory();
+
   generate(ast_: ast.Ast): string {
     const project = new Project({
       useInMemoryFileSystem: true,
     });
     const sourceFile = project.createSourceFile("generated.ts");
 
-    const typeFactory = new TypeFactory();
-
     this.addStatements({
-      objectTypes: ast.ObjectType.toposort(ast_.objectTypes).flatMap(
-        (astObjectType) => {
-          const type = typeFactory.createTypeFromAstType(astObjectType);
+      objectTypes: this.synthesizeObjectTypes({
+        astObjectTypes: ast_.objectTypes,
+      }).concat(
+        ast.ObjectType.toposort(ast_.objectTypes).flatMap((astObjectType) => {
+          const type = this.typeFactory.createTypeFromAstType(astObjectType);
           return type instanceof ObjectType ? [type] : [];
-        },
+        }),
       ),
       objectUnionTypes: ast_.objectUnionTypes.flatMap((astObjectUnionType) => {
-        const type = typeFactory.createTypeFromAstType(astObjectUnionType);
+        const type = this.typeFactory.createTypeFromAstType(astObjectUnionType);
         return type instanceof ObjectUnionType ? [type] : [];
       }),
       sourceFile,
@@ -129,5 +135,90 @@ export class TsGenerator implements Generator {
         objectUnionTypes: objectUnionTypesSortedByName,
       }).toList(),
     );
+  }
+
+  private synthesizeObjectTypes({
+    astObjectTypes,
+  }: { astObjectTypes: readonly ast.ObjectType[] }): readonly ObjectType[] {
+    const synthesizeStubObjectType = ({
+      features,
+      identifierKinds,
+      name,
+    }: {
+      features: Set<TsFeature>;
+      identifierKinds: Set<"BlankNode" | "NamedNode">;
+      name: string;
+    }): ObjectType =>
+      this.typeFactory.createObjectTypeFromAstType({
+        abstract: false,
+        ancestorObjectTypes: [],
+        childObjectTypes: [],
+        comment: Maybe.empty(),
+        descendantObjectTypes: [],
+        export: true,
+        extern: false,
+        fromRdfType: Maybe.empty(),
+        identifierIn: [],
+        identifierKinds,
+        identifierMintingStrategy: Maybe.empty(),
+        kind: "ObjectType",
+        label: Maybe.empty(),
+        name: {
+          identifier: N3.DataFactory.blankNode(),
+          label: Maybe.empty(),
+          propertyPath: Maybe.empty(),
+          shName: Maybe.empty(),
+          shaclmateName: Maybe.empty(),
+          syntheticName: Maybe.of(name),
+        },
+        parentObjectTypes: [],
+        properties: [],
+        toRdfTypes: [],
+        tsFeatures: features,
+        tsImports: [],
+        tsObjectDeclarationType: "class",
+      } satisfies ast.ObjectType);
+
+    let defaultStubObjectType: ObjectType | undefined;
+    let namedDefaultStubObjectType: ObjectType | undefined;
+    for (const astObjectType of astObjectTypes) {
+      if (!astObjectType.properties.some((property) => property.lazy)) {
+        continue;
+      }
+
+      if (
+        astObjectType.identifierKinds.size === 1 &&
+        astObjectType.identifierKinds.has("NamedNode")
+      ) {
+        if (!namedDefaultStubObjectType) {
+          namedDefaultStubObjectType = synthesizeStubObjectType({
+            features: astObjectType.tsFeatures,
+            identifierKinds: astObjectType.identifierKinds,
+            name: `${syntheticNamePrefix}NamedDefaultStub`,
+          });
+        }
+      } else if (!defaultStubObjectType) {
+        invariant(astObjectType.identifierKinds.size === 2);
+        defaultStubObjectType = synthesizeStubObjectType({
+          features: astObjectType.tsFeatures,
+          identifierKinds: astObjectType.identifierKinds,
+          name: `${syntheticNamePrefix}DefaultStub`,
+        });
+      }
+
+      if (defaultStubObjectType && namedDefaultStubObjectType) {
+        break;
+      }
+    }
+
+    const syntheticObjectTypes: ObjectType[] = [];
+    if (defaultStubObjectType) {
+      syntheticObjectTypes.push(defaultStubObjectType);
+    }
+    if (namedDefaultStubObjectType) {
+      syntheticObjectTypes.push(namedDefaultStubObjectType);
+    }
+
+    return syntheticObjectTypes;
   }
 }

@@ -27,6 +27,11 @@ function* tsNameAlternatives(astName: ast.Name): Iterable<string | undefined> {
 }
 
 export function tsName(astName: ast.Name): string {
+  const syntheticName = astName.syntheticName.extract();
+  if (syntheticName) {
+    return syntheticName;
+  }
+
   for (const tsNameAlternative of tsNameAlternatives(astName)) {
     if (tsNameAlternative) {
       return stringToValidTsIdentifier(tsNameAlternative);
