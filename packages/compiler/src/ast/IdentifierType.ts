@@ -1,4 +1,5 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
+import type { IdentifierKind } from "@shaclmate/shacl-ast";
 import type { TermType } from "./TermType.js";
 
 /**

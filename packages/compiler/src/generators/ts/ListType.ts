@@ -2,6 +2,7 @@ import type { NamedNode } from "@rdfjs/types";
 
 import { Maybe } from "purify-ts";
 
+import type { IdentifierKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../enums/index.js";
@@ -15,7 +16,7 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 export class ListType extends Type {
   private readonly _mutable: boolean;
   private readonly identifierMintingStrategy: IdentifierMintingStrategy;
-  private readonly identifierNodeKind: "BlankNode" | "NamedNode";
+  private readonly identifierKind: IdentifierKind;
   private readonly toRdfTypes: readonly NamedNode[];
 
   readonly itemType: Type;
@@ -23,23 +24,23 @@ export class ListType extends Type {
   readonly typeof = "object";
 
   constructor({
-    identifierNodeKind,
+    identifierKind,
     itemType,
     identifierMintingStrategy,
     mutable,
     toRdfTypes,
   }: {
-    identifierNodeKind: ListType["identifierNodeKind"];
+    identifierKind: ListType["identifierKind"];
     itemType: Type;
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     mutable: boolean;
     toRdfTypes: readonly NamedNode[];
   }) {
     super();
-    this.identifierNodeKind = identifierNodeKind;
+    this.identifierKind = identifierKind;
     this.itemType = itemType;
     this.identifierMintingStrategy = identifierMintingStrategy.orDefault(
-      identifierNodeKind === "BlankNode" ? "blankNode" : "sha256",
+      identifierKind === "BlankNode" ? "blankNode" : "sha256",
     );
     this._mutable = mutable;
     this.toRdfTypes = toRdfTypes;
@@ -355,7 +356,7 @@ export class ListType extends Type {
     let mutableResourceTypeName: string;
     let resourceSetMethodName: string;
     let subListIdentifier: string;
-    switch (this.identifierNodeKind) {
+    switch (this.identifierKind) {
       case "BlankNode": {
         listIdentifier = subListIdentifier = "dataFactory.blankNode()";
         mutableResourceTypeName = "rdfjsResource.MutableResource";
@@ -432,7 +433,7 @@ export class ListType extends Type {
     const imports: Import[] = this.itemType.useImports(parameters).concat();
     if (
       parameters.features.has("hash") &&
-      this.identifierNodeKind === "NamedNode"
+      this.identifierKind === "NamedNode"
     ) {
       imports.push(Import.SHA256);
     }

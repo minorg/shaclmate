@@ -1,5 +1,6 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
 
+import type { IdentifierKind } from "@shaclmate/shacl-ast";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
@@ -25,7 +26,7 @@ function transformNodeShapeToAstListType(
   // Put a placeholder in the cache to deal with cyclic references
   const listType: ast.ListType = {
     comment: pickLiteral(nodeShape.comments).map((literal) => literal.value),
-    identifierNodeKind: nodeShape.nodeKinds.has("BlankNode")
+    identifierKind: nodeShape.nodeKinds.has("BlankNode")
       ? "BlankNode"
       : "NamedNode",
     itemType: {
@@ -43,8 +44,13 @@ function transformNodeShapeToAstListType(
 
   const properties: ast.ObjectType.Property[] = [];
   for (const propertyShape of nodeShape.constraints.properties) {
-    const propertyEither =
-      this.transformPropertyShapeToAstObjectTypeProperty(propertyShape);
+    const propertyEither = this.transformPropertyShapeToAstObjectTypeProperty({
+      objectType: {
+        identifierKinds: new Set<IdentifierKind>(),
+        tsFeatures: nodeShape.tsFeatures.orDefault(new Set(tsFeaturesDefault)),
+      },
+      propertyShape,
+    });
     if (propertyEither.isLeft()) {
       logger.warn(
         "error transforming %s %s: %s",
@@ -347,8 +353,10 @@ export function transformNodeShapeToAstType(
     }
   };
   for (const propertyShape of nodeShape.constraints.properties) {
-    const propertyEither =
-      this.transformPropertyShapeToAstObjectTypeProperty(propertyShape);
+    const propertyEither = this.transformPropertyShapeToAstObjectTypeProperty({
+      objectType,
+      propertyShape,
+    });
     if (propertyEither.isLeft()) {
       logger.warn(
         "error transforming %s %s: %s",

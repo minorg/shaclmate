@@ -10,6 +10,7 @@ import type {
   TsObjectDeclarationType,
 } from "../enums/index.js";
 import type { Name } from "./Name.js";
+import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { Type } from "./Type.js";
 
 export interface ObjectType {
@@ -163,11 +164,6 @@ export namespace ObjectType {
     readonly label: Maybe<string>;
 
     /**
-     * The property value should be lazily accessed/deserialized rather than eagerly.
-     */
-    readonly lazy: Maybe<boolean>;
-
-    /**
      * The property should be mutable in generated code i.e., it should be re-assignable. The property value may or may
      * not be mutable.
      */
@@ -192,6 +188,11 @@ export namespace ObjectType {
      * Does the property directly or indirectly reference the ObjectType itself?
      */
     readonly recursive?: boolean;
+
+    /**
+     * The property will be resolved lazily, with this type serving as a stub before resolution of the actual type.
+     */
+    readonly stubType: Maybe<ObjectType | ObjectUnionType>;
 
     /**
      * Type of this property.
