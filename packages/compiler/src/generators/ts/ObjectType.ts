@@ -514,23 +514,26 @@ export namespace ObjectType {
   export type IdentifierProperty = _ObjectType.IdentifierProperty;
   export const LazyShaclProperty = _ObjectType.LazyShaclProperty;
   export type LazyShaclProperty<
-    IdentifierTypeT extends _ObjectType.LazyShaclProperty.Type.IdentifierType,
     LazyTypeT extends _ObjectType.LazyShaclProperty.Type<
-      IdentifierTypeT,
-      ResultTypeT
+      ResolvedTypeT,
+      StubTypeT
     >,
-    ResultTypeT extends _ObjectType.LazyShaclProperty.Type.ResultType,
-  > = _ObjectType.LazyShaclProperty<IdentifierTypeT, LazyTypeT, ResultTypeT>;
+    ResolvedTypeT extends
+      _ObjectType.LazyShaclProperty.Type.ResolvedTypeConstraint,
+    StubTypeT extends _ObjectType.LazyShaclProperty.Type.StubTypeConstraint,
+  > = _ObjectType.LazyShaclProperty<LazyTypeT, ResolvedTypeT, StubTypeT>;
   export namespace LazyShaclProperty {
     export type Type<
-      IdentifierTypeT extends _ObjectType.LazyShaclProperty.Type.IdentifierType,
-      ResultTypeT extends _ObjectType.LazyShaclProperty.Type.ResultType,
-    > = _ObjectType.LazyShaclProperty.Type<IdentifierTypeT, ResultTypeT>;
+      ResolvedTypeT extends
+        _ObjectType.LazyShaclProperty.Type.ResolvedTypeConstraint,
+      StubTypeT extends _ObjectType.LazyShaclProperty.Type.StubTypeConstraint,
+    > = _ObjectType.LazyShaclProperty.Type<ResolvedTypeT, StubTypeT>;
 
     export namespace Type {
-      export type IdentifierType =
-        _ObjectType.LazyShaclProperty.Type.IdentifierType;
-      export type ResultType = _ObjectType.LazyShaclProperty.Type.ResultType;
+      export type ResolvedTypeConstraint =
+        _ObjectType.LazyShaclProperty.Type.ResolvedTypeConstraint;
+      export type StubTypeConstraint =
+        _ObjectType.LazyShaclProperty.Type.StubTypeConstraint;
     }
   }
   export type ObjectSetMethodNames = {

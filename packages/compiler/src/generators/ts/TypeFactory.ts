@@ -424,34 +424,72 @@ export class TypeFactory {
 
     const name = tsName(astObjectTypeProperty.name);
 
-    if (astObjectTypeProperty.lazy.orDefault(false)) {
-      const eagerType = this.createTypeFromAstType(astObjectTypeProperty.type);
+    if (astObjectTypeProperty.stubType.isJust()) {
+      const resolvedType = this.createTypeFromAstType(
+        astObjectTypeProperty.type,
+      );
       let lazyType: ObjectType.LazyShaclProperty.Type<
-        ObjectType.LazyShaclProperty.Type.IdentifierType,
-        ObjectType.LazyShaclProperty.Type.ResultType
+        ObjectType.LazyShaclProperty.Type.ResolvedTypeConstraint,
+        ObjectType.LazyShaclProperty.Type.StubTypeConstraint
       >;
-      if (eagerType instanceof OptionType || eagerType instanceof SetType) {
+      const stubType = this.createTypeFromAstType(
+        astObjectTypeProperty.stubType.unsafeCoerce(),
+      );
+
+      if (
+        resolvedType instanceof OptionType ||
+        resolvedType instanceof SetType
+      ) {
         invariant(
-          eagerType.itemType instanceof ObjectType ||
-            eagerType.itemType instanceof ObjectUnionType,
-          `lazy property ${name} on ${objectType.name} of ${eagerType.kind} has ${eagerType.itemType.kind} items`,
+          stubType instanceof OptionType || stubType instanceof SetType,
         );
-        if (eagerType instanceof OptionType) {
-          lazyType = new ObjectType.LazyShaclProperty.OptionalObjectType(
-            eagerType,
+        invariant(
+          resolvedType.itemType instanceof ObjectType ||
+            resolvedType.itemType instanceof ObjectUnionType,
+          `lazy property ${name} on ${objectType.name} of ${resolvedType.kind} has ${resolvedType.itemType.kind} items`,
+        );
+        invariant(
+          stubType.itemType instanceof ObjectType ||
+            stubType.itemType instanceof ObjectUnionType,
+          `lazy property ${name} on ${objectType.name} of ${resolvedType.kind} has ${stubType.itemType.kind} stubs`,
+        );
+
+        if (resolvedType instanceof OptionType) {
+          invariant(
+            stubType instanceof OptionType,
+            `lazy property ${name} on ${objectType.name} of ${resolvedType.kind} has ${stubType.kind} stubs`,
           );
+
+          lazyType = new ObjectType.LazyShaclProperty.OptionalObjectType({
+            resolvedType,
+            stubType,
+          });
         } else {
-          lazyType = new ObjectType.LazyShaclProperty.ObjectSetType(eagerType);
+          invariant(
+            stubType instanceof SetType,
+            `lazy property ${name} on ${objectType.name} of ${resolvedType.kind} has ${stubType.kind} stubs`,
+          );
+
+          lazyType = new ObjectType.LazyShaclProperty.ObjectSetType({
+            resolvedType,
+            stubType,
+          });
         }
       } else {
         invariant(
-          eagerType instanceof ObjectType ||
-            eagerType instanceof ObjectUnionType,
-          `lazy property ${name} on ${objectType.name} has ${(eagerType as any).kind}`,
+          resolvedType instanceof ObjectType ||
+            resolvedType instanceof ObjectUnionType,
+          `lazy property ${name} on ${objectType.name} has ${(resolvedType as any).kind}`,
         );
-        lazyType = new ObjectType.LazyShaclProperty.RequiredObjectType(
-          eagerType,
+        invariant(
+          stubType instanceof ObjectType || stubType instanceof ObjectUnionType,
+          `lazy property ${name} on ${objectType.name} of ${resolvedType.kind} has ${(stubType as any).kind} stubs`,
         );
+
+        lazyType = new ObjectType.LazyShaclProperty.RequiredObjectType({
+          resolvedType,
+          stubType,
+        });
       }
 
       property = new ObjectType.LazyShaclProperty({
