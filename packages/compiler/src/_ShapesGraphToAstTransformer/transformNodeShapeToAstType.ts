@@ -1,6 +1,6 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
 
-import type { IdentifierKind } from "@shaclmate/shacl-ast";
+import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
@@ -26,7 +26,7 @@ function transformNodeShapeToAstListType(
   // Put a placeholder in the cache to deal with cyclic references
   const listType: ast.ListType = {
     comment: pickLiteral(nodeShape.comments).map((literal) => literal.value),
-    identifierKind: nodeShape.nodeKinds.has("BlankNode")
+    identifierNodeKind: nodeShape.nodeKinds.has("BlankNode")
       ? "BlankNode"
       : "NamedNode",
     itemType: {
@@ -46,7 +46,7 @@ function transformNodeShapeToAstListType(
   for (const propertyShape of nodeShape.constraints.properties) {
     const propertyEither = this.transformPropertyShapeToAstObjectTypeProperty({
       objectType: {
-        identifierKinds: new Set<IdentifierKind>(),
+        identifierNodeKinds: new Set<IdentifierNodeKind>(),
         tsFeatures: nodeShape.tsFeatures.orDefault(new Set(tsFeaturesDefault)),
       },
       propertyShape,
@@ -280,7 +280,7 @@ export function transformNodeShapeToAstType(
       identifierIn.length === 0
         ? nodeShape.identifierMintingStrategy
         : Maybe.empty(),
-    identifierKinds:
+    identifierNodeKinds:
       identifierIn.length === 0 ? nodeShape.nodeKinds : new Set(["NamedNode"]),
     name: this.shapeAstName(nodeShape),
     properties: [], // This is mutable, we'll populate it below.

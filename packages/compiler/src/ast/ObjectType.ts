@@ -81,7 +81,7 @@ export interface ObjectType {
    *
    * Used to associate instances with an RDF identifier.
    */
-  readonly identifierKinds: Set<Exclude<NodeKind, "Literal">>;
+  readonly identifierNodeKinds: Set<Exclude<NodeKind, "Literal">>;
 
   /**
    * Strategy for minting new object identifiers.

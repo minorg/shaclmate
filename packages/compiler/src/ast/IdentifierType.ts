@@ -1,5 +1,5 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import type { IdentifierKind } from "@shaclmate/shacl-ast";
+import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import type { TermType } from "./TermType.js";
 
 /**
@@ -8,5 +8,5 @@ import type { TermType } from "./TermType.js";
 export interface IdentifierType
   extends TermType<NamedNode, BlankNode | NamedNode> {
   readonly kind: "IdentifierType";
-  readonly nodeKinds: Set<IdentifierKind>;
+  readonly nodeKinds: Set<IdentifierNodeKind>;
 }

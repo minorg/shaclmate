@@ -1,5 +1,5 @@
 import type { NamedNode } from "@rdfjs/types";
-import type { IdentifierKind } from "@shaclmate/shacl-ast";
+import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import type { Maybe } from "purify-ts";
 import type { IdentifierMintingStrategy } from "../enums/IdentifierMintingStrategy.js";
 import type { Name } from "./Name.js";
@@ -21,7 +21,7 @@ export interface ListType {
   /**
    * Type of identifier (blank or named node) to use for lists and sub-lists.
    */
-  readonly identifierKind: IdentifierKind;
+  readonly identifierNodeKind: IdentifierNodeKind;
 
   /**
    * List item type.

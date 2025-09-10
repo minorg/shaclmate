@@ -524,7 +524,7 @@
                   "value": "http://example.com/DirectRecursiveClass"
                 }
               },
-              "identifierKinds": [
+              "identifierNodeKinds": [
                 "BlankNode",
                 "NamedNode"
               ],
@@ -572,7 +572,7 @@
                   "value": "http://example.com/IndirectRecursiveHelperClass"
                 }
               },
-              "identifierKinds": [
+              "identifierNodeKinds": [
                 "BlankNode",
                 "NamedNode"
               ],
@@ -619,7 +619,7 @@
                   "value": "http://example.com/IndirectRecursiveClass"
                 }
               },
-              "identifierKinds": [
+              "identifierNodeKinds": [
                 "BlankNode",
                 "NamedNode"
               ],
@@ -750,7 +750,7 @@
                   "value": "http://example.com/ExternClass"
                 }
               },
-              "identifierKinds": [
+              "identifierNodeKinds": [
                 "BlankNode",
                 "NamedNode"
               ],
@@ -810,7 +810,7 @@
                   "value": "http://example.com/ExternPropertiesInlineNestedClass"
                 }
               },
-              "identifierKinds": [
+              "identifierNodeKinds": [
                 "BlankNode",
                 "NamedNode"
               ],
@@ -1380,7 +1380,7 @@
                     "value": "http://example.com/NonClass"
                   }
                 },
-                "identifierKinds": [
+                "identifierNodeKinds": [
                   "BlankNode",
                   "NamedNode"
                 ],
@@ -2127,7 +2127,7 @@
                       "value": "http://example.com/NonClass"
                     }
                   },
-                  "identifierKinds": [
+                  "identifierNodeKinds": [
                     "BlankNode",
                     "NamedNode"
                   ],

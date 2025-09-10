@@ -1,4 +1,4 @@
-import type { IdentifierKind } from "@shaclmate/shacl-ast";
+import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import N3 from "n3";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
@@ -9,16 +9,16 @@ import type * as input from "../input/index.js";
 import { pickLiteral } from "./pickLiteral.js";
 
 function synthesizeStubAstObjectType({
-  identifierKinds,
+  identifierNodeKinds,
   tsFeatures,
 }: {
-  identifierKinds: Set<IdentifierKind>;
+  identifierNodeKinds: Set<IdentifierNodeKind>;
   tsFeatures: Set<TsFeature>;
 }): ast.ObjectType {
   let syntheticName: string;
-  switch (identifierKinds.size) {
+  switch (identifierNodeKinds.size) {
     case 1:
-      invariant(identifierKinds.has("NamedNode"));
+      invariant(identifierNodeKinds.has("NamedNode"));
       syntheticName = "NamedDefaultStub";
       break;
     case 2:
@@ -38,7 +38,7 @@ function synthesizeStubAstObjectType({
     extern: false,
     fromRdfType: Maybe.empty(),
     identifierIn: [],
-    identifierKinds,
+    identifierNodeKinds,
     identifierMintingStrategy: Maybe.empty(),
     kind: "ObjectType",
     label: Maybe.empty(),
@@ -66,7 +66,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     propertyShape,
   }: {
     objectType: {
-      identifierKinds: Set<IdentifierKind>;
+      identifierNodeKinds: Set<IdentifierNodeKind>;
       tsFeatures: Set<TsFeature>;
     };
     propertyShape: input.PropertyShape;

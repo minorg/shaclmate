@@ -1,5 +1,5 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
-import type { IdentifierKind, NodeKind } from "@shaclmate/shacl-ast";
+import type { IdentifierNodeKind, NodeKind } from "@shaclmate/shacl-ast";
 import { owl, rdfs } from "@tpluscode/rdf-ns-builders";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
@@ -213,7 +213,7 @@ function widenAstCompositeTypeToSingleType({
       hasValues: [],
       in_: [],
       kind: "IdentifierType",
-      nodeKinds: new Set<IdentifierKind>(
+      nodeKinds: new Set<IdentifierNodeKind>(
         memberItemTypes
           .filter((memberItemType) => memberItemType.kind === "IdentifierType")
           .flatMap((memberItemType) => [

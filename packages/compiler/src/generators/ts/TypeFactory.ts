@@ -10,7 +10,7 @@ import { Scope } from "ts-morph";
 
 import type * as ast from "../../ast/index.js";
 
-import type { IdentifierKind } from "@shaclmate/shacl-ast";
+import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { logger } from "../../logger.js";
 import { BooleanType } from "./BooleanType.js";
 import { DateTimeType } from "./DateTimeType.js";
@@ -59,7 +59,7 @@ export class TypeFactory {
       defaultValue: Maybe.empty(),
       hasValues: [],
       in_: astType.identifierIn,
-      nodeKinds: astType.identifierKinds,
+      nodeKinds: astType.identifierNodeKinds,
     });
 
     const staticModuleName =
@@ -255,7 +255,7 @@ export class TypeFactory {
         throw new Error("not implemented");
       case "ListType": {
         return new ListType({
-          identifierKind: astType.identifierKind,
+          identifierNodeKind: astType.identifierNodeKind,
           itemType: this.createTypeFromAstType(astType.itemType),
           mutable: astType.mutable.orDefault(false),
           identifierMintingStrategy: astType.identifierMintingStrategy,
@@ -501,7 +501,7 @@ export class TypeFactory {
       .map((astType) => this.createTypeFromAstType(astType))
       .filter((memberType) => memberType instanceof ObjectType);
 
-    const memberIdentifierTypeNodeKinds = new Set<IdentifierKind>();
+    const memberIdentifierTypeNodeKinds = new Set<IdentifierNodeKind>();
     const memberIdentifierTypesIn = new TermSet<NamedNode>();
     for (const memberType of memberTypes) {
       for (const nodeKind of memberType.identifierType.nodeKinds) {
