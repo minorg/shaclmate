@@ -62,13 +62,7 @@ shaclmate:ShaclmateOntology
     shaclmate:rdfType owl:Ontology ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf shaclmate:OwlOntology ;
-    sh:property shaclmate:ShaclmateOntology-tsDataFactoryVariable, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
-
-shaclmate:ShaclmateOntology-tsDataFactoryVariable
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:maxCount 1 ;
-    sh:path shaclmate:tsDataFactoryVariable .
+    sh:property shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
 
 shaclmate:ShaclmatePropertyShape
     shaclmate:rdfType sh:PropertyShape ;

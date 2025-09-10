@@ -11,10 +11,6 @@ export class Ontology extends OwlOntology {
     super(generatedShaclmateOntology);
   }
 
-  get tsDataFactoryVariable(): Maybe<string> {
-    return this.generatedShaclmateOntology.tsDataFactoryVariable;
-  }
-
   get tsFeatures(): Maybe<Set<TsFeature>> {
     return tsFeatures(this.generatedShaclmateOntology);
   }
