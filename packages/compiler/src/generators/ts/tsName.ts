@@ -1,6 +1,7 @@
 import { Resource } from "rdfjs-resource";
 import type * as ast from "../../ast/index.js";
 import { stringToValidTsIdentifier } from "./stringToValidTsIdentifier.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 function* tsNameAlternatives(astName: ast.Name): Iterable<string | undefined> {
   yield astName.shaclmateName.extract();
@@ -29,7 +30,7 @@ function* tsNameAlternatives(astName: ast.Name): Iterable<string | undefined> {
 export function tsName(astName: ast.Name): string {
   const syntheticName = astName.syntheticName.extract();
   if (syntheticName) {
-    return syntheticName;
+    return `${syntheticNamePrefix}${syntheticName}`;
   }
 
   for (const tsNameAlternative of tsNameAlternatives(astName)) {
