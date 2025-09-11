@@ -20,6 +20,10 @@ export function graphqlTypeVariableStatement(
     return Maybe.empty();
   }
 
+  if (this.synthetic) {
+    return Maybe.empty();
+  }
+
   return Maybe.of({
     declarationKind: VariableDeclarationKind.Const,
     kind: StructureKind.VariableStatement,

@@ -40,6 +40,7 @@ export class ObjectType extends DeclaredType {
   readonly fromRdfType: Maybe<NamedNode>;
   readonly kind = "ObjectType";
   readonly staticModuleName: string;
+  readonly synthetic: boolean;
   readonly typeof = "object";
 
   constructor({
@@ -57,6 +58,7 @@ export class ObjectType extends DeclaredType {
     lazyParentObjectTypes,
     lazyProperties,
     staticModuleName,
+    synthetic,
     toRdfTypes,
     ...superParameters
   }: {
@@ -74,6 +76,7 @@ export class ObjectType extends DeclaredType {
     lazyParentObjectTypes: () => readonly ObjectType[];
     lazyProperties: (objectType: ObjectType) => readonly ObjectType.Property[];
     staticModuleName: string;
+    synthetic: boolean;
     toRdfTypes: readonly NamedNode[];
   } & ConstructorParameters<typeof DeclaredType>[0]) {
     super(superParameters);
@@ -92,6 +95,7 @@ export class ObjectType extends DeclaredType {
     this.lazyParentObjectTypes = lazyParentObjectTypes;
     this.lazyProperties = lazyProperties;
     this.staticModuleName = staticModuleName;
+    this.synthetic = synthetic;
     this.toRdfTypes = toRdfTypes;
   }
 

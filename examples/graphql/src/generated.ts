@@ -113,19 +113,6 @@ export class $DefaultStub {
 }
 
 export namespace $DefaultStub {
-  export const $GraphQL = new graphql.GraphQLObjectType<
-    $DefaultStub,
-    { objectSet: $ObjectSet }
-  >({
-    fields: () => ({
-      _identifier: {
-        resolve: (source) =>
-          $DefaultStub.$Identifier.toString(source.$identifier),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLString),
-      },
-    }),
-    name: "$DefaultStub",
-  });
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -1552,18 +1539,6 @@ export namespace Union {
   }
 }
 export interface $ObjectSet {
-  defaultStub(
-    identifier: $DefaultStub.$Identifier,
-  ): Promise<purify.Either<Error, $DefaultStub>>;
-  defaultStubIdentifiers(
-    query?: $ObjectSet.Query<$DefaultStub.$Identifier>,
-  ): Promise<purify.Either<Error, readonly $DefaultStub.$Identifier[]>>;
-  defaultStubs(
-    query?: $ObjectSet.Query<$DefaultStub.$Identifier>,
-  ): Promise<purify.Either<Error, readonly $DefaultStub[]>>;
-  defaultStubsCount(
-    query?: Pick<$ObjectSet.Query<$DefaultStub.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>>;
   child(identifier: Child.$Identifier): Promise<purify.Either<Error, Child>>;
   childIdentifiers(
     query?: $ObjectSet.Query<Child.$Identifier>,
@@ -1659,65 +1634,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   constructor({ dataset }: { dataset: rdfjs.DatasetCore }) {
     this.resourceSet = new rdfjsResource.ResourceSet({ dataset });
-  }
-
-  async defaultStub(
-    identifier: $DefaultStub.$Identifier,
-  ): Promise<purify.Either<Error, $DefaultStub>> {
-    return this.defaultStubSync(identifier);
-  }
-
-  defaultStubSync(
-    identifier: $DefaultStub.$Identifier,
-  ): purify.Either<Error, $DefaultStub> {
-    return this.defaultStubsSync({
-      where: { identifiers: [identifier], type: "identifiers" },
-    }).map((objects) => objects[0]);
-  }
-
-  async defaultStubIdentifiers(
-    query?: $ObjectSet.Query<$DefaultStub.$Identifier>,
-  ): Promise<purify.Either<Error, readonly $DefaultStub.$Identifier[]>> {
-    return this.defaultStubIdentifiersSync(query);
-  }
-
-  defaultStubIdentifiersSync(
-    query?: $ObjectSet.Query<$DefaultStub.$Identifier>,
-  ): purify.Either<Error, readonly $DefaultStub.$Identifier[]> {
-    return this.$objectIdentifiersSync<$DefaultStub, $DefaultStub.$Identifier>(
-      { ...$DefaultStub, $fromRdfType: undefined },
-      query,
-    );
-  }
-
-  async defaultStubs(
-    query?: $ObjectSet.Query<$DefaultStub.$Identifier>,
-  ): Promise<purify.Either<Error, readonly $DefaultStub[]>> {
-    return this.defaultStubsSync(query);
-  }
-
-  defaultStubsSync(
-    query?: $ObjectSet.Query<$DefaultStub.$Identifier>,
-  ): purify.Either<Error, readonly $DefaultStub[]> {
-    return this.$objectsSync<$DefaultStub, $DefaultStub.$Identifier>(
-      { ...$DefaultStub, $fromRdfType: undefined },
-      query,
-    );
-  }
-
-  async defaultStubsCount(
-    query?: Pick<$ObjectSet.Query<$DefaultStub.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.defaultStubsCountSync(query);
-  }
-
-  defaultStubsCountSync(
-    query?: Pick<$ObjectSet.Query<$DefaultStub.$Identifier>, "where">,
-  ): purify.Either<Error, number> {
-    return this.$objectsCountSync<$DefaultStub, $DefaultStub.$Identifier>(
-      { ...$DefaultStub, $fromRdfType: undefined },
-      query,
-    );
   }
 
   async child(
@@ -2358,108 +2274,6 @@ export const graphqlSchema = new graphql.GraphQLSchema({
   query: new graphql.GraphQLObjectType<null, { objectSet: $ObjectSet }>({
     name: "Query",
     fields: {
-      defaultStub: {
-        args: {
-          identifier: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
-        },
-        resolve: async (
-          _source,
-          args: { identifier: string },
-          { objectSet },
-        ): Promise<$DefaultStub> =>
-          (
-            await purify.EitherAsync<Error, $DefaultStub>(
-              async ({ liftEither }) =>
-                liftEither(
-                  await objectSet.defaultStub(
-                    await liftEither(
-                      $DefaultStub.$Identifier.fromString(args.identifier),
-                    ),
-                  ),
-                ),
-            )
-          ).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull($DefaultStub.$GraphQL),
-      },
-      defaultStubIdentifiers: {
-        args: {
-          limit: { type: graphql.GraphQLInt },
-          offset: { type: graphql.GraphQLInt },
-        },
-        resolve: async (
-          _source,
-          args: { limit: number | null; offset: number | null },
-          { objectSet },
-        ): Promise<readonly string[]> =>
-          (
-            await objectSet.defaultStubIdentifiers({
-              limit: args.limit !== null ? args.limit : undefined,
-              offset: args.offset !== null ? args.offset : undefined,
-            })
-          )
-            .unsafeCoerce()
-            .map($DefaultStub.$Identifier.toString),
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(graphql.GraphQLString),
-        ),
-      },
-      defaultStubs: {
-        args: {
-          identifiers: {
-            type: new graphql.GraphQLList(
-              new graphql.GraphQLNonNull(graphql.GraphQLID),
-            ),
-          },
-          limit: { type: graphql.GraphQLInt },
-          offset: { type: graphql.GraphQLInt },
-        },
-        resolve: async (
-          _source,
-          args: {
-            identifiers: readonly string[] | null;
-            limit: number | null;
-            offset: number | null;
-          },
-          { objectSet },
-        ): Promise<readonly $DefaultStub[]> =>
-          (
-            await purify.EitherAsync<Error, readonly $DefaultStub[]>(
-              async ({ liftEither }) => {
-                let where:
-                  | $ObjectSet.Where<$DefaultStub.$Identifier>
-                  | undefined;
-                if (args.identifiers) {
-                  const identifiers: $DefaultStub.$Identifier[] = [];
-                  for (const identifierArg of args.identifiers) {
-                    identifiers.push(
-                      await liftEither(
-                        $DefaultStub.$Identifier.fromString(identifierArg),
-                      ),
-                    );
-                  }
-                  where = { identifiers, type: "identifiers" };
-                }
-                return await liftEither(
-                  await objectSet.defaultStubs({
-                    limit: args.limit !== null ? args.limit : undefined,
-                    offset: args.offset !== null ? args.offset : undefined,
-                    where,
-                  }),
-                );
-              },
-            )
-          ).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(
-            new graphql.GraphQLNonNull($DefaultStub.$GraphQL),
-          ),
-        ),
-      },
-      defaultStubsCount: {
-        resolve: async (_source, _args, { objectSet }): Promise<number> =>
-          (await objectSet.defaultStubsCount()).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLInt),
-      },
       child: {
         args: {
           identifier: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },

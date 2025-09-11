@@ -236,6 +236,7 @@ export class TypeFactory {
       identifierMintingStrategy: astType.identifierMintingStrategy,
       name: tsName(astType.name),
       staticModuleName,
+      synthetic: astType.synthetic,
       toRdfTypes: astType.toRdfTypes,
     });
     this.cachedObjectTypesByIdentifier.set(astType.name.identifier, objectType);
