@@ -226,9 +226,10 @@ export const harnesses = {
       $identifier,
       // These nested objects won't be resolvable since they're not serialized with $toRdf.
       // This harness is just intended to test the deserialization/deserialization of the identifiers.
-      lazyRequiredObjectProperty: new kitchenSink.NonClass({
-        nonClassProperty: "test required empty",
-      }),
+      lazyRequiredObjectProperty:
+        new kitchenSink.LazyResolvedBlankNodeOrIriClass({
+          lazyResolvedStringProperty: "test required empty",
+        }),
     }),
     kitchenSink.LazyPropertiesClass,
   ),
@@ -237,17 +238,23 @@ export const harnesses = {
       $identifier,
       // These nested objects won't be resolvable since they're not serialized with $toRdf.
       // This harness is just intended to test the deserialization/deserialization of the identifiers.
+      lazyIriObjectProperty: new kitchenSink.LazyResolvedIriClass({
+        $identifier: dataFactory.namedNode("http://example.com/resolved"),
+        lazyResolvedStringProperty: "test IRI",
+      }),
       lazyObjectSetProperty: [
-        new kitchenSink.NonClass({
-          nonClassProperty: "test set",
+        new kitchenSink.LazyResolvedBlankNodeOrIriClass({
+          lazyResolvedStringProperty: "test set",
         }),
       ],
-      lazyOptionalObjectProperty: new kitchenSink.NonClass({
-        nonClassProperty: "test optional",
-      }),
-      lazyRequiredObjectProperty: new kitchenSink.NonClass({
-        nonClassProperty: "test required",
-      }),
+      lazyOptionalObjectProperty:
+        new kitchenSink.LazyResolvedBlankNodeOrIriClass({
+          lazyResolvedStringProperty: "test optional",
+        }),
+      lazyRequiredObjectProperty:
+        new kitchenSink.LazyResolvedBlankNodeOrIriClass({
+          lazyResolvedStringProperty: "test required",
+        }),
     }),
     kitchenSink.LazyPropertiesClass,
   ),

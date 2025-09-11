@@ -11,6 +11,8 @@ import type {
 } from "../enums/index.js";
 import type { Name } from "./Name.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
+import type { OptionType } from "./OptionType.js";
+import type { SetType } from "./SetType.js";
 import type { Type } from "./Type.js";
 
 export interface ObjectType {
@@ -118,6 +120,11 @@ export interface ObjectType {
   readonly properties: ObjectType.Property[];
 
   /**
+   * Was this type synthesized or did it come from SHACL?
+   */
+  readonly synthetic: boolean;
+
+  /**
    * rdf:type's that will be added to this object when it's serialized toRdf.
    *
    * This is usually the identifier of an sh:NodeShape that is also an rdfs:Class (i.e., a node shape with implicit
@@ -190,9 +197,16 @@ export namespace ObjectType {
     readonly recursive?: boolean;
 
     /**
-     * The property will be resolved lazily, with this type serving as a stub before resolution of the actual type.
+     * The property will be resolved lazily, with this type serving as a stub before resolution of the actual type (type).
+     *
+     * This type will mirror type: if type is an OptionType<ObjectType>, this will also be an OptionType<ObjectType>.
      */
-    readonly stubType: Maybe<ObjectType | ObjectUnionType>;
+    readonly stubType: Maybe<
+      | ObjectType
+      | ObjectUnionType
+      | OptionType<ObjectType | ObjectUnionType>
+      | SetType<ObjectType | ObjectUnionType>
+    >;
 
     /**
      * Type of this property.

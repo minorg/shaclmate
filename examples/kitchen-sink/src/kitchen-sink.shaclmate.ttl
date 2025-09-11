@@ -390,18 +390,44 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         shaclmate:lazy true ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
-        sh:node :NonClass ;
+        sh:node :LazyResolvedBlankNodeOrIriClass ;
         sh:path :lazyOptionalObjectProperty
     ], [
         shaclmate:lazy true ;
-        sh:node :NonClass ;
+        sh:node :LazyResolvedBlankNodeOrIriClass ;
         sh:path :lazyObjectSetProperty
     ], [
         shaclmate:lazy true ;
-        sh:class :NonClass ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
+        sh:node :LazyResolvedBlankNodeOrIriClass ;
         sh:path :lazyRequiredObjectProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:node :LazyResolvedIriClass ;
+        sh:path :lazyIriObjectProperty
+    ] .
+
+:LazyResolvedBlankNodeOrIriClass
+    a sh:NodeShape ;
+    rdfs:comment "Node shape resolved by LazyPropertiesClass" ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazyResolvedStringProperty
+    ] .
+
+:LazyResolvedIriClass
+    a sh:NodeShape ;
+    rdfs:comment "Node shape resolved by LazyPropertiesClass" ;
+    sh:nodeKind sh:IRI ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazyResolvedStringProperty
     ] .
 
 :ListPropertiesClass

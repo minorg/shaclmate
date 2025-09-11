@@ -210,7 +210,7 @@ export namespace LazyShaclProperty {
       return super.conversions.concat(
         {
           conversionExpression: (value) =>
-            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}.map(_ => _.${syntheticNamePrefix}identifier), resolver: async () => purify.Either.of(${value} as readonly ${this.resolvedType.itemType.name}[]) })`,
+            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}.map(_ => new ${this.stubType.itemType.name}(_)), resolver: async () => purify.Either.of(${value} as readonly ${this.resolvedType.itemType.name}[]) })`,
           sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
           sourceTypeName: `readonly ${this.resolvedType.itemType.name}[]`,
         },
@@ -234,7 +234,7 @@ export namespace LazyShaclProperty {
       parameters: Parameters<_Type["fromRdfExpression"]>[0],
     ): string {
       const { variables } = parameters;
-      return `${this.stubType.fromRdfExpression(parameters)}.map(identifiers => new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: identifiers, resolver: (identifiers) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.objects}({ where: { identifiers, type: "identifiers" }}) }))`;
+      return `${this.stubType.fromRdfExpression(parameters)}.map(${this.runtimeClass.stubPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}, resolver: (identifiers) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.objects}({ where: { identifiers, type: "identifiers" }}) }))`;
     }
   }
 
@@ -266,10 +266,10 @@ export namespace LazyShaclProperty {
       super({
         resolvedType,
         runtimeClass: {
-          stubPropertyName: "identifier",
           name: `${syntheticNamePrefix}LazyOptionalObject<${resolvedType.itemType.identifierTypeAlias}, ${resolvedType.itemType.name}, ${stubType.itemType.name}>`,
           rawName: `${syntheticNamePrefix}LazyOptionalObject`,
           snippetDeclaration: SnippetDeclarations.LazyOptionalObject,
+          stubPropertyName: "stub",
         },
         stubType,
       });
@@ -280,14 +280,14 @@ export namespace LazyShaclProperty {
       return super.conversions.concat(
         {
           conversionExpression: (value) =>
-            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: purify.Maybe.of(${value}.${syntheticNamePrefix}identifier), resolver: async () => purify.Either.of(${value} as ${this.resolvedType.itemType.name}) })`,
+            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: purify.Maybe.of(new ${this.stubType.itemType.name}(${value})), resolver: async () => purify.Either.of(${value} as ${this.resolvedType.itemType.name}) })`,
           sourceTypeCheckExpression: (value) =>
             `typeof ${value} === "object" && ${value} instanceof ${this.resolvedType.itemType.name}`,
           sourceTypeName: this.resolvedType.itemType.name,
         },
         {
           conversionExpression: (value) =>
-            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}.map(_ => _.${syntheticNamePrefix}identifier), resolver: async () => purify.Either.of((${value} as purify.Maybe<${this.resolvedType.itemType.name}>).unsafeCoerce()) })`,
+            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}.map(_ => new ${this.stubType.itemType.name}(_)), resolver: async () => purify.Either.of((${value} as purify.Maybe<${this.resolvedType.itemType.name}>).unsafeCoerce()) })`,
           sourceTypeCheckExpression: (value) =>
             `purify.Maybe.isMaybe(${value})`,
           sourceTypeName: `purify.Maybe<${this.resolvedType.itemType.name}>`,
@@ -306,7 +306,7 @@ export namespace LazyShaclProperty {
       parameters: Parameters<_Type["fromRdfExpression"]>[0],
     ): string {
       const { variables } = parameters;
-      return `${this.stubType.fromRdfExpression(parameters)}.map(identifier => new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: identifier, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.object}(identifier) }))`;
+      return `${this.stubType.fromRdfExpression(parameters)}.map(${this.runtimeClass.stubPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.object}(identifier) }))`;
     }
 
     override graphqlResolveExpression(
@@ -327,10 +327,10 @@ export namespace LazyShaclProperty {
       super({
         resolvedType,
         runtimeClass: {
-          stubPropertyName: "identifier",
           name: `${syntheticNamePrefix}LazyRequiredObject<${resolvedType.identifierTypeAlias}, ${resolvedType.name}, ${stubType.name}>`,
           rawName: `${syntheticNamePrefix}LazyRequiredObject`,
           snippetDeclaration: SnippetDeclarations.LazyRequiredObject,
+          stubPropertyName: "stub",
         },
         stubType,
       });
@@ -339,7 +339,7 @@ export namespace LazyShaclProperty {
     override get conversions(): readonly _Type.Conversion[] {
       return super.conversions.concat({
         conversionExpression: (value) =>
-          `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}.${syntheticNamePrefix}identifier, resolver: async () => purify.Either.of(${value} as ${this.resolvedType.name}) })`,
+          `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: new ${this.stubType.name}(${value}), resolver: async () => purify.Either.of(${value} as ${this.resolvedType.name}) })`,
         sourceTypeCheckExpression: (value) =>
           `typeof ${value} === "object" && ${value} instanceof ${this.resolvedType.name}`,
         sourceTypeName: this.resolvedType.name,
@@ -350,7 +350,7 @@ export namespace LazyShaclProperty {
       parameters: Parameters<_Type["fromRdfExpression"]>[0],
     ): string {
       const { variables } = parameters;
-      return `${this.stubType.fromRdfExpression(parameters)}.map(identifier => new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: identifier, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.objectSetMethodNames.object}(identifier) }))`;
+      return `${this.stubType.fromRdfExpression(parameters)}.map(${this.runtimeClass.stubPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.objectSetMethodNames.object}(identifier) }))`;
     }
   }
 }

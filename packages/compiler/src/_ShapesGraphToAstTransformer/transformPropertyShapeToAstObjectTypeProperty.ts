@@ -8,6 +8,21 @@ import type { TsFeature } from "../enums/index.js";
 import type * as input from "../input/index.js";
 import { pickLiteral } from "./pickLiteral.js";
 
+function identifierNodeKinds(
+  type: ast.ObjectType | ast.ObjectUnionType,
+): Set<IdentifierNodeKind> {
+  switch (type.kind) {
+    case "ObjectType":
+      return type.identifierNodeKinds;
+    case "ObjectUnionType":
+      return new Set(
+        type.memberTypes.flatMap((memberType) => [
+          ...memberType.identifierNodeKinds,
+        ]),
+      );
+  }
+}
+
 function synthesizeStubAstObjectType({
   identifierNodeKinds,
   tsFeatures,
@@ -52,6 +67,7 @@ function synthesizeStubAstObjectType({
     },
     parentObjectTypes: [],
     properties: [],
+    synthetic: true,
     toRdfTypes: [],
     tsFeatures,
     tsImports: [],
@@ -61,16 +77,7 @@ function synthesizeStubAstObjectType({
 
 export function transformPropertyShapeToAstObjectTypeProperty(
   this: ShapesGraphToAstTransformer,
-  {
-    objectType,
-    propertyShape,
-  }: {
-    objectType: {
-      identifierNodeKinds: Set<IdentifierNodeKind>;
-      tsFeatures: Set<TsFeature>;
-    };
-    propertyShape: input.PropertyShape;
-  },
+  propertyShape: input.PropertyShape,
 ): Either<Error, ast.ObjectType.Property> {
   {
     const property = this.astObjectTypePropertiesByIdentifier.get(
@@ -87,19 +94,42 @@ export function transformPropertyShapeToAstObjectTypeProperty(
   }
   const type = typeEither.unsafeCoerce();
 
+  let stubType: ast.ObjectType.Property["stubType"] = Maybe.empty();
   if (propertyShape.lazy.orDefault(false)) {
     switch (type.kind) {
-      case "ObjectIntersectionType":
       case "ObjectType":
       case "ObjectUnionType":
+        stubType = Maybe.of(
+          synthesizeStubAstObjectType({
+            identifierNodeKinds: identifierNodeKinds(type),
+            tsFeatures: type.tsFeatures,
+          }),
+        );
         break;
       case "OptionType":
       case "SetType": {
         switch (type.itemType.kind) {
-          case "ObjectIntersectionType":
           case "ObjectType":
-          case "ObjectUnionType":
+          case "ObjectUnionType": {
+            const stubItemType = synthesizeStubAstObjectType({
+              identifierNodeKinds: identifierNodeKinds(type.itemType),
+              tsFeatures: type.itemType.tsFeatures,
+            });
+            if (type.kind === "OptionType") {
+              stubType = Maybe.of({
+                kind: "OptionType",
+                itemType: stubItemType,
+              });
+            } else {
+              stubType = Maybe.of({
+                kind: "SetType",
+                itemType: stubItemType,
+                minCount: 0,
+                mutable: Maybe.empty(),
+              });
+            }
             break;
+          }
           default:
             return Left(
               new Error(
@@ -135,9 +165,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     name: this.shapeAstName(propertyShape),
     order: propertyShape.order.orDefault(0),
     path,
-    stubType: propertyShape.lazy.map(() =>
-      synthesizeStubAstObjectType(objectType),
-    ),
+    stubType,
     type,
     visibility: propertyShape.visibility,
   };

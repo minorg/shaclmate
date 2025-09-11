@@ -248,7 +248,7 @@ export class ${syntheticNamePrefix}LazyOptionalObject<ObjectIdentifierT extends 
     if (this.stub.isNothing()) {
       return purify.Either.of(purify.Maybe.empty());
     }
-    return await this.resolver(this.stub.unsafeCoerce().${syntheticNamePrefix}identifier);
+    return (await this.resolver(this.stub.unsafeCoerce().${syntheticNamePrefix}identifier)).map(purify.Maybe.of);
   }
 }`;
 

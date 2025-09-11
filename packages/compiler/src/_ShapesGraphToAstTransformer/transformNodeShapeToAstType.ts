@@ -1,6 +1,4 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
-
-import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
@@ -44,13 +42,8 @@ function transformNodeShapeToAstListType(
 
   const properties: ast.ObjectType.Property[] = [];
   for (const propertyShape of nodeShape.constraints.properties) {
-    const propertyEither = this.transformPropertyShapeToAstObjectTypeProperty({
-      objectType: {
-        identifierNodeKinds: new Set<IdentifierNodeKind>(),
-        tsFeatures: nodeShape.tsFeatures.orDefault(new Set(tsFeaturesDefault)),
-      },
-      propertyShape,
-    });
+    const propertyEither =
+      this.transformPropertyShapeToAstObjectTypeProperty(propertyShape);
     if (propertyEither.isLeft()) {
       logger.warn(
         "error transforming %s %s: %s",
@@ -285,6 +278,7 @@ export function transformNodeShapeToAstType(
     name: this.shapeAstName(nodeShape),
     properties: [], // This is mutable, we'll populate it below.
     parentObjectTypes: [], // This is mutable, we'll populate it below
+    synthetic: false,
     toRdfTypes,
     tsFeatures: nodeShape.tsFeatures.orDefault(new Set(tsFeaturesDefault)),
     tsImports: nodeShape.tsImports,
@@ -353,10 +347,8 @@ export function transformNodeShapeToAstType(
     }
   };
   for (const propertyShape of nodeShape.constraints.properties) {
-    const propertyEither = this.transformPropertyShapeToAstObjectTypeProperty({
-      objectType,
-      propertyShape,
-    });
+    const propertyEither =
+      this.transformPropertyShapeToAstObjectTypeProperty(propertyShape);
     if (propertyEither.isLeft()) {
       logger.warn(
         "error transforming %s %s: %s",

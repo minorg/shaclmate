@@ -52,10 +52,6 @@ export class ShapesGraphToAstTransformer {
       [];
     const nodeShapeAstObjectTypes: ast.ObjectType[] = [];
     const syntheticAstObjectTypesByName: Record<string, ast.ObjectType> = {};
-    const syntheticAstObjectUnionTypesByName: Record<
-      string,
-      ast.ObjectUnionType
-    > = {};
     const nodeShapeAstObjectUnionTypes: ast.ObjectUnionType[] = [];
 
     for (const nodeShape of this.shapesGraph.nodeShapes) {
@@ -83,23 +79,23 @@ export class ShapesGraphToAstTransformer {
         case "ObjectType": {
           nodeShapeAstObjectTypes.push(nodeShapeAstType);
           for (const property of nodeShapeAstType.properties) {
-            property.stubType.ifJust((stubType) => {
-              stubType.name.syntheticName.ifJust((syntheticName) => {
-                switch (stubType.kind) {
-                  case "ObjectType":
-                    if (!syntheticAstObjectTypesByName[syntheticName]) {
-                      syntheticAstObjectTypesByName[syntheticName] = stubType;
-                    }
-                    break;
-                  case "ObjectUnionType":
-                    if (!syntheticAstObjectUnionTypesByName[syntheticName]) {
-                      syntheticAstObjectUnionTypesByName[syntheticName] =
-                        stubType;
-                    }
-                    break;
+            property.stubType
+              .map((stubType) =>
+                stubType.kind === "ObjectType" ||
+                stubType.kind === "ObjectUnionType"
+                  ? stubType
+                  : stubType.itemType,
+              )
+              .filter((stubItemType) => stubItemType.kind === "ObjectType")
+              .filter((stubItemType) => stubItemType.synthetic)
+              .ifJust((stubItemType) => {
+                const stubItemTypeName =
+                  stubItemType.name.syntheticName.unsafeCoerce();
+                if (!syntheticAstObjectTypesByName[stubItemTypeName]) {
+                  syntheticAstObjectTypesByName[stubItemTypeName] =
+                    stubItemType as ast.ObjectType;
                 }
               });
-            });
           }
 
           break;
@@ -117,9 +113,7 @@ export class ShapesGraphToAstTransformer {
       objectTypes: nodeShapeAstObjectTypes.concat(
         Object.values(syntheticAstObjectTypesByName),
       ),
-      objectUnionTypes: nodeShapeAstObjectUnionTypes.concat(
-        Object.values(syntheticAstObjectUnionTypesByName),
-      ),
+      objectUnionTypes: nodeShapeAstObjectUnionTypes,
     });
   }
 }

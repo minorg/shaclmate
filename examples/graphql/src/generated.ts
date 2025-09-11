@@ -76,7 +76,9 @@ export class $LazyOptionalObject<
     if (this.stub.isNothing()) {
       return purify.Either.of(purify.Maybe.empty());
     }
-    return await this.resolver(this.stub.unsafeCoerce().$identifier);
+    return (await this.resolver(this.stub.unsafeCoerce().$identifier)).map(
+      purify.Maybe.of,
+    );
   }
 }
 export class $DefaultStub {
@@ -166,110 +168,6 @@ export namespace $DefaultStub {
     return $DefaultStub
       .$propertiesFromRdf(parameters)
       .map((properties) => new $DefaultStub(properties));
-  }
-
-  export const $properties = {};
-}
-export class $NamedDefaultStub {
-  readonly $identifier: $NamedDefaultStub.$Identifier;
-  readonly $type = "$NamedDefaultStub";
-
-  constructor(parameters: { readonly $identifier: rdfjs.NamedNode | string }) {
-    if (typeof parameters.$identifier === "object") {
-      this.$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this.$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else {
-      this.$identifier = parameters.$identifier satisfies never;
-    }
-  }
-
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
-    const _resource = resourceSet.mutableNamedResource(this.$identifier, {
-      mutateGraph,
-    });
-    return _resource;
-  }
-}
-
-export namespace $NamedDefaultStub {
-  export const $GraphQL = new graphql.GraphQLObjectType<
-    $NamedDefaultStub,
-    { objectSet: $ObjectSet }
-  >({
-    fields: () => ({
-      _identifier: {
-        resolve: (source) =>
-          $NamedDefaultStub.$Identifier.toString(source.$identifier),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLString),
-      },
-    }),
-    name: "$NamedDefaultStub",
-  });
-  export type $Identifier = rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjs.NamedNode> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? purify.Either.of(identifier)
-          : purify.Left(new Error("expected identifier to be NamedNode")),
-      ) as purify.Either<Error, rdfjs.NamedNode>;
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
-      toString = rdfjsResource.Resource.Identifier.toString;
-  }
-
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
-    objectSet: $objectSetParameter,
-    resource: $resource,
-    // @ts-ignore
-    ...$context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
-    resource: rdfjsResource.Resource;
-  }): purify.Either<Error, { $identifier: rdfjs.NamedNode }> {
-    if ($resource.identifier.termType !== "NamedNode") {
-      return purify.Left(
-        new rdfjsResource.Resource.MistypedValueError({
-          actualValue: $resource.identifier,
-          expectedValueType: "(rdfjs.NamedNode)",
-          focusResource: $resource,
-          predicate: $RdfVocabularies.rdf.subject,
-        }),
-      );
-    }
-
-    const $identifier: $NamedDefaultStub.$Identifier = $resource.identifier;
-    return purify.Either.of({ $identifier });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof $NamedDefaultStub.$propertiesFromRdf>[0],
-  ): purify.Either<Error, $NamedDefaultStub> {
-    return $NamedDefaultStub
-      .$propertiesFromRdf(parameters)
-      .map((properties) => new $NamedDefaultStub(properties));
   }
 
   export const $properties = {};
@@ -1129,8 +1027,9 @@ export class Child extends Parent {
    * Optional lazy object property
    */
   readonly optionalLazyObjectProperty: $LazyOptionalObject<
+    Nested.$Identifier,
     Nested,
-    Nested.$Identifier
+    $DefaultStub
   >;
   /**
    * Optional object property
@@ -1150,7 +1049,7 @@ export class Child extends Parent {
       readonly $identifier: rdfjs.NamedNode | string;
       readonly childStringProperty?: purify.Maybe<string> | string;
       readonly optionalLazyObjectProperty?:
-        | $LazyOptionalObject<Nested, Nested.$Identifier>
+        | $LazyOptionalObject<Nested.$Identifier, Nested, $DefaultStub>
         | Nested
         | purify.Maybe<Nested>;
       readonly optionalObjectProperty?: Nested | purify.Maybe<Nested>;
@@ -1181,24 +1080,26 @@ export class Child extends Parent {
       parameters.optionalLazyObjectProperty instanceof Nested
     ) {
       this.optionalLazyObjectProperty = new $LazyOptionalObject<
+        Nested.$Identifier,
         Nested,
-        Nested.$Identifier
+        $DefaultStub
       >({
-        identifier: purify.Maybe.of(
-          parameters.optionalLazyObjectProperty.$identifier,
+        stub: purify.Maybe.of(
+          new $DefaultStub(parameters.optionalLazyObjectProperty),
         ),
-        object: async () =>
+        resolver: async () =>
           purify.Either.of(parameters.optionalLazyObjectProperty as Nested),
       });
     } else if (purify.Maybe.isMaybe(parameters.optionalLazyObjectProperty)) {
       this.optionalLazyObjectProperty = new $LazyOptionalObject<
+        Nested.$Identifier,
         Nested,
-        Nested.$Identifier
+        $DefaultStub
       >({
-        identifier: parameters.optionalLazyObjectProperty.map(
-          (_) => _.$identifier,
+        stub: parameters.optionalLazyObjectProperty.map(
+          (_) => new $DefaultStub(_),
         ),
-        object: async () =>
+        resolver: async () =>
           purify.Either.of(
             (
               parameters.optionalLazyObjectProperty as purify.Maybe<Nested>
@@ -1207,11 +1108,12 @@ export class Child extends Parent {
       });
     } else if (typeof parameters.optionalLazyObjectProperty === "undefined") {
       this.optionalLazyObjectProperty = new $LazyOptionalObject<
+        Nested.$Identifier,
         Nested,
-        Nested.$Identifier
+        $DefaultStub
       >({
-        identifier: purify.Maybe.empty(),
-        object: async () => {
+        stub: purify.Maybe.empty(),
+        resolver: async () => {
           throw new Error("should never be called");
         },
       });
@@ -1279,7 +1181,9 @@ export class Child extends Parent {
     );
     _resource.add(
       Child.$properties.optionalLazyObjectProperty["identifier"],
-      this.optionalLazyObjectProperty.identifier,
+      this.optionalLazyObjectProperty.stub.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
     );
     _resource.add(
       Child.$properties.optionalObjectProperty["identifier"],
@@ -1321,7 +1225,7 @@ export namespace Child {
       optionalLazyObjectProperty: {
         description: "Optional lazy object property",
         resolve: async (source) =>
-          (await source.optionalLazyObjectProperty.object())
+          (await source.optionalLazyObjectProperty.resolve())
             .unsafeCoerce()
             .extractNullable(),
         type: new graphql.GraphQLNonNull(Nested.$GraphQL),
@@ -1366,8 +1270,9 @@ export namespace Child {
       $identifier: rdfjs.NamedNode;
       childStringProperty: purify.Maybe<string>;
       optionalLazyObjectProperty: $LazyOptionalObject<
+        Nested.$Identifier,
         Nested,
-        Nested.$Identifier
+        $DefaultStub
       >;
       optionalObjectProperty: purify.Maybe<Nested>;
       optionalStringProperty: purify.Maybe<string>;
@@ -1433,13 +1338,21 @@ export namespace Child {
     const childStringProperty = _childStringPropertyEither.unsafeCoerce();
     const _optionalLazyObjectPropertyEither: purify.Either<
       Error,
-      $LazyOptionalObject<Nested, Nested.$Identifier>
+      $LazyOptionalObject<Nested.$Identifier, Nested, $DefaultStub>
     > = $resource
       .values($properties.optionalLazyObjectProperty["identifier"], {
         unique: true,
       })
       .head()
-      .chain((value) => value.toIdentifier())
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        $DefaultStub.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
         error instanceof rdfjsResource.Resource.MissingValueError
@@ -1447,10 +1360,10 @@ export namespace Child {
           : purify.Left(error),
       )
       .map(
-        (identifier) =>
-          new $LazyOptionalObject<Nested, Nested.$Identifier>({
-            identifier: identifier,
-            object: (identifier) => $objectSet.nested(identifier),
+        (stub) =>
+          new $LazyOptionalObject<Nested.$Identifier, Nested, $DefaultStub>({
+            stub,
+            resolver: (identifier) => $objectSet.nested(identifier),
           }),
       );
     if (_optionalLazyObjectPropertyEither.isLeft()) {
@@ -1651,18 +1564,6 @@ export interface $ObjectSet {
   defaultStubsCount(
     query?: Pick<$ObjectSet.Query<$DefaultStub.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
-  namedDefaultStub(
-    identifier: $NamedDefaultStub.$Identifier,
-  ): Promise<purify.Either<Error, $NamedDefaultStub>>;
-  namedDefaultStubIdentifiers(
-    query?: $ObjectSet.Query<$NamedDefaultStub.$Identifier>,
-  ): Promise<purify.Either<Error, readonly $NamedDefaultStub.$Identifier[]>>;
-  namedDefaultStubs(
-    query?: $ObjectSet.Query<$NamedDefaultStub.$Identifier>,
-  ): Promise<purify.Either<Error, readonly $NamedDefaultStub[]>>;
-  namedDefaultStubsCount(
-    query?: Pick<$ObjectSet.Query<$NamedDefaultStub.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>>;
   child(identifier: Child.$Identifier): Promise<purify.Either<Error, Child>>;
   childIdentifiers(
     query?: $ObjectSet.Query<Child.$Identifier>,
@@ -1817,65 +1718,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       { ...$DefaultStub, $fromRdfType: undefined },
       query,
     );
-  }
-
-  async namedDefaultStub(
-    identifier: $NamedDefaultStub.$Identifier,
-  ): Promise<purify.Either<Error, $NamedDefaultStub>> {
-    return this.namedDefaultStubSync(identifier);
-  }
-
-  namedDefaultStubSync(
-    identifier: $NamedDefaultStub.$Identifier,
-  ): purify.Either<Error, $NamedDefaultStub> {
-    return this.namedDefaultStubsSync({
-      where: { identifiers: [identifier], type: "identifiers" },
-    }).map((objects) => objects[0]);
-  }
-
-  async namedDefaultStubIdentifiers(
-    query?: $ObjectSet.Query<$NamedDefaultStub.$Identifier>,
-  ): Promise<purify.Either<Error, readonly $NamedDefaultStub.$Identifier[]>> {
-    return this.namedDefaultStubIdentifiersSync(query);
-  }
-
-  namedDefaultStubIdentifiersSync(
-    query?: $ObjectSet.Query<$NamedDefaultStub.$Identifier>,
-  ): purify.Either<Error, readonly $NamedDefaultStub.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      $NamedDefaultStub,
-      $NamedDefaultStub.$Identifier
-    >({ ...$NamedDefaultStub, $fromRdfType: undefined }, query);
-  }
-
-  async namedDefaultStubs(
-    query?: $ObjectSet.Query<$NamedDefaultStub.$Identifier>,
-  ): Promise<purify.Either<Error, readonly $NamedDefaultStub[]>> {
-    return this.namedDefaultStubsSync(query);
-  }
-
-  namedDefaultStubsSync(
-    query?: $ObjectSet.Query<$NamedDefaultStub.$Identifier>,
-  ): purify.Either<Error, readonly $NamedDefaultStub[]> {
-    return this.$objectsSync<$NamedDefaultStub, $NamedDefaultStub.$Identifier>(
-      { ...$NamedDefaultStub, $fromRdfType: undefined },
-      query,
-    );
-  }
-
-  async namedDefaultStubsCount(
-    query?: Pick<$ObjectSet.Query<$NamedDefaultStub.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.namedDefaultStubsCountSync(query);
-  }
-
-  namedDefaultStubsCountSync(
-    query?: Pick<$ObjectSet.Query<$NamedDefaultStub.$Identifier>, "where">,
-  ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      $NamedDefaultStub,
-      $NamedDefaultStub.$Identifier
-    >({ ...$NamedDefaultStub, $fromRdfType: undefined }, query);
   }
 
   async child(
@@ -2616,108 +2458,6 @@ export const graphqlSchema = new graphql.GraphQLSchema({
       defaultStubsCount: {
         resolve: async (_source, _args, { objectSet }): Promise<number> =>
           (await objectSet.defaultStubsCount()).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(graphql.GraphQLInt),
-      },
-      namedDefaultStub: {
-        args: {
-          identifier: { type: new graphql.GraphQLNonNull(graphql.GraphQLID) },
-        },
-        resolve: async (
-          _source,
-          args: { identifier: string },
-          { objectSet },
-        ): Promise<$NamedDefaultStub> =>
-          (
-            await purify.EitherAsync<Error, $NamedDefaultStub>(
-              async ({ liftEither }) =>
-                liftEither(
-                  await objectSet.namedDefaultStub(
-                    await liftEither(
-                      $NamedDefaultStub.$Identifier.fromString(args.identifier),
-                    ),
-                  ),
-                ),
-            )
-          ).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull($NamedDefaultStub.$GraphQL),
-      },
-      namedDefaultStubIdentifiers: {
-        args: {
-          limit: { type: graphql.GraphQLInt },
-          offset: { type: graphql.GraphQLInt },
-        },
-        resolve: async (
-          _source,
-          args: { limit: number | null; offset: number | null },
-          { objectSet },
-        ): Promise<readonly string[]> =>
-          (
-            await objectSet.namedDefaultStubIdentifiers({
-              limit: args.limit !== null ? args.limit : undefined,
-              offset: args.offset !== null ? args.offset : undefined,
-            })
-          )
-            .unsafeCoerce()
-            .map($NamedDefaultStub.$Identifier.toString),
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(graphql.GraphQLString),
-        ),
-      },
-      namedDefaultStubs: {
-        args: {
-          identifiers: {
-            type: new graphql.GraphQLList(
-              new graphql.GraphQLNonNull(graphql.GraphQLID),
-            ),
-          },
-          limit: { type: graphql.GraphQLInt },
-          offset: { type: graphql.GraphQLInt },
-        },
-        resolve: async (
-          _source,
-          args: {
-            identifiers: readonly string[] | null;
-            limit: number | null;
-            offset: number | null;
-          },
-          { objectSet },
-        ): Promise<readonly $NamedDefaultStub[]> =>
-          (
-            await purify.EitherAsync<Error, readonly $NamedDefaultStub[]>(
-              async ({ liftEither }) => {
-                let where:
-                  | $ObjectSet.Where<$NamedDefaultStub.$Identifier>
-                  | undefined;
-                if (args.identifiers) {
-                  const identifiers: $NamedDefaultStub.$Identifier[] = [];
-                  for (const identifierArg of args.identifiers) {
-                    identifiers.push(
-                      await liftEither(
-                        $NamedDefaultStub.$Identifier.fromString(identifierArg),
-                      ),
-                    );
-                  }
-                  where = { identifiers, type: "identifiers" };
-                }
-                return await liftEither(
-                  await objectSet.namedDefaultStubs({
-                    limit: args.limit !== null ? args.limit : undefined,
-                    offset: args.offset !== null ? args.offset : undefined,
-                    where,
-                  }),
-                );
-              },
-            )
-          ).unsafeCoerce(),
-        type: new graphql.GraphQLNonNull(
-          new graphql.GraphQLList(
-            new graphql.GraphQLNonNull($NamedDefaultStub.$GraphQL),
-          ),
-        ),
-      },
-      namedDefaultStubsCount: {
-        resolve: async (_source, _args, { objectSet }): Promise<number> =>
-          (await objectSet.namedDefaultStubsCount()).unsafeCoerce(),
         type: new graphql.GraphQLNonNull(graphql.GraphQLInt),
       },
       child: {

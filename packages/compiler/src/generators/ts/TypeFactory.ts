@@ -436,45 +436,44 @@ export class TypeFactory {
         astObjectTypeProperty.stubType.unsafeCoerce(),
       );
 
-      if (
-        resolvedType instanceof OptionType ||
-        resolvedType instanceof SetType
-      ) {
-        invariant(
-          stubType instanceof OptionType || stubType instanceof SetType,
-        );
+      if (resolvedType instanceof OptionType) {
         invariant(
           resolvedType.itemType instanceof ObjectType ||
             resolvedType.itemType instanceof ObjectUnionType,
-          `lazy property ${name} on ${objectType.name} of ${resolvedType.kind} has ${resolvedType.itemType.kind} items`,
+          `lazy property ${name} on ${objectType.name} has ${resolvedType.kind} ${resolvedType.itemType.kind} items`,
         );
         invariant(
-          stubType.itemType instanceof ObjectType ||
-            stubType.itemType instanceof ObjectUnionType,
-          `lazy property ${name} on ${objectType.name} of ${resolvedType.kind} has ${stubType.itemType.kind} stubs`,
+          stubType instanceof OptionType,
+          `lazy property ${name} on ${objectType.name} has ${(stubType as any).kind} stubs`,
+        );
+        invariant(
+          stubType.itemType.kind === resolvedType.itemType.kind,
+          `lazy property ${name} on ${objectType.name} has mismatched stub/resolved item types`,
         );
 
-        if (resolvedType instanceof OptionType) {
-          invariant(
-            stubType instanceof OptionType,
-            `lazy property ${name} on ${objectType.name} of ${resolvedType.kind} has ${stubType.kind} stubs`,
-          );
+        lazyType = new ObjectType.LazyShaclProperty.OptionalObjectType({
+          resolvedType,
+          stubType,
+        });
+      } else if (resolvedType instanceof SetType) {
+        invariant(
+          resolvedType.itemType instanceof ObjectType ||
+            resolvedType.itemType instanceof ObjectUnionType,
+          `lazy property ${name} on ${objectType.name} has ${resolvedType.kind} ${resolvedType.itemType.kind} items`,
+        );
+        invariant(
+          stubType instanceof SetType,
+          `lazy property ${name} on ${objectType.name} has ${(stubType as any).kind} stubs`,
+        );
+        invariant(
+          stubType.itemType.kind === resolvedType.itemType.kind,
+          `lazy property ${name} on ${objectType.name} has mismatched stub/resolved item types`,
+        );
 
-          lazyType = new ObjectType.LazyShaclProperty.OptionalObjectType({
-            resolvedType,
-            stubType,
-          });
-        } else {
-          invariant(
-            stubType instanceof SetType,
-            `lazy property ${name} on ${objectType.name} of ${resolvedType.kind} has ${stubType.kind} stubs`,
-          );
-
-          lazyType = new ObjectType.LazyShaclProperty.ObjectSetType({
-            resolvedType,
-            stubType,
-          });
-        }
+        lazyType = new ObjectType.LazyShaclProperty.ObjectSetType({
+          resolvedType,
+          stubType,
+        });
       } else {
         invariant(
           resolvedType instanceof ObjectType ||
@@ -483,7 +482,7 @@ export class TypeFactory {
         );
         invariant(
           stubType instanceof ObjectType || stubType instanceof ObjectUnionType,
-          `lazy property ${name} on ${objectType.name} of ${resolvedType.kind} has ${(stubType as any).kind} stubs`,
+          `lazy property ${name} on ${objectType.name} has ${(stubType as any).kind} stubs`,
         );
 
         lazyType = new ObjectType.LazyShaclProperty.RequiredObjectType({

@@ -6,11 +6,11 @@ import type { Type } from "./Type.js";
  *
  * This is a property with sh:maxCount != 1.
  */
-export interface SetType {
+export interface SetType<ItemTypeT extends Type = Type> {
   /**
    * Set item type.
    */
-  readonly itemType: Type;
+  readonly itemType: ItemTypeT;
 
   readonly kind: "SetType";
 
