@@ -390,7 +390,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :lazyResolvedStringProperty
+        sh:path :lazilyResolvedStringProperty
     ] .
 
 :LazilyResolvedIriClass
@@ -401,7 +401,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :lazyResolvedStringProperty
+        sh:path :lazilyResolvedStringProperty
     ] .
 
 :LazyPropertiesClass
@@ -428,6 +428,11 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:node :LazilyResolvedIriClass ;
         sh:path :lazyIriObjectProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:node :ClassUnion ;
+        sh:path :lazyObjectUnionProperty
     ] .
 
 :ListPropertiesClass

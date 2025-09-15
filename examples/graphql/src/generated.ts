@@ -1062,10 +1062,23 @@ export class Child extends Parent {
       parameters.optionalLazyObjectProperty instanceof $LazyOptionalObject
     ) {
       this.optionalLazyObjectProperty = parameters.optionalLazyObjectProperty;
-    } else if (
-      typeof parameters.optionalLazyObjectProperty === "object" &&
-      parameters.optionalLazyObjectProperty instanceof Nested
-    ) {
+    } else if (purify.Maybe.isMaybe(parameters.optionalLazyObjectProperty)) {
+      this.optionalLazyObjectProperty = new $LazyOptionalObject<
+        Nested.$Identifier,
+        Nested,
+        $DefaultStub
+      >({
+        stub: parameters.optionalLazyObjectProperty.map(
+          (parameters) => new $DefaultStub(parameters),
+        ),
+        resolver: async () =>
+          purify.Either.of(
+            (
+              parameters.optionalLazyObjectProperty as purify.Maybe<Nested>
+            ).unsafeCoerce(),
+          ),
+      });
+    } else if (typeof parameters.optionalLazyObjectProperty === "object") {
       this.optionalLazyObjectProperty = new $LazyOptionalObject<
         Nested.$Identifier,
         Nested,
@@ -1076,22 +1089,6 @@ export class Child extends Parent {
         ),
         resolver: async () =>
           purify.Either.of(parameters.optionalLazyObjectProperty as Nested),
-      });
-    } else if (purify.Maybe.isMaybe(parameters.optionalLazyObjectProperty)) {
-      this.optionalLazyObjectProperty = new $LazyOptionalObject<
-        Nested.$Identifier,
-        Nested,
-        $DefaultStub
-      >({
-        stub: parameters.optionalLazyObjectProperty.map(
-          (_) => new $DefaultStub(_),
-        ),
-        resolver: async () =>
-          purify.Either.of(
-            (
-              parameters.optionalLazyObjectProperty as purify.Maybe<Nested>
-            ).unsafeCoerce(),
-          ),
       });
     } else if (typeof parameters.optionalLazyObjectProperty === "undefined") {
       this.optionalLazyObjectProperty = new $LazyOptionalObject<

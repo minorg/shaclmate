@@ -447,10 +447,6 @@ export class TypeFactory {
           stubType instanceof OptionType,
           `lazy property ${name} on ${objectType.name} has ${(stubType as any).kind} stubs`,
         );
-        invariant(
-          stubType.itemType.kind === resolvedType.itemType.kind,
-          `lazy property ${name} on ${objectType.name} has mismatched stub/resolved item types`,
-        );
 
         lazyType = new ObjectType.LazyShaclProperty.OptionalObjectType({
           resolvedType,
@@ -465,10 +461,6 @@ export class TypeFactory {
         invariant(
           stubType instanceof SetType,
           `lazy property ${name} on ${objectType.name} has ${(stubType as any).kind} stubs`,
-        );
-        invariant(
-          stubType.itemType.kind === resolvedType.itemType.kind,
-          `lazy property ${name} on ${objectType.name} has mismatched stub/resolved item types`,
         );
 
         lazyType = new ObjectType.LazyShaclProperty.ObjectSetType({

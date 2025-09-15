@@ -212,7 +212,7 @@ export namespace LazyShaclProperty {
       if (this.stubType.itemType.kind === "ObjectType") {
         conversions.push({
           conversionExpression: (value) =>
-            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}.map(parameters => ${(this.stubType.itemType as ObjectType).newExpression({ parameters: "parameters" })}(_)), resolver: async () => purify.Either.of(${value} as readonly ${this.resolvedType.itemType.name}[]) })`,
+            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}.map(parameters => ${(this.stubType.itemType as ObjectType).newExpression({ parameters: "parameters" })}), resolver: async () => purify.Either.of(${value} as readonly ${this.resolvedType.itemType.name}[]) })`,
           sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
           sourceTypeName: `readonly ${this.resolvedType.itemType.name}[]`,
         });
@@ -287,17 +287,17 @@ export namespace LazyShaclProperty {
         conversions.push(
           {
             conversionExpression: (value) =>
-              `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: purify.Maybe.of(${(this.stubType.itemType as ObjectType).newExpression({ parameters: value })}), resolver: async () => purify.Either.of(${value} as ${this.resolvedType.itemType.name}) })`,
-            sourceTypeCheckExpression: (value) =>
-              `typeof ${value} === "object" && ${value} instanceof ${this.resolvedType.itemType.name}`,
-            sourceTypeName: this.resolvedType.itemType.name,
-          },
-          {
-            conversionExpression: (value) =>
               `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}.map(parameters => ${(this.stubType.itemType as ObjectType).newExpression({ parameters: "parameters" })}), resolver: async () => purify.Either.of((${value} as purify.Maybe<${this.resolvedType.itemType.name}>).unsafeCoerce()) })`,
             sourceTypeCheckExpression: (value) =>
               `purify.Maybe.isMaybe(${value})`,
             sourceTypeName: `purify.Maybe<${this.resolvedType.itemType.name}>`,
+          },
+          {
+            conversionExpression: (value) =>
+              `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: purify.Maybe.of(${(this.stubType.itemType as ObjectType).newExpression({ parameters: value })}), resolver: async () => purify.Either.of(${value} as ${this.resolvedType.itemType.name}) })`,
+            sourceTypeCheckExpression: (value) =>
+              `typeof ${value} === "object"`,
+            sourceTypeName: this.resolvedType.itemType.name,
           },
         );
       }
