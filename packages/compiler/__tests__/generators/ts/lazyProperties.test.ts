@@ -5,8 +5,9 @@ import { invariant } from "ts-invariant";
 import { beforeAll, describe, it } from "vitest";
 
 describe("lazyProperties", () => {
-  let emptySut: kitchenSink.LazyPropertiesClass;
-  let nonEmptySut: kitchenSink.LazyPropertiesClass;
+  let emptyLazyPropertiesObject: kitchenSink.LazyPropertiesClass;
+  let nonEmptyLazyPropertiesObject: kitchenSink.LazyPropertiesClass;
+
   const expectedLazilyResolvedBlankNodeOrIriObject =
     new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
       $identifier: N3.DataFactory.namedNode(
@@ -37,31 +38,37 @@ describe("lazyProperties", () => {
     expectedLazilyResolvedIriObject.$toRdf({ resourceSet });
     expectedLazilyResolvedObjectUnion.$toRdf({ resourceSet });
 
-    emptySut = kitchenSink.LazyPropertiesClass.$fromRdf({
+    emptyLazyPropertiesObject = kitchenSink.LazyPropertiesClass.$fromRdf({
       resource: new kitchenSink.LazyPropertiesClass({
         lazyRequiredObjectProperty: expectedLazilyResolvedBlankNodeOrIriObject,
+        stubRequiredObjectProperty: expectedLazilyResolvedBlankNodeOrIriObject,
       }).$toRdf({ resourceSet }),
     }).unsafeCoerce();
 
-    nonEmptySut = kitchenSink.LazyPropertiesClass.$fromRdf({
+    nonEmptyLazyPropertiesObject = kitchenSink.LazyPropertiesClass.$fromRdf({
       resource: new kitchenSink.LazyPropertiesClass({
         lazyIriObjectProperty: expectedLazilyResolvedIriObject,
         lazyOptionalObjectProperty: expectedLazilyResolvedBlankNodeOrIriObject,
         lazyRequiredObjectProperty: expectedLazilyResolvedBlankNodeOrIriObject,
         lazyObjectSetProperty: [expectedLazilyResolvedBlankNodeOrIriObject],
         lazyObjectUnionProperty: expectedLazilyResolvedObjectUnion,
+        stubOptionalObjectProperty: expectedLazilyResolvedBlankNodeOrIriObject,
+        stubObjectSetProperty: [expectedLazilyResolvedBlankNodeOrIriObject],
+        stubRequiredObjectProperty: expectedLazilyResolvedBlankNodeOrIriObject,
       }).$toRdf({ resourceSet }),
     }).unsafeCoerce();
   });
 
   it("lazy IRI", async ({ expect }) => {
     expect(
-      nonEmptySut.lazyIriObjectProperty.stub
+      nonEmptyLazyPropertiesObject.lazyIriObjectProperty.stub
         .unsafeCoerce()
         .$identifier.equals(expectedLazilyResolvedIriObject.$identifier),
     ).toStrictEqual(true);
 
-    const resolvedObject = (await nonEmptySut.lazyIriObjectProperty.resolve())
+    const resolvedObject = (
+      await nonEmptyLazyPropertiesObject.lazyIriObjectProperty.resolve()
+    )
       .unsafeCoerce()
       .unsafeCoerce();
     expect(
@@ -71,12 +78,14 @@ describe("lazyProperties", () => {
 
   it("lazy object union", async ({ expect }) => {
     expect(
-      nonEmptySut.lazyObjectUnionProperty.stub
+      nonEmptyLazyPropertiesObject.lazyObjectUnionProperty.stub
         .unsafeCoerce()
         .$identifier.equals(expectedLazilyResolvedObjectUnion.$identifier),
     ).toStrictEqual(true);
 
-    const resolvedObject = (await nonEmptySut.lazyObjectUnionProperty.resolve())
+    const resolvedObject = (
+      await nonEmptyLazyPropertiesObject.lazyObjectUnionProperty.resolve()
+    )
       .unsafeCoerce()
       .unsafeCoerce();
     invariant(resolvedObject.$type === expectedLazilyResolvedObjectUnion.$type);
@@ -86,23 +95,27 @@ describe("lazyProperties", () => {
   });
 
   it("lazy object set (empty)", async ({ expect }) => {
-    expect(emptySut.lazyObjectSetProperty.stubs).toHaveLength(0);
+    expect(emptyLazyPropertiesObject.lazyObjectSetProperty.stubs).toHaveLength(
+      0,
+    );
     const resolvedObjects = (
-      await emptySut.lazyObjectSetProperty.resolve()
+      await emptyLazyPropertiesObject.lazyObjectSetProperty.resolve()
     ).unsafeCoerce();
     expect(resolvedObjects).toHaveLength(0);
   });
 
   it("lazy object set (non-empty)", async ({ expect }) => {
-    expect(nonEmptySut.lazyObjectSetProperty.stubs).toHaveLength(1);
     expect(
-      nonEmptySut.lazyObjectSetProperty.stubs[0].$identifier.equals(
+      nonEmptyLazyPropertiesObject.lazyObjectSetProperty.stubs,
+    ).toHaveLength(1);
+    expect(
+      nonEmptyLazyPropertiesObject.lazyObjectSetProperty.stubs[0].$identifier.equals(
         expectedLazilyResolvedBlankNodeOrIriObject.$identifier,
       ),
     ).toStrictEqual(true);
 
     const resolvedObjects = (
-      await nonEmptySut.lazyObjectSetProperty.resolve()
+      await nonEmptyLazyPropertiesObject.lazyObjectSetProperty.resolve()
     ).unsafeCoerce();
     expect(resolvedObjects).toHaveLength(1);
     expect(
@@ -113,19 +126,19 @@ describe("lazyProperties", () => {
   });
 
   it("lazy optional object (empty)", async ({ expect }) => {
-    expect(emptySut.lazyOptionalObjectProperty.stub.isNothing()).toStrictEqual(
-      true,
-    );
+    expect(
+      emptyLazyPropertiesObject.lazyOptionalObjectProperty.stub.isNothing(),
+    ).toStrictEqual(true);
 
     const resolvedObject = (
-      await emptySut.lazyOptionalObjectProperty.resolve()
+      await emptyLazyPropertiesObject.lazyOptionalObjectProperty.resolve()
     ).unsafeCoerce();
     expect(resolvedObject.isNothing()).toStrictEqual(true);
   });
 
   it("lazy optional object (non-empty)", async ({ expect }) => {
     expect(
-      nonEmptySut.lazyOptionalObjectProperty.stub
+      nonEmptyLazyPropertiesObject.lazyOptionalObjectProperty.stub
         .unsafeCoerce()
         .$identifier.equals(
           expectedLazilyResolvedBlankNodeOrIriObject.$identifier,
@@ -133,7 +146,7 @@ describe("lazyProperties", () => {
     ).toStrictEqual(true);
 
     const resolvedObject = (
-      await nonEmptySut.lazyOptionalObjectProperty.resolve()
+      await nonEmptyLazyPropertiesObject.lazyOptionalObjectProperty.resolve()
     )
       .unsafeCoerce()
       .unsafeCoerce();
@@ -146,13 +159,93 @@ describe("lazyProperties", () => {
 
   it("lazy required object", async ({ expect }) => {
     expect(
-      nonEmptySut.lazyRequiredObjectProperty.stub.$identifier.equals(
+      nonEmptyLazyPropertiesObject.lazyRequiredObjectProperty.stub.$identifier.equals(
         expectedLazilyResolvedBlankNodeOrIriObject.$identifier,
       ),
     ).toStrictEqual(true);
 
     const resolvedObject = (
-      await nonEmptySut.lazyRequiredObjectProperty.resolve()
+      await nonEmptyLazyPropertiesObject.lazyRequiredObjectProperty.resolve()
+    ).unsafeCoerce();
+    expect(
+      resolvedObject
+        .$equals(expectedLazilyResolvedBlankNodeOrIriObject)
+        .extract(),
+    ).toStrictEqual(true);
+  });
+
+  it("stub object set (empty)", async ({ expect }) => {
+    expect(emptyLazyPropertiesObject.stubObjectSetProperty.stubs).toHaveLength(
+      0,
+    );
+    const resolvedObjects = (
+      await emptyLazyPropertiesObject.stubObjectSetProperty.resolve()
+    ).unsafeCoerce();
+    expect(resolvedObjects).toHaveLength(0);
+  });
+
+  it("stub object set (non-empty)", async ({ expect }) => {
+    expect(
+      nonEmptyLazyPropertiesObject.stubObjectSetProperty.stubs,
+    ).toHaveLength(1);
+    expect(
+      nonEmptyLazyPropertiesObject.stubObjectSetProperty.stubs[0].$identifier.equals(
+        expectedLazilyResolvedBlankNodeOrIriObject.$identifier,
+      ),
+    ).toStrictEqual(true);
+
+    const resolvedObjects = (
+      await nonEmptyLazyPropertiesObject.stubObjectSetProperty.resolve()
+    ).unsafeCoerce();
+    expect(resolvedObjects).toHaveLength(1);
+    expect(
+      resolvedObjects[0]
+        .$equals(expectedLazilyResolvedBlankNodeOrIriObject)
+        .extract(),
+    ).toStrictEqual(true);
+  });
+
+  it("stub optional object (empty)", async ({ expect }) => {
+    expect(
+      emptyLazyPropertiesObject.stubOptionalObjectProperty.stub.isNothing(),
+    ).toStrictEqual(true);
+
+    const resolvedObject = (
+      await emptyLazyPropertiesObject.stubOptionalObjectProperty.resolve()
+    ).unsafeCoerce();
+    expect(resolvedObject.isNothing()).toStrictEqual(true);
+  });
+
+  it("stub optional object (non-empty)", async ({ expect }) => {
+    expect(
+      nonEmptyLazyPropertiesObject.stubOptionalObjectProperty.stub
+        .unsafeCoerce()
+        .$identifier.equals(
+          expectedLazilyResolvedBlankNodeOrIriObject.$identifier,
+        ),
+    ).toStrictEqual(true);
+
+    const resolvedObject = (
+      await nonEmptyLazyPropertiesObject.stubOptionalObjectProperty.resolve()
+    )
+      .unsafeCoerce()
+      .unsafeCoerce();
+    expect(
+      resolvedObject
+        .$equals(expectedLazilyResolvedBlankNodeOrIriObject)
+        .extract(),
+    ).toStrictEqual(true);
+  });
+
+  it("stub required object", async ({ expect }) => {
+    expect(
+      nonEmptyLazyPropertiesObject.stubRequiredObjectProperty.stub.$identifier.equals(
+        expectedLazilyResolvedBlankNodeOrIriObject.$identifier,
+      ),
+    ).toStrictEqual(true);
+
+    const resolvedObject = (
+      await nonEmptyLazyPropertiesObject.stubRequiredObjectProperty.resolve()
     ).unsafeCoerce();
     expect(
       resolvedObject

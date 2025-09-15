@@ -1734,7 +1734,9 @@ export namespace UnionPropertiesClass {
         };
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2839,7 +2841,9 @@ export namespace TermPropertiesClass {
         };
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4123,7 +4127,9 @@ export namespace PropertyVisibilitiesClass {
     readonly publicProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4693,7 +4699,9 @@ export namespace PropertyCardinalitiesClass {
     readonly requiredStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5332,7 +5340,9 @@ export namespace OrderedPropertiesClass {
     readonly orderedPropertyA: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6289,7 +6299,9 @@ export namespace MutablePropertiesClass {
     readonly mutableStringProperty?: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -7098,7 +7110,9 @@ export namespace ListPropertiesClass {
     readonly stringListProperty?: readonly string[];
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -7693,7 +7707,373 @@ export namespace ListPropertiesClass {
   }
 }
 /**
- * Node shape that has lazy properties.
+ * Node shape used as a stub by LazyPropertiesClass
+ */
+export class StubClass {
+  private _$identifier?: StubClass.$Identifier;
+  readonly $type = "StubClass";
+  readonly lazilyResolvedStringProperty: string;
+
+  constructor(parameters: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly lazilyResolvedStringProperty: string;
+  }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+
+    this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
+  }
+
+  get $identifier(): StubClass.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: StubClass): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(
+          this.lazilyResolvedStringProperty,
+          other.lazilyResolvedStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "lazilyResolvedStringProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.lazilyResolvedStringProperty);
+    return _hasher;
+  }
+
+  $toJson(): StubClass.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
+      } satisfies StubClass.$Json),
+    );
+  }
+
+  $toRdf({
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.$identifier, {
+      mutateGraph,
+    });
+    _resource.add(
+      StubClass.$properties.lazilyResolvedStringProperty["identifier"],
+      this.lazilyResolvedStringProperty,
+    );
+    return _resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace StubClass {
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "StubClass";
+    readonly lazilyResolvedStringProperty: string;
+  };
+
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      lazilyResolvedStringProperty: string;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const lazilyResolvedStringProperty =
+      $jsonObject["lazilyResolvedStringProperty"];
+    return purify.Either.of({ $identifier, lazilyResolvedStringProperty });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, StubClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new StubClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zodToJsonSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "StubClass" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+          type: "Control",
+        },
+      ],
+      label: "StubClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("StubClass"),
+      lazilyResolvedStringProperty: zod.string(),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      lazilyResolvedStringProperty: string;
+    }
+  > {
+    const $identifier: StubClass.$Identifier = $resource.identifier;
+    const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
+      $resource
+        .values($properties.lazilyResolvedStringProperty["identifier"], {
+          unique: true,
+        })
+        .head()
+        .chain((value) => value.toString());
+    if (_lazilyResolvedStringPropertyEither.isLeft()) {
+      return _lazilyResolvedStringPropertyEither;
+    }
+
+    const lazilyResolvedStringProperty =
+      _lazilyResolvedStringPropertyEither.unsafeCoerce();
+    return purify.Either.of({ $identifier, lazilyResolvedStringProperty });
+  }
+
+  export function $fromRdf(
+    parameters: Parameters<typeof StubClass.$propertiesFromRdf>[0],
+  ): purify.Either<Error, StubClass> {
+    return StubClass.$propertiesFromRdf(parameters).map(
+      (properties) => new StubClass(properties),
+    );
+  }
+
+  export const $properties = {
+    lazilyResolvedStringProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/lazilyResolvedStringProperty",
+      ),
+    },
+  };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        StubClass.$sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        StubClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      StubClass.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject = parameters?.subject ?? dataFactory.variable!("stubClass");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "stubClass");
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}LazilyResolvedStringProperty`,
+      ),
+      predicate:
+        StubClass.$properties.lazilyResolvedStringProperty["identifier"],
+      subject,
+    });
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject = parameters?.subject ?? dataFactory.variable!("stubClass");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "stubClass");
+    const propertyPatterns: readonly sparqljs.Pattern[] = [
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(
+              `${variablePrefix}LazilyResolvedStringProperty`,
+            ),
+            predicate:
+              StubClass.$properties.lazilyResolvedStringProperty["identifier"],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+    ];
+    for (const pattern of propertyPatterns) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+/**
+ * Node shape that has lazy properties with default stubs.
  */
 export class LazyPropertiesClass {
   private _$identifier?: LazyPropertiesClass.$Identifier;
@@ -7722,6 +8102,21 @@ export class LazyPropertiesClass {
     LazilyResolvedBlankNodeOrIriClass.$Identifier,
     LazilyResolvedBlankNodeOrIriClass,
     $DefaultStub
+  >;
+  readonly stubObjectSetProperty: $LazyObjectSet<
+    LazilyResolvedBlankNodeOrIriClass.$Identifier,
+    LazilyResolvedBlankNodeOrIriClass,
+    StubClass
+  >;
+  readonly stubOptionalObjectProperty: $LazyOptionalObject<
+    LazilyResolvedBlankNodeOrIriClass.$Identifier,
+    LazilyResolvedBlankNodeOrIriClass,
+    StubClass
+  >;
+  readonly stubRequiredObjectProperty: $LazyRequiredObject<
+    LazilyResolvedBlankNodeOrIriClass.$Identifier,
+    LazilyResolvedBlankNodeOrIriClass,
+    StubClass
   >;
 
   constructor(parameters: {
@@ -7758,6 +8153,28 @@ export class LazyPropertiesClass {
           LazilyResolvedBlankNodeOrIriClass.$Identifier,
           LazilyResolvedBlankNodeOrIriClass,
           $DefaultStub
+        >
+      | LazilyResolvedBlankNodeOrIriClass;
+    readonly stubObjectSetProperty?:
+      | $LazyObjectSet<
+          LazilyResolvedBlankNodeOrIriClass.$Identifier,
+          LazilyResolvedBlankNodeOrIriClass,
+          StubClass
+        >
+      | readonly LazilyResolvedBlankNodeOrIriClass[];
+    readonly stubOptionalObjectProperty?:
+      | $LazyOptionalObject<
+          LazilyResolvedBlankNodeOrIriClass.$Identifier,
+          LazilyResolvedBlankNodeOrIriClass,
+          StubClass
+        >
+      | LazilyResolvedBlankNodeOrIriClass
+      | purify.Maybe<LazilyResolvedBlankNodeOrIriClass>;
+    readonly stubRequiredObjectProperty:
+      | $LazyRequiredObject<
+          LazilyResolvedBlankNodeOrIriClass.$Identifier,
+          LazilyResolvedBlankNodeOrIriClass,
+          StubClass
         >
       | LazilyResolvedBlankNodeOrIriClass;
   }) {
@@ -7981,6 +8398,118 @@ export class LazyPropertiesClass {
       this.lazyRequiredObjectProperty =
         parameters.lazyRequiredObjectProperty satisfies never;
     }
+
+    if (
+      typeof parameters.stubObjectSetProperty === "object" &&
+      parameters.stubObjectSetProperty instanceof $LazyObjectSet
+    ) {
+      this.stubObjectSetProperty = parameters.stubObjectSetProperty;
+    } else if (typeof parameters.stubObjectSetProperty === "object") {
+      this.stubObjectSetProperty = new $LazyObjectSet<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
+      >({
+        stubs: parameters.stubObjectSetProperty.map(
+          (parameters) => new StubClass(parameters),
+        ),
+        resolver: async () =>
+          purify.Either.of(
+            parameters.stubObjectSetProperty as readonly LazilyResolvedBlankNodeOrIriClass[],
+          ),
+      });
+    } else if (typeof parameters.stubObjectSetProperty === "undefined") {
+      this.stubObjectSetProperty = new $LazyObjectSet<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
+      >({
+        stubs: [],
+        resolver: async () => {
+          throw new Error("should never be called");
+        },
+      });
+    } else {
+      this.stubObjectSetProperty =
+        parameters.stubObjectSetProperty satisfies never;
+    }
+
+    if (
+      typeof parameters.stubOptionalObjectProperty === "object" &&
+      parameters.stubOptionalObjectProperty instanceof $LazyOptionalObject
+    ) {
+      this.stubOptionalObjectProperty = parameters.stubOptionalObjectProperty;
+    } else if (purify.Maybe.isMaybe(parameters.stubOptionalObjectProperty)) {
+      this.stubOptionalObjectProperty = new $LazyOptionalObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
+      >({
+        stub: parameters.stubOptionalObjectProperty.map(
+          (parameters) => new StubClass(parameters),
+        ),
+        resolver: async () =>
+          purify.Either.of(
+            (
+              parameters.stubOptionalObjectProperty as purify.Maybe<LazilyResolvedBlankNodeOrIriClass>
+            ).unsafeCoerce(),
+          ),
+      });
+    } else if (typeof parameters.stubOptionalObjectProperty === "object") {
+      this.stubOptionalObjectProperty = new $LazyOptionalObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
+      >({
+        stub: purify.Maybe.of(
+          new StubClass(parameters.stubOptionalObjectProperty),
+        ),
+        resolver: async () =>
+          purify.Either.of(
+            parameters.stubOptionalObjectProperty as LazilyResolvedBlankNodeOrIriClass,
+          ),
+      });
+    } else if (typeof parameters.stubOptionalObjectProperty === "undefined") {
+      this.stubOptionalObjectProperty = new $LazyOptionalObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
+      >({
+        stub: purify.Maybe.empty(),
+        resolver: async () => {
+          throw new Error("should never be called");
+        },
+      });
+    } else {
+      this.stubOptionalObjectProperty =
+        parameters.stubOptionalObjectProperty satisfies never;
+    }
+
+    if (
+      typeof parameters.stubRequiredObjectProperty === "object" &&
+      parameters.stubRequiredObjectProperty instanceof $LazyRequiredObject
+    ) {
+      this.stubRequiredObjectProperty = parameters.stubRequiredObjectProperty;
+    } else if (
+      typeof parameters.stubRequiredObjectProperty === "object" &&
+      parameters.stubRequiredObjectProperty instanceof
+        LazilyResolvedBlankNodeOrIriClass
+    ) {
+      this.stubRequiredObjectProperty = new $LazyRequiredObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
+      >({
+        stub: new StubClass(parameters.stubRequiredObjectProperty),
+        resolver: async () =>
+          purify.Either.of(
+            parameters.stubRequiredObjectProperty as LazilyResolvedBlankNodeOrIriClass,
+          ),
+      });
+    } else {
+      this.stubRequiredObjectProperty =
+        parameters.stubRequiredObjectProperty satisfies never;
+    }
   }
 
   get $identifier(): LazyPropertiesClass.$Identifier {
@@ -8088,6 +8617,52 @@ export class LazyPropertiesClass {
           propertyValuesUnequal,
           type: "Property" as const,
         })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          ((left, right) =>
+            $arrayEquals(left, right, (left, right) => left.$equals(right)))(
+            left.stubs,
+            right.stubs,
+          ))(this.stubObjectSetProperty, other.stubObjectSetProperty).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "stubObjectSetProperty",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) =>
+          ((left, right) =>
+            $maybeEquals(left, right, (left, right) => left.$equals(right)))(
+            left.stub,
+            right.stub,
+          ))(
+          this.stubOptionalObjectProperty,
+          other.stubOptionalObjectProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "stubOptionalObjectProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          ((left, right) => left.$equals(right))(left.stub, right.stub))(
+          this.stubRequiredObjectProperty,
+          other.stubRequiredObjectProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "stubRequiredObjectProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
       );
   }
 
@@ -8121,6 +8696,14 @@ export class LazyPropertiesClass {
       value1.$hash(_hasher);
     });
     this.lazyRequiredObjectProperty.stub.$hash(_hasher);
+    for (const item1 of this.stubObjectSetProperty.stubs) {
+      item1.$hash(_hasher);
+    }
+
+    this.stubOptionalObjectProperty.stub.ifJust((value1) => {
+      value1.$hash(_hasher);
+    });
+    this.stubRequiredObjectProperty.stub.$hash(_hasher);
     return _hasher;
   }
 
@@ -8146,6 +8729,14 @@ export class LazyPropertiesClass {
           .extract(),
         lazyRequiredObjectProperty:
           this.lazyRequiredObjectProperty.stub.$toJson(),
+        stubObjectSetProperty: this.stubObjectSetProperty.stubs.map((item) =>
+          item.$toJson(),
+        ),
+        stubOptionalObjectProperty: this.stubOptionalObjectProperty.stub
+          .map((item) => item.$toJson())
+          .extract(),
+        stubRequiredObjectProperty:
+          this.stubRequiredObjectProperty.stub.$toJson(),
       } satisfies LazyPropertiesClass.$Json),
     );
   }
@@ -8192,6 +8783,25 @@ export class LazyPropertiesClass {
         resourceSet: resourceSet,
       }),
     );
+    _resource.add(
+      LazyPropertiesClass.$properties.stubObjectSetProperty["identifier"],
+      this.stubObjectSetProperty.stubs.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
+      LazyPropertiesClass.$properties.stubOptionalObjectProperty["identifier"],
+      this.stubOptionalObjectProperty.stub.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
+      LazyPropertiesClass.$properties.stubRequiredObjectProperty["identifier"],
+      this.stubRequiredObjectProperty.stub.$toRdf({
+        mutateGraph: mutateGraph,
+        resourceSet: resourceSet,
+      }),
+    );
     return _resource;
   }
 
@@ -8227,9 +8837,14 @@ export namespace LazyPropertiesClass {
     readonly lazyObjectUnionProperty?: $DefaultStub.$Json;
     readonly lazyOptionalObjectProperty?: $DefaultStub.$Json;
     readonly lazyRequiredObjectProperty: $DefaultStub.$Json;
+    readonly stubObjectSetProperty?: readonly StubClass.$Json[];
+    readonly stubOptionalObjectProperty?: StubClass.$Json;
+    readonly stubRequiredObjectProperty: StubClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8257,6 +8872,21 @@ export namespace LazyPropertiesClass {
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
         LazilyResolvedBlankNodeOrIriClass,
         $DefaultStub
+      >;
+      stubObjectSetProperty: $LazyObjectSet<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
+      >;
+      stubOptionalObjectProperty: $LazyOptionalObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
+      >;
+      stubRequiredObjectProperty: $LazyRequiredObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
       >;
     }
   > {
@@ -8352,6 +8982,55 @@ export namespace LazyPropertiesClass {
           ),
         ),
     });
+    const stubObjectSetProperty = new $LazyObjectSet<
+      LazilyResolvedBlankNodeOrIriClass.$Identifier,
+      LazilyResolvedBlankNodeOrIriClass,
+      StubClass
+    >({
+      stubs: $jsonObject["stubObjectSetProperty"].map((item) =>
+        StubClass.$fromJson(item).unsafeCoerce(),
+      ),
+      resolver: () =>
+        Promise.resolve(
+          purify.Left(
+            new Error("unable to resolve identifiers deserialized from JSON"),
+          ),
+        ),
+    });
+    const stubOptionalObjectProperty = new $LazyOptionalObject<
+      LazilyResolvedBlankNodeOrIriClass.$Identifier,
+      LazilyResolvedBlankNodeOrIriClass,
+      StubClass
+    >({
+      stub: purify.Maybe.fromNullable(
+        $jsonObject["stubOptionalObjectProperty"],
+      ).map((item) => StubClass.$fromJson(item).unsafeCoerce()),
+      resolver: (identifier) =>
+        Promise.resolve(
+          purify.Left(
+            new Error(
+              `unable to resolve identifier ${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON`,
+            ),
+          ),
+        ),
+    });
+    const stubRequiredObjectProperty = new $LazyRequiredObject<
+      LazilyResolvedBlankNodeOrIriClass.$Identifier,
+      LazilyResolvedBlankNodeOrIriClass,
+      StubClass
+    >({
+      stub: StubClass.$fromJson(
+        $jsonObject["stubRequiredObjectProperty"],
+      ).unsafeCoerce(),
+      resolver: (identifier) =>
+        Promise.resolve(
+          purify.Left(
+            new Error(
+              `unable to resolve identifier ${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON`,
+            ),
+          ),
+        ),
+    });
     return purify.Either.of({
       $identifier,
       lazyIriObjectProperty,
@@ -8359,6 +9038,9 @@ export namespace LazyPropertiesClass {
       lazyObjectUnionProperty,
       lazyOptionalObjectProperty,
       lazyRequiredObjectProperty,
+      stubObjectSetProperty,
+      stubOptionalObjectProperty,
+      stubRequiredObjectProperty,
     });
   }
 
@@ -8409,6 +9091,15 @@ export namespace LazyPropertiesClass {
         $DefaultStub.$jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/lazyRequiredObjectProperty`,
         }),
+        StubClass.$jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/stubObjectSetProperty`,
+        }),
+        StubClass.$jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/stubOptionalObjectProperty`,
+        }),
+        StubClass.$jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/stubRequiredObjectProperty`,
+        }),
       ],
       label: "LazyPropertiesClass",
       type: "Group",
@@ -8427,6 +9118,11 @@ export namespace LazyPropertiesClass {
       lazyObjectUnionProperty: $DefaultStub.$jsonZodSchema().optional(),
       lazyOptionalObjectProperty: $DefaultStub.$jsonZodSchema().optional(),
       lazyRequiredObjectProperty: $DefaultStub.$jsonZodSchema(),
+      stubObjectSetProperty: StubClass.$jsonZodSchema()
+        .array()
+        .default(() => []),
+      stubOptionalObjectProperty: StubClass.$jsonZodSchema().optional(),
+      stubRequiredObjectProperty: StubClass.$jsonZodSchema(),
     }) satisfies zod.ZodType<$Json>;
   }
 
@@ -8471,6 +9167,21 @@ export namespace LazyPropertiesClass {
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
         LazilyResolvedBlankNodeOrIriClass,
         $DefaultStub
+      >;
+      stubObjectSetProperty: $LazyObjectSet<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
+      >;
+      stubOptionalObjectProperty: $LazyOptionalObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
+      >;
+      stubRequiredObjectProperty: $LazyRequiredObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
       >;
     }
   > {
@@ -8689,6 +9400,135 @@ export namespace LazyPropertiesClass {
 
     const lazyRequiredObjectProperty =
       _lazyRequiredObjectPropertyEither.unsafeCoerce();
+    const _stubObjectSetPropertyEither: purify.Either<
+      Error,
+      $LazyObjectSet<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
+      >
+    > = purify.Either.sequence(
+      $resource
+        .values($properties.stubObjectSetProperty["identifier"], {
+          unique: true,
+        })
+        .map((item) =>
+          item
+            .toValues()
+            .head()
+            .chain((value) => value.toResource())
+            .chain((_resource) =>
+              StubClass.$fromRdf({
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                resource: _resource,
+              }),
+            ),
+        ),
+    ).map(
+      (stubs) =>
+        new $LazyObjectSet<
+          LazilyResolvedBlankNodeOrIriClass.$Identifier,
+          LazilyResolvedBlankNodeOrIriClass,
+          StubClass
+        >({
+          stubs,
+          resolver: (identifiers) =>
+            $objectSet.lazilyResolvedBlankNodeOrIriClasses({
+              where: { identifiers, type: "identifiers" },
+            }),
+        }),
+    );
+    if (_stubObjectSetPropertyEither.isLeft()) {
+      return _stubObjectSetPropertyEither;
+    }
+
+    const stubObjectSetProperty = _stubObjectSetPropertyEither.unsafeCoerce();
+    const _stubOptionalObjectPropertyEither: purify.Either<
+      Error,
+      $LazyOptionalObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
+      >
+    > = $resource
+      .values($properties.stubOptionalObjectProperty["identifier"], {
+        unique: true,
+      })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        StubClass.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      )
+      .map(
+        (stub) =>
+          new $LazyOptionalObject<
+            LazilyResolvedBlankNodeOrIriClass.$Identifier,
+            LazilyResolvedBlankNodeOrIriClass,
+            StubClass
+          >({
+            stub,
+            resolver: (identifier) =>
+              $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
+          }),
+      );
+    if (_stubOptionalObjectPropertyEither.isLeft()) {
+      return _stubOptionalObjectPropertyEither;
+    }
+
+    const stubOptionalObjectProperty =
+      _stubOptionalObjectPropertyEither.unsafeCoerce();
+    const _stubRequiredObjectPropertyEither: purify.Either<
+      Error,
+      $LazyRequiredObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
+      >
+    > = $resource
+      .values($properties.stubRequiredObjectProperty["identifier"], {
+        unique: true,
+      })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        StubClass.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map(
+        (stub) =>
+          new $LazyRequiredObject<
+            LazilyResolvedBlankNodeOrIriClass.$Identifier,
+            LazilyResolvedBlankNodeOrIriClass,
+            StubClass
+          >({
+            stub,
+            resolver: (identifier) =>
+              $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
+          }),
+      );
+    if (_stubRequiredObjectPropertyEither.isLeft()) {
+      return _stubRequiredObjectPropertyEither;
+    }
+
+    const stubRequiredObjectProperty =
+      _stubRequiredObjectPropertyEither.unsafeCoerce();
     return purify.Either.of({
       $identifier,
       lazyIriObjectProperty,
@@ -8696,6 +9536,9 @@ export namespace LazyPropertiesClass {
       lazyObjectUnionProperty,
       lazyOptionalObjectProperty,
       lazyRequiredObjectProperty,
+      stubObjectSetProperty,
+      stubOptionalObjectProperty,
+      stubRequiredObjectProperty,
     });
   }
 
@@ -8731,6 +9574,21 @@ export namespace LazyPropertiesClass {
     lazyRequiredObjectProperty: {
       identifier: dataFactory.namedNode(
         "http://example.com/lazyRequiredObjectProperty",
+      ),
+    },
+    stubObjectSetProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/stubObjectSetProperty",
+      ),
+    },
+    stubOptionalObjectProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/stubOptionalObjectProperty",
+      ),
+    },
+    stubRequiredObjectProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/stubRequiredObjectProperty",
       ),
     },
   };
@@ -8866,6 +9724,59 @@ export namespace LazyPropertiesClass {
           `${variablePrefix}LazyRequiredObjectProperty`,
         ),
         variablePrefix: `${variablePrefix}LazyRequiredObjectProperty`,
+      }),
+    );
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}StubObjectSetProperty`),
+      predicate:
+        LazyPropertiesClass.$properties.stubObjectSetProperty["identifier"],
+      subject,
+    });
+    triples.push(
+      ...StubClass.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(
+          `${variablePrefix}StubObjectSetProperty`,
+        ),
+        variablePrefix: `${variablePrefix}StubObjectSetProperty`,
+      }),
+    );
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}StubOptionalObjectProperty`,
+      ),
+      predicate:
+        LazyPropertiesClass.$properties.stubOptionalObjectProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push(
+      ...StubClass.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(
+          `${variablePrefix}StubOptionalObjectProperty`,
+        ),
+        variablePrefix: `${variablePrefix}StubOptionalObjectProperty`,
+      }),
+    );
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}StubRequiredObjectProperty`,
+      ),
+      predicate:
+        LazyPropertiesClass.$properties.stubRequiredObjectProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push(
+      ...StubClass.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(
+          `${variablePrefix}StubRequiredObjectProperty`,
+        ),
+        variablePrefix: `${variablePrefix}StubRequiredObjectProperty`,
       }),
     );
     return triples;
@@ -9013,6 +9924,82 @@ export namespace LazyPropertiesClass {
           `${variablePrefix}LazyRequiredObjectProperty`,
         ),
         variablePrefix: `${variablePrefix}LazyRequiredObjectProperty`,
+      }),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}StubObjectSetProperty`,
+                ),
+                predicate:
+                  LazyPropertiesClass.$properties.stubObjectSetProperty[
+                    "identifier"
+                  ],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...StubClass.$sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(
+              `${variablePrefix}StubObjectSetProperty`,
+            ),
+            variablePrefix: `${variablePrefix}StubObjectSetProperty`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}StubOptionalObjectProperty`,
+                ),
+                predicate:
+                  LazyPropertiesClass.$properties.stubOptionalObjectProperty[
+                    "identifier"
+                  ],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...StubClass.$sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(
+              `${variablePrefix}StubOptionalObjectProperty`,
+            ),
+            variablePrefix: `${variablePrefix}StubOptionalObjectProperty`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(
+              `${variablePrefix}StubRequiredObjectProperty`,
+            ),
+            predicate:
+              LazyPropertiesClass.$properties.stubRequiredObjectProperty[
+                "identifier"
+              ],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      ...StubClass.$sparqlWherePatterns({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(
+          `${variablePrefix}StubRequiredObjectProperty`,
+        ),
+        variablePrefix: `${variablePrefix}StubRequiredObjectProperty`,
       }),
     ];
     for (const pattern of propertyPatterns) {
@@ -9551,7 +10538,9 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -10111,7 +11100,9 @@ export namespace LanguageInPropertiesClass {
     };
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -10837,7 +11828,9 @@ export namespace InterfaceUnionMember2b {
     readonly interfaceUnionMember2bProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11233,7 +12226,9 @@ export namespace InterfaceUnionMember2a {
     readonly interfaceUnionMember2aProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11629,7 +12624,9 @@ export namespace InterfaceUnionMember1 {
     readonly interfaceUnionMember1Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12013,7 +13010,9 @@ export namespace Interface {
     readonly interfaceProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12440,7 +13439,9 @@ export namespace IndirectRecursiveHelperClass {
     readonly indirectRecursiveProperty?: IndirectRecursiveClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12892,7 +13893,9 @@ export namespace IndirectRecursiveClass {
     readonly indirectRecursiveHelperProperty?: IndirectRecursiveHelperClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13424,7 +14427,9 @@ export namespace InPropertiesClass {
     readonly inStringsProperty?: "text" | "html";
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13585,21 +14590,23 @@ export namespace InPropertiesClass {
       .values($properties.inBooleansProperty["identifier"], { unique: true })
       .head()
       .chain((value) =>
-        value.toBoolean().chain((value) =>
-          value === true
-            ? purify.Either.of<Error, true>(value)
-            : purify.Left<Error, true>(
-                new rdfjsResource.Resource.MistypedValueError({
-                  actualValue: rdfLiteral.toRdf(value),
-                  expectedValueType: "true",
-                  focusResource: $resource,
-                  predicate:
-                    InPropertiesClass.$properties.inBooleansProperty[
-                      "identifier"
-                    ],
-                }),
-              ),
-        ),
+        value
+          .toBoolean()
+          .chain((value) =>
+            value === true
+              ? purify.Either.of<Error, true>(value)
+              : purify.Left<Error, true>(
+                  new rdfjsResource.Resource.MistypedValueError({
+                    actualValue: rdfLiteral.toRdf(value),
+                    expectedValueType: "true",
+                    focusResource: $resource,
+                    predicate:
+                      InPropertiesClass.$properties.inBooleansProperty[
+                        "identifier"
+                      ],
+                  }),
+                ),
+          ),
       )
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
@@ -14217,7 +15224,9 @@ export namespace InIdentifierClass {
     readonly inIdentifierProperty?: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.NamedNode<
@@ -14687,7 +15696,9 @@ export namespace HasValuePropertiesClass {
     readonly hasLiteralValueProperty?: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15179,7 +16190,9 @@ export namespace ExternClassPropertyClass {
     readonly externClassProperty?: ExternClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15603,7 +16616,9 @@ export namespace ExplicitRdfTypeClass {
     readonly explicitRdfTypeProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16059,7 +17074,9 @@ export namespace ExplicitFromToRdfTypesClass {
     readonly explicitFromToRdfTypesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16526,7 +17543,9 @@ export namespace DirectRecursiveClass {
     readonly directRecursiveProperty?: DirectRecursiveClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17093,7 +18112,9 @@ export namespace DefaultValuePropertiesClass {
     readonly trueBooleanDefaultValueProperty: boolean;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17810,7 +18831,9 @@ export namespace BaseInterfaceWithPropertiesStatic {
     readonly baseInterfaceWithPropertiesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18274,7 +19297,9 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export const $Identifier = BaseInterfaceWithPropertiesStatic.$Identifier;
   export type $Json = BaseInterfaceWithPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18698,7 +19723,9 @@ export namespace ConcreteParentInterfaceStatic {
     readonly concreteParentInterfaceProperty: string;
   } & BaseInterfaceWithoutPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19191,7 +20218,9 @@ export namespace ConcreteChildInterface {
     readonly concreteChildInterfaceProperty: string;
   } & ConcreteParentInterfaceStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19758,7 +20787,9 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     readonly abstractBaseClassWithPropertiesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -20311,18 +21342,20 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
   }
 
   override $equals(other: ConcreteParentClass): $EqualsResult {
-    return super.$equals(other).chain(() =>
-      $strictEquals(
-        this.concreteParentClassProperty,
-        other.concreteParentClassProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "concreteParentClassProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .$equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.concreteParentClassProperty,
+          other.concreteParentClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "concreteParentClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override $hash<
@@ -20402,7 +21435,9 @@ export namespace ConcreteParentClassStatic {
     readonly concreteParentClassProperty: string;
   } & AbstractBaseClassWithoutPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -20785,18 +21820,20 @@ export class ConcreteChildClass extends ConcreteParentClass {
   }
 
   override $equals(other: ConcreteChildClass): $EqualsResult {
-    return super.$equals(other).chain(() =>
-      $strictEquals(
-        this.concreteChildClassProperty,
-        other.concreteChildClassProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "concreteChildClassProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .$equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.concreteChildClassProperty,
+          other.concreteChildClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "concreteChildClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override $hash<
@@ -20872,7 +21909,9 @@ export namespace ConcreteChildClass {
     readonly concreteChildClassProperty: string;
   } & ConcreteParentClassStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -21351,7 +22390,9 @@ export namespace ClassUnionMember2 {
     readonly classUnionMember2Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -21792,7 +22833,9 @@ export namespace ClassUnionMember1 {
     readonly classUnionMember1Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -22474,7 +23517,9 @@ export namespace AbstractBaseClassForExternClassStatic {
     readonly abstractBaseClassForExternClassProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -24025,6 +25070,18 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly Sha256IriClass[]>>;
   sha256IriClassesCount(
     query?: Pick<$ObjectSet.Query<Sha256IriClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  stubClass(
+    identifier: StubClass.$Identifier,
+  ): Promise<purify.Either<Error, StubClass>>;
+  stubClassIdentifiers(
+    query?: $ObjectSet.Query<StubClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClass.$Identifier[]>>;
+  stubClasses(
+    query?: $ObjectSet.Query<StubClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClass[]>>;
+  stubClassesCount(
+    query?: Pick<$ObjectSet.Query<StubClass.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
   termPropertiesClass(
     identifier: TermPropertiesClass.$Identifier,
@@ -26343,6 +27400,65 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async stubClass(
+    identifier: StubClass.$Identifier,
+  ): Promise<purify.Either<Error, StubClass>> {
+    return this.stubClassSync(identifier);
+  }
+
+  stubClassSync(
+    identifier: StubClass.$Identifier,
+  ): purify.Either<Error, StubClass> {
+    return this.stubClassesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async stubClassIdentifiers(
+    query?: $ObjectSet.Query<StubClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClass.$Identifier[]>> {
+    return this.stubClassIdentifiersSync(query);
+  }
+
+  stubClassIdentifiersSync(
+    query?: $ObjectSet.Query<StubClass.$Identifier>,
+  ): purify.Either<Error, readonly StubClass.$Identifier[]> {
+    return this.$objectIdentifiersSync<StubClass, StubClass.$Identifier>(
+      { ...StubClass, $fromRdfType: undefined },
+      query,
+    );
+  }
+
+  async stubClasses(
+    query?: $ObjectSet.Query<StubClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClass[]>> {
+    return this.stubClassesSync(query);
+  }
+
+  stubClassesSync(
+    query?: $ObjectSet.Query<StubClass.$Identifier>,
+  ): purify.Either<Error, readonly StubClass[]> {
+    return this.$objectsSync<StubClass, StubClass.$Identifier>(
+      { ...StubClass, $fromRdfType: undefined },
+      query,
+    );
+  }
+
+  async stubClassesCount(
+    query?: Pick<$ObjectSet.Query<StubClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.stubClassesCountSync(query);
+  }
+
+  stubClassesCountSync(
+    query?: Pick<$ObjectSet.Query<StubClass.$Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<StubClass, StubClass.$Identifier>(
+      { ...StubClass, $fromRdfType: undefined },
+      query,
+    );
+  }
+
   async termPropertiesClass(
     identifier: TermPropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, TermPropertiesClass>> {
@@ -28464,6 +29580,34 @@ export class $SparqlObjectSet implements $ObjectSet {
       Sha256IriClass,
       query,
     );
+  }
+
+  async stubClass(
+    identifier: StubClass.$Identifier,
+  ): Promise<purify.Either<Error, StubClass>> {
+    return (
+      await this.stubClasses({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async stubClassIdentifiers(
+    query?: $SparqlObjectSet.Query<StubClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClass.$Identifier[]>> {
+    return this.$objectIdentifiers<StubClass.$Identifier>(StubClass, query);
+  }
+
+  async stubClasses(
+    query?: $SparqlObjectSet.Query<StubClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClass[]>> {
+    return this.$objects<StubClass, StubClass.$Identifier>(StubClass, query);
+  }
+
+  async stubClassesCount(
+    query?: Pick<$SparqlObjectSet.Query<StubClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<StubClass.$Identifier>(StubClass, query);
   }
 
   async termPropertiesClass(

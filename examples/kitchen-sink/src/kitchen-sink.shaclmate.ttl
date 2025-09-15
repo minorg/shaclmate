@@ -406,7 +406,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :LazyPropertiesClass
     a sh:NodeShape ;
-    rdfs:comment "Node shape that has lazy properties." ;
+    rdfs:comment "Node shape that has lazy properties with default stubs." ;
     sh:property [
         shaclmate:lazy true ;
         sh:maxCount 1 ;
@@ -433,6 +433,22 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:node :ClassUnion ;
         sh:path :lazyObjectUnionProperty
+    ], [
+        shaclmate:stub :StubClass ;
+        sh:maxCount 1 ;
+        sh:minCount 0 ;
+        sh:node :LazilyResolvedBlankNodeOrIriClass ;
+        sh:path :stubOptionalObjectProperty
+    ], [
+        shaclmate:stub :StubClass ;
+        sh:node :LazilyResolvedBlankNodeOrIriClass ;
+        sh:path :stubObjectSetProperty
+    ], [
+        shaclmate:stub :StubClass ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :LazilyResolvedBlankNodeOrIriClass ;
+        sh:path :stubRequiredObjectProperty
     ] .
 
 :ListPropertiesClass
@@ -645,18 +661,20 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ]
     ) .
 
+:StubClass
+    a sh:NodeShape ;
+    rdfs:comment "Node shape used as a stub by LazyPropertiesClass" ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
 :TermPropertiesClass
     a sh:NodeShape ;
     rdfs:comment "Shape with properties that are not nested objects" ;
     sh:property [
-        sh:datatype xsd:boolean ;
-        sh:maxCount 1 ;
-        sh:path :booleanTermProperty
-    ], [
-        sh:datatype xsd:date ;
-        sh:maxCount 1 ;
-        sh:path :dateTermProperty
-    ], [
         sh:datatype xsd:dateTime ;
         sh:maxCount 1 ;
         sh:path :dateTimeTermProperty
@@ -679,6 +697,14 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ], [
         sh:maxCount 1 ;
         sh:path :termProperty
+    ], [
+        sh:datatype xsd:boolean ;
+        sh:maxCount 1 ;
+        sh:path :booleanTermProperty
+    ], [
+        sh:datatype xsd:date ;
+        sh:maxCount 1 ;
+        sh:path :dateTermProperty
     ] .
 
 :UnionPropertiesClass
