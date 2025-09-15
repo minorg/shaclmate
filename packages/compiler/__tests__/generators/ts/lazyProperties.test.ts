@@ -22,12 +22,13 @@ describe("lazyProperties", () => {
       ),
       lazilyResolvedStringProperty: "test",
     });
-  const expectedLazilyResolvedObjectUnion = new kitchenSink.ClassUnionMember1({
-    $identifier: N3.DataFactory.namedNode(
-      "http://example.com/lazilyResolvedObjectUnion",
-    ),
-    classUnionMember1Property: "test",
-  });
+  const expectedLazilyResolvedObjectUnion =
+    new kitchenSink.LazilyResolvedClassUnionMember1({
+      $identifier: N3.DataFactory.namedNode(
+        "http://example.com/lazilyResolvedObjectUnion",
+      ),
+      lazilyResolvedStringProperty: "test",
+    });
 
   beforeAll(() => {
     const resourceSet = new MutableResourceSet({

@@ -228,7 +228,11 @@ export const harnesses = {
       // This harness is just intended to test the deserialization/deserialization of the identifiers.
       lazyRequiredObjectProperty:
         new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
-          lazyResolvedStringProperty: "test required empty",
+          lazilyResolvedStringProperty: "test required empty",
+        }),
+      stubRequiredObjectProperty:
+        new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
+          lazilyResolvedStringProperty: "test required empty",
         }),
     }),
     kitchenSink.LazyPropertiesClass,
@@ -240,20 +244,36 @@ export const harnesses = {
       // This harness is just intended to test the deserialization/deserialization of the identifiers.
       lazyIriObjectProperty: new kitchenSink.LazilyResolvedIriClass({
         $identifier: dataFactory.namedNode("http://example.com/resolved"),
-        lazyResolvedStringProperty: "test IRI",
+        lazilyResolvedStringProperty: "test IRI",
       }),
       lazyObjectSetProperty: [
         new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
-          lazyResolvedStringProperty: "test set",
+          lazilyResolvedStringProperty: "test set",
         }),
       ],
+      lazyObjectUnionProperty: new kitchenSink.LazilyResolvedClassUnionMember1({
+        lazilyResolvedStringProperty: "test union",
+      }),
       lazyOptionalObjectProperty:
         new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
-          lazyResolvedStringProperty: "test optional",
+          lazilyResolvedStringProperty: "test optional",
         }),
       lazyRequiredObjectProperty:
         new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
-          lazyResolvedStringProperty: "test required",
+          lazilyResolvedStringProperty: "test required",
+        }),
+      stubObjectSetProperty: [
+        new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
+          lazilyResolvedStringProperty: "test set",
+        }),
+      ],
+      stubOptionalObjectProperty:
+        new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
+          lazilyResolvedStringProperty: "test optional",
+        }),
+      stubRequiredObjectProperty:
+        new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
+          lazilyResolvedStringProperty: "test required empty",
         }),
     }),
     kitchenSink.LazyPropertiesClass,

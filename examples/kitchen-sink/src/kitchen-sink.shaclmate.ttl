@@ -393,6 +393,31 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :lazilyResolvedStringProperty
     ] .
 
+:LazilyResolvedClassUnion
+    a sh:NodeShape ;
+    rdfs:comment "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
+    sh:xone (:LazilyResolvedClassUnionMember1
+        :LazilyResolvedClassUnionMember2
+    ) .
+
+:LazilyResolvedClassUnionMember1
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
+:LazilyResolvedClassUnionMember2
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
 :LazilyResolvedIriClass
     a sh:NodeShape ;
     rdfs:comment "Node shape resolved by LazyPropertiesClass" ;
@@ -431,7 +456,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ], [
         shaclmate:lazy true ;
         sh:maxCount 1 ;
-        sh:node :ClassUnion ;
+        sh:node :LazilyResolvedClassUnion ;
         sh:path :lazyObjectUnionProperty
     ], [
         shaclmate:stub :StubClass ;
@@ -449,6 +474,11 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:minCount 1 ;
         sh:node :LazilyResolvedBlankNodeOrIriClass ;
         sh:path :stubRequiredObjectProperty
+    ], [
+        shaclmate:stub :StubClass ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedClassUnion ;
+        sh:path :stubObjectUnionProperty
     ] .
 
 :ListPropertiesClass
@@ -675,6 +705,14 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Shape with properties that are not nested objects" ;
     sh:property [
+        sh:datatype xsd:boolean ;
+        sh:maxCount 1 ;
+        sh:path :booleanTermProperty
+    ], [
+        sh:datatype xsd:date ;
+        sh:maxCount 1 ;
+        sh:path :dateTermProperty
+    ], [
         sh:datatype xsd:dateTime ;
         sh:maxCount 1 ;
         sh:path :dateTimeTermProperty
@@ -697,14 +735,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ], [
         sh:maxCount 1 ;
         sh:path :termProperty
-    ], [
-        sh:datatype xsd:boolean ;
-        sh:maxCount 1 ;
-        sh:path :booleanTermProperty
-    ], [
-        sh:datatype xsd:date ;
-        sh:maxCount 1 ;
-        sh:path :dateTermProperty
     ] .
 
 :UnionPropertiesClass
