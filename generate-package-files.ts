@@ -418,6 +418,9 @@ fs.writeFileSync(
     },
     jobs: {
       build: {
+        env: {
+          DO_NOT_TRACK: 1,
+        },
         name: "Build and test",
         "runs-on": "ubuntu-latest",
         steps: [
