@@ -267,12 +267,12 @@ export class ObjectType extends DeclaredType {
     return this.properties.some((property) => property.mutable);
   }
 
-  newExpression({ variables }: { variables: { parameters: string } }): string {
+  newExpression({ parameters }: { parameters: string }): string {
     switch (this.declarationType) {
       case "class":
-        return `new ${this.name}(${variables.parameters})`;
+        return `new ${this.name}(${parameters})`;
       case "interface":
-        return `${this.staticModuleName}.create(${variables.parameters})`;
+        return `${this.staticModuleName}.create(${parameters})`;
     }
   }
 

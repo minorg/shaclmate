@@ -207,21 +207,25 @@ export namespace LazyShaclProperty {
 
     @Memoize()
     override get conversions(): readonly _Type.Conversion[] {
-      return super.conversions.concat(
-        {
+      const conversions = super.conversions.concat();
+
+      if (this.stubType.itemType.kind === "ObjectType") {
+        conversions.push({
           conversionExpression: (value) =>
-            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}.map(_ => new ${this.stubType.itemType.name}(_)), resolver: async () => purify.Either.of(${value} as readonly ${this.resolvedType.itemType.name}[]) })`,
+            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}.map(parameters => ${(this.stubType.itemType as ObjectType).newExpression({ parameters: "parameters" })}(_)), resolver: async () => purify.Either.of(${value} as readonly ${this.resolvedType.itemType.name}[]) })`,
           sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
           sourceTypeName: `readonly ${this.resolvedType.itemType.name}[]`,
-        },
-        {
-          conversionExpression: () =>
-            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: [], resolver: async () => { throw new Error("should never be called"); } })`,
-          sourceTypeCheckExpression: (value) =>
-            `typeof ${value} === "undefined"`,
-          sourceTypeName: "undefined",
-        },
-      );
+        });
+      }
+
+      conversions.push({
+        conversionExpression: () =>
+          `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: [], resolver: async () => { throw new Error("should never be called"); } })`,
+        sourceTypeCheckExpression: (value) => `typeof ${value} === "undefined"`,
+        sourceTypeName: "undefined",
+      });
+
+      return conversions;
     }
 
     override fromJsonExpression(
@@ -277,29 +281,35 @@ export namespace LazyShaclProperty {
 
     @Memoize()
     override get conversions(): readonly _Type.Conversion[] {
-      return super.conversions.concat(
-        {
-          conversionExpression: (value) =>
-            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: purify.Maybe.of(new ${this.stubType.itemType.name}(${value})), resolver: async () => purify.Either.of(${value} as ${this.resolvedType.itemType.name}) })`,
-          sourceTypeCheckExpression: (value) =>
-            `typeof ${value} === "object" && ${value} instanceof ${this.resolvedType.itemType.name}`,
-          sourceTypeName: this.resolvedType.itemType.name,
-        },
-        {
-          conversionExpression: (value) =>
-            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}.map(_ => new ${this.stubType.itemType.name}(_)), resolver: async () => purify.Either.of((${value} as purify.Maybe<${this.resolvedType.itemType.name}>).unsafeCoerce()) })`,
-          sourceTypeCheckExpression: (value) =>
-            `purify.Maybe.isMaybe(${value})`,
-          sourceTypeName: `purify.Maybe<${this.resolvedType.itemType.name}>`,
-        },
-        {
-          conversionExpression: () =>
-            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: purify.Maybe.empty(), resolver: async () => { throw new Error("should never be called"); } })`,
-          sourceTypeCheckExpression: (value) =>
-            `typeof ${value} === "undefined"`,
-          sourceTypeName: "undefined",
-        },
-      );
+      const conversions = super.conversions.concat();
+
+      if (this.stubType.itemType.kind === "ObjectType") {
+        conversions.push(
+          {
+            conversionExpression: (value) =>
+              `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: purify.Maybe.of(${(this.stubType.itemType as ObjectType).newExpression({ parameters: value })}), resolver: async () => purify.Either.of(${value} as ${this.resolvedType.itemType.name}) })`,
+            sourceTypeCheckExpression: (value) =>
+              `typeof ${value} === "object" && ${value} instanceof ${this.resolvedType.itemType.name}`,
+            sourceTypeName: this.resolvedType.itemType.name,
+          },
+          {
+            conversionExpression: (value) =>
+              `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}.map(parameters => ${(this.stubType.itemType as ObjectType).newExpression({ parameters: "parameters" })}), resolver: async () => purify.Either.of((${value} as purify.Maybe<${this.resolvedType.itemType.name}>).unsafeCoerce()) })`,
+            sourceTypeCheckExpression: (value) =>
+              `purify.Maybe.isMaybe(${value})`,
+            sourceTypeName: `purify.Maybe<${this.resolvedType.itemType.name}>`,
+          },
+        );
+      }
+
+      conversions.push({
+        conversionExpression: () =>
+          `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: purify.Maybe.empty(), resolver: async () => { throw new Error("should never be called"); } })`,
+        sourceTypeCheckExpression: (value) => `typeof ${value} === "undefined"`,
+        sourceTypeName: "undefined",
+      });
+
+      return conversions;
     }
 
     override fromRdfExpression(
@@ -337,13 +347,19 @@ export namespace LazyShaclProperty {
     }
 
     override get conversions(): readonly _Type.Conversion[] {
-      return super.conversions.concat({
-        conversionExpression: (value) =>
-          `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: new ${this.stubType.name}(${value}), resolver: async () => purify.Either.of(${value} as ${this.resolvedType.name}) })`,
-        sourceTypeCheckExpression: (value) =>
-          `typeof ${value} === "object" && ${value} instanceof ${this.resolvedType.name}`,
-        sourceTypeName: this.resolvedType.name,
-      });
+      const conversions = super.conversions.concat();
+
+      if (this.stubType.kind === "ObjectType") {
+        conversions.push({
+          conversionExpression: (value) =>
+            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${(this.stubType as ObjectType).newExpression({ parameters: value })}, resolver: async () => purify.Either.of(${value} as ${this.resolvedType.name}) })`,
+          sourceTypeCheckExpression: (value) =>
+            `typeof ${value} === "object" && ${value} instanceof ${this.resolvedType.name}`,
+          sourceTypeName: this.resolvedType.name,
+        });
+      }
+
+      return conversions;
     }
 
     override fromRdfExpression(
