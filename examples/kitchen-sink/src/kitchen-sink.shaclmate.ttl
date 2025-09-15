@@ -383,33 +383,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :languageInPropertiesLiteralProperty
     ] .
 
-:LazyPropertiesClass
-    a sh:NodeShape ;
-    rdfs:comment "Node shape that has lazy properties." ;
-    sh:property [
-        shaclmate:lazy true ;
-        sh:maxCount 1 ;
-        sh:minCount 0 ;
-        sh:node :LazyResolvedBlankNodeOrIriClass ;
-        sh:path :lazyOptionalObjectProperty
-    ], [
-        shaclmate:lazy true ;
-        sh:node :LazyResolvedBlankNodeOrIriClass ;
-        sh:path :lazyObjectSetProperty
-    ], [
-        shaclmate:lazy true ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:node :LazyResolvedBlankNodeOrIriClass ;
-        sh:path :lazyRequiredObjectProperty
-    ], [
-        shaclmate:lazy true ;
-        sh:maxCount 1 ;
-        sh:node :LazyResolvedIriClass ;
-        sh:path :lazyIriObjectProperty
-    ] .
-
-:LazyResolvedBlankNodeOrIriClass
+:LazilyResolvedBlankNodeOrIriClass
     a sh:NodeShape ;
     rdfs:comment "Node shape resolved by LazyPropertiesClass" ;
     sh:property [
@@ -419,7 +393,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :lazyResolvedStringProperty
     ] .
 
-:LazyResolvedIriClass
+:LazilyResolvedIriClass
     a sh:NodeShape ;
     rdfs:comment "Node shape resolved by LazyPropertiesClass" ;
     sh:nodeKind sh:IRI ;
@@ -428,6 +402,32 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :lazyResolvedStringProperty
+    ] .
+
+:LazyPropertiesClass
+    a sh:NodeShape ;
+    rdfs:comment "Node shape that has lazy properties." ;
+    sh:property [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:minCount 0 ;
+        sh:node :LazilyResolvedBlankNodeOrIriClass ;
+        sh:path :lazyOptionalObjectProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:node :LazilyResolvedBlankNodeOrIriClass ;
+        sh:path :lazyObjectSetProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :LazilyResolvedBlankNodeOrIriClass ;
+        sh:path :lazyRequiredObjectProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedIriClass ;
+        sh:path :lazyIriObjectProperty
     ] .
 
 :ListPropertiesClass
