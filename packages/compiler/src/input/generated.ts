@@ -1763,6 +1763,7 @@ export interface ShaclmatePropertyShape extends ShaclCorePropertyShape {
   readonly lazy: purify.Maybe<boolean>;
   readonly mutable: purify.Maybe<boolean>;
   readonly name: purify.Maybe<string>;
+  readonly stub: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>;
   readonly visibility: purify.Maybe<
     rdfjs.NamedNode<
       | "http://purl.org/shaclmate/ontology#_Visibility_Private"
@@ -1801,6 +1802,7 @@ export namespace ShaclmatePropertyShape {
       lazy: purify.Maybe<boolean>;
       mutable: purify.Maybe<boolean>;
       name: purify.Maybe<string>;
+      stub: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>;
       visibility: purify.Maybe<
         rdfjs.NamedNode<
           | "http://purl.org/shaclmate/ontology#_Visibility_Private"
@@ -1888,6 +1890,24 @@ export namespace ShaclmatePropertyShape {
     }
 
     const name = _nameEither.unsafeCoerce();
+    const _stubEither: purify.Either<
+      Error,
+      purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>
+    > = $resource
+      .values($properties.stub["identifier"], { unique: true })
+      .head()
+      .chain((value) => value.toIdentifier())
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      );
+    if (_stubEither.isLeft()) {
+      return _stubEither;
+    }
+
+    const stub = _stubEither.unsafeCoerce();
     const _visibilityEither: purify.Either<
       Error,
       purify.Maybe<
@@ -1990,6 +2010,7 @@ export namespace ShaclmatePropertyShape {
       lazy,
       mutable,
       name,
+      stub,
       visibility,
       widen,
     });
@@ -2039,6 +2060,10 @@ export namespace ShaclmatePropertyShape {
       _shaclmatePropertyShape.name,
     );
     _resource.add(
+      ShaclmatePropertyShape.$properties.stub["identifier"],
+      _shaclmatePropertyShape.stub,
+    );
+    _resource.add(
       ShaclmatePropertyShape.$properties.visibility["identifier"],
       _shaclmatePropertyShape.visibility,
     );
@@ -2064,6 +2089,11 @@ export namespace ShaclmatePropertyShape {
     name: {
       identifier: dataFactory.namedNode(
         "http://purl.org/shaclmate/ontology#name",
+      ),
+    },
+    stub: {
+      identifier: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#stub",
       ),
     },
     visibility: {
