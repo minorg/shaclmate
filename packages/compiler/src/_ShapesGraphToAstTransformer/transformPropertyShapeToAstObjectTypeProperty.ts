@@ -95,26 +95,56 @@ export function transformPropertyShapeToAstObjectTypeProperty(
   const type = typeEither.unsafeCoerce();
 
   let stubType: ast.ObjectType.Property["stubType"] = Maybe.empty();
-  if (propertyShape.lazy.orDefault(false)) {
+  let propertyShapeStubType: ast.ObjectType | ast.ObjectUnionType | undefined;
+  if (propertyShape.stub.isJust()) {
+    const propertyShapeStubTypeEither = this.transformNodeShapeToAstType(
+      propertyShape.stub.unsafeCoerce(),
+    ).chain((propertyShapeStubType) => {
+      switch (propertyShapeStubType.kind) {
+        case "ListType":
+        case "ObjectIntersectionType":
+          return Left(
+            new Error(
+              `${propertyShape} stub cannot refer to a ${propertyShapeStubType.kind}`,
+            ),
+          );
+        case "ObjectType":
+        case "ObjectUnionType":
+          return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
+            propertyShapeStubType,
+          );
+      }
+    });
+    if (propertyShapeStubTypeEither.isLeft()) {
+      return propertyShapeStubTypeEither;
+    }
+    propertyShapeStubType = propertyShapeStubTypeEither.unsafeCoerce();
+  }
+
+  if (propertyShapeStubType || propertyShape.lazy.orDefault(false)) {
     switch (type.kind) {
       case "ObjectType":
-      case "ObjectUnionType":
+      case "ObjectUnionType": {
         stubType = Maybe.of(
-          synthesizeStubAstObjectType({
-            identifierNodeKinds: identifierNodeKinds(type),
-            tsFeatures: type.tsFeatures,
-          }),
+          propertyShapeStubType ??
+            synthesizeStubAstObjectType({
+              identifierNodeKinds: identifierNodeKinds(type),
+              tsFeatures: type.tsFeatures,
+            }),
         );
         break;
+      }
       case "OptionType":
       case "SetType": {
         switch (type.itemType.kind) {
           case "ObjectType":
           case "ObjectUnionType": {
-            const stubItemType = synthesizeStubAstObjectType({
-              identifierNodeKinds: identifierNodeKinds(type.itemType),
-              tsFeatures: type.itemType.tsFeatures,
-            });
+            const stubItemType =
+              propertyShapeStubType ??
+              synthesizeStubAstObjectType({
+                identifierNodeKinds: identifierNodeKinds(type.itemType),
+                tsFeatures: type.itemType.tsFeatures,
+              });
             if (type.kind === "OptionType") {
               stubType = Maybe.of({
                 kind: "OptionType",
