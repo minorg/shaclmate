@@ -2,6 +2,7 @@ import type { NamedNode } from "@rdfjs/types";
 
 import { Maybe } from "purify-ts";
 
+import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../enums/index.js";
@@ -15,7 +16,7 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 export class ListType extends Type {
   private readonly _mutable: boolean;
   private readonly identifierMintingStrategy: IdentifierMintingStrategy;
-  private readonly identifierNodeKind: "BlankNode" | "NamedNode";
+  private readonly identifierNodeKind: IdentifierNodeKind;
   private readonly toRdfTypes: readonly NamedNode[];
 
   readonly itemType: Type;

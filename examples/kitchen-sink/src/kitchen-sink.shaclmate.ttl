@@ -383,25 +383,107 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :languageInPropertiesLiteralProperty
     ] .
 
+:LazilyResolvedBlankNodeOrIriClass
+    a sh:NodeShape ;
+    rdfs:comment "Node shape resolved by LazyPropertiesClass" ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
+:LazilyResolvedClassUnion
+    a sh:NodeShape ;
+    rdfs:comment "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
+    sh:xone (:LazilyResolvedClassUnionMember1
+        :LazilyResolvedClassUnionMember2
+    ) .
+
+:LazilyResolvedClassUnionMember1
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
+:LazilyResolvedClassUnionMember2
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
+:LazilyResolvedIriClass
+    a sh:NodeShape ;
+    rdfs:comment "Node shape resolved by LazyPropertiesClass" ;
+    sh:nodeKind sh:IRI ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
 :LazyPropertiesClass
     a sh:NodeShape ;
-    rdfs:comment "Node shape that has lazy properties." ;
+    rdfs:comment "Node shape that has lazy properties with default stubs." ;
     sh:property [
         shaclmate:lazy true ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
-        sh:node :NonClass ;
-        sh:path :lazyOptionalObjectProperty
+        sh:node :LazilyResolvedBlankNodeOrIriClass ;
+        sh:path :optionalLazyToResolvedClassProperty
     ], [
         shaclmate:lazy true ;
-        sh:node :NonClass ;
-        sh:path :lazyObjectSetProperty
+        sh:node :LazilyResolvedBlankNodeOrIriClass ;
+        sh:path :setLazyToResolvedClassProperty
     ], [
         shaclmate:lazy true ;
-        sh:class :NonClass ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :lazyRequiredObjectProperty
+        sh:node :LazilyResolvedBlankNodeOrIriClass ;
+        sh:path :requiredLazyToResolvedClassProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedIriClass ;
+        sh:path :optionalLazyToResolvedIriClassProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedClassUnion ;
+        sh:path :optionalLazyToResolvedClassUnionProperty
+    ], [
+        shaclmate:stub :StubClass ;
+        sh:maxCount 1 ;
+        sh:minCount 0 ;
+        sh:node :LazilyResolvedBlankNodeOrIriClass ;
+        sh:path :optionalStubClassToResolvedClassProperty
+    ], [
+        shaclmate:stub :StubClass ;
+        sh:node :LazilyResolvedBlankNodeOrIriClass ;
+        sh:path :setStubClassToResolvedClassProperty
+    ], [
+        shaclmate:stub :StubClass ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :LazilyResolvedBlankNodeOrIriClass ;
+        sh:path :requiredStubClassToResolvedClassProperty
+    ], [
+        shaclmate:stub :StubClass ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedClassUnion ;
+        sh:path :optionalStubClassToResolvedClassUnionProperty
+    ], [
+        shaclmate:stub :StubClassUnion ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedClassUnion ;
+        sh:path :optionalStubClassUnionToResolvedClassUnionProperty
     ] .
 
 :ListPropertiesClass
@@ -613,6 +695,41 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             sh:hasValue ( )
         ]
     ) .
+
+:StubClass
+    a sh:NodeShape ;
+    rdfs:comment "Node shape used as a stub by LazyPropertiesClass" ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
+:StubClassUnion
+    a sh:NodeShape ;
+    rdfs:comment "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
+    sh:xone (:StubClassUnionMember1
+        :StubClassUnionMember2
+    ) .
+
+:StubClassUnionMember1
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
+:StubClassUnionMember2
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
 
 :TermPropertiesClass
     a sh:NodeShape ;

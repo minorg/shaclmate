@@ -124,7 +124,7 @@ function typeToJson(type: ast.Type): AstJson.Type {
           type.identifierIn.length > 0
             ? type.identifierIn.map(termToJson)
             : undefined,
-        identifierKinds: [...type.identifierKinds],
+        identifierNodeKinds: [...type.identifierNodeKinds],
         identifierMintingStrategy: type.identifierMintingStrategy.extract(),
         toRdfTypes:
           type.toRdfTypes.length > 0

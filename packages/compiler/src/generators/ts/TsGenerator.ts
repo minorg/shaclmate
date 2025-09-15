@@ -3,9 +3,7 @@ import {
   Project,
   type SourceFile,
 } from "ts-morph";
-
 import * as ast from "../../ast/index.js";
-
 import type { Generator } from "../Generator.js";
 import type { Import } from "./Import.js";
 import { ObjectType } from "./ObjectType.js";
@@ -15,23 +13,23 @@ import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
 
 export class TsGenerator implements Generator {
+  private readonly typeFactory = new TypeFactory();
+
   generate(ast_: ast.Ast): string {
     const project = new Project({
       useInMemoryFileSystem: true,
     });
     const sourceFile = project.createSourceFile("generated.ts");
 
-    const typeFactory = new TypeFactory();
-
     this.addStatements({
       objectTypes: ast.ObjectType.toposort(ast_.objectTypes).flatMap(
         (astObjectType) => {
-          const type = typeFactory.createTypeFromAstType(astObjectType);
+          const type = this.typeFactory.createTypeFromAstType(astObjectType);
           return type instanceof ObjectType ? [type] : [];
         },
       ),
       objectUnionTypes: ast_.objectUnionTypes.flatMap((astObjectUnionType) => {
-        const type = typeFactory.createTypeFromAstType(astObjectUnionType);
+        const type = this.typeFactory.createTypeFromAstType(astObjectUnionType);
         return type instanceof ObjectUnionType ? [type] : [];
       }),
       sourceFile,

@@ -5,7 +5,7 @@ import type { Type } from "./Type.js";
  *
  * This is a property with sh:minCount 0 and sh:maxCount 1.
  */
-export interface OptionType {
-  readonly itemType: Type;
+export interface OptionType<ItemTypeT extends Type = Type> {
+  readonly itemType: ItemTypeT;
   readonly kind: "OptionType";
 }

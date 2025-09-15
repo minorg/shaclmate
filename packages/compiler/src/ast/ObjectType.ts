@@ -10,6 +10,9 @@ import type {
   TsObjectDeclarationType,
 } from "../enums/index.js";
 import type { Name } from "./Name.js";
+import type { ObjectUnionType } from "./ObjectUnionType.js";
+import type { OptionType } from "./OptionType.js";
+import type { SetType } from "./SetType.js";
 import type { Type } from "./Type.js";
 
 export interface ObjectType {
@@ -80,7 +83,7 @@ export interface ObjectType {
    *
    * Used to associate instances with an RDF identifier.
    */
-  readonly identifierKinds: Set<Exclude<NodeKind, "Literal">>;
+  readonly identifierNodeKinds: Set<Exclude<NodeKind, "Literal">>;
 
   /**
    * Strategy for minting new object identifiers.
@@ -115,6 +118,11 @@ export interface ObjectType {
    * Mutable to support cycle-handling logic in the compiler.
    */
   readonly properties: ObjectType.Property[];
+
+  /**
+   * Was this type synthesized or did it come from SHACL?
+   */
+  readonly synthetic: boolean;
 
   /**
    * rdf:type's that will be added to this object when it's serialized toRdf.
@@ -163,11 +171,6 @@ export namespace ObjectType {
     readonly label: Maybe<string>;
 
     /**
-     * The property value should be lazily accessed/deserialized rather than eagerly.
-     */
-    readonly lazy: Maybe<boolean>;
-
-    /**
      * The property should be mutable in generated code i.e., it should be re-assignable. The property value may or may
      * not be mutable.
      */
@@ -192,6 +195,18 @@ export namespace ObjectType {
      * Does the property directly or indirectly reference the ObjectType itself?
      */
     readonly recursive?: boolean;
+
+    /**
+     * The property will be resolved lazily, with this type serving as a stub before resolution of the actual type (type).
+     *
+     * This type will mirror type: if type is an OptionType<ObjectType>, this will also be an OptionType<ObjectType>.
+     */
+    readonly stubType: Maybe<
+      | ObjectType
+      | ObjectUnionType
+      | OptionType<ObjectType | ObjectUnionType>
+      | SetType<ObjectType | ObjectUnionType>
+    >;
 
     /**
      * Type of this property.

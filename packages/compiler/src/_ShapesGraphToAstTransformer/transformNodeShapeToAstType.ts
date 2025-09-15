@@ -1,5 +1,4 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
-
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
@@ -274,11 +273,12 @@ export function transformNodeShapeToAstType(
       identifierIn.length === 0
         ? nodeShape.identifierMintingStrategy
         : Maybe.empty(),
-    identifierKinds:
+    identifierNodeKinds:
       identifierIn.length === 0 ? nodeShape.nodeKinds : new Set(["NamedNode"]),
     name: this.shapeAstName(nodeShape),
     properties: [], // This is mutable, we'll populate it below.
     parentObjectTypes: [], // This is mutable, we'll populate it below
+    synthetic: false,
     toRdfTypes,
     tsFeatures: nodeShape.tsFeatures.orDefault(new Set(tsFeaturesDefault)),
     tsImports: nodeShape.tsImports,

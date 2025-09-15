@@ -1,4 +1,5 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
+import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { Either, Left, Maybe } from "purify-ts";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type * as ast from "../ast/index.js";
@@ -40,7 +41,7 @@ export function transformPropertyShapeToAstIdentifierType(
       hasValues: identifierHasValues,
       in_: identifierIn,
       kind: "IdentifierType",
-      nodeKinds: nodeKinds as Set<"BlankNode" | "NamedNode">,
+      nodeKinds: nodeKinds as Set<IdentifierNodeKind>,
     });
   }
 

@@ -40,6 +40,7 @@ export class ObjectType extends DeclaredType {
   readonly fromRdfType: Maybe<NamedNode>;
   readonly kind = "ObjectType";
   readonly staticModuleName: string;
+  readonly synthetic: boolean;
   readonly typeof = "object";
 
   constructor({
@@ -57,6 +58,7 @@ export class ObjectType extends DeclaredType {
     lazyParentObjectTypes,
     lazyProperties,
     staticModuleName,
+    synthetic,
     toRdfTypes,
     ...superParameters
   }: {
@@ -74,6 +76,7 @@ export class ObjectType extends DeclaredType {
     lazyParentObjectTypes: () => readonly ObjectType[];
     lazyProperties: (objectType: ObjectType) => readonly ObjectType.Property[];
     staticModuleName: string;
+    synthetic: boolean;
     toRdfTypes: readonly NamedNode[];
   } & ConstructorParameters<typeof DeclaredType>[0]) {
     super(superParameters);
@@ -92,6 +95,7 @@ export class ObjectType extends DeclaredType {
     this.lazyParentObjectTypes = lazyParentObjectTypes;
     this.lazyProperties = lazyProperties;
     this.staticModuleName = staticModuleName;
+    this.synthetic = synthetic;
     this.toRdfTypes = toRdfTypes;
   }
 
@@ -261,6 +265,15 @@ export class ObjectType extends DeclaredType {
   @Memoize()
   override get mutable(): boolean {
     return this.properties.some((property) => property.mutable);
+  }
+
+  newExpression({ parameters }: { parameters: string }): string {
+    switch (this.declarationType) {
+      case "class":
+        return `new ${this.name}(${parameters})`;
+      case "interface":
+        return `${this.staticModuleName}.create(${parameters})`;
+    }
   }
 
   @Memoize()
@@ -514,23 +527,26 @@ export namespace ObjectType {
   export type IdentifierProperty = _ObjectType.IdentifierProperty;
   export const LazyShaclProperty = _ObjectType.LazyShaclProperty;
   export type LazyShaclProperty<
-    IdentifierTypeT extends _ObjectType.LazyShaclProperty.Type.IdentifierType,
     LazyTypeT extends _ObjectType.LazyShaclProperty.Type<
-      IdentifierTypeT,
-      ResultTypeT
+      ResolvedTypeT,
+      StubTypeT
     >,
-    ResultTypeT extends _ObjectType.LazyShaclProperty.Type.ResultType,
-  > = _ObjectType.LazyShaclProperty<IdentifierTypeT, LazyTypeT, ResultTypeT>;
+    ResolvedTypeT extends
+      _ObjectType.LazyShaclProperty.Type.ResolvedTypeConstraint,
+    StubTypeT extends _ObjectType.LazyShaclProperty.Type.StubTypeConstraint,
+  > = _ObjectType.LazyShaclProperty<LazyTypeT, ResolvedTypeT, StubTypeT>;
   export namespace LazyShaclProperty {
     export type Type<
-      IdentifierTypeT extends _ObjectType.LazyShaclProperty.Type.IdentifierType,
-      ResultTypeT extends _ObjectType.LazyShaclProperty.Type.ResultType,
-    > = _ObjectType.LazyShaclProperty.Type<IdentifierTypeT, ResultTypeT>;
+      ResolvedTypeT extends
+        _ObjectType.LazyShaclProperty.Type.ResolvedTypeConstraint,
+      StubTypeT extends _ObjectType.LazyShaclProperty.Type.StubTypeConstraint,
+    > = _ObjectType.LazyShaclProperty.Type<ResolvedTypeT, StubTypeT>;
 
     export namespace Type {
-      export type IdentifierType =
-        _ObjectType.LazyShaclProperty.Type.IdentifierType;
-      export type ResultType = _ObjectType.LazyShaclProperty.Type.ResultType;
+      export type ResolvedTypeConstraint =
+        _ObjectType.LazyShaclProperty.Type.ResolvedTypeConstraint;
+      export type StubTypeConstraint =
+        _ObjectType.LazyShaclProperty.Type.StubTypeConstraint;
     }
   }
   export type ObjectSetMethodNames = {

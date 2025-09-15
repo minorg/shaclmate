@@ -39,6 +39,12 @@ export class PropertyShape extends ShaclCorePropertyShape<
     return this.generatedShaclmatePropertyShape.name;
   }
 
+  get stub(): Maybe<NodeShape> {
+    return this.generatedShaclmatePropertyShape.stub.chain((identifier) =>
+      this.shapesGraph.nodeShapeByIdentifier(identifier),
+    );
+  }
+
   get visibility(): PropertyVisibility {
     return this.generatedShaclmatePropertyShape.visibility
       .map((iri) => {

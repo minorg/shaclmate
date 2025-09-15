@@ -62,25 +62,26 @@ shaclmate:ShaclmateOntology
     shaclmate:rdfType owl:Ontology ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf shaclmate:OwlOntology ;
-    sh:property shaclmate:ShaclmateOntology-tsDataFactoryVariable, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
-
-shaclmate:ShaclmateOntology-tsDataFactoryVariable
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:maxCount 1 ;
-    sh:path shaclmate:tsDataFactoryVariable .
+    sh:property shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
 
 shaclmate:ShaclmatePropertyShape
     shaclmate:rdfType sh:PropertyShape ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf shaclmate:ShaclCorePropertyShape ;
-    sh:property shaclmate:ShaclmatePropertyShape-lazy, shaclmate:ShaclmatePropertyShape-visibility, shaclmate:ShaclmatePropertyShape-widen, shaclmate:ShaclmateShape-mutable, shaclmate:ShaclmateShape-name .
+    sh:property shaclmate:ShaclmatePropertyShape-lazy, shaclmate:ShaclmatePropertyShape-stub, shaclmate:ShaclmatePropertyShape-visibility, shaclmate:ShaclmatePropertyShape-widen, shaclmate:ShaclmateShape-mutable, shaclmate:ShaclmateShape-name .
 
 shaclmate:ShaclmatePropertyShape-lazy
     a sh:PropertyShape ;
     sh:datatype xsd:boolean ;
     sh:maxCount 1 ;
     sh:path shaclmate:lazy .
+
+shaclmate:ShaclmatePropertyShape-stub
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:name "stub" ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:path shaclmate:stub .
 
 shaclmate:ShaclmatePropertyShape-visibility
     a sh:PropertyShape ;

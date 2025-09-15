@@ -91,8 +91,8 @@ export function graphqlSchemaVariableStatement(parameters: {
   objectTypes: readonly ObjectType[];
   objectUnionTypes: ObjectUnionType[];
 }): Maybe<OptionalKind<VariableStatementStructure>> {
-  const objectTypes = parameters.objectTypes.filter((objectType) =>
-    objectType.features.has("graphql"),
+  const objectTypes = parameters.objectTypes.filter(
+    (objectType) => objectType.features.has("graphql") && !objectType.synthetic,
   );
   const objectUnionTypes = parameters.objectUnionTypes.filter(
     (objectUnionType) => objectUnionType.features.has("graphql"),

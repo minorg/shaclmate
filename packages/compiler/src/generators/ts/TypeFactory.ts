@@ -5,11 +5,12 @@ import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
 
 import { Maybe } from "purify-ts";
 import { fromRdf } from "rdf-literal";
+import { invariant } from "ts-invariant";
+import { Scope } from "ts-morph";
 
 import type * as ast from "../../ast/index.js";
 
-import { invariant } from "ts-invariant";
-import { Scope } from "ts-morph";
+import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { logger } from "../../logger.js";
 import { BooleanType } from "./BooleanType.js";
 import { DateTimeType } from "./DateTimeType.js";
@@ -30,25 +31,6 @@ import { UnionType } from "./UnionType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { tsName } from "./tsName.js";
 
-const numberDatatypes = {
-  float: [xsd.decimal, xsd.double, xsd.float],
-  int: [
-    xsd.byte,
-    xsd.int,
-    xsd.integer,
-    xsd.long,
-    xsd.negativeInteger,
-    xsd.nonNegativeInteger,
-    xsd.nonPositiveInteger,
-    xsd.positiveInteger,
-    xsd.short,
-    xsd.unsignedByte,
-    xsd.unsignedInt,
-    xsd.unsignedLong,
-    xsd.unsignedShort,
-  ],
-};
-
 export class TypeFactory {
   private cachedObjectTypePropertiesByIdentifier: TermMap<
     BlankNode | NamedNode,
@@ -63,169 +45,7 @@ export class TypeFactory {
     ObjectUnionType
   > = new TermMap();
 
-  createTypeFromAstType(astType: ast.Type): Type {
-    switch (astType.kind) {
-      case "IdentifierType":
-        return new IdentifierType({
-          defaultValue: astType.defaultValue,
-          hasValues: astType.hasValues,
-          in_: astType.in_.filter((_) => _.termType === "NamedNode"),
-          nodeKinds: astType.nodeKinds,
-        });
-      case "IntersectionType":
-        throw new Error("not implemented");
-      case "ListType": {
-        return new ListType({
-          identifierNodeKind: astType.identifierNodeKind,
-          itemType: this.createTypeFromAstType(astType.itemType),
-          mutable: astType.mutable.orDefault(false),
-          identifierMintingStrategy: astType.identifierMintingStrategy,
-          toRdfTypes: astType.toRdfTypes,
-        });
-      }
-      case "LiteralType": {
-        // Look at sh:datatype as well as sh:defaultValue/sh:hasValue/sh:in term datatypes
-        // If there's one common datatype than we can refine the type
-        // Otherwise default to rdfjs.Literal
-        const datatypes = new TermSet<NamedNode>();
-        astType.datatype.ifJust((datatype) => datatypes.add(datatype));
-        astType.defaultValue.ifJust((defaultValue) =>
-          datatypes.add(defaultValue.datatype),
-        );
-        for (const hasValue of astType.hasValues) {
-          datatypes.add(hasValue.datatype);
-        }
-        for (const value of astType.in_) {
-          datatypes.add(value.datatype);
-        }
-
-        if (datatypes.size === 1) {
-          const datatype = [...datatypes][0];
-
-          if (datatype.equals(xsd.boolean)) {
-            return new BooleanType({
-              defaultValue: astType.defaultValue,
-              hasValues: astType.hasValues,
-              languageIn: [],
-              in_: astType.in_,
-              primitiveDefaultValue: astType.defaultValue
-                .map((value) => fromRdf(value, true))
-                .filter((value) => typeof value === "boolean"),
-              primitiveIn: astType.in_
-                .map((value) => fromRdf(value, true))
-                .filter((value) => typeof value === "boolean"),
-            });
-          }
-
-          if (datatype.equals(xsd.date) || datatype.equals(xsd.dateTime)) {
-            return new (datatype.equals(xsd.date) ? DateType : DateTimeType)({
-              defaultValue: astType.defaultValue,
-              hasValues: astType.hasValues,
-              in_: astType.in_,
-              languageIn: [],
-              primitiveDefaultValue: astType.defaultValue
-                .map((value) => fromRdf(value, true))
-                .filter(
-                  (value) => typeof value === "object" && value instanceof Date,
-                ),
-              primitiveIn: astType.in_
-                .map((value) => fromRdf(value, true))
-                .filter(
-                  (value) => typeof value === "object" && value instanceof Date,
-                ),
-            });
-          }
-
-          for (const [floatOrInt, numberDatatypes_] of Object.entries(
-            numberDatatypes,
-          )) {
-            for (const numberDatatype of numberDatatypes_) {
-              if (datatype.equals(numberDatatype)) {
-                return new (floatOrInt === "float" ? FloatType : IntType)({
-                  defaultValue: astType.defaultValue,
-                  hasValues: astType.hasValues,
-                  in_: astType.in_,
-                  languageIn: [],
-                  primitiveDefaultValue: astType.defaultValue
-                    .map((value) => fromRdf(value, true))
-                    .filter((value) => typeof value === "number"),
-                  primitiveIn: astType.in_
-                    .map((value) => fromRdf(value, true))
-                    .filter((value) => typeof value === "number"),
-                });
-              }
-            }
-          }
-
-          if (datatype.equals(xsd.anyURI) || datatype.equals(xsd.string)) {
-            return new StringType({
-              defaultValue: astType.defaultValue,
-              hasValues: astType.hasValues,
-              languageIn: [],
-              in_: astType.in_,
-              primitiveDefaultValue: astType.defaultValue.map(
-                (value) => value.value,
-              ),
-              primitiveIn: astType.in_.map((value) => value.value),
-            });
-          }
-
-          if (datatype.equals(rdf.langString)) {
-            // Drop down
-          } else {
-            logger.warn("unrecognized literal datatype: %s", datatype.value);
-          }
-        } else if (datatypes.size > 0) {
-          logger.warn(
-            "literal type has multiple datatypes: %s",
-            JSON.stringify([...datatypes].map((datatype) => datatype.value)),
-          );
-        } else {
-          logger.debug("literal type has no datatypes");
-        }
-
-        return new LiteralType({
-          defaultValue: astType.defaultValue,
-          hasValues: astType.hasValues,
-          in_: astType.in_,
-          languageIn: astType.languageIn,
-        });
-      }
-      case "ObjectIntersectionType":
-        throw new Error("not implemented");
-      case "ObjectType":
-        return this.createObjectTypeFromAstType(astType);
-      case "ObjectUnionType":
-        return this.createObjectUnionTypeFromAstType(astType);
-      case "OptionType":
-        return new OptionType({
-          itemType: this.createTypeFromAstType(astType.itemType),
-        });
-      case "PlaceholderType":
-        throw new Error(astType.kind);
-      case "SetType":
-        return new SetType({
-          itemType: this.createTypeFromAstType(astType.itemType),
-          mutable: astType.mutable.orDefault(false),
-          minCount: astType.minCount,
-        });
-      case "TermType":
-        return new TermType({
-          defaultValue: astType["defaultValue"],
-          hasValues: astType["hasValues"],
-          in_: astType["in_"],
-          nodeKinds: astType["nodeKinds"],
-        });
-      case "UnionType":
-        return new UnionType({
-          memberTypes: astType.memberTypes.map((astType) =>
-            this.createTypeFromAstType(astType),
-          ),
-        });
-    }
-  }
-
-  private createObjectTypeFromAstType(astType: ast.ObjectType): ObjectType {
+  createObjectTypeFromAstType(astType: ast.ObjectType): ObjectType {
     {
       const cachedObjectType = this.cachedObjectTypesByIdentifier.get(
         astType.name.identifier,
@@ -239,7 +59,7 @@ export class TypeFactory {
       defaultValue: Maybe.empty(),
       hasValues: [],
       in_: astType.identifierIn,
-      nodeKinds: astType.identifierKinds,
+      nodeKinds: astType.identifierNodeKinds,
     });
 
     const staticModuleName =
@@ -416,10 +236,173 @@ export class TypeFactory {
       identifierMintingStrategy: astType.identifierMintingStrategy,
       name: tsName(astType.name),
       staticModuleName,
+      synthetic: astType.synthetic,
       toRdfTypes: astType.toRdfTypes,
     });
     this.cachedObjectTypesByIdentifier.set(astType.name.identifier, objectType);
     return objectType;
+  }
+
+  createTypeFromAstType(astType: ast.Type): Type {
+    switch (astType.kind) {
+      case "IdentifierType":
+        return new IdentifierType({
+          defaultValue: astType.defaultValue,
+          hasValues: astType.hasValues,
+          in_: astType.in_.filter((_) => _.termType === "NamedNode"),
+          nodeKinds: astType.nodeKinds,
+        });
+      case "IntersectionType":
+        throw new Error("not implemented");
+      case "ListType": {
+        return new ListType({
+          identifierNodeKind: astType.identifierNodeKind,
+          itemType: this.createTypeFromAstType(astType.itemType),
+          mutable: astType.mutable.orDefault(false),
+          identifierMintingStrategy: astType.identifierMintingStrategy,
+          toRdfTypes: astType.toRdfTypes,
+        });
+      }
+      case "LiteralType": {
+        // Look at sh:datatype as well as sh:defaultValue/sh:hasValue/sh:in term datatypes
+        // If there's one common datatype than we can refine the type
+        // Otherwise default to rdfjs.Literal
+        const datatypes = new TermSet<NamedNode>();
+        astType.datatype.ifJust((datatype) => datatypes.add(datatype));
+        astType.defaultValue.ifJust((defaultValue) =>
+          datatypes.add(defaultValue.datatype),
+        );
+        for (const hasValue of astType.hasValues) {
+          datatypes.add(hasValue.datatype);
+        }
+        for (const value of astType.in_) {
+          datatypes.add(value.datatype);
+        }
+
+        if (datatypes.size === 1) {
+          const datatype = [...datatypes][0];
+
+          if (datatype.equals(xsd.boolean)) {
+            return new BooleanType({
+              defaultValue: astType.defaultValue,
+              hasValues: astType.hasValues,
+              languageIn: [],
+              in_: astType.in_,
+              primitiveDefaultValue: astType.defaultValue
+                .map((value) => fromRdf(value, true))
+                .filter((value) => typeof value === "boolean"),
+              primitiveIn: astType.in_
+                .map((value) => fromRdf(value, true))
+                .filter((value) => typeof value === "boolean"),
+            });
+          }
+
+          if (datatype.equals(xsd.date) || datatype.equals(xsd.dateTime)) {
+            return new (datatype.equals(xsd.date) ? DateType : DateTimeType)({
+              defaultValue: astType.defaultValue,
+              hasValues: astType.hasValues,
+              in_: astType.in_,
+              languageIn: [],
+              primitiveDefaultValue: astType.defaultValue
+                .map((value) => fromRdf(value, true))
+                .filter(
+                  (value) => typeof value === "object" && value instanceof Date,
+                ),
+              primitiveIn: astType.in_
+                .map((value) => fromRdf(value, true))
+                .filter(
+                  (value) => typeof value === "object" && value instanceof Date,
+                ),
+            });
+          }
+
+          for (const [floatOrInt, numberDatatypes_] of Object.entries(
+            numberDatatypes,
+          )) {
+            for (const numberDatatype of numberDatatypes_) {
+              if (datatype.equals(numberDatatype)) {
+                return new (floatOrInt === "float" ? FloatType : IntType)({
+                  defaultValue: astType.defaultValue,
+                  hasValues: astType.hasValues,
+                  in_: astType.in_,
+                  languageIn: [],
+                  primitiveDefaultValue: astType.defaultValue
+                    .map((value) => fromRdf(value, true))
+                    .filter((value) => typeof value === "number"),
+                  primitiveIn: astType.in_
+                    .map((value) => fromRdf(value, true))
+                    .filter((value) => typeof value === "number"),
+                });
+              }
+            }
+          }
+
+          if (datatype.equals(xsd.anyURI) || datatype.equals(xsd.string)) {
+            return new StringType({
+              defaultValue: astType.defaultValue,
+              hasValues: astType.hasValues,
+              languageIn: [],
+              in_: astType.in_,
+              primitiveDefaultValue: astType.defaultValue.map(
+                (value) => value.value,
+              ),
+              primitiveIn: astType.in_.map((value) => value.value),
+            });
+          }
+
+          if (datatype.equals(rdf.langString)) {
+            // Drop down
+          } else {
+            logger.warn("unrecognized literal datatype: %s", datatype.value);
+          }
+        } else if (datatypes.size > 0) {
+          logger.warn(
+            "literal type has multiple datatypes: %s",
+            JSON.stringify([...datatypes].map((datatype) => datatype.value)),
+          );
+        } else {
+          logger.debug("literal type has no datatypes");
+        }
+
+        return new LiteralType({
+          defaultValue: astType.defaultValue,
+          hasValues: astType.hasValues,
+          in_: astType.in_,
+          languageIn: astType.languageIn,
+        });
+      }
+      case "ObjectIntersectionType":
+        throw new Error("not implemented");
+      case "ObjectType":
+        return this.createObjectTypeFromAstType(astType);
+      case "ObjectUnionType":
+        return this.createObjectUnionTypeFromAstType(astType);
+      case "OptionType":
+        return new OptionType({
+          itemType: this.createTypeFromAstType(astType.itemType),
+        });
+      case "PlaceholderType":
+        throw new Error(astType.kind);
+      case "SetType":
+        return new SetType({
+          itemType: this.createTypeFromAstType(astType.itemType),
+          mutable: astType.mutable.orDefault(false),
+          minCount: astType.minCount,
+        });
+      case "TermType":
+        return new TermType({
+          defaultValue: astType["defaultValue"],
+          hasValues: astType["hasValues"],
+          in_: astType["in_"],
+          nodeKinds: astType["nodeKinds"],
+        });
+      case "UnionType":
+        return new UnionType({
+          memberTypes: astType.memberTypes.map((astType) =>
+            this.createTypeFromAstType(astType),
+          ),
+        });
+    }
   }
 
   private createObjectTypePropertyFromAstProperty({
@@ -442,34 +425,63 @@ export class TypeFactory {
 
     const name = tsName(astObjectTypeProperty.name);
 
-    if (astObjectTypeProperty.lazy.orDefault(false)) {
-      const eagerType = this.createTypeFromAstType(astObjectTypeProperty.type);
+    if (astObjectTypeProperty.stubType.isJust()) {
+      const resolvedType = this.createTypeFromAstType(
+        astObjectTypeProperty.type,
+      );
       let lazyType: ObjectType.LazyShaclProperty.Type<
-        ObjectType.LazyShaclProperty.Type.IdentifierType,
-        ObjectType.LazyShaclProperty.Type.ResultType
+        ObjectType.LazyShaclProperty.Type.ResolvedTypeConstraint,
+        ObjectType.LazyShaclProperty.Type.StubTypeConstraint
       >;
-      if (eagerType instanceof OptionType || eagerType instanceof SetType) {
+      const stubType = this.createTypeFromAstType(
+        astObjectTypeProperty.stubType.unsafeCoerce(),
+      );
+
+      if (resolvedType instanceof OptionType) {
         invariant(
-          eagerType.itemType instanceof ObjectType ||
-            eagerType.itemType instanceof ObjectUnionType,
-          `lazy property ${name} on ${objectType.name} of ${eagerType.kind} has ${eagerType.itemType.kind} items`,
+          resolvedType.itemType instanceof ObjectType ||
+            resolvedType.itemType instanceof ObjectUnionType,
+          `lazy property ${name} on ${objectType.name} has ${resolvedType.kind} ${resolvedType.itemType.kind} items`,
         );
-        if (eagerType instanceof OptionType) {
-          lazyType = new ObjectType.LazyShaclProperty.OptionalObjectType(
-            eagerType,
-          );
-        } else {
-          lazyType = new ObjectType.LazyShaclProperty.ObjectSetType(eagerType);
-        }
+        invariant(
+          stubType instanceof OptionType,
+          `lazy property ${name} on ${objectType.name} has ${(stubType as any).kind} stubs`,
+        );
+
+        lazyType = new ObjectType.LazyShaclProperty.OptionalObjectType({
+          resolvedType,
+          stubType,
+        });
+      } else if (resolvedType instanceof SetType) {
+        invariant(
+          resolvedType.itemType instanceof ObjectType ||
+            resolvedType.itemType instanceof ObjectUnionType,
+          `lazy property ${name} on ${objectType.name} has ${resolvedType.kind} ${resolvedType.itemType.kind} items`,
+        );
+        invariant(
+          stubType instanceof SetType,
+          `lazy property ${name} on ${objectType.name} has ${(stubType as any).kind} stubs`,
+        );
+
+        lazyType = new ObjectType.LazyShaclProperty.ObjectSetType({
+          resolvedType,
+          stubType,
+        });
       } else {
         invariant(
-          eagerType instanceof ObjectType ||
-            eagerType instanceof ObjectUnionType,
-          `lazy property ${name} on ${objectType.name} has ${(eagerType as any).kind}`,
+          resolvedType instanceof ObjectType ||
+            resolvedType instanceof ObjectUnionType,
+          `lazy property ${name} on ${objectType.name} has ${(resolvedType as any).kind}`,
         );
-        lazyType = new ObjectType.LazyShaclProperty.RequiredObjectType(
-          eagerType,
+        invariant(
+          stubType instanceof ObjectType || stubType instanceof ObjectUnionType,
+          `lazy property ${name} on ${objectType.name} has ${(stubType as any).kind} stubs`,
         );
+
+        lazyType = new ObjectType.LazyShaclProperty.RequiredObjectType({
+          resolvedType,
+          stubType,
+        });
       }
 
       property = new ObjectType.LazyShaclProperty({
@@ -519,7 +531,7 @@ export class TypeFactory {
       .map((astType) => this.createTypeFromAstType(astType))
       .filter((memberType) => memberType instanceof ObjectType);
 
-    const memberIdentifierTypeNodeKinds = new Set<"BlankNode" | "NamedNode">();
+    const memberIdentifierTypeNodeKinds = new Set<IdentifierNodeKind>();
     const memberIdentifierTypesIn = new TermSet<NamedNode>();
     for (const memberType of memberTypes) {
       for (const nodeKind of memberType.identifierType.nodeKinds) {
@@ -568,3 +580,22 @@ function objectTypeNeedsIdentifierPrefixProperty(
     })
     .orDefault(false);
 }
+
+const numberDatatypes = {
+  float: [xsd.decimal, xsd.double, xsd.float],
+  int: [
+    xsd.byte,
+    xsd.int,
+    xsd.integer,
+    xsd.long,
+    xsd.negativeInteger,
+    xsd.nonNegativeInteger,
+    xsd.nonPositiveInteger,
+    xsd.positiveInteger,
+    xsd.short,
+    xsd.unsignedByte,
+    xsd.unsignedInt,
+    xsd.unsignedLong,
+    xsd.unsignedShort,
+  ],
+};

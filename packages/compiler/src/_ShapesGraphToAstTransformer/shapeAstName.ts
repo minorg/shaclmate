@@ -80,5 +80,6 @@ export function shapeAstName(
     propertyPath,
     shName,
     shaclmateName: shape.shaclmateName,
+    syntheticName: Maybe.empty(),
   };
 }
