@@ -267,6 +267,15 @@ export class ObjectType extends DeclaredType {
     return this.properties.some((property) => property.mutable);
   }
 
+  newExpression({ variables }: { variables: { parameters: string } }): string {
+    switch (this.declarationType) {
+      case "class":
+        return `new ${this.name}(${variables.parameters})`;
+      case "interface":
+        return `${this.staticModuleName}.create(${variables.parameters})`;
+    }
+  }
+
   @Memoize()
   get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
     return _ObjectType.objectSetMethodNames.bind(this)();
