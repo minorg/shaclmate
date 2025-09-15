@@ -3,7 +3,7 @@ import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 
 import { DataFactory as dataFactory } from "n3";
-import { NonEmptyList } from "purify-ts";
+import { Either, Maybe, NonEmptyList } from "purify-ts";
 
 import { ClassHarness } from "./ClassHarness.js";
 import { ClassUnionHarness } from "./ClassUnionHarness.js";
@@ -226,11 +226,11 @@ export const harnesses = {
       $identifier,
       // These nested objects won't be resolvable since they're not serialized with $toRdf.
       // This harness is just intended to test the deserialization/deserialization of the identifiers.
-      lazyRequiredObjectProperty:
+      requiredLazyToResolvedClassProperty:
         new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
           lazilyResolvedStringProperty: "test required empty",
         }),
-      stubRequiredObjectProperty:
+      requiredStubClassToResolvedClassProperty:
         new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
           lazilyResolvedStringProperty: "test required empty",
         }),
@@ -242,39 +242,66 @@ export const harnesses = {
       $identifier,
       // These nested objects won't be resolvable since they're not serialized with $toRdf.
       // This harness is just intended to test the deserialization/deserialization of the identifiers.
-      lazyIriObjectProperty: new kitchenSink.LazilyResolvedIriClass({
-        $identifier: dataFactory.namedNode("http://example.com/resolved"),
-        lazilyResolvedStringProperty: "test IRI",
-      }),
-      lazyObjectSetProperty: [
+      optionalLazyToResolvedClassProperty:
         new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
-          lazilyResolvedStringProperty: "test set",
+          lazilyResolvedStringProperty: "optionalLazyToResolvedClassProperty",
+        }),
+      optionalLazyToResolvedClassUnionProperty:
+        new kitchenSink.LazilyResolvedClassUnionMember1({
+          lazilyResolvedStringProperty:
+            "optionalLazyToResolvedClassUnionProperty",
+        }),
+      optionalLazyToResolvedIriClassProperty:
+        new kitchenSink.LazilyResolvedIriClass({
+          $identifier: dataFactory.namedNode("http://example.com/resolved"),
+          lazilyResolvedStringProperty:
+            "optionalLazyToResolvedIriClassProperty",
+        }),
+      optionalStubClassToResolvedClassProperty:
+        new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
+          lazilyResolvedStringProperty:
+            "optionalStubClassToResolvedClassProperty",
+        }),
+      optionalStubClassToResolvedClassUnionProperty:
+        new kitchenSink.LazilyResolvedClassUnionMember1({
+          lazilyResolvedStringProperty:
+            "optionalStubClassToResolvedClassUnionProperty",
+        }),
+      optionalStubClassUnionToResolvedClassUnionProperty:
+        new kitchenSink.$LazyOptionalObject({
+          stub: Maybe.of(
+            new kitchenSink.StubClassUnionMember1({
+              lazilyResolvedStringProperty:
+                "optionalStubClassUnionToResolvedClassUnionProperty",
+            }),
+          ),
+          resolver: async () =>
+            Either.of(
+              new kitchenSink.LazilyResolvedClassUnionMember1({
+                lazilyResolvedStringProperty:
+                  "optionalStubClassUnionToResolvedClassUnionProperty",
+              }),
+            ),
+        }),
+      requiredLazyToResolvedClassProperty:
+        new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
+          lazilyResolvedStringProperty: "requiredLazyToResolvedClassProperty",
+        }),
+      requiredStubClassToResolvedClassProperty:
+        new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
+          lazilyResolvedStringProperty:
+            "requiredStubClassToResolvedClassProperty",
+        }),
+      setLazyToResolvedClassProperty: [
+        new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
+          lazilyResolvedStringProperty: "setLazyToResolvedClassProperty",
         }),
       ],
-      lazyObjectUnionProperty: new kitchenSink.LazilyResolvedClassUnionMember1({
-        lazilyResolvedStringProperty: "test union",
-      }),
-      lazyOptionalObjectProperty:
+      setStubClassToResolvedClassProperty: [
         new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
-          lazilyResolvedStringProperty: "test optional",
-        }),
-      lazyRequiredObjectProperty:
-        new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
-          lazilyResolvedStringProperty: "test required",
-        }),
-      stubObjectSetProperty: [
-        new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
-          lazilyResolvedStringProperty: "test set",
+          lazilyResolvedStringProperty: "setStubClassToResolvedClassProperty",
         }),
       ],
-      stubOptionalObjectProperty:
-        new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
-          lazilyResolvedStringProperty: "test optional",
-        }),
-      stubRequiredObjectProperty:
-        new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
-          lazilyResolvedStringProperty: "test required empty",
-        }),
     }),
     kitchenSink.LazyPropertiesClass,
   ),

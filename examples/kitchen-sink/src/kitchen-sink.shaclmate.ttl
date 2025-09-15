@@ -437,48 +437,53 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:minCount 0 ;
         sh:node :LazilyResolvedBlankNodeOrIriClass ;
-        sh:path :lazyOptionalObjectProperty
+        sh:path :optionalLazyToResolvedClassProperty
     ], [
         shaclmate:lazy true ;
         sh:node :LazilyResolvedBlankNodeOrIriClass ;
-        sh:path :lazyObjectSetProperty
+        sh:path :setLazyToResolvedClassProperty
     ], [
         shaclmate:lazy true ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:node :LazilyResolvedBlankNodeOrIriClass ;
-        sh:path :lazyRequiredObjectProperty
+        sh:path :requiredLazyToResolvedClassProperty
     ], [
         shaclmate:lazy true ;
         sh:maxCount 1 ;
         sh:node :LazilyResolvedIriClass ;
-        sh:path :lazyIriObjectProperty
+        sh:path :optionalLazyToResolvedIriClassProperty
     ], [
         shaclmate:lazy true ;
         sh:maxCount 1 ;
         sh:node :LazilyResolvedClassUnion ;
-        sh:path :lazyObjectUnionProperty
+        sh:path :optionalLazyToResolvedClassUnionProperty
     ], [
         shaclmate:stub :StubClass ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
         sh:node :LazilyResolvedBlankNodeOrIriClass ;
-        sh:path :stubOptionalObjectProperty
+        sh:path :optionalStubClassToResolvedClassProperty
     ], [
         shaclmate:stub :StubClass ;
         sh:node :LazilyResolvedBlankNodeOrIriClass ;
-        sh:path :stubObjectSetProperty
+        sh:path :setStubClassToResolvedClassProperty
     ], [
         shaclmate:stub :StubClass ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:node :LazilyResolvedBlankNodeOrIriClass ;
-        sh:path :stubRequiredObjectProperty
+        sh:path :requiredStubClassToResolvedClassProperty
     ], [
         shaclmate:stub :StubClass ;
         sh:maxCount 1 ;
         sh:node :LazilyResolvedClassUnion ;
-        sh:path :stubObjectUnionProperty
+        sh:path :optionalStubClassToResolvedClassUnionProperty
+    ], [
+        shaclmate:stub :StubClassUnion ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedClassUnion ;
+        sh:path :optionalStubClassUnionToResolvedClassUnionProperty
     ] .
 
 :ListPropertiesClass
@@ -694,6 +699,31 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 :StubClass
     a sh:NodeShape ;
     rdfs:comment "Node shape used as a stub by LazyPropertiesClass" ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
+:StubClassUnion
+    a sh:NodeShape ;
+    rdfs:comment "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
+    sh:xone (:StubClassUnionMember1
+        :StubClassUnionMember2
+    ) .
+
+:StubClassUnionMember1
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
+:StubClassUnionMember2
+    a owl:Class, sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;

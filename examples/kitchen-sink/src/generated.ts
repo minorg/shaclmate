@@ -181,6 +181,38 @@ export function $dateEquals(left: Date, right: Date): $EqualsResult {
   );
 }
 /**
+ * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
+ */
+export function $sparqlInstancesOfPattern({
+  rdfType,
+  subject,
+}: {
+  rdfType: rdfjs.NamedNode;
+  subject: sparqljs.Triple["subject"];
+}): sparqljs.Pattern {
+  return {
+    triples: [
+      {
+        subject,
+        predicate: {
+          items: [
+            $RdfVocabularies.rdf.type,
+            {
+              items: [$RdfVocabularies.rdfs.subClassOf],
+              pathType: "*",
+              type: "path",
+            },
+          ],
+          pathType: "/",
+          type: "path",
+        },
+        object: rdfType,
+      },
+    ],
+    type: "bgp",
+  };
+}
+/**
  * Compare two arrays element-wise with the provided elementEquals function.
  */
 export function $arrayEquals<T>(
@@ -283,6 +315,36 @@ export class $LazyOptionalObject<
   }
 }
 /**
+ * Type of lazy properties that return a single required object. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ */
+export class $LazyRequiredObject<
+  ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
+  StubObjectT extends { $identifier: ObjectIdentifierT },
+> {
+  private readonly resolver: (
+    identifier: ObjectIdentifierT,
+  ) => Promise<purify.Either<Error, ResolvedObjectT>>;
+  readonly stub: StubObjectT;
+
+  constructor({
+    resolver,
+    stub,
+  }: {
+    resolver: (
+      identifier: ObjectIdentifierT,
+    ) => Promise<purify.Either<Error, ResolvedObjectT>>;
+    stub: StubObjectT;
+  }) {
+    this.resolver = resolver;
+    this.stub = stub;
+  }
+
+  resolve(): Promise<purify.Either<Error, ResolvedObjectT>> {
+    return this.resolver(this.stub.$identifier);
+  }
+}
+/**
  * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
 export class $LazyObjectSet<
@@ -313,68 +375,6 @@ export class $LazyObjectSet<
       return purify.Either.of([]);
     }
     return await this.resolver(this.stubs.map((stub) => stub.$identifier));
-  }
-}
-/**
- * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
- */
-export function $sparqlInstancesOfPattern({
-  rdfType,
-  subject,
-}: {
-  rdfType: rdfjs.NamedNode;
-  subject: sparqljs.Triple["subject"];
-}): sparqljs.Pattern {
-  return {
-    triples: [
-      {
-        subject,
-        predicate: {
-          items: [
-            $RdfVocabularies.rdf.type,
-            {
-              items: [$RdfVocabularies.rdfs.subClassOf],
-              pathType: "*",
-              type: "path",
-            },
-          ],
-          pathType: "/",
-          type: "path",
-        },
-        object: rdfType,
-      },
-    ],
-    type: "bgp",
-  };
-}
-/**
- * Type of lazy properties that return a single required object. This is a class instead of an interface so it can be instanceof'd elsewhere.
- */
-export class $LazyRequiredObject<
-  ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
-  StubObjectT extends { $identifier: ObjectIdentifierT },
-> {
-  private readonly resolver: (
-    identifier: ObjectIdentifierT,
-  ) => Promise<purify.Either<Error, ResolvedObjectT>>;
-  readonly stub: StubObjectT;
-
-  constructor({
-    resolver,
-    stub,
-  }: {
-    resolver: (
-      identifier: ObjectIdentifierT,
-    ) => Promise<purify.Either<Error, ResolvedObjectT>>;
-    stub: StubObjectT;
-  }) {
-    this.resolver = resolver;
-    this.stub = stub;
-  }
-
-  resolve(): Promise<purify.Either<Error, ResolvedObjectT>> {
-    return this.resolver(this.stub.$identifier);
   }
 }
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
@@ -3543,6 +3543,914 @@ export namespace TermPropertiesClass {
           },
         ],
         type: "optional",
+      },
+    ];
+    for (const pattern of propertyPatterns) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+export class StubClassUnionMember2 {
+  private _$identifier?: StubClassUnionMember2.$Identifier;
+  readonly $type = "StubClassUnionMember2";
+  readonly lazilyResolvedStringProperty: string;
+
+  constructor(parameters: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly lazilyResolvedStringProperty: string;
+  }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+
+    this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
+  }
+
+  get $identifier(): StubClassUnionMember2.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: StubClassUnionMember2): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(
+          this.lazilyResolvedStringProperty,
+          other.lazilyResolvedStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "lazilyResolvedStringProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.lazilyResolvedStringProperty);
+    return _hasher;
+  }
+
+  $toJson(): StubClassUnionMember2.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
+      } satisfies StubClassUnionMember2.$Json),
+    );
+  }
+
+  $toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.$identifier, {
+      mutateGraph,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        $RdfVocabularies.rdf.type,
+        _resource.dataFactory.namedNode(
+          "http://example.com/StubClassUnionMember2",
+        ),
+      );
+    }
+
+    _resource.add(
+      StubClassUnionMember2.$properties.lazilyResolvedStringProperty[
+        "identifier"
+      ],
+      this.lazilyResolvedStringProperty,
+    );
+    return _resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace StubClassUnionMember2 {
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/StubClassUnionMember2",
+  );
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "StubClassUnionMember2";
+    readonly lazilyResolvedStringProperty: string;
+  };
+
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      lazilyResolvedStringProperty: string;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const lazilyResolvedStringProperty =
+      $jsonObject["lazilyResolvedStringProperty"];
+    return purify.Either.of({ $identifier, lazilyResolvedStringProperty });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, StubClassUnionMember2> {
+    return $propertiesFromJson(json).map(
+      (properties) => new StubClassUnionMember2(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zodToJsonSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "StubClassUnionMember2" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+          type: "Control",
+        },
+      ],
+      label: "StubClassUnionMember2",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("StubClassUnionMember2"),
+      lazilyResolvedStringProperty: zod.string(),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      lazilyResolvedStringProperty: string;
+    }
+  > {
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
+        .value($RdfVocabularies.rdf.type)
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/StubClassUnionMember2)`,
+            ),
+          ),
+        );
+    }
+
+    const $identifier: StubClassUnionMember2.$Identifier = $resource.identifier;
+    const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
+      $resource
+        .values($properties.lazilyResolvedStringProperty["identifier"], {
+          unique: true,
+        })
+        .head()
+        .chain((value) => value.toString());
+    if (_lazilyResolvedStringPropertyEither.isLeft()) {
+      return _lazilyResolvedStringPropertyEither;
+    }
+
+    const lazilyResolvedStringProperty =
+      _lazilyResolvedStringPropertyEither.unsafeCoerce();
+    return purify.Either.of({ $identifier, lazilyResolvedStringProperty });
+  }
+
+  export function $fromRdf(
+    parameters: Parameters<typeof StubClassUnionMember2.$propertiesFromRdf>[0],
+  ): purify.Either<Error, StubClassUnionMember2> {
+    return StubClassUnionMember2.$propertiesFromRdf(parameters).map(
+      (properties) => new StubClassUnionMember2(properties),
+    );
+  }
+
+  export const $properties = {
+    lazilyResolvedStringProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/lazilyResolvedStringProperty",
+      ),
+    },
+  };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        StubClassUnionMember2.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        StubClassUnionMember2.$sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      StubClassUnionMember2.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("stubClassUnionMember2");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "stubClassUnionMember2");
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+        },
+      );
+    }
+
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}LazilyResolvedStringProperty`,
+      ),
+      predicate:
+        StubClassUnionMember2.$properties.lazilyResolvedStringProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("stubClassUnionMember2");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "stubClassUnionMember2");
+    if (!parameters?.ignoreRdfType) {
+      requiredPatterns.push(
+        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+      );
+      requiredPatterns.push({
+        triples: [
+          {
+            subject,
+            predicate: $RdfVocabularies.rdf.type,
+            object: dataFactory.variable!(`${variablePrefix}RdfType`),
+          },
+        ],
+        type: "bgp" as const,
+      });
+      optionalPatterns.push({
+        patterns: [
+          {
+            triples: [
+              {
+                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                predicate: {
+                  items: [$RdfVocabularies.rdfs.subClassOf],
+                  pathType: "+" as const,
+                  type: "path" as const,
+                },
+                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+              },
+            ],
+            type: "bgp" as const,
+          },
+        ],
+        type: "optional" as const,
+      });
+    }
+
+    const propertyPatterns: readonly sparqljs.Pattern[] = [
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(
+              `${variablePrefix}LazilyResolvedStringProperty`,
+            ),
+            predicate:
+              StubClassUnionMember2.$properties.lazilyResolvedStringProperty[
+                "identifier"
+              ],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+    ];
+    for (const pattern of propertyPatterns) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+export class StubClassUnionMember1 {
+  private _$identifier?: StubClassUnionMember1.$Identifier;
+  readonly $type = "StubClassUnionMember1";
+  readonly lazilyResolvedStringProperty: string;
+
+  constructor(parameters: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly lazilyResolvedStringProperty: string;
+  }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+
+    this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
+  }
+
+  get $identifier(): StubClassUnionMember1.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: StubClassUnionMember1): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(
+          this.lazilyResolvedStringProperty,
+          other.lazilyResolvedStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "lazilyResolvedStringProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.lazilyResolvedStringProperty);
+    return _hasher;
+  }
+
+  $toJson(): StubClassUnionMember1.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
+      } satisfies StubClassUnionMember1.$Json),
+    );
+  }
+
+  $toRdf({
+    ignoreRdfType,
+    mutateGraph,
+    resourceSet,
+  }: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const _resource = resourceSet.mutableResource(this.$identifier, {
+      mutateGraph,
+    });
+    if (!ignoreRdfType) {
+      _resource.add(
+        $RdfVocabularies.rdf.type,
+        _resource.dataFactory.namedNode(
+          "http://example.com/StubClassUnionMember1",
+        ),
+      );
+    }
+
+    _resource.add(
+      StubClassUnionMember1.$properties.lazilyResolvedStringProperty[
+        "identifier"
+      ],
+      this.lazilyResolvedStringProperty,
+    );
+    return _resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace StubClassUnionMember1 {
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/StubClassUnionMember1",
+  );
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "StubClassUnionMember1";
+    readonly lazilyResolvedStringProperty: string;
+  };
+
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      lazilyResolvedStringProperty: string;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const lazilyResolvedStringProperty =
+      $jsonObject["lazilyResolvedStringProperty"];
+    return purify.Either.of({ $identifier, lazilyResolvedStringProperty });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, StubClassUnionMember1> {
+    return $propertiesFromJson(json).map(
+      (properties) => new StubClassUnionMember1(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zodToJsonSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "StubClassUnionMember1" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+          type: "Control",
+        },
+      ],
+      label: "StubClassUnionMember1",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("StubClassUnionMember1"),
+      lazilyResolvedStringProperty: zod.string(),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    languageIn: $languageIn,
+    objectSet: $objectSetParameter,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
+    objectSet?: $ObjectSet;
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      lazilyResolvedStringProperty: string;
+    }
+  > {
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
+        .value($RdfVocabularies.rdf.type)
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/StubClassUnionMember1)`,
+            ),
+          ),
+        );
+    }
+
+    const $identifier: StubClassUnionMember1.$Identifier = $resource.identifier;
+    const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
+      $resource
+        .values($properties.lazilyResolvedStringProperty["identifier"], {
+          unique: true,
+        })
+        .head()
+        .chain((value) => value.toString());
+    if (_lazilyResolvedStringPropertyEither.isLeft()) {
+      return _lazilyResolvedStringPropertyEither;
+    }
+
+    const lazilyResolvedStringProperty =
+      _lazilyResolvedStringPropertyEither.unsafeCoerce();
+    return purify.Either.of({ $identifier, lazilyResolvedStringProperty });
+  }
+
+  export function $fromRdf(
+    parameters: Parameters<typeof StubClassUnionMember1.$propertiesFromRdf>[0],
+  ): purify.Either<Error, StubClassUnionMember1> {
+    return StubClassUnionMember1.$propertiesFromRdf(parameters).map(
+      (properties) => new StubClassUnionMember1(properties),
+    );
+  }
+
+  export const $properties = {
+    lazilyResolvedStringProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/lazilyResolvedStringProperty",
+      ),
+    },
+  };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        StubClassUnionMember1.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        StubClassUnionMember1.$sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      StubClassUnionMember1.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("stubClassUnionMember1");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "stubClassUnionMember1");
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+        },
+      );
+    }
+
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}LazilyResolvedStringProperty`,
+      ),
+      predicate:
+        StubClassUnionMember1.$properties.lazilyResolvedStringProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("stubClassUnionMember1");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "stubClassUnionMember1");
+    if (!parameters?.ignoreRdfType) {
+      requiredPatterns.push(
+        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+      );
+      requiredPatterns.push({
+        triples: [
+          {
+            subject,
+            predicate: $RdfVocabularies.rdf.type,
+            object: dataFactory.variable!(`${variablePrefix}RdfType`),
+          },
+        ],
+        type: "bgp" as const,
+      });
+      optionalPatterns.push({
+        patterns: [
+          {
+            triples: [
+              {
+                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                predicate: {
+                  items: [$RdfVocabularies.rdfs.subClassOf],
+                  pathType: "+" as const,
+                  type: "path" as const,
+                },
+                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+              },
+            ],
+            type: "bgp" as const,
+          },
+        ],
+        type: "optional" as const,
+      });
+    }
+
+    const propertyPatterns: readonly sparqljs.Pattern[] = [
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(
+              `${variablePrefix}LazilyResolvedStringProperty`,
+            ),
+            predicate:
+              StubClassUnionMember1.$properties.lazilyResolvedStringProperty[
+                "identifier"
+              ],
+            subject,
+          },
+        ],
+        type: "bgp",
       },
     ];
     for (const pattern of propertyPatterns) {
@@ -8078,47 +8986,52 @@ export namespace StubClass {
 export class LazyPropertiesClass {
   private _$identifier?: LazyPropertiesClass.$Identifier;
   readonly $type = "LazyPropertiesClass";
-  readonly lazyIriObjectProperty: $LazyOptionalObject<
+  readonly optionalLazyToResolvedClassProperty: $LazyOptionalObject<
+    LazilyResolvedBlankNodeOrIriClass.$Identifier,
+    LazilyResolvedBlankNodeOrIriClass,
+    $DefaultStub
+  >;
+  readonly optionalLazyToResolvedClassUnionProperty: $LazyOptionalObject<
+    LazilyResolvedClassUnion.$Identifier,
+    LazilyResolvedClassUnion,
+    $DefaultStub
+  >;
+  readonly optionalLazyToResolvedIriClassProperty: $LazyOptionalObject<
     LazilyResolvedIriClass.$Identifier,
     LazilyResolvedIriClass,
     $NamedDefaultStub
   >;
-  readonly lazyObjectSetProperty: $LazyObjectSet<
-    LazilyResolvedBlankNodeOrIriClass.$Identifier,
-    LazilyResolvedBlankNodeOrIriClass,
-    $DefaultStub
-  >;
-  readonly lazyObjectUnionProperty: $LazyOptionalObject<
-    LazilyResolvedClassUnion.$Identifier,
-    LazilyResolvedClassUnion,
-    $DefaultStub
-  >;
-  readonly lazyOptionalObjectProperty: $LazyOptionalObject<
-    LazilyResolvedBlankNodeOrIriClass.$Identifier,
-    LazilyResolvedBlankNodeOrIriClass,
-    $DefaultStub
-  >;
-  readonly lazyRequiredObjectProperty: $LazyRequiredObject<
-    LazilyResolvedBlankNodeOrIriClass.$Identifier,
-    LazilyResolvedBlankNodeOrIriClass,
-    $DefaultStub
-  >;
-  readonly stubObjectSetProperty: $LazyObjectSet<
+  readonly optionalStubClassToResolvedClassProperty: $LazyOptionalObject<
     LazilyResolvedBlankNodeOrIriClass.$Identifier,
     LazilyResolvedBlankNodeOrIriClass,
     StubClass
   >;
-  readonly stubObjectUnionProperty: $LazyOptionalObject<
+  readonly optionalStubClassToResolvedClassUnionProperty: $LazyOptionalObject<
     LazilyResolvedClassUnion.$Identifier,
     LazilyResolvedClassUnion,
     StubClass
   >;
-  readonly stubOptionalObjectProperty: $LazyOptionalObject<
+  readonly optionalStubClassUnionToResolvedClassUnionProperty: $LazyOptionalObject<
+    LazilyResolvedClassUnion.$Identifier,
+    LazilyResolvedClassUnion,
+    StubClassUnion
+  >;
+  readonly requiredLazyToResolvedClassProperty: $LazyRequiredObject<
+    LazilyResolvedBlankNodeOrIriClass.$Identifier,
+    LazilyResolvedBlankNodeOrIriClass,
+    $DefaultStub
+  >;
+  readonly requiredStubClassToResolvedClassProperty: $LazyRequiredObject<
     LazilyResolvedBlankNodeOrIriClass.$Identifier,
     LazilyResolvedBlankNodeOrIriClass,
     StubClass
   >;
-  readonly stubRequiredObjectProperty: $LazyRequiredObject<
+  readonly setLazyToResolvedClassProperty: $LazyObjectSet<
+    LazilyResolvedBlankNodeOrIriClass.$Identifier,
+    LazilyResolvedBlankNodeOrIriClass,
+    $DefaultStub
+  >;
+  readonly setStubClassToResolvedClassProperty: $LazyObjectSet<
     LazilyResolvedBlankNodeOrIriClass.$Identifier,
     LazilyResolvedBlankNodeOrIriClass,
     StubClass
@@ -8126,7 +9039,23 @@ export class LazyPropertiesClass {
 
   constructor(parameters: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly lazyIriObjectProperty?:
+    readonly optionalLazyToResolvedClassProperty?:
+      | $LazyOptionalObject<
+          LazilyResolvedBlankNodeOrIriClass.$Identifier,
+          LazilyResolvedBlankNodeOrIriClass,
+          $DefaultStub
+        >
+      | LazilyResolvedBlankNodeOrIriClass
+      | purify.Maybe<LazilyResolvedBlankNodeOrIriClass>;
+    readonly optionalLazyToResolvedClassUnionProperty?:
+      | $LazyOptionalObject<
+          LazilyResolvedClassUnion.$Identifier,
+          LazilyResolvedClassUnion,
+          $DefaultStub
+        >
+      | LazilyResolvedClassUnion
+      | purify.Maybe<LazilyResolvedClassUnion>;
+    readonly optionalLazyToResolvedIriClassProperty?:
       | $LazyOptionalObject<
           LazilyResolvedIriClass.$Identifier,
           LazilyResolvedIriClass,
@@ -8134,52 +9063,7 @@ export class LazyPropertiesClass {
         >
       | LazilyResolvedIriClass
       | purify.Maybe<LazilyResolvedIriClass>;
-    readonly lazyObjectSetProperty?:
-      | $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriClass.$Identifier,
-          LazilyResolvedBlankNodeOrIriClass,
-          $DefaultStub
-        >
-      | readonly LazilyResolvedBlankNodeOrIriClass[];
-    readonly lazyObjectUnionProperty?:
-      | $LazyOptionalObject<
-          LazilyResolvedClassUnion.$Identifier,
-          LazilyResolvedClassUnion,
-          $DefaultStub
-        >
-      | LazilyResolvedClassUnion
-      | purify.Maybe<LazilyResolvedClassUnion>;
-    readonly lazyOptionalObjectProperty?:
-      | $LazyOptionalObject<
-          LazilyResolvedBlankNodeOrIriClass.$Identifier,
-          LazilyResolvedBlankNodeOrIriClass,
-          $DefaultStub
-        >
-      | LazilyResolvedBlankNodeOrIriClass
-      | purify.Maybe<LazilyResolvedBlankNodeOrIriClass>;
-    readonly lazyRequiredObjectProperty:
-      | $LazyRequiredObject<
-          LazilyResolvedBlankNodeOrIriClass.$Identifier,
-          LazilyResolvedBlankNodeOrIriClass,
-          $DefaultStub
-        >
-      | LazilyResolvedBlankNodeOrIriClass;
-    readonly stubObjectSetProperty?:
-      | $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriClass.$Identifier,
-          LazilyResolvedBlankNodeOrIriClass,
-          StubClass
-        >
-      | readonly LazilyResolvedBlankNodeOrIriClass[];
-    readonly stubObjectUnionProperty?:
-      | $LazyOptionalObject<
-          LazilyResolvedClassUnion.$Identifier,
-          LazilyResolvedClassUnion,
-          StubClass
-        >
-      | LazilyResolvedClassUnion
-      | purify.Maybe<LazilyResolvedClassUnion>;
-    readonly stubOptionalObjectProperty?:
+    readonly optionalStubClassToResolvedClassProperty?:
       | $LazyOptionalObject<
           LazilyResolvedBlankNodeOrIriClass.$Identifier,
           LazilyResolvedBlankNodeOrIriClass,
@@ -8187,13 +9071,47 @@ export class LazyPropertiesClass {
         >
       | LazilyResolvedBlankNodeOrIriClass
       | purify.Maybe<LazilyResolvedBlankNodeOrIriClass>;
-    readonly stubRequiredObjectProperty:
+    readonly optionalStubClassToResolvedClassUnionProperty?:
+      | $LazyOptionalObject<
+          LazilyResolvedClassUnion.$Identifier,
+          LazilyResolvedClassUnion,
+          StubClass
+        >
+      | LazilyResolvedClassUnion
+      | purify.Maybe<LazilyResolvedClassUnion>;
+    readonly optionalStubClassUnionToResolvedClassUnionProperty?: $LazyOptionalObject<
+      LazilyResolvedClassUnion.$Identifier,
+      LazilyResolvedClassUnion,
+      StubClassUnion
+    >;
+    readonly requiredLazyToResolvedClassProperty:
+      | $LazyRequiredObject<
+          LazilyResolvedBlankNodeOrIriClass.$Identifier,
+          LazilyResolvedBlankNodeOrIriClass,
+          $DefaultStub
+        >
+      | LazilyResolvedBlankNodeOrIriClass;
+    readonly requiredStubClassToResolvedClassProperty:
       | $LazyRequiredObject<
           LazilyResolvedBlankNodeOrIriClass.$Identifier,
           LazilyResolvedBlankNodeOrIriClass,
           StubClass
         >
       | LazilyResolvedBlankNodeOrIriClass;
+    readonly setLazyToResolvedClassProperty?:
+      | $LazyObjectSet<
+          LazilyResolvedBlankNodeOrIriClass.$Identifier,
+          LazilyResolvedBlankNodeOrIriClass,
+          $DefaultStub
+        >
+      | readonly LazilyResolvedBlankNodeOrIriClass[];
+    readonly setStubClassToResolvedClassProperty?:
+      | $LazyObjectSet<
+          LazilyResolvedBlankNodeOrIriClass.$Identifier,
+          LazilyResolvedBlankNodeOrIriClass,
+          StubClass
+        >
+      | readonly LazilyResolvedBlankNodeOrIriClass[];
   }) {
     if (typeof parameters.$identifier === "object") {
       this._$identifier = parameters.$identifier;
@@ -8205,42 +9123,170 @@ export class LazyPropertiesClass {
     }
 
     if (
-      typeof parameters.lazyIriObjectProperty === "object" &&
-      parameters.lazyIriObjectProperty instanceof $LazyOptionalObject
+      typeof parameters.optionalLazyToResolvedClassProperty === "object" &&
+      parameters.optionalLazyToResolvedClassProperty instanceof
+        $LazyOptionalObject
     ) {
-      this.lazyIriObjectProperty = parameters.lazyIriObjectProperty;
-    } else if (purify.Maybe.isMaybe(parameters.lazyIriObjectProperty)) {
-      this.lazyIriObjectProperty = new $LazyOptionalObject<
+      this.optionalLazyToResolvedClassProperty =
+        parameters.optionalLazyToResolvedClassProperty;
+    } else if (
+      purify.Maybe.isMaybe(parameters.optionalLazyToResolvedClassProperty)
+    ) {
+      this.optionalLazyToResolvedClassProperty = new $LazyOptionalObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        $DefaultStub
+      >({
+        stub: parameters.optionalLazyToResolvedClassProperty.map(
+          (parameters) => new $DefaultStub(parameters),
+        ),
+        resolver: async () =>
+          purify.Either.of(
+            (
+              parameters.optionalLazyToResolvedClassProperty as purify.Maybe<LazilyResolvedBlankNodeOrIriClass>
+            ).unsafeCoerce(),
+          ),
+      });
+    } else if (
+      typeof parameters.optionalLazyToResolvedClassProperty === "object"
+    ) {
+      this.optionalLazyToResolvedClassProperty = new $LazyOptionalObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        $DefaultStub
+      >({
+        stub: purify.Maybe.of(
+          new $DefaultStub(parameters.optionalLazyToResolvedClassProperty),
+        ),
+        resolver: async () =>
+          purify.Either.of(
+            parameters.optionalLazyToResolvedClassProperty as LazilyResolvedBlankNodeOrIriClass,
+          ),
+      });
+    } else if (
+      typeof parameters.optionalLazyToResolvedClassProperty === "undefined"
+    ) {
+      this.optionalLazyToResolvedClassProperty = new $LazyOptionalObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        $DefaultStub
+      >({
+        stub: purify.Maybe.empty(),
+        resolver: async () => {
+          throw new Error("should never be called");
+        },
+      });
+    } else {
+      this.optionalLazyToResolvedClassProperty =
+        parameters.optionalLazyToResolvedClassProperty satisfies never;
+    }
+
+    if (
+      typeof parameters.optionalLazyToResolvedClassUnionProperty === "object" &&
+      parameters.optionalLazyToResolvedClassUnionProperty instanceof
+        $LazyOptionalObject
+    ) {
+      this.optionalLazyToResolvedClassUnionProperty =
+        parameters.optionalLazyToResolvedClassUnionProperty;
+    } else if (
+      purify.Maybe.isMaybe(parameters.optionalLazyToResolvedClassUnionProperty)
+    ) {
+      this.optionalLazyToResolvedClassUnionProperty = new $LazyOptionalObject<
+        LazilyResolvedClassUnion.$Identifier,
+        LazilyResolvedClassUnion,
+        $DefaultStub
+      >({
+        stub: parameters.optionalLazyToResolvedClassUnionProperty.map(
+          (parameters) => new $DefaultStub(parameters),
+        ),
+        resolver: async () =>
+          purify.Either.of(
+            (
+              parameters.optionalLazyToResolvedClassUnionProperty as purify.Maybe<LazilyResolvedClassUnion>
+            ).unsafeCoerce(),
+          ),
+      });
+    } else if (
+      typeof parameters.optionalLazyToResolvedClassUnionProperty === "object"
+    ) {
+      this.optionalLazyToResolvedClassUnionProperty = new $LazyOptionalObject<
+        LazilyResolvedClassUnion.$Identifier,
+        LazilyResolvedClassUnion,
+        $DefaultStub
+      >({
+        stub: purify.Maybe.of(
+          new $DefaultStub(parameters.optionalLazyToResolvedClassUnionProperty),
+        ),
+        resolver: async () =>
+          purify.Either.of(
+            parameters.optionalLazyToResolvedClassUnionProperty as LazilyResolvedClassUnion,
+          ),
+      });
+    } else if (
+      typeof parameters.optionalLazyToResolvedClassUnionProperty === "undefined"
+    ) {
+      this.optionalLazyToResolvedClassUnionProperty = new $LazyOptionalObject<
+        LazilyResolvedClassUnion.$Identifier,
+        LazilyResolvedClassUnion,
+        $DefaultStub
+      >({
+        stub: purify.Maybe.empty(),
+        resolver: async () => {
+          throw new Error("should never be called");
+        },
+      });
+    } else {
+      this.optionalLazyToResolvedClassUnionProperty =
+        parameters.optionalLazyToResolvedClassUnionProperty satisfies never;
+    }
+
+    if (
+      typeof parameters.optionalLazyToResolvedIriClassProperty === "object" &&
+      parameters.optionalLazyToResolvedIriClassProperty instanceof
+        $LazyOptionalObject
+    ) {
+      this.optionalLazyToResolvedIriClassProperty =
+        parameters.optionalLazyToResolvedIriClassProperty;
+    } else if (
+      purify.Maybe.isMaybe(parameters.optionalLazyToResolvedIriClassProperty)
+    ) {
+      this.optionalLazyToResolvedIriClassProperty = new $LazyOptionalObject<
         LazilyResolvedIriClass.$Identifier,
         LazilyResolvedIriClass,
         $NamedDefaultStub
       >({
-        stub: parameters.lazyIriObjectProperty.map(
+        stub: parameters.optionalLazyToResolvedIriClassProperty.map(
           (parameters) => new $NamedDefaultStub(parameters),
         ),
         resolver: async () =>
           purify.Either.of(
             (
-              parameters.lazyIriObjectProperty as purify.Maybe<LazilyResolvedIriClass>
+              parameters.optionalLazyToResolvedIriClassProperty as purify.Maybe<LazilyResolvedIriClass>
             ).unsafeCoerce(),
           ),
       });
-    } else if (typeof parameters.lazyIriObjectProperty === "object") {
-      this.lazyIriObjectProperty = new $LazyOptionalObject<
+    } else if (
+      typeof parameters.optionalLazyToResolvedIriClassProperty === "object"
+    ) {
+      this.optionalLazyToResolvedIriClassProperty = new $LazyOptionalObject<
         LazilyResolvedIriClass.$Identifier,
         LazilyResolvedIriClass,
         $NamedDefaultStub
       >({
         stub: purify.Maybe.of(
-          new $NamedDefaultStub(parameters.lazyIriObjectProperty),
+          new $NamedDefaultStub(
+            parameters.optionalLazyToResolvedIriClassProperty,
+          ),
         ),
         resolver: async () =>
           purify.Either.of(
-            parameters.lazyIriObjectProperty as LazilyResolvedIriClass,
+            parameters.optionalLazyToResolvedIriClassProperty as LazilyResolvedIriClass,
           ),
       });
-    } else if (typeof parameters.lazyIriObjectProperty === "undefined") {
-      this.lazyIriObjectProperty = new $LazyOptionalObject<
+    } else if (
+      typeof parameters.optionalLazyToResolvedIriClassProperty === "undefined"
+    ) {
+      this.optionalLazyToResolvedIriClassProperty = new $LazyOptionalObject<
         LazilyResolvedIriClass.$Identifier,
         LazilyResolvedIriClass,
         $NamedDefaultStub
@@ -8251,31 +9297,248 @@ export class LazyPropertiesClass {
         },
       });
     } else {
-      this.lazyIriObjectProperty =
-        parameters.lazyIriObjectProperty satisfies never;
+      this.optionalLazyToResolvedIriClassProperty =
+        parameters.optionalLazyToResolvedIriClassProperty satisfies never;
     }
 
     if (
-      typeof parameters.lazyObjectSetProperty === "object" &&
-      parameters.lazyObjectSetProperty instanceof $LazyObjectSet
+      typeof parameters.optionalStubClassToResolvedClassProperty === "object" &&
+      parameters.optionalStubClassToResolvedClassProperty instanceof
+        $LazyOptionalObject
     ) {
-      this.lazyObjectSetProperty = parameters.lazyObjectSetProperty;
-    } else if (typeof parameters.lazyObjectSetProperty === "object") {
-      this.lazyObjectSetProperty = new $LazyObjectSet<
+      this.optionalStubClassToResolvedClassProperty =
+        parameters.optionalStubClassToResolvedClassProperty;
+    } else if (
+      purify.Maybe.isMaybe(parameters.optionalStubClassToResolvedClassProperty)
+    ) {
+      this.optionalStubClassToResolvedClassProperty = new $LazyOptionalObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
+      >({
+        stub: parameters.optionalStubClassToResolvedClassProperty.map(
+          (parameters) => new StubClass(parameters),
+        ),
+        resolver: async () =>
+          purify.Either.of(
+            (
+              parameters.optionalStubClassToResolvedClassProperty as purify.Maybe<LazilyResolvedBlankNodeOrIriClass>
+            ).unsafeCoerce(),
+          ),
+      });
+    } else if (
+      typeof parameters.optionalStubClassToResolvedClassProperty === "object"
+    ) {
+      this.optionalStubClassToResolvedClassProperty = new $LazyOptionalObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
+      >({
+        stub: purify.Maybe.of(
+          new StubClass(parameters.optionalStubClassToResolvedClassProperty),
+        ),
+        resolver: async () =>
+          purify.Either.of(
+            parameters.optionalStubClassToResolvedClassProperty as LazilyResolvedBlankNodeOrIriClass,
+          ),
+      });
+    } else if (
+      typeof parameters.optionalStubClassToResolvedClassProperty === "undefined"
+    ) {
+      this.optionalStubClassToResolvedClassProperty = new $LazyOptionalObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
+      >({
+        stub: purify.Maybe.empty(),
+        resolver: async () => {
+          throw new Error("should never be called");
+        },
+      });
+    } else {
+      this.optionalStubClassToResolvedClassProperty =
+        parameters.optionalStubClassToResolvedClassProperty satisfies never;
+    }
+
+    if (
+      typeof parameters.optionalStubClassToResolvedClassUnionProperty ===
+        "object" &&
+      parameters.optionalStubClassToResolvedClassUnionProperty instanceof
+        $LazyOptionalObject
+    ) {
+      this.optionalStubClassToResolvedClassUnionProperty =
+        parameters.optionalStubClassToResolvedClassUnionProperty;
+    } else if (
+      purify.Maybe.isMaybe(
+        parameters.optionalStubClassToResolvedClassUnionProperty,
+      )
+    ) {
+      this.optionalStubClassToResolvedClassUnionProperty =
+        new $LazyOptionalObject<
+          LazilyResolvedClassUnion.$Identifier,
+          LazilyResolvedClassUnion,
+          StubClass
+        >({
+          stub: parameters.optionalStubClassToResolvedClassUnionProperty.map(
+            (parameters) => new StubClass(parameters),
+          ),
+          resolver: async () =>
+            purify.Either.of(
+              (
+                parameters.optionalStubClassToResolvedClassUnionProperty as purify.Maybe<LazilyResolvedClassUnion>
+              ).unsafeCoerce(),
+            ),
+        });
+    } else if (
+      typeof parameters.optionalStubClassToResolvedClassUnionProperty ===
+      "object"
+    ) {
+      this.optionalStubClassToResolvedClassUnionProperty =
+        new $LazyOptionalObject<
+          LazilyResolvedClassUnion.$Identifier,
+          LazilyResolvedClassUnion,
+          StubClass
+        >({
+          stub: purify.Maybe.of(
+            new StubClass(
+              parameters.optionalStubClassToResolvedClassUnionProperty,
+            ),
+          ),
+          resolver: async () =>
+            purify.Either.of(
+              parameters.optionalStubClassToResolvedClassUnionProperty as LazilyResolvedClassUnion,
+            ),
+        });
+    } else if (
+      typeof parameters.optionalStubClassToResolvedClassUnionProperty ===
+      "undefined"
+    ) {
+      this.optionalStubClassToResolvedClassUnionProperty =
+        new $LazyOptionalObject<
+          LazilyResolvedClassUnion.$Identifier,
+          LazilyResolvedClassUnion,
+          StubClass
+        >({
+          stub: purify.Maybe.empty(),
+          resolver: async () => {
+            throw new Error("should never be called");
+          },
+        });
+    } else {
+      this.optionalStubClassToResolvedClassUnionProperty =
+        parameters.optionalStubClassToResolvedClassUnionProperty satisfies never;
+    }
+
+    if (
+      typeof parameters.optionalStubClassUnionToResolvedClassUnionProperty ===
+        "object" &&
+      parameters.optionalStubClassUnionToResolvedClassUnionProperty instanceof
+        $LazyOptionalObject
+    ) {
+      this.optionalStubClassUnionToResolvedClassUnionProperty =
+        parameters.optionalStubClassUnionToResolvedClassUnionProperty;
+    } else if (
+      typeof parameters.optionalStubClassUnionToResolvedClassUnionProperty ===
+      "undefined"
+    ) {
+      this.optionalStubClassUnionToResolvedClassUnionProperty =
+        new $LazyOptionalObject<
+          LazilyResolvedClassUnion.$Identifier,
+          LazilyResolvedClassUnion,
+          StubClassUnion
+        >({
+          stub: purify.Maybe.empty(),
+          resolver: async () => {
+            throw new Error("should never be called");
+          },
+        });
+    } else {
+      this.optionalStubClassUnionToResolvedClassUnionProperty =
+        parameters.optionalStubClassUnionToResolvedClassUnionProperty satisfies never;
+    }
+
+    if (
+      typeof parameters.requiredLazyToResolvedClassProperty === "object" &&
+      parameters.requiredLazyToResolvedClassProperty instanceof
+        $LazyRequiredObject
+    ) {
+      this.requiredLazyToResolvedClassProperty =
+        parameters.requiredLazyToResolvedClassProperty;
+    } else if (
+      typeof parameters.requiredLazyToResolvedClassProperty === "object" &&
+      parameters.requiredLazyToResolvedClassProperty instanceof
+        LazilyResolvedBlankNodeOrIriClass
+    ) {
+      this.requiredLazyToResolvedClassProperty = new $LazyRequiredObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
         LazilyResolvedBlankNodeOrIriClass,
         $DefaultStub
       >({
-        stubs: parameters.lazyObjectSetProperty.map(
+        stub: new $DefaultStub(parameters.requiredLazyToResolvedClassProperty),
+        resolver: async () =>
+          purify.Either.of(
+            parameters.requiredLazyToResolvedClassProperty as LazilyResolvedBlankNodeOrIriClass,
+          ),
+      });
+    } else {
+      this.requiredLazyToResolvedClassProperty =
+        parameters.requiredLazyToResolvedClassProperty satisfies never;
+    }
+
+    if (
+      typeof parameters.requiredStubClassToResolvedClassProperty === "object" &&
+      parameters.requiredStubClassToResolvedClassProperty instanceof
+        $LazyRequiredObject
+    ) {
+      this.requiredStubClassToResolvedClassProperty =
+        parameters.requiredStubClassToResolvedClassProperty;
+    } else if (
+      typeof parameters.requiredStubClassToResolvedClassProperty === "object" &&
+      parameters.requiredStubClassToResolvedClassProperty instanceof
+        LazilyResolvedBlankNodeOrIriClass
+    ) {
+      this.requiredStubClassToResolvedClassProperty = new $LazyRequiredObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
+      >({
+        stub: new StubClass(
+          parameters.requiredStubClassToResolvedClassProperty,
+        ),
+        resolver: async () =>
+          purify.Either.of(
+            parameters.requiredStubClassToResolvedClassProperty as LazilyResolvedBlankNodeOrIriClass,
+          ),
+      });
+    } else {
+      this.requiredStubClassToResolvedClassProperty =
+        parameters.requiredStubClassToResolvedClassProperty satisfies never;
+    }
+
+    if (
+      typeof parameters.setLazyToResolvedClassProperty === "object" &&
+      parameters.setLazyToResolvedClassProperty instanceof $LazyObjectSet
+    ) {
+      this.setLazyToResolvedClassProperty =
+        parameters.setLazyToResolvedClassProperty;
+    } else if (typeof parameters.setLazyToResolvedClassProperty === "object") {
+      this.setLazyToResolvedClassProperty = new $LazyObjectSet<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        $DefaultStub
+      >({
+        stubs: parameters.setLazyToResolvedClassProperty.map(
           (parameters) => new $DefaultStub(parameters),
         ),
         resolver: async () =>
           purify.Either.of(
-            parameters.lazyObjectSetProperty as readonly LazilyResolvedBlankNodeOrIriClass[],
+            parameters.setLazyToResolvedClassProperty as readonly LazilyResolvedBlankNodeOrIriClass[],
           ),
       });
-    } else if (typeof parameters.lazyObjectSetProperty === "undefined") {
-      this.lazyObjectSetProperty = new $LazyObjectSet<
+    } else if (
+      typeof parameters.setLazyToResolvedClassProperty === "undefined"
+    ) {
+      this.setLazyToResolvedClassProperty = new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
         LazilyResolvedBlankNodeOrIriClass,
         $DefaultStub
@@ -8286,159 +9549,36 @@ export class LazyPropertiesClass {
         },
       });
     } else {
-      this.lazyObjectSetProperty =
-        parameters.lazyObjectSetProperty satisfies never;
+      this.setLazyToResolvedClassProperty =
+        parameters.setLazyToResolvedClassProperty satisfies never;
     }
 
     if (
-      typeof parameters.lazyObjectUnionProperty === "object" &&
-      parameters.lazyObjectUnionProperty instanceof $LazyOptionalObject
+      typeof parameters.setStubClassToResolvedClassProperty === "object" &&
+      parameters.setStubClassToResolvedClassProperty instanceof $LazyObjectSet
     ) {
-      this.lazyObjectUnionProperty = parameters.lazyObjectUnionProperty;
-    } else if (purify.Maybe.isMaybe(parameters.lazyObjectUnionProperty)) {
-      this.lazyObjectUnionProperty = new $LazyOptionalObject<
-        LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        $DefaultStub
-      >({
-        stub: parameters.lazyObjectUnionProperty.map(
-          (parameters) => new $DefaultStub(parameters),
-        ),
-        resolver: async () =>
-          purify.Either.of(
-            (
-              parameters.lazyObjectUnionProperty as purify.Maybe<LazilyResolvedClassUnion>
-            ).unsafeCoerce(),
-          ),
-      });
-    } else if (typeof parameters.lazyObjectUnionProperty === "object") {
-      this.lazyObjectUnionProperty = new $LazyOptionalObject<
-        LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        $DefaultStub
-      >({
-        stub: purify.Maybe.of(
-          new $DefaultStub(parameters.lazyObjectUnionProperty),
-        ),
-        resolver: async () =>
-          purify.Either.of(
-            parameters.lazyObjectUnionProperty as LazilyResolvedClassUnion,
-          ),
-      });
-    } else if (typeof parameters.lazyObjectUnionProperty === "undefined") {
-      this.lazyObjectUnionProperty = new $LazyOptionalObject<
-        LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        $DefaultStub
-      >({
-        stub: purify.Maybe.empty(),
-        resolver: async () => {
-          throw new Error("should never be called");
-        },
-      });
-    } else {
-      this.lazyObjectUnionProperty =
-        parameters.lazyObjectUnionProperty satisfies never;
-    }
-
-    if (
-      typeof parameters.lazyOptionalObjectProperty === "object" &&
-      parameters.lazyOptionalObjectProperty instanceof $LazyOptionalObject
-    ) {
-      this.lazyOptionalObjectProperty = parameters.lazyOptionalObjectProperty;
-    } else if (purify.Maybe.isMaybe(parameters.lazyOptionalObjectProperty)) {
-      this.lazyOptionalObjectProperty = new $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultStub
-      >({
-        stub: parameters.lazyOptionalObjectProperty.map(
-          (parameters) => new $DefaultStub(parameters),
-        ),
-        resolver: async () =>
-          purify.Either.of(
-            (
-              parameters.lazyOptionalObjectProperty as purify.Maybe<LazilyResolvedBlankNodeOrIriClass>
-            ).unsafeCoerce(),
-          ),
-      });
-    } else if (typeof parameters.lazyOptionalObjectProperty === "object") {
-      this.lazyOptionalObjectProperty = new $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultStub
-      >({
-        stub: purify.Maybe.of(
-          new $DefaultStub(parameters.lazyOptionalObjectProperty),
-        ),
-        resolver: async () =>
-          purify.Either.of(
-            parameters.lazyOptionalObjectProperty as LazilyResolvedBlankNodeOrIriClass,
-          ),
-      });
-    } else if (typeof parameters.lazyOptionalObjectProperty === "undefined") {
-      this.lazyOptionalObjectProperty = new $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultStub
-      >({
-        stub: purify.Maybe.empty(),
-        resolver: async () => {
-          throw new Error("should never be called");
-        },
-      });
-    } else {
-      this.lazyOptionalObjectProperty =
-        parameters.lazyOptionalObjectProperty satisfies never;
-    }
-
-    if (
-      typeof parameters.lazyRequiredObjectProperty === "object" &&
-      parameters.lazyRequiredObjectProperty instanceof $LazyRequiredObject
-    ) {
-      this.lazyRequiredObjectProperty = parameters.lazyRequiredObjectProperty;
+      this.setStubClassToResolvedClassProperty =
+        parameters.setStubClassToResolvedClassProperty;
     } else if (
-      typeof parameters.lazyRequiredObjectProperty === "object" &&
-      parameters.lazyRequiredObjectProperty instanceof
-        LazilyResolvedBlankNodeOrIriClass
+      typeof parameters.setStubClassToResolvedClassProperty === "object"
     ) {
-      this.lazyRequiredObjectProperty = new $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultStub
-      >({
-        stub: new $DefaultStub(parameters.lazyRequiredObjectProperty),
-        resolver: async () =>
-          purify.Either.of(
-            parameters.lazyRequiredObjectProperty as LazilyResolvedBlankNodeOrIriClass,
-          ),
-      });
-    } else {
-      this.lazyRequiredObjectProperty =
-        parameters.lazyRequiredObjectProperty satisfies never;
-    }
-
-    if (
-      typeof parameters.stubObjectSetProperty === "object" &&
-      parameters.stubObjectSetProperty instanceof $LazyObjectSet
-    ) {
-      this.stubObjectSetProperty = parameters.stubObjectSetProperty;
-    } else if (typeof parameters.stubObjectSetProperty === "object") {
-      this.stubObjectSetProperty = new $LazyObjectSet<
+      this.setStubClassToResolvedClassProperty = new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
         LazilyResolvedBlankNodeOrIriClass,
         StubClass
       >({
-        stubs: parameters.stubObjectSetProperty.map(
+        stubs: parameters.setStubClassToResolvedClassProperty.map(
           (parameters) => new StubClass(parameters),
         ),
         resolver: async () =>
           purify.Either.of(
-            parameters.stubObjectSetProperty as readonly LazilyResolvedBlankNodeOrIriClass[],
+            parameters.setStubClassToResolvedClassProperty as readonly LazilyResolvedBlankNodeOrIriClass[],
           ),
       });
-    } else if (typeof parameters.stubObjectSetProperty === "undefined") {
-      this.stubObjectSetProperty = new $LazyObjectSet<
+    } else if (
+      typeof parameters.setStubClassToResolvedClassProperty === "undefined"
+    ) {
+      this.setStubClassToResolvedClassProperty = new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
         LazilyResolvedBlankNodeOrIriClass,
         StubClass
@@ -8449,136 +9589,8 @@ export class LazyPropertiesClass {
         },
       });
     } else {
-      this.stubObjectSetProperty =
-        parameters.stubObjectSetProperty satisfies never;
-    }
-
-    if (
-      typeof parameters.stubObjectUnionProperty === "object" &&
-      parameters.stubObjectUnionProperty instanceof $LazyOptionalObject
-    ) {
-      this.stubObjectUnionProperty = parameters.stubObjectUnionProperty;
-    } else if (purify.Maybe.isMaybe(parameters.stubObjectUnionProperty)) {
-      this.stubObjectUnionProperty = new $LazyOptionalObject<
-        LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        StubClass
-      >({
-        stub: parameters.stubObjectUnionProperty.map(
-          (parameters) => new StubClass(parameters),
-        ),
-        resolver: async () =>
-          purify.Either.of(
-            (
-              parameters.stubObjectUnionProperty as purify.Maybe<LazilyResolvedClassUnion>
-            ).unsafeCoerce(),
-          ),
-      });
-    } else if (typeof parameters.stubObjectUnionProperty === "object") {
-      this.stubObjectUnionProperty = new $LazyOptionalObject<
-        LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        StubClass
-      >({
-        stub: purify.Maybe.of(
-          new StubClass(parameters.stubObjectUnionProperty),
-        ),
-        resolver: async () =>
-          purify.Either.of(
-            parameters.stubObjectUnionProperty as LazilyResolvedClassUnion,
-          ),
-      });
-    } else if (typeof parameters.stubObjectUnionProperty === "undefined") {
-      this.stubObjectUnionProperty = new $LazyOptionalObject<
-        LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        StubClass
-      >({
-        stub: purify.Maybe.empty(),
-        resolver: async () => {
-          throw new Error("should never be called");
-        },
-      });
-    } else {
-      this.stubObjectUnionProperty =
-        parameters.stubObjectUnionProperty satisfies never;
-    }
-
-    if (
-      typeof parameters.stubOptionalObjectProperty === "object" &&
-      parameters.stubOptionalObjectProperty instanceof $LazyOptionalObject
-    ) {
-      this.stubOptionalObjectProperty = parameters.stubOptionalObjectProperty;
-    } else if (purify.Maybe.isMaybe(parameters.stubOptionalObjectProperty)) {
-      this.stubOptionalObjectProperty = new $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        StubClass
-      >({
-        stub: parameters.stubOptionalObjectProperty.map(
-          (parameters) => new StubClass(parameters),
-        ),
-        resolver: async () =>
-          purify.Either.of(
-            (
-              parameters.stubOptionalObjectProperty as purify.Maybe<LazilyResolvedBlankNodeOrIriClass>
-            ).unsafeCoerce(),
-          ),
-      });
-    } else if (typeof parameters.stubOptionalObjectProperty === "object") {
-      this.stubOptionalObjectProperty = new $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        StubClass
-      >({
-        stub: purify.Maybe.of(
-          new StubClass(parameters.stubOptionalObjectProperty),
-        ),
-        resolver: async () =>
-          purify.Either.of(
-            parameters.stubOptionalObjectProperty as LazilyResolvedBlankNodeOrIriClass,
-          ),
-      });
-    } else if (typeof parameters.stubOptionalObjectProperty === "undefined") {
-      this.stubOptionalObjectProperty = new $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        StubClass
-      >({
-        stub: purify.Maybe.empty(),
-        resolver: async () => {
-          throw new Error("should never be called");
-        },
-      });
-    } else {
-      this.stubOptionalObjectProperty =
-        parameters.stubOptionalObjectProperty satisfies never;
-    }
-
-    if (
-      typeof parameters.stubRequiredObjectProperty === "object" &&
-      parameters.stubRequiredObjectProperty instanceof $LazyRequiredObject
-    ) {
-      this.stubRequiredObjectProperty = parameters.stubRequiredObjectProperty;
-    } else if (
-      typeof parameters.stubRequiredObjectProperty === "object" &&
-      parameters.stubRequiredObjectProperty instanceof
-        LazilyResolvedBlankNodeOrIriClass
-    ) {
-      this.stubRequiredObjectProperty = new $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        StubClass
-      >({
-        stub: new StubClass(parameters.stubRequiredObjectProperty),
-        resolver: async () =>
-          purify.Either.of(
-            parameters.stubRequiredObjectProperty as LazilyResolvedBlankNodeOrIriClass,
-          ),
-      });
-    } else {
-      this.stubRequiredObjectProperty =
-        parameters.stubRequiredObjectProperty satisfies never;
+      this.setStubClassToResolvedClassProperty =
+        parameters.setStubClassToResolvedClassProperty satisfies never;
     }
   }
 
@@ -8615,45 +9627,13 @@ export class LazyPropertiesClass {
             $maybeEquals(left, right, (left, right) => left.$equals(right)))(
             left.stub,
             right.stub,
-          ))(this.lazyIriObjectProperty, other.lazyIriObjectProperty).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "lazyIriObjectProperty",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        ((left, right) =>
-          ((left, right) =>
-            $arrayEquals(left, right, (left, right) => left.$equals(right)))(
-            left.stubs,
-            right.stubs,
-          ))(this.lazyObjectSetProperty, other.lazyObjectSetProperty).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "lazyObjectSetProperty",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        ((left, right) =>
-          ((left, right) =>
-            $maybeEquals(left, right, (left, right) => left.$equals(right)))(
-            left.stub,
-            right.stub,
           ))(
-          this.lazyObjectUnionProperty,
-          other.lazyObjectUnionProperty,
+          this.optionalLazyToResolvedClassProperty,
+          other.optionalLazyToResolvedClassProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left: this,
           right: other,
-          propertyName: "lazyObjectUnionProperty",
+          propertyName: "optionalLazyToResolvedClassProperty",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -8665,12 +9645,79 @@ export class LazyPropertiesClass {
             left.stub,
             right.stub,
           ))(
-          this.lazyOptionalObjectProperty,
-          other.lazyOptionalObjectProperty,
+          this.optionalLazyToResolvedClassUnionProperty,
+          other.optionalLazyToResolvedClassUnionProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left: this,
           right: other,
-          propertyName: "lazyOptionalObjectProperty",
+          propertyName: "optionalLazyToResolvedClassUnionProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          ((left, right) =>
+            $maybeEquals(left, right, (left, right) => left.$equals(right)))(
+            left.stub,
+            right.stub,
+          ))(
+          this.optionalLazyToResolvedIriClassProperty,
+          other.optionalLazyToResolvedIriClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "optionalLazyToResolvedIriClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          ((left, right) =>
+            $maybeEquals(left, right, (left, right) => left.$equals(right)))(
+            left.stub,
+            right.stub,
+          ))(
+          this.optionalStubClassToResolvedClassProperty,
+          other.optionalStubClassToResolvedClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "optionalStubClassToResolvedClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          ((left, right) =>
+            $maybeEquals(left, right, (left, right) => left.$equals(right)))(
+            left.stub,
+            right.stub,
+          ))(
+          this.optionalStubClassToResolvedClassUnionProperty,
+          other.optionalStubClassToResolvedClassUnionProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "optionalStubClassToResolvedClassUnionProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          ((left, right) => $maybeEquals(left, right, StubClassUnion.$equals))(
+            left.stub,
+            right.stub,
+          ))(
+          this.optionalStubClassUnionToResolvedClassUnionProperty,
+          other.optionalStubClassUnionToResolvedClassUnionProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "optionalStubClassUnionToResolvedClassUnionProperty",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -8678,12 +9725,25 @@ export class LazyPropertiesClass {
       .chain(() =>
         ((left, right) =>
           ((left, right) => left.$equals(right))(left.stub, right.stub))(
-          this.lazyRequiredObjectProperty,
-          other.lazyRequiredObjectProperty,
+          this.requiredLazyToResolvedClassProperty,
+          other.requiredLazyToResolvedClassProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left: this,
           right: other,
-          propertyName: "lazyRequiredObjectProperty",
+          propertyName: "requiredLazyToResolvedClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          ((left, right) => left.$equals(right))(left.stub, right.stub))(
+          this.requiredStubClassToResolvedClassProperty,
+          other.requiredStubClassToResolvedClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "requiredStubClassToResolvedClassProperty",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -8694,29 +9754,13 @@ export class LazyPropertiesClass {
             $arrayEquals(left, right, (left, right) => left.$equals(right)))(
             left.stubs,
             right.stubs,
-          ))(this.stubObjectSetProperty, other.stubObjectSetProperty).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "stubObjectSetProperty",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        ((left, right) =>
-          ((left, right) =>
-            $maybeEquals(left, right, (left, right) => left.$equals(right)))(
-            left.stub,
-            right.stub,
           ))(
-          this.stubObjectUnionProperty,
-          other.stubObjectUnionProperty,
+          this.setLazyToResolvedClassProperty,
+          other.setLazyToResolvedClassProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left: this,
           right: other,
-          propertyName: "stubObjectUnionProperty",
+          propertyName: "setLazyToResolvedClassProperty",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -8724,29 +9768,16 @@ export class LazyPropertiesClass {
       .chain(() =>
         ((left, right) =>
           ((left, right) =>
-            $maybeEquals(left, right, (left, right) => left.$equals(right)))(
-            left.stub,
-            right.stub,
+            $arrayEquals(left, right, (left, right) => left.$equals(right)))(
+            left.stubs,
+            right.stubs,
           ))(
-          this.stubOptionalObjectProperty,
-          other.stubOptionalObjectProperty,
+          this.setStubClassToResolvedClassProperty,
+          other.setStubClassToResolvedClassProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left: this,
           right: other,
-          propertyName: "stubOptionalObjectProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) =>
-          ((left, right) => left.$equals(right))(left.stub, right.stub))(
-          this.stubRequiredObjectProperty,
-          other.stubRequiredObjectProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "stubRequiredObjectProperty",
+          propertyName: "setStubClassToResolvedClassProperty",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -8769,31 +9800,36 @@ export class LazyPropertiesClass {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    this.lazyIriObjectProperty.stub.ifJust((value1) => {
+    this.optionalLazyToResolvedClassProperty.stub.ifJust((value1) => {
       value1.$hash(_hasher);
     });
-    for (const item1 of this.lazyObjectSetProperty.stubs) {
+    this.optionalLazyToResolvedClassUnionProperty.stub.ifJust((value1) => {
+      value1.$hash(_hasher);
+    });
+    this.optionalLazyToResolvedIriClassProperty.stub.ifJust((value1) => {
+      value1.$hash(_hasher);
+    });
+    this.optionalStubClassToResolvedClassProperty.stub.ifJust((value1) => {
+      value1.$hash(_hasher);
+    });
+    this.optionalStubClassToResolvedClassUnionProperty.stub.ifJust((value1) => {
+      value1.$hash(_hasher);
+    });
+    this.optionalStubClassUnionToResolvedClassUnionProperty.stub.ifJust(
+      (value1) => {
+        value1.$hash(_hasher);
+      },
+    );
+    this.requiredLazyToResolvedClassProperty.stub.$hash(_hasher);
+    this.requiredStubClassToResolvedClassProperty.stub.$hash(_hasher);
+    for (const item1 of this.setLazyToResolvedClassProperty.stubs) {
       item1.$hash(_hasher);
     }
 
-    this.lazyObjectUnionProperty.stub.ifJust((value1) => {
-      value1.$hash(_hasher);
-    });
-    this.lazyOptionalObjectProperty.stub.ifJust((value1) => {
-      value1.$hash(_hasher);
-    });
-    this.lazyRequiredObjectProperty.stub.$hash(_hasher);
-    for (const item1 of this.stubObjectSetProperty.stubs) {
+    for (const item1 of this.setStubClassToResolvedClassProperty.stubs) {
       item1.$hash(_hasher);
     }
 
-    this.stubObjectUnionProperty.stub.ifJust((value1) => {
-      value1.$hash(_hasher);
-    });
-    this.stubOptionalObjectProperty.stub.ifJust((value1) => {
-      value1.$hash(_hasher);
-    });
-    this.stubRequiredObjectProperty.stub.$hash(_hasher);
     return _hasher;
   }
 
@@ -8805,31 +9841,42 @@ export class LazyPropertiesClass {
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
         $type: this.$type,
-        lazyIriObjectProperty: this.lazyIriObjectProperty.stub
-          .map((item) => item.$toJson())
-          .extract(),
-        lazyObjectSetProperty: this.lazyObjectSetProperty.stubs.map((item) =>
-          item.$toJson(),
-        ),
-        lazyObjectUnionProperty: this.lazyObjectUnionProperty.stub
-          .map((item) => item.$toJson())
-          .extract(),
-        lazyOptionalObjectProperty: this.lazyOptionalObjectProperty.stub
-          .map((item) => item.$toJson())
-          .extract(),
-        lazyRequiredObjectProperty:
-          this.lazyRequiredObjectProperty.stub.$toJson(),
-        stubObjectSetProperty: this.stubObjectSetProperty.stubs.map((item) =>
-          item.$toJson(),
-        ),
-        stubObjectUnionProperty: this.stubObjectUnionProperty.stub
-          .map((item) => item.$toJson())
-          .extract(),
-        stubOptionalObjectProperty: this.stubOptionalObjectProperty.stub
-          .map((item) => item.$toJson())
-          .extract(),
-        stubRequiredObjectProperty:
-          this.stubRequiredObjectProperty.stub.$toJson(),
+        optionalLazyToResolvedClassProperty:
+          this.optionalLazyToResolvedClassProperty.stub
+            .map((item) => item.$toJson())
+            .extract(),
+        optionalLazyToResolvedClassUnionProperty:
+          this.optionalLazyToResolvedClassUnionProperty.stub
+            .map((item) => item.$toJson())
+            .extract(),
+        optionalLazyToResolvedIriClassProperty:
+          this.optionalLazyToResolvedIriClassProperty.stub
+            .map((item) => item.$toJson())
+            .extract(),
+        optionalStubClassToResolvedClassProperty:
+          this.optionalStubClassToResolvedClassProperty.stub
+            .map((item) => item.$toJson())
+            .extract(),
+        optionalStubClassToResolvedClassUnionProperty:
+          this.optionalStubClassToResolvedClassUnionProperty.stub
+            .map((item) => item.$toJson())
+            .extract(),
+        optionalStubClassUnionToResolvedClassUnionProperty:
+          this.optionalStubClassUnionToResolvedClassUnionProperty.stub
+            .map((item) => item.$toJson())
+            .extract(),
+        requiredLazyToResolvedClassProperty:
+          this.requiredLazyToResolvedClassProperty.stub.$toJson(),
+        requiredStubClassToResolvedClassProperty:
+          this.requiredStubClassToResolvedClassProperty.stub.$toJson(),
+        setLazyToResolvedClassProperty:
+          this.setLazyToResolvedClassProperty.stubs.map((item) =>
+            item.$toJson(),
+          ),
+        setStubClassToResolvedClassProperty:
+          this.setStubClassToResolvedClassProperty.stubs.map((item) =>
+            item.$toJson(),
+          ),
       } satisfies LazyPropertiesClass.$Json),
     );
   }
@@ -8846,60 +9893,85 @@ export class LazyPropertiesClass {
       mutateGraph,
     });
     _resource.add(
-      LazyPropertiesClass.$properties.lazyIriObjectProperty["identifier"],
-      this.lazyIriObjectProperty.stub.map((value) =>
+      LazyPropertiesClass.$properties.optionalLazyToResolvedClassProperty[
+        "identifier"
+      ],
+      this.optionalLazyToResolvedClassProperty.stub.map((value) =>
         value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
-      LazyPropertiesClass.$properties.lazyObjectSetProperty["identifier"],
-      this.lazyObjectSetProperty.stubs.map((item) =>
-        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    _resource.add(
-      LazyPropertiesClass.$properties.lazyObjectUnionProperty["identifier"],
-      this.lazyObjectUnionProperty.stub.map((value) =>
+      LazyPropertiesClass.$properties.optionalLazyToResolvedClassUnionProperty[
+        "identifier"
+      ],
+      this.optionalLazyToResolvedClassUnionProperty.stub.map((value) =>
         value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
-      LazyPropertiesClass.$properties.lazyOptionalObjectProperty["identifier"],
-      this.lazyOptionalObjectProperty.stub.map((value) =>
+      LazyPropertiesClass.$properties.optionalLazyToResolvedIriClassProperty[
+        "identifier"
+      ],
+      this.optionalLazyToResolvedIriClassProperty.stub.map((value) =>
         value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
-      LazyPropertiesClass.$properties.lazyRequiredObjectProperty["identifier"],
-      this.lazyRequiredObjectProperty.stub.$toRdf({
+      LazyPropertiesClass.$properties.optionalStubClassToResolvedClassProperty[
+        "identifier"
+      ],
+      this.optionalStubClassToResolvedClassProperty.stub.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
+      LazyPropertiesClass.$properties
+        .optionalStubClassToResolvedClassUnionProperty["identifier"],
+      this.optionalStubClassToResolvedClassUnionProperty.stub.map((value) =>
+        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
+      LazyPropertiesClass.$properties
+        .optionalStubClassUnionToResolvedClassUnionProperty["identifier"],
+      this.optionalStubClassUnionToResolvedClassUnionProperty.stub.map(
+        (value) =>
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    _resource.add(
+      LazyPropertiesClass.$properties.requiredLazyToResolvedClassProperty[
+        "identifier"
+      ],
+      this.requiredLazyToResolvedClassProperty.stub.$toRdf({
         mutateGraph: mutateGraph,
         resourceSet: resourceSet,
       }),
     );
     _resource.add(
-      LazyPropertiesClass.$properties.stubObjectSetProperty["identifier"],
-      this.stubObjectSetProperty.stubs.map((item) =>
+      LazyPropertiesClass.$properties.requiredStubClassToResolvedClassProperty[
+        "identifier"
+      ],
+      this.requiredStubClassToResolvedClassProperty.stub.$toRdf({
+        mutateGraph: mutateGraph,
+        resourceSet: resourceSet,
+      }),
+    );
+    _resource.add(
+      LazyPropertiesClass.$properties.setLazyToResolvedClassProperty[
+        "identifier"
+      ],
+      this.setLazyToResolvedClassProperty.stubs.map((item) =>
         item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
     _resource.add(
-      LazyPropertiesClass.$properties.stubObjectUnionProperty["identifier"],
-      this.stubObjectUnionProperty.stub.map((value) =>
-        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      LazyPropertiesClass.$properties.setStubClassToResolvedClassProperty[
+        "identifier"
+      ],
+      this.setStubClassToResolvedClassProperty.stubs.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
-    );
-    _resource.add(
-      LazyPropertiesClass.$properties.stubOptionalObjectProperty["identifier"],
-      this.stubOptionalObjectProperty.stub.map((value) =>
-        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    _resource.add(
-      LazyPropertiesClass.$properties.stubRequiredObjectProperty["identifier"],
-      this.stubRequiredObjectProperty.stub.$toRdf({
-        mutateGraph: mutateGraph,
-        resourceSet: resourceSet,
-      }),
     );
     return _resource;
   }
@@ -8931,15 +10003,18 @@ export namespace LazyPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "LazyPropertiesClass";
-    readonly lazyIriObjectProperty?: $NamedDefaultStub.$Json;
-    readonly lazyObjectSetProperty?: readonly $DefaultStub.$Json[];
-    readonly lazyObjectUnionProperty?: $DefaultStub.$Json;
-    readonly lazyOptionalObjectProperty?: $DefaultStub.$Json;
-    readonly lazyRequiredObjectProperty: $DefaultStub.$Json;
-    readonly stubObjectSetProperty?: readonly StubClass.$Json[];
-    readonly stubObjectUnionProperty?: StubClass.$Json;
-    readonly stubOptionalObjectProperty?: StubClass.$Json;
-    readonly stubRequiredObjectProperty: StubClass.$Json;
+    readonly optionalLazyToResolvedClassProperty?: $DefaultStub.$Json;
+    readonly optionalLazyToResolvedClassUnionProperty?: $DefaultStub.$Json;
+    readonly optionalLazyToResolvedIriClassProperty?: $NamedDefaultStub.$Json;
+    readonly optionalStubClassToResolvedClassProperty?: StubClass.$Json;
+    readonly optionalStubClassToResolvedClassUnionProperty?: StubClass.$Json;
+    readonly optionalStubClassUnionToResolvedClassUnionProperty?:
+      | StubClassUnionMember1.$Json
+      | StubClassUnionMember2.$Json;
+    readonly requiredLazyToResolvedClassProperty: $DefaultStub.$Json;
+    readonly requiredStubClassToResolvedClassProperty: StubClass.$Json;
+    readonly setLazyToResolvedClassProperty?: readonly $DefaultStub.$Json[];
+    readonly setStubClassToResolvedClassProperty?: readonly StubClass.$Json[];
   };
 
   export function $propertiesFromJson(
@@ -8948,47 +10023,52 @@ export namespace LazyPropertiesClass {
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      lazyIriObjectProperty: $LazyOptionalObject<
+      optionalLazyToResolvedClassProperty: $LazyOptionalObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        $DefaultStub
+      >;
+      optionalLazyToResolvedClassUnionProperty: $LazyOptionalObject<
+        LazilyResolvedClassUnion.$Identifier,
+        LazilyResolvedClassUnion,
+        $DefaultStub
+      >;
+      optionalLazyToResolvedIriClassProperty: $LazyOptionalObject<
         LazilyResolvedIriClass.$Identifier,
         LazilyResolvedIriClass,
         $NamedDefaultStub
       >;
-      lazyObjectSetProperty: $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultStub
-      >;
-      lazyObjectUnionProperty: $LazyOptionalObject<
-        LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        $DefaultStub
-      >;
-      lazyOptionalObjectProperty: $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultStub
-      >;
-      lazyRequiredObjectProperty: $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultStub
-      >;
-      stubObjectSetProperty: $LazyObjectSet<
+      optionalStubClassToResolvedClassProperty: $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
         LazilyResolvedBlankNodeOrIriClass,
         StubClass
       >;
-      stubObjectUnionProperty: $LazyOptionalObject<
+      optionalStubClassToResolvedClassUnionProperty: $LazyOptionalObject<
         LazilyResolvedClassUnion.$Identifier,
         LazilyResolvedClassUnion,
         StubClass
       >;
-      stubOptionalObjectProperty: $LazyOptionalObject<
+      optionalStubClassUnionToResolvedClassUnionProperty: $LazyOptionalObject<
+        LazilyResolvedClassUnion.$Identifier,
+        LazilyResolvedClassUnion,
+        StubClassUnion
+      >;
+      requiredLazyToResolvedClassProperty: $LazyRequiredObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        $DefaultStub
+      >;
+      requiredStubClassToResolvedClassProperty: $LazyRequiredObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
         LazilyResolvedBlankNodeOrIriClass,
         StubClass
       >;
-      stubRequiredObjectProperty: $LazyRequiredObject<
+      setLazyToResolvedClassProperty: $LazyObjectSet<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        $DefaultStub
+      >;
+      setStubClassToResolvedClassProperty: $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
         LazilyResolvedBlankNodeOrIriClass,
         StubClass
@@ -9004,14 +10084,14 @@ export namespace LazyPropertiesClass {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    const lazyIriObjectProperty = new $LazyOptionalObject<
-      LazilyResolvedIriClass.$Identifier,
-      LazilyResolvedIriClass,
-      $NamedDefaultStub
+    const optionalLazyToResolvedClassProperty = new $LazyOptionalObject<
+      LazilyResolvedBlankNodeOrIriClass.$Identifier,
+      LazilyResolvedBlankNodeOrIriClass,
+      $DefaultStub
     >({
-      stub: purify.Maybe.fromNullable($jsonObject["lazyIriObjectProperty"]).map(
-        (item) => $NamedDefaultStub.$fromJson(item).unsafeCoerce(),
-      ),
+      stub: purify.Maybe.fromNullable(
+        $jsonObject["optionalLazyToResolvedClassProperty"],
+      ).map((item) => $DefaultStub.$fromJson(item).unsafeCoerce()),
       resolver: (identifier) =>
         Promise.resolve(
           purify.Left(
@@ -9021,28 +10101,13 @@ export namespace LazyPropertiesClass {
           ),
         ),
     });
-    const lazyObjectSetProperty = new $LazyObjectSet<
-      LazilyResolvedBlankNodeOrIriClass.$Identifier,
-      LazilyResolvedBlankNodeOrIriClass,
-      $DefaultStub
-    >({
-      stubs: $jsonObject["lazyObjectSetProperty"].map((item) =>
-        $DefaultStub.$fromJson(item).unsafeCoerce(),
-      ),
-      resolver: () =>
-        Promise.resolve(
-          purify.Left(
-            new Error("unable to resolve identifiers deserialized from JSON"),
-          ),
-        ),
-    });
-    const lazyObjectUnionProperty = new $LazyOptionalObject<
+    const optionalLazyToResolvedClassUnionProperty = new $LazyOptionalObject<
       LazilyResolvedClassUnion.$Identifier,
       LazilyResolvedClassUnion,
       $DefaultStub
     >({
       stub: purify.Maybe.fromNullable(
-        $jsonObject["lazyObjectUnionProperty"],
+        $jsonObject["optionalLazyToResolvedClassUnionProperty"],
       ).map((item) => $DefaultStub.$fromJson(item).unsafeCoerce()),
       resolver: (identifier) =>
         Promise.resolve(
@@ -9053,14 +10118,14 @@ export namespace LazyPropertiesClass {
           ),
         ),
     });
-    const lazyOptionalObjectProperty = new $LazyOptionalObject<
-      LazilyResolvedBlankNodeOrIriClass.$Identifier,
-      LazilyResolvedBlankNodeOrIriClass,
-      $DefaultStub
+    const optionalLazyToResolvedIriClassProperty = new $LazyOptionalObject<
+      LazilyResolvedIriClass.$Identifier,
+      LazilyResolvedIriClass,
+      $NamedDefaultStub
     >({
       stub: purify.Maybe.fromNullable(
-        $jsonObject["lazyOptionalObjectProperty"],
-      ).map((item) => $DefaultStub.$fromJson(item).unsafeCoerce()),
+        $jsonObject["optionalLazyToResolvedIriClassProperty"],
+      ).map((item) => $NamedDefaultStub.$fromJson(item).unsafeCoerce()),
       resolver: (identifier) =>
         Promise.resolve(
           purify.Left(
@@ -9070,13 +10135,66 @@ export namespace LazyPropertiesClass {
           ),
         ),
     });
-    const lazyRequiredObjectProperty = new $LazyRequiredObject<
+    const optionalStubClassToResolvedClassProperty = new $LazyOptionalObject<
+      LazilyResolvedBlankNodeOrIriClass.$Identifier,
+      LazilyResolvedBlankNodeOrIriClass,
+      StubClass
+    >({
+      stub: purify.Maybe.fromNullable(
+        $jsonObject["optionalStubClassToResolvedClassProperty"],
+      ).map((item) => StubClass.$fromJson(item).unsafeCoerce()),
+      resolver: (identifier) =>
+        Promise.resolve(
+          purify.Left(
+            new Error(
+              `unable to resolve identifier ${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON`,
+            ),
+          ),
+        ),
+    });
+    const optionalStubClassToResolvedClassUnionProperty =
+      new $LazyOptionalObject<
+        LazilyResolvedClassUnion.$Identifier,
+        LazilyResolvedClassUnion,
+        StubClass
+      >({
+        stub: purify.Maybe.fromNullable(
+          $jsonObject["optionalStubClassToResolvedClassUnionProperty"],
+        ).map((item) => StubClass.$fromJson(item).unsafeCoerce()),
+        resolver: (identifier) =>
+          Promise.resolve(
+            purify.Left(
+              new Error(
+                `unable to resolve identifier ${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON`,
+              ),
+            ),
+          ),
+      });
+    const optionalStubClassUnionToResolvedClassUnionProperty =
+      new $LazyOptionalObject<
+        LazilyResolvedClassUnion.$Identifier,
+        LazilyResolvedClassUnion,
+        StubClassUnion
+      >({
+        stub: purify.Maybe.fromNullable(
+          $jsonObject["optionalStubClassUnionToResolvedClassUnionProperty"],
+        ).map((item) => StubClassUnion.$fromJson(item).unsafeCoerce()),
+        resolver: (identifier) =>
+          Promise.resolve(
+            purify.Left(
+              new Error(
+                `unable to resolve identifier ${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON`,
+              ),
+            ),
+          ),
+      });
+    const requiredLazyToResolvedClassProperty = new $LazyRequiredObject<
       LazilyResolvedBlankNodeOrIriClass.$Identifier,
       LazilyResolvedBlankNodeOrIriClass,
       $DefaultStub
     >({
       stub: $DefaultStub
-        .$fromJson($jsonObject["lazyRequiredObjectProperty"])
+        .$fromJson($jsonObject["requiredLazyToResolvedClassProperty"])
         .unsafeCoerce(),
       resolver: (identifier) =>
         Promise.resolve(
@@ -9087,62 +10205,13 @@ export namespace LazyPropertiesClass {
           ),
         ),
     });
-    const stubObjectSetProperty = new $LazyObjectSet<
-      LazilyResolvedBlankNodeOrIriClass.$Identifier,
-      LazilyResolvedBlankNodeOrIriClass,
-      StubClass
-    >({
-      stubs: $jsonObject["stubObjectSetProperty"].map((item) =>
-        StubClass.$fromJson(item).unsafeCoerce(),
-      ),
-      resolver: () =>
-        Promise.resolve(
-          purify.Left(
-            new Error("unable to resolve identifiers deserialized from JSON"),
-          ),
-        ),
-    });
-    const stubObjectUnionProperty = new $LazyOptionalObject<
-      LazilyResolvedClassUnion.$Identifier,
-      LazilyResolvedClassUnion,
-      StubClass
-    >({
-      stub: purify.Maybe.fromNullable(
-        $jsonObject["stubObjectUnionProperty"],
-      ).map((item) => StubClass.$fromJson(item).unsafeCoerce()),
-      resolver: (identifier) =>
-        Promise.resolve(
-          purify.Left(
-            new Error(
-              `unable to resolve identifier ${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON`,
-            ),
-          ),
-        ),
-    });
-    const stubOptionalObjectProperty = new $LazyOptionalObject<
-      LazilyResolvedBlankNodeOrIriClass.$Identifier,
-      LazilyResolvedBlankNodeOrIriClass,
-      StubClass
-    >({
-      stub: purify.Maybe.fromNullable(
-        $jsonObject["stubOptionalObjectProperty"],
-      ).map((item) => StubClass.$fromJson(item).unsafeCoerce()),
-      resolver: (identifier) =>
-        Promise.resolve(
-          purify.Left(
-            new Error(
-              `unable to resolve identifier ${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON`,
-            ),
-          ),
-        ),
-    });
-    const stubRequiredObjectProperty = new $LazyRequiredObject<
+    const requiredStubClassToResolvedClassProperty = new $LazyRequiredObject<
       LazilyResolvedBlankNodeOrIriClass.$Identifier,
       LazilyResolvedBlankNodeOrIriClass,
       StubClass
     >({
       stub: StubClass.$fromJson(
-        $jsonObject["stubRequiredObjectProperty"],
+        $jsonObject["requiredStubClassToResolvedClassProperty"],
       ).unsafeCoerce(),
       resolver: (identifier) =>
         Promise.resolve(
@@ -9153,17 +10222,48 @@ export namespace LazyPropertiesClass {
           ),
         ),
     });
+    const setLazyToResolvedClassProperty = new $LazyObjectSet<
+      LazilyResolvedBlankNodeOrIriClass.$Identifier,
+      LazilyResolvedBlankNodeOrIriClass,
+      $DefaultStub
+    >({
+      stubs: $jsonObject["setLazyToResolvedClassProperty"].map((item) =>
+        $DefaultStub.$fromJson(item).unsafeCoerce(),
+      ),
+      resolver: () =>
+        Promise.resolve(
+          purify.Left(
+            new Error("unable to resolve identifiers deserialized from JSON"),
+          ),
+        ),
+    });
+    const setStubClassToResolvedClassProperty = new $LazyObjectSet<
+      LazilyResolvedBlankNodeOrIriClass.$Identifier,
+      LazilyResolvedBlankNodeOrIriClass,
+      StubClass
+    >({
+      stubs: $jsonObject["setStubClassToResolvedClassProperty"].map((item) =>
+        StubClass.$fromJson(item).unsafeCoerce(),
+      ),
+      resolver: () =>
+        Promise.resolve(
+          purify.Left(
+            new Error("unable to resolve identifiers deserialized from JSON"),
+          ),
+        ),
+    });
     return purify.Either.of({
       $identifier,
-      lazyIriObjectProperty,
-      lazyObjectSetProperty,
-      lazyObjectUnionProperty,
-      lazyOptionalObjectProperty,
-      lazyRequiredObjectProperty,
-      stubObjectSetProperty,
-      stubObjectUnionProperty,
-      stubOptionalObjectProperty,
-      stubRequiredObjectProperty,
+      optionalLazyToResolvedClassProperty,
+      optionalLazyToResolvedClassUnionProperty,
+      optionalLazyToResolvedIriClassProperty,
+      optionalStubClassToResolvedClassProperty,
+      optionalStubClassToResolvedClassUnionProperty,
+      optionalStubClassUnionToResolvedClassUnionProperty,
+      requiredLazyToResolvedClassProperty,
+      requiredStubClassToResolvedClassProperty,
+      setLazyToResolvedClassProperty,
+      setStubClassToResolvedClassProperty,
     });
   }
 
@@ -9199,32 +10299,36 @@ export namespace LazyPropertiesClass {
           scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
+        $DefaultStub.$jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedClassProperty`,
+        }),
+        $DefaultStub.$jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedClassUnionProperty`,
+        }),
         $NamedDefaultStub.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/lazyIriObjectProperty`,
-        }),
-        $DefaultStub.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/lazyObjectSetProperty`,
-        }),
-        $DefaultStub.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/lazyObjectUnionProperty`,
-        }),
-        $DefaultStub.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/lazyOptionalObjectProperty`,
-        }),
-        $DefaultStub.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/lazyRequiredObjectProperty`,
+          scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedIriClassProperty`,
         }),
         StubClass.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/stubObjectSetProperty`,
+          scopePrefix: `${scopePrefix}/properties/optionalStubClassToResolvedClassProperty`,
         }),
         StubClass.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/stubObjectUnionProperty`,
+          scopePrefix: `${scopePrefix}/properties/optionalStubClassToResolvedClassUnionProperty`,
+        }),
+        {
+          scope: `${scopePrefix}/properties/optionalStubClassUnionToResolvedClassUnionProperty`,
+          type: "Control",
+        },
+        $DefaultStub.$jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/requiredLazyToResolvedClassProperty`,
         }),
         StubClass.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/stubOptionalObjectProperty`,
+          scopePrefix: `${scopePrefix}/properties/requiredStubClassToResolvedClassProperty`,
+        }),
+        $DefaultStub.$jsonUiSchema({
+          scopePrefix: `${scopePrefix}/properties/setLazyToResolvedClassProperty`,
         }),
         StubClass.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/stubRequiredObjectProperty`,
+          scopePrefix: `${scopePrefix}/properties/setStubClassToResolvedClassProperty`,
         }),
       ],
       label: "LazyPropertiesClass",
@@ -9236,20 +10340,30 @@ export namespace LazyPropertiesClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("LazyPropertiesClass"),
-      lazyIriObjectProperty: $NamedDefaultStub.$jsonZodSchema().optional(),
-      lazyObjectSetProperty: $DefaultStub
+      optionalLazyToResolvedClassProperty: $DefaultStub
+        .$jsonZodSchema()
+        .optional(),
+      optionalLazyToResolvedClassUnionProperty: $DefaultStub
+        .$jsonZodSchema()
+        .optional(),
+      optionalLazyToResolvedIriClassProperty: $NamedDefaultStub
+        .$jsonZodSchema()
+        .optional(),
+      optionalStubClassToResolvedClassProperty:
+        StubClass.$jsonZodSchema().optional(),
+      optionalStubClassToResolvedClassUnionProperty:
+        StubClass.$jsonZodSchema().optional(),
+      optionalStubClassUnionToResolvedClassUnionProperty:
+        StubClassUnion.$jsonZodSchema().optional(),
+      requiredLazyToResolvedClassProperty: $DefaultStub.$jsonZodSchema(),
+      requiredStubClassToResolvedClassProperty: StubClass.$jsonZodSchema(),
+      setLazyToResolvedClassProperty: $DefaultStub
         .$jsonZodSchema()
         .array()
         .default(() => []),
-      lazyObjectUnionProperty: $DefaultStub.$jsonZodSchema().optional(),
-      lazyOptionalObjectProperty: $DefaultStub.$jsonZodSchema().optional(),
-      lazyRequiredObjectProperty: $DefaultStub.$jsonZodSchema(),
-      stubObjectSetProperty: StubClass.$jsonZodSchema()
+      setStubClassToResolvedClassProperty: StubClass.$jsonZodSchema()
         .array()
         .default(() => []),
-      stubObjectUnionProperty: StubClass.$jsonZodSchema().optional(),
-      stubOptionalObjectProperty: StubClass.$jsonZodSchema().optional(),
-      stubRequiredObjectProperty: StubClass.$jsonZodSchema(),
     }) satisfies zod.ZodType<$Json>;
   }
 
@@ -9270,47 +10384,52 @@ export namespace LazyPropertiesClass {
     Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      lazyIriObjectProperty: $LazyOptionalObject<
+      optionalLazyToResolvedClassProperty: $LazyOptionalObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        $DefaultStub
+      >;
+      optionalLazyToResolvedClassUnionProperty: $LazyOptionalObject<
+        LazilyResolvedClassUnion.$Identifier,
+        LazilyResolvedClassUnion,
+        $DefaultStub
+      >;
+      optionalLazyToResolvedIriClassProperty: $LazyOptionalObject<
         LazilyResolvedIriClass.$Identifier,
         LazilyResolvedIriClass,
         $NamedDefaultStub
       >;
-      lazyObjectSetProperty: $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultStub
-      >;
-      lazyObjectUnionProperty: $LazyOptionalObject<
-        LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        $DefaultStub
-      >;
-      lazyOptionalObjectProperty: $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultStub
-      >;
-      lazyRequiredObjectProperty: $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultStub
-      >;
-      stubObjectSetProperty: $LazyObjectSet<
+      optionalStubClassToResolvedClassProperty: $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
         LazilyResolvedBlankNodeOrIriClass,
         StubClass
       >;
-      stubObjectUnionProperty: $LazyOptionalObject<
+      optionalStubClassToResolvedClassUnionProperty: $LazyOptionalObject<
         LazilyResolvedClassUnion.$Identifier,
         LazilyResolvedClassUnion,
         StubClass
       >;
-      stubOptionalObjectProperty: $LazyOptionalObject<
+      optionalStubClassUnionToResolvedClassUnionProperty: $LazyOptionalObject<
+        LazilyResolvedClassUnion.$Identifier,
+        LazilyResolvedClassUnion,
+        StubClassUnion
+      >;
+      requiredLazyToResolvedClassProperty: $LazyRequiredObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        $DefaultStub
+      >;
+      requiredStubClassToResolvedClassProperty: $LazyRequiredObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
         LazilyResolvedBlankNodeOrIriClass,
         StubClass
       >;
-      stubRequiredObjectProperty: $LazyRequiredObject<
+      setLazyToResolvedClassProperty: $LazyObjectSet<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        $DefaultStub
+      >;
+      setStubClassToResolvedClassProperty: $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
         LazilyResolvedBlankNodeOrIriClass,
         StubClass
@@ -9321,7 +10440,98 @@ export namespace LazyPropertiesClass {
       $objectSetParameter ??
       new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: LazyPropertiesClass.$Identifier = $resource.identifier;
-    const _lazyIriObjectPropertyEither: purify.Either<
+    const _optionalLazyToResolvedClassPropertyEither: purify.Either<
+      Error,
+      $LazyOptionalObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        $DefaultStub
+      >
+    > = $resource
+      .values($properties.optionalLazyToResolvedClassProperty["identifier"], {
+        unique: true,
+      })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        $DefaultStub.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      )
+      .map(
+        (stub) =>
+          new $LazyOptionalObject<
+            LazilyResolvedBlankNodeOrIriClass.$Identifier,
+            LazilyResolvedBlankNodeOrIriClass,
+            $DefaultStub
+          >({
+            stub,
+            resolver: (identifier) =>
+              $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
+          }),
+      );
+    if (_optionalLazyToResolvedClassPropertyEither.isLeft()) {
+      return _optionalLazyToResolvedClassPropertyEither;
+    }
+
+    const optionalLazyToResolvedClassProperty =
+      _optionalLazyToResolvedClassPropertyEither.unsafeCoerce();
+    const _optionalLazyToResolvedClassUnionPropertyEither: purify.Either<
+      Error,
+      $LazyOptionalObject<
+        LazilyResolvedClassUnion.$Identifier,
+        LazilyResolvedClassUnion,
+        $DefaultStub
+      >
+    > = $resource
+      .values(
+        $properties.optionalLazyToResolvedClassUnionProperty["identifier"],
+        { unique: true },
+      )
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        $DefaultStub.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      )
+      .map(
+        (stub) =>
+          new $LazyOptionalObject<
+            LazilyResolvedClassUnion.$Identifier,
+            LazilyResolvedClassUnion,
+            $DefaultStub
+          >({
+            stub,
+            resolver: (identifier) =>
+              $objectSet.lazilyResolvedClassUnion(identifier),
+          }),
+      );
+    if (_optionalLazyToResolvedClassUnionPropertyEither.isLeft()) {
+      return _optionalLazyToResolvedClassUnionPropertyEither;
+    }
+
+    const optionalLazyToResolvedClassUnionProperty =
+      _optionalLazyToResolvedClassUnionPropertyEither.unsafeCoerce();
+    const _optionalLazyToResolvedIriClassPropertyEither: purify.Either<
       Error,
       $LazyOptionalObject<
         LazilyResolvedIriClass.$Identifier,
@@ -9329,7 +10539,10 @@ export namespace LazyPropertiesClass {
         $NamedDefaultStub
       >
     > = $resource
-      .values($properties.lazyIriObjectProperty["identifier"], { unique: true })
+      .values(
+        $properties.optionalLazyToResolvedIriClassProperty["identifier"],
+        { unique: true },
+      )
       .head()
       .chain((value) => value.toResource())
       .chain((_resource) =>
@@ -9358,12 +10571,231 @@ export namespace LazyPropertiesClass {
               $objectSet.lazilyResolvedIriClass(identifier),
           }),
       );
-    if (_lazyIriObjectPropertyEither.isLeft()) {
-      return _lazyIriObjectPropertyEither;
+    if (_optionalLazyToResolvedIriClassPropertyEither.isLeft()) {
+      return _optionalLazyToResolvedIriClassPropertyEither;
     }
 
-    const lazyIriObjectProperty = _lazyIriObjectPropertyEither.unsafeCoerce();
-    const _lazyObjectSetPropertyEither: purify.Either<
+    const optionalLazyToResolvedIriClassProperty =
+      _optionalLazyToResolvedIriClassPropertyEither.unsafeCoerce();
+    const _optionalStubClassToResolvedClassPropertyEither: purify.Either<
+      Error,
+      $LazyOptionalObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
+      >
+    > = $resource
+      .values(
+        $properties.optionalStubClassToResolvedClassProperty["identifier"],
+        { unique: true },
+      )
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        StubClass.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      )
+      .map(
+        (stub) =>
+          new $LazyOptionalObject<
+            LazilyResolvedBlankNodeOrIriClass.$Identifier,
+            LazilyResolvedBlankNodeOrIriClass,
+            StubClass
+          >({
+            stub,
+            resolver: (identifier) =>
+              $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
+          }),
+      );
+    if (_optionalStubClassToResolvedClassPropertyEither.isLeft()) {
+      return _optionalStubClassToResolvedClassPropertyEither;
+    }
+
+    const optionalStubClassToResolvedClassProperty =
+      _optionalStubClassToResolvedClassPropertyEither.unsafeCoerce();
+    const _optionalStubClassToResolvedClassUnionPropertyEither: purify.Either<
+      Error,
+      $LazyOptionalObject<
+        LazilyResolvedClassUnion.$Identifier,
+        LazilyResolvedClassUnion,
+        StubClass
+      >
+    > = $resource
+      .values(
+        $properties.optionalStubClassToResolvedClassUnionProperty["identifier"],
+        { unique: true },
+      )
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        StubClass.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      )
+      .map(
+        (stub) =>
+          new $LazyOptionalObject<
+            LazilyResolvedClassUnion.$Identifier,
+            LazilyResolvedClassUnion,
+            StubClass
+          >({
+            stub,
+            resolver: (identifier) =>
+              $objectSet.lazilyResolvedClassUnion(identifier),
+          }),
+      );
+    if (_optionalStubClassToResolvedClassUnionPropertyEither.isLeft()) {
+      return _optionalStubClassToResolvedClassUnionPropertyEither;
+    }
+
+    const optionalStubClassToResolvedClassUnionProperty =
+      _optionalStubClassToResolvedClassUnionPropertyEither.unsafeCoerce();
+    const _optionalStubClassUnionToResolvedClassUnionPropertyEither: purify.Either<
+      Error,
+      $LazyOptionalObject<
+        LazilyResolvedClassUnion.$Identifier,
+        LazilyResolvedClassUnion,
+        StubClassUnion
+      >
+    > = $resource
+      .values(
+        $properties.optionalStubClassUnionToResolvedClassUnionProperty[
+          "identifier"
+        ],
+        { unique: true },
+      )
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        StubClassUnion.$fromRdf({
+          ...$context,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map((value) => purify.Maybe.of(value))
+      .chainLeft((error) =>
+        error instanceof rdfjsResource.Resource.MissingValueError
+          ? purify.Right(purify.Maybe.empty())
+          : purify.Left(error),
+      )
+      .map(
+        (stub) =>
+          new $LazyOptionalObject<
+            LazilyResolvedClassUnion.$Identifier,
+            LazilyResolvedClassUnion,
+            StubClassUnion
+          >({
+            stub,
+            resolver: (identifier) =>
+              $objectSet.lazilyResolvedClassUnion(identifier),
+          }),
+      );
+    if (_optionalStubClassUnionToResolvedClassUnionPropertyEither.isLeft()) {
+      return _optionalStubClassUnionToResolvedClassUnionPropertyEither;
+    }
+
+    const optionalStubClassUnionToResolvedClassUnionProperty =
+      _optionalStubClassUnionToResolvedClassUnionPropertyEither.unsafeCoerce();
+    const _requiredLazyToResolvedClassPropertyEither: purify.Either<
+      Error,
+      $LazyRequiredObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        $DefaultStub
+      >
+    > = $resource
+      .values($properties.requiredLazyToResolvedClassProperty["identifier"], {
+        unique: true,
+      })
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        $DefaultStub.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map(
+        (stub) =>
+          new $LazyRequiredObject<
+            LazilyResolvedBlankNodeOrIriClass.$Identifier,
+            LazilyResolvedBlankNodeOrIriClass,
+            $DefaultStub
+          >({
+            stub,
+            resolver: (identifier) =>
+              $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
+          }),
+      );
+    if (_requiredLazyToResolvedClassPropertyEither.isLeft()) {
+      return _requiredLazyToResolvedClassPropertyEither;
+    }
+
+    const requiredLazyToResolvedClassProperty =
+      _requiredLazyToResolvedClassPropertyEither.unsafeCoerce();
+    const _requiredStubClassToResolvedClassPropertyEither: purify.Either<
+      Error,
+      $LazyRequiredObject<
+        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriClass,
+        StubClass
+      >
+    > = $resource
+      .values(
+        $properties.requiredStubClassToResolvedClassProperty["identifier"],
+        { unique: true },
+      )
+      .head()
+      .chain((value) => value.toResource())
+      .chain((_resource) =>
+        StubClass.$fromRdf({
+          ...$context,
+          ignoreRdfType: true,
+          languageIn: $languageIn,
+          resource: _resource,
+        }),
+      )
+      .map(
+        (stub) =>
+          new $LazyRequiredObject<
+            LazilyResolvedBlankNodeOrIriClass.$Identifier,
+            LazilyResolvedBlankNodeOrIriClass,
+            StubClass
+          >({
+            stub,
+            resolver: (identifier) =>
+              $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
+          }),
+      );
+    if (_requiredStubClassToResolvedClassPropertyEither.isLeft()) {
+      return _requiredStubClassToResolvedClassPropertyEither;
+    }
+
+    const requiredStubClassToResolvedClassProperty =
+      _requiredStubClassToResolvedClassPropertyEither.unsafeCoerce();
+    const _setLazyToResolvedClassPropertyEither: purify.Either<
       Error,
       $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
@@ -9372,7 +10804,7 @@ export namespace LazyPropertiesClass {
       >
     > = purify.Either.sequence(
       $resource
-        .values($properties.lazyObjectSetProperty["identifier"], {
+        .values($properties.setLazyToResolvedClassProperty["identifier"], {
           unique: true,
         })
         .map((item) =>
@@ -9403,141 +10835,13 @@ export namespace LazyPropertiesClass {
             }),
         }),
     );
-    if (_lazyObjectSetPropertyEither.isLeft()) {
-      return _lazyObjectSetPropertyEither;
+    if (_setLazyToResolvedClassPropertyEither.isLeft()) {
+      return _setLazyToResolvedClassPropertyEither;
     }
 
-    const lazyObjectSetProperty = _lazyObjectSetPropertyEither.unsafeCoerce();
-    const _lazyObjectUnionPropertyEither: purify.Either<
-      Error,
-      $LazyOptionalObject<
-        LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        $DefaultStub
-      >
-    > = $resource
-      .values($properties.lazyObjectUnionProperty["identifier"], {
-        unique: true,
-      })
-      .head()
-      .chain((value) => value.toResource())
-      .chain((_resource) =>
-        $DefaultStub.$fromRdf({
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          resource: _resource,
-        }),
-      )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      )
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedClassUnion.$Identifier,
-            LazilyResolvedClassUnion,
-            $DefaultStub
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedClassUnion(identifier),
-          }),
-      );
-    if (_lazyObjectUnionPropertyEither.isLeft()) {
-      return _lazyObjectUnionPropertyEither;
-    }
-
-    const lazyObjectUnionProperty =
-      _lazyObjectUnionPropertyEither.unsafeCoerce();
-    const _lazyOptionalObjectPropertyEither: purify.Either<
-      Error,
-      $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultStub
-      >
-    > = $resource
-      .values($properties.lazyOptionalObjectProperty["identifier"], {
-        unique: true,
-      })
-      .head()
-      .chain((value) => value.toResource())
-      .chain((_resource) =>
-        $DefaultStub.$fromRdf({
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          resource: _resource,
-        }),
-      )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      )
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedBlankNodeOrIriClass.$Identifier,
-            LazilyResolvedBlankNodeOrIriClass,
-            $DefaultStub
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
-          }),
-      );
-    if (_lazyOptionalObjectPropertyEither.isLeft()) {
-      return _lazyOptionalObjectPropertyEither;
-    }
-
-    const lazyOptionalObjectProperty =
-      _lazyOptionalObjectPropertyEither.unsafeCoerce();
-    const _lazyRequiredObjectPropertyEither: purify.Either<
-      Error,
-      $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultStub
-      >
-    > = $resource
-      .values($properties.lazyRequiredObjectProperty["identifier"], {
-        unique: true,
-      })
-      .head()
-      .chain((value) => value.toResource())
-      .chain((_resource) =>
-        $DefaultStub.$fromRdf({
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          resource: _resource,
-        }),
-      )
-      .map(
-        (stub) =>
-          new $LazyRequiredObject<
-            LazilyResolvedBlankNodeOrIriClass.$Identifier,
-            LazilyResolvedBlankNodeOrIriClass,
-            $DefaultStub
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
-          }),
-      );
-    if (_lazyRequiredObjectPropertyEither.isLeft()) {
-      return _lazyRequiredObjectPropertyEither;
-    }
-
-    const lazyRequiredObjectProperty =
-      _lazyRequiredObjectPropertyEither.unsafeCoerce();
-    const _stubObjectSetPropertyEither: purify.Either<
+    const setLazyToResolvedClassProperty =
+      _setLazyToResolvedClassPropertyEither.unsafeCoerce();
+    const _setStubClassToResolvedClassPropertyEither: purify.Either<
       Error,
       $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
@@ -9546,7 +10850,7 @@ export namespace LazyPropertiesClass {
       >
     > = purify.Either.sequence(
       $resource
-        .values($properties.stubObjectSetProperty["identifier"], {
+        .values($properties.setStubClassToResolvedClassProperty["identifier"], {
           unique: true,
         })
         .map((item) =>
@@ -9577,151 +10881,24 @@ export namespace LazyPropertiesClass {
             }),
         }),
     );
-    if (_stubObjectSetPropertyEither.isLeft()) {
-      return _stubObjectSetPropertyEither;
+    if (_setStubClassToResolvedClassPropertyEither.isLeft()) {
+      return _setStubClassToResolvedClassPropertyEither;
     }
 
-    const stubObjectSetProperty = _stubObjectSetPropertyEither.unsafeCoerce();
-    const _stubObjectUnionPropertyEither: purify.Either<
-      Error,
-      $LazyOptionalObject<
-        LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        StubClass
-      >
-    > = $resource
-      .values($properties.stubObjectUnionProperty["identifier"], {
-        unique: true,
-      })
-      .head()
-      .chain((value) => value.toResource())
-      .chain((_resource) =>
-        StubClass.$fromRdf({
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          resource: _resource,
-        }),
-      )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      )
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedClassUnion.$Identifier,
-            LazilyResolvedClassUnion,
-            StubClass
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedClassUnion(identifier),
-          }),
-      );
-    if (_stubObjectUnionPropertyEither.isLeft()) {
-      return _stubObjectUnionPropertyEither;
-    }
-
-    const stubObjectUnionProperty =
-      _stubObjectUnionPropertyEither.unsafeCoerce();
-    const _stubOptionalObjectPropertyEither: purify.Either<
-      Error,
-      $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        StubClass
-      >
-    > = $resource
-      .values($properties.stubOptionalObjectProperty["identifier"], {
-        unique: true,
-      })
-      .head()
-      .chain((value) => value.toResource())
-      .chain((_resource) =>
-        StubClass.$fromRdf({
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          resource: _resource,
-        }),
-      )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      )
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedBlankNodeOrIriClass.$Identifier,
-            LazilyResolvedBlankNodeOrIriClass,
-            StubClass
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
-          }),
-      );
-    if (_stubOptionalObjectPropertyEither.isLeft()) {
-      return _stubOptionalObjectPropertyEither;
-    }
-
-    const stubOptionalObjectProperty =
-      _stubOptionalObjectPropertyEither.unsafeCoerce();
-    const _stubRequiredObjectPropertyEither: purify.Either<
-      Error,
-      $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        StubClass
-      >
-    > = $resource
-      .values($properties.stubRequiredObjectProperty["identifier"], {
-        unique: true,
-      })
-      .head()
-      .chain((value) => value.toResource())
-      .chain((_resource) =>
-        StubClass.$fromRdf({
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          resource: _resource,
-        }),
-      )
-      .map(
-        (stub) =>
-          new $LazyRequiredObject<
-            LazilyResolvedBlankNodeOrIriClass.$Identifier,
-            LazilyResolvedBlankNodeOrIriClass,
-            StubClass
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
-          }),
-      );
-    if (_stubRequiredObjectPropertyEither.isLeft()) {
-      return _stubRequiredObjectPropertyEither;
-    }
-
-    const stubRequiredObjectProperty =
-      _stubRequiredObjectPropertyEither.unsafeCoerce();
+    const setStubClassToResolvedClassProperty =
+      _setStubClassToResolvedClassPropertyEither.unsafeCoerce();
     return purify.Either.of({
       $identifier,
-      lazyIriObjectProperty,
-      lazyObjectSetProperty,
-      lazyObjectUnionProperty,
-      lazyOptionalObjectProperty,
-      lazyRequiredObjectProperty,
-      stubObjectSetProperty,
-      stubObjectUnionProperty,
-      stubOptionalObjectProperty,
-      stubRequiredObjectProperty,
+      optionalLazyToResolvedClassProperty,
+      optionalLazyToResolvedClassUnionProperty,
+      optionalLazyToResolvedIriClassProperty,
+      optionalStubClassToResolvedClassProperty,
+      optionalStubClassToResolvedClassUnionProperty,
+      optionalStubClassUnionToResolvedClassUnionProperty,
+      requiredLazyToResolvedClassProperty,
+      requiredStubClassToResolvedClassProperty,
+      setLazyToResolvedClassProperty,
+      setStubClassToResolvedClassProperty,
     });
   }
 
@@ -9734,49 +10911,54 @@ export namespace LazyPropertiesClass {
   }
 
   export const $properties = {
-    lazyIriObjectProperty: {
+    optionalLazyToResolvedClassProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/lazyIriObjectProperty",
+        "http://example.com/optionalLazyToResolvedClassProperty",
       ),
     },
-    lazyObjectSetProperty: {
+    optionalLazyToResolvedClassUnionProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/lazyObjectSetProperty",
+        "http://example.com/optionalLazyToResolvedClassUnionProperty",
       ),
     },
-    lazyObjectUnionProperty: {
+    optionalLazyToResolvedIriClassProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/lazyObjectUnionProperty",
+        "http://example.com/optionalLazyToResolvedIriClassProperty",
       ),
     },
-    lazyOptionalObjectProperty: {
+    optionalStubClassToResolvedClassProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/lazyOptionalObjectProperty",
+        "http://example.com/optionalStubClassToResolvedClassProperty",
       ),
     },
-    lazyRequiredObjectProperty: {
+    optionalStubClassToResolvedClassUnionProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/lazyRequiredObjectProperty",
+        "http://example.com/optionalStubClassToResolvedClassUnionProperty",
       ),
     },
-    stubObjectSetProperty: {
+    optionalStubClassUnionToResolvedClassUnionProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/stubObjectSetProperty",
+        "http://example.com/optionalStubClassUnionToResolvedClassUnionProperty",
       ),
     },
-    stubObjectUnionProperty: {
+    requiredLazyToResolvedClassProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/stubObjectUnionProperty",
+        "http://example.com/requiredLazyToResolvedClassProperty",
       ),
     },
-    stubOptionalObjectProperty: {
+    requiredStubClassToResolvedClassProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/stubOptionalObjectProperty",
+        "http://example.com/requiredStubClassToResolvedClassProperty",
       ),
     },
-    stubRequiredObjectProperty: {
+    setLazyToResolvedClassProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/stubRequiredObjectProperty",
+        "http://example.com/setLazyToResolvedClassProperty",
+      ),
+    },
+    setStubClassToResolvedClassProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/setStubClassToResolvedClassProperty",
       ),
     },
   };
@@ -9832,56 +11014,120 @@ export namespace LazyPropertiesClass {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass");
     triples.push({
-      object: dataFactory.variable!(`${variablePrefix}LazyIriObjectProperty`),
+      object: dataFactory.variable!(
+        `${variablePrefix}OptionalLazyToResolvedClassProperty`,
+      ),
       predicate:
-        LazyPropertiesClass.$properties.lazyIriObjectProperty["identifier"],
+        LazyPropertiesClass.$properties.optionalLazyToResolvedClassProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push(
+      ...$DefaultStub.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(
+          `${variablePrefix}OptionalLazyToResolvedClassProperty`,
+        ),
+        variablePrefix: `${variablePrefix}OptionalLazyToResolvedClassProperty`,
+      }),
+    );
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}OptionalLazyToResolvedClassUnionProperty`,
+      ),
+      predicate:
+        LazyPropertiesClass.$properties
+          .optionalLazyToResolvedClassUnionProperty["identifier"],
+      subject,
+    });
+    triples.push(
+      ...$DefaultStub.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(
+          `${variablePrefix}OptionalLazyToResolvedClassUnionProperty`,
+        ),
+        variablePrefix: `${variablePrefix}OptionalLazyToResolvedClassUnionProperty`,
+      }),
+    );
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}OptionalLazyToResolvedIriClassProperty`,
+      ),
+      predicate:
+        LazyPropertiesClass.$properties.optionalLazyToResolvedIriClassProperty[
+          "identifier"
+        ],
       subject,
     });
     triples.push(
       ...$NamedDefaultStub.$sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
-          `${variablePrefix}LazyIriObjectProperty`,
+          `${variablePrefix}OptionalLazyToResolvedIriClassProperty`,
         ),
-        variablePrefix: `${variablePrefix}LazyIriObjectProperty`,
-      }),
-    );
-    triples.push({
-      object: dataFactory.variable!(`${variablePrefix}LazyObjectSetProperty`),
-      predicate:
-        LazyPropertiesClass.$properties.lazyObjectSetProperty["identifier"],
-      subject,
-    });
-    triples.push(
-      ...$DefaultStub.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${variablePrefix}LazyObjectSetProperty`,
-        ),
-        variablePrefix: `${variablePrefix}LazyObjectSetProperty`,
-      }),
-    );
-    triples.push({
-      object: dataFactory.variable!(`${variablePrefix}LazyObjectUnionProperty`),
-      predicate:
-        LazyPropertiesClass.$properties.lazyObjectUnionProperty["identifier"],
-      subject,
-    });
-    triples.push(
-      ...$DefaultStub.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${variablePrefix}LazyObjectUnionProperty`,
-        ),
-        variablePrefix: `${variablePrefix}LazyObjectUnionProperty`,
+        variablePrefix: `${variablePrefix}OptionalLazyToResolvedIriClassProperty`,
       }),
     );
     triples.push({
       object: dataFactory.variable!(
-        `${variablePrefix}LazyOptionalObjectProperty`,
+        `${variablePrefix}OptionalStubClassToResolvedClassProperty`,
       ),
       predicate:
-        LazyPropertiesClass.$properties.lazyOptionalObjectProperty[
+        LazyPropertiesClass.$properties
+          .optionalStubClassToResolvedClassProperty["identifier"],
+      subject,
+    });
+    triples.push(
+      ...StubClass.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(
+          `${variablePrefix}OptionalStubClassToResolvedClassProperty`,
+        ),
+        variablePrefix: `${variablePrefix}OptionalStubClassToResolvedClassProperty`,
+      }),
+    );
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}OptionalStubClassToResolvedClassUnionProperty`,
+      ),
+      predicate:
+        LazyPropertiesClass.$properties
+          .optionalStubClassToResolvedClassUnionProperty["identifier"],
+      subject,
+    });
+    triples.push(
+      ...StubClass.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(
+          `${variablePrefix}OptionalStubClassToResolvedClassUnionProperty`,
+        ),
+        variablePrefix: `${variablePrefix}OptionalStubClassToResolvedClassUnionProperty`,
+      }),
+    );
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}OptionalStubClassUnionToResolvedClassUnionProperty`,
+      ),
+      predicate:
+        LazyPropertiesClass.$properties
+          .optionalStubClassUnionToResolvedClassUnionProperty["identifier"],
+      subject,
+    });
+    triples.push(
+      ...StubClassUnion.$sparqlConstructTemplateTriples({
+        subject: dataFactory.variable!(
+          `${variablePrefix}OptionalStubClassUnionToResolvedClassUnionProperty`,
+        ),
+        variablePrefix: `${variablePrefix}OptionalStubClassUnionToResolvedClassUnionProperty`,
+      }),
+    );
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}RequiredLazyToResolvedClassProperty`,
+      ),
+      predicate:
+        LazyPropertiesClass.$properties.requiredLazyToResolvedClassProperty[
           "identifier"
         ],
       subject,
@@ -9890,17 +11136,35 @@ export namespace LazyPropertiesClass {
       ...$DefaultStub.$sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
-          `${variablePrefix}LazyOptionalObjectProperty`,
+          `${variablePrefix}RequiredLazyToResolvedClassProperty`,
         ),
-        variablePrefix: `${variablePrefix}LazyOptionalObjectProperty`,
+        variablePrefix: `${variablePrefix}RequiredLazyToResolvedClassProperty`,
       }),
     );
     triples.push({
       object: dataFactory.variable!(
-        `${variablePrefix}LazyRequiredObjectProperty`,
+        `${variablePrefix}RequiredStubClassToResolvedClassProperty`,
       ),
       predicate:
-        LazyPropertiesClass.$properties.lazyRequiredObjectProperty[
+        LazyPropertiesClass.$properties
+          .requiredStubClassToResolvedClassProperty["identifier"],
+      subject,
+    });
+    triples.push(
+      ...StubClass.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject: dataFactory.variable!(
+          `${variablePrefix}RequiredStubClassToResolvedClassProperty`,
+        ),
+        variablePrefix: `${variablePrefix}RequiredStubClassToResolvedClassProperty`,
+      }),
+    );
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}SetLazyToResolvedClassProperty`,
+      ),
+      predicate:
+        LazyPropertiesClass.$properties.setLazyToResolvedClassProperty[
           "identifier"
         ],
       subject,
@@ -9909,47 +11173,17 @@ export namespace LazyPropertiesClass {
       ...$DefaultStub.$sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
-          `${variablePrefix}LazyRequiredObjectProperty`,
+          `${variablePrefix}SetLazyToResolvedClassProperty`,
         ),
-        variablePrefix: `${variablePrefix}LazyRequiredObjectProperty`,
-      }),
-    );
-    triples.push({
-      object: dataFactory.variable!(`${variablePrefix}StubObjectSetProperty`),
-      predicate:
-        LazyPropertiesClass.$properties.stubObjectSetProperty["identifier"],
-      subject,
-    });
-    triples.push(
-      ...StubClass.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${variablePrefix}StubObjectSetProperty`,
-        ),
-        variablePrefix: `${variablePrefix}StubObjectSetProperty`,
-      }),
-    );
-    triples.push({
-      object: dataFactory.variable!(`${variablePrefix}StubObjectUnionProperty`),
-      predicate:
-        LazyPropertiesClass.$properties.stubObjectUnionProperty["identifier"],
-      subject,
-    });
-    triples.push(
-      ...StubClass.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${variablePrefix}StubObjectUnionProperty`,
-        ),
-        variablePrefix: `${variablePrefix}StubObjectUnionProperty`,
+        variablePrefix: `${variablePrefix}SetLazyToResolvedClassProperty`,
       }),
     );
     triples.push({
       object: dataFactory.variable!(
-        `${variablePrefix}StubOptionalObjectProperty`,
+        `${variablePrefix}SetStubClassToResolvedClassProperty`,
       ),
       predicate:
-        LazyPropertiesClass.$properties.stubOptionalObjectProperty[
+        LazyPropertiesClass.$properties.setStubClassToResolvedClassProperty[
           "identifier"
         ],
       subject,
@@ -9958,28 +11192,9 @@ export namespace LazyPropertiesClass {
       ...StubClass.$sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
-          `${variablePrefix}StubOptionalObjectProperty`,
+          `${variablePrefix}SetStubClassToResolvedClassProperty`,
         ),
-        variablePrefix: `${variablePrefix}StubOptionalObjectProperty`,
-      }),
-    );
-    triples.push({
-      object: dataFactory.variable!(
-        `${variablePrefix}StubRequiredObjectProperty`,
-      ),
-      predicate:
-        LazyPropertiesClass.$properties.stubRequiredObjectProperty[
-          "identifier"
-        ],
-      subject,
-    });
-    triples.push(
-      ...StubClass.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${variablePrefix}StubRequiredObjectProperty`,
-        ),
-        variablePrefix: `${variablePrefix}StubRequiredObjectProperty`,
+        variablePrefix: `${variablePrefix}SetStubClassToResolvedClassProperty`,
       }),
     );
     return triples;
@@ -10004,12 +11219,63 @@ export namespace LazyPropertiesClass {
             triples: [
               {
                 object: dataFactory.variable!(
-                  `${variablePrefix}LazyIriObjectProperty`,
+                  `${variablePrefix}OptionalLazyToResolvedClassProperty`,
                 ),
                 predicate:
-                  LazyPropertiesClass.$properties.lazyIriObjectProperty[
-                    "identifier"
-                  ],
+                  LazyPropertiesClass.$properties
+                    .optionalLazyToResolvedClassProperty["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...$DefaultStub.$sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(
+              `${variablePrefix}OptionalLazyToResolvedClassProperty`,
+            ),
+            variablePrefix: `${variablePrefix}OptionalLazyToResolvedClassProperty`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}OptionalLazyToResolvedClassUnionProperty`,
+                ),
+                predicate:
+                  LazyPropertiesClass.$properties
+                    .optionalLazyToResolvedClassUnionProperty["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...$DefaultStub.$sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(
+              `${variablePrefix}OptionalLazyToResolvedClassUnionProperty`,
+            ),
+            variablePrefix: `${variablePrefix}OptionalLazyToResolvedClassUnionProperty`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}OptionalLazyToResolvedIriClassProperty`,
+                ),
+                predicate:
+                  LazyPropertiesClass.$properties
+                    .optionalLazyToResolvedIriClassProperty["identifier"],
                 subject,
               },
             ],
@@ -10018,9 +11284,9 @@ export namespace LazyPropertiesClass {
           ...$NamedDefaultStub.$sparqlWherePatterns({
             ignoreRdfType: true,
             subject: dataFactory.variable!(
-              `${variablePrefix}LazyIriObjectProperty`,
+              `${variablePrefix}OptionalLazyToResolvedIriClassProperty`,
             ),
-            variablePrefix: `${variablePrefix}LazyIriObjectProperty`,
+            variablePrefix: `${variablePrefix}OptionalLazyToResolvedIriClassProperty`,
           }),
         ],
         type: "optional",
@@ -10031,23 +11297,22 @@ export namespace LazyPropertiesClass {
             triples: [
               {
                 object: dataFactory.variable!(
-                  `${variablePrefix}LazyObjectSetProperty`,
+                  `${variablePrefix}OptionalStubClassToResolvedClassProperty`,
                 ),
                 predicate:
-                  LazyPropertiesClass.$properties.lazyObjectSetProperty[
-                    "identifier"
-                  ],
+                  LazyPropertiesClass.$properties
+                    .optionalStubClassToResolvedClassProperty["identifier"],
                 subject,
               },
             ],
             type: "bgp",
           },
-          ...$DefaultStub.$sparqlWherePatterns({
+          ...StubClass.$sparqlWherePatterns({
             ignoreRdfType: true,
             subject: dataFactory.variable!(
-              `${variablePrefix}LazyObjectSetProperty`,
+              `${variablePrefix}OptionalStubClassToResolvedClassProperty`,
             ),
-            variablePrefix: `${variablePrefix}LazyObjectSetProperty`,
+            variablePrefix: `${variablePrefix}OptionalStubClassToResolvedClassProperty`,
           }),
         ],
         type: "optional",
@@ -10058,10 +11323,11 @@ export namespace LazyPropertiesClass {
             triples: [
               {
                 object: dataFactory.variable!(
-                  `${variablePrefix}LazyObjectUnionProperty`,
+                  `${variablePrefix}OptionalStubClassToResolvedClassUnionProperty`,
                 ),
                 predicate:
-                  LazyPropertiesClass.$properties.lazyObjectUnionProperty[
+                  LazyPropertiesClass.$properties
+                    .optionalStubClassToResolvedClassUnionProperty[
                     "identifier"
                   ],
                 subject,
@@ -10069,12 +11335,12 @@ export namespace LazyPropertiesClass {
             ],
             type: "bgp",
           },
-          ...$DefaultStub.$sparqlWherePatterns({
+          ...StubClass.$sparqlWherePatterns({
             ignoreRdfType: true,
             subject: dataFactory.variable!(
-              `${variablePrefix}LazyObjectUnionProperty`,
+              `${variablePrefix}OptionalStubClassToResolvedClassUnionProperty`,
             ),
-            variablePrefix: `${variablePrefix}LazyObjectUnionProperty`,
+            variablePrefix: `${variablePrefix}OptionalStubClassToResolvedClassUnionProperty`,
           }),
         ],
         type: "optional",
@@ -10085,10 +11351,11 @@ export namespace LazyPropertiesClass {
             triples: [
               {
                 object: dataFactory.variable!(
-                  `${variablePrefix}LazyOptionalObjectProperty`,
+                  `${variablePrefix}OptionalStubClassUnionToResolvedClassUnionProperty`,
                 ),
                 predicate:
-                  LazyPropertiesClass.$properties.lazyOptionalObjectProperty[
+                  LazyPropertiesClass.$properties
+                    .optionalStubClassUnionToResolvedClassUnionProperty[
                     "identifier"
                   ],
                 subject,
@@ -10096,12 +11363,11 @@ export namespace LazyPropertiesClass {
             ],
             type: "bgp",
           },
-          ...$DefaultStub.$sparqlWherePatterns({
-            ignoreRdfType: true,
+          ...StubClassUnion.$sparqlWherePatterns({
             subject: dataFactory.variable!(
-              `${variablePrefix}LazyOptionalObjectProperty`,
+              `${variablePrefix}OptionalStubClassUnionToResolvedClassUnionProperty`,
             ),
-            variablePrefix: `${variablePrefix}LazyOptionalObjectProperty`,
+            variablePrefix: `${variablePrefix}OptionalStubClassUnionToResolvedClassUnionProperty`,
           }),
         ],
         type: "optional",
@@ -10110,12 +11376,11 @@ export namespace LazyPropertiesClass {
         triples: [
           {
             object: dataFactory.variable!(
-              `${variablePrefix}LazyRequiredObjectProperty`,
+              `${variablePrefix}RequiredLazyToResolvedClassProperty`,
             ),
             predicate:
-              LazyPropertiesClass.$properties.lazyRequiredObjectProperty[
-                "identifier"
-              ],
+              LazyPropertiesClass.$properties
+                .requiredLazyToResolvedClassProperty["identifier"],
             subject,
           },
         ],
@@ -10124,101 +11389,19 @@ export namespace LazyPropertiesClass {
       ...$DefaultStub.$sparqlWherePatterns({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
-          `${variablePrefix}LazyRequiredObjectProperty`,
+          `${variablePrefix}RequiredLazyToResolvedClassProperty`,
         ),
-        variablePrefix: `${variablePrefix}LazyRequiredObjectProperty`,
+        variablePrefix: `${variablePrefix}RequiredLazyToResolvedClassProperty`,
       }),
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}StubObjectSetProperty`,
-                ),
-                predicate:
-                  LazyPropertiesClass.$properties.stubObjectSetProperty[
-                    "identifier"
-                  ],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...StubClass.$sparqlWherePatterns({
-            ignoreRdfType: true,
-            subject: dataFactory.variable!(
-              `${variablePrefix}StubObjectSetProperty`,
-            ),
-            variablePrefix: `${variablePrefix}StubObjectSetProperty`,
-          }),
-        ],
-        type: "optional",
-      },
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}StubObjectUnionProperty`,
-                ),
-                predicate:
-                  LazyPropertiesClass.$properties.stubObjectUnionProperty[
-                    "identifier"
-                  ],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...StubClass.$sparqlWherePatterns({
-            ignoreRdfType: true,
-            subject: dataFactory.variable!(
-              `${variablePrefix}StubObjectUnionProperty`,
-            ),
-            variablePrefix: `${variablePrefix}StubObjectUnionProperty`,
-          }),
-        ],
-        type: "optional",
-      },
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}StubOptionalObjectProperty`,
-                ),
-                predicate:
-                  LazyPropertiesClass.$properties.stubOptionalObjectProperty[
-                    "identifier"
-                  ],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...StubClass.$sparqlWherePatterns({
-            ignoreRdfType: true,
-            subject: dataFactory.variable!(
-              `${variablePrefix}StubOptionalObjectProperty`,
-            ),
-            variablePrefix: `${variablePrefix}StubOptionalObjectProperty`,
-          }),
-        ],
-        type: "optional",
-      },
       {
         triples: [
           {
             object: dataFactory.variable!(
-              `${variablePrefix}StubRequiredObjectProperty`,
+              `${variablePrefix}RequiredStubClassToResolvedClassProperty`,
             ),
             predicate:
-              LazyPropertiesClass.$properties.stubRequiredObjectProperty[
-                "identifier"
-              ],
+              LazyPropertiesClass.$properties
+                .requiredStubClassToResolvedClassProperty["identifier"],
             subject,
           },
         ],
@@ -10227,10 +11410,62 @@ export namespace LazyPropertiesClass {
       ...StubClass.$sparqlWherePatterns({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
-          `${variablePrefix}StubRequiredObjectProperty`,
+          `${variablePrefix}RequiredStubClassToResolvedClassProperty`,
         ),
-        variablePrefix: `${variablePrefix}StubRequiredObjectProperty`,
+        variablePrefix: `${variablePrefix}RequiredStubClassToResolvedClassProperty`,
       }),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}SetLazyToResolvedClassProperty`,
+                ),
+                predicate:
+                  LazyPropertiesClass.$properties
+                    .setLazyToResolvedClassProperty["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...$DefaultStub.$sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(
+              `${variablePrefix}SetLazyToResolvedClassProperty`,
+            ),
+            variablePrefix: `${variablePrefix}SetLazyToResolvedClassProperty`,
+          }),
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}SetStubClassToResolvedClassProperty`,
+                ),
+                predicate:
+                  LazyPropertiesClass.$properties
+                    .setStubClassToResolvedClassProperty["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...StubClass.$sparqlWherePatterns({
+            ignoreRdfType: true,
+            subject: dataFactory.variable!(
+              `${variablePrefix}SetStubClassToResolvedClassProperty`,
+            ),
+            variablePrefix: `${variablePrefix}SetStubClassToResolvedClassProperty`,
+          }),
+        ],
+        type: "optional",
+      },
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -25970,6 +27205,244 @@ export namespace LazilyResolvedClassUnion {
     }
   }
 }
+/**
+ * Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.
+ */
+export type StubClassUnion = StubClassUnionMember1 | StubClassUnionMember2;
+
+export namespace StubClassUnion {
+  export function $equals(
+    left: StubClassUnion,
+    right: StubClassUnion,
+  ): $EqualsResult {
+    return $strictEquals(left.$type, right.$type).chain(() => {
+      switch (left.$type) {
+        case "StubClassUnionMember1":
+          return left.$equals(right as unknown as StubClassUnionMember1);
+        case "StubClassUnionMember2":
+          return left.$equals(right as unknown as StubClassUnionMember2);
+        default:
+          left satisfies never;
+          throw new Error("unrecognized type");
+      }
+    });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, StubClassUnion> {
+    return (
+      StubClassUnionMember1.$fromJson(json) as purify.Either<
+        zod.ZodError,
+        StubClassUnion
+      >
+    ).altLazy(
+      () =>
+        StubClassUnionMember2.$fromJson(json) as purify.Either<
+          zod.ZodError,
+          StubClassUnion
+        >,
+    );
+  }
+
+  export function $fromRdf({
+    ignoreRdfType,
+    resource,
+    ...context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType?: boolean;
+    resource: rdfjsResource.Resource;
+  }): purify.Either<Error, StubClassUnion> {
+    return (
+      StubClassUnionMember1.$fromRdf({ ...context, resource }) as purify.Either<
+        Error,
+        StubClassUnion
+      >
+    ).altLazy(
+      () =>
+        StubClassUnionMember2.$fromRdf({
+          ...context,
+          resource,
+        }) as purify.Either<Error, StubClassUnion>,
+    );
+  }
+
+  export function $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_stubClassUnion: StubClassUnion, _hasher: HasherT): HasherT {
+    switch (_stubClassUnion.$type) {
+      case "StubClassUnionMember1":
+        return _stubClassUnion.$hash(_hasher);
+      case "StubClassUnionMember2":
+        return _stubClassUnion.$hash(_hasher);
+      default:
+        _stubClassUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+
+  export type $Json = StubClassUnionMember1.$Json | StubClassUnionMember2.$Json;
+
+  export function $jsonZodSchema() {
+    return zod.discriminatedUnion("$type", [
+      StubClassUnionMember1.$jsonZodSchema(),
+      StubClassUnionMember2.$jsonZodSchema(),
+    ]);
+  }
+
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        StubClassUnion.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        StubClassUnion.$sparqlWherePatterns({ ignoreRdfType, subject }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      StubClassUnion.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...StubClassUnionMember1.$sparqlConstructTemplateTriples({
+        subject:
+          parameters?.subject ??
+          dataFactory.variable!("stubClassUnionStubClassUnionMember1"),
+        variablePrefix: parameters?.variablePrefix
+          ? `${parameters.variablePrefix}StubClassUnionMember1`
+          : "stubClassUnionStubClassUnionMember1",
+      }).concat(),
+      ...StubClassUnionMember2.$sparqlConstructTemplateTriples({
+        subject:
+          parameters?.subject ??
+          dataFactory.variable!("stubClassUnionStubClassUnionMember2"),
+        variablePrefix: parameters?.variablePrefix
+          ? `${parameters.variablePrefix}StubClassUnionMember2`
+          : "stubClassUnionStubClassUnionMember2",
+      }).concat(),
+    ];
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    return [
+      {
+        patterns: [
+          {
+            patterns: StubClassUnionMember1.$sparqlWherePatterns({
+              subject:
+                parameters?.subject ??
+                dataFactory.variable!("stubClassUnionStubClassUnionMember1"),
+              variablePrefix: parameters?.variablePrefix
+                ? `${parameters.variablePrefix}StubClassUnionMember1`
+                : "stubClassUnionStubClassUnionMember1",
+            }).concat(),
+            type: "group",
+          },
+          {
+            patterns: StubClassUnionMember2.$sparqlWherePatterns({
+              subject:
+                parameters?.subject ??
+                dataFactory.variable!("stubClassUnionStubClassUnionMember2"),
+              variablePrefix: parameters?.variablePrefix
+                ? `${parameters.variablePrefix}StubClassUnionMember2`
+                : "stubClassUnionStubClassUnionMember2",
+            }).concat(),
+            type: "group",
+          },
+        ],
+        type: "union",
+      },
+    ];
+  }
+
+  export function $toJson(
+    _stubClassUnion: StubClassUnion,
+  ): StubClassUnionMember1.$Json | StubClassUnionMember2.$Json {
+    switch (_stubClassUnion.$type) {
+      case "StubClassUnionMember1":
+        return _stubClassUnion.$toJson();
+      case "StubClassUnionMember2":
+        return _stubClassUnion.$toJson();
+      default:
+        _stubClassUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+
+  export function $toRdf(
+    _stubClassUnion: StubClassUnion,
+    _parameters: {
+      mutateGraph: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    switch (_stubClassUnion.$type) {
+      case "StubClassUnionMember1":
+        return _stubClassUnion.$toRdf(_parameters);
+      case "StubClassUnionMember2":
+        return _stubClassUnion.$toRdf(_parameters);
+      default:
+        _stubClassUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+}
 export interface $ObjectSet {
   baseInterfaceWithoutProperties(
     identifier: BaseInterfaceWithoutPropertiesStatic.$Identifier,
@@ -26529,6 +28002,34 @@ export interface $ObjectSet {
   stubClassesCount(
     query?: Pick<$ObjectSet.Query<StubClass.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
+  stubClassUnionMember1(
+    identifier: StubClassUnionMember1.$Identifier,
+  ): Promise<purify.Either<Error, StubClassUnionMember1>>;
+  stubClassUnionMember1Identifiers(
+    query?: $ObjectSet.Query<StubClassUnionMember1.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly StubClassUnionMember1.$Identifier[]>
+  >;
+  stubClassUnionMember1s(
+    query?: $ObjectSet.Query<StubClassUnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClassUnionMember1[]>>;
+  stubClassUnionMember1sCount(
+    query?: Pick<$ObjectSet.Query<StubClassUnionMember1.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  stubClassUnionMember2(
+    identifier: StubClassUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, StubClassUnionMember2>>;
+  stubClassUnionMember2Identifiers(
+    query?: $ObjectSet.Query<StubClassUnionMember2.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly StubClassUnionMember2.$Identifier[]>
+  >;
+  stubClassUnionMember2s(
+    query?: $ObjectSet.Query<StubClassUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClassUnionMember2[]>>;
+  stubClassUnionMember2sCount(
+    query?: Pick<$ObjectSet.Query<StubClassUnionMember2.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
   termPropertiesClass(
     identifier: TermPropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, TermPropertiesClass>>;
@@ -26619,6 +28120,18 @@ export interface $ObjectSet {
       $ObjectSet.Query<LazilyResolvedClassUnion.$Identifier>,
       "where"
     >,
+  ): Promise<purify.Either<Error, number>>;
+  stubClassUnion(
+    identifier: StubClassUnion.$Identifier,
+  ): Promise<purify.Either<Error, StubClassUnion>>;
+  stubClassUnionIdentifiers(
+    query?: $ObjectSet.Query<StubClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClassUnion.$Identifier[]>>;
+  stubClassUnions(
+    query?: $ObjectSet.Query<StubClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClassUnion[]>>;
+  stubClassUnionsCount(
+    query?: Pick<$ObjectSet.Query<StubClassUnion.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
 }
 
@@ -29062,6 +30575,128 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async stubClassUnionMember1(
+    identifier: StubClassUnionMember1.$Identifier,
+  ): Promise<purify.Either<Error, StubClassUnionMember1>> {
+    return this.stubClassUnionMember1Sync(identifier);
+  }
+
+  stubClassUnionMember1Sync(
+    identifier: StubClassUnionMember1.$Identifier,
+  ): purify.Either<Error, StubClassUnionMember1> {
+    return this.stubClassUnionMember1sSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async stubClassUnionMember1Identifiers(
+    query?: $ObjectSet.Query<StubClassUnionMember1.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly StubClassUnionMember1.$Identifier[]>
+  > {
+    return this.stubClassUnionMember1IdentifiersSync(query);
+  }
+
+  stubClassUnionMember1IdentifiersSync(
+    query?: $ObjectSet.Query<StubClassUnionMember1.$Identifier>,
+  ): purify.Either<Error, readonly StubClassUnionMember1.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      StubClassUnionMember1,
+      StubClassUnionMember1.$Identifier
+    >(StubClassUnionMember1, query);
+  }
+
+  async stubClassUnionMember1s(
+    query?: $ObjectSet.Query<StubClassUnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClassUnionMember1[]>> {
+    return this.stubClassUnionMember1sSync(query);
+  }
+
+  stubClassUnionMember1sSync(
+    query?: $ObjectSet.Query<StubClassUnionMember1.$Identifier>,
+  ): purify.Either<Error, readonly StubClassUnionMember1[]> {
+    return this.$objectsSync<
+      StubClassUnionMember1,
+      StubClassUnionMember1.$Identifier
+    >(StubClassUnionMember1, query);
+  }
+
+  async stubClassUnionMember1sCount(
+    query?: Pick<$ObjectSet.Query<StubClassUnionMember1.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.stubClassUnionMember1sCountSync(query);
+  }
+
+  stubClassUnionMember1sCountSync(
+    query?: Pick<$ObjectSet.Query<StubClassUnionMember1.$Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      StubClassUnionMember1,
+      StubClassUnionMember1.$Identifier
+    >(StubClassUnionMember1, query);
+  }
+
+  async stubClassUnionMember2(
+    identifier: StubClassUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, StubClassUnionMember2>> {
+    return this.stubClassUnionMember2Sync(identifier);
+  }
+
+  stubClassUnionMember2Sync(
+    identifier: StubClassUnionMember2.$Identifier,
+  ): purify.Either<Error, StubClassUnionMember2> {
+    return this.stubClassUnionMember2sSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async stubClassUnionMember2Identifiers(
+    query?: $ObjectSet.Query<StubClassUnionMember2.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly StubClassUnionMember2.$Identifier[]>
+  > {
+    return this.stubClassUnionMember2IdentifiersSync(query);
+  }
+
+  stubClassUnionMember2IdentifiersSync(
+    query?: $ObjectSet.Query<StubClassUnionMember2.$Identifier>,
+  ): purify.Either<Error, readonly StubClassUnionMember2.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      StubClassUnionMember2,
+      StubClassUnionMember2.$Identifier
+    >(StubClassUnionMember2, query);
+  }
+
+  async stubClassUnionMember2s(
+    query?: $ObjectSet.Query<StubClassUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClassUnionMember2[]>> {
+    return this.stubClassUnionMember2sSync(query);
+  }
+
+  stubClassUnionMember2sSync(
+    query?: $ObjectSet.Query<StubClassUnionMember2.$Identifier>,
+  ): purify.Either<Error, readonly StubClassUnionMember2[]> {
+    return this.$objectsSync<
+      StubClassUnionMember2,
+      StubClassUnionMember2.$Identifier
+    >(StubClassUnionMember2, query);
+  }
+
+  async stubClassUnionMember2sCount(
+    query?: Pick<$ObjectSet.Query<StubClassUnionMember2.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.stubClassUnionMember2sCountSync(query);
+  }
+
+  stubClassUnionMember2sCountSync(
+    query?: Pick<$ObjectSet.Query<StubClassUnionMember2.$Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      StubClassUnionMember2,
+      StubClassUnionMember2.$Identifier
+    >(StubClassUnionMember2, query);
+  }
+
   async termPropertiesClass(
     identifier: TermPropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, TermPropertiesClass>> {
@@ -29530,6 +31165,65 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       [LazilyResolvedClassUnionMember1, LazilyResolvedClassUnionMember2],
       query,
     );
+  }
+
+  async stubClassUnion(
+    identifier: StubClassUnion.$Identifier,
+  ): Promise<purify.Either<Error, StubClassUnion>> {
+    return this.stubClassUnionSync(identifier);
+  }
+
+  stubClassUnionSync(
+    identifier: StubClassUnion.$Identifier,
+  ): purify.Either<Error, StubClassUnion> {
+    return this.stubClassUnionsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async stubClassUnionIdentifiers(
+    query?: $ObjectSet.Query<StubClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClassUnion.$Identifier[]>> {
+    return this.stubClassUnionIdentifiersSync(query);
+  }
+
+  stubClassUnionIdentifiersSync(
+    query?: $ObjectSet.Query<StubClassUnion.$Identifier>,
+  ): purify.Either<Error, readonly StubClassUnion.$Identifier[]> {
+    return this.$objectUnionIdentifiersSync<
+      StubClassUnion,
+      StubClassUnion.$Identifier
+    >([StubClassUnionMember1, StubClassUnionMember2], query);
+  }
+
+  async stubClassUnions(
+    query?: $ObjectSet.Query<StubClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClassUnion[]>> {
+    return this.stubClassUnionsSync(query);
+  }
+
+  stubClassUnionsSync(
+    query?: $ObjectSet.Query<StubClassUnion.$Identifier>,
+  ): purify.Either<Error, readonly StubClassUnion[]> {
+    return this.$objectUnionsSync<StubClassUnion, StubClassUnion.$Identifier>(
+      [StubClassUnionMember1, StubClassUnionMember2],
+      query,
+    );
+  }
+
+  async stubClassUnionsCount(
+    query?: Pick<$ObjectSet.Query<StubClassUnion.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.stubClassUnionsCountSync(query);
+  }
+
+  stubClassUnionsCountSync(
+    query?: Pick<$ObjectSet.Query<StubClassUnion.$Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectUnionsCountSync<
+      StubClassUnion,
+      StubClassUnion.$Identifier
+    >([StubClassUnionMember1, StubClassUnionMember2], query);
   }
 
   protected $objectIdentifiersSync<
@@ -31373,6 +33067,90 @@ export class $SparqlObjectSet implements $ObjectSet {
     return this.$objectsCount<StubClass.$Identifier>(StubClass, query);
   }
 
+  async stubClassUnionMember1(
+    identifier: StubClassUnionMember1.$Identifier,
+  ): Promise<purify.Either<Error, StubClassUnionMember1>> {
+    return (
+      await this.stubClassUnionMember1s({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async stubClassUnionMember1Identifiers(
+    query?: $SparqlObjectSet.Query<StubClassUnionMember1.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly StubClassUnionMember1.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<StubClassUnionMember1.$Identifier>(
+      StubClassUnionMember1,
+      query,
+    );
+  }
+
+  async stubClassUnionMember1s(
+    query?: $SparqlObjectSet.Query<StubClassUnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClassUnionMember1[]>> {
+    return this.$objects<
+      StubClassUnionMember1,
+      StubClassUnionMember1.$Identifier
+    >(StubClassUnionMember1, query);
+  }
+
+  async stubClassUnionMember1sCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<StubClassUnionMember1.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<StubClassUnionMember1.$Identifier>(
+      StubClassUnionMember1,
+      query,
+    );
+  }
+
+  async stubClassUnionMember2(
+    identifier: StubClassUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, StubClassUnionMember2>> {
+    return (
+      await this.stubClassUnionMember2s({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async stubClassUnionMember2Identifiers(
+    query?: $SparqlObjectSet.Query<StubClassUnionMember2.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly StubClassUnionMember2.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<StubClassUnionMember2.$Identifier>(
+      StubClassUnionMember2,
+      query,
+    );
+  }
+
+  async stubClassUnionMember2s(
+    query?: $SparqlObjectSet.Query<StubClassUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClassUnionMember2[]>> {
+    return this.$objects<
+      StubClassUnionMember2,
+      StubClassUnionMember2.$Identifier
+    >(StubClassUnionMember2, query);
+  }
+
+  async stubClassUnionMember2sCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<StubClassUnionMember2.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<StubClassUnionMember2.$Identifier>(
+      StubClassUnionMember2,
+      query,
+    );
+  }
+
   async termPropertiesClass(
     identifier: TermPropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, TermPropertiesClass>> {
@@ -31637,6 +33415,43 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<LazilyResolvedClassUnion.$Identifier>(
       LazilyResolvedClassUnion,
+      query,
+    );
+  }
+
+  async stubClassUnion(
+    identifier: StubClassUnion.$Identifier,
+  ): Promise<purify.Either<Error, StubClassUnion>> {
+    return (
+      await this.stubClassUnions({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async stubClassUnionIdentifiers(
+    query?: $SparqlObjectSet.Query<StubClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClassUnion.$Identifier[]>> {
+    return this.$objectIdentifiers<StubClassUnion.$Identifier>(
+      StubClassUnion,
+      query,
+    );
+  }
+
+  async stubClassUnions(
+    query?: $SparqlObjectSet.Query<StubClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClassUnion[]>> {
+    return this.$objects<StubClassUnion, StubClassUnion.$Identifier>(
+      StubClassUnion,
+      query,
+    );
+  }
+
+  async stubClassUnionsCount(
+    query?: Pick<$SparqlObjectSet.Query<StubClassUnion.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<StubClassUnion.$Identifier>(
+      StubClassUnion,
       query,
     );
   }
