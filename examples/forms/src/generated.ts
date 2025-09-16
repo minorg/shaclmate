@@ -446,6 +446,10 @@ export namespace NestedNodeShape {
       requiredStringProperty: string;
     }
   > {
+    // @ts-ignore
+    const $objectSet =
+      $objectSetParameter ??
+      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: NestedNodeShape.$Identifier = $resource.identifier;
     const $type = "NestedNodeShape" as const;
     const _requiredStringPropertyEither: purify.Either<Error, string> =
@@ -929,6 +933,10 @@ export namespace FormNodeShape {
       requiredStringProperty: string;
     }
   > {
+    // @ts-ignore
+    const $objectSet =
+      $objectSetParameter ??
+      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: FormNodeShape.$Identifier = $resource.identifier;
     const $type = "FormNodeShape" as const;
     const _emptyStringSetPropertyEither: purify.Either<
@@ -963,6 +971,7 @@ export namespace FormNodeShape {
             ...$context,
             ignoreRdfType: true,
             languageIn: $languageIn,
+            objectSet: $objectSet,
             resource: _resource,
           }),
         );
@@ -1318,6 +1327,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   >(
     objectType: {
       $fromRdf: (parameters: {
+        objectSet: $ObjectSet;
         resource: rdfjsResource.Resource;
       }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
@@ -1335,6 +1345,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   >(
     objectType: {
       $fromRdf: (parameters: {
+        objectSet: $ObjectSet;
         resource: rdfjsResource.Resource;
       }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
@@ -1392,6 +1403,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       const objects: ObjectT[] = [];
       for (const identifier of identifiers) {
         const either = objectType.$fromRdf({
+          objectSet: this,
           resource: this.resourceSet.resource(identifier),
         });
         if (either.isLeft()) {
@@ -1417,7 +1429,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     const objects: ObjectT[] = [];
     let objectI = 0;
     for (const resource of resources) {
-      const either = objectType.$fromRdf({ resource });
+      const either = objectType.$fromRdf({ objectSet: this, resource });
       if (either.isLeft()) {
         return either;
       }
@@ -1437,6 +1449,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   >(
     objectType: {
       $fromRdf: (parameters: {
+        objectSet: $ObjectSet;
         resource: rdfjsResource.Resource;
       }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;

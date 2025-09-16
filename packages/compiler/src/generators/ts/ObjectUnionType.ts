@@ -367,14 +367,14 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
       name: `${syntheticNamePrefix}fromRdf`,
       parameters: [
         {
-          name: "{ ignoreRdfType, resource, ...context }",
-          type: "{ [_index: string]: any; ignoreRdfType?: boolean; resource: rdfjsResource.Resource; }",
+          name: "{ ignoreRdfType, objectSet, resource, ...context }",
+          type: `{ [_index: string]: any; ignoreRdfType?: boolean; objectSet?: ${syntheticNamePrefix}ObjectSet, resource: rdfjsResource.Resource; }`,
         },
       ],
       returnType: `purify.Either<Error, ${this.name}>`,
       statements: [
         `return ${this.memberTypes.reduce((expression, memberType) => {
-          const memberTypeExpression = `(${memberType.staticModuleName}.${syntheticNamePrefix}fromRdf({ ...context, resource }) as purify.Either<Error, ${this.name}>)`;
+          const memberTypeExpression = `(${memberType.staticModuleName}.${syntheticNamePrefix}fromRdf({ ...context, objectSet, resource }) as purify.Either<Error, ${this.name}>)`;
           return expression.length > 0
             ? `${expression}.altLazy(() => ${memberTypeExpression})`
             : memberTypeExpression;
@@ -677,7 +677,7 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
     variables,
   }: Parameters<Type["fromRdfExpression"]>[0]): string {
     // Don't ignoreRdfType, we may need it to distinguish the union members
-    return `${variables.resourceValues}.head().chain(value => value.toResource()).chain(_resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf({ ...${variables.context}, languageIn: ${variables.languageIn}, resource: _resource }))`;
+    return `${variables.resourceValues}.head().chain(value => value.toResource()).chain(_resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf({ ...${variables.context}, languageIn: ${variables.languageIn}, objectSet: ${variables.objectSet}, resource: _resource }))`;
   }
 
   override graphqlResolveExpression({

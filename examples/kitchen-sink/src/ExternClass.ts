@@ -5,6 +5,7 @@ import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { Either } from "purify-ts";
 
 import {
+  type $ObjectSet,
   AbstractBaseClassForExternClass,
   AbstractBaseClassForExternClassStatic,
 } from "./generated.js";
@@ -76,6 +77,7 @@ export namespace ExternClass {
     extra?: number;
     languageIn?: readonly string[];
     ignoreRdfType?: boolean;
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): Either<Error, ExternClass> {
     if (extra !== 1) {
