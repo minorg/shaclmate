@@ -145,6 +145,10 @@ export namespace $DefaultStub {
     objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }> {
+    // @ts-ignore
+    const $objectSet =
+      $objectSetParameter ??
+      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: $DefaultStub.$Identifier = $resource.identifier;
     return purify.Either.of({ $identifier });
   }
@@ -292,6 +296,10 @@ export namespace UnionMember2 {
       optionalStringProperty: purify.Maybe<string>;
     }
   > {
+    // @ts-ignore
+    const $objectSet =
+      $objectSetParameter ??
+      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
       return $resource
         .value($RdfVocabularies.rdf.type)
@@ -478,6 +486,10 @@ export namespace UnionMember1 {
       optionalNumberProperty: purify.Maybe<number>;
     }
   > {
+    // @ts-ignore
+    const $objectSet =
+      $objectSetParameter ??
+      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
       return $resource
         .value($RdfVocabularies.rdf.type)
@@ -708,6 +720,10 @@ export namespace Nested {
       requiredStringProperty: string;
     }
   > {
+    // @ts-ignore
+    const $objectSet =
+      $objectSetParameter ??
+      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
       return $resource
         .value($RdfVocabularies.rdf.type)
@@ -934,6 +950,10 @@ export namespace ParentStatic {
     Error,
     { $identifier: rdfjs.NamedNode; parentStringProperty: purify.Maybe<string> }
   > {
+    // @ts-ignore
+    const $objectSet =
+      $objectSetParameter ??
+      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
       return $resource
         .value($RdfVocabularies.rdf.type)
@@ -1263,10 +1283,15 @@ export namespace Child {
       requiredStringProperty: string;
     } & $UnwrapR<ReturnType<typeof ParentStatic.$propertiesFromRdf>>
   > {
+    // @ts-ignore
+    const $objectSet =
+      $objectSetParameter ??
+      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $super0Either = ParentStatic.$propertiesFromRdf({
       ...$context,
       ignoreRdfType: true,
       languageIn: $languageIn,
+      objectSet: $objectSet,
       resource: $resource,
     });
     if ($super0Either.isLeft()) {
@@ -1287,9 +1312,6 @@ export namespace Child {
         );
     }
 
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if ($resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedValueError({
@@ -1334,6 +1356,7 @@ export namespace Child {
           ...$context,
           ignoreRdfType: true,
           languageIn: $languageIn,
+          objectSet: $objectSet,
           resource: _resource,
         }),
       )
@@ -1370,6 +1393,7 @@ export namespace Child {
           ...$context,
           ignoreRdfType: true,
           languageIn: $languageIn,
+          objectSet: $objectSet,
           resource: _resource,
         }),
       )
@@ -1472,24 +1496,28 @@ export type Union = UnionMember1 | UnionMember2;
 export namespace Union {
   export function $fromRdf({
     ignoreRdfType,
+    objectSet,
     resource,
     ...context
   }: {
     [_index: string]: any;
     ignoreRdfType?: boolean;
+    objectSet?: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, Union> {
     return (
-      UnionMember1.$fromRdf({ ...context, resource }) as purify.Either<
-        Error,
-        Union
-      >
+      UnionMember1.$fromRdf({
+        ...context,
+        objectSet,
+        resource,
+      }) as purify.Either<Error, Union>
     ).altLazy(
       () =>
-        UnionMember2.$fromRdf({ ...context, resource }) as purify.Either<
-          Error,
-          Union
-        >,
+        UnionMember2.$fromRdf({
+          ...context,
+          objectSet,
+          resource,
+        }) as purify.Either<Error, Union>,
     );
   }
 
@@ -1972,6 +2000,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   >(
     objectType: {
       $fromRdf: (parameters: {
+        objectSet: $ObjectSet;
         resource: rdfjsResource.Resource;
       }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
@@ -1989,6 +2018,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   >(
     objectType: {
       $fromRdf: (parameters: {
+        objectSet: $ObjectSet;
         resource: rdfjsResource.Resource;
       }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
@@ -2046,6 +2076,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       const objects: ObjectT[] = [];
       for (const identifier of identifiers) {
         const either = objectType.$fromRdf({
+          objectSet: this,
           resource: this.resourceSet.resource(identifier),
         });
         if (either.isLeft()) {
@@ -2071,7 +2102,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     const objects: ObjectT[] = [];
     let objectI = 0;
     for (const resource of resources) {
-      const either = objectType.$fromRdf({ resource });
+      const either = objectType.$fromRdf({ objectSet: this, resource });
       if (either.isLeft()) {
         return either;
       }
@@ -2091,6 +2122,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   >(
     objectType: {
       $fromRdf: (parameters: {
+        objectSet: $ObjectSet;
         resource: rdfjsResource.Resource;
       }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
@@ -2108,6 +2140,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   >(
     objectTypes: readonly {
       $fromRdf: (parameters: {
+        objectSet: $ObjectSet;
         resource: rdfjsResource.Resource;
       }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
@@ -2126,6 +2159,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   >(
     objectTypes: readonly {
       $fromRdf: (parameters: {
+        objectSet: $ObjectSet;
         resource: rdfjsResource.Resource;
       }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
@@ -2185,7 +2219,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         const resource = this.resourceSet.resource(identifier);
         const lefts: purify.Either<Error, ObjectT>[] = [];
         for (const objectType of objectTypes) {
-          const either = objectType.$fromRdf({ resource });
+          const either = objectType.$fromRdf({ objectSet: this, resource });
           if (either.isRight()) {
             objects.push(either.unsafeCoerce());
             break;
@@ -2206,6 +2240,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     const resources: {
       objectType: {
         $fromRdf: (parameters: {
+          objectSet: $ObjectSet;
           resource: rdfjsResource.Resource;
         }) => purify.Either<Error, ObjectT>;
         $fromRdfType?: rdfjs.NamedNode;
@@ -2234,7 +2269,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     let objectI = 0;
     const objects: ObjectT[] = [];
     for (const { objectType, resource } of resources) {
-      const either = objectType.$fromRdf({ resource });
+      const either = objectType.$fromRdf({ objectSet: this, resource });
       if (either.isLeft()) {
         return either;
       }
@@ -2254,6 +2289,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   >(
     objectTypes: readonly {
       $fromRdf: (parameters: {
+        objectSet: $ObjectSet;
         resource: rdfjsResource.Resource;
       }) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
