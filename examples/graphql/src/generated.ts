@@ -1,6 +1,6 @@
 import type * as rdfjs from "@rdfjs/types";
 import * as graphql from "graphql";
-import { DataFactory as dataFactory } from "n3";
+import N3, { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
 import * as rdfjsResource from "rdfjs-resource";
 export namespace $RdfVocabularies {
@@ -97,18 +97,22 @@ export class $DefaultStub {
     }
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    return _resource;
+    return resource;
   }
 }
 
@@ -226,30 +230,34 @@ export class UnionMember2 {
     return this._$identifier;
   }
 
-  $toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
     if (!ignoreRdfType) {
-      _resource.add(
+      resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode("http://example.com/UnionMember2"),
+        resource.dataFactory.namedNode("http://example.com/UnionMember2"),
       );
     }
 
-    _resource.add(
+    resource.add(
       UnionMember2.$properties.optionalStringProperty["identifier"],
       this.optionalStringProperty,
     );
-    return _resource;
+    return resource;
   }
 }
 
@@ -432,30 +440,34 @@ export class UnionMember1 {
     return this._$identifier;
   }
 
-  $toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
     if (!ignoreRdfType) {
-      _resource.add(
+      resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode("http://example.com/UnionMember1"),
+        resource.dataFactory.namedNode("http://example.com/UnionMember1"),
       );
     }
 
-    _resource.add(
+    resource.add(
       UnionMember1.$properties.optionalNumberProperty["identifier"],
       this.optionalNumberProperty,
     );
-    return _resource;
+    return resource;
   }
 }
 
@@ -663,38 +675,42 @@ export class Nested {
     return this._$identifier;
   }
 
-  $toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
     if (!ignoreRdfType) {
-      _resource.add(
+      resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode("http://example.com/Nested"),
+        resource.dataFactory.namedNode("http://example.com/Nested"),
       );
     }
 
-    _resource.add(
+    resource.add(
       UnionMember1.$properties.optionalNumberProperty["identifier"],
       this.optionalNumberProperty,
     );
-    _resource.add(
+    resource.add(
       UnionMember2.$properties.optionalStringProperty["identifier"],
       this.optionalStringProperty,
     );
-    _resource.add(
+    resource.add(
       Nested.$properties.requiredStringProperty["identifier"],
       this.requiredStringProperty,
     );
-    return _resource;
+    return resource;
   }
 }
 
@@ -927,30 +943,34 @@ export class Parent {
     }
   }
 
-  $toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
-    const _resource = resourceSet.mutableNamedResource(this.$identifier, {
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableNamedResource(this.$identifier, {
       mutateGraph,
     });
     if (!ignoreRdfType) {
-      _resource.add(
+      resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode("http://example.com/Parent"),
+        resource.dataFactory.namedNode("http://example.com/Parent"),
       );
     }
 
-    _resource.add(
+    resource.add(
       ParentStatic.$properties.parentStringProperty["identifier"],
       this.parentStringProperty,
     );
-    return _resource;
+    return resource;
   }
 }
 
@@ -1243,52 +1263,56 @@ export class Child extends Parent {
     this.requiredStringProperty = parameters.requiredStringProperty;
   }
 
-  override $toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
+  override $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
-    const _resource = super.$toRdf({
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = super.$toRdf({
       ignoreRdfType: true,
       mutateGraph,
       resourceSet,
     });
     if (!ignoreRdfType) {
-      _resource.add(
+      resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode("http://example.com/Child"),
+        resource.dataFactory.namedNode("http://example.com/Child"),
       );
     }
 
-    _resource.add(
+    resource.add(
       Child.$properties.childStringProperty["identifier"],
       this.childStringProperty,
     );
-    _resource.add(
+    resource.add(
       Child.$properties.optionalLazyObjectProperty["identifier"],
       this.optionalLazyObjectProperty.stub.map((value) =>
         value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
-    _resource.add(
+    resource.add(
       Child.$properties.optionalObjectProperty["identifier"],
       this.optionalObjectProperty.map((value) =>
         value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
-    _resource.add(
+    resource.add(
       UnionMember2.$properties.optionalStringProperty["identifier"],
       this.optionalStringProperty,
     );
-    _resource.add(
+    resource.add(
       Nested.$properties.requiredStringProperty["identifier"],
       this.requiredStringProperty,
     );
-    return _resource;
+    return resource;
   }
 }
 

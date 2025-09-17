@@ -8,7 +8,6 @@ import Typography from "@mui/material/Typography";
 import * as N3 from "n3";
 const dataFactory = N3.DataFactory;
 import { NonEmptyList } from "purify-ts";
-import { MutableResourceSet } from "rdfjs-resource";
 import { type FC, useMemo, useState } from "react";
 import * as generated from "./generated.js";
 
@@ -66,16 +65,8 @@ const App: FC = () => {
       generated.FormNodeShape.$fromJson(data)
         .mapLeft((error) => error.toString())
         .map((instance) => {
-          const store = new N3.Store();
-          generated.FormNodeShape.$toRdf(instance, {
-            mutateGraph: dataFactory.defaultGraph(),
-            resourceSet: new MutableResourceSet({
-              dataFactory,
-              dataset: store,
-            }),
-          });
           return new N3.Writer({ format: "N-Triples" }).quadsToString([
-            ...store,
+            ...generated.FormNodeShape.$toRdf(instance).dataset,
           ]);
         })
         .extract(),

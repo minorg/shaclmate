@@ -18,9 +18,26 @@ export function toRdfFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
 
   this.ensureAtMostOneSuperObjectType();
 
+  const parameters: OptionalKind<ParameterDeclarationStructure>[] = [];
+  if (this.declarationType === "interface") {
+    parameters.push({
+      name: this.thisVariable,
+      type: this.name,
+    });
+  }
+  parameters.push({
+    hasQuestionToken: true,
+    name: "options",
+    type: `{ ${variables.ignoreRdfType}?: boolean; ${variables.mutateGraph}?: rdfjsResource.MutableResource.MutateGraph, ${variables.resourceSet}?: rdfjsResource.MutableResourceSet }`,
+  });
+
   let usedIgnoreRdfTypeVariable = false;
 
-  const statements: string[] = [];
+  const statements: string[] = [
+    `const ${variables.mutateGraph} = options?.${variables.mutateGraph};`,
+    `const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new rdfjsResource.MutableResourceSet({ dataFactory, dataset: new N3.Store() });`,
+  ];
+
   if (this.parentObjectTypes.length > 0) {
     const superToRdfOptions = `{ ${variables.ignoreRdfType}: true, ${variables.mutateGraph}, ${variables.resourceSet} }`;
     let superToRdfCall: string;
@@ -64,17 +81,11 @@ export function toRdfFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
 
   statements.push(`return ${variables.resource};`);
 
-  const parameters: OptionalKind<ParameterDeclarationStructure>[] = [];
-  if (this.declarationType === "interface") {
-    parameters.push({
-      name: this.thisVariable,
-      type: this.name,
-    });
+  if (usedIgnoreRdfTypeVariable) {
+    statements.unshift(
+      `const ${variables.ignoreRdfType} = !!options?.ignoreRdfType;`,
+    );
   }
-  parameters.push({
-    name: `{ ${usedIgnoreRdfTypeVariable ? `${variables.ignoreRdfType}, ` : ""}${variables.mutateGraph}, ${variables.resourceSet} }`,
-    type: `{ ${variables.ignoreRdfType}?: boolean; ${variables.mutateGraph}?: rdfjsResource.MutableResource.MutateGraph, ${variables.resourceSet}: rdfjsResource.MutableResourceSet }`,
-  });
 
   return Maybe.of({
     name: `${syntheticNamePrefix}toRdf`,
@@ -87,6 +98,6 @@ export function toRdfFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
 const variables = {
   ignoreRdfType: "ignoreRdfType",
   mutateGraph: "mutateGraph",
-  resource: "_resource",
+  resource: "resource",
   resourceSet: "resourceSet",
 };

@@ -1,5 +1,5 @@
 import type * as rdfjs from "@rdfjs/types";
-import { DataFactory as dataFactory } from "n3";
+import N3, { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
 import * as rdfjsResource from "rdfjs-resource";
 import { z as zod } from "zod";
@@ -493,24 +493,27 @@ export namespace NestedNodeShape {
 
   export function $toRdf(
     _nestedNodeShape: NestedNodeShape,
-    {
-      mutateGraph,
-      resourceSet,
-    }: {
+    options?: {
       ignoreRdfType?: boolean;
       mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(
-      _nestedNodeShape.$identifier,
-      { mutateGraph },
-    );
-    _resource.add(
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(_nestedNodeShape.$identifier, {
+      mutateGraph,
+    });
+    resource.add(
       NestedNodeShape.$properties.requiredStringProperty["identifier"],
       _nestedNodeShape.requiredStringProperty,
     );
-    return _resource;
+    return resource;
   }
 
   export const $properties = {
@@ -1107,46 +1110,50 @@ export namespace FormNodeShape {
 
   export function $toRdf(
     _formNodeShape: FormNodeShape,
-    {
-      mutateGraph,
-      resourceSet,
-    }: {
+    options?: {
       ignoreRdfType?: boolean;
       mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(_formNodeShape.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(_formNodeShape.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       FormNodeShape.$properties.emptyStringSetProperty["identifier"],
       _formNodeShape.emptyStringSetProperty.map((item) => item),
     );
-    _resource.add(
+    resource.add(
       FormNodeShape.$properties.nestedObjectProperty["identifier"],
       NestedNodeShape.$toRdf(_formNodeShape.nestedObjectProperty, {
         mutateGraph: mutateGraph,
         resourceSet: resourceSet,
       }),
     );
-    _resource.add(
+    resource.add(
       FormNodeShape.$properties.nonEmptyStringSetProperty["identifier"],
       _formNodeShape.nonEmptyStringSetProperty.map((item) => item),
     );
-    _resource.add(
+    resource.add(
       FormNodeShape.$properties.optionalStringProperty["identifier"],
       _formNodeShape.optionalStringProperty,
     );
-    _resource.add(
+    resource.add(
       FormNodeShape.$properties.requiredIntegerProperty["identifier"],
       _formNodeShape.requiredIntegerProperty,
     );
-    _resource.add(
+    resource.add(
       FormNodeShape.$properties.requiredStringProperty["identifier"],
       _formNodeShape.requiredStringProperty,
     );
-    return _resource;
+    return resource;
   }
 
   export const $properties = {

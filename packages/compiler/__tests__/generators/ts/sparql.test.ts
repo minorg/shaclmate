@@ -13,14 +13,7 @@ describe("sparql", () => {
     }
 
     it(`SPARQL: ${id}`, async ({ expect }) => {
-      const toRdfDataset = new N3.Store();
-      harness.toRdf({
-        resourceSet: new MutableResourceSet({
-          dataFactory,
-          dataset: toRdfDataset,
-        }),
-        mutateGraph: dataFactory.defaultGraph(),
-      });
+      const toRdfDataset = harness.toRdf().dataset;
       const toRdfQuads: Quad[] = [];
 
       const oxigraphStore = new oxigraph.Store();

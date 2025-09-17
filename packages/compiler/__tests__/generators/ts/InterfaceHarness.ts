@@ -13,9 +13,9 @@ export class InterfaceHarness<
 > extends Harness<T, IdentifierT> {
   readonly equals: (other: T) => $EqualsResult;
   readonly toJson: () => any;
-  readonly toRdf: (options: {
-    mutateGraph: MutableResource.MutateGraph;
-    resourceSet: MutableResourceSet;
+  readonly toRdf: (options?: {
+    mutateGraph?: MutableResource.MutateGraph;
+    resourceSet?: MutableResourceSet;
   }) => Resource<IdentifierT>;
 
   constructor(
