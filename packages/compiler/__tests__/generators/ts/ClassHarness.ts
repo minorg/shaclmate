@@ -12,7 +12,7 @@ export class ClassHarness<
     $equals: (other: T) => $EqualsResult;
     $identifier: IdentifierT;
     $toJson: () => any;
-    $toRdf: (options: {
+    $toRdf: (options?: {
       mutateGraph: MutableResource.MutateGraph;
       resourceSet: MutableResourceSet;
     }) => Resource<IdentifierT>;
@@ -27,7 +27,7 @@ export class ClassHarness<
     return this.instance.$toJson();
   }
 
-  override toRdf(options: {
+  override toRdf(options?: {
     mutateGraph: MutableResource.MutateGraph;
     resourceSet: MutableResourceSet;
   }): Resource<IdentifierT> {

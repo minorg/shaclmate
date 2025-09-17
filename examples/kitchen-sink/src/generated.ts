@@ -442,18 +442,22 @@ export class $NamedDefaultStub {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
-    const _resource = resourceSet.mutableNamedResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableNamedResource(this.$identifier, {
       mutateGraph,
     });
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -732,18 +736,22 @@ export class $DefaultStub {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -1059,22 +1067,26 @@ export class UuidV4IriClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
-    const _resource = resourceSet.mutableNamedResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableNamedResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       UuidV4IriClass.$properties.uuidV4IriProperty["identifier"],
       this.uuidV4IriProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -1718,24 +1730,28 @@ export class UnionPropertiesClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       UnionPropertiesClass.$properties.narrowLiteralsProperty["identifier"],
       this.narrowLiteralsProperty.map((value) =>
         typeof value === "string" ? value : value,
       ),
     );
-    _resource.add(
+    resource.add(
       UnionPropertiesClass.$properties.unrelatedTypesProperty["identifier"],
       this.unrelatedTypesProperty.map((value) =>
         typeof value === "object"
@@ -1743,15 +1759,15 @@ export class UnionPropertiesClass {
           : value,
       ),
     );
-    _resource.add(
+    resource.add(
       UnionPropertiesClass.$properties.widenedLiteralsProperty["identifier"],
       this.widenedLiteralsProperty,
     );
-    _resource.add(
+    resource.add(
       UnionPropertiesClass.$properties.widenedTermsProperty["identifier"],
       this.widenedTermsProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -1798,7 +1814,9 @@ export namespace UnionPropertiesClass {
         };
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2819,22 +2837,26 @@ export class TermPropertiesClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       TermPropertiesClass.$properties.booleanTermProperty["identifier"],
       this.booleanTermProperty,
     );
-    _resource.add(
+    resource.add(
       TermPropertiesClass.$properties.dateTermProperty["identifier"],
       this.dateTermProperty.map((value) =>
         rdfLiteral.toRdf(value, {
@@ -2843,7 +2865,7 @@ export class TermPropertiesClass {
         }),
       ),
     );
-    _resource.add(
+    resource.add(
       TermPropertiesClass.$properties.dateTimeTermProperty["identifier"],
       this.dateTimeTermProperty.map((value) =>
         rdfLiteral.toRdf(value, {
@@ -2852,27 +2874,27 @@ export class TermPropertiesClass {
         }),
       ),
     );
-    _resource.add(
+    resource.add(
       TermPropertiesClass.$properties.iriTermProperty["identifier"],
       this.iriTermProperty,
     );
-    _resource.add(
+    resource.add(
       TermPropertiesClass.$properties.literalTermProperty["identifier"],
       this.literalTermProperty,
     );
-    _resource.add(
+    resource.add(
       TermPropertiesClass.$properties.numberTermProperty["identifier"],
       this.numberTermProperty,
     );
-    _resource.add(
+    resource.add(
       TermPropertiesClass.$properties.stringTermProperty["identifier"],
       this.stringTermProperty,
     );
-    _resource.add(
+    resource.add(
       TermPropertiesClass.$properties.termProperty["identifier"],
       this.termProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -2923,7 +2945,9 @@ export namespace TermPropertiesClass {
         };
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3751,34 +3775,38 @@ export class StubClassUnionMember2 {
     );
   }
 
-  $toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
     if (!ignoreRdfType) {
-      _resource.add(
+      resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode(
+        resource.dataFactory.namedNode(
           "http://example.com/StubClassUnionMember2",
         ),
       );
     }
 
-    _resource.add(
+    resource.add(
       StubClassUnionMember2.$properties.lazilyResolvedStringProperty[
         "identifier"
       ],
       this.lazilyResolvedStringProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -3814,7 +3842,9 @@ export namespace StubClassUnionMember2 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4223,34 +4253,38 @@ export class StubClassUnionMember1 {
     );
   }
 
-  $toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
     if (!ignoreRdfType) {
-      _resource.add(
+      resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode(
+        resource.dataFactory.namedNode(
           "http://example.com/StubClassUnionMember1",
         ),
       );
     }
 
-    _resource.add(
+    resource.add(
       StubClassUnionMember1.$properties.lazilyResolvedStringProperty[
         "identifier"
       ],
       this.lazilyResolvedStringProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -4286,7 +4320,9 @@ export namespace StubClassUnionMember1 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4716,22 +4752,26 @@ export class Sha256IriClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
-    const _resource = resourceSet.mutableNamedResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableNamedResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       Sha256IriClass.$properties.sha256IriProperty["identifier"],
       this.sha256IriProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -5133,30 +5173,34 @@ export class PropertyVisibilitiesClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       PropertyVisibilitiesClass.$properties.privateProperty["identifier"],
       this.privateProperty,
     );
-    _resource.add(
+    resource.add(
       PropertyVisibilitiesClass.$properties.protectedProperty["identifier"],
       this.protectedProperty,
     );
-    _resource.add(
+    resource.add(
       PropertyVisibilitiesClass.$properties.publicProperty["identifier"],
       this.publicProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -5191,7 +5235,9 @@ export namespace PropertyVisibilitiesClass {
     readonly publicProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5708,42 +5754,46 @@ export class PropertyCardinalitiesClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
         "identifier"
       ],
       this.emptyStringSetProperty.map((item) => item),
     );
-    _resource.add(
+    resource.add(
       PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
         "identifier"
       ],
       this.nonEmptyStringSetProperty.map((item) => item),
     );
-    _resource.add(
+    resource.add(
       PropertyCardinalitiesClass.$properties.optionalStringProperty[
         "identifier"
       ],
       this.optionalStringProperty,
     );
-    _resource.add(
+    resource.add(
       PropertyCardinalitiesClass.$properties.requiredStringProperty[
         "identifier"
       ],
       this.requiredStringProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -5779,7 +5829,9 @@ export namespace PropertyCardinalitiesClass {
     readonly requiredStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6378,30 +6430,34 @@ export class OrderedPropertiesClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       OrderedPropertiesClass.$properties.orderedPropertyC["identifier"],
       this.orderedPropertyC,
     );
-    _resource.add(
+    resource.add(
       OrderedPropertiesClass.$properties.orderedPropertyB["identifier"],
       this.orderedPropertyB,
     );
-    _resource.add(
+    resource.add(
       OrderedPropertiesClass.$properties.orderedPropertyA["identifier"],
       this.orderedPropertyA,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -6436,7 +6492,9 @@ export namespace OrderedPropertiesClass {
     readonly orderedPropertyA: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6854,22 +6912,26 @@ export class NonClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       NonClass.$properties.nonClassProperty["identifier"],
       this.nonClassProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -7329,18 +7391,22 @@ export class MutablePropertiesClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       MutablePropertiesClass.$properties.mutableListProperty["identifier"],
       this.mutableListProperty.map((value) =>
         value.length > 0
@@ -7390,15 +7456,15 @@ export class MutablePropertiesClass {
           : $RdfVocabularies.rdf.nil,
       ),
     );
-    _resource.add(
+    resource.add(
       MutablePropertiesClass.$properties.mutableSetProperty["identifier"],
       this.mutableSetProperty.map((item) => item),
     );
-    _resource.add(
+    resource.add(
       MutablePropertiesClass.$properties.mutableStringProperty["identifier"],
       this.mutableStringProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -7433,7 +7499,9 @@ export namespace MutablePropertiesClass {
     readonly mutableStringProperty?: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8111,18 +8179,22 @@ export class ListPropertiesClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       ListPropertiesClass.$properties.objectListProperty["identifier"],
       this.objectListProperty.map((value) =>
         value.length > 0
@@ -8178,7 +8250,7 @@ export class ListPropertiesClass {
           : $RdfVocabularies.rdf.nil,
       ),
     );
-    _resource.add(
+    resource.add(
       ListPropertiesClass.$properties.stringListProperty["identifier"],
       this.stringListProperty.map((value) =>
         value.length > 0
@@ -8228,7 +8300,7 @@ export class ListPropertiesClass {
           : $RdfVocabularies.rdf.nil,
       ),
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -8262,7 +8334,9 @@ export namespace ListPropertiesClass {
     readonly stringListProperty?: readonly string[];
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8974,22 +9048,26 @@ export class StubClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       StubClass.$properties.lazilyResolvedStringProperty["identifier"],
       this.lazilyResolvedStringProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -9022,7 +9100,9 @@ export namespace StubClass {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -10161,18 +10241,22 @@ export class LazyPropertiesClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       LazyPropertiesClass.$properties.optionalLazyToResolvedClassProperty[
         "identifier"
       ],
@@ -10180,7 +10264,7 @@ export class LazyPropertiesClass {
         value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
-    _resource.add(
+    resource.add(
       LazyPropertiesClass.$properties.optionalLazyToResolvedClassUnionProperty[
         "identifier"
       ],
@@ -10188,7 +10272,7 @@ export class LazyPropertiesClass {
         value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
-    _resource.add(
+    resource.add(
       LazyPropertiesClass.$properties.optionalLazyToResolvedIriClassProperty[
         "identifier"
       ],
@@ -10196,7 +10280,7 @@ export class LazyPropertiesClass {
         value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
-    _resource.add(
+    resource.add(
       LazyPropertiesClass.$properties.optionalStubClassToResolvedClassProperty[
         "identifier"
       ],
@@ -10204,14 +10288,14 @@ export class LazyPropertiesClass {
         value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
-    _resource.add(
+    resource.add(
       LazyPropertiesClass.$properties
         .optionalStubClassToResolvedClassUnionProperty["identifier"],
       this.optionalStubClassToResolvedClassUnionProperty.stub.map((value) =>
         value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
-    _resource.add(
+    resource.add(
       LazyPropertiesClass.$properties
         .optionalStubClassUnionToResolvedClassUnionProperty["identifier"],
       this.optionalStubClassUnionToResolvedClassUnionProperty.stub.map(
@@ -10219,7 +10303,7 @@ export class LazyPropertiesClass {
           value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
-    _resource.add(
+    resource.add(
       LazyPropertiesClass.$properties.requiredLazyToResolvedClassProperty[
         "identifier"
       ],
@@ -10228,7 +10312,7 @@ export class LazyPropertiesClass {
         resourceSet: resourceSet,
       }),
     );
-    _resource.add(
+    resource.add(
       LazyPropertiesClass.$properties.requiredStubClassToResolvedClassProperty[
         "identifier"
       ],
@@ -10237,7 +10321,7 @@ export class LazyPropertiesClass {
         resourceSet: resourceSet,
       }),
     );
-    _resource.add(
+    resource.add(
       LazyPropertiesClass.$properties.setLazyToResolvedClassProperty[
         "identifier"
       ],
@@ -10245,7 +10329,7 @@ export class LazyPropertiesClass {
         item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
-    _resource.add(
+    resource.add(
       LazyPropertiesClass.$properties.setStubClassToResolvedClassProperty[
         "identifier"
       ],
@@ -10253,7 +10337,7 @@ export class LazyPropertiesClass {
         item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -10297,7 +10381,9 @@ export namespace LazyPropertiesClass {
     readonly setStubClassToResolvedClassProperty?: readonly StubClass.$Json[];
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -11861,24 +11947,28 @@ export class LazilyResolvedIriClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
-    const _resource = resourceSet.mutableNamedResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableNamedResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       LazilyResolvedIriClass.$properties.lazilyResolvedStringProperty[
         "identifier"
       ],
       this.lazilyResolvedStringProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -12267,34 +12357,38 @@ export class LazilyResolvedClassUnionMember2 {
     );
   }
 
-  $toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
     if (!ignoreRdfType) {
-      _resource.add(
+      resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode(
+        resource.dataFactory.namedNode(
           "http://example.com/LazilyResolvedClassUnionMember2",
         ),
       );
     }
 
-    _resource.add(
+    resource.add(
       LazilyResolvedClassUnionMember2.$properties.lazilyResolvedStringProperty[
         "identifier"
       ],
       this.lazilyResolvedStringProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -12330,7 +12424,9 @@ export namespace LazilyResolvedClassUnionMember2 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12743,34 +12839,38 @@ export class LazilyResolvedClassUnionMember1 {
     );
   }
 
-  $toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
     if (!ignoreRdfType) {
-      _resource.add(
+      resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode(
+        resource.dataFactory.namedNode(
           "http://example.com/LazilyResolvedClassUnionMember1",
         ),
       );
     }
 
-    _resource.add(
+    resource.add(
       LazilyResolvedClassUnionMember1.$properties.lazilyResolvedStringProperty[
         "identifier"
       ],
       this.lazilyResolvedStringProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -12806,7 +12906,9 @@ export namespace LazilyResolvedClassUnionMember1 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13222,23 +13324,27 @@ export class LazilyResolvedBlankNodeOrIriClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       LazilyResolvedBlankNodeOrIriClass.$properties
         .lazilyResolvedStringProperty["identifier"],
       this.lazilyResolvedStringProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -13271,7 +13377,9 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13785,29 +13893,33 @@ export class LanguageInPropertiesClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       LanguageInPropertiesClass.$properties
         .languageInPropertiesLanguageInProperty["identifier"],
       this.languageInPropertiesLanguageInProperty,
     );
-    _resource.add(
+    resource.add(
       LanguageInPropertiesClass.$properties.languageInPropertiesLiteralProperty[
         "identifier"
       ],
       this.languageInPropertiesLiteralProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -13849,7 +13961,9 @@ export namespace LanguageInPropertiesClass {
     };
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14313,18 +14427,22 @@ export class IriClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
-    const _resource = resourceSet.mutableNamedResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableNamedResource(this.$identifier, {
       mutateGraph,
     });
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -14613,7 +14731,9 @@ export namespace InterfaceUnionMember2b {
     readonly interfaceUnionMember2bProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14807,26 +14927,30 @@ export namespace InterfaceUnionMember2b {
 
   export function $toRdf(
     _interfaceUnionMember2b: InterfaceUnionMember2b,
-    {
-      mutateGraph,
-      resourceSet,
-    }: {
+    options?: {
       ignoreRdfType?: boolean;
       mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(
       _interfaceUnionMember2b.$identifier,
       { mutateGraph },
     );
-    _resource.add(
+    resource.add(
       InterfaceUnionMember2b.$properties.interfaceUnionMember2bProperty[
         "identifier"
       ],
       _interfaceUnionMember2b.interfaceUnionMember2bProperty,
     );
-    return _resource;
+    return resource;
   }
 
   export const $properties = {
@@ -15031,7 +15155,9 @@ export namespace InterfaceUnionMember2a {
     readonly interfaceUnionMember2aProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15225,26 +15351,30 @@ export namespace InterfaceUnionMember2a {
 
   export function $toRdf(
     _interfaceUnionMember2a: InterfaceUnionMember2a,
-    {
-      mutateGraph,
-      resourceSet,
-    }: {
+    options?: {
       ignoreRdfType?: boolean;
       mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(
       _interfaceUnionMember2a.$identifier,
       { mutateGraph },
     );
-    _resource.add(
+    resource.add(
       InterfaceUnionMember2a.$properties.interfaceUnionMember2aProperty[
         "identifier"
       ],
       _interfaceUnionMember2a.interfaceUnionMember2aProperty,
     );
-    return _resource;
+    return resource;
   }
 
   export const $properties = {
@@ -15449,7 +15579,9 @@ export namespace InterfaceUnionMember1 {
     readonly interfaceUnionMember1Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15633,26 +15765,30 @@ export namespace InterfaceUnionMember1 {
 
   export function $toRdf(
     _interfaceUnionMember1: InterfaceUnionMember1,
-    {
-      mutateGraph,
-      resourceSet,
-    }: {
+    options?: {
       ignoreRdfType?: boolean;
       mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(
       _interfaceUnionMember1.$identifier,
       { mutateGraph },
     );
-    _resource.add(
+    resource.add(
       InterfaceUnionMember1.$properties.interfaceUnionMember1Property[
         "identifier"
       ],
       _interfaceUnionMember1.interfaceUnionMember1Property,
     );
-    return _resource;
+    return resource;
   }
 
   export const $properties = {
@@ -15855,7 +15991,9 @@ export namespace Interface {
     readonly interfaceProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16023,23 +16161,27 @@ export namespace Interface {
 
   export function $toRdf(
     _interface: Interface,
-    {
-      mutateGraph,
-      resourceSet,
-    }: {
+    options?: {
       ignoreRdfType?: boolean;
       mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(_interface.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(_interface.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       Interface.$properties.interfaceProperty["identifier"],
       _interface.interfaceProperty,
     );
-    return _resource;
+    return resource;
   }
 
   export const $properties = {
@@ -16252,18 +16394,22 @@ export class IndirectRecursiveHelperClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       IndirectRecursiveHelperClass.$properties.indirectRecursiveProperty[
         "identifier"
       ],
@@ -16271,7 +16417,7 @@ export class IndirectRecursiveHelperClass {
         value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -16304,7 +16450,9 @@ export namespace IndirectRecursiveHelperClass {
     readonly indirectRecursiveProperty?: IndirectRecursiveClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16722,18 +16870,22 @@ export class IndirectRecursiveClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       IndirectRecursiveClass.$properties.indirectRecursiveHelperProperty[
         "identifier"
       ],
@@ -16741,7 +16893,7 @@ export class IndirectRecursiveClass {
         value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -16774,7 +16926,9 @@ export namespace IndirectRecursiveClass {
     readonly indirectRecursiveHelperProperty?: IndirectRecursiveHelperClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17249,22 +17403,26 @@ export class InPropertiesClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       InPropertiesClass.$properties.inBooleansProperty["identifier"],
       this.inBooleansProperty,
     );
-    _resource.add(
+    resource.add(
       InPropertiesClass.$properties.inDateTimesProperty["identifier"],
       this.inDateTimesProperty.map((value) =>
         rdfLiteral.toRdf(value, {
@@ -17273,19 +17431,19 @@ export class InPropertiesClass {
         }),
       ),
     );
-    _resource.add(
+    resource.add(
       InPropertiesClass.$properties.inIrisProperty["identifier"],
       this.inIrisProperty,
     );
-    _resource.add(
+    resource.add(
       InPropertiesClass.$properties.inNumbersProperty["identifier"],
       this.inNumbersProperty,
     );
-    _resource.add(
+    resource.add(
       InPropertiesClass.$properties.inStringsProperty["identifier"],
       this.inStringsProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -17326,7 +17484,9 @@ export namespace InPropertiesClass {
     readonly inStringsProperty?: "text" | "html";
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17515,21 +17675,23 @@ export namespace InPropertiesClass {
       .values($properties.inBooleansProperty["identifier"], { unique: true })
       .head()
       .chain((value) =>
-        value.toBoolean().chain((value) =>
-          value === true
-            ? purify.Either.of<Error, true>(value)
-            : purify.Left<Error, true>(
-                new rdfjsResource.Resource.MistypedValueError({
-                  actualValue: rdfLiteral.toRdf(value),
-                  expectedValueType: "true",
-                  focusResource: $resource,
-                  predicate:
-                    InPropertiesClass.$properties.inBooleansProperty[
-                      "identifier"
-                    ],
-                }),
-              ),
-        ),
+        value
+          .toBoolean()
+          .chain((value) =>
+            value === true
+              ? purify.Either.of<Error, true>(value)
+              : purify.Left<Error, true>(
+                  new rdfjsResource.Resource.MistypedValueError({
+                    actualValue: rdfLiteral.toRdf(value),
+                    expectedValueType: "true",
+                    focusResource: $resource,
+                    predicate:
+                      InPropertiesClass.$properties.inBooleansProperty[
+                        "identifier"
+                      ],
+                  }),
+                ),
+          ),
       )
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
@@ -18053,22 +18215,26 @@ export class InIdentifierClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
-    const _resource = resourceSet.mutableNamedResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableNamedResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       InIdentifierClass.$properties.inIdentifierProperty["identifier"],
       this.inIdentifierProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -18139,7 +18305,9 @@ export namespace InIdentifierClass {
     readonly inIdentifierProperty?: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.NamedNode<
@@ -18576,26 +18744,30 @@ export class HasValuePropertiesClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       HasValuePropertiesClass.$properties.hasIriValueProperty["identifier"],
       this.hasIriValueProperty,
     );
-    _resource.add(
+    resource.add(
       HasValuePropertiesClass.$properties.hasLiteralValueProperty["identifier"],
       this.hasLiteralValueProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -18629,7 +18801,9 @@ export namespace HasValuePropertiesClass {
     readonly hasLiteralValueProperty?: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19089,24 +19263,28 @@ export class ExternClassPropertyClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       ExternClassPropertyClass.$properties.externClassProperty["identifier"],
       this.externClassProperty.map((value) =>
         value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -19139,7 +19317,9 @@ export namespace ExternClassPropertyClass {
     readonly externClassProperty?: ExternClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19522,30 +19702,34 @@ export class ExplicitRdfTypeClass {
     );
   }
 
-  $toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
     if (!ignoreRdfType) {
-      _resource.add(
+      resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode("http://example.com/RdfType"),
+        resource.dataFactory.namedNode("http://example.com/RdfType"),
       );
     }
 
-    _resource.add(
+    resource.add(
       ExplicitRdfTypeClass.$properties.explicitRdfTypeProperty["identifier"],
       this.explicitRdfTypeProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -19581,7 +19765,9 @@ export namespace ExplicitRdfTypeClass {
     readonly explicitRdfTypeProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19992,36 +20178,40 @@ export class ExplicitFromToRdfTypesClass {
     );
   }
 
-  $toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
     if (!ignoreRdfType) {
-      _resource.add(
+      resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode("http://example.com/ToRdfType"),
+        resource.dataFactory.namedNode("http://example.com/ToRdfType"),
       );
-      _resource.add(
+      resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode("http://example.com/FromRdfType"),
+        resource.dataFactory.namedNode("http://example.com/FromRdfType"),
       );
     }
 
-    _resource.add(
+    resource.add(
       ExplicitFromToRdfTypesClass.$properties.explicitFromToRdfTypesProperty[
         "identifier"
       ],
       this.explicitFromToRdfTypesProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -20057,7 +20247,9 @@ export namespace ExplicitFromToRdfTypesClass {
     readonly explicitFromToRdfTypesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -20492,24 +20684,28 @@ export class DirectRecursiveClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       DirectRecursiveClass.$properties.directRecursiveProperty["identifier"],
       this.directRecursiveProperty.map((value) =>
         value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
       ),
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -20542,7 +20738,9 @@ export namespace DirectRecursiveClass {
     readonly directRecursiveProperty?: DirectRecursiveClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -21030,18 +21228,22 @@ export class DefaultValuePropertiesClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       DefaultValuePropertiesClass.$properties.dateDefaultValueProperty[
         "identifier"
       ],
@@ -21052,7 +21254,7 @@ export class DefaultValuePropertiesClass {
           })
         : undefined,
     );
-    _resource.add(
+    resource.add(
       DefaultValuePropertiesClass.$properties.dateTimeDefaultValueProperty[
         "identifier"
       ],
@@ -21063,13 +21265,13 @@ export class DefaultValuePropertiesClass {
           })
         : undefined,
     );
-    _resource.add(
+    resource.add(
       DefaultValuePropertiesClass.$properties.falseBooleanDefaultValueProperty[
         "identifier"
       ],
       this.falseBooleanDefaultValueProperty ? true : undefined,
     );
-    _resource.add(
+    resource.add(
       DefaultValuePropertiesClass.$properties.numberDefaultValueProperty[
         "identifier"
       ],
@@ -21077,7 +21279,7 @@ export class DefaultValuePropertiesClass {
         ? this.numberDefaultValueProperty
         : undefined,
     );
-    _resource.add(
+    resource.add(
       DefaultValuePropertiesClass.$properties.stringDefaultValueProperty[
         "identifier"
       ],
@@ -21085,13 +21287,13 @@ export class DefaultValuePropertiesClass {
         ? this.stringDefaultValueProperty
         : undefined,
     );
-    _resource.add(
+    resource.add(
       DefaultValuePropertiesClass.$properties.trueBooleanDefaultValueProperty[
         "identifier"
       ],
       !this.trueBooleanDefaultValueProperty ? false : undefined,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -21129,7 +21331,9 @@ export namespace DefaultValuePropertiesClass {
     readonly trueBooleanDefaultValueProperty: boolean;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -21864,7 +22068,9 @@ export namespace BaseInterfaceWithPropertiesStatic {
     readonly baseInterfaceWithPropertiesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -22101,35 +22307,39 @@ export namespace BaseInterfaceWithPropertiesStatic {
 
   export function $toRdf(
     _baseInterfaceWithProperties: BaseInterfaceWithProperties,
-    {
-      ignoreRdfType,
-      mutateGraph,
-      resourceSet,
-    }: {
+    options?: {
       ignoreRdfType?: boolean;
       mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(
       _baseInterfaceWithProperties.$identifier,
       { mutateGraph },
     );
     if (!ignoreRdfType) {
-      _resource.add(
+      resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode(
+        resource.dataFactory.namedNode(
           "http://example.com/BaseInterfaceWithProperties",
         ),
       );
     }
 
-    _resource.add(
+    resource.add(
       BaseInterfaceWithPropertiesStatic.$properties
         .baseInterfaceWithPropertiesProperty["identifier"],
       _baseInterfaceWithProperties.baseInterfaceWithPropertiesProperty,
     );
-    return _resource;
+    return resource;
   }
 
   export const $properties = {
@@ -22349,7 +22559,9 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export const $Identifier = BaseInterfaceWithPropertiesStatic.$Identifier;
   export type $Json = BaseInterfaceWithPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -22556,30 +22768,34 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
 
   export function $toRdf(
     _baseInterfaceWithoutProperties: BaseInterfaceWithoutProperties,
-    {
-      ignoreRdfType,
-      mutateGraph,
-      resourceSet,
-    }: {
+    options?: {
       ignoreRdfType?: boolean;
       mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    const _resource = BaseInterfaceWithPropertiesStatic.$toRdf(
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = BaseInterfaceWithPropertiesStatic.$toRdf(
       _baseInterfaceWithoutProperties,
       { ignoreRdfType: true, mutateGraph, resourceSet },
     );
     if (!ignoreRdfType) {
-      _resource.add(
+      resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode(
+        resource.dataFactory.namedNode(
           "http://example.com/BaseInterfaceWithoutProperties",
         ),
       );
     }
 
-    return _resource;
+    return resource;
   }
 
   export const $properties = {
@@ -22794,7 +23010,9 @@ export namespace ConcreteParentInterfaceStatic {
     readonly concreteParentInterfaceProperty: string;
   } & BaseInterfaceWithoutPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -23029,36 +23247,40 @@ export namespace ConcreteParentInterfaceStatic {
 
   export function $toRdf(
     _concreteParentInterface: ConcreteParentInterface,
-    {
-      ignoreRdfType,
-      mutateGraph,
-      resourceSet,
-    }: {
+    options?: {
       ignoreRdfType?: boolean;
       mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    const _resource = BaseInterfaceWithoutPropertiesStatic.$toRdf(
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = BaseInterfaceWithoutPropertiesStatic.$toRdf(
       _concreteParentInterface,
       { ignoreRdfType: true, mutateGraph, resourceSet },
     );
     if (!ignoreRdfType) {
-      _resource.add(
+      resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode(
+        resource.dataFactory.namedNode(
           "http://example.com/ConcreteParentInterface",
         ),
       );
     }
 
-    _resource.add(
+    resource.add(
       ConcreteParentInterfaceStatic.$properties.concreteParentInterfaceProperty[
         "identifier"
       ],
       _concreteParentInterface.concreteParentInterfaceProperty,
     );
-    return _resource;
+    return resource;
   }
 
   export const $properties = {
@@ -23308,7 +23530,9 @@ export namespace ConcreteChildInterface {
     readonly concreteChildInterfaceProperty: string;
   } & ConcreteParentInterfaceStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -23525,36 +23749,40 @@ export namespace ConcreteChildInterface {
 
   export function $toRdf(
     _concreteChildInterface: ConcreteChildInterface,
-    {
-      ignoreRdfType,
-      mutateGraph,
-      resourceSet,
-    }: {
+    options?: {
       ignoreRdfType?: boolean;
       mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    const _resource = ConcreteParentInterfaceStatic.$toRdf(
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = ConcreteParentInterfaceStatic.$toRdf(
       _concreteChildInterface,
       { ignoreRdfType: true, mutateGraph, resourceSet },
     );
     if (!ignoreRdfType) {
-      _resource.add(
+      resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode(
+        resource.dataFactory.namedNode(
           "http://example.com/ConcreteChildInterface",
         ),
       );
     }
 
-    _resource.add(
+    resource.add(
       ConcreteChildInterface.$properties.concreteChildInterfaceProperty[
         "identifier"
       ],
       _concreteChildInterface.concreteChildInterfaceProperty,
     );
-    return _resource;
+    return resource;
   }
 
   export const $properties = {
@@ -23849,23 +24077,27 @@ export abstract class AbstractBaseClassWithProperties {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       AbstractBaseClassWithPropertiesStatic.$properties
         .abstractBaseClassWithPropertiesProperty["identifier"],
       this.abstractBaseClassWithPropertiesProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -23898,7 +24130,9 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     readonly abstractBaseClassWithPropertiesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -24184,20 +24418,24 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
       : `urn:shaclmate:${this.$type}:`;
   }
 
-  override $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  override $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = super.$toRdf({
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = super.$toRdf({
       ignoreRdfType: true,
       mutateGraph,
       resourceSet,
     });
-    return _resource;
+    return resource;
   }
 
   override toString(): string {
@@ -24481,18 +24719,20 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
   }
 
   override $equals(other: ConcreteParentClass): $EqualsResult {
-    return super.$equals(other).chain(() =>
-      $strictEquals(
-        this.concreteParentClassProperty,
-        other.concreteParentClassProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "concreteParentClassProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .$equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.concreteParentClassProperty,
+          other.concreteParentClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "concreteParentClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override $hash<
@@ -24523,36 +24763,40 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
     );
   }
 
-  override $toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
+  override $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = super.$toRdf({
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = super.$toRdf({
       ignoreRdfType: true,
       mutateGraph,
       resourceSet,
     });
     if (!ignoreRdfType) {
-      _resource.add(
+      resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode(
+        resource.dataFactory.namedNode(
           "http://example.com/ConcreteParentClass",
         ),
       );
     }
 
-    _resource.add(
+    resource.add(
       ConcreteParentClassStatic.$properties.concreteParentClassProperty[
         "identifier"
       ],
       this.concreteParentClassProperty,
     );
-    return _resource;
+    return resource;
   }
 
   override toString(): string {
@@ -24572,7 +24816,9 @@ export namespace ConcreteParentClassStatic {
     readonly concreteParentClassProperty: string;
   } & AbstractBaseClassWithoutPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -24974,18 +25220,20 @@ export class ConcreteChildClass extends ConcreteParentClass {
   }
 
   override $equals(other: ConcreteChildClass): $EqualsResult {
-    return super.$equals(other).chain(() =>
-      $strictEquals(
-        this.concreteChildClassProperty,
-        other.concreteChildClassProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "concreteChildClassProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .$equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.concreteChildClassProperty,
+          other.concreteChildClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "concreteChildClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override $hash<
@@ -25016,34 +25264,36 @@ export class ConcreteChildClass extends ConcreteParentClass {
     );
   }
 
-  override $toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
+  override $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = super.$toRdf({
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = super.$toRdf({
       ignoreRdfType: true,
       mutateGraph,
       resourceSet,
     });
     if (!ignoreRdfType) {
-      _resource.add(
+      resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode(
-          "http://example.com/ConcreteChildClass",
-        ),
+        resource.dataFactory.namedNode("http://example.com/ConcreteChildClass"),
       );
     }
 
-    _resource.add(
+    resource.add(
       ConcreteChildClass.$properties.concreteChildClassProperty["identifier"],
       this.concreteChildClassProperty,
     );
-    return _resource;
+    return resource;
   }
 
   override toString(): string {
@@ -25061,7 +25311,9 @@ export namespace ConcreteChildClass {
     readonly concreteChildClassProperty: string;
   } & ConcreteParentClassStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -25502,30 +25754,34 @@ export class ClassUnionMember2 {
     );
   }
 
-  $toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
     if (!ignoreRdfType) {
-      _resource.add(
+      resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode("http://example.com/ClassUnionMember2"),
+        resource.dataFactory.namedNode("http://example.com/ClassUnionMember2"),
       );
     }
 
-    _resource.add(
+    resource.add(
       ClassUnionMember2.$properties.classUnionMember2Property["identifier"],
       this.classUnionMember2Property,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -25561,7 +25817,9 @@ export namespace ClassUnionMember2 {
     readonly classUnionMember2Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -25963,30 +26221,34 @@ export class ClassUnionMember1 {
     );
   }
 
-  $toRdf({
-    ignoreRdfType,
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
     if (!ignoreRdfType) {
-      _resource.add(
+      resource.add(
         $RdfVocabularies.rdf.type,
-        _resource.dataFactory.namedNode("http://example.com/ClassUnionMember1"),
+        resource.dataFactory.namedNode("http://example.com/ClassUnionMember1"),
       );
     }
 
-    _resource.add(
+    resource.add(
       ClassUnionMember1.$properties.classUnionMember1Property["identifier"],
       this.classUnionMember1Property,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -26022,7 +26284,9 @@ export namespace ClassUnionMember1 {
     readonly classUnionMember1Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -26409,18 +26673,22 @@ export class BlankClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -26695,23 +26963,27 @@ export abstract class AbstractBaseClassForExternClass {
     );
   }
 
-  $toRdf({
-    mutateGraph,
-    resourceSet,
-  }: {
+  $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet: rdfjsResource.MutableResourceSet;
+    resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
-    const _resource = resourceSet.mutableResource(this.$identifier, {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: new N3.Store(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    _resource.add(
+    resource.add(
       AbstractBaseClassForExternClassStatic.$properties
         .abstractBaseClassForExternClassProperty["identifier"],
       this.abstractBaseClassForExternClassProperty,
     );
-    return _resource;
+    return resource;
   }
 
   toString(): string {
@@ -26744,7 +27016,9 @@ export namespace AbstractBaseClassForExternClassStatic {
     readonly abstractBaseClassForExternClassProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;

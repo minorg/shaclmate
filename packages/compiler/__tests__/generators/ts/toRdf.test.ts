@@ -1,7 +1,6 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
 
 import N3, { DataFactory as dataFactory } from "n3";
-import { MutableResourceSet } from "rdfjs-resource";
 import { describe, it } from "vitest";
 
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
@@ -9,13 +8,8 @@ import { harnesses } from "./harnesses.js";
 
 describe("toRdf", () => {
   it("should populate a dataset", ({ expect }) => {
-    const dataset = new N3.Store();
-    const resourceSet = new MutableResourceSet({ dataFactory, dataset });
-    const resource = harnesses.concreteChildClass.toRdf({
-      resourceSet,
-      mutateGraph: dataFactory.defaultGraph(),
-    });
-    expect(dataset.size).toStrictEqual(4);
+    const resource = harnesses.concreteChildClass.toRdf();
+    expect(resource.dataset.size).toStrictEqual(4);
     expect(
       resource.identifier.equals(
         harnesses.concreteChildClass.instance.$identifier,
@@ -40,27 +34,16 @@ describe("toRdf", () => {
   });
 
   it("should produce serializable RDF", ({ expect }) => {
-    const dataset = new N3.Store();
-    harnesses.nonClass.toRdf({
-      mutateGraph: dataFactory.defaultGraph(),
-      resourceSet: new MutableResourceSet({ dataFactory, dataset }),
-    });
+    const resource = harnesses.nonClass.toRdf();
     const ttl = new N3.Writer({ format: "text/turtle" }).quadsToString([
-      ...dataset,
+      ...resource.dataset,
     ]);
     expect(ttl).not.toHaveLength(0);
   });
 
   it("explicit rdfType", ({ expect }) => {
-    const dataset = new N3.Store();
-    const resource = harnesses.explicitRdfTypeClass.toRdf({
-      mutateGraph: dataFactory.defaultGraph(),
-      resourceSet: new MutableResourceSet({
-        dataFactory,
-        dataset,
-      }),
-    });
-    expect(dataset.size).toStrictEqual(2); // One rdf:type and the property
+    const resource = harnesses.explicitRdfTypeClass.toRdf();
+    expect(resource.dataset.size).toStrictEqual(2); // One rdf:type and the property
     expect(
       resource.isInstanceOf(
         dataFactory.namedNode("http://example.com/RdfType"),
@@ -78,15 +61,8 @@ describe("toRdf", () => {
   });
 
   it("explicit toRdfType", ({ expect }) => {
-    const dataset = new N3.Store();
-    const resource = harnesses.explicitFromToRdfTypesClass.toRdf({
-      mutateGraph: dataFactory.defaultGraph(),
-      resourceSet: new MutableResourceSet({
-        dataFactory,
-        dataset,
-      }),
-    });
-    expect(dataset.size).toStrictEqual(3); // Two RDF types and the property
+    const resource = harnesses.explicitFromToRdfTypesClass.toRdf();
+    expect(resource.dataset.size).toStrictEqual(3); // Two RDF types and the property
     expect(
       resource.isInstanceOf(
         dataFactory.namedNode("http://example.com/FromRdfType"),
@@ -109,21 +85,14 @@ describe("toRdf", () => {
   });
 
   it("should not serialize default values", ({ expect }) => {
-    const dataset = new N3.Store();
-    harnesses.defaultValuePropertiesClass.toRdf({
-      mutateGraph: dataFactory.defaultGraph(),
-      resourceSet: new MutableResourceSet({ dataFactory, dataset }),
-    });
-    expect(dataset.size).toStrictEqual(0);
+    const resource = harnesses.defaultValuePropertiesClass.toRdf();
+    expect(resource.dataset.size).toStrictEqual(0);
   });
 
   it("should serialize non-default values", ({ expect }) => {
-    const dataset = new N3.Store();
-    const resource = harnesses.defaultValuePropertiesOverriddenDifferent.toRdf({
-      mutateGraph: dataFactory.defaultGraph(),
-      resourceSet: new MutableResourceSet({ dataFactory, dataset }),
-    });
-    expect(dataset.size).toStrictEqual(4);
+    const resource =
+      harnesses.defaultValuePropertiesOverriddenDifferent.toRdf();
+    expect(resource.dataset.size).toStrictEqual(4);
     expect(
       resource
         .value(
