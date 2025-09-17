@@ -37,7 +37,7 @@ export function sparqlObjectSetClassDeclaration({
     constructObjectType: {
       name: "objectType",
       type: `{\
-  ${syntheticNamePrefix}fromRdf: (parameters: { objectSet: ${syntheticNamePrefix}ObjectSet, resource: rdfjsResource.Resource }) => purify.Either<Error, ${typeParameters.ObjectT.name}>;
+  ${syntheticNamePrefix}fromRdf: (resource: rdfjsResource.Resource, options: { objectSet: ${syntheticNamePrefix}ObjectSet }) => purify.Either<Error, ${typeParameters.ObjectT.name}>;
   ${syntheticNamePrefix}sparqlConstructQueryString: (parameters?: { subject?: sparqljs.Triple["subject"]; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> & sparqljs.GeneratorOptions) => string;
   ${syntheticNamePrefix}sparqlWherePatterns: ${sparqlWherePatternsFunctionType};
 }`,
@@ -281,10 +281,10 @@ try {
 const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
 const objects: ${typeParameters.ObjectT.name}[] = [];
 for (const identifier of identifiers) {
-  const objectEither = objectType.${syntheticNamePrefix}fromRdf({
-    objectSet: this,
-    resource: new rdfjsResource.Resource<rdfjs.NamedNode>({ dataset, identifier: identifier as rdfjs.NamedNode })
-  });
+  const objectEither = objectType.${syntheticNamePrefix}fromRdf(
+    new rdfjsResource.Resource<rdfjs.NamedNode>({ dataset, identifier: identifier as rdfjs.NamedNode }),
+    { objectSet: this }
+  );
   if (objectEither.isLeft()) {
     return objectEither;
   }

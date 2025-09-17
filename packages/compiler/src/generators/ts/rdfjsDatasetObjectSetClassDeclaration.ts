@@ -31,7 +31,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
     } satisfies OptionalKind<TypeParameterDeclarationStructure>,
   };
 
-  const fromRdfFunctionType = `(parameters: { objectSet: ${syntheticNamePrefix}ObjectSet, resource: rdfjsResource.Resource }) => purify.Either<Error, ${typeParameters.ObjectT.name}>`;
+  const fromRdfFunctionType = `(resource: rdfjsResource.Resource, options: { objectSet: ${syntheticNamePrefix}ObjectSet }) => purify.Either<Error, ${typeParameters.ObjectT.name}>`;
 
   const reusableMethodDeclarations: MethodDeclarationStructure[] = [];
   if (objectTypes.length > 0) {
@@ -106,7 +106,7 @@ if (query?.where) {
 
   const objects: ${typeParameters.ObjectT.name}[] = [];
   for (const identifier of identifiers) {
-    const either = objectType.${syntheticNamePrefix}fromRdf({ objectSet: this, resource: this.resourceSet.resource(identifier) });
+    const either = objectType.${syntheticNamePrefix}fromRdf(this.resourceSet.resource(identifier), { objectSet: this });
     if (either.isLeft()) {
       return either;
     }
@@ -126,7 +126,7 @@ resources.sort((left, right) => left.identifier.value.localeCompare(right.identi
 const objects: ${typeParameters.ObjectT.name}[] = [];
 let objectI = 0;
 for (const resource of resources) {
-  const either = objectType.${syntheticNamePrefix}fromRdf({ objectSet: this, resource });
+  const either = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
   if (either.isLeft()) {
     return either;
   }
@@ -238,7 +238,7 @@ if (query?.where) {
     const resource = this.resourceSet.resource(identifier);
     const lefts: purify.Either<Error, ${typeParameters.ObjectT.name}>[] = [];
     for (const objectType of objectTypes) {
-      const either = objectType.${syntheticNamePrefix}fromRdf({ objectSet: this, resource });
+      const either = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
       if (either.isRight()) {
         objects.push(either.unsafeCoerce());
         break;
@@ -270,7 +270,7 @@ resources.sort((left, right) => left.resource.identifier.value.localeCompare(rig
 let objectI = 0;
 const objects: ${typeParameters.ObjectT.name}[] = [];
 for (const { objectType, resource } of resources) {
-  const either = objectType.${syntheticNamePrefix}fromRdf({ objectSet: this, resource });
+  const either = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
   if (either.isLeft()) {
     return either;
   }

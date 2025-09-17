@@ -70,17 +70,16 @@ export namespace ExternClass {
     );
   }
 
-  export function $fromRdf({
-    extra,
-    resource,
-  }: {
-    extra?: number;
-    languageIn?: readonly string[];
-    ignoreRdfType?: boolean;
-    objectSet?: $ObjectSet;
-    resource: rdfjsResource.Resource;
-  }): Either<Error, ExternClass> {
-    if (extra !== 1) {
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      extra?: number;
+      languageIn?: readonly string[];
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+    },
+  ): Either<Error, ExternClass> {
+    if (options?.extra !== 1) {
       throw new Error("extra didn't come through");
     }
     return Either.of(new ExternClass(resource.identifier));

@@ -319,7 +319,9 @@ export namespace NestedNodeShape {
     readonly requiredStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -425,18 +427,46 @@ export namespace NestedNodeShape {
     return _hasher;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, NestedNodeShape> {
+    let {
+      ignoreRdfType = false,
+      languageIn = [],
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return NestedNodeShape.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    });
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    ignoreRdfType: boolean;
+    languageIn: readonly string[];
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -446,10 +476,6 @@ export namespace NestedNodeShape {
       requiredStringProperty: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: NestedNodeShape.$Identifier = $resource.identifier;
     const $type = "NestedNodeShape" as const;
     const _requiredStringPropertyEither: purify.Either<Error, string> =
@@ -465,12 +491,6 @@ export namespace NestedNodeShape {
 
     const requiredStringProperty = _requiredStringPropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, $type, requiredStringProperty });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof NestedNodeShape.$propertiesFromRdf>[0],
-  ): purify.Either<Error, NestedNodeShape> {
-    return NestedNodeShape.$propertiesFromRdf(parameters);
   }
 
   export function $toRdf(
@@ -721,7 +741,9 @@ export namespace FormNodeShape {
     readonly requiredStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -907,18 +929,46 @@ export namespace FormNodeShape {
     return _hasher;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, FormNodeShape> {
+    let {
+      ignoreRdfType = false,
+      languageIn = [],
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return FormNodeShape.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    });
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    ignoreRdfType: boolean;
+    languageIn: readonly string[];
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -933,10 +983,6 @@ export namespace FormNodeShape {
       requiredStringProperty: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: FormNodeShape.$Identifier = $resource.identifier;
     const $type = "FormNodeShape" as const;
     const _emptyStringSetPropertyEither: purify.Either<
@@ -966,13 +1012,12 @@ export namespace FormNodeShape {
         })
         .head()
         .chain((value) => value.toResource())
-        .chain((_resource) =>
-          NestedNodeShape.$fromRdf({
+        .chain((resource) =>
+          NestedNodeShape.$fromRdf(resource, {
             ...$context,
             ignoreRdfType: true,
             languageIn: $languageIn,
             objectSet: $objectSet,
-            resource: _resource,
           }),
         );
     if (_nestedObjectPropertyEither.isLeft()) {
@@ -1062,12 +1107,6 @@ export namespace FormNodeShape {
       requiredIntegerProperty,
       requiredStringProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof FormNodeShape.$propertiesFromRdf>[0],
-  ): purify.Either<Error, FormNodeShape> {
-    return FormNodeShape.$propertiesFromRdf(parameters);
   }
 
   export function $toRdf(
@@ -1326,10 +1365,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectType: {
-      $fromRdf: (parameters: {
-        objectSet: $ObjectSet;
-        resource: rdfjsResource.Resource;
-      }) => purify.Either<Error, ObjectT>;
+      $fromRdf: (
+        resource: rdfjsResource.Resource,
+        options: { objectSet: $ObjectSet },
+      ) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
@@ -1344,10 +1383,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectType: {
-      $fromRdf: (parameters: {
-        objectSet: $ObjectSet;
-        resource: rdfjsResource.Resource;
-      }) => purify.Either<Error, ObjectT>;
+      $fromRdf: (
+        resource: rdfjsResource.Resource,
+        options: { objectSet: $ObjectSet },
+      ) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
@@ -1402,10 +1441,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
       const objects: ObjectT[] = [];
       for (const identifier of identifiers) {
-        const either = objectType.$fromRdf({
-          objectSet: this,
-          resource: this.resourceSet.resource(identifier),
-        });
+        const either = objectType.$fromRdf(
+          this.resourceSet.resource(identifier),
+          { objectSet: this },
+        );
         if (either.isLeft()) {
           return either;
         }
@@ -1429,7 +1468,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     const objects: ObjectT[] = [];
     let objectI = 0;
     for (const resource of resources) {
-      const either = objectType.$fromRdf({ objectSet: this, resource });
+      const either = objectType.$fromRdf(resource, { objectSet: this });
       if (either.isLeft()) {
         return either;
       }
@@ -1448,10 +1487,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectType: {
-      $fromRdf: (parameters: {
-        objectSet: $ObjectSet;
-        resource: rdfjsResource.Resource;
-      }) => purify.Either<Error, ObjectT>;
+      $fromRdf: (
+        resource: rdfjsResource.Resource,
+        options: { objectSet: $ObjectSet },
+      ) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,

@@ -367,14 +367,19 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
       name: `${syntheticNamePrefix}fromRdf`,
       parameters: [
         {
-          name: "{ ignoreRdfType, objectSet, resource, ...context }",
-          type: `{ [_index: string]: any; ignoreRdfType?: boolean; objectSet?: ${syntheticNamePrefix}ObjectSet, resource: rdfjsResource.Resource; }`,
+          name: "resource",
+          type: "rdfjsResource.Resource",
+        },
+        {
+          hasQuestionToken: true,
+          name: "options",
+          type: `{ [_index: string]: any; ignoreRdfType?: boolean; languageIn?: readonly string[]; objectSet?: ${syntheticNamePrefix}ObjectSet }`,
         },
       ],
       returnType: `purify.Either<Error, ${this.name}>`,
       statements: [
         `return ${this.memberTypes.reduce((expression, memberType) => {
-          const memberTypeExpression = `(${memberType.staticModuleName}.${syntheticNamePrefix}fromRdf({ ...context, objectSet, resource }) as purify.Either<Error, ${this.name}>)`;
+          const memberTypeExpression = `(${memberType.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { ...options, ignoreRdfType: false }) as purify.Either<Error, ${this.name}>)`;
           return expression.length > 0
             ? `${expression}.altLazy(() => ${memberTypeExpression})`
             : memberTypeExpression;
@@ -677,7 +682,7 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
     variables,
   }: Parameters<Type["fromRdfExpression"]>[0]): string {
     // Don't ignoreRdfType, we may need it to distinguish the union members
-    return `${variables.resourceValues}.head().chain(value => value.toResource()).chain(_resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf({ ...${variables.context}, languageIn: ${variables.languageIn}, objectSet: ${variables.objectSet}, resource: _resource }))`;
+    return `${variables.resourceValues}.head().chain(value => value.toResource()).chain(resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { ...${variables.context}, ignoreRdfType: false, languageIn: ${variables.languageIn}, objectSet: ${variables.objectSet} }))`;
   }
 
   override graphqlResolveExpression({

@@ -40,17 +40,17 @@ describe("lazyProperties", () => {
     expectedLazilyResolvedIriObject.$toRdf({ resourceSet });
     expectedLazilyResolvedObjectUnion.$toRdf({ resourceSet });
 
-    emptyLazyPropertiesObject = kitchenSink.LazyPropertiesClass.$fromRdf({
-      resource: new kitchenSink.LazyPropertiesClass({
+    emptyLazyPropertiesObject = kitchenSink.LazyPropertiesClass.$fromRdf(
+      new kitchenSink.LazyPropertiesClass({
         requiredLazyToResolvedClassProperty:
           expectedLazilyResolvedBlankNodeOrIriObject,
         requiredStubClassToResolvedClassProperty:
           expectedLazilyResolvedBlankNodeOrIriObject,
       }).$toRdf({ resourceSet }),
-    }).unsafeCoerce();
+    ).unsafeCoerce();
 
-    nonEmptyLazyPropertiesObject = kitchenSink.LazyPropertiesClass.$fromRdf({
-      resource: new kitchenSink.LazyPropertiesClass({
+    nonEmptyLazyPropertiesObject = kitchenSink.LazyPropertiesClass.$fromRdf(
+      new kitchenSink.LazyPropertiesClass({
         optionalLazyToResolvedClassProperty:
           expectedLazilyResolvedBlankNodeOrIriObject,
         optionalLazyToResolvedClassUnionProperty:
@@ -82,7 +82,7 @@ describe("lazyProperties", () => {
           expectedLazilyResolvedBlankNodeOrIriObject,
         ],
       }).$toRdf({ resourceSet }),
-    }).unsafeCoerce();
+    ).unsafeCoerce();
   });
 
   for (const propertyNameString of Object.keys(
