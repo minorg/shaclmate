@@ -11,9 +11,9 @@ export class ClassUnionHarness<
   T extends {
     $identifier: IdentifierT;
     $toJson: () => any;
-    $toRdf: (options: {
-      mutateGraph: MutableResource.MutateGraph;
-      resourceSet: MutableResourceSet;
+    $toRdf: (options?: {
+      mutateGraph?: MutableResource.MutateGraph;
+      resourceSet?: MutableResourceSet;
     }) => Resource<IdentifierT>;
   },
   IdentifierT extends BlankNode | NamedNode,
@@ -37,9 +37,9 @@ export class ClassUnionHarness<
     return this.instance.$toJson();
   }
 
-  override toRdf(options: {
-    mutateGraph: MutableResource.MutateGraph;
-    resourceSet: MutableResourceSet;
+  override toRdf(options?: {
+    mutateGraph?: MutableResource.MutateGraph;
+    resourceSet?: MutableResourceSet;
   }): Resource<IdentifierT> {
     return this.instance.$toRdf(options);
   }
