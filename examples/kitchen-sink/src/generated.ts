@@ -547,24 +547,50 @@ export namespace $NamedDefaultStub {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, $NamedDefaultStub> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return $NamedDefaultStub
+      .$propertiesFromRdf({
+        ...context,
+        ignoreRdfType,
+        languageIn,
+        objectSet,
+        resource,
+      })
+      .map((properties) => new $NamedDefaultStub(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.NamedNode }> {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if ($resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedValueError({
@@ -578,14 +604,6 @@ export namespace $NamedDefaultStub {
 
     const $identifier: $NamedDefaultStub.$Identifier = $resource.identifier;
     return purify.Either.of({ $identifier });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof $NamedDefaultStub.$propertiesFromRdf>[0],
-  ): purify.Either<Error, $NamedDefaultStub> {
-    return $NamedDefaultStub
-      .$propertiesFromRdf(parameters)
-      .map((properties) => new $NamedDefaultStub(properties));
   }
 
   export const $properties = {};
@@ -820,34 +838,52 @@ export namespace $DefaultStub {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, $DefaultStub> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return $DefaultStub
+      .$propertiesFromRdf({
+        ...context,
+        ignoreRdfType,
+        languageIn,
+        objectSet,
+        resource,
+      })
+      .map((properties) => new $DefaultStub(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }> {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: $DefaultStub.$Identifier = $resource.identifier;
     return purify.Either.of({ $identifier });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof $DefaultStub.$propertiesFromRdf>[0],
-  ): purify.Either<Error, $DefaultStub> {
-    return $DefaultStub
-      .$propertiesFromRdf(parameters)
-      .map((properties) => new $DefaultStub(properties));
   }
 
   export const $properties = {};
@@ -1142,27 +1178,51 @@ export namespace UuidV4IriClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, UuidV4IriClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return UuidV4IriClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new UuidV4IriClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
     { $identifier: rdfjs.NamedNode; uuidV4IriProperty: string }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if ($resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedValueError({
@@ -1185,14 +1245,6 @@ export namespace UuidV4IriClass {
 
     const uuidV4IriProperty = _uuidV4IriPropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, uuidV4IriProperty });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof UuidV4IriClass.$propertiesFromRdf>[0],
-  ): purify.Either<Error, UuidV4IriClass> {
-    return UuidV4IriClass.$propertiesFromRdf(parameters).map(
-      (properties) => new UuidV4IriClass(properties),
-    );
   }
 
   export const $properties = {
@@ -1896,18 +1948,46 @@ export namespace UnionPropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, UnionPropertiesClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return UnionPropertiesClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new UnionPropertiesClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -1919,10 +1999,6 @@ export namespace UnionPropertiesClass {
       widenedTermsProperty: purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: UnionPropertiesClass.$Identifier = $resource.identifier;
     const _narrowLiteralsPropertyEither: purify.Either<
       Error,
@@ -1983,12 +2059,11 @@ export namespace UnionPropertiesClass {
             })
             .head()
             .chain((value) => value.toResource())
-            .chain((_resource) =>
-              NonClass.$fromRdf({
+            .chain((resource) =>
+              NonClass.$fromRdf(resource, {
                 ...$context,
                 languageIn: $languageIn,
                 objectSet: $objectSet,
-                resource: _resource,
               }),
             ) as purify.Either<Error, number | NonClass>,
       )
@@ -2087,14 +2162,6 @@ export namespace UnionPropertiesClass {
       widenedLiteralsProperty,
       widenedTermsProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof UnionPropertiesClass.$propertiesFromRdf>[0],
-  ): purify.Either<Error, UnionPropertiesClass> {
-    return UnionPropertiesClass.$propertiesFromRdf(parameters).map(
-      (properties) => new UnionPropertiesClass(properties),
-    );
   }
 
   export const $properties = {
@@ -3042,18 +3109,46 @@ export namespace TermPropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, TermPropertiesClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return TermPropertiesClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new TermPropertiesClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -3071,10 +3166,6 @@ export namespace TermPropertiesClass {
       >;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: TermPropertiesClass.$Identifier = $resource.identifier;
     const _booleanTermPropertyEither: purify.Either<
       Error,
@@ -3249,14 +3340,6 @@ export namespace TermPropertiesClass {
       stringTermProperty,
       termProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof TermPropertiesClass.$propertiesFromRdf>[0],
-  ): purify.Either<Error, TermPropertiesClass> {
-    return TermPropertiesClass.$propertiesFromRdf(parameters).map(
-      (properties) => new TermPropertiesClass(properties),
-    );
   }
 
   export const $properties = {
@@ -3802,18 +3885,46 @@ export namespace StubClassUnionMember2 {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, StubClassUnionMember2> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return StubClassUnionMember2.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new StubClassUnionMember2(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -3822,10 +3933,6 @@ export namespace StubClassUnionMember2 {
       lazilyResolvedStringProperty: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
       return $resource
         .value($RdfVocabularies.rdf.type)
@@ -3854,14 +3961,6 @@ export namespace StubClassUnionMember2 {
     const lazilyResolvedStringProperty =
       _lazilyResolvedStringPropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, lazilyResolvedStringProperty });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof StubClassUnionMember2.$propertiesFromRdf>[0],
-  ): purify.Either<Error, StubClassUnionMember2> {
-    return StubClassUnionMember2.$propertiesFromRdf(parameters).map(
-      (properties) => new StubClassUnionMember2(properties),
-    );
   }
 
   export const $properties = {
@@ -4258,18 +4357,46 @@ export namespace StubClassUnionMember1 {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, StubClassUnionMember1> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return StubClassUnionMember1.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new StubClassUnionMember1(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -4278,10 +4405,6 @@ export namespace StubClassUnionMember1 {
       lazilyResolvedStringProperty: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
       return $resource
         .value($RdfVocabularies.rdf.type)
@@ -4310,14 +4433,6 @@ export namespace StubClassUnionMember1 {
     const lazilyResolvedStringProperty =
       _lazilyResolvedStringPropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, lazilyResolvedStringProperty });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof StubClassUnionMember1.$propertiesFromRdf>[0],
-  ): purify.Either<Error, StubClassUnionMember1> {
-    return StubClassUnionMember1.$propertiesFromRdf(parameters).map(
-      (properties) => new StubClassUnionMember1(properties),
-    );
   }
 
   export const $properties = {
@@ -4720,27 +4835,51 @@ export namespace Sha256IriClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, Sha256IriClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return Sha256IriClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new Sha256IriClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
     { $identifier: rdfjs.NamedNode; sha256IriProperty: string }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if ($resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedValueError({
@@ -4763,14 +4902,6 @@ export namespace Sha256IriClass {
 
     const sha256IriProperty = _sha256IriPropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, sha256IriProperty });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof Sha256IriClass.$propertiesFromRdf>[0],
-  ): purify.Either<Error, Sha256IriClass> {
-    return Sha256IriClass.$propertiesFromRdf(parameters).map(
-      (properties) => new Sha256IriClass(properties),
-    );
   }
 
   export const $properties = {
@@ -5143,18 +5274,46 @@ export namespace PropertyVisibilitiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, PropertyVisibilitiesClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return PropertyVisibilitiesClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new PropertyVisibilitiesClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -5165,10 +5324,6 @@ export namespace PropertyVisibilitiesClass {
       publicProperty: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: PropertyVisibilitiesClass.$Identifier =
       $resource.identifier;
     const _privatePropertyEither: purify.Either<Error, string> = $resource
@@ -5204,16 +5359,6 @@ export namespace PropertyVisibilitiesClass {
       protectedProperty,
       publicProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<
-      typeof PropertyVisibilitiesClass.$propertiesFromRdf
-    >[0],
-  ): purify.Either<Error, PropertyVisibilitiesClass> {
-    return PropertyVisibilitiesClass.$propertiesFromRdf(parameters).map(
-      (properties) => new PropertyVisibilitiesClass(properties),
-    );
   }
 
   export const $properties = {
@@ -5749,18 +5894,46 @@ export namespace PropertyCardinalitiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, PropertyCardinalitiesClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return PropertyCardinalitiesClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new PropertyCardinalitiesClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -5772,10 +5945,6 @@ export namespace PropertyCardinalitiesClass {
       requiredStringProperty: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: PropertyCardinalitiesClass.$Identifier =
       $resource.identifier;
     const _emptyStringSetPropertyEither: purify.Either<
@@ -5864,16 +6033,6 @@ export namespace PropertyCardinalitiesClass {
       optionalStringProperty,
       requiredStringProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<
-      typeof PropertyCardinalitiesClass.$propertiesFromRdf
-    >[0],
-  ): purify.Either<Error, PropertyCardinalitiesClass> {
-    return PropertyCardinalitiesClass.$propertiesFromRdf(parameters).map(
-      (properties) => new PropertyCardinalitiesClass(properties),
-    );
   }
 
   export const $properties = {
@@ -6366,18 +6525,46 @@ export namespace OrderedPropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, OrderedPropertiesClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return OrderedPropertiesClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new OrderedPropertiesClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -6388,10 +6575,6 @@ export namespace OrderedPropertiesClass {
       orderedPropertyA: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: OrderedPropertiesClass.$Identifier =
       $resource.identifier;
     const _orderedPropertyCEither: purify.Either<Error, string> = $resource
@@ -6427,14 +6610,6 @@ export namespace OrderedPropertiesClass {
       orderedPropertyB,
       orderedPropertyA,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof OrderedPropertiesClass.$propertiesFromRdf>[0],
-  ): purify.Either<Error, OrderedPropertiesClass> {
-    return OrderedPropertiesClass.$propertiesFromRdf(parameters).map(
-      (properties) => new OrderedPropertiesClass(properties),
-    );
   }
 
   export const $properties = {
@@ -6796,27 +6971,51 @@ export namespace NonClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, NonClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return NonClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new NonClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode; nonClassProperty: string }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: NonClass.$Identifier = $resource.identifier;
     const _nonClassPropertyEither: purify.Either<Error, string> = $resource
       .values($properties.nonClassProperty["identifier"], { unique: true })
@@ -6828,14 +7027,6 @@ export namespace NonClass {
 
     const nonClassProperty = _nonClassPropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, nonClassProperty });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof NonClass.$propertiesFromRdf>[0],
-  ): purify.Either<Error, NonClass> {
-    return NonClass.$propertiesFromRdf(parameters).map(
-      (properties) => new NonClass(properties),
-    );
   }
 
   export const $properties = {
@@ -7350,18 +7541,46 @@ export namespace MutablePropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, MutablePropertiesClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return MutablePropertiesClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new MutablePropertiesClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -7372,10 +7591,6 @@ export namespace MutablePropertiesClass {
       mutableStringProperty: purify.Maybe<string>;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: MutablePropertiesClass.$Identifier =
       $resource.identifier;
     const _mutableListPropertyEither: purify.Either<
@@ -7448,14 +7663,6 @@ export namespace MutablePropertiesClass {
       mutableSetProperty,
       mutableStringProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof MutablePropertiesClass.$propertiesFromRdf>[0],
-  ): purify.Either<Error, MutablePropertiesClass> {
-    return MutablePropertiesClass.$propertiesFromRdf(parameters).map(
-      (properties) => new MutablePropertiesClass(properties),
-    );
   }
 
   export const $properties = {
@@ -8141,18 +8348,46 @@ export namespace ListPropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, ListPropertiesClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return ListPropertiesClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new ListPropertiesClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -8162,10 +8397,6 @@ export namespace ListPropertiesClass {
       stringListProperty: purify.Maybe<readonly string[]>;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: ListPropertiesClass.$Identifier = $resource.identifier;
     const _objectListPropertyEither: purify.Either<
       Error,
@@ -8181,13 +8412,12 @@ export namespace ListPropertiesClass {
               .toValues()
               .head()
               .chain((value) => value.toResource())
-              .chain((_resource) =>
-                NonClass.$fromRdf({
+              .chain((resource) =>
+                NonClass.$fromRdf(resource, {
                   ...$context,
                   ignoreRdfType: true,
                   languageIn: $languageIn,
                   objectSet: $objectSet,
-                  resource: _resource,
                 }),
               ),
           ),
@@ -8237,14 +8467,6 @@ export namespace ListPropertiesClass {
       objectListProperty,
       stringListProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof ListPropertiesClass.$propertiesFromRdf>[0],
-  ): purify.Either<Error, ListPropertiesClass> {
-    return ListPropertiesClass.$propertiesFromRdf(parameters).map(
-      (properties) => new ListPropertiesClass(properties),
-    );
   }
 
   export const $properties = {
@@ -8871,18 +9093,46 @@ export namespace StubClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, StubClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return StubClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new StubClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -8891,10 +9141,6 @@ export namespace StubClass {
       lazilyResolvedStringProperty: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: StubClass.$Identifier = $resource.identifier;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
       $resource
@@ -8910,14 +9156,6 @@ export namespace StubClass {
     const lazilyResolvedStringProperty =
       _lazilyResolvedStringPropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, lazilyResolvedStringProperty });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof StubClass.$propertiesFromRdf>[0],
-  ): purify.Either<Error, StubClass> {
-    return StubClass.$propertiesFromRdf(parameters).map(
-      (properties) => new StubClass(properties),
-    );
   }
 
   export const $properties = {
@@ -10407,18 +10645,46 @@ export namespace LazyPropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, LazyPropertiesClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return LazyPropertiesClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new LazyPropertiesClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -10476,10 +10742,6 @@ export namespace LazyPropertiesClass {
       >;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: LazyPropertiesClass.$Identifier = $resource.identifier;
     const _optionalLazyToResolvedClassPropertyEither: purify.Either<
       Error,
@@ -10494,13 +10756,12 @@ export namespace LazyPropertiesClass {
       })
       .head()
       .chain((value) => value.toResource())
-      .chain((_resource) =>
-        $DefaultStub.$fromRdf({
+      .chain((resource) =>
+        $DefaultStub.$fromRdf(resource, {
           ...$context,
           ignoreRdfType: true,
           languageIn: $languageIn,
           objectSet: $objectSet,
-          resource: _resource,
         }),
       )
       .map((value) => purify.Maybe.of(value))
@@ -10541,13 +10802,12 @@ export namespace LazyPropertiesClass {
       )
       .head()
       .chain((value) => value.toResource())
-      .chain((_resource) =>
-        $DefaultStub.$fromRdf({
+      .chain((resource) =>
+        $DefaultStub.$fromRdf(resource, {
           ...$context,
           ignoreRdfType: true,
           languageIn: $languageIn,
           objectSet: $objectSet,
-          resource: _resource,
         }),
       )
       .map((value) => purify.Maybe.of(value))
@@ -10588,13 +10848,12 @@ export namespace LazyPropertiesClass {
       )
       .head()
       .chain((value) => value.toResource())
-      .chain((_resource) =>
-        $NamedDefaultStub.$fromRdf({
+      .chain((resource) =>
+        $NamedDefaultStub.$fromRdf(resource, {
           ...$context,
           ignoreRdfType: true,
           languageIn: $languageIn,
           objectSet: $objectSet,
-          resource: _resource,
         }),
       )
       .map((value) => purify.Maybe.of(value))
@@ -10635,13 +10894,12 @@ export namespace LazyPropertiesClass {
       )
       .head()
       .chain((value) => value.toResource())
-      .chain((_resource) =>
-        StubClass.$fromRdf({
+      .chain((resource) =>
+        StubClass.$fromRdf(resource, {
           ...$context,
           ignoreRdfType: true,
           languageIn: $languageIn,
           objectSet: $objectSet,
-          resource: _resource,
         }),
       )
       .map((value) => purify.Maybe.of(value))
@@ -10682,13 +10940,12 @@ export namespace LazyPropertiesClass {
       )
       .head()
       .chain((value) => value.toResource())
-      .chain((_resource) =>
-        StubClass.$fromRdf({
+      .chain((resource) =>
+        StubClass.$fromRdf(resource, {
           ...$context,
           ignoreRdfType: true,
           languageIn: $languageIn,
           objectSet: $objectSet,
-          resource: _resource,
         }),
       )
       .map((value) => purify.Maybe.of(value))
@@ -10731,12 +10988,12 @@ export namespace LazyPropertiesClass {
       )
       .head()
       .chain((value) => value.toResource())
-      .chain((_resource) =>
-        StubClassUnion.$fromRdf({
+      .chain((resource) =>
+        StubClassUnion.$fromRdf(resource, {
           ...$context,
+          ignoreRdfType: false,
           languageIn: $languageIn,
           objectSet: $objectSet,
-          resource: _resource,
         }),
       )
       .map((value) => purify.Maybe.of(value))
@@ -10776,13 +11033,12 @@ export namespace LazyPropertiesClass {
       })
       .head()
       .chain((value) => value.toResource())
-      .chain((_resource) =>
-        $DefaultStub.$fromRdf({
+      .chain((resource) =>
+        $DefaultStub.$fromRdf(resource, {
           ...$context,
           ignoreRdfType: true,
           languageIn: $languageIn,
           objectSet: $objectSet,
-          resource: _resource,
         }),
       )
       .map(
@@ -10817,13 +11073,12 @@ export namespace LazyPropertiesClass {
       )
       .head()
       .chain((value) => value.toResource())
-      .chain((_resource) =>
-        StubClass.$fromRdf({
+      .chain((resource) =>
+        StubClass.$fromRdf(resource, {
           ...$context,
           ignoreRdfType: true,
           languageIn: $languageIn,
           objectSet: $objectSet,
-          resource: _resource,
         }),
       )
       .map(
@@ -10861,13 +11116,12 @@ export namespace LazyPropertiesClass {
             .toValues()
             .head()
             .chain((value) => value.toResource())
-            .chain((_resource) =>
-              $DefaultStub.$fromRdf({
+            .chain((resource) =>
+              $DefaultStub.$fromRdf(resource, {
                 ...$context,
                 ignoreRdfType: true,
                 languageIn: $languageIn,
                 objectSet: $objectSet,
-                resource: _resource,
               }),
             ),
         ),
@@ -10908,13 +11162,12 @@ export namespace LazyPropertiesClass {
             .toValues()
             .head()
             .chain((value) => value.toResource())
-            .chain((_resource) =>
-              StubClass.$fromRdf({
+            .chain((resource) =>
+              StubClass.$fromRdf(resource, {
                 ...$context,
                 ignoreRdfType: true,
                 languageIn: $languageIn,
                 objectSet: $objectSet,
-                resource: _resource,
               }),
             ),
         ),
@@ -10951,14 +11204,6 @@ export namespace LazyPropertiesClass {
       setLazyToResolvedClassProperty,
       setStubClassToResolvedClassProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof LazyPropertiesClass.$propertiesFromRdf>[0],
-  ): purify.Either<Error, LazyPropertiesClass> {
-    return LazyPropertiesClass.$propertiesFromRdf(parameters).map(
-      (properties) => new LazyPropertiesClass(properties),
-    );
   }
 
   export const $properties = {
@@ -11738,27 +11983,51 @@ export namespace LazilyResolvedIriClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, LazilyResolvedIriClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return LazilyResolvedIriClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new LazilyResolvedIriClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
     { $identifier: rdfjs.NamedNode; lazilyResolvedStringProperty: string }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if ($resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedValueError({
@@ -11786,14 +12055,6 @@ export namespace LazilyResolvedIriClass {
     const lazilyResolvedStringProperty =
       _lazilyResolvedStringPropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, lazilyResolvedStringProperty });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof LazilyResolvedIriClass.$propertiesFromRdf>[0],
-  ): purify.Either<Error, LazilyResolvedIriClass> {
-    return LazilyResolvedIriClass.$propertiesFromRdf(parameters).map(
-      (properties) => new LazilyResolvedIriClass(properties),
-    );
   }
 
   export const $properties = {
@@ -12140,18 +12401,46 @@ export namespace LazilyResolvedClassUnionMember2 {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, LazilyResolvedClassUnionMember2> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return LazilyResolvedClassUnionMember2.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new LazilyResolvedClassUnionMember2(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -12160,10 +12449,6 @@ export namespace LazilyResolvedClassUnionMember2 {
       lazilyResolvedStringProperty: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
       return $resource
         .value($RdfVocabularies.rdf.type)
@@ -12193,16 +12478,6 @@ export namespace LazilyResolvedClassUnionMember2 {
     const lazilyResolvedStringProperty =
       _lazilyResolvedStringPropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, lazilyResolvedStringProperty });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<
-      typeof LazilyResolvedClassUnionMember2.$propertiesFromRdf
-    >[0],
-  ): purify.Either<Error, LazilyResolvedClassUnionMember2> {
-    return LazilyResolvedClassUnionMember2.$propertiesFromRdf(parameters).map(
-      (properties) => new LazilyResolvedClassUnionMember2(properties),
-    );
   }
 
   export const $properties = {
@@ -12602,18 +12877,46 @@ export namespace LazilyResolvedClassUnionMember1 {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, LazilyResolvedClassUnionMember1> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return LazilyResolvedClassUnionMember1.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new LazilyResolvedClassUnionMember1(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -12622,10 +12925,6 @@ export namespace LazilyResolvedClassUnionMember1 {
       lazilyResolvedStringProperty: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
       return $resource
         .value($RdfVocabularies.rdf.type)
@@ -12655,16 +12954,6 @@ export namespace LazilyResolvedClassUnionMember1 {
     const lazilyResolvedStringProperty =
       _lazilyResolvedStringPropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, lazilyResolvedStringProperty });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<
-      typeof LazilyResolvedClassUnionMember1.$propertiesFromRdf
-    >[0],
-  ): purify.Either<Error, LazilyResolvedClassUnionMember1> {
-    return LazilyResolvedClassUnionMember1.$propertiesFromRdf(parameters).map(
-      (properties) => new LazilyResolvedClassUnionMember1(properties),
-    );
   }
 
   export const $properties = {
@@ -13053,18 +13342,46 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, LazilyResolvedBlankNodeOrIriClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return LazilyResolvedBlankNodeOrIriClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new LazilyResolvedBlankNodeOrIriClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -13073,10 +13390,6 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
       lazilyResolvedStringProperty: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: LazilyResolvedBlankNodeOrIriClass.$Identifier =
       $resource.identifier;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
@@ -13093,16 +13406,6 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
     const lazilyResolvedStringProperty =
       _lazilyResolvedStringPropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, lazilyResolvedStringProperty });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<
-      typeof LazilyResolvedBlankNodeOrIriClass.$propertiesFromRdf
-    >[0],
-  ): purify.Either<Error, LazilyResolvedBlankNodeOrIriClass> {
-    return LazilyResolvedBlankNodeOrIriClass.$propertiesFromRdf(parameters).map(
-      (properties) => new LazilyResolvedBlankNodeOrIriClass(properties),
-    );
   }
 
   export const $properties = {
@@ -13662,18 +13965,46 @@ export namespace LanguageInPropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, LanguageInPropertiesClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return LanguageInPropertiesClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new LanguageInPropertiesClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -13683,10 +14014,6 @@ export namespace LanguageInPropertiesClass {
       languageInPropertiesLiteralProperty: purify.Maybe<rdfjs.Literal>;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: LanguageInPropertiesClass.$Identifier =
       $resource.identifier;
     const _languageInPropertiesLanguageInPropertyEither: purify.Either<
@@ -13763,16 +14090,6 @@ export namespace LanguageInPropertiesClass {
       languageInPropertiesLanguageInProperty,
       languageInPropertiesLiteralProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<
-      typeof LanguageInPropertiesClass.$propertiesFromRdf
-    >[0],
-  ): purify.Either<Error, LanguageInPropertiesClass> {
-    return LanguageInPropertiesClass.$propertiesFromRdf(parameters).map(
-      (properties) => new LanguageInPropertiesClass(properties),
-    );
   }
 
   export const $properties = {
@@ -14098,24 +14415,48 @@ export namespace IriClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, IriClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return IriClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new IriClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.NamedNode }> {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if ($resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedValueError({
@@ -14129,14 +14470,6 @@ export namespace IriClass {
 
     const $identifier: IriClass.$Identifier = $resource.identifier;
     return purify.Either.of({ $identifier });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof IriClass.$propertiesFromRdf>[0],
-  ): purify.Either<Error, IriClass> {
-    return IriClass.$propertiesFromRdf(parameters).map(
-      (properties) => new IriClass(properties),
-    );
   }
 
   export const $properties = {};
@@ -14400,18 +14733,46 @@ export namespace InterfaceUnionMember2b {
     return _hasher;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, InterfaceUnionMember2b> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return InterfaceUnionMember2b.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    });
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -14421,10 +14782,6 @@ export namespace InterfaceUnionMember2b {
       interfaceUnionMember2bProperty: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: InterfaceUnionMember2b.$Identifier =
       $resource.identifier;
     const $type = "InterfaceUnionMember2b" as const;
@@ -14446,12 +14803,6 @@ export namespace InterfaceUnionMember2b {
       $type,
       interfaceUnionMember2bProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof InterfaceUnionMember2b.$propertiesFromRdf>[0],
-  ): purify.Either<Error, InterfaceUnionMember2b> {
-    return InterfaceUnionMember2b.$propertiesFromRdf(parameters);
   }
 
   export function $toRdf(
@@ -14800,18 +15151,46 @@ export namespace InterfaceUnionMember2a {
     return _hasher;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, InterfaceUnionMember2a> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return InterfaceUnionMember2a.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    });
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -14821,10 +15200,6 @@ export namespace InterfaceUnionMember2a {
       interfaceUnionMember2aProperty: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: InterfaceUnionMember2a.$Identifier =
       $resource.identifier;
     const $type = "InterfaceUnionMember2a" as const;
@@ -14846,12 +15221,6 @@ export namespace InterfaceUnionMember2a {
       $type,
       interfaceUnionMember2aProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof InterfaceUnionMember2a.$propertiesFromRdf>[0],
-  ): purify.Either<Error, InterfaceUnionMember2a> {
-    return InterfaceUnionMember2a.$propertiesFromRdf(parameters);
   }
 
   export function $toRdf(
@@ -15191,18 +15560,46 @@ export namespace InterfaceUnionMember1 {
     return _hasher;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, InterfaceUnionMember1> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return InterfaceUnionMember1.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    });
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -15212,10 +15609,6 @@ export namespace InterfaceUnionMember1 {
       interfaceUnionMember1Property: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: InterfaceUnionMember1.$Identifier = $resource.identifier;
     const $type = "InterfaceUnionMember1" as const;
     const _interfaceUnionMember1PropertyEither: purify.Either<Error, string> =
@@ -15236,12 +15629,6 @@ export namespace InterfaceUnionMember1 {
       $type,
       interfaceUnionMember1Property,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof InterfaceUnionMember1.$propertiesFromRdf>[0],
-  ): purify.Either<Error, InterfaceUnionMember1> {
-    return InterfaceUnionMember1.$propertiesFromRdf(parameters);
   }
 
   export function $toRdf(
@@ -15571,18 +15958,46 @@ export namespace Interface {
     return _hasher;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, Interface> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return Interface.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    });
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -15592,10 +16007,6 @@ export namespace Interface {
       interfaceProperty: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: Interface.$Identifier = $resource.identifier;
     const $type = "Interface" as const;
     const _interfacePropertyEither: purify.Either<Error, string> = $resource
@@ -15608,12 +16019,6 @@ export namespace Interface {
 
     const interfaceProperty = _interfacePropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, $type, interfaceProperty });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof Interface.$propertiesFromRdf>[0],
-  ): purify.Either<Error, Interface> {
-    return Interface.$propertiesFromRdf(parameters);
   }
 
   export function $toRdf(
@@ -15975,18 +16380,46 @@ export namespace IndirectRecursiveHelperClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, IndirectRecursiveHelperClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return IndirectRecursiveHelperClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new IndirectRecursiveHelperClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -15995,10 +16428,6 @@ export namespace IndirectRecursiveHelperClass {
       indirectRecursiveProperty: purify.Maybe<IndirectRecursiveClass>;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: IndirectRecursiveHelperClass.$Identifier =
       $resource.identifier;
     const _indirectRecursivePropertyEither: purify.Either<
@@ -16010,13 +16439,12 @@ export namespace IndirectRecursiveHelperClass {
       })
       .head()
       .chain((value) => value.toResource())
-      .chain((_resource) =>
-        IndirectRecursiveClass.$fromRdf({
+      .chain((resource) =>
+        IndirectRecursiveClass.$fromRdf(resource, {
           ...$context,
           ignoreRdfType: true,
           languageIn: $languageIn,
           objectSet: $objectSet,
-          resource: _resource,
         }),
       )
       .map((value) => purify.Maybe.of(value))
@@ -16032,16 +16460,6 @@ export namespace IndirectRecursiveHelperClass {
     const indirectRecursiveProperty =
       _indirectRecursivePropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, indirectRecursiveProperty });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<
-      typeof IndirectRecursiveHelperClass.$propertiesFromRdf
-    >[0],
-  ): purify.Either<Error, IndirectRecursiveHelperClass> {
-    return IndirectRecursiveHelperClass.$propertiesFromRdf(parameters).map(
-      (properties) => new IndirectRecursiveHelperClass(properties),
-    );
   }
 
   export const $properties = {
@@ -16430,18 +16848,46 @@ export namespace IndirectRecursiveClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, IndirectRecursiveClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return IndirectRecursiveClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new IndirectRecursiveClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -16450,10 +16896,6 @@ export namespace IndirectRecursiveClass {
       indirectRecursiveHelperProperty: purify.Maybe<IndirectRecursiveHelperClass>;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: IndirectRecursiveClass.$Identifier =
       $resource.identifier;
     const _indirectRecursiveHelperPropertyEither: purify.Either<
@@ -16465,13 +16907,12 @@ export namespace IndirectRecursiveClass {
       })
       .head()
       .chain((value) => value.toResource())
-      .chain((_resource) =>
-        IndirectRecursiveHelperClass.$fromRdf({
+      .chain((resource) =>
+        IndirectRecursiveHelperClass.$fromRdf(resource, {
           ...$context,
           ignoreRdfType: true,
           languageIn: $languageIn,
           objectSet: $objectSet,
-          resource: _resource,
         }),
       )
       .map((value) => purify.Maybe.of(value))
@@ -16487,14 +16928,6 @@ export namespace IndirectRecursiveClass {
     const indirectRecursiveHelperProperty =
       _indirectRecursiveHelperPropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, indirectRecursiveHelperProperty });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof IndirectRecursiveClass.$propertiesFromRdf>[0],
-  ): purify.Either<Error, IndirectRecursiveClass> {
-    return IndirectRecursiveClass.$propertiesFromRdf(parameters).map(
-      (properties) => new IndirectRecursiveClass(properties),
-    );
   }
 
   export const $properties = {
@@ -17017,18 +17450,46 @@ export namespace InPropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, InPropertiesClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return InPropertiesClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new InPropertiesClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -17046,10 +17507,6 @@ export namespace InPropertiesClass {
       inStringsProperty: purify.Maybe<"text" | "html">;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: InPropertiesClass.$Identifier = $resource.identifier;
     const _inBooleansPropertyEither: purify.Either<
       Error,
@@ -17266,14 +17723,6 @@ export namespace InPropertiesClass {
       inNumbersProperty,
       inStringsProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof InPropertiesClass.$propertiesFromRdf>[0],
-  ): purify.Either<Error, InPropertiesClass> {
-    return InPropertiesClass.$propertiesFromRdf(parameters).map(
-      (properties) => new InPropertiesClass(properties),
-    );
   }
 
   export const $properties = {
@@ -17766,18 +18215,46 @@ export namespace InIdentifierClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, InIdentifierClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return InIdentifierClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new InIdentifierClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -17789,10 +18266,6 @@ export namespace InIdentifierClass {
       inIdentifierProperty: purify.Maybe<string>;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     let $identifier: InIdentifierClass.$Identifier;
     switch ($resource.identifier.value) {
       case "http://example.com/InIdentifierInstance1":
@@ -17836,14 +18309,6 @@ export namespace InIdentifierClass {
 
     const inIdentifierProperty = _inIdentifierPropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, inIdentifierProperty });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof InIdentifierClass.$propertiesFromRdf>[0],
-  ): purify.Either<Error, InIdentifierClass> {
-    return InIdentifierClass.$propertiesFromRdf(parameters).map(
-      (properties) => new InIdentifierClass(properties),
-    );
   }
 
   export const $properties = {
@@ -18251,18 +18716,46 @@ export namespace HasValuePropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, HasValuePropertiesClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return HasValuePropertiesClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new HasValuePropertiesClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -18272,10 +18765,6 @@ export namespace HasValuePropertiesClass {
       hasLiteralValueProperty: purify.Maybe<string>;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: HasValuePropertiesClass.$Identifier =
       $resource.identifier;
     const _hasIriValuePropertyEither: purify.Either<
@@ -18330,16 +18819,6 @@ export namespace HasValuePropertiesClass {
       hasIriValueProperty,
       hasLiteralValueProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<
-      typeof HasValuePropertiesClass.$propertiesFromRdf
-    >[0],
-  ): purify.Either<Error, HasValuePropertiesClass> {
-    return HasValuePropertiesClass.$propertiesFromRdf(parameters).map(
-      (properties) => new HasValuePropertiesClass(properties),
-    );
   }
 
   export const $properties = {
@@ -18731,18 +19210,46 @@ export namespace ExternClassPropertyClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, ExternClassPropertyClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return ExternClassPropertyClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new ExternClassPropertyClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -18751,10 +19258,6 @@ export namespace ExternClassPropertyClass {
       externClassProperty: purify.Maybe<ExternClass>;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: ExternClassPropertyClass.$Identifier =
       $resource.identifier;
     const _externClassPropertyEither: purify.Either<
@@ -18764,13 +19267,12 @@ export namespace ExternClassPropertyClass {
       .values($properties.externClassProperty["identifier"], { unique: true })
       .head()
       .chain((value) => value.toResource())
-      .chain((_resource) =>
-        ExternClass.$fromRdf({
+      .chain((resource) =>
+        ExternClass.$fromRdf(resource, {
           ...$context,
           ignoreRdfType: true,
           languageIn: $languageIn,
           objectSet: $objectSet,
-          resource: _resource,
         }),
       )
       .map((value) => purify.Maybe.of(value))
@@ -18785,16 +19287,6 @@ export namespace ExternClassPropertyClass {
 
     const externClassProperty = _externClassPropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, externClassProperty });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<
-      typeof ExternClassPropertyClass.$propertiesFromRdf
-    >[0],
-  ): purify.Either<Error, ExternClassPropertyClass> {
-    return ExternClassPropertyClass.$propertiesFromRdf(parameters).map(
-      (properties) => new ExternClassPropertyClass(properties),
-    );
   }
 
   export const $properties = {
@@ -19159,18 +19651,46 @@ export namespace ExplicitRdfTypeClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, ExplicitRdfTypeClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return ExplicitRdfTypeClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new ExplicitRdfTypeClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -19179,10 +19699,6 @@ export namespace ExplicitRdfTypeClass {
       explicitRdfTypeProperty: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
       return $resource
         .value($RdfVocabularies.rdf.type)
@@ -19211,14 +19727,6 @@ export namespace ExplicitRdfTypeClass {
     const explicitRdfTypeProperty =
       _explicitRdfTypePropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, explicitRdfTypeProperty });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof ExplicitRdfTypeClass.$propertiesFromRdf>[0],
-  ): purify.Either<Error, ExplicitRdfTypeClass> {
-    return ExplicitRdfTypeClass.$propertiesFromRdf(parameters).map(
-      (properties) => new ExplicitRdfTypeClass(properties),
-    );
   }
 
   export const $properties = {
@@ -19620,18 +20128,46 @@ export namespace ExplicitFromToRdfTypesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, ExplicitFromToRdfTypesClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return ExplicitFromToRdfTypesClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new ExplicitFromToRdfTypesClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -19640,10 +20176,6 @@ export namespace ExplicitFromToRdfTypesClass {
       explicitFromToRdfTypesProperty: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
       return $resource
         .value($RdfVocabularies.rdf.type)
@@ -19673,16 +20205,6 @@ export namespace ExplicitFromToRdfTypesClass {
     const explicitFromToRdfTypesProperty =
       _explicitFromToRdfTypesPropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, explicitFromToRdfTypesProperty });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<
-      typeof ExplicitFromToRdfTypesClass.$propertiesFromRdf
-    >[0],
-  ): purify.Either<Error, ExplicitFromToRdfTypesClass> {
-    return ExplicitFromToRdfTypesClass.$propertiesFromRdf(parameters).map(
-      (properties) => new ExplicitFromToRdfTypesClass(properties),
-    );
   }
 
   export const $properties = {
@@ -20096,18 +20618,46 @@ export namespace DirectRecursiveClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, DirectRecursiveClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return DirectRecursiveClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new DirectRecursiveClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -20116,10 +20666,6 @@ export namespace DirectRecursiveClass {
       directRecursiveProperty: purify.Maybe<DirectRecursiveClass>;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: DirectRecursiveClass.$Identifier = $resource.identifier;
     const _directRecursivePropertyEither: purify.Either<
       Error,
@@ -20130,13 +20676,12 @@ export namespace DirectRecursiveClass {
       })
       .head()
       .chain((value) => value.toResource())
-      .chain((_resource) =>
-        DirectRecursiveClass.$fromRdf({
+      .chain((resource) =>
+        DirectRecursiveClass.$fromRdf(resource, {
           ...$context,
           ignoreRdfType: true,
           languageIn: $languageIn,
           objectSet: $objectSet,
-          resource: _resource,
         }),
       )
       .map((value) => purify.Maybe.of(value))
@@ -20152,14 +20697,6 @@ export namespace DirectRecursiveClass {
     const directRecursiveProperty =
       _directRecursivePropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, directRecursiveProperty });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof DirectRecursiveClass.$propertiesFromRdf>[0],
-  ): purify.Either<Error, DirectRecursiveClass> {
-    return DirectRecursiveClass.$propertiesFromRdf(parameters).map(
-      (properties) => new DirectRecursiveClass(properties),
-    );
   }
 
   export const $properties = {
@@ -20713,18 +21250,46 @@ export namespace DefaultValuePropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, DefaultValuePropertiesClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return DefaultValuePropertiesClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new DefaultValuePropertiesClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -20738,10 +21303,6 @@ export namespace DefaultValuePropertiesClass {
       trueBooleanDefaultValueProperty: boolean;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: DefaultValuePropertiesClass.$Identifier =
       $resource.identifier;
     const _dateDefaultValuePropertyEither: purify.Either<Error, Date> =
@@ -20907,16 +21468,6 @@ export namespace DefaultValuePropertiesClass {
       stringDefaultValueProperty,
       trueBooleanDefaultValueProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<
-      typeof DefaultValuePropertiesClass.$propertiesFromRdf
-    >[0],
-  ): purify.Either<Error, DefaultValuePropertiesClass> {
-    return DefaultValuePropertiesClass.$propertiesFromRdf(parameters).map(
-      (properties) => new DefaultValuePropertiesClass(properties),
-    );
   }
 
   export const $properties = {
@@ -21449,18 +22000,54 @@ export namespace BaseInterfaceWithPropertiesStatic {
     return _hasher;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, BaseInterfaceWithProperties> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return (
+      BaseInterfaceWithoutPropertiesStatic.$fromRdf(resource, {
+        ...context,
+        ignoreRdfType: false,
+        objectSet,
+      }) as purify.Either<Error, BaseInterfaceWithProperties>
+    ).altLazy(() =>
+      BaseInterfaceWithPropertiesStatic.$propertiesFromRdf({
+        ...context,
+        ignoreRdfType,
+        languageIn,
+        objectSet,
+        resource,
+      }),
+    );
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -21474,10 +22061,6 @@ export namespace BaseInterfaceWithPropertiesStatic {
       baseInterfaceWithPropertiesProperty: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
       return $resource
         .value($RdfVocabularies.rdf.type)
@@ -21514,21 +22097,6 @@ export namespace BaseInterfaceWithPropertiesStatic {
       $type,
       baseInterfaceWithPropertiesProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<
-      typeof BaseInterfaceWithPropertiesStatic.$propertiesFromRdf
-    >[0],
-  ): purify.Either<Error, BaseInterfaceWithProperties> {
-    const { ignoreRdfType: _, ...otherParameters } = parameters;
-    return (
-      BaseInterfaceWithoutPropertiesStatic.$fromRdf(
-        otherParameters,
-      ) as purify.Either<Error, BaseInterfaceWithProperties>
-    ).altLazy(() =>
-      BaseInterfaceWithPropertiesStatic.$propertiesFromRdf(parameters),
-    );
   }
 
   export function $toRdf(
@@ -21894,18 +22462,54 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     return _hasher;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, BaseInterfaceWithoutProperties> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return (
+      ConcreteParentInterfaceStatic.$fromRdf(resource, {
+        ...context,
+        ignoreRdfType: false,
+        objectSet,
+      }) as purify.Either<Error, BaseInterfaceWithoutProperties>
+    ).altLazy(() =>
+      BaseInterfaceWithoutPropertiesStatic.$propertiesFromRdf({
+        ...context,
+        ignoreRdfType,
+        languageIn,
+        objectSet,
+        resource,
+      }),
+    );
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -21919,10 +22523,6 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       ReturnType<typeof BaseInterfaceWithPropertiesStatic.$propertiesFromRdf>
     >
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $super0Either = BaseInterfaceWithPropertiesStatic.$propertiesFromRdf({
       ...$context,
       ignoreRdfType: true,
@@ -21952,22 +22552,6 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       $resource.identifier;
     const $type = "BaseInterfaceWithoutProperties" as const;
     return purify.Either.of({ ...$super0, $identifier, $type });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<
-      typeof BaseInterfaceWithoutPropertiesStatic.$propertiesFromRdf
-    >[0],
-  ): purify.Either<Error, BaseInterfaceWithoutProperties> {
-    const { ignoreRdfType: _, ...otherParameters } = parameters;
-    return (
-      ConcreteParentInterfaceStatic.$fromRdf(otherParameters) as purify.Either<
-        Error,
-        BaseInterfaceWithoutProperties
-      >
-    ).altLazy(() =>
-      BaseInterfaceWithoutPropertiesStatic.$propertiesFromRdf(parameters),
-    );
   }
 
   export function $toRdf(
@@ -22334,18 +22918,54 @@ export namespace ConcreteParentInterfaceStatic {
     return _hasher;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, ConcreteParentInterface> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return (
+      ConcreteChildInterface.$fromRdf(resource, {
+        ...context,
+        ignoreRdfType: false,
+        objectSet,
+      }) as purify.Either<Error, ConcreteParentInterface>
+    ).altLazy(() =>
+      ConcreteParentInterfaceStatic.$propertiesFromRdf({
+        ...context,
+        ignoreRdfType,
+        languageIn,
+        objectSet,
+        resource,
+      }),
+    );
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -22357,10 +22977,6 @@ export namespace ConcreteParentInterfaceStatic {
       ReturnType<typeof BaseInterfaceWithoutPropertiesStatic.$propertiesFromRdf>
     >
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $super0Either =
       BaseInterfaceWithoutPropertiesStatic.$propertiesFromRdf({
         ...$context,
@@ -22409,22 +23025,6 @@ export namespace ConcreteParentInterfaceStatic {
       $type,
       concreteParentInterfaceProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<
-      typeof ConcreteParentInterfaceStatic.$propertiesFromRdf
-    >[0],
-  ): purify.Either<Error, ConcreteParentInterface> {
-    const { ignoreRdfType: _, ...otherParameters } = parameters;
-    return (
-      ConcreteChildInterface.$fromRdf(otherParameters) as purify.Either<
-        Error,
-        ConcreteParentInterface
-      >
-    ).altLazy(() =>
-      ConcreteParentInterfaceStatic.$propertiesFromRdf(parameters),
-    );
   }
 
   export function $toRdf(
@@ -22823,18 +23423,46 @@ export namespace ConcreteChildInterface {
     return _hasher;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, ConcreteChildInterface> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return ConcreteChildInterface.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    });
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -22846,10 +23474,6 @@ export namespace ConcreteChildInterface {
       ReturnType<typeof ConcreteParentInterfaceStatic.$propertiesFromRdf>
     >
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $super0Either = ConcreteParentInterfaceStatic.$propertiesFromRdf({
       ...$context,
       ignoreRdfType: true,
@@ -22897,12 +23521,6 @@ export namespace ConcreteChildInterface {
       $type,
       concreteChildInterfaceProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof ConcreteChildInterface.$propertiesFromRdf>[0],
-  ): purify.Either<Error, ConcreteChildInterface> {
-    return ConcreteChildInterface.$propertiesFromRdf(parameters);
   }
 
   export function $toRdf(
@@ -23354,18 +23972,44 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, AbstractBaseClassWithProperties> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return AbstractBaseClassWithoutPropertiesStatic.$fromRdf(resource, {
+      ...context,
+      ignoreRdfType: false,
+      objectSet,
+    }) as purify.Either<Error, AbstractBaseClassWithProperties>;
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -23374,10 +24018,6 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       abstractBaseClassWithPropertiesProperty: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: AbstractBaseClassWithPropertiesStatic.$Identifier =
       $resource.identifier;
     const _abstractBaseClassWithPropertiesPropertyEither: purify.Either<
@@ -23400,17 +24040,6 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       $identifier,
       abstractBaseClassWithPropertiesProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<
-      typeof AbstractBaseClassWithPropertiesStatic.$propertiesFromRdf
-    >[0],
-  ): purify.Either<Error, AbstractBaseClassWithProperties> {
-    const { ignoreRdfType: _, ...otherParameters } = parameters;
-    return AbstractBaseClassWithoutPropertiesStatic.$fromRdf(
-      otherParameters,
-    ) as purify.Either<Error, AbstractBaseClassWithProperties>;
   }
 
   export const $properties = {
@@ -23643,18 +24272,44 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     ) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, AbstractBaseClassWithoutProperties> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return ConcreteParentClassStatic.$fromRdf(resource, {
+      ...context,
+      ignoreRdfType: false,
+      objectSet,
+    }) as purify.Either<Error, AbstractBaseClassWithoutProperties>;
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -23664,10 +24319,6 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
       >
     >
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $super0Either =
       AbstractBaseClassWithPropertiesStatic.$propertiesFromRdf({
         ...$context,
@@ -23684,18 +24335,6 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     const $identifier: AbstractBaseClassWithoutPropertiesStatic.$Identifier =
       $resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<
-      typeof AbstractBaseClassWithoutPropertiesStatic.$propertiesFromRdf
-    >[0],
-  ): purify.Either<Error, AbstractBaseClassWithoutProperties> {
-    const { ignoreRdfType: _, ...otherParameters } = parameters;
-    return ConcreteParentClassStatic.$fromRdf(otherParameters) as purify.Either<
-      Error,
-      AbstractBaseClassWithoutProperties
-    >;
   }
 
   export const $properties = {
@@ -24013,18 +24652,54 @@ export namespace ConcreteParentClassStatic {
     ) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, ConcreteParentClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return (
+      ConcreteChildClass.$fromRdf(resource, {
+        ...context,
+        ignoreRdfType: false,
+        objectSet,
+      }) as purify.Either<Error, ConcreteParentClass>
+    ).altLazy(() =>
+      ConcreteParentClassStatic.$propertiesFromRdf({
+        ...context,
+        ignoreRdfType,
+        languageIn,
+        objectSet,
+        resource,
+      }).map((properties) => new ConcreteParentClass(properties)),
+    );
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -24037,10 +24712,6 @@ export namespace ConcreteParentClassStatic {
       >
     >
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $super0Either =
       AbstractBaseClassWithoutPropertiesStatic.$propertiesFromRdf({
         ...$context,
@@ -24087,24 +24758,6 @@ export namespace ConcreteParentClassStatic {
       $identifier,
       concreteParentClassProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<
-      typeof ConcreteParentClassStatic.$propertiesFromRdf
-    >[0],
-  ): purify.Either<Error, ConcreteParentClass> {
-    const { ignoreRdfType: _, ...otherParameters } = parameters;
-    return (
-      ConcreteChildClass.$fromRdf(otherParameters) as purify.Either<
-        Error,
-        ConcreteParentClass
-      >
-    ).altLazy(() =>
-      ConcreteParentClassStatic.$propertiesFromRdf(parameters).map(
-        (properties) => new ConcreteParentClass(properties),
-      ),
-    );
   }
 
   export const $properties = {
@@ -24479,18 +25132,46 @@ export namespace ConcreteChildClass {
     ) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, ConcreteChildClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return ConcreteChildClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new ConcreteChildClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -24501,10 +25182,6 @@ export namespace ConcreteChildClass {
       ReturnType<typeof ConcreteParentClassStatic.$propertiesFromRdf>
     >
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $super0Either = ConcreteParentClassStatic.$propertiesFromRdf({
       ...$context,
       ignoreRdfType: true,
@@ -24549,14 +25226,6 @@ export namespace ConcreteChildClass {
       $identifier,
       concreteChildClassProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof ConcreteChildClass.$propertiesFromRdf>[0],
-  ): purify.Either<Error, ConcreteChildClass> {
-    return ConcreteChildClass.$propertiesFromRdf(parameters).map(
-      (properties) => new ConcreteChildClass(properties),
-    );
   }
 
   export const $properties = {
@@ -24962,18 +25631,46 @@ export namespace ClassUnionMember2 {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, ClassUnionMember2> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return ClassUnionMember2.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new ClassUnionMember2(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -24982,10 +25679,6 @@ export namespace ClassUnionMember2 {
       classUnionMember2Property: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
       return $resource
         .value($RdfVocabularies.rdf.type)
@@ -25014,14 +25707,6 @@ export namespace ClassUnionMember2 {
     const classUnionMember2Property =
       _classUnionMember2PropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, classUnionMember2Property });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof ClassUnionMember2.$propertiesFromRdf>[0],
-  ): purify.Either<Error, ClassUnionMember2> {
-    return ClassUnionMember2.$propertiesFromRdf(parameters).map(
-      (properties) => new ClassUnionMember2(properties),
-    );
   }
 
   export const $properties = {
@@ -25407,18 +26092,46 @@ export namespace ClassUnionMember1 {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, ClassUnionMember1> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return ClassUnionMember1.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new ClassUnionMember1(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -25427,10 +26140,6 @@ export namespace ClassUnionMember1 {
       classUnionMember1Property: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
       return $resource
         .value($RdfVocabularies.rdf.type)
@@ -25459,14 +26168,6 @@ export namespace ClassUnionMember1 {
     const classUnionMember1Property =
       _classUnionMember1PropertyEither.unsafeCoerce();
     return purify.Either.of({ $identifier, classUnionMember1Property });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof ClassUnionMember1.$propertiesFromRdf>[0],
-  ): purify.Either<Error, ClassUnionMember1> {
-    return ClassUnionMember1.$propertiesFromRdf(parameters).map(
-      (properties) => new ClassUnionMember1(properties),
-    );
   }
 
   export const $properties = {
@@ -25811,34 +26512,50 @@ export namespace BlankClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, BlankClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return BlankClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      languageIn,
+      objectSet,
+      resource,
+    }).map((properties) => new BlankClass(properties));
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }> {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: BlankClass.$Identifier = $resource.identifier;
     return purify.Either.of({ $identifier });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<typeof BlankClass.$propertiesFromRdf>[0],
-  ): purify.Either<Error, BlankClass> {
-    return BlankClass.$propertiesFromRdf(parameters).map(
-      (properties) => new BlankClass(properties),
-    );
   }
 
   export const $properties = {};
@@ -26102,18 +26819,44 @@ export namespace AbstractBaseClassForExternClassStatic {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, AbstractBaseClassForExternClass> {
+    let {
+      ignoreRdfType = false,
+      languageIn,
+      objectSet,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return ExternClass.$fromRdf(resource, {
+      ...context,
+      ignoreRdfType: false,
+      objectSet,
+    }) as purify.Either<Error, AbstractBaseClassForExternClass>;
+  }
+
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     languageIn: $languageIn,
-    objectSet: $objectSetParameter,
+    objectSet: $objectSet,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
-    ignoreRdfType?: boolean;
+    ignoreRdfType: boolean;
     languageIn?: readonly string[];
-    objectSet?: $ObjectSet;
+    objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -26122,10 +26865,6 @@ export namespace AbstractBaseClassForExternClassStatic {
       abstractBaseClassForExternClassProperty: string;
     }
   > {
-    // @ts-ignore
-    const $objectSet =
-      $objectSetParameter ??
-      new $RdfjsDatasetObjectSet({ dataset: $resource.dataset });
     const $identifier: AbstractBaseClassForExternClassStatic.$Identifier =
       $resource.identifier;
     const _abstractBaseClassForExternClassPropertyEither: purify.Either<
@@ -26148,18 +26887,6 @@ export namespace AbstractBaseClassForExternClassStatic {
       $identifier,
       abstractBaseClassForExternClassProperty,
     });
-  }
-
-  export function $fromRdf(
-    parameters: Parameters<
-      typeof AbstractBaseClassForExternClassStatic.$propertiesFromRdf
-    >[0],
-  ): purify.Either<Error, AbstractBaseClassForExternClass> {
-    const { ignoreRdfType: _, ...otherParameters } = parameters;
-    return ExternClass.$fromRdf(otherParameters) as purify.Either<
-      Error,
-      AbstractBaseClassForExternClass
-    >;
   }
 
   export const $properties = {
@@ -26317,29 +27044,25 @@ export namespace ClassUnion {
     );
   }
 
-  export function $fromRdf({
-    ignoreRdfType,
-    objectSet,
-    resource,
-    ...context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    objectSet?: $ObjectSet;
-    resource: rdfjsResource.Resource;
-  }): purify.Either<Error, ClassUnion> {
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, ClassUnion> {
     return (
-      ClassUnionMember1.$fromRdf({
-        ...context,
-        objectSet,
-        resource,
+      ClassUnionMember1.$fromRdf(resource, {
+        ...options,
+        ignoreRdfType: false,
       }) as purify.Either<Error, ClassUnion>
     ).altLazy(
       () =>
-        ClassUnionMember2.$fromRdf({
-          ...context,
-          objectSet,
-          resource,
+        ClassUnionMember2.$fromRdf(resource, {
+          ...options,
+          ignoreRdfType: false,
         }) as purify.Either<Error, ClassUnion>,
     );
   }
@@ -26578,38 +27301,33 @@ export namespace InterfaceUnion {
       );
   }
 
-  export function $fromRdf({
-    ignoreRdfType,
-    objectSet,
-    resource,
-    ...context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    objectSet?: $ObjectSet;
-    resource: rdfjsResource.Resource;
-  }): purify.Either<Error, InterfaceUnion> {
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, InterfaceUnion> {
     return (
-      InterfaceUnionMember1.$fromRdf({
-        ...context,
-        objectSet,
-        resource,
+      InterfaceUnionMember1.$fromRdf(resource, {
+        ...options,
+        ignoreRdfType: false,
       }) as purify.Either<Error, InterfaceUnion>
     )
       .altLazy(
         () =>
-          InterfaceUnionMember2a.$fromRdf({
-            ...context,
-            objectSet,
-            resource,
+          InterfaceUnionMember2a.$fromRdf(resource, {
+            ...options,
+            ignoreRdfType: false,
           }) as purify.Either<Error, InterfaceUnion>,
       )
       .altLazy(
         () =>
-          InterfaceUnionMember2b.$fromRdf({
-            ...context,
-            objectSet,
-            resource,
+          InterfaceUnionMember2b.$fromRdf(resource, {
+            ...options,
+            ignoreRdfType: false,
           }) as purify.Either<Error, InterfaceUnion>,
       );
   }
@@ -26869,29 +27587,25 @@ export namespace InterfaceUnionMember2 {
     );
   }
 
-  export function $fromRdf({
-    ignoreRdfType,
-    objectSet,
-    resource,
-    ...context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    objectSet?: $ObjectSet;
-    resource: rdfjsResource.Resource;
-  }): purify.Either<Error, InterfaceUnionMember2> {
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, InterfaceUnionMember2> {
     return (
-      InterfaceUnionMember2a.$fromRdf({
-        ...context,
-        objectSet,
-        resource,
+      InterfaceUnionMember2a.$fromRdf(resource, {
+        ...options,
+        ignoreRdfType: false,
       }) as purify.Either<Error, InterfaceUnionMember2>
     ).altLazy(
       () =>
-        InterfaceUnionMember2b.$fromRdf({
-          ...context,
-          objectSet,
-          resource,
+        InterfaceUnionMember2b.$fromRdf(resource, {
+          ...options,
+          ignoreRdfType: false,
         }) as purify.Either<Error, InterfaceUnionMember2>,
     );
   }
@@ -27129,29 +27843,25 @@ export namespace LazilyResolvedClassUnion {
     );
   }
 
-  export function $fromRdf({
-    ignoreRdfType,
-    objectSet,
-    resource,
-    ...context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    objectSet?: $ObjectSet;
-    resource: rdfjsResource.Resource;
-  }): purify.Either<Error, LazilyResolvedClassUnion> {
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, LazilyResolvedClassUnion> {
     return (
-      LazilyResolvedClassUnionMember1.$fromRdf({
-        ...context,
-        objectSet,
-        resource,
+      LazilyResolvedClassUnionMember1.$fromRdf(resource, {
+        ...options,
+        ignoreRdfType: false,
       }) as purify.Either<Error, LazilyResolvedClassUnion>
     ).altLazy(
       () =>
-        LazilyResolvedClassUnionMember2.$fromRdf({
-          ...context,
-          objectSet,
-          resource,
+        LazilyResolvedClassUnionMember2.$fromRdf(resource, {
+          ...options,
+          ignoreRdfType: false,
         }) as purify.Either<Error, LazilyResolvedClassUnion>,
     );
   }
@@ -27389,29 +28099,25 @@ export namespace StubClassUnion {
     );
   }
 
-  export function $fromRdf({
-    ignoreRdfType,
-    objectSet,
-    resource,
-    ...context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    objectSet?: $ObjectSet;
-    resource: rdfjsResource.Resource;
-  }): purify.Either<Error, StubClassUnion> {
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+      objectSet?: $ObjectSet;
+    },
+  ): purify.Either<Error, StubClassUnion> {
     return (
-      StubClassUnionMember1.$fromRdf({
-        ...context,
-        objectSet,
-        resource,
+      StubClassUnionMember1.$fromRdf(resource, {
+        ...options,
+        ignoreRdfType: false,
       }) as purify.Either<Error, StubClassUnion>
     ).altLazy(
       () =>
-        StubClassUnionMember2.$fromRdf({
-          ...context,
-          objectSet,
-          resource,
+        StubClassUnionMember2.$fromRdf(resource, {
+          ...options,
+          ignoreRdfType: false,
         }) as purify.Either<Error, StubClassUnion>,
     );
   }
@@ -31379,10 +32085,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectType: {
-      $fromRdf: (parameters: {
-        objectSet: $ObjectSet;
-        resource: rdfjsResource.Resource;
-      }) => purify.Either<Error, ObjectT>;
+      $fromRdf: (
+        resource: rdfjsResource.Resource,
+        options: { objectSet: $ObjectSet },
+      ) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
@@ -31397,10 +32103,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectType: {
-      $fromRdf: (parameters: {
-        objectSet: $ObjectSet;
-        resource: rdfjsResource.Resource;
-      }) => purify.Either<Error, ObjectT>;
+      $fromRdf: (
+        resource: rdfjsResource.Resource,
+        options: { objectSet: $ObjectSet },
+      ) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
@@ -31455,10 +32161,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
       const objects: ObjectT[] = [];
       for (const identifier of identifiers) {
-        const either = objectType.$fromRdf({
-          objectSet: this,
-          resource: this.resourceSet.resource(identifier),
-        });
+        const either = objectType.$fromRdf(
+          this.resourceSet.resource(identifier),
+          { objectSet: this },
+        );
         if (either.isLeft()) {
           return either;
         }
@@ -31482,7 +32188,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     const objects: ObjectT[] = [];
     let objectI = 0;
     for (const resource of resources) {
-      const either = objectType.$fromRdf({ objectSet: this, resource });
+      const either = objectType.$fromRdf(resource, { objectSet: this });
       if (either.isLeft()) {
         return either;
       }
@@ -31501,10 +32207,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectType: {
-      $fromRdf: (parameters: {
-        objectSet: $ObjectSet;
-        resource: rdfjsResource.Resource;
-      }) => purify.Either<Error, ObjectT>;
+      $fromRdf: (
+        resource: rdfjsResource.Resource,
+        options: { objectSet: $ObjectSet },
+      ) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
@@ -31519,10 +32225,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectTypes: readonly {
-      $fromRdf: (parameters: {
-        objectSet: $ObjectSet;
-        resource: rdfjsResource.Resource;
-      }) => purify.Either<Error, ObjectT>;
+      $fromRdf: (
+        resource: rdfjsResource.Resource,
+        options: { objectSet: $ObjectSet },
+      ) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
@@ -31538,10 +32244,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectTypes: readonly {
-      $fromRdf: (parameters: {
-        objectSet: $ObjectSet;
-        resource: rdfjsResource.Resource;
-      }) => purify.Either<Error, ObjectT>;
+      $fromRdf: (
+        resource: rdfjsResource.Resource,
+        options: { objectSet: $ObjectSet },
+      ) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
@@ -31599,7 +32305,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         const resource = this.resourceSet.resource(identifier);
         const lefts: purify.Either<Error, ObjectT>[] = [];
         for (const objectType of objectTypes) {
-          const either = objectType.$fromRdf({ objectSet: this, resource });
+          const either = objectType.$fromRdf(resource, { objectSet: this });
           if (either.isRight()) {
             objects.push(either.unsafeCoerce());
             break;
@@ -31619,10 +32325,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
     const resources: {
       objectType: {
-        $fromRdf: (parameters: {
-          objectSet: $ObjectSet;
-          resource: rdfjsResource.Resource;
-        }) => purify.Either<Error, ObjectT>;
+        $fromRdf: (
+          resource: rdfjsResource.Resource,
+          options: { objectSet: $ObjectSet },
+        ) => purify.Either<Error, ObjectT>;
         $fromRdfType?: rdfjs.NamedNode;
       };
       resource: rdfjsResource.Resource;
@@ -31649,7 +32355,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     let objectI = 0;
     const objects: ObjectT[] = [];
     for (const { objectType, resource } of resources) {
-      const either = objectType.$fromRdf({ objectSet: this, resource });
+      const either = objectType.$fromRdf(resource, { objectSet: this });
       if (either.isLeft()) {
         return either;
       }
@@ -31668,10 +32374,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectTypes: readonly {
-      $fromRdf: (parameters: {
-        objectSet: $ObjectSet;
-        resource: rdfjsResource.Resource;
-      }) => purify.Either<Error, ObjectT>;
+      $fromRdf: (
+        resource: rdfjsResource.Resource,
+        options: { objectSet: $ObjectSet },
+      ) => purify.Either<Error, ObjectT>;
       $fromRdfType?: rdfjs.NamedNode;
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
@@ -33716,10 +34422,10 @@ export class $SparqlObjectSet implements $ObjectSet {
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectType: {
-      $fromRdf: (parameters: {
-        objectSet: $ObjectSet;
-        resource: rdfjsResource.Resource;
-      }) => purify.Either<Error, ObjectT>;
+      $fromRdf: (
+        resource: rdfjsResource.Resource,
+        options: { objectSet: $ObjectSet },
+      ) => purify.Either<Error, ObjectT>;
       $sparqlConstructQueryString: (
         parameters?: { subject?: sparqljs.Triple["subject"] } & Omit<
           sparqljs.ConstructQuery,
@@ -33769,13 +34475,13 @@ export class $SparqlObjectSet implements $ObjectSet {
     const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
     const objects: ObjectT[] = [];
     for (const identifier of identifiers) {
-      const objectEither = objectType.$fromRdf({
-        objectSet: this,
-        resource: new rdfjsResource.Resource<rdfjs.NamedNode>({
+      const objectEither = objectType.$fromRdf(
+        new rdfjsResource.Resource<rdfjs.NamedNode>({
           dataset,
           identifier: identifier as rdfjs.NamedNode,
         }),
-      });
+        { objectSet: this },
+      );
       if (objectEither.isLeft()) {
         return objectEither;
       }

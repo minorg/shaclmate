@@ -36,13 +36,15 @@ describe("sparql", () => {
         oxigraphStore.query(constructQueryString) as Quad[],
       );
       const constructInstance = harness
-        .fromRdf({
-          extra: 1,
-          resource: new MutableResourceSet({
+        .fromRdf(
+          new MutableResourceSet({
             dataFactory,
             dataset: constructResultDataset,
           }).namedResource(harness.instance.$identifier as NamedNode),
-        })
+          {
+            extra: 1,
+          },
+        )
         .unsafeCoerce();
       const equalsResult = harness.equals(constructInstance as any).extract();
       if (equalsResult !== true) {

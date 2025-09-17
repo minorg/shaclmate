@@ -13,10 +13,12 @@ export abstract class Harness<
   IdentifierT extends BlankNode | NamedNode,
 > {
   readonly fromJson: (json: unknown) => Either<zod.ZodError, T>;
-  readonly fromRdf: (parameters: {
-    [_index: string]: any;
-    resource: Resource<IdentifierT>;
-  }) => Either<Error, T>;
+  readonly fromRdf: (
+    resource: Resource<IdentifierT>,
+    parameters: {
+      [_index: string]: any;
+    },
+  ) => Either<Error, T>;
   readonly sparqlConstructQueryString: () => string;
 
   constructor(
