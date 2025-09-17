@@ -5,7 +5,7 @@ import path from "node:path";
 import url from "node:url";
 import { stringify as stringifyYaml } from "yaml";
 
-const VERSION = "2.0.22";
+const VERSION = "2.0.23";
 
 type PackageName =
   | "cli"
