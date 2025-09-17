@@ -215,7 +215,7 @@ describe("fromRdf", () => {
     expect(result.extract()).toBeInstanceOf(Resource.MistypedValueError);
   });
 
-  it.only("runtime languageIn", ({ expect }) => {
+  it("runtime languageIn", ({ expect }) => {
     const dataset = new N3.Store();
     const identifier = dataFactory.blankNode();
     const resource = new MutableResourceSet({

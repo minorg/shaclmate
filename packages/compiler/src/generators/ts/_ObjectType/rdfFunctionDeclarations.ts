@@ -13,7 +13,7 @@ function fromRdfFunctionDeclaration(
   const statements: string[] = [];
 
   statements.push(
-    "let { ignoreRdfType = false, languageIn = [], objectSet, ...context } = (options ?? {});",
+    "let { ignoreRdfType = false, languageIn, objectSet, ...context } = (options ?? {});",
     `if (!objectSet) { objectSet = new ${syntheticNamePrefix}RdfjsDatasetObjectSet({ dataset: resource.dataset }); }`,
   );
 
@@ -133,7 +133,7 @@ if (!${variables.ignoreRdfType} && !${variables.resource}.isInstanceOf(${synthet
     parameters: [
       {
         name: `{ ignoreRdfType: ${variables.ignoreRdfType}, languageIn: ${variables.languageIn}, objectSet: ${variables.objectSet}, resource: ${variables.resource},\n// @ts-ignore\n...${variables.context} }`,
-        type: `{ [_index: string]: any; ignoreRdfType: boolean; languageIn: readonly string[]; objectSet: ${syntheticNamePrefix}ObjectSet; resource: rdfjsResource.Resource; }`,
+        type: `{ [_index: string]: any; ignoreRdfType: boolean; languageIn?: readonly string[]; objectSet: ${syntheticNamePrefix}ObjectSet; resource: rdfjsResource.Resource; }`,
       },
     ],
     returnType: `purify.Either<Error, ${returnType.join(" & ")}>`,

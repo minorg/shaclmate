@@ -558,7 +558,7 @@ export namespace $NamedDefaultStub {
   ): purify.Either<Error, $NamedDefaultStub> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -587,7 +587,7 @@ export namespace $NamedDefaultStub {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.NamedNode }> {
@@ -849,7 +849,7 @@ export namespace $DefaultStub {
   ): purify.Either<Error, $DefaultStub> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -878,7 +878,7 @@ export namespace $DefaultStub {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }> {
@@ -1189,7 +1189,7 @@ export namespace UuidV4IriClass {
   ): purify.Either<Error, UuidV4IriClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -1216,7 +1216,7 @@ export namespace UuidV4IriClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -1798,9 +1798,7 @@ export namespace UnionPropertiesClass {
         };
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -1961,7 +1959,7 @@ export namespace UnionPropertiesClass {
   ): purify.Either<Error, UnionPropertiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -1988,7 +1986,7 @@ export namespace UnionPropertiesClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -2925,9 +2923,7 @@ export namespace TermPropertiesClass {
         };
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3124,7 +3120,7 @@ export namespace TermPropertiesClass {
   ): purify.Either<Error, TermPropertiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -3151,7 +3147,7 @@ export namespace TermPropertiesClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -3818,9 +3814,7 @@ export namespace StubClassUnionMember2 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3902,7 +3896,7 @@ export namespace StubClassUnionMember2 {
   ): purify.Either<Error, StubClassUnionMember2> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -3929,7 +3923,7 @@ export namespace StubClassUnionMember2 {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -4292,9 +4286,7 @@ export namespace StubClassUnionMember1 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4376,7 +4368,7 @@ export namespace StubClassUnionMember1 {
   ): purify.Either<Error, StubClassUnionMember1> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -4403,7 +4395,7 @@ export namespace StubClassUnionMember1 {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -4854,7 +4846,7 @@ export namespace Sha256IriClass {
   ): purify.Either<Error, Sha256IriClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -4881,7 +4873,7 @@ export namespace Sha256IriClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -5199,9 +5191,7 @@ export namespace PropertyVisibilitiesClass {
     readonly publicProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5295,7 +5285,7 @@ export namespace PropertyVisibilitiesClass {
   ): purify.Either<Error, PropertyVisibilitiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -5322,7 +5312,7 @@ export namespace PropertyVisibilitiesClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -5789,9 +5779,7 @@ export namespace PropertyCardinalitiesClass {
     readonly requiredStringProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5917,7 +5905,7 @@ export namespace PropertyCardinalitiesClass {
   ): purify.Either<Error, PropertyCardinalitiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -5944,7 +5932,7 @@ export namespace PropertyCardinalitiesClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -6448,9 +6436,7 @@ export namespace OrderedPropertiesClass {
     readonly orderedPropertyA: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6550,7 +6536,7 @@ export namespace OrderedPropertiesClass {
   ): purify.Either<Error, OrderedPropertiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -6577,7 +6563,7 @@ export namespace OrderedPropertiesClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -6996,7 +6982,7 @@ export namespace NonClass {
   ): purify.Either<Error, NonClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -7023,7 +7009,7 @@ export namespace NonClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -7447,9 +7433,7 @@ export namespace MutablePropertiesClass {
     readonly mutableStringProperty?: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -7568,7 +7552,7 @@ export namespace MutablePropertiesClass {
   ): purify.Either<Error, MutablePropertiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -7595,7 +7579,7 @@ export namespace MutablePropertiesClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -8278,9 +8262,7 @@ export namespace ListPropertiesClass {
     readonly stringListProperty?: readonly string[];
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8377,7 +8359,7 @@ export namespace ListPropertiesClass {
   ): purify.Either<Error, ListPropertiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -8404,7 +8386,7 @@ export namespace ListPropertiesClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -9040,9 +9022,7 @@ export namespace StubClass {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9124,7 +9104,7 @@ export namespace StubClass {
   ): purify.Either<Error, StubClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -9151,7 +9131,7 @@ export namespace StubClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -10317,9 +10297,7 @@ export namespace LazyPropertiesClass {
     readonly setStubClassToResolvedClassProperty?: readonly StubClass.$Json[];
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -10678,7 +10656,7 @@ export namespace LazyPropertiesClass {
   ): purify.Either<Error, LazyPropertiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -10705,7 +10683,7 @@ export namespace LazyPropertiesClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -12016,7 +11994,7 @@ export namespace LazilyResolvedIriClass {
   ): purify.Either<Error, LazilyResolvedIriClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -12043,7 +12021,7 @@ export namespace LazilyResolvedIriClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -12352,9 +12330,7 @@ export namespace LazilyResolvedClassUnionMember2 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12436,7 +12412,7 @@ export namespace LazilyResolvedClassUnionMember2 {
   ): purify.Either<Error, LazilyResolvedClassUnionMember2> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -12463,7 +12439,7 @@ export namespace LazilyResolvedClassUnionMember2 {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -12830,9 +12806,7 @@ export namespace LazilyResolvedClassUnionMember1 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12914,7 +12888,7 @@ export namespace LazilyResolvedClassUnionMember1 {
   ): purify.Either<Error, LazilyResolvedClassUnionMember1> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -12941,7 +12915,7 @@ export namespace LazilyResolvedClassUnionMember1 {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -13297,9 +13271,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13381,7 +13353,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
   ): purify.Either<Error, LazilyResolvedBlankNodeOrIriClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -13408,7 +13380,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -13877,9 +13849,7 @@ export namespace LanguageInPropertiesClass {
     };
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14006,7 +13976,7 @@ export namespace LanguageInPropertiesClass {
   ): purify.Either<Error, LanguageInPropertiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -14033,7 +14003,7 @@ export namespace LanguageInPropertiesClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -14456,7 +14426,7 @@ export namespace IriClass {
   ): purify.Either<Error, IriClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -14483,7 +14453,7 @@ export namespace IriClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.NamedNode }> {
@@ -14643,9 +14613,7 @@ export namespace InterfaceUnionMember2b {
     readonly interfaceUnionMember2bProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -14776,7 +14744,7 @@ export namespace InterfaceUnionMember2b {
   ): purify.Either<Error, InterfaceUnionMember2b> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -14803,7 +14771,7 @@ export namespace InterfaceUnionMember2b {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -15063,9 +15031,7 @@ export namespace InterfaceUnionMember2a {
     readonly interfaceUnionMember2aProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15196,7 +15162,7 @@ export namespace InterfaceUnionMember2a {
   ): purify.Either<Error, InterfaceUnionMember2a> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -15223,7 +15189,7 @@ export namespace InterfaceUnionMember2a {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -15483,9 +15449,7 @@ export namespace InterfaceUnionMember1 {
     readonly interfaceUnionMember1Property: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15607,7 +15571,7 @@ export namespace InterfaceUnionMember1 {
   ): purify.Either<Error, InterfaceUnionMember1> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -15634,7 +15598,7 @@ export namespace InterfaceUnionMember1 {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -15891,9 +15855,7 @@ export namespace Interface {
     readonly interfaceProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16007,7 +15969,7 @@ export namespace Interface {
   ): purify.Either<Error, Interface> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -16034,7 +15996,7 @@ export namespace Interface {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -16342,9 +16304,7 @@ export namespace IndirectRecursiveHelperClass {
     readonly indirectRecursiveProperty?: IndirectRecursiveClass.$Json;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16431,7 +16391,7 @@ export namespace IndirectRecursiveHelperClass {
   ): purify.Either<Error, IndirectRecursiveHelperClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -16458,7 +16418,7 @@ export namespace IndirectRecursiveHelperClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -16814,9 +16774,7 @@ export namespace IndirectRecursiveClass {
     readonly indirectRecursiveHelperProperty?: IndirectRecursiveHelperClass.$Json;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16901,7 +16859,7 @@ export namespace IndirectRecursiveClass {
   ): purify.Either<Error, IndirectRecursiveClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -16928,7 +16886,7 @@ export namespace IndirectRecursiveClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -17368,9 +17326,7 @@ export namespace InPropertiesClass {
     readonly inStringsProperty?: "text" | "html";
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17505,7 +17461,7 @@ export namespace InPropertiesClass {
   ): purify.Either<Error, InPropertiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -17532,7 +17488,7 @@ export namespace InPropertiesClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -17559,23 +17515,21 @@ export namespace InPropertiesClass {
       .values($properties.inBooleansProperty["identifier"], { unique: true })
       .head()
       .chain((value) =>
-        value
-          .toBoolean()
-          .chain((value) =>
-            value === true
-              ? purify.Either.of<Error, true>(value)
-              : purify.Left<Error, true>(
-                  new rdfjsResource.Resource.MistypedValueError({
-                    actualValue: rdfLiteral.toRdf(value),
-                    expectedValueType: "true",
-                    focusResource: $resource,
-                    predicate:
-                      InPropertiesClass.$properties.inBooleansProperty[
-                        "identifier"
-                      ],
-                  }),
-                ),
-          ),
+        value.toBoolean().chain((value) =>
+          value === true
+            ? purify.Either.of<Error, true>(value)
+            : purify.Left<Error, true>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: rdfLiteral.toRdf(value),
+                  expectedValueType: "true",
+                  focusResource: $resource,
+                  predicate:
+                    InPropertiesClass.$properties.inBooleansProperty[
+                      "identifier"
+                    ],
+                }),
+              ),
+        ),
       )
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
@@ -18185,9 +18139,7 @@ export namespace InIdentifierClass {
     readonly inIdentifierProperty?: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.NamedNode<
@@ -18274,7 +18226,7 @@ export namespace InIdentifierClass {
   ): purify.Either<Error, InIdentifierClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -18301,7 +18253,7 @@ export namespace InIdentifierClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -18677,9 +18629,7 @@ export namespace HasValuePropertiesClass {
     readonly hasLiteralValueProperty?: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18777,7 +18727,7 @@ export namespace HasValuePropertiesClass {
   ): purify.Either<Error, HasValuePropertiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -18804,7 +18754,7 @@ export namespace HasValuePropertiesClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -19189,9 +19139,7 @@ export namespace ExternClassPropertyClass {
     readonly externClassProperty?: ExternClass.$Json;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19273,7 +19221,7 @@ export namespace ExternClassPropertyClass {
   ): purify.Either<Error, ExternClassPropertyClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -19300,7 +19248,7 @@ export namespace ExternClassPropertyClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -19633,9 +19581,7 @@ export namespace ExplicitRdfTypeClass {
     readonly explicitRdfTypeProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19716,7 +19662,7 @@ export namespace ExplicitRdfTypeClass {
   ): purify.Either<Error, ExplicitRdfTypeClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -19743,7 +19689,7 @@ export namespace ExplicitRdfTypeClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -20111,9 +20057,7 @@ export namespace ExplicitFromToRdfTypesClass {
     readonly explicitFromToRdfTypesProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -20195,7 +20139,7 @@ export namespace ExplicitFromToRdfTypesClass {
   ): purify.Either<Error, ExplicitFromToRdfTypesClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -20222,7 +20166,7 @@ export namespace ExplicitFromToRdfTypesClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -20598,9 +20542,7 @@ export namespace DirectRecursiveClass {
     readonly directRecursiveProperty?: DirectRecursiveClass.$Json;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -20687,7 +20629,7 @@ export namespace DirectRecursiveClass {
   ): purify.Either<Error, DirectRecursiveClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -20714,7 +20656,7 @@ export namespace DirectRecursiveClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -21187,9 +21129,7 @@ export namespace DefaultValuePropertiesClass {
     readonly trueBooleanDefaultValueProperty: boolean;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -21321,7 +21261,7 @@ export namespace DefaultValuePropertiesClass {
   ): purify.Either<Error, DefaultValuePropertiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -21348,7 +21288,7 @@ export namespace DefaultValuePropertiesClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -21924,9 +21864,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
     readonly baseInterfaceWithPropertiesProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -22073,7 +22011,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
   ): purify.Either<Error, BaseInterfaceWithProperties> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -22108,7 +22046,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -22411,9 +22349,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export const $Identifier = BaseInterfaceWithPropertiesStatic.$Identifier;
   export type $Json = BaseInterfaceWithPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -22537,7 +22473,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   ): purify.Either<Error, BaseInterfaceWithoutProperties> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -22572,7 +22508,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -22858,9 +22794,7 @@ export namespace ConcreteParentInterfaceStatic {
     readonly concreteParentInterfaceProperty: string;
   } & BaseInterfaceWithoutPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -22995,7 +22929,7 @@ export namespace ConcreteParentInterfaceStatic {
   ): purify.Either<Error, ConcreteParentInterface> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -23030,7 +22964,7 @@ export namespace ConcreteParentInterfaceStatic {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -23374,9 +23308,7 @@ export namespace ConcreteChildInterface {
     readonly concreteChildInterfaceProperty: string;
   } & ConcreteParentInterfaceStatic.$Json;
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -23502,7 +23434,7 @@ export namespace ConcreteChildInterface {
   ): purify.Either<Error, ConcreteChildInterface> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -23529,7 +23461,7 @@ export namespace ConcreteChildInterface {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -23966,9 +23898,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     readonly abstractBaseClassWithPropertiesProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -24053,7 +23983,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
   ): purify.Either<Error, AbstractBaseClassWithProperties> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -24078,7 +24008,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -24353,7 +24283,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
   ): purify.Either<Error, AbstractBaseClassWithoutProperties> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -24378,7 +24308,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -24551,20 +24481,18 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
   }
 
   override $equals(other: ConcreteParentClass): $EqualsResult {
-    return super
-      .$equals(other)
-      .chain(() =>
-        $strictEquals(
-          this.concreteParentClassProperty,
-          other.concreteParentClassProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "concreteParentClassProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.$equals(other).chain(() =>
+      $strictEquals(
+        this.concreteParentClassProperty,
+        other.concreteParentClassProperty,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "concreteParentClassProperty",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override $hash<
@@ -24644,9 +24572,7 @@ export namespace ConcreteParentClassStatic {
     readonly concreteParentClassProperty: string;
   } & AbstractBaseClassWithoutPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -24737,7 +24663,7 @@ export namespace ConcreteParentClassStatic {
   ): purify.Either<Error, ConcreteParentClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -24772,7 +24698,7 @@ export namespace ConcreteParentClassStatic {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -25048,20 +24974,18 @@ export class ConcreteChildClass extends ConcreteParentClass {
   }
 
   override $equals(other: ConcreteChildClass): $EqualsResult {
-    return super
-      .$equals(other)
-      .chain(() =>
-        $strictEquals(
-          this.concreteChildClassProperty,
-          other.concreteChildClassProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "concreteChildClassProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
+    return super.$equals(other).chain(() =>
+      $strictEquals(
+        this.concreteChildClassProperty,
+        other.concreteChildClassProperty,
+      ).mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "concreteChildClassProperty",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      })),
+    );
   }
 
   override $hash<
@@ -25137,9 +25061,7 @@ export namespace ConcreteChildClass {
     readonly concreteChildClassProperty: string;
   } & ConcreteParentClassStatic.$Json;
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -25221,7 +25143,7 @@ export namespace ConcreteChildClass {
   ): purify.Either<Error, ConcreteChildClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -25248,7 +25170,7 @@ export namespace ConcreteChildClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -25639,9 +25561,7 @@ export namespace ClassUnionMember2 {
     readonly classUnionMember2Property: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -25722,7 +25642,7 @@ export namespace ClassUnionMember2 {
   ): purify.Either<Error, ClassUnionMember2> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -25749,7 +25669,7 @@ export namespace ClassUnionMember2 {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -26102,9 +26022,7 @@ export namespace ClassUnionMember1 {
     readonly classUnionMember1Property: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -26185,7 +26103,7 @@ export namespace ClassUnionMember1 {
   ): purify.Either<Error, ClassUnionMember1> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -26212,7 +26130,7 @@ export namespace ClassUnionMember1 {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -26605,7 +26523,7 @@ export namespace BlankClass {
   ): purify.Either<Error, BlankClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -26632,7 +26550,7 @@ export namespace BlankClass {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }> {
@@ -26826,9 +26744,7 @@ export namespace AbstractBaseClassForExternClassStatic {
     readonly abstractBaseClassForExternClassProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -26914,7 +26830,7 @@ export namespace AbstractBaseClassForExternClassStatic {
   ): purify.Either<Error, AbstractBaseClassForExternClass> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -26939,7 +26855,7 @@ export namespace AbstractBaseClassForExternClassStatic {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<

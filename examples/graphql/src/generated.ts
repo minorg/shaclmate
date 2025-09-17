@@ -142,7 +142,7 @@ export namespace $DefaultStub {
   ): purify.Either<Error, $DefaultStub> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -171,7 +171,7 @@ export namespace $DefaultStub {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }> {
@@ -305,7 +305,7 @@ export namespace UnionMember2 {
   ): purify.Either<Error, UnionMember2> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -332,7 +332,7 @@ export namespace UnionMember2 {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -511,7 +511,7 @@ export namespace UnionMember1 {
   ): purify.Either<Error, UnionMember1> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -538,7 +538,7 @@ export namespace UnionMember1 {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -759,7 +759,7 @@ export namespace Nested {
   ): purify.Either<Error, Nested> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -786,7 +786,7 @@ export namespace Nested {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -1010,7 +1010,7 @@ export namespace ParentStatic {
   ): purify.Either<Error, Parent> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -1045,7 +1045,7 @@ export namespace ParentStatic {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -1351,7 +1351,7 @@ export namespace Child {
   ): purify.Either<Error, Child> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -1378,7 +1378,7 @@ export namespace Child {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<

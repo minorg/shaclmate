@@ -319,9 +319,7 @@ export namespace NestedNodeShape {
     readonly requiredStringProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -438,7 +436,7 @@ export namespace NestedNodeShape {
   ): purify.Either<Error, NestedNodeShape> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -465,7 +463,7 @@ export namespace NestedNodeShape {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
@@ -741,9 +739,7 @@ export namespace FormNodeShape {
     readonly requiredStringProperty: string;
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -940,7 +936,7 @@ export namespace FormNodeShape {
   ): purify.Either<Error, FormNodeShape> {
     let {
       ignoreRdfType = false,
-      languageIn = [],
+      languageIn,
       objectSet,
       ...context
     } = options ?? {};
@@ -967,7 +963,7 @@ export namespace FormNodeShape {
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn: readonly string[];
+    languageIn?: readonly string[];
     objectSet: $ObjectSet;
     resource: rdfjsResource.Resource;
   }): purify.Either<
