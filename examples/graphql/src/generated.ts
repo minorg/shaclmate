@@ -1,6 +1,10 @@
+import {
+  StoreFactory as _DatasetFactory,
+  DataFactory as dataFactory,
+} from "n3";
+const datasetFactory: rdfjs.DatasetCoreFactory = new _DatasetFactory();
 import type * as rdfjs from "@rdfjs/types";
 import * as graphql from "graphql";
-import N3, { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
 import * as rdfjsResource from "rdfjs-resource";
 export namespace $RdfVocabularies {
@@ -107,7 +111,7 @@ export class $DefaultStub {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -241,7 +245,7 @@ export class UnionMember2 {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -451,7 +455,7 @@ export class UnionMember1 {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -686,7 +690,7 @@ export class Nested {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -954,7 +958,7 @@ export class Parent {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableNamedResource(this.$identifier, {
       mutateGraph,
@@ -1274,7 +1278,7 @@ export class Child extends Parent {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = super.$toRdf({
       ignoreRdfType: true,

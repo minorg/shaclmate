@@ -50,9 +50,10 @@ export class TsGenerator implements Generator {
     sourceFile: SourceFile;
   }): void {
     // sourceFile.addStatements(this.configuration.dataFactoryImport);
-    sourceFile.addStatements(
-      'import N3, { DataFactory as dataFactory } from "n3"',
-    );
+    sourceFile.addStatements([
+      'import { DataFactory as dataFactory, StoreFactory as _DatasetFactory } from "n3";',
+      "const datasetFactory: rdfjs.DatasetCoreFactory = new _DatasetFactory();",
+    ]);
 
     const declaredTypes: (ObjectType | ObjectUnionType)[] = [
       ...objectTypes,

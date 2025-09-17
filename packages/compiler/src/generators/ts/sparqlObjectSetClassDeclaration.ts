@@ -278,7 +278,7 @@ try {
   return purify.Left(e as Error);
 }
 
-const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+const dataset = datasetFactory.dataset(quads.concat());
 const objects: ${typeParameters.ObjectT.name}[] = [];
 for (const identifier of identifiers) {
   const objectEither = objectType.${syntheticNamePrefix}fromRdf(

@@ -35,7 +35,7 @@ export function toRdfFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
 
   const statements: string[] = [
     `const ${variables.mutateGraph} = options?.${variables.mutateGraph};`,
-    `const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new rdfjsResource.MutableResourceSet({ dataFactory, dataset: new N3.Store() });`,
+    `const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new rdfjsResource.MutableResourceSet({ dataFactory, dataset: datasetFactory.dataset() });`,
   ];
 
   if (this.parentObjectTypes.length > 0) {

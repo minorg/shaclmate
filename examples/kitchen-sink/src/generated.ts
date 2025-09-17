@@ -1,6 +1,10 @@
+import {
+  StoreFactory as _DatasetFactory,
+  DataFactory as dataFactory,
+} from "n3";
+const datasetFactory: rdfjs.DatasetCoreFactory = new _DatasetFactory();
 import type * as rdfjs from "@rdfjs/types";
 import { sha256 } from "js-sha256";
-import N3, { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
 import * as rdfLiteral from "rdf-literal";
 import * as rdfjsResource from "rdfjs-resource";
@@ -452,7 +456,7 @@ export class $NamedDefaultStub {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableNamedResource(this.$identifier, {
       mutateGraph,
@@ -746,7 +750,7 @@ export class $DefaultStub {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -1077,7 +1081,7 @@ export class UuidV4IriClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableNamedResource(this.$identifier, {
       mutateGraph,
@@ -1740,7 +1744,7 @@ export class UnionPropertiesClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -2845,7 +2849,7 @@ export class TermPropertiesClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -3782,7 +3786,7 @@ export class StubClassUnionMember2 {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -4258,7 +4262,7 @@ export class StubClassUnionMember1 {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -4754,7 +4758,7 @@ export class Sha256IriClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableNamedResource(this.$identifier, {
       mutateGraph,
@@ -5175,7 +5179,7 @@ export class PropertyVisibilitiesClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -5754,7 +5758,7 @@ export class PropertyCardinalitiesClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -6428,7 +6432,7 @@ export class OrderedPropertiesClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -6908,7 +6912,7 @@ export class NonClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -7387,7 +7391,7 @@ export class MutablePropertiesClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -8173,7 +8177,7 @@ export class ListPropertiesClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -9040,7 +9044,7 @@ export class StubClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -10231,7 +10235,7 @@ export class LazyPropertiesClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -11935,7 +11939,7 @@ export class LazilyResolvedIriClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableNamedResource(this.$identifier, {
       mutateGraph,
@@ -12346,7 +12350,7 @@ export class LazilyResolvedClassUnionMember2 {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -12826,7 +12830,7 @@ export class LazilyResolvedClassUnionMember1 {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -13308,7 +13312,7 @@ export class LazilyResolvedBlankNodeOrIriClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -13875,7 +13879,7 @@ export class LanguageInPropertiesClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -14407,7 +14411,7 @@ export class IriClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableNamedResource(this.$identifier, {
       mutateGraph,
@@ -14906,7 +14910,7 @@ export namespace InterfaceUnionMember2b {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(
       _interfaceUnionMember2b.$identifier,
@@ -15328,7 +15332,7 @@ export namespace InterfaceUnionMember2a {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(
       _interfaceUnionMember2a.$identifier,
@@ -15740,7 +15744,7 @@ export namespace InterfaceUnionMember1 {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(
       _interfaceUnionMember1.$identifier,
@@ -16134,7 +16138,7 @@ export namespace Interface {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(_interface.$identifier, {
       mutateGraph,
@@ -16366,7 +16370,7 @@ export class IndirectRecursiveHelperClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -16840,7 +16844,7 @@ export class IndirectRecursiveClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -17371,7 +17375,7 @@ export class InPropertiesClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -18179,7 +18183,7 @@ export class InIdentifierClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableNamedResource(this.$identifier, {
       mutateGraph,
@@ -18706,7 +18710,7 @@ export class HasValuePropertiesClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -19223,7 +19227,7 @@ export class ExternClassPropertyClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -19661,7 +19665,7 @@ export class ExplicitRdfTypeClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -20135,7 +20139,7 @@ export class ExplicitFromToRdfTypesClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -20638,7 +20642,7 @@ export class DirectRecursiveClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -21180,7 +21184,7 @@ export class DefaultValuePropertiesClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -22257,7 +22261,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(
       _baseInterfaceWithProperties.$identifier,
@@ -22716,7 +22720,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = BaseInterfaceWithPropertiesStatic.$toRdf(
       _baseInterfaceWithoutProperties,
@@ -23193,7 +23197,7 @@ export namespace ConcreteParentInterfaceStatic {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = BaseInterfaceWithoutPropertiesStatic.$toRdf(
       _concreteParentInterface,
@@ -23693,7 +23697,7 @@ export namespace ConcreteChildInterface {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = ConcreteParentInterfaceStatic.$toRdf(
       _concreteChildInterface,
@@ -24019,7 +24023,7 @@ export abstract class AbstractBaseClassWithProperties {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -24358,7 +24362,7 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = super.$toRdf({
       ignoreRdfType: true,
@@ -24702,7 +24706,7 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = super.$toRdf({
       ignoreRdfType: true,
@@ -25199,7 +25203,7 @@ export class ConcreteChildClass extends ConcreteParentClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = super.$toRdf({
       ignoreRdfType: true,
@@ -25687,7 +25691,7 @@ export class ClassUnionMember2 {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -26152,7 +26156,7 @@ export class ClassUnionMember1 {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -26601,7 +26605,7 @@ export class BlankClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -26891,7 +26895,7 @@ export abstract class AbstractBaseClassForExternClass {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
@@ -34662,7 +34666,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       return purify.Left(e as Error);
     }
 
-    const dataset: rdfjs.DatasetCore = new N3.Store(quads.concat());
+    const dataset = datasetFactory.dataset(quads.concat());
     const objects: ObjectT[] = [];
     for (const identifier of identifiers) {
       const objectEither = objectType.$fromRdf(

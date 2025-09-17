@@ -1,5 +1,9 @@
+import {
+  StoreFactory as _DatasetFactory,
+  DataFactory as dataFactory,
+} from "n3";
+const datasetFactory: rdfjs.DatasetCoreFactory = new _DatasetFactory();
 import type * as rdfjs from "@rdfjs/types";
-import N3, { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
 import * as rdfjsResource from "rdfjs-resource";
 import { z as zod } from "zod";
@@ -504,7 +508,7 @@ export namespace NestedNodeShape {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(_nestedNodeShape.$identifier, {
       mutateGraph,
@@ -1121,7 +1125,7 @@ export namespace FormNodeShape {
       options?.resourceSet ??
       new rdfjsResource.MutableResourceSet({
         dataFactory,
-        dataset: new N3.Store(),
+        dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(_formNodeShape.$identifier, {
       mutateGraph,

@@ -12,18 +12,9 @@ describe("fromRdf", () => {
   for (const [id, harness] of Object.entries(harnesses)) {
     it(`${id} round trip`, ({ expect }) => {
       const fromRdfInstance = harness
-        .fromRdf(
-          harness.toRdf({
-            mutateGraph: dataFactory.defaultGraph(),
-            resourceSet: new MutableResourceSet({
-              dataFactory,
-              dataset: new N3.Store(),
-            }),
-          }),
-          {
-            extra: 1,
-          },
-        )
+        .fromRdf(harness.toRdf(), {
+          extra: 1,
+        })
         .unsafeCoerce() as any;
       expect(harness.equals(fromRdfInstance).extract()).toStrictEqual(true);
     });
@@ -32,13 +23,7 @@ describe("fromRdf", () => {
   it("abstract base class fromRdf", ({ expect }) => {
     const fromRdfInstance =
       kitchenSink.AbstractBaseClassWithPropertiesStatic.$fromRdf(
-        harnesses.concreteChildClass.toRdf({
-          mutateGraph: dataFactory.defaultGraph(),
-          resourceSet: new MutableResourceSet({
-            dataFactory,
-            dataset: new N3.Store(),
-          }),
-        }),
+        harnesses.concreteChildClass.toRdf(),
       ).unsafeCoerce() as any;
     expect(
       harnesses.concreteChildClass.equals(fromRdfInstance).extract(),
@@ -47,13 +32,7 @@ describe("fromRdf", () => {
 
   it("concrete base class fromRdf", ({ expect }) => {
     const fromRdfInstance = kitchenSink.ConcreteParentClassStatic.$fromRdf(
-      harnesses.concreteChildClass.toRdf({
-        mutateGraph: dataFactory.defaultGraph(),
-        resourceSet: new MutableResourceSet({
-          dataFactory,
-          dataset: new N3.Store(),
-        }),
-      }),
+      harnesses.concreteChildClass.toRdf(),
     ).unsafeCoerce() as any;
     expect(
       harnesses.concreteChildClass.equals(fromRdfInstance).extract(),
