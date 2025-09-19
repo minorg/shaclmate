@@ -2,6 +2,7 @@ import { Maybe } from "purify-ts";
 import "ts-morph";
 import { Memoize } from "typescript-memoize";
 
+import { invariant } from "ts-invariant";
 import type { TsFeature } from "../../../enums/TsFeature.js";
 import { Import } from "../Import.js";
 import type { ObjectType } from "../ObjectType.js";
@@ -12,6 +13,31 @@ import { SnippetDeclarations } from "../SnippetDeclarations.js";
 import { Type as _Type } from "../Type.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { ShaclProperty } from "./ShaclProperty.js";
+
+function stubObjectUnionTypeToResolvedObjectUnionTypeSwitchStatement({
+  resolvedObjectUnionType,
+  stubObjectUnionType,
+  variables,
+}: {
+  resolvedObjectUnionType: ObjectUnionType;
+  stubObjectUnionType: ObjectUnionType;
+  variables: { value: string };
+}) {
+  invariant(
+    resolvedObjectUnionType.memberTypes.length ===
+      stubObjectUnionType.memberTypes.length,
+  );
+
+  const caseBlocks = resolvedObjectUnionType.memberTypes.map(
+    (resolvedObjectType, objectTypeI) => {
+      return `${resolvedObjectType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${stubObjectUnionType.memberTypes[objectTypeI].newExpression({ parameters: variables.value })};`;
+    },
+  );
+  caseBlocks.push(
+    `default: ${variables.value} satisfies never; throw new Error("unrecognized type");`,
+  );
+  return `switch (${variables.value}.${resolvedObjectUnionType.discriminatorProperty.unsafeCoerce().name}) { ${caseBlocks.join("\n")} }`;
+}
 
 export class LazyShaclProperty<
   LazyTypeT extends LazyShaclProperty.Type<ResolvedTypeT, StubTypeT>,
@@ -212,7 +238,19 @@ export namespace LazyShaclProperty {
       if (this.stubType.itemType.kind === "ObjectType") {
         conversions.push({
           conversionExpression: (value) =>
-            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}.map(parameters => ${(this.stubType.itemType as ObjectType).newExpression({ parameters: "parameters" })}), resolver: async () => purify.Either.of(${value} as readonly ${this.resolvedType.itemType.name}[]) })`,
+            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}.map(object => ${(this.stubType.itemType as ObjectType).newExpression({ parameters: "object" })}), resolver: async () => purify.Either.of(${value} as readonly ${this.resolvedType.itemType.name}[]) })`,
+          sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
+          sourceTypeName: `readonly ${this.resolvedType.itemType.name}[]`,
+        });
+      } else if (
+        this.resolvedType.itemType.kind === "ObjectUnionType" &&
+        this.stubType.itemType.kind === "ObjectUnionType" &&
+        this.resolvedType.itemType.memberTypes.length ===
+          this.stubType.itemType.memberTypes.length
+      ) {
+        conversions.push({
+          conversionExpression: (value) =>
+            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}.map(object => { ${stubObjectUnionTypeToResolvedObjectUnionTypeSwitchStatement({ resolvedObjectUnionType: this.resolvedType.itemType as ObjectUnionType, stubObjectUnionType: this.stubType.itemType as ObjectUnionType, variables: { value: "object" } })} }), resolver: async () => purify.Either.of(${value} as readonly ${this.resolvedType.itemType.name}[]) })`,
           sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
           sourceTypeName: `readonly ${this.resolvedType.itemType.name}[]`,
         });
@@ -287,7 +325,7 @@ export namespace LazyShaclProperty {
         conversions.push(
           {
             conversionExpression: (value) =>
-              `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}.map(parameters => ${(this.stubType.itemType as ObjectType).newExpression({ parameters: "parameters" })}), resolver: async () => purify.Either.of((${value} as purify.Maybe<${this.resolvedType.itemType.name}>).unsafeCoerce()) })`,
+              `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}.map(object => ${(this.stubType.itemType as ObjectType).newExpression({ parameters: "object" })}), resolver: async () => purify.Either.of((${value} as purify.Maybe<${this.resolvedType.itemType.name}>).unsafeCoerce()) })`,
             sourceTypeCheckExpression: (value) =>
               `purify.Maybe.isMaybe(${value})`,
             sourceTypeName: `purify.Maybe<${this.resolvedType.itemType.name}>`,
@@ -295,6 +333,30 @@ export namespace LazyShaclProperty {
           {
             conversionExpression: (value) =>
               `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: purify.Maybe.of(${(this.stubType.itemType as ObjectType).newExpression({ parameters: value })}), resolver: async () => purify.Either.of(${value} as ${this.resolvedType.itemType.name}) })`,
+            sourceTypeCheckExpression: (value) =>
+              `typeof ${value} === "object"`,
+            sourceTypeName: this.resolvedType.itemType.name,
+          },
+        );
+      } else if (
+        this.resolvedType.itemType.kind === "ObjectUnionType" &&
+        this.stubType.itemType.kind === "ObjectUnionType" &&
+        this.resolvedType.itemType.memberTypes.length ===
+          this.stubType.itemType.memberTypes.length
+      ) {
+        const maybeMap = `.map(object => { ${stubObjectUnionTypeToResolvedObjectUnionTypeSwitchStatement({ resolvedObjectUnionType: this.resolvedType.itemType as ObjectUnionType, stubObjectUnionType: this.stubType.itemType as ObjectUnionType, variables: { value: "object" } })} })`;
+
+        conversions.push(
+          {
+            conversionExpression: (value) =>
+              `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}${maybeMap}, resolver: async () => purify.Either.of((${value} as purify.Maybe<${this.resolvedType.itemType.name}>).unsafeCoerce()) })`,
+            sourceTypeCheckExpression: (value) =>
+              `purify.Maybe.isMaybe(${value})`,
+            sourceTypeName: `purify.Maybe<${this.resolvedType.itemType.name}>`,
+          },
+          {
+            conversionExpression: (value) =>
+              `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: purify.Maybe.of(${value})${maybeMap}, resolver: async () => purify.Either.of(${value} as ${this.resolvedType.itemType.name}) })`,
             sourceTypeCheckExpression: (value) =>
               `typeof ${value} === "object"`,
             sourceTypeName: this.resolvedType.itemType.name,
@@ -353,6 +415,19 @@ export namespace LazyShaclProperty {
         conversions.push({
           conversionExpression: (value) =>
             `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${(this.stubType as ObjectType).newExpression({ parameters: value })}, resolver: async () => purify.Either.of(${value} as ${this.resolvedType.name}) })`,
+          sourceTypeCheckExpression: (value) =>
+            `typeof ${value} === "object" && ${value} instanceof ${this.resolvedType.name}`,
+          sourceTypeName: this.resolvedType.name,
+        });
+      } else if (
+        this.resolvedType.kind === "ObjectUnionType" &&
+        this.stubType.kind === "ObjectUnionType" &&
+        this.resolvedType.memberTypes.length ===
+          this.stubType.memberTypes.length
+      ) {
+        conversions.push({
+          conversionExpression: (value) =>
+            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ((object: ${this.resolvedType.name}) => { ${stubObjectUnionTypeToResolvedObjectUnionTypeSwitchStatement({ resolvedObjectUnionType: this.resolvedType as ObjectUnionType, stubObjectUnionType: this.stubType as ObjectUnionType, variables: { value: "object" } })} })(${value}), resolver: async () => purify.Either.of(${value} as ${this.resolvedType.name}) })`,
           sourceTypeCheckExpression: (value) =>
             `typeof ${value} === "object" && ${value} instanceof ${this.resolvedType.name}`,
           sourceTypeName: this.resolvedType.name,
