@@ -3,7 +3,7 @@ import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 
 import { DataFactory as dataFactory } from "n3";
-import { Either, Maybe, NonEmptyList } from "purify-ts";
+import { NonEmptyList } from "purify-ts";
 
 import { ClassHarness } from "./ClassHarness.js";
 import { ClassUnionHarness } from "./ClassUnionHarness.js";
@@ -268,20 +268,9 @@ export const harnesses = {
             "optionalStubClassToResolvedClassUnionProperty",
         }),
       optionalStubClassUnionToResolvedClassUnionProperty:
-        new kitchenSink.$LazyOptionalObject({
-          stub: Maybe.of(
-            new kitchenSink.StubClassUnionMember1({
-              lazilyResolvedStringProperty:
-                "optionalStubClassUnionToResolvedClassUnionProperty",
-            }),
-          ),
-          resolver: async () =>
-            Either.of(
-              new kitchenSink.LazilyResolvedClassUnionMember1({
-                lazilyResolvedStringProperty:
-                  "optionalStubClassUnionToResolvedClassUnionProperty",
-              }),
-            ),
+        new kitchenSink.LazilyResolvedClassUnionMember1({
+          lazilyResolvedStringProperty:
+            "optionalStubClassUnionToResolvedClassUnionProperty",
         }),
       requiredLazyToResolvedClassProperty:
         new kitchenSink.LazilyResolvedBlankNodeOrIriClass({

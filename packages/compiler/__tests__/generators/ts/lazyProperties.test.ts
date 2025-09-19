@@ -1,6 +1,6 @@
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import N3 from "n3";
-import { Either, Maybe } from "purify-ts";
+import {} from "purify-ts";
 import { MutableResourceSet } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
 import { beforeAll, describe, it } from "vitest";
@@ -61,16 +61,7 @@ describe("lazyProperties", () => {
         optionalStubClassToResolvedClassUnionProperty:
           expectedLazilyResolvedObjectUnion,
         optionalStubClassUnionToResolvedClassUnionProperty:
-          new kitchenSink.$LazyOptionalObject({
-            stub: Maybe.of(
-              new kitchenSink.StubClassUnionMember1({
-                $identifier: expectedLazilyResolvedObjectUnion.$identifier,
-                lazilyResolvedStringProperty:
-                  expectedLazilyResolvedObjectUnion.lazilyResolvedStringProperty,
-              }),
-            ),
-            resolver: async () => Either.of(expectedLazilyResolvedObjectUnion),
-          }),
+          expectedLazilyResolvedObjectUnion,
         requiredLazyToResolvedClassProperty:
           expectedLazilyResolvedBlankNodeOrIriObject,
         requiredStubClassToResolvedClassProperty:

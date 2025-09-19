@@ -112,6 +112,12 @@ class MemberType {
     return this.delegate.jsonZodSchema(parameters);
   }
 
+  newExpression(
+    parameters: Parameters<ObjectType["newExpression"]>[0],
+  ): string {
+    return this.delegate.newExpression(parameters);
+  }
+
   snippetDeclarations(
     parameters: Parameters<DeclaredType["snippetDeclarations"]>[0],
   ): readonly string[] {

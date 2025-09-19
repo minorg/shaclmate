@@ -1198,7 +1198,7 @@ export class Child extends Parent {
         $DefaultStub
       >({
         stub: parameters.optionalLazyObjectProperty.map(
-          (parameters) => new $DefaultStub(parameters),
+          (object) => new $DefaultStub(object),
         ),
         resolver: async () =>
           purify.Either.of(

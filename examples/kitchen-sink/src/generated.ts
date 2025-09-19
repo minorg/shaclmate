@@ -9423,11 +9423,14 @@ export class LazyPropertiesClass {
         >
       | LazilyResolvedClassUnion
       | purify.Maybe<LazilyResolvedClassUnion>;
-    readonly optionalStubClassUnionToResolvedClassUnionProperty?: $LazyOptionalObject<
-      LazilyResolvedClassUnion.$Identifier,
-      LazilyResolvedClassUnion,
-      StubClassUnion
-    >;
+    readonly optionalStubClassUnionToResolvedClassUnionProperty?:
+      | $LazyOptionalObject<
+          LazilyResolvedClassUnion.$Identifier,
+          LazilyResolvedClassUnion,
+          StubClassUnion
+        >
+      | LazilyResolvedClassUnion
+      | purify.Maybe<LazilyResolvedClassUnion>;
     readonly requiredLazyToResolvedClassProperty:
       | $LazyRequiredObject<
           LazilyResolvedBlankNodeOrIriClass.$Identifier,
@@ -9482,7 +9485,7 @@ export class LazyPropertiesClass {
         $DefaultStub
       >({
         stub: parameters.optionalLazyToResolvedClassProperty.map(
-          (parameters) => new $DefaultStub(parameters),
+          (object) => new $DefaultStub(object),
         ),
         resolver: async () =>
           purify.Either.of(
@@ -9541,7 +9544,7 @@ export class LazyPropertiesClass {
         $DefaultStub
       >({
         stub: parameters.optionalLazyToResolvedClassUnionProperty.map(
-          (parameters) => new $DefaultStub(parameters),
+          (object) => new $DefaultStub(object),
         ),
         resolver: async () =>
           purify.Either.of(
@@ -9600,7 +9603,7 @@ export class LazyPropertiesClass {
         $NamedDefaultStub
       >({
         stub: parameters.optionalLazyToResolvedIriClassProperty.map(
-          (parameters) => new $NamedDefaultStub(parameters),
+          (object) => new $NamedDefaultStub(object),
         ),
         resolver: async () =>
           purify.Either.of(
@@ -9661,7 +9664,7 @@ export class LazyPropertiesClass {
         StubClass
       >({
         stub: parameters.optionalStubClassToResolvedClassProperty.map(
-          (parameters) => new StubClass(parameters),
+          (object) => new StubClass(object),
         ),
         resolver: async () =>
           purify.Either.of(
@@ -9724,7 +9727,7 @@ export class LazyPropertiesClass {
           StubClass
         >({
           stub: parameters.optionalStubClassToResolvedClassUnionProperty.map(
-            (parameters) => new StubClass(parameters),
+            (object) => new StubClass(object),
           ),
           resolver: async () =>
             purify.Either.of(
@@ -9781,6 +9784,65 @@ export class LazyPropertiesClass {
     ) {
       this.optionalStubClassUnionToResolvedClassUnionProperty =
         parameters.optionalStubClassUnionToResolvedClassUnionProperty;
+    } else if (
+      purify.Maybe.isMaybe(
+        parameters.optionalStubClassUnionToResolvedClassUnionProperty,
+      )
+    ) {
+      this.optionalStubClassUnionToResolvedClassUnionProperty =
+        new $LazyOptionalObject<
+          LazilyResolvedClassUnion.$Identifier,
+          LazilyResolvedClassUnion,
+          StubClassUnion
+        >({
+          stub: parameters.optionalStubClassUnionToResolvedClassUnionProperty.map(
+            (object) => {
+              switch (object.$type) {
+                case "LazilyResolvedClassUnionMember1":
+                  return new StubClassUnionMember1(object);
+                case "LazilyResolvedClassUnionMember2":
+                  return new StubClassUnionMember2(object);
+                default:
+                  object satisfies never;
+                  throw new Error("unrecognized type");
+              }
+            },
+          ),
+          resolver: async () =>
+            purify.Either.of(
+              (
+                parameters.optionalStubClassUnionToResolvedClassUnionProperty as purify.Maybe<LazilyResolvedClassUnion>
+              ).unsafeCoerce(),
+            ),
+        });
+    } else if (
+      typeof parameters.optionalStubClassUnionToResolvedClassUnionProperty ===
+      "object"
+    ) {
+      this.optionalStubClassUnionToResolvedClassUnionProperty =
+        new $LazyOptionalObject<
+          LazilyResolvedClassUnion.$Identifier,
+          LazilyResolvedClassUnion,
+          StubClassUnion
+        >({
+          stub: purify.Maybe.of(
+            parameters.optionalStubClassUnionToResolvedClassUnionProperty,
+          ).map((object) => {
+            switch (object.$type) {
+              case "LazilyResolvedClassUnionMember1":
+                return new StubClassUnionMember1(object);
+              case "LazilyResolvedClassUnionMember2":
+                return new StubClassUnionMember2(object);
+              default:
+                object satisfies never;
+                throw new Error("unrecognized type");
+            }
+          }),
+          resolver: async () =>
+            purify.Either.of(
+              parameters.optionalStubClassUnionToResolvedClassUnionProperty as LazilyResolvedClassUnion,
+            ),
+        });
     } else if (
       typeof parameters.optionalStubClassUnionToResolvedClassUnionProperty ===
       "undefined"
@@ -9872,7 +9934,7 @@ export class LazyPropertiesClass {
         $DefaultStub
       >({
         stubs: parameters.setLazyToResolvedClassProperty.map(
-          (parameters) => new $DefaultStub(parameters),
+          (object) => new $DefaultStub(object),
         ),
         resolver: async () =>
           purify.Either.of(
@@ -9912,7 +9974,7 @@ export class LazyPropertiesClass {
         StubClass
       >({
         stubs: parameters.setStubClassToResolvedClassProperty.map(
-          (parameters) => new StubClass(parameters),
+          (object) => new StubClass(object),
         ),
         resolver: async () =>
           purify.Either.of(
