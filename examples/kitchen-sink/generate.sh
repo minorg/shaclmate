@@ -11,4 +11,4 @@ format_rdf() {
 
 format_rdf src/kitchen-sink.shaclmate.ttl
 #../../packages/cli/dist/cli.js show-ast-json src/kitchen-sink.shaclmate.ttl >src/ast.json
-../../packages/cli/dist/cli.js generate src/kitchen-sink.shaclmate.ttl >src/generated.ts
+time ../../packages/cli/dist/cli.js generate src/kitchen-sink.shaclmate.ttl >src/generated.ts
