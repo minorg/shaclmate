@@ -374,11 +374,26 @@ export class $LazyObjectSet<
     this.stubs = stubs;
   }
 
-  async resolve(): Promise<purify.Either<Error, readonly ResolvedObjectT[]>> {
+  async resolve(options?: { limit?: number; offset?: number }): Promise<
+    purify.Either<Error, readonly ResolvedObjectT[]>
+  > {
     if (this.stubs.length === 0) {
       return purify.Either.of([]);
     }
-    return await this.resolver(this.stubs.map((stub) => stub.$identifier));
+
+    const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return purify.Either.of([]);
+    }
+
+    let offset = options?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    return await this.resolver(
+      this.stubs.slice(offset, offset + limit).map((stub) => stub.$identifier),
+    );
   }
 }
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;

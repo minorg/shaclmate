@@ -344,15 +344,24 @@ describe("lazyProperties", () => {
                 ),
               ).toStrictEqual(true);
 
+              {
+                const resolvedObjects = (
+                  await nonEmptyLazyPropertiesObject.setLazyToResolvedClassProperty.resolve()
+                ).unsafeCoerce();
+                expect(resolvedObjects).toHaveLength(1);
+                expect(
+                  resolvedObjects[0]
+                    .$equals(expectedLazilyResolvedBlankNodeOrIriObject)
+                    .extract(),
+                ).toStrictEqual(true);
+              }
+
               const resolvedObjects = (
-                await nonEmptyLazyPropertiesObject.setLazyToResolvedClassProperty.resolve()
+                await nonEmptyLazyPropertiesObject.setLazyToResolvedClassProperty.resolve(
+                  { offset: 1 },
+                )
               ).unsafeCoerce();
-              expect(resolvedObjects).toHaveLength(1);
-              expect(
-                resolvedObjects[0]
-                  .$equals(expectedLazilyResolvedBlankNodeOrIriObject)
-                  .extract(),
-              ).toStrictEqual(true);
+              expect(resolvedObjects).toHaveLength(0);
             }
             break;
           }
