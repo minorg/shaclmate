@@ -20,23 +20,28 @@ export function createFunctionDeclaration(
   }
 
   const parametersPropertySignatures = this.properties.flatMap((property) =>
-    property.constructorParametersPropertySignature
-      .map(
-        (propertySignature) =>
-          `readonly ${propertySignature.name}${propertySignature.hasQuestionToken ? "?" : ""}: ${propertySignature.type}`,
-      )
-      .toList(),
+    property.constructorParametersPropertySignature.toList(),
   );
-  // Should always have at least an identifier
-  invariant(parametersPropertySignatures.length > 0);
-  const parametersType = [`{ ${parametersPropertySignatures.join(", ")} }`]
-    .concat(
-      this.parentObjectTypes.map(
-        (parentObjectType) =>
-          `Parameters<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}create>[0]`,
-      ),
-    )
-    .join(" & ");
+
+  const parametersType: string[] = [];
+  if (parametersPropertySignatures.length > 0) {
+    parametersType.push(
+      `{ ${parametersPropertySignatures
+        .map(
+          (propertySignature) =>
+            `readonly ${propertySignature.name}${propertySignature.hasQuestionToken ? "?" : ""}: ${propertySignature.type}`,
+        )
+        .join(", ")} }`,
+    );
+  }
+  for (const parentObjectType of this.parentObjectTypes) {
+    parametersType.push(
+      `Parameters<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}create>[0]`,
+    );
+  }
+  if (parametersType.length === 0) {
+    parametersType.push("object");
+  }
 
   const propertyInitializers: string[] = [];
   const omitPropertyNames: string[] = [];
@@ -46,11 +51,17 @@ export function createFunctionDeclaration(
       `...${parentObjectType.staticModuleName}.${syntheticNamePrefix}create(parameters)`,
     );
   }
+  const parametersHasQuestionToken =
+    this.parentObjectTypes.length === 0 &&
+    parametersPropertySignatures.every(
+      (propertySignature) => !!propertySignature.hasQuestionToken,
+    );
+  const parametersVariable = `parameters${parametersHasQuestionToken ? "?" : ""}`;
   for (const property of this.properties) {
     const thisPropertyStatements = property.constructorStatements({
       variables: {
-        parameter: `parameters.${property.name}`,
-        parameters: "parameters",
+        parameter: `${parametersVariable}.${property.name}`,
+        parameters: parametersVariable,
       },
     });
     if (thisPropertyStatements.length > 0) {
@@ -69,8 +80,9 @@ export function createFunctionDeclaration(
     name: `${syntheticNamePrefix}create`,
     parameters: [
       {
+        hasQuestionToken: parametersHasQuestionToken,
         name: "parameters",
-        type: parametersType,
+        type: parametersType.join(" & "),
       },
     ],
     returnType:
