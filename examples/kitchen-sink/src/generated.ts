@@ -1786,7 +1786,7 @@ export class UnionPropertiesClass {
   readonly widenedLiteralsProperty: purify.Maybe<rdfjs.Literal>;
   readonly widenedTermsProperty: purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>;
 
-  constructor(parameters: {
+  constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly narrowLiteralsProperty?:
       | number
@@ -1811,111 +1811,111 @@ export class UnionPropertiesClass {
       | purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>
       | string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this._$identifier = parameters?.$identifier satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.narrowLiteralsProperty)) {
-      this.narrowLiteralsProperty = parameters.narrowLiteralsProperty;
-    } else if (typeof parameters.narrowLiteralsProperty === "number") {
+    if (purify.Maybe.isMaybe(parameters?.narrowLiteralsProperty)) {
+      this.narrowLiteralsProperty = parameters?.narrowLiteralsProperty;
+    } else if (typeof parameters?.narrowLiteralsProperty === "number") {
       this.narrowLiteralsProperty = purify.Maybe.of(
-        parameters.narrowLiteralsProperty,
+        parameters?.narrowLiteralsProperty,
       );
-    } else if (typeof parameters.narrowLiteralsProperty === "string") {
+    } else if (typeof parameters?.narrowLiteralsProperty === "string") {
       this.narrowLiteralsProperty = purify.Maybe.of(
-        parameters.narrowLiteralsProperty,
+        parameters?.narrowLiteralsProperty,
       );
-    } else if (typeof parameters.narrowLiteralsProperty === "undefined") {
+    } else if (typeof parameters?.narrowLiteralsProperty === "undefined") {
       this.narrowLiteralsProperty = purify.Maybe.empty();
     } else {
       this.narrowLiteralsProperty =
-        parameters.narrowLiteralsProperty satisfies never;
+        parameters?.narrowLiteralsProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.unrelatedTypesProperty)) {
-      this.unrelatedTypesProperty = parameters.unrelatedTypesProperty;
-    } else if (typeof parameters.unrelatedTypesProperty === "number") {
+    if (purify.Maybe.isMaybe(parameters?.unrelatedTypesProperty)) {
+      this.unrelatedTypesProperty = parameters?.unrelatedTypesProperty;
+    } else if (typeof parameters?.unrelatedTypesProperty === "number") {
       this.unrelatedTypesProperty = purify.Maybe.of(
-        parameters.unrelatedTypesProperty,
+        parameters?.unrelatedTypesProperty,
       );
-    } else if (typeof parameters.unrelatedTypesProperty === "object") {
+    } else if (typeof parameters?.unrelatedTypesProperty === "object") {
       this.unrelatedTypesProperty = purify.Maybe.of(
-        parameters.unrelatedTypesProperty,
+        parameters?.unrelatedTypesProperty,
       );
-    } else if (typeof parameters.unrelatedTypesProperty === "undefined") {
+    } else if (typeof parameters?.unrelatedTypesProperty === "undefined") {
       this.unrelatedTypesProperty = purify.Maybe.empty();
     } else {
       this.unrelatedTypesProperty =
-        parameters.unrelatedTypesProperty satisfies never;
+        parameters?.unrelatedTypesProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.widenedLiteralsProperty)) {
-      this.widenedLiteralsProperty = parameters.widenedLiteralsProperty;
-    } else if (typeof parameters.widenedLiteralsProperty === "boolean") {
+    if (purify.Maybe.isMaybe(parameters?.widenedLiteralsProperty)) {
+      this.widenedLiteralsProperty = parameters?.widenedLiteralsProperty;
+    } else if (typeof parameters?.widenedLiteralsProperty === "boolean") {
       this.widenedLiteralsProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.widenedLiteralsProperty, { dataFactory }),
+        rdfLiteral.toRdf(parameters?.widenedLiteralsProperty, { dataFactory }),
       );
     } else if (
-      typeof parameters.widenedLiteralsProperty === "object" &&
-      parameters.widenedLiteralsProperty instanceof Date
+      typeof parameters?.widenedLiteralsProperty === "object" &&
+      parameters?.widenedLiteralsProperty instanceof Date
     ) {
       this.widenedLiteralsProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.widenedLiteralsProperty, { dataFactory }),
+        rdfLiteral.toRdf(parameters?.widenedLiteralsProperty, { dataFactory }),
       );
-    } else if (typeof parameters.widenedLiteralsProperty === "number") {
+    } else if (typeof parameters?.widenedLiteralsProperty === "number") {
       this.widenedLiteralsProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.widenedLiteralsProperty, { dataFactory }),
+        rdfLiteral.toRdf(parameters?.widenedLiteralsProperty, { dataFactory }),
       );
-    } else if (typeof parameters.widenedLiteralsProperty === "string") {
+    } else if (typeof parameters?.widenedLiteralsProperty === "string") {
       this.widenedLiteralsProperty = purify.Maybe.of(
-        dataFactory.literal(parameters.widenedLiteralsProperty),
+        dataFactory.literal(parameters?.widenedLiteralsProperty),
       );
-    } else if (typeof parameters.widenedLiteralsProperty === "object") {
+    } else if (typeof parameters?.widenedLiteralsProperty === "object") {
       this.widenedLiteralsProperty = purify.Maybe.of(
-        parameters.widenedLiteralsProperty,
+        parameters?.widenedLiteralsProperty,
       );
-    } else if (typeof parameters.widenedLiteralsProperty === "undefined") {
+    } else if (typeof parameters?.widenedLiteralsProperty === "undefined") {
       this.widenedLiteralsProperty = purify.Maybe.empty();
     } else {
       this.widenedLiteralsProperty =
-        parameters.widenedLiteralsProperty satisfies never;
+        parameters?.widenedLiteralsProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.widenedTermsProperty)) {
-      this.widenedTermsProperty = parameters.widenedTermsProperty;
-    } else if (typeof parameters.widenedTermsProperty === "boolean") {
+    if (purify.Maybe.isMaybe(parameters?.widenedTermsProperty)) {
+      this.widenedTermsProperty = parameters?.widenedTermsProperty;
+    } else if (typeof parameters?.widenedTermsProperty === "boolean") {
       this.widenedTermsProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.widenedTermsProperty, { dataFactory }),
+        rdfLiteral.toRdf(parameters?.widenedTermsProperty, { dataFactory }),
       );
     } else if (
-      typeof parameters.widenedTermsProperty === "object" &&
-      parameters.widenedTermsProperty instanceof Date
+      typeof parameters?.widenedTermsProperty === "object" &&
+      parameters?.widenedTermsProperty instanceof Date
     ) {
       this.widenedTermsProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.widenedTermsProperty, { dataFactory }),
+        rdfLiteral.toRdf(parameters?.widenedTermsProperty, { dataFactory }),
       );
-    } else if (typeof parameters.widenedTermsProperty === "number") {
+    } else if (typeof parameters?.widenedTermsProperty === "number") {
       this.widenedTermsProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.widenedTermsProperty, { dataFactory }),
+        rdfLiteral.toRdf(parameters?.widenedTermsProperty, { dataFactory }),
       );
-    } else if (typeof parameters.widenedTermsProperty === "string") {
+    } else if (typeof parameters?.widenedTermsProperty === "string") {
       this.widenedTermsProperty = purify.Maybe.of(
-        dataFactory.literal(parameters.widenedTermsProperty),
+        dataFactory.literal(parameters?.widenedTermsProperty),
       );
-    } else if (typeof parameters.widenedTermsProperty === "object") {
+    } else if (typeof parameters?.widenedTermsProperty === "object") {
       this.widenedTermsProperty = purify.Maybe.of(
-        parameters.widenedTermsProperty,
+        parameters?.widenedTermsProperty,
       );
-    } else if (typeof parameters.widenedTermsProperty === "undefined") {
+    } else if (typeof parameters?.widenedTermsProperty === "undefined") {
       this.widenedTermsProperty = purify.Maybe.empty();
     } else {
       this.widenedTermsProperty =
-        parameters.widenedTermsProperty satisfies never;
+        parameters?.widenedTermsProperty satisfies never;
     }
   }
 
@@ -2848,7 +2848,7 @@ export class TermPropertiesClass {
     rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
   >;
 
-  constructor(parameters: {
+  constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly booleanTermProperty?: boolean | purify.Maybe<boolean>;
     readonly dateTermProperty?: Date | purify.Maybe<Date>;
@@ -2874,148 +2874,150 @@ export class TermPropertiesClass {
       | purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
       | string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this._$identifier = parameters?.$identifier satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.booleanTermProperty)) {
-      this.booleanTermProperty = parameters.booleanTermProperty;
-    } else if (typeof parameters.booleanTermProperty === "boolean") {
+    if (purify.Maybe.isMaybe(parameters?.booleanTermProperty)) {
+      this.booleanTermProperty = parameters?.booleanTermProperty;
+    } else if (typeof parameters?.booleanTermProperty === "boolean") {
       this.booleanTermProperty = purify.Maybe.of(
-        parameters.booleanTermProperty,
+        parameters?.booleanTermProperty,
       );
-    } else if (typeof parameters.booleanTermProperty === "undefined") {
+    } else if (typeof parameters?.booleanTermProperty === "undefined") {
       this.booleanTermProperty = purify.Maybe.empty();
     } else {
-      this.booleanTermProperty = parameters.booleanTermProperty satisfies never;
+      this.booleanTermProperty =
+        parameters?.booleanTermProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.dateTermProperty)) {
-      this.dateTermProperty = parameters.dateTermProperty;
+    if (purify.Maybe.isMaybe(parameters?.dateTermProperty)) {
+      this.dateTermProperty = parameters?.dateTermProperty;
     } else if (
-      typeof parameters.dateTermProperty === "object" &&
-      parameters.dateTermProperty instanceof Date
+      typeof parameters?.dateTermProperty === "object" &&
+      parameters?.dateTermProperty instanceof Date
     ) {
-      this.dateTermProperty = purify.Maybe.of(parameters.dateTermProperty);
-    } else if (typeof parameters.dateTermProperty === "undefined") {
+      this.dateTermProperty = purify.Maybe.of(parameters?.dateTermProperty);
+    } else if (typeof parameters?.dateTermProperty === "undefined") {
       this.dateTermProperty = purify.Maybe.empty();
     } else {
-      this.dateTermProperty = parameters.dateTermProperty satisfies never;
+      this.dateTermProperty = parameters?.dateTermProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.dateTimeTermProperty)) {
-      this.dateTimeTermProperty = parameters.dateTimeTermProperty;
+    if (purify.Maybe.isMaybe(parameters?.dateTimeTermProperty)) {
+      this.dateTimeTermProperty = parameters?.dateTimeTermProperty;
     } else if (
-      typeof parameters.dateTimeTermProperty === "object" &&
-      parameters.dateTimeTermProperty instanceof Date
+      typeof parameters?.dateTimeTermProperty === "object" &&
+      parameters?.dateTimeTermProperty instanceof Date
     ) {
       this.dateTimeTermProperty = purify.Maybe.of(
-        parameters.dateTimeTermProperty,
+        parameters?.dateTimeTermProperty,
       );
-    } else if (typeof parameters.dateTimeTermProperty === "undefined") {
+    } else if (typeof parameters?.dateTimeTermProperty === "undefined") {
       this.dateTimeTermProperty = purify.Maybe.empty();
     } else {
       this.dateTimeTermProperty =
-        parameters.dateTimeTermProperty satisfies never;
+        parameters?.dateTimeTermProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.iriTermProperty)) {
-      this.iriTermProperty = parameters.iriTermProperty;
-    } else if (typeof parameters.iriTermProperty === "object") {
-      this.iriTermProperty = purify.Maybe.of(parameters.iriTermProperty);
-    } else if (typeof parameters.iriTermProperty === "string") {
+    if (purify.Maybe.isMaybe(parameters?.iriTermProperty)) {
+      this.iriTermProperty = parameters?.iriTermProperty;
+    } else if (typeof parameters?.iriTermProperty === "object") {
+      this.iriTermProperty = purify.Maybe.of(parameters?.iriTermProperty);
+    } else if (typeof parameters?.iriTermProperty === "string") {
       this.iriTermProperty = purify.Maybe.of(
-        dataFactory.namedNode(parameters.iriTermProperty),
+        dataFactory.namedNode(parameters?.iriTermProperty),
       );
-    } else if (typeof parameters.iriTermProperty === "undefined") {
+    } else if (typeof parameters?.iriTermProperty === "undefined") {
       this.iriTermProperty = purify.Maybe.empty();
     } else {
-      this.iriTermProperty = parameters.iriTermProperty satisfies never;
+      this.iriTermProperty = parameters?.iriTermProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.literalTermProperty)) {
-      this.literalTermProperty = parameters.literalTermProperty;
-    } else if (typeof parameters.literalTermProperty === "boolean") {
+    if (purify.Maybe.isMaybe(parameters?.literalTermProperty)) {
+      this.literalTermProperty = parameters?.literalTermProperty;
+    } else if (typeof parameters?.literalTermProperty === "boolean") {
       this.literalTermProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.literalTermProperty, { dataFactory }),
+        rdfLiteral.toRdf(parameters?.literalTermProperty, { dataFactory }),
       );
     } else if (
-      typeof parameters.literalTermProperty === "object" &&
-      parameters.literalTermProperty instanceof Date
+      typeof parameters?.literalTermProperty === "object" &&
+      parameters?.literalTermProperty instanceof Date
     ) {
       this.literalTermProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.literalTermProperty, { dataFactory }),
+        rdfLiteral.toRdf(parameters?.literalTermProperty, { dataFactory }),
       );
-    } else if (typeof parameters.literalTermProperty === "number") {
+    } else if (typeof parameters?.literalTermProperty === "number") {
       this.literalTermProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.literalTermProperty, { dataFactory }),
+        rdfLiteral.toRdf(parameters?.literalTermProperty, { dataFactory }),
       );
-    } else if (typeof parameters.literalTermProperty === "string") {
+    } else if (typeof parameters?.literalTermProperty === "string") {
       this.literalTermProperty = purify.Maybe.of(
-        dataFactory.literal(parameters.literalTermProperty),
+        dataFactory.literal(parameters?.literalTermProperty),
       );
-    } else if (typeof parameters.literalTermProperty === "object") {
+    } else if (typeof parameters?.literalTermProperty === "object") {
       this.literalTermProperty = purify.Maybe.of(
-        parameters.literalTermProperty,
+        parameters?.literalTermProperty,
       );
-    } else if (typeof parameters.literalTermProperty === "undefined") {
+    } else if (typeof parameters?.literalTermProperty === "undefined") {
       this.literalTermProperty = purify.Maybe.empty();
     } else {
-      this.literalTermProperty = parameters.literalTermProperty satisfies never;
+      this.literalTermProperty =
+        parameters?.literalTermProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.numberTermProperty)) {
-      this.numberTermProperty = parameters.numberTermProperty;
-    } else if (typeof parameters.numberTermProperty === "number") {
-      this.numberTermProperty = purify.Maybe.of(parameters.numberTermProperty);
-    } else if (typeof parameters.numberTermProperty === "undefined") {
+    if (purify.Maybe.isMaybe(parameters?.numberTermProperty)) {
+      this.numberTermProperty = parameters?.numberTermProperty;
+    } else if (typeof parameters?.numberTermProperty === "number") {
+      this.numberTermProperty = purify.Maybe.of(parameters?.numberTermProperty);
+    } else if (typeof parameters?.numberTermProperty === "undefined") {
       this.numberTermProperty = purify.Maybe.empty();
     } else {
-      this.numberTermProperty = parameters.numberTermProperty satisfies never;
+      this.numberTermProperty = parameters?.numberTermProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.stringTermProperty)) {
-      this.stringTermProperty = parameters.stringTermProperty;
-    } else if (typeof parameters.stringTermProperty === "string") {
-      this.stringTermProperty = purify.Maybe.of(parameters.stringTermProperty);
-    } else if (typeof parameters.stringTermProperty === "undefined") {
+    if (purify.Maybe.isMaybe(parameters?.stringTermProperty)) {
+      this.stringTermProperty = parameters?.stringTermProperty;
+    } else if (typeof parameters?.stringTermProperty === "string") {
+      this.stringTermProperty = purify.Maybe.of(parameters?.stringTermProperty);
+    } else if (typeof parameters?.stringTermProperty === "undefined") {
       this.stringTermProperty = purify.Maybe.empty();
     } else {
-      this.stringTermProperty = parameters.stringTermProperty satisfies never;
+      this.stringTermProperty = parameters?.stringTermProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.termProperty)) {
-      this.termProperty = parameters.termProperty;
-    } else if (typeof parameters.termProperty === "boolean") {
+    if (purify.Maybe.isMaybe(parameters?.termProperty)) {
+      this.termProperty = parameters?.termProperty;
+    } else if (typeof parameters?.termProperty === "boolean") {
       this.termProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.termProperty, { dataFactory }),
+        rdfLiteral.toRdf(parameters?.termProperty, { dataFactory }),
       );
     } else if (
-      typeof parameters.termProperty === "object" &&
-      parameters.termProperty instanceof Date
+      typeof parameters?.termProperty === "object" &&
+      parameters?.termProperty instanceof Date
     ) {
       this.termProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.termProperty, { dataFactory }),
+        rdfLiteral.toRdf(parameters?.termProperty, { dataFactory }),
       );
-    } else if (typeof parameters.termProperty === "number") {
+    } else if (typeof parameters?.termProperty === "number") {
       this.termProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.termProperty, { dataFactory }),
+        rdfLiteral.toRdf(parameters?.termProperty, { dataFactory }),
       );
-    } else if (typeof parameters.termProperty === "string") {
+    } else if (typeof parameters?.termProperty === "string") {
       this.termProperty = purify.Maybe.of(
-        dataFactory.literal(parameters.termProperty),
+        dataFactory.literal(parameters?.termProperty),
       );
-    } else if (typeof parameters.termProperty === "object") {
-      this.termProperty = purify.Maybe.of(parameters.termProperty);
-    } else if (typeof parameters.termProperty === "undefined") {
+    } else if (typeof parameters?.termProperty === "object") {
+      this.termProperty = purify.Maybe.of(parameters?.termProperty);
+    } else if (typeof parameters?.termProperty === "undefined") {
       this.termProperty = purify.Maybe.empty();
     } else {
-      this.termProperty = parameters.termProperty satisfies never;
+      this.termProperty = parameters?.termProperty satisfies never;
     }
   }
 
@@ -7607,54 +7609,55 @@ export class MutablePropertiesClass {
    */
   mutableStringProperty: purify.Maybe<string>;
 
-  constructor(parameters: {
+  constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly $identifierPrefix?: string;
     readonly mutableListProperty?: purify.Maybe<string[]> | string[];
     readonly mutableSetProperty?: readonly string[];
     readonly mutableStringProperty?: purify.Maybe<string> | string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this._$identifier = parameters?.$identifier satisfies never;
     }
 
-    this._$identifierPrefix = parameters.$identifierPrefix;
-    if (purify.Maybe.isMaybe(parameters.mutableListProperty)) {
-      this.mutableListProperty = parameters.mutableListProperty;
-    } else if (typeof parameters.mutableListProperty === "object") {
+    this._$identifierPrefix = parameters?.$identifierPrefix;
+    if (purify.Maybe.isMaybe(parameters?.mutableListProperty)) {
+      this.mutableListProperty = parameters?.mutableListProperty;
+    } else if (typeof parameters?.mutableListProperty === "object") {
       this.mutableListProperty = purify.Maybe.of(
-        parameters.mutableListProperty.concat(),
+        parameters?.mutableListProperty.concat(),
       );
-    } else if (typeof parameters.mutableListProperty === "undefined") {
+    } else if (typeof parameters?.mutableListProperty === "undefined") {
       this.mutableListProperty = purify.Maybe.empty();
     } else {
-      this.mutableListProperty = parameters.mutableListProperty satisfies never;
+      this.mutableListProperty =
+        parameters?.mutableListProperty satisfies never;
     }
 
-    if (typeof parameters.mutableSetProperty === "undefined") {
+    if (typeof parameters?.mutableSetProperty === "undefined") {
       this.mutableSetProperty = [];
-    } else if (typeof parameters.mutableSetProperty === "object") {
-      this.mutableSetProperty = parameters.mutableSetProperty.concat();
+    } else if (typeof parameters?.mutableSetProperty === "object") {
+      this.mutableSetProperty = parameters?.mutableSetProperty.concat();
     } else {
-      this.mutableSetProperty = parameters.mutableSetProperty satisfies never;
+      this.mutableSetProperty = parameters?.mutableSetProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.mutableStringProperty)) {
-      this.mutableStringProperty = parameters.mutableStringProperty;
-    } else if (typeof parameters.mutableStringProperty === "string") {
+    if (purify.Maybe.isMaybe(parameters?.mutableStringProperty)) {
+      this.mutableStringProperty = parameters?.mutableStringProperty;
+    } else if (typeof parameters?.mutableStringProperty === "string") {
       this.mutableStringProperty = purify.Maybe.of(
-        parameters.mutableStringProperty,
+        parameters?.mutableStringProperty,
       );
-    } else if (typeof parameters.mutableStringProperty === "undefined") {
+    } else if (typeof parameters?.mutableStringProperty === "undefined") {
       this.mutableStringProperty = purify.Maybe.empty();
     } else {
       this.mutableStringProperty =
-        parameters.mutableStringProperty satisfies never;
+        parameters?.mutableStringProperty satisfies never;
     }
   }
 
@@ -8436,7 +8439,7 @@ export class ListPropertiesClass {
   readonly objectListProperty: purify.Maybe<readonly NonClass[]>;
   readonly stringListProperty: purify.Maybe<readonly string[]>;
 
-  constructor(parameters: {
+  constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly objectListProperty?:
       | purify.Maybe<readonly NonClass[]>
@@ -8445,33 +8448,33 @@ export class ListPropertiesClass {
       | purify.Maybe<readonly string[]>
       | readonly string[];
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this._$identifier = parameters?.$identifier satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.objectListProperty)) {
-      this.objectListProperty = parameters.objectListProperty;
-    } else if (typeof parameters.objectListProperty === "object") {
-      this.objectListProperty = purify.Maybe.of(parameters.objectListProperty);
-    } else if (typeof parameters.objectListProperty === "undefined") {
+    if (purify.Maybe.isMaybe(parameters?.objectListProperty)) {
+      this.objectListProperty = parameters?.objectListProperty;
+    } else if (typeof parameters?.objectListProperty === "object") {
+      this.objectListProperty = purify.Maybe.of(parameters?.objectListProperty);
+    } else if (typeof parameters?.objectListProperty === "undefined") {
       this.objectListProperty = purify.Maybe.empty();
     } else {
-      this.objectListProperty = parameters.objectListProperty satisfies never;
+      this.objectListProperty = parameters?.objectListProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.stringListProperty)) {
-      this.stringListProperty = parameters.stringListProperty;
-    } else if (typeof parameters.stringListProperty === "object") {
-      this.stringListProperty = purify.Maybe.of(parameters.stringListProperty);
-    } else if (typeof parameters.stringListProperty === "undefined") {
+    if (purify.Maybe.isMaybe(parameters?.stringListProperty)) {
+      this.stringListProperty = parameters?.stringListProperty;
+    } else if (typeof parameters?.stringListProperty === "object") {
+      this.stringListProperty = purify.Maybe.of(parameters?.stringListProperty);
+    } else if (typeof parameters?.stringListProperty === "undefined") {
       this.stringListProperty = purify.Maybe.empty();
     } else {
-      this.stringListProperty = parameters.stringListProperty satisfies never;
+      this.stringListProperty = parameters?.stringListProperty satisfies never;
     }
   }
 
@@ -14096,7 +14099,7 @@ export class LanguageInPropertiesClass {
    */
   readonly languageInPropertiesLiteralProperty: purify.Maybe<rdfjs.Literal>;
 
-  constructor(parameters: {
+  constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly languageInPropertiesLanguageInProperty?:
       | rdfjs.Literal
@@ -14113,113 +14116,113 @@ export class LanguageInPropertiesClass {
       | purify.Maybe<rdfjs.Literal>
       | string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this._$identifier = parameters?.$identifier satisfies never;
     }
 
     if (
-      purify.Maybe.isMaybe(parameters.languageInPropertiesLanguageInProperty)
+      purify.Maybe.isMaybe(parameters?.languageInPropertiesLanguageInProperty)
     ) {
       this.languageInPropertiesLanguageInProperty =
-        parameters.languageInPropertiesLanguageInProperty;
+        parameters?.languageInPropertiesLanguageInProperty;
     } else if (
-      typeof parameters.languageInPropertiesLanguageInProperty === "boolean"
+      typeof parameters?.languageInPropertiesLanguageInProperty === "boolean"
     ) {
       this.languageInPropertiesLanguageInProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.languageInPropertiesLanguageInProperty, {
+        rdfLiteral.toRdf(parameters?.languageInPropertiesLanguageInProperty, {
           dataFactory,
         }),
       );
     } else if (
-      typeof parameters.languageInPropertiesLanguageInProperty === "object" &&
-      parameters.languageInPropertiesLanguageInProperty instanceof Date
+      typeof parameters?.languageInPropertiesLanguageInProperty === "object" &&
+      parameters?.languageInPropertiesLanguageInProperty instanceof Date
     ) {
       this.languageInPropertiesLanguageInProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.languageInPropertiesLanguageInProperty, {
+        rdfLiteral.toRdf(parameters?.languageInPropertiesLanguageInProperty, {
           dataFactory,
         }),
       );
     } else if (
-      typeof parameters.languageInPropertiesLanguageInProperty === "number"
+      typeof parameters?.languageInPropertiesLanguageInProperty === "number"
     ) {
       this.languageInPropertiesLanguageInProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.languageInPropertiesLanguageInProperty, {
+        rdfLiteral.toRdf(parameters?.languageInPropertiesLanguageInProperty, {
           dataFactory,
         }),
       );
     } else if (
-      typeof parameters.languageInPropertiesLanguageInProperty === "string"
+      typeof parameters?.languageInPropertiesLanguageInProperty === "string"
     ) {
       this.languageInPropertiesLanguageInProperty = purify.Maybe.of(
-        dataFactory.literal(parameters.languageInPropertiesLanguageInProperty),
+        dataFactory.literal(parameters?.languageInPropertiesLanguageInProperty),
       );
     } else if (
-      typeof parameters.languageInPropertiesLanguageInProperty === "object"
+      typeof parameters?.languageInPropertiesLanguageInProperty === "object"
     ) {
       this.languageInPropertiesLanguageInProperty = purify.Maybe.of(
-        parameters.languageInPropertiesLanguageInProperty,
+        parameters?.languageInPropertiesLanguageInProperty,
       );
     } else if (
-      typeof parameters.languageInPropertiesLanguageInProperty === "undefined"
+      typeof parameters?.languageInPropertiesLanguageInProperty === "undefined"
     ) {
       this.languageInPropertiesLanguageInProperty = purify.Maybe.empty();
     } else {
       this.languageInPropertiesLanguageInProperty =
-        parameters.languageInPropertiesLanguageInProperty satisfies never;
+        parameters?.languageInPropertiesLanguageInProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.languageInPropertiesLiteralProperty)) {
+    if (purify.Maybe.isMaybe(parameters?.languageInPropertiesLiteralProperty)) {
       this.languageInPropertiesLiteralProperty =
-        parameters.languageInPropertiesLiteralProperty;
+        parameters?.languageInPropertiesLiteralProperty;
     } else if (
-      typeof parameters.languageInPropertiesLiteralProperty === "boolean"
+      typeof parameters?.languageInPropertiesLiteralProperty === "boolean"
     ) {
       this.languageInPropertiesLiteralProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.languageInPropertiesLiteralProperty, {
+        rdfLiteral.toRdf(parameters?.languageInPropertiesLiteralProperty, {
           dataFactory,
         }),
       );
     } else if (
-      typeof parameters.languageInPropertiesLiteralProperty === "object" &&
-      parameters.languageInPropertiesLiteralProperty instanceof Date
+      typeof parameters?.languageInPropertiesLiteralProperty === "object" &&
+      parameters?.languageInPropertiesLiteralProperty instanceof Date
     ) {
       this.languageInPropertiesLiteralProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.languageInPropertiesLiteralProperty, {
+        rdfLiteral.toRdf(parameters?.languageInPropertiesLiteralProperty, {
           dataFactory,
         }),
       );
     } else if (
-      typeof parameters.languageInPropertiesLiteralProperty === "number"
+      typeof parameters?.languageInPropertiesLiteralProperty === "number"
     ) {
       this.languageInPropertiesLiteralProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.languageInPropertiesLiteralProperty, {
+        rdfLiteral.toRdf(parameters?.languageInPropertiesLiteralProperty, {
           dataFactory,
         }),
       );
     } else if (
-      typeof parameters.languageInPropertiesLiteralProperty === "string"
+      typeof parameters?.languageInPropertiesLiteralProperty === "string"
     ) {
       this.languageInPropertiesLiteralProperty = purify.Maybe.of(
-        dataFactory.literal(parameters.languageInPropertiesLiteralProperty),
+        dataFactory.literal(parameters?.languageInPropertiesLiteralProperty),
       );
     } else if (
-      typeof parameters.languageInPropertiesLiteralProperty === "object"
+      typeof parameters?.languageInPropertiesLiteralProperty === "object"
     ) {
       this.languageInPropertiesLiteralProperty = purify.Maybe.of(
-        parameters.languageInPropertiesLiteralProperty,
+        parameters?.languageInPropertiesLiteralProperty,
       );
     } else if (
-      typeof parameters.languageInPropertiesLiteralProperty === "undefined"
+      typeof parameters?.languageInPropertiesLiteralProperty === "undefined"
     ) {
       this.languageInPropertiesLiteralProperty = purify.Maybe.empty();
     } else {
       this.languageInPropertiesLiteralProperty =
-        parameters.languageInPropertiesLiteralProperty satisfies never;
+        parameters?.languageInPropertiesLiteralProperty satisfies never;
     }
   }
 
@@ -16731,35 +16734,35 @@ export class IndirectRecursiveHelperClass {
   readonly $type = "IndirectRecursiveHelperClass";
   readonly indirectRecursiveProperty: purify.Maybe<IndirectRecursiveClass>;
 
-  constructor(parameters: {
+  constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly indirectRecursiveProperty?:
       | IndirectRecursiveClass
       | purify.Maybe<IndirectRecursiveClass>;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this._$identifier = parameters?.$identifier satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.indirectRecursiveProperty)) {
-      this.indirectRecursiveProperty = parameters.indirectRecursiveProperty;
+    if (purify.Maybe.isMaybe(parameters?.indirectRecursiveProperty)) {
+      this.indirectRecursiveProperty = parameters?.indirectRecursiveProperty;
     } else if (
-      typeof parameters.indirectRecursiveProperty === "object" &&
-      parameters.indirectRecursiveProperty instanceof IndirectRecursiveClass
+      typeof parameters?.indirectRecursiveProperty === "object" &&
+      parameters?.indirectRecursiveProperty instanceof IndirectRecursiveClass
     ) {
       this.indirectRecursiveProperty = purify.Maybe.of(
-        parameters.indirectRecursiveProperty,
+        parameters?.indirectRecursiveProperty,
       );
-    } else if (typeof parameters.indirectRecursiveProperty === "undefined") {
+    } else if (typeof parameters?.indirectRecursiveProperty === "undefined") {
       this.indirectRecursiveProperty = purify.Maybe.empty();
     } else {
       this.indirectRecursiveProperty =
-        parameters.indirectRecursiveProperty satisfies never;
+        parameters?.indirectRecursiveProperty satisfies never;
     }
   }
 
@@ -17201,39 +17204,39 @@ export class IndirectRecursiveClass {
   readonly $type = "IndirectRecursiveClass";
   readonly indirectRecursiveHelperProperty: purify.Maybe<IndirectRecursiveHelperClass>;
 
-  constructor(parameters: {
+  constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly indirectRecursiveHelperProperty?:
       | IndirectRecursiveHelperClass
       | purify.Maybe<IndirectRecursiveHelperClass>;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this._$identifier = parameters?.$identifier satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.indirectRecursiveHelperProperty)) {
+    if (purify.Maybe.isMaybe(parameters?.indirectRecursiveHelperProperty)) {
       this.indirectRecursiveHelperProperty =
-        parameters.indirectRecursiveHelperProperty;
+        parameters?.indirectRecursiveHelperProperty;
     } else if (
-      typeof parameters.indirectRecursiveHelperProperty === "object" &&
-      parameters.indirectRecursiveHelperProperty instanceof
+      typeof parameters?.indirectRecursiveHelperProperty === "object" &&
+      parameters?.indirectRecursiveHelperProperty instanceof
         IndirectRecursiveHelperClass
     ) {
       this.indirectRecursiveHelperProperty = purify.Maybe.of(
-        parameters.indirectRecursiveHelperProperty,
+        parameters?.indirectRecursiveHelperProperty,
       );
     } else if (
-      typeof parameters.indirectRecursiveHelperProperty === "undefined"
+      typeof parameters?.indirectRecursiveHelperProperty === "undefined"
     ) {
       this.indirectRecursiveHelperProperty = purify.Maybe.empty();
     } else {
       this.indirectRecursiveHelperProperty =
-        parameters.indirectRecursiveHelperProperty satisfies never;
+        parameters?.indirectRecursiveHelperProperty satisfies never;
     }
   }
 
@@ -17608,7 +17611,7 @@ export class InPropertiesClass {
   readonly inNumbersProperty: purify.Maybe<1 | 2>;
   readonly inStringsProperty: purify.Maybe<"text" | "html">;
 
-  constructor(parameters: {
+  constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly inBooleansProperty?: purify.Maybe<true> | true;
     readonly inDateTimesProperty?: Date | purify.Maybe<Date>;
@@ -17631,72 +17634,73 @@ export class InPropertiesClass {
       | "html"
       | purify.Maybe<"text" | "html">;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this._$identifier = parameters?.$identifier satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.inBooleansProperty)) {
-      this.inBooleansProperty = parameters.inBooleansProperty;
-    } else if (typeof parameters.inBooleansProperty === "boolean") {
-      this.inBooleansProperty = purify.Maybe.of(parameters.inBooleansProperty);
-    } else if (typeof parameters.inBooleansProperty === "undefined") {
+    if (purify.Maybe.isMaybe(parameters?.inBooleansProperty)) {
+      this.inBooleansProperty = parameters?.inBooleansProperty;
+    } else if (typeof parameters?.inBooleansProperty === "boolean") {
+      this.inBooleansProperty = purify.Maybe.of(parameters?.inBooleansProperty);
+    } else if (typeof parameters?.inBooleansProperty === "undefined") {
       this.inBooleansProperty = purify.Maybe.empty();
     } else {
-      this.inBooleansProperty = parameters.inBooleansProperty satisfies never;
+      this.inBooleansProperty = parameters?.inBooleansProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.inDateTimesProperty)) {
-      this.inDateTimesProperty = parameters.inDateTimesProperty;
+    if (purify.Maybe.isMaybe(parameters?.inDateTimesProperty)) {
+      this.inDateTimesProperty = parameters?.inDateTimesProperty;
     } else if (
-      typeof parameters.inDateTimesProperty === "object" &&
-      parameters.inDateTimesProperty instanceof Date
+      typeof parameters?.inDateTimesProperty === "object" &&
+      parameters?.inDateTimesProperty instanceof Date
     ) {
       this.inDateTimesProperty = purify.Maybe.of(
-        parameters.inDateTimesProperty,
+        parameters?.inDateTimesProperty,
       );
-    } else if (typeof parameters.inDateTimesProperty === "undefined") {
+    } else if (typeof parameters?.inDateTimesProperty === "undefined") {
       this.inDateTimesProperty = purify.Maybe.empty();
     } else {
-      this.inDateTimesProperty = parameters.inDateTimesProperty satisfies never;
+      this.inDateTimesProperty =
+        parameters?.inDateTimesProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.inIrisProperty)) {
-      this.inIrisProperty = parameters.inIrisProperty;
-    } else if (typeof parameters.inIrisProperty === "object") {
-      this.inIrisProperty = purify.Maybe.of(parameters.inIrisProperty);
-    } else if (typeof parameters.inIrisProperty === "string") {
+    if (purify.Maybe.isMaybe(parameters?.inIrisProperty)) {
+      this.inIrisProperty = parameters?.inIrisProperty;
+    } else if (typeof parameters?.inIrisProperty === "object") {
+      this.inIrisProperty = purify.Maybe.of(parameters?.inIrisProperty);
+    } else if (typeof parameters?.inIrisProperty === "string") {
       this.inIrisProperty = purify.Maybe.of(
-        dataFactory.namedNode(parameters.inIrisProperty),
+        dataFactory.namedNode(parameters?.inIrisProperty),
       );
-    } else if (typeof parameters.inIrisProperty === "undefined") {
+    } else if (typeof parameters?.inIrisProperty === "undefined") {
       this.inIrisProperty = purify.Maybe.empty();
     } else {
-      this.inIrisProperty = parameters.inIrisProperty satisfies never;
+      this.inIrisProperty = parameters?.inIrisProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.inNumbersProperty)) {
-      this.inNumbersProperty = parameters.inNumbersProperty;
-    } else if (typeof parameters.inNumbersProperty === "number") {
-      this.inNumbersProperty = purify.Maybe.of(parameters.inNumbersProperty);
-    } else if (typeof parameters.inNumbersProperty === "undefined") {
+    if (purify.Maybe.isMaybe(parameters?.inNumbersProperty)) {
+      this.inNumbersProperty = parameters?.inNumbersProperty;
+    } else if (typeof parameters?.inNumbersProperty === "number") {
+      this.inNumbersProperty = purify.Maybe.of(parameters?.inNumbersProperty);
+    } else if (typeof parameters?.inNumbersProperty === "undefined") {
       this.inNumbersProperty = purify.Maybe.empty();
     } else {
-      this.inNumbersProperty = parameters.inNumbersProperty satisfies never;
+      this.inNumbersProperty = parameters?.inNumbersProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.inStringsProperty)) {
-      this.inStringsProperty = parameters.inStringsProperty;
-    } else if (typeof parameters.inStringsProperty === "string") {
-      this.inStringsProperty = purify.Maybe.of(parameters.inStringsProperty);
-    } else if (typeof parameters.inStringsProperty === "undefined") {
+    if (purify.Maybe.isMaybe(parameters?.inStringsProperty)) {
+      this.inStringsProperty = parameters?.inStringsProperty;
+    } else if (typeof parameters?.inStringsProperty === "string") {
+      this.inStringsProperty = purify.Maybe.of(parameters?.inStringsProperty);
+    } else if (typeof parameters?.inStringsProperty === "undefined") {
       this.inStringsProperty = purify.Maybe.empty();
     } else {
-      this.inStringsProperty = parameters.inStringsProperty satisfies never;
+      this.inStringsProperty = parameters?.inStringsProperty satisfies never;
     }
   }
 
@@ -19038,7 +19042,7 @@ export class HasValuePropertiesClass {
   readonly hasIriValueProperty: purify.Maybe<rdfjs.NamedNode>;
   readonly hasLiteralValueProperty: purify.Maybe<string>;
 
-  constructor(parameters: {
+  constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly hasIriValueProperty?:
       | rdfjs.NamedNode
@@ -19046,42 +19050,43 @@ export class HasValuePropertiesClass {
       | string;
     readonly hasLiteralValueProperty?: purify.Maybe<string> | string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this._$identifier = parameters?.$identifier satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.hasIriValueProperty)) {
-      this.hasIriValueProperty = parameters.hasIriValueProperty;
-    } else if (typeof parameters.hasIriValueProperty === "object") {
+    if (purify.Maybe.isMaybe(parameters?.hasIriValueProperty)) {
+      this.hasIriValueProperty = parameters?.hasIriValueProperty;
+    } else if (typeof parameters?.hasIriValueProperty === "object") {
       this.hasIriValueProperty = purify.Maybe.of(
-        parameters.hasIriValueProperty,
+        parameters?.hasIriValueProperty,
       );
-    } else if (typeof parameters.hasIriValueProperty === "string") {
+    } else if (typeof parameters?.hasIriValueProperty === "string") {
       this.hasIriValueProperty = purify.Maybe.of(
-        dataFactory.namedNode(parameters.hasIriValueProperty),
+        dataFactory.namedNode(parameters?.hasIriValueProperty),
       );
-    } else if (typeof parameters.hasIriValueProperty === "undefined") {
+    } else if (typeof parameters?.hasIriValueProperty === "undefined") {
       this.hasIriValueProperty = purify.Maybe.empty();
     } else {
-      this.hasIriValueProperty = parameters.hasIriValueProperty satisfies never;
+      this.hasIriValueProperty =
+        parameters?.hasIriValueProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.hasLiteralValueProperty)) {
-      this.hasLiteralValueProperty = parameters.hasLiteralValueProperty;
-    } else if (typeof parameters.hasLiteralValueProperty === "string") {
+    if (purify.Maybe.isMaybe(parameters?.hasLiteralValueProperty)) {
+      this.hasLiteralValueProperty = parameters?.hasLiteralValueProperty;
+    } else if (typeof parameters?.hasLiteralValueProperty === "string") {
       this.hasLiteralValueProperty = purify.Maybe.of(
-        parameters.hasLiteralValueProperty,
+        parameters?.hasLiteralValueProperty,
       );
-    } else if (typeof parameters.hasLiteralValueProperty === "undefined") {
+    } else if (typeof parameters?.hasLiteralValueProperty === "undefined") {
       this.hasLiteralValueProperty = purify.Maybe.empty();
     } else {
       this.hasLiteralValueProperty =
-        parameters.hasLiteralValueProperty satisfies never;
+        parameters?.hasLiteralValueProperty satisfies never;
     }
   }
 
@@ -19591,32 +19596,33 @@ export class ExternClassPropertyClass {
   readonly $type = "ExternClassPropertyClass";
   readonly externClassProperty: purify.Maybe<ExternClass>;
 
-  constructor(parameters: {
+  constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly externClassProperty?: ExternClass | purify.Maybe<ExternClass>;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this._$identifier = parameters?.$identifier satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.externClassProperty)) {
-      this.externClassProperty = parameters.externClassProperty;
+    if (purify.Maybe.isMaybe(parameters?.externClassProperty)) {
+      this.externClassProperty = parameters?.externClassProperty;
     } else if (
-      typeof parameters.externClassProperty === "object" &&
-      parameters.externClassProperty instanceof ExternClass
+      typeof parameters?.externClassProperty === "object" &&
+      parameters?.externClassProperty instanceof ExternClass
     ) {
       this.externClassProperty = purify.Maybe.of(
-        parameters.externClassProperty,
+        parameters?.externClassProperty,
       );
-    } else if (typeof parameters.externClassProperty === "undefined") {
+    } else if (typeof parameters?.externClassProperty === "undefined") {
       this.externClassProperty = purify.Maybe.empty();
     } else {
-      this.externClassProperty = parameters.externClassProperty satisfies never;
+      this.externClassProperty =
+        parameters?.externClassProperty satisfies never;
     }
   }
 
@@ -21003,35 +21009,35 @@ export class DirectRecursiveClass {
   readonly $type = "DirectRecursiveClass";
   readonly directRecursiveProperty: purify.Maybe<DirectRecursiveClass>;
 
-  constructor(parameters: {
+  constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly directRecursiveProperty?:
       | DirectRecursiveClass
       | purify.Maybe<DirectRecursiveClass>;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this._$identifier = parameters?.$identifier satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.directRecursiveProperty)) {
-      this.directRecursiveProperty = parameters.directRecursiveProperty;
+    if (purify.Maybe.isMaybe(parameters?.directRecursiveProperty)) {
+      this.directRecursiveProperty = parameters?.directRecursiveProperty;
     } else if (
-      typeof parameters.directRecursiveProperty === "object" &&
-      parameters.directRecursiveProperty instanceof DirectRecursiveClass
+      typeof parameters?.directRecursiveProperty === "object" &&
+      parameters?.directRecursiveProperty instanceof DirectRecursiveClass
     ) {
       this.directRecursiveProperty = purify.Maybe.of(
-        parameters.directRecursiveProperty,
+        parameters?.directRecursiveProperty,
       );
-    } else if (typeof parameters.directRecursiveProperty === "undefined") {
+    } else if (typeof parameters?.directRecursiveProperty === "undefined") {
       this.directRecursiveProperty = purify.Maybe.empty();
     } else {
       this.directRecursiveProperty =
-        parameters.directRecursiveProperty satisfies never;
+        parameters?.directRecursiveProperty satisfies never;
     }
   }
 
@@ -21402,7 +21408,7 @@ export class DefaultValuePropertiesClass {
   readonly stringDefaultValueProperty: string;
   readonly trueBooleanDefaultValueProperty: boolean;
 
-  constructor(parameters: {
+  constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly $identifierPrefix?: string;
     readonly dateDefaultValueProperty?: Date;
@@ -21412,81 +21418,83 @@ export class DefaultValuePropertiesClass {
     readonly stringDefaultValueProperty?: string;
     readonly trueBooleanDefaultValueProperty?: boolean;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this._$identifier = parameters?.$identifier satisfies never;
     }
 
-    this._$identifierPrefix = parameters.$identifierPrefix;
+    this._$identifierPrefix = parameters?.$identifierPrefix;
     if (
-      typeof parameters.dateDefaultValueProperty === "object" &&
-      parameters.dateDefaultValueProperty instanceof Date
+      typeof parameters?.dateDefaultValueProperty === "object" &&
+      parameters?.dateDefaultValueProperty instanceof Date
     ) {
-      this.dateDefaultValueProperty = parameters.dateDefaultValueProperty;
-    } else if (typeof parameters.dateDefaultValueProperty === "undefined") {
+      this.dateDefaultValueProperty = parameters?.dateDefaultValueProperty;
+    } else if (typeof parameters?.dateDefaultValueProperty === "undefined") {
       this.dateDefaultValueProperty = new Date("2018-04-09T00:00:00.000Z");
     } else {
       this.dateDefaultValueProperty =
-        parameters.dateDefaultValueProperty satisfies never;
+        parameters?.dateDefaultValueProperty satisfies never;
     }
 
     if (
-      typeof parameters.dateTimeDefaultValueProperty === "object" &&
-      parameters.dateTimeDefaultValueProperty instanceof Date
+      typeof parameters?.dateTimeDefaultValueProperty === "object" &&
+      parameters?.dateTimeDefaultValueProperty instanceof Date
     ) {
       this.dateTimeDefaultValueProperty =
-        parameters.dateTimeDefaultValueProperty;
-    } else if (typeof parameters.dateTimeDefaultValueProperty === "undefined") {
+        parameters?.dateTimeDefaultValueProperty;
+    } else if (
+      typeof parameters?.dateTimeDefaultValueProperty === "undefined"
+    ) {
       this.dateTimeDefaultValueProperty = new Date("2018-04-09T10:00:00.000Z");
     } else {
       this.dateTimeDefaultValueProperty =
-        parameters.dateTimeDefaultValueProperty satisfies never;
+        parameters?.dateTimeDefaultValueProperty satisfies never;
     }
 
-    if (typeof parameters.falseBooleanDefaultValueProperty === "boolean") {
+    if (typeof parameters?.falseBooleanDefaultValueProperty === "boolean") {
       this.falseBooleanDefaultValueProperty =
-        parameters.falseBooleanDefaultValueProperty;
+        parameters?.falseBooleanDefaultValueProperty;
     } else if (
-      typeof parameters.falseBooleanDefaultValueProperty === "undefined"
+      typeof parameters?.falseBooleanDefaultValueProperty === "undefined"
     ) {
       this.falseBooleanDefaultValueProperty = false;
     } else {
       this.falseBooleanDefaultValueProperty =
-        parameters.falseBooleanDefaultValueProperty satisfies never;
+        parameters?.falseBooleanDefaultValueProperty satisfies never;
     }
 
-    if (typeof parameters.numberDefaultValueProperty === "number") {
-      this.numberDefaultValueProperty = parameters.numberDefaultValueProperty;
-    } else if (typeof parameters.numberDefaultValueProperty === "undefined") {
+    if (typeof parameters?.numberDefaultValueProperty === "number") {
+      this.numberDefaultValueProperty = parameters?.numberDefaultValueProperty;
+    } else if (typeof parameters?.numberDefaultValueProperty === "undefined") {
       this.numberDefaultValueProperty = 0;
     } else {
       this.numberDefaultValueProperty =
-        parameters.numberDefaultValueProperty satisfies never;
+        parameters?.numberDefaultValueProperty satisfies never;
     }
 
-    if (typeof parameters.stringDefaultValueProperty === "string") {
-      this.stringDefaultValueProperty = parameters.stringDefaultValueProperty;
-    } else if (typeof parameters.stringDefaultValueProperty === "undefined") {
+    if (typeof parameters?.stringDefaultValueProperty === "string") {
+      this.stringDefaultValueProperty = parameters?.stringDefaultValueProperty;
+    } else if (typeof parameters?.stringDefaultValueProperty === "undefined") {
       this.stringDefaultValueProperty = "";
     } else {
       this.stringDefaultValueProperty =
-        parameters.stringDefaultValueProperty satisfies never;
+        parameters?.stringDefaultValueProperty satisfies never;
     }
 
-    if (typeof parameters.trueBooleanDefaultValueProperty === "boolean") {
+    if (typeof parameters?.trueBooleanDefaultValueProperty === "boolean") {
       this.trueBooleanDefaultValueProperty =
-        parameters.trueBooleanDefaultValueProperty;
+        parameters?.trueBooleanDefaultValueProperty;
     } else if (
-      typeof parameters.trueBooleanDefaultValueProperty === "undefined"
+      typeof parameters?.trueBooleanDefaultValueProperty === "undefined"
     ) {
       this.trueBooleanDefaultValueProperty = true;
     } else {
       this.trueBooleanDefaultValueProperty =
-        parameters.trueBooleanDefaultValueProperty satisfies never;
+        parameters?.trueBooleanDefaultValueProperty satisfies never;
     }
   }
 
@@ -27014,18 +27022,18 @@ export interface BlankInterface {
 }
 
 export namespace BlankInterface {
-  export function $create(parameters: {
+  export function $create(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
   }): BlankInterface {
     let $identifier: BlankInterface.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    if (typeof parameters?.$identifier === "object") {
+      $identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      $identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
       $identifier = dataFactory.blankNode();
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = parameters?.$identifier satisfies never;
     }
 
     const $type = "BlankInterface" as const;
@@ -27310,16 +27318,16 @@ export class BlankClass {
   private _$identifier?: BlankClass.$Identifier;
   readonly $type = "BlankClass";
 
-  constructor(parameters: {
+  constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this._$identifier = parameters?.$identifier satisfies never;
     }
   }
 

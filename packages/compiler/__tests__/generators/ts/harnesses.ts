@@ -17,7 +17,7 @@ export const harnesses = {
     kitchenSink.BlankClass,
   ),
   blankClassWithoutExplicitIdentifier: new ClassHarness(
-    new kitchenSink.BlankClass({}),
+    new kitchenSink.BlankClass(),
     kitchenSink.BlankClass,
   ),
   blankInterfaceWithExplicitIdentifier: new InterfaceHarness(
@@ -25,7 +25,7 @@ export const harnesses = {
     kitchenSink.BlankInterface,
   ),
   blankInterfaceWithoutExplicitIdentifier: new InterfaceHarness(
-    kitchenSink.BlankInterface.$create({}),
+    kitchenSink.BlankInterface.$create(),
     kitchenSink.BlankInterface,
   ),
   classUnionMember1: new ClassUnionHarness(

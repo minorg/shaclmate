@@ -200,30 +200,30 @@ export class UnionMember2 {
    */
   readonly optionalStringProperty: purify.Maybe<string>;
 
-  constructor(parameters: {
+  constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly optionalStringProperty?: purify.Maybe<string> | string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this._$identifier = parameters?.$identifier satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.optionalStringProperty)) {
-      this.optionalStringProperty = parameters.optionalStringProperty;
-    } else if (typeof parameters.optionalStringProperty === "string") {
+    if (purify.Maybe.isMaybe(parameters?.optionalStringProperty)) {
+      this.optionalStringProperty = parameters?.optionalStringProperty;
+    } else if (typeof parameters?.optionalStringProperty === "string") {
       this.optionalStringProperty = purify.Maybe.of(
-        parameters.optionalStringProperty,
+        parameters?.optionalStringProperty,
       );
-    } else if (typeof parameters.optionalStringProperty === "undefined") {
+    } else if (typeof parameters?.optionalStringProperty === "undefined") {
       this.optionalStringProperty = purify.Maybe.empty();
     } else {
       this.optionalStringProperty =
-        parameters.optionalStringProperty satisfies never;
+        parameters?.optionalStringProperty satisfies never;
     }
   }
 
@@ -410,30 +410,30 @@ export class UnionMember1 {
    */
   readonly optionalNumberProperty: purify.Maybe<number>;
 
-  constructor(parameters: {
+  constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly optionalNumberProperty?: number | purify.Maybe<number>;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this._$identifier = parameters?.$identifier satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.optionalNumberProperty)) {
-      this.optionalNumberProperty = parameters.optionalNumberProperty;
-    } else if (typeof parameters.optionalNumberProperty === "number") {
+    if (purify.Maybe.isMaybe(parameters?.optionalNumberProperty)) {
+      this.optionalNumberProperty = parameters?.optionalNumberProperty;
+    } else if (typeof parameters?.optionalNumberProperty === "number") {
       this.optionalNumberProperty = purify.Maybe.of(
-        parameters.optionalNumberProperty,
+        parameters?.optionalNumberProperty,
       );
-    } else if (typeof parameters.optionalNumberProperty === "undefined") {
+    } else if (typeof parameters?.optionalNumberProperty === "undefined") {
       this.optionalNumberProperty = purify.Maybe.empty();
     } else {
       this.optionalNumberProperty =
-        parameters.optionalNumberProperty satisfies never;
+        parameters?.optionalNumberProperty satisfies never;
     }
   }
 

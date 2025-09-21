@@ -21,26 +21,28 @@ function constructorDeclaration(
   this: ObjectType,
 ): OptionalKind<ConstructorDeclarationStructure> {
   const parametersPropertySignatures = this.properties.flatMap((property) =>
-    property.constructorParametersPropertySignature
-      .map(
-        (propertySignature) =>
-          `readonly ${propertySignature.name}${propertySignature.hasQuestionToken ? "?" : ""}: ${propertySignature.type}`,
-      )
-      .toList(),
+    property.constructorParametersPropertySignature.toList(),
   );
 
-  let parametersType: string;
+  const parametersType: string[] = [];
   if (parametersPropertySignatures.length > 0) {
-    parametersType = `{ ${parametersPropertySignatures.join(", ")} }`;
-  } else {
-    parametersType = "";
+    parametersType.push(
+      `{ ${parametersPropertySignatures
+        .map(
+          (propertySignature) =>
+            `readonly ${propertySignature.name}${propertySignature.hasQuestionToken ? "?" : ""}: ${propertySignature.type}`,
+        )
+        .join(", ")} }`,
+    );
   }
   if (this.parentObjectTypes.length > 0) {
     // Pass up parameters
-    parametersType = `${parametersType}${parametersType.length > 0 ? " & " : ""}ConstructorParameters<typeof ${this.parentObjectTypes[0].name}>[0]`;
+    parametersType.push(
+      `ConstructorParameters<typeof ${this.parentObjectTypes[0].name}>[0]`,
+    );
   }
   if (parametersType.length === 0) {
-    parametersType = "object";
+    parametersType.push("object");
   }
 
   const statements: (string | StatementStructures)[] = [];
@@ -50,11 +52,17 @@ function constructorDeclaration(
     statements.push("super(parameters);");
   }
 
+  const parametersHasQuestionToken =
+    this.parentObjectTypes.length === 0 &&
+    parametersPropertySignatures.every(
+      (propertySignature) => !!propertySignature.hasQuestionToken,
+    );
+  const parametersVariable = `parameters${parametersHasQuestionToken ? "?" : ""}`;
   const propertyStatements = this.properties.flatMap((property) =>
     property.constructorStatements({
       variables: {
-        parameter: `parameters.${property.name}`,
-        parameters: "parameters",
+        parameter: `${parametersVariable}.${property.name}`,
+        parameters: parametersVariable,
       },
     }),
   );
@@ -67,8 +75,9 @@ function constructorDeclaration(
         : undefined,
     parameters: [
       {
+        hasQuestionToken: parametersHasQuestionToken,
         name: statements.length > 0 ? "parameters" : "_parameters",
-        type: parametersType,
+        type: parametersType.join(" & "),
       },
     ],
     statements,
