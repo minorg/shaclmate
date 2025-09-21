@@ -389,7 +389,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :LazilyResolvedBlankNodeOrIriClass
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape resolved by LazyPropertiesClass" ;
     sh:property [
         sh:datatype xsd:string ;
@@ -400,7 +400,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :LazilyResolvedBlankNodeOrIriInterface
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape resolved by LazyPropertiesInterface" ;
     sh:property [
         sh:datatype xsd:string ;

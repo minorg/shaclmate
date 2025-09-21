@@ -19348,6 +19348,9 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
       );
   }
 
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/LazilyResolvedBlankNodeOrIriInterface",
+  );
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -19544,6 +19547,19 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
       lazilyResolvedStringProperty: string;
     }
   > {
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
+        .value($RdfVocabularies.rdf.type)
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedBlankNodeOrIriInterface)`,
+            ),
+          ),
+        );
+    }
+
     const $identifier: LazilyResolvedBlankNodeOrIriInterface.$Identifier =
       $resource.identifier;
     const $type = "LazilyResolvedBlankNodeOrIriInterface" as const;
@@ -19575,6 +19591,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
       resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -19586,6 +19603,15 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
       _lazilyResolvedBlankNodeOrIriInterface.$identifier,
       { mutateGraph },
     );
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/LazilyResolvedBlankNodeOrIriInterface",
+        ),
+      );
+    }
+
     resource.add(
       LazilyResolvedBlankNodeOrIriInterface.$properties
         .lazilyResolvedStringProperty["identifier"],
@@ -19658,6 +19684,21 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
       (subject.termType === "Variable"
         ? subject.value
         : "lazilyResolvedBlankNodeOrIriInterface");
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+        },
+      );
+    }
+
     triples.push({
       object: dataFactory.variable!(
         `${variablePrefix}LazilyResolvedStringProperty`,
@@ -19685,6 +19726,41 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
       (subject.termType === "Variable"
         ? subject.value
         : "lazilyResolvedBlankNodeOrIriInterface");
+    if (!parameters?.ignoreRdfType) {
+      requiredPatterns.push(
+        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+      );
+      requiredPatterns.push({
+        triples: [
+          {
+            subject,
+            predicate: $RdfVocabularies.rdf.type,
+            object: dataFactory.variable!(`${variablePrefix}RdfType`),
+          },
+        ],
+        type: "bgp" as const,
+      });
+      optionalPatterns.push({
+        patterns: [
+          {
+            triples: [
+              {
+                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                predicate: {
+                  items: [$RdfVocabularies.rdfs.subClassOf],
+                  pathType: "+" as const,
+                  type: "path" as const,
+                },
+                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+              },
+            ],
+            type: "bgp" as const,
+          },
+        ],
+        type: "optional" as const,
+      });
+    }
+
     const propertyPatterns: readonly sparqljs.Pattern[] = [
       {
         triples: [
@@ -19815,6 +19891,7 @@ export class LazilyResolvedBlankNodeOrIriClass {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -19825,6 +19902,15 @@ export class LazilyResolvedBlankNodeOrIriClass {
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/LazilyResolvedBlankNodeOrIriClass",
+        ),
+      );
+    }
+
     resource.add(
       LazilyResolvedBlankNodeOrIriClass.$properties
         .lazilyResolvedStringProperty["identifier"],
@@ -19839,6 +19925,9 @@ export class LazilyResolvedBlankNodeOrIriClass {
 }
 
 export namespace LazilyResolvedBlankNodeOrIriClass {
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/LazilyResolvedBlankNodeOrIriClass",
+  );
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -19982,6 +20071,19 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
       lazilyResolvedStringProperty: string;
     }
   > {
+    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
+      return $resource
+        .value($RdfVocabularies.rdf.type)
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) =>
+          purify.Left(
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedBlankNodeOrIriClass)`,
+            ),
+          ),
+        );
+    }
+
     const $identifier: LazilyResolvedBlankNodeOrIriClass.$Identifier =
       $resource.identifier;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
@@ -20064,6 +20166,21 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
       (subject.termType === "Variable"
         ? subject.value
         : "lazilyResolvedBlankNodeOrIriClass");
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+        },
+      );
+    }
+
     triples.push({
       object: dataFactory.variable!(
         `${variablePrefix}LazilyResolvedStringProperty`,
@@ -20091,6 +20208,41 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
       (subject.termType === "Variable"
         ? subject.value
         : "lazilyResolvedBlankNodeOrIriClass");
+    if (!parameters?.ignoreRdfType) {
+      requiredPatterns.push(
+        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+      );
+      requiredPatterns.push({
+        triples: [
+          {
+            subject,
+            predicate: $RdfVocabularies.rdf.type,
+            object: dataFactory.variable!(`${variablePrefix}RdfType`),
+          },
+        ],
+        type: "bgp" as const,
+      });
+      optionalPatterns.push({
+        patterns: [
+          {
+            triples: [
+              {
+                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                predicate: {
+                  items: [$RdfVocabularies.rdfs.subClassOf],
+                  pathType: "+" as const,
+                  type: "path" as const,
+                },
+                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+              },
+            ],
+            type: "bgp" as const,
+          },
+        ],
+        type: "optional" as const,
+      });
+    }
+
     const propertyPatterns: readonly sparqljs.Pattern[] = [
       {
         triples: [
@@ -38453,7 +38605,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       LazilyResolvedBlankNodeOrIriClass,
       LazilyResolvedBlankNodeOrIriClass.$Identifier
-    >({ ...LazilyResolvedBlankNodeOrIriClass, $fromRdfType: undefined }, query);
+    >(LazilyResolvedBlankNodeOrIriClass, query);
   }
 
   async lazilyResolvedBlankNodeOrIriClasses(
@@ -38470,7 +38622,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       LazilyResolvedBlankNodeOrIriClass,
       LazilyResolvedBlankNodeOrIriClass.$Identifier
-    >({ ...LazilyResolvedBlankNodeOrIriClass, $fromRdfType: undefined }, query);
+    >(LazilyResolvedBlankNodeOrIriClass, query);
   }
 
   async lazilyResolvedBlankNodeOrIriClassesCount(
@@ -38491,7 +38643,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       LazilyResolvedBlankNodeOrIriClass,
       LazilyResolvedBlankNodeOrIriClass.$Identifier
-    >({ ...LazilyResolvedBlankNodeOrIriClass, $fromRdfType: undefined }, query);
+    >(LazilyResolvedBlankNodeOrIriClass, query);
   }
 
   async lazilyResolvedBlankNodeOrIriInterface(
@@ -38528,10 +38680,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       LazilyResolvedBlankNodeOrIriInterface,
       LazilyResolvedBlankNodeOrIriInterface.$Identifier
-    >(
-      { ...LazilyResolvedBlankNodeOrIriInterface, $fromRdfType: undefined },
-      query,
-    );
+    >(LazilyResolvedBlankNodeOrIriInterface, query);
   }
 
   async lazilyResolvedBlankNodeOrIriInterfaces(
@@ -38548,10 +38697,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       LazilyResolvedBlankNodeOrIriInterface,
       LazilyResolvedBlankNodeOrIriInterface.$Identifier
-    >(
-      { ...LazilyResolvedBlankNodeOrIriInterface, $fromRdfType: undefined },
-      query,
-    );
+    >(LazilyResolvedBlankNodeOrIriInterface, query);
   }
 
   async lazilyResolvedBlankNodeOrIriInterfacesCount(
@@ -38572,10 +38718,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       LazilyResolvedBlankNodeOrIriInterface,
       LazilyResolvedBlankNodeOrIriInterface.$Identifier
-    >(
-      { ...LazilyResolvedBlankNodeOrIriInterface, $fromRdfType: undefined },
-      query,
-    );
+    >(LazilyResolvedBlankNodeOrIriInterface, query);
   }
 
   async lazilyResolvedClassUnionMember1(

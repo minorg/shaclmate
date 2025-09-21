@@ -291,11 +291,11 @@ describe("lazyProperties", () => {
         switch (propertyName) {
           case "optionalLazyToResolvedClassProperty": {
             if (empty) {
-              expectEmptyOptional(
+              await expectEmptyOptional(
                 emptyLazyPropertiesClassInstance.optionalLazyToResolvedClassProperty,
               );
             } else {
-              expectedNonEmptyOptional({
+              await expectedNonEmptyOptional({
                 actual:
                   nonEmptyLazyPropertiesClassInstance.optionalLazyToResolvedClassProperty,
                 equals: (left, right) => left.$equals(right),
@@ -306,11 +306,11 @@ describe("lazyProperties", () => {
           }
           case "optionalLazyToResolvedClassUnionProperty": {
             if (empty) {
-              expectEmptyOptional(
+              await expectEmptyOptional(
                 emptyLazyPropertiesClassInstance.optionalLazyToResolvedClassUnionProperty,
               );
             } else {
-              expectedNonEmptyOptional({
+              await expectedNonEmptyOptional({
                 actual:
                   nonEmptyLazyPropertiesClassInstance.optionalLazyToResolvedClassProperty,
                 equals: (left, right) => left.$equals(right),
@@ -321,11 +321,11 @@ describe("lazyProperties", () => {
           }
           case "optionalLazyToResolvedInterfaceProperty": {
             if (empty) {
-              expectEmptyOptional(
+              await expectEmptyOptional(
                 emptyLazyPropertiesInterfaceInstance.optionalLazyToResolvedInterfaceProperty,
               );
             } else {
-              expectedNonEmptyOptional({
+              await expectedNonEmptyOptional({
                 actual:
                   nonEmptyLazyPropertiesInterfaceInstance.optionalLazyToResolvedInterfaceProperty,
                 equals:
@@ -337,11 +337,11 @@ describe("lazyProperties", () => {
           }
           case "optionalLazyToResolvedInterfaceUnionProperty": {
             if (empty) {
-              expectEmptyOptional(
+              await expectEmptyOptional(
                 emptyLazyPropertiesInterfaceInstance.optionalLazyToResolvedInterfaceUnionProperty,
               );
             } else {
-              expectedNonEmptyOptional({
+              await expectedNonEmptyOptional({
                 actual:
                   nonEmptyLazyPropertiesInterfaceInstance.optionalLazyToResolvedInterfaceUnionProperty,
                 equals: kitchenSink.LazilyResolvedInterfaceUnion.$equals,
@@ -352,11 +352,11 @@ describe("lazyProperties", () => {
           }
           case "optionalLazyToResolvedIriClassProperty": {
             if (empty) {
-              expectEmptyOptional(
+              await expectEmptyOptional(
                 emptyLazyPropertiesClassInstance.optionalLazyToResolvedIriClassProperty,
               );
             } else {
-              expectedNonEmptyOptional({
+              await expectedNonEmptyOptional({
                 actual:
                   nonEmptyLazyPropertiesClassInstance.optionalLazyToResolvedIriClassProperty,
                 equals: (left, right) => left.$equals(right),
@@ -367,11 +367,11 @@ describe("lazyProperties", () => {
           }
           case "optionalLazyToResolvedIriInterfaceProperty": {
             if (empty) {
-              expectEmptyOptional(
+              await expectEmptyOptional(
                 emptyLazyPropertiesInterfaceInstance.optionalLazyToResolvedIriInterfaceProperty,
               );
             } else {
-              expectedNonEmptyOptional({
+              await expectedNonEmptyOptional({
                 actual:
                   emptyLazyPropertiesInterfaceInstance.optionalLazyToResolvedIriInterfaceProperty,
                 equals: kitchenSink.LazilyResolvedIriInterface.$equals,
@@ -382,11 +382,11 @@ describe("lazyProperties", () => {
           }
           case "optionalStubClassToResolvedClassProperty": {
             if (empty) {
-              expectEmptyOptional(
+              await expectEmptyOptional(
                 emptyLazyPropertiesClassInstance.optionalStubClassToResolvedClassProperty,
               );
             } else {
-              expectedNonEmptyOptional({
+              await expectedNonEmptyOptional({
                 actual:
                   nonEmptyLazyPropertiesClassInstance.optionalStubClassToResolvedClassProperty,
                 equals: (left, right) => left.$equals(right),
@@ -397,11 +397,11 @@ describe("lazyProperties", () => {
           }
           case "optionalStubClassToResolvedClassUnionProperty": {
             if (empty) {
-              expectEmptyOptional(
+              await expectEmptyOptional(
                 emptyLazyPropertiesClassInstance.optionalStubClassToResolvedClassUnionProperty,
               );
             } else {
-              expectedNonEmptyOptional({
+              await expectedNonEmptyOptional({
                 actual:
                   nonEmptyLazyPropertiesClassInstance.optionalStubClassToResolvedClassUnionProperty,
                 equals: kitchenSink.LazilyResolvedClassUnion.$equals,
@@ -412,11 +412,11 @@ describe("lazyProperties", () => {
           }
           case "optionalStubClassUnionToResolvedClassUnionProperty": {
             if (empty) {
-              expectEmptyOptional(
+              await expectEmptyOptional(
                 emptyLazyPropertiesClassInstance.optionalStubClassUnionToResolvedClassUnionProperty,
               );
             } else {
-              expectedNonEmptyOptional({
+              await expectedNonEmptyOptional({
                 actual:
                   nonEmptyLazyPropertiesClassInstance.optionalStubClassUnionToResolvedClassUnionProperty,
                 equals: kitchenSink.LazilyResolvedClassUnion.$equals,
@@ -427,11 +427,11 @@ describe("lazyProperties", () => {
           }
           case "optionalStubInterfaceToResolvedInterfaceProperty": {
             if (empty) {
-              expectEmptyOptional(
+              await expectEmptyOptional(
                 emptyLazyPropertiesInterfaceInstance.optionalStubInterfaceToResolvedInterfaceProperty,
               );
             } else {
-              expectedNonEmptyOptional({
+              await expectedNonEmptyOptional({
                 actual:
                   nonEmptyLazyPropertiesInterfaceInstance.optionalStubInterfaceToResolvedInterfaceProperty,
                 equals:
@@ -443,11 +443,11 @@ describe("lazyProperties", () => {
           }
           case "optionalStubInterfaceToResolvedInterfaceUnionProperty": {
             if (empty) {
-              expectEmptyOptional(
+              await expectEmptyOptional(
                 emptyLazyPropertiesInterfaceInstance.optionalStubInterfaceToResolvedInterfaceUnionProperty,
               );
             } else {
-              expectedNonEmptyOptional({
+              await expectedNonEmptyOptional({
                 actual:
                   nonEmptyLazyPropertiesInterfaceInstance.optionalStubInterfaceToResolvedInterfaceUnionProperty,
                 equals: kitchenSink.LazilyResolvedInterfaceUnion.$equals,
@@ -458,11 +458,11 @@ describe("lazyProperties", () => {
           }
           case "optionalStubInterfaceUnionToResolvedInterfaceUnionProperty": {
             if (empty) {
-              expectEmptyOptional(
+              await expectEmptyOptional(
                 emptyLazyPropertiesInterfaceInstance.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty,
               );
             } else {
-              expectedNonEmptyOptional({
+              await expectedNonEmptyOptional({
                 actual:
                   nonEmptyLazyPropertiesInterfaceInstance.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty,
                 equals: kitchenSink.LazilyResolvedInterfaceUnion.$equals,
@@ -474,7 +474,7 @@ describe("lazyProperties", () => {
           case "requiredLazyToResolvedClassProperty": {
             if (empty) {
             } else {
-              expectRequired({
+              await expectRequired({
                 actual:
                   nonEmptyLazyPropertiesClassInstance.requiredLazyToResolvedClassProperty,
                 equals: (left, right) => left.$equals(right),
@@ -486,7 +486,7 @@ describe("lazyProperties", () => {
           case "requiredLazyToResolvedInterfaceProperty": {
             if (empty) {
             } else {
-              expectRequired({
+              await expectRequired({
                 actual:
                   nonEmptyLazyPropertiesInterfaceInstance.requiredLazyToResolvedInterfaceProperty,
                 equals:
@@ -499,7 +499,7 @@ describe("lazyProperties", () => {
           case "requiredStubClassToResolvedClassProperty": {
             if (empty) {
             } else {
-              expectRequired({
+              await expectRequired({
                 actual:
                   nonEmptyLazyPropertiesClassInstance.requiredStubClassToResolvedClassProperty,
                 equals: (left, right) => left.$equals(right),
@@ -511,7 +511,7 @@ describe("lazyProperties", () => {
           case "requiredStubInterfaceToResolvedInterfaceProperty": {
             if (empty) {
             } else {
-              expectRequired({
+              await expectRequired({
                 actual:
                   nonEmptyLazyPropertiesInterfaceInstance.requiredStubInterfaceToResolvedInterfaceProperty,
                 equals:
@@ -523,11 +523,11 @@ describe("lazyProperties", () => {
           }
           case "setLazyToResolvedClassProperty": {
             if (empty) {
-              expectEmptySet(
+              await expectEmptySet(
                 emptyLazyPropertiesClassInstance.setLazyToResolvedClassProperty,
               );
             } else {
-              expectSet({
+              await expectSet({
                 actual:
                   nonEmptyLazyPropertiesClassInstance.setLazyToResolvedClassProperty,
                 equals: (left, right) => left.$equals(right),
@@ -539,11 +539,11 @@ describe("lazyProperties", () => {
           case "setStubClassToResolvedClassProperty":
             {
               if (empty) {
-                expectEmptySet(
+                await expectEmptySet(
                   emptyLazyPropertiesClassInstance.setStubClassToResolvedClassProperty,
                 );
               } else {
-                expectSet({
+                await expectSet({
                   actual:
                     nonEmptyLazyPropertiesClassInstance.setStubClassToResolvedClassProperty,
                   equals: (left, right) => left.$equals(right),
@@ -554,11 +554,11 @@ describe("lazyProperties", () => {
             break;
           case "setLazyToResolvedInterfaceProperty": {
             if (empty) {
-              expectEmptySet(
+              await expectEmptySet(
                 emptyLazyPropertiesInterfaceInstance.setLazyToResolvedInterfaceProperty,
               );
             } else {
-              expectSet({
+              await expectSet({
                 actual:
                   nonEmptyLazyPropertiesInterfaceInstance.setLazyToResolvedInterfaceProperty,
                 equals:
@@ -573,11 +573,11 @@ describe("lazyProperties", () => {
           case "setStubInterfaceToResolvedInterfaceProperty":
             {
               if (empty) {
-                expectEmptySet(
+                await expectEmptySet(
                   emptyLazyPropertiesInterfaceInstance.setStubInterfaceToResolvedInterfaceProperty,
                 );
               } else {
-                expectSet({
+                await expectSet({
                   actual:
                     nonEmptyLazyPropertiesInterfaceInstance.setStubInterfaceToResolvedInterfaceProperty,
                   equals:
