@@ -12,9 +12,21 @@ import { InterfaceHarness } from "./InterfaceHarness.js";
 const $identifier = dataFactory.namedNode("http://example.com/instance");
 
 export const harnesses = {
-  blankClass: new ClassHarness(
+  blankClassWithExplicitIdentifier: new ClassHarness(
+    new kitchenSink.BlankClass({ $identifier: dataFactory.blankNode() }),
+    kitchenSink.BlankClass,
+  ),
+  blankClassWithoutExplicitIdentifier: new ClassHarness(
     new kitchenSink.BlankClass({}),
     kitchenSink.BlankClass,
+  ),
+  blankInterfaceWithExplicitIdentifier: new InterfaceHarness(
+    { $identifier: dataFactory.blankNode(), $type: "BlankInterface" },
+    kitchenSink.BlankInterface,
+  ),
+  blankInterfaceWithoutExplicitIdentifier: new InterfaceHarness(
+    kitchenSink.BlankInterface.$create({}),
+    kitchenSink.BlankInterface,
   ),
   classUnionMember1: new ClassUnionHarness(
     new kitchenSink.ClassUnionMember1({
@@ -416,5 +428,20 @@ export const harnesses = {
       uuidV4IriProperty: "test",
     }),
     kitchenSink.UuidV4IriClass,
+  ),
+  uuidv4IriInterfaceWithExplicitIdentifier: new InterfaceHarness(
+    {
+      $identifier,
+      $type: "UuidV4IriInterface",
+      uuidV4IriProperty: "test",
+    } satisfies kitchenSink.UuidV4IriInterface,
+    kitchenSink.UuidV4IriInterface,
+  ),
+  uuidv4IriInterfaceWithoutExplicitIdentifier: new InterfaceHarness(
+    kitchenSink.UuidV4IriInterface.$create({
+      $identifierPrefix: "http://example.com/",
+      uuidV4IriProperty: "test",
+    }),
+    kitchenSink.UuidV4IriInterface,
   ),
 };

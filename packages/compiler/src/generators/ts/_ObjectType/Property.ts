@@ -23,7 +23,7 @@ export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
   /**
    * Function declaration that takes two values of the property and compares them, returning an $EqualsResult.
    */
-  abstract readonly equalsFunction: string;
+  abstract readonly equalsFunction: Maybe<string>;
 
   /**
    * Optional get accessor to include in a class declaration of the object type.
@@ -131,6 +131,7 @@ export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
   abstract constructorStatements(parameters: {
     variables: {
       parameter: string;
+      parameters: string;
     };
   }): readonly string[];
 

@@ -54,9 +54,11 @@ export function equalsFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
   }
 
   for (const property of this.ownProperties) {
-    chain.push(
-      `(${property.equalsFunction})(${leftVariable}.${property.name}, ${rightVariable}.${property.name}).mapLeft(propertyValuesUnequal => ({ left: ${leftVariable}, right: ${rightVariable}, propertyName: "${property.name}", propertyValuesUnequal, type: "Property" as const }))`,
-    );
+    property.equalsFunction.ifJust((equalsFunction) => {
+      chain.push(
+        `(${equalsFunction})(${leftVariable}.${property.name}, ${rightVariable}.${property.name}).mapLeft(propertyValuesUnequal => ({ left: ${leftVariable}, right: ${rightVariable}, propertyName: "${property.name}", propertyValuesUnequal, type: "Property" as const }))`,
+      );
+    });
   }
 
   return Maybe.of({

@@ -21,7 +21,9 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
     OptionalKind<PropertySignatureStructure>
   > = Maybe.empty();
   override readonly declarationImports: readonly Import[] = [];
-  override readonly equalsFunction = `${syntheticNamePrefix}strictEquals`;
+  override readonly equalsFunction = Maybe.of(
+    `${syntheticNamePrefix}strictEquals`,
+  );
   override readonly getAccessorDeclaration: Maybe<
     OptionalKind<GetAccessorDeclarationStructure>
   > = Maybe.empty();

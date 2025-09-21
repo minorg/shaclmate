@@ -245,7 +245,7 @@ export interface NestedNodeShape {
 
 export namespace NestedNodeShape {
   export function $create(parameters: {
-    readonly $identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly requiredStringProperty: string;
   }): NestedNodeShape {
     let $identifier: NestedNodeShape.$Identifier;
@@ -253,6 +253,8 @@ export namespace NestedNodeShape {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+      $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
     }
@@ -562,7 +564,7 @@ export interface FormNodeShape {
 
 export namespace FormNodeShape {
   export function $create(parameters: {
-    readonly $identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly emptyStringSetProperty?: readonly string[];
     readonly nestedObjectProperty: NestedNodeShape;
     readonly nonEmptyStringSetProperty: purify.NonEmptyList<string>;
@@ -575,6 +577,8 @@ export namespace FormNodeShape {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+      $identifier = dataFactory.blankNode();
     } else {
       $identifier = parameters.$identifier satisfies never;
     }

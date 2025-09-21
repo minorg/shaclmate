@@ -48,7 +48,10 @@ export function createFunctionDeclaration(
   }
   for (const property of this.properties) {
     const thisPropertyStatements = property.constructorStatements({
-      variables: { parameter: `parameters.${property.name}` },
+      variables: {
+        parameter: `parameters.${property.name}`,
+        parameters: "parameters",
+      },
     });
     if (thisPropertyStatements.length > 0) {
       propertyInitializers.push(property.name);

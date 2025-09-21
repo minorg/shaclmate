@@ -231,7 +231,7 @@ export class TypeFactory {
           0,
           new ObjectType.IdentifierProperty({
             abstract: astType.abstract,
-            classGetAccessorScope: (() => {
+            getAccessorScope: (() => {
               if (astType.abstract) {
                 return Maybe.empty();
               }
@@ -247,7 +247,12 @@ export class TypeFactory {
 
               return Maybe.empty();
             })(),
-            classPropertyDeclarationVisibility: (() => {
+            identifierMintingStrategy: astType.identifierMintingStrategy,
+            identifierPrefixPropertyName: `${syntheticNamePrefix}identifierPrefix`,
+            name: `${syntheticNamePrefix}identifier`,
+            objectType,
+            override: astType.parentObjectTypes.length > 0,
+            propertyDeclarationVisibility: (() => {
               if (astType.abstract) {
                 // If the type is abstract, don't declare an identifier property.
                 return Maybe.empty();
@@ -273,11 +278,6 @@ export class TypeFactory {
 
               return Maybe.of("private");
             })(),
-            identifierMintingStrategy: astType.identifierMintingStrategy,
-            identifierPrefixPropertyName: `${syntheticNamePrefix}identifierPrefix`,
-            name: `${syntheticNamePrefix}identifier`,
-            objectType,
-            override: astType.parentObjectTypes.length > 0,
             type: identifierType,
             typeAlias: `${staticModuleName}.${syntheticNamePrefix}Identifier`,
             visibility: "public",

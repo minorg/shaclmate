@@ -52,7 +52,10 @@ function constructorDeclaration(
 
   const propertyStatements = this.properties.flatMap((property) =>
     property.constructorStatements({
-      variables: { parameter: `parameters.${property.name}` },
+      variables: {
+        parameter: `parameters.${property.name}`,
+        parameters: "parameters",
+      },
     }),
   );
   statements.push(...propertyStatements);
