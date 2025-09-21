@@ -14,6 +14,7 @@ import type {
   IdentifierMintingStrategy,
   PropertyVisibility,
 } from "../../../enums/index.js";
+import { logger } from "../../../logger.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import { Import } from "../Import.js";
 import { SnippetDeclarations } from "../SnippetDeclarations.js";
@@ -78,10 +79,23 @@ export class IdentifierProperty extends Property<IdentifierType> {
       }
     }
 
+    let hasQuestionToken: boolean;
+    switch (this.objectType.declarationType) {
+      case "class":
+        hasQuestionToken = this.identifierMintingStrategy.isJust();
+        break;
+      case "interface": {
+        const identifierMintingStrategy =
+          this.identifierMintingStrategy.extract();
+        hasQuestionToken =
+          typeof identifierMintingStrategy !== "undefined" &&
+          identifierMintingStrategy !== "sha256";
+        break;
+      }
+    }
+
     return Maybe.of({
-      hasQuestionToken:
-        this.objectType.declarationType === "class" &&
-        this.identifierMintingStrategy.isJust(),
+      hasQuestionToken,
       isReadonly: true,
       name: this.name,
       type: [...typeNames].sort().join(" | "),
@@ -91,21 +105,16 @@ export class IdentifierProperty extends Property<IdentifierType> {
   override get declarationImports(): readonly Import[] {
     const imports = this.type.useImports().concat();
 
-    if (
-      this.objectType.features.has("hash") &&
-      this.objectType.declarationType === "class"
-    ) {
-      this.identifierMintingStrategy.ifJust((identifierMintingStrategy) => {
-        switch (identifierMintingStrategy) {
-          case "sha256":
-            imports.push(Import.SHA256);
-            break;
-          case "uuidv4":
-            imports.push(Import.UUID);
-            break;
-        }
-      });
-    }
+    this.identifierMintingStrategy.ifJust((identifierMintingStrategy) => {
+      switch (identifierMintingStrategy) {
+        case "sha256":
+          imports.push(Import.SHA256);
+          break;
+        case "uuidv4":
+          imports.push(Import.UUID);
+          break;
+      }
+    });
 
     return imports;
   }
@@ -217,11 +226,37 @@ export class IdentifierProperty extends Property<IdentifierType> {
         `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = ${conversion.conversionExpression(variables.parameter)}; }`,
       );
     }
-    if (lhs.startsWith("this._")) {
-      conversionBranches.push(
-        `if (typeof ${variables.parameter} === "undefined") { }`,
-      );
-    }
+    this.identifierMintingStrategy.ifJust((identifierMintingStrategy) => {
+      switch (this.objectType.declarationType) {
+        case "class":
+          conversionBranches.push(
+            `if (typeof ${variables.parameter} === "undefined") { }`,
+          );
+          break;
+        case "interface": {
+          let mintIdentifier: string;
+          switch (identifierMintingStrategy) {
+            case "blankNode":
+              mintIdentifier = "dataFactory.blankNode()";
+              break;
+            case "sha256":
+              logger.warn(
+                "minting %s identifiers with %s is unsupported",
+                this.objectType.declarationType,
+                identifierMintingStrategy,
+              );
+              return;
+            case "uuidv4":
+              mintIdentifier = `dataFactory.namedNode(\`\${${variables.parameters}.${this.identifierPrefixPropertyName} ?? "urn:shaclmate:${this.objectType.discriminatorValue}:"}\${uuid.v4()}\`)`;
+              break;
+          }
+          conversionBranches.push(
+            `if (typeof ${variables.parameter} === "undefined") { ${lhs} = ${mintIdentifier}; }`,
+          );
+        }
+      }
+    });
+
     // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
     conversionBranches.push(
       `{ ${lhs} = (${variables.parameter}) satisfies never;\n }`,

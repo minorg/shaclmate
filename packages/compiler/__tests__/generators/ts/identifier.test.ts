@@ -8,9 +8,10 @@ describe("identifier", () => {
   it("use a blank node if no minting strategy is specified and a blank node is allowed as an identifier", ({
     expect,
   }) => {
-    expect(harnesses.blankClass.instance.$identifier.termType).toStrictEqual(
-      "BlankNode",
-    );
+    expect(
+      harnesses.blankClassWithoutExplicitIdentifier.instance.$identifier
+        .termType,
+    ).toStrictEqual("BlankNode");
   });
 
   it("don't mint an IRI if one is supplied", ({ expect }) => {

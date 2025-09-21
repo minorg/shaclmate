@@ -131,6 +131,7 @@ export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
   abstract constructorStatements(parameters: {
     variables: {
       parameter: string;
+      parameters: string;
     };
   }): readonly string[];
 

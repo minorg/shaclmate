@@ -68,7 +68,12 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
 
 :BlankClass
     a sh:NodeShape ;
-    rdfs:comment "Shape that can have a blank node or IRI as an identifier" .
+    rdfs:comment "Node shape that can have a blank node or IRI as an identifier" .
+
+:BlankInterface
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    a sh:NodeShape ;
+    rdfs:comment "Node shape that can have a blank node or IRI as an identifier" .
 
 :ClassUnion
     a sh:NodeShape ;
@@ -815,6 +820,19 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :UuidV4IriClass
     shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_UUIDv4 ;
+    a sh:NodeShape ;
+    rdfs:comment "A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied." ;
+    sh:nodeKind sh:IRI ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :uuidV4IriProperty
+    ] .
+
+:UuidV4IriInterface
+    shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_UUIDv4 ;
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a sh:NodeShape ;
     rdfs:comment "A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied." ;
     sh:nodeKind sh:IRI ;
