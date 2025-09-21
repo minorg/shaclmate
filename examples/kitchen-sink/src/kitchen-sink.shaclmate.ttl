@@ -398,6 +398,17 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :lazilyResolvedStringProperty
     ] .
 
+:LazilyResolvedBlankNodeOrIriInterface
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    a sh:NodeShape ;
+    rdfs:comment "Node shape resolved by LazyPropertiesInterface" ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
 :LazilyResolvedClassUnion
     a sh:NodeShape ;
     rdfs:comment "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
@@ -423,6 +434,33 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :lazilyResolvedStringProperty
     ] .
 
+:LazilyResolvedInterfaceUnion
+    a sh:NodeShape ;
+    rdfs:comment "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
+    sh:xone (:LazilyResolvedInterfaceUnionMember1
+        :LazilyResolvedInterfaceUnionMember2
+    ) .
+
+:LazilyResolvedInterfaceUnionMember1
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
+:LazilyResolvedInterfaceUnionMember2
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
 :LazilyResolvedIriClass
     a sh:NodeShape ;
     rdfs:comment "Node shape resolved by LazyPropertiesClass" ;
@@ -434,9 +472,21 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :lazilyResolvedStringProperty
     ] .
 
+:LazilyResolvedIriInterface
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    a sh:NodeShape ;
+    rdfs:comment "Node shape resolved by LazyPropertiesInterface" ;
+    sh:nodeKind sh:IRI ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
 :LazyPropertiesClass
     a sh:NodeShape ;
-    rdfs:comment "Node shape that has lazy properties with default stubs." ;
+    rdfs:comment "Node shape that has lazy properties." ;
     sh:property [
         shaclmate:lazy true ;
         sh:maxCount 1 ;
@@ -489,6 +539,63 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:node :LazilyResolvedClassUnion ;
         sh:path :optionalStubClassUnionToResolvedClassUnionProperty
+    ] .
+
+:LazyPropertiesInterface
+    a sh:NodeShape ;
+    rdfs:comment "Node shape that has lazy properties." ;
+    sh:property [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:minCount 0 ;
+        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
+        sh:path :optionalLazyToResolvedInterfaceProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
+        sh:path :setLazyToResolvedInterfaceProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
+        sh:path :requiredLazyToResolvedInterfaceProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedIriInterface ;
+        sh:path :optionalLazyToResolvedIriInterfaceProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedInterfaceUnion ;
+        sh:path :optionalLazyToResolvedInterfaceUnionProperty
+    ], [
+        shaclmate:stub :StubInterface ;
+        sh:maxCount 1 ;
+        sh:minCount 0 ;
+        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
+        sh:path :optionalStubInterfaceToResolvedInterfaceProperty
+    ], [
+        shaclmate:stub :StubInterface ;
+        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
+        sh:path :setStubInterfaceToResolvedInterfaceProperty
+    ], [
+        shaclmate:stub :StubInterface ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
+        sh:path :requiredStubInterfaceToResolvedInterfaceProperty
+    ], [
+        shaclmate:stub :StubInterface ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedInterfaceUnion ;
+        sh:path :optionalStubInterfaceToResolvedInterfaceUnionProperty
+    ], [
+        shaclmate:stub :StubInterfaceUnion ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedInterfaceUnion ;
+        sh:path :optionalStubInterfaceUnionToResolvedInterfaceUnionProperty
     ] .
 
 :ListPropertiesClass
@@ -597,6 +704,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
+        sh:order 1 ;
+        sh:path :orderedPropertyC
+    ], [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
         sh:order 3 ;
         sh:path :orderedPropertyA
     ], [
@@ -605,12 +718,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:minCount 1 ;
         sh:order 2 ;
         sh:path :orderedPropertyB
-    ], [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:order 1 ;
-        sh:path :orderedPropertyC
     ] .
 
 :PropertyCardinalitiesClass
@@ -728,6 +835,44 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :StubClassUnionMember2
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
+:StubInterface
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    a sh:NodeShape ;
+    rdfs:comment "Node shape used as a stub by LazyPropertiesInterface" ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
+:StubInterfaceUnion
+    a sh:NodeShape ;
+    rdfs:comment "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
+    sh:xone (:StubInterfaceUnionMember1
+        :StubInterfaceUnionMember2
+    ) .
+
+:StubInterfaceUnionMember1
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
+:StubInterfaceUnionMember2
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a owl:Class, sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
