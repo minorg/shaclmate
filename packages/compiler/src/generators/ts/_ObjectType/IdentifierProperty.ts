@@ -22,11 +22,11 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { Property } from "./Property.js";
 
 export class IdentifierProperty extends Property<IdentifierType> {
-  private readonly classGetAccessorScope: Maybe<Scope>;
-  private readonly classPropertyDeclarationVisibility: Maybe<PropertyVisibility>;
+  private readonly getAccessorScope: Maybe<Scope>;
   private readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
   private readonly identifierPrefixPropertyName: string;
   private readonly override: boolean;
+  private readonly propertyDeclarationVisibility: Maybe<PropertyVisibility>;
   private readonly typeAlias: string;
 
   readonly abstract: boolean;
@@ -36,17 +36,17 @@ export class IdentifierProperty extends Property<IdentifierType> {
 
   constructor({
     abstract,
-    classGetAccessorScope,
-    classPropertyDeclarationVisibility,
+    getAccessorScope,
     identifierMintingStrategy,
     identifierPrefixPropertyName,
     override,
+    propertyDeclarationVisibility,
     typeAlias,
     ...superParameters
   }: {
     abstract: boolean;
-    classGetAccessorScope: Maybe<Scope>;
-    classPropertyDeclarationVisibility: Maybe<PropertyVisibility>;
+    getAccessorScope: Maybe<Scope>;
+    propertyDeclarationVisibility: Maybe<PropertyVisibility>;
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     identifierPrefixPropertyName: string;
     override: boolean;
@@ -56,9 +56,8 @@ export class IdentifierProperty extends Property<IdentifierType> {
     super(superParameters);
     invariant(this.visibility === "public");
     this.abstract = abstract;
-    this.classGetAccessorScope = classGetAccessorScope;
-    this.classPropertyDeclarationVisibility =
-      classPropertyDeclarationVisibility;
+    this.getAccessorScope = getAccessorScope;
+    this.propertyDeclarationVisibility = propertyDeclarationVisibility;
     this.identifierMintingStrategy = identifierMintingStrategy;
     this.identifierPrefixPropertyName = identifierPrefixPropertyName;
     this.override = override;
@@ -114,11 +113,11 @@ export class IdentifierProperty extends Property<IdentifierType> {
   override get getAccessorDeclaration(): Maybe<
     OptionalKind<GetAccessorDeclarationStructure>
   > {
-    if (this.classGetAccessorScope.isNothing()) {
+    if (this.getAccessorScope.isNothing()) {
       return Maybe.empty();
     }
 
-    invariant(this.classGetAccessorScope.unsafeCoerce() === "public");
+    invariant(this.getAccessorScope.unsafeCoerce() === "public");
 
     if (this.identifierMintingStrategy.isJust()) {
       let memoizeMintedIdentifier: boolean;
@@ -325,7 +324,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
     }
 
     // See note in TypeFactory re: the logic of whether to declare the identifier in the class or not.
-    if (!this.classPropertyDeclarationVisibility.isJust()) {
+    if (!this.propertyDeclarationVisibility.isJust()) {
       return Maybe.empty();
     }
 
@@ -334,7 +333,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
       return Maybe.of({
         hasQuestionToken: true,
         name: `_${this.name}`,
-        scope: this.classPropertyDeclarationVisibility
+        scope: this.propertyDeclarationVisibility
           .map(Property.visibilityToScope)
           .unsafeCoerce(),
         type: `${this.typeAlias}`,
