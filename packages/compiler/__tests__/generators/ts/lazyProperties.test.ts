@@ -192,8 +192,20 @@ describe("lazyProperties", () => {
       dataset: new N3.Store(),
     });
     expectedLazilyResolvedBlankNodeOrIriClassInstance.$toRdf({ resourceSet });
+    kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$toRdf(
+      expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
+      { resourceSet },
+    );
     expectedLazilyResolvedIriClassInstance.$toRdf({ resourceSet });
+    kitchenSink.LazilyResolvedIriInterface.$toRdf(
+      expectedLazilyResolvedIriInterfaceInstance,
+      { resourceSet },
+    );
     expectedLazilyResolvedClassUnionInstance.$toRdf({ resourceSet });
+    kitchenSink.LazilyResolvedInterfaceUnion.$toRdf(
+      expectedLazilyResolvedInterfaceUnionInstance,
+      { resourceSet },
+    );
 
     emptyLazyPropertiesClassInstance = kitchenSink.LazyPropertiesClass.$fromRdf(
       new kitchenSink.LazyPropertiesClass({
@@ -373,7 +385,7 @@ describe("lazyProperties", () => {
             } else {
               await expectedNonEmptyOptional({
                 actual:
-                  emptyLazyPropertiesInterfaceInstance.optionalLazyToResolvedIriInterfaceProperty,
+                  nonEmptyLazyPropertiesInterfaceInstance.optionalLazyToResolvedIriInterfaceProperty,
                 equals: kitchenSink.LazilyResolvedIriInterface.$equals,
                 expected: expectedLazilyResolvedIriInterfaceInstance,
               });
