@@ -542,6 +542,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :LazyPropertiesInterface
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a sh:NodeShape ;
     rdfs:comment "Node shape that has lazy properties." ;
     sh:property [

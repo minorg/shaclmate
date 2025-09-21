@@ -10764,9 +10764,9 @@ export namespace StubInterface {
 /**
  * Node shape that has lazy properties.
  */
-export class LazyPropertiesInterface {
-  private _$identifier?: LazyPropertiesInterface.$Identifier;
-  readonly $type = "LazyPropertiesInterface";
+export interface LazyPropertiesInterface {
+  readonly $identifier: LazyPropertiesInterface.$Identifier;
+  readonly $type: "LazyPropertiesInterface";
   readonly optionalLazyToResolvedInterfaceProperty: $LazyOptionalObject<
     LazilyResolvedBlankNodeOrIriInterface.$Identifier,
     LazilyResolvedBlankNodeOrIriInterface,
@@ -10817,8 +10817,10 @@ export class LazyPropertiesInterface {
     LazilyResolvedBlankNodeOrIriInterface,
     StubInterface
   >;
+}
 
-  constructor(parameters: {
+export namespace LazyPropertiesInterface {
+  export function $create(parameters: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly optionalLazyToResolvedInterfaceProperty?:
       | $LazyOptionalObject<
@@ -10896,27 +10898,35 @@ export class LazyPropertiesInterface {
           StubInterface
         >
       | readonly LazilyResolvedBlankNodeOrIriInterface[];
-  }) {
+  }): LazyPropertiesInterface {
+    let $identifier: LazyPropertiesInterface.$Identifier;
     if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
+      $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+      $identifier = dataFactory.namedNode(parameters.$identifier);
     } else if (typeof parameters.$identifier === "undefined") {
+      $identifier = dataFactory.blankNode();
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      $identifier = parameters.$identifier satisfies never;
     }
 
+    const $type = "LazyPropertiesInterface" as const;
+    let optionalLazyToResolvedInterfaceProperty: $LazyOptionalObject<
+      LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+      LazilyResolvedBlankNodeOrIriInterface,
+      $DefaultStub
+    >;
     if (
       typeof parameters.optionalLazyToResolvedInterfaceProperty === "object" &&
       parameters.optionalLazyToResolvedInterfaceProperty instanceof
         $LazyOptionalObject
     ) {
-      this.optionalLazyToResolvedInterfaceProperty =
+      optionalLazyToResolvedInterfaceProperty =
         parameters.optionalLazyToResolvedInterfaceProperty;
     } else if (
       purify.Maybe.isMaybe(parameters.optionalLazyToResolvedInterfaceProperty)
     ) {
-      this.optionalLazyToResolvedInterfaceProperty = new $LazyOptionalObject<
+      optionalLazyToResolvedInterfaceProperty = new $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
         LazilyResolvedBlankNodeOrIriInterface,
         $DefaultStub
@@ -10934,7 +10944,7 @@ export class LazyPropertiesInterface {
     } else if (
       typeof parameters.optionalLazyToResolvedInterfaceProperty === "object"
     ) {
-      this.optionalLazyToResolvedInterfaceProperty = new $LazyOptionalObject<
+      optionalLazyToResolvedInterfaceProperty = new $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
         LazilyResolvedBlankNodeOrIriInterface,
         $DefaultStub
@@ -10950,7 +10960,7 @@ export class LazyPropertiesInterface {
     } else if (
       typeof parameters.optionalLazyToResolvedInterfaceProperty === "undefined"
     ) {
-      this.optionalLazyToResolvedInterfaceProperty = new $LazyOptionalObject<
+      optionalLazyToResolvedInterfaceProperty = new $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
         LazilyResolvedBlankNodeOrIriInterface,
         $DefaultStub
@@ -10961,93 +10971,100 @@ export class LazyPropertiesInterface {
         },
       });
     } else {
-      this.optionalLazyToResolvedInterfaceProperty =
+      optionalLazyToResolvedInterfaceProperty =
         parameters.optionalLazyToResolvedInterfaceProperty satisfies never;
     }
 
+    let optionalLazyToResolvedInterfaceUnionProperty: $LazyOptionalObject<
+      LazilyResolvedInterfaceUnion.$Identifier,
+      LazilyResolvedInterfaceUnion,
+      $DefaultStub
+    >;
     if (
       typeof parameters.optionalLazyToResolvedInterfaceUnionProperty ===
         "object" &&
       parameters.optionalLazyToResolvedInterfaceUnionProperty instanceof
         $LazyOptionalObject
     ) {
-      this.optionalLazyToResolvedInterfaceUnionProperty =
+      optionalLazyToResolvedInterfaceUnionProperty =
         parameters.optionalLazyToResolvedInterfaceUnionProperty;
     } else if (
       purify.Maybe.isMaybe(
         parameters.optionalLazyToResolvedInterfaceUnionProperty,
       )
     ) {
-      this.optionalLazyToResolvedInterfaceUnionProperty =
-        new $LazyOptionalObject<
-          LazilyResolvedInterfaceUnion.$Identifier,
-          LazilyResolvedInterfaceUnion,
-          $DefaultStub
-        >({
-          stub: parameters.optionalLazyToResolvedInterfaceUnionProperty.map(
-            (object) => new $DefaultStub(object),
+      optionalLazyToResolvedInterfaceUnionProperty = new $LazyOptionalObject<
+        LazilyResolvedInterfaceUnion.$Identifier,
+        LazilyResolvedInterfaceUnion,
+        $DefaultStub
+      >({
+        stub: parameters.optionalLazyToResolvedInterfaceUnionProperty.map(
+          (object) => new $DefaultStub(object),
+        ),
+        resolver: async () =>
+          purify.Either.of(
+            (
+              parameters.optionalLazyToResolvedInterfaceUnionProperty as purify.Maybe<LazilyResolvedInterfaceUnion>
+            ).unsafeCoerce(),
           ),
-          resolver: async () =>
-            purify.Either.of(
-              (
-                parameters.optionalLazyToResolvedInterfaceUnionProperty as purify.Maybe<LazilyResolvedInterfaceUnion>
-              ).unsafeCoerce(),
-            ),
-        });
+      });
     } else if (
       typeof parameters.optionalLazyToResolvedInterfaceUnionProperty ===
       "object"
     ) {
-      this.optionalLazyToResolvedInterfaceUnionProperty =
-        new $LazyOptionalObject<
-          LazilyResolvedInterfaceUnion.$Identifier,
-          LazilyResolvedInterfaceUnion,
-          $DefaultStub
-        >({
-          stub: purify.Maybe.of(
-            new $DefaultStub(
-              parameters.optionalLazyToResolvedInterfaceUnionProperty,
-            ),
+      optionalLazyToResolvedInterfaceUnionProperty = new $LazyOptionalObject<
+        LazilyResolvedInterfaceUnion.$Identifier,
+        LazilyResolvedInterfaceUnion,
+        $DefaultStub
+      >({
+        stub: purify.Maybe.of(
+          new $DefaultStub(
+            parameters.optionalLazyToResolvedInterfaceUnionProperty,
           ),
-          resolver: async () =>
-            purify.Either.of(
-              parameters.optionalLazyToResolvedInterfaceUnionProperty as LazilyResolvedInterfaceUnion,
-            ),
-        });
+        ),
+        resolver: async () =>
+          purify.Either.of(
+            parameters.optionalLazyToResolvedInterfaceUnionProperty as LazilyResolvedInterfaceUnion,
+          ),
+      });
     } else if (
       typeof parameters.optionalLazyToResolvedInterfaceUnionProperty ===
       "undefined"
     ) {
-      this.optionalLazyToResolvedInterfaceUnionProperty =
-        new $LazyOptionalObject<
-          LazilyResolvedInterfaceUnion.$Identifier,
-          LazilyResolvedInterfaceUnion,
-          $DefaultStub
-        >({
-          stub: purify.Maybe.empty(),
-          resolver: async () => {
-            throw new Error("should never be called");
-          },
-        });
+      optionalLazyToResolvedInterfaceUnionProperty = new $LazyOptionalObject<
+        LazilyResolvedInterfaceUnion.$Identifier,
+        LazilyResolvedInterfaceUnion,
+        $DefaultStub
+      >({
+        stub: purify.Maybe.empty(),
+        resolver: async () => {
+          throw new Error("should never be called");
+        },
+      });
     } else {
-      this.optionalLazyToResolvedInterfaceUnionProperty =
+      optionalLazyToResolvedInterfaceUnionProperty =
         parameters.optionalLazyToResolvedInterfaceUnionProperty satisfies never;
     }
 
+    let optionalLazyToResolvedIriInterfaceProperty: $LazyOptionalObject<
+      LazilyResolvedIriInterface.$Identifier,
+      LazilyResolvedIriInterface,
+      $NamedDefaultStub
+    >;
     if (
       typeof parameters.optionalLazyToResolvedIriInterfaceProperty ===
         "object" &&
       parameters.optionalLazyToResolvedIriInterfaceProperty instanceof
         $LazyOptionalObject
     ) {
-      this.optionalLazyToResolvedIriInterfaceProperty =
+      optionalLazyToResolvedIriInterfaceProperty =
         parameters.optionalLazyToResolvedIriInterfaceProperty;
     } else if (
       purify.Maybe.isMaybe(
         parameters.optionalLazyToResolvedIriInterfaceProperty,
       )
     ) {
-      this.optionalLazyToResolvedIriInterfaceProperty = new $LazyOptionalObject<
+      optionalLazyToResolvedIriInterfaceProperty = new $LazyOptionalObject<
         LazilyResolvedIriInterface.$Identifier,
         LazilyResolvedIriInterface,
         $NamedDefaultStub
@@ -11065,7 +11082,7 @@ export class LazyPropertiesInterface {
     } else if (
       typeof parameters.optionalLazyToResolvedIriInterfaceProperty === "object"
     ) {
-      this.optionalLazyToResolvedIriInterfaceProperty = new $LazyOptionalObject<
+      optionalLazyToResolvedIriInterfaceProperty = new $LazyOptionalObject<
         LazilyResolvedIriInterface.$Identifier,
         LazilyResolvedIriInterface,
         $NamedDefaultStub
@@ -11084,7 +11101,7 @@ export class LazyPropertiesInterface {
       typeof parameters.optionalLazyToResolvedIriInterfaceProperty ===
       "undefined"
     ) {
-      this.optionalLazyToResolvedIriInterfaceProperty = new $LazyOptionalObject<
+      optionalLazyToResolvedIriInterfaceProperty = new $LazyOptionalObject<
         LazilyResolvedIriInterface.$Identifier,
         LazilyResolvedIriInterface,
         $NamedDefaultStub
@@ -11095,24 +11112,29 @@ export class LazyPropertiesInterface {
         },
       });
     } else {
-      this.optionalLazyToResolvedIriInterfaceProperty =
+      optionalLazyToResolvedIriInterfaceProperty =
         parameters.optionalLazyToResolvedIriInterfaceProperty satisfies never;
     }
 
+    let optionalStubInterfaceToResolvedInterfaceProperty: $LazyOptionalObject<
+      LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+      LazilyResolvedBlankNodeOrIriInterface,
+      StubInterface
+    >;
     if (
       typeof parameters.optionalStubInterfaceToResolvedInterfaceProperty ===
         "object" &&
       parameters.optionalStubInterfaceToResolvedInterfaceProperty instanceof
         $LazyOptionalObject
     ) {
-      this.optionalStubInterfaceToResolvedInterfaceProperty =
+      optionalStubInterfaceToResolvedInterfaceProperty =
         parameters.optionalStubInterfaceToResolvedInterfaceProperty;
     } else if (
       purify.Maybe.isMaybe(
         parameters.optionalStubInterfaceToResolvedInterfaceProperty,
       )
     ) {
-      this.optionalStubInterfaceToResolvedInterfaceProperty =
+      optionalStubInterfaceToResolvedInterfaceProperty =
         new $LazyOptionalObject<
           LazilyResolvedBlankNodeOrIriInterface.$Identifier,
           LazilyResolvedBlankNodeOrIriInterface,
@@ -11132,7 +11154,7 @@ export class LazyPropertiesInterface {
       typeof parameters.optionalStubInterfaceToResolvedInterfaceProperty ===
       "object"
     ) {
-      this.optionalStubInterfaceToResolvedInterfaceProperty =
+      optionalStubInterfaceToResolvedInterfaceProperty =
         new $LazyOptionalObject<
           LazilyResolvedBlankNodeOrIriInterface.$Identifier,
           LazilyResolvedBlankNodeOrIriInterface,
@@ -11152,7 +11174,7 @@ export class LazyPropertiesInterface {
       typeof parameters.optionalStubInterfaceToResolvedInterfaceProperty ===
       "undefined"
     ) {
-      this.optionalStubInterfaceToResolvedInterfaceProperty =
+      optionalStubInterfaceToResolvedInterfaceProperty =
         new $LazyOptionalObject<
           LazilyResolvedBlankNodeOrIriInterface.$Identifier,
           LazilyResolvedBlankNodeOrIriInterface,
@@ -11164,24 +11186,29 @@ export class LazyPropertiesInterface {
           },
         });
     } else {
-      this.optionalStubInterfaceToResolvedInterfaceProperty =
+      optionalStubInterfaceToResolvedInterfaceProperty =
         parameters.optionalStubInterfaceToResolvedInterfaceProperty satisfies never;
     }
 
+    let optionalStubInterfaceToResolvedInterfaceUnionProperty: $LazyOptionalObject<
+      LazilyResolvedInterfaceUnion.$Identifier,
+      LazilyResolvedInterfaceUnion,
+      StubInterface
+    >;
     if (
       typeof parameters.optionalStubInterfaceToResolvedInterfaceUnionProperty ===
         "object" &&
       parameters.optionalStubInterfaceToResolvedInterfaceUnionProperty instanceof
         $LazyOptionalObject
     ) {
-      this.optionalStubInterfaceToResolvedInterfaceUnionProperty =
+      optionalStubInterfaceToResolvedInterfaceUnionProperty =
         parameters.optionalStubInterfaceToResolvedInterfaceUnionProperty;
     } else if (
       purify.Maybe.isMaybe(
         parameters.optionalStubInterfaceToResolvedInterfaceUnionProperty,
       )
     ) {
-      this.optionalStubInterfaceToResolvedInterfaceUnionProperty =
+      optionalStubInterfaceToResolvedInterfaceUnionProperty =
         new $LazyOptionalObject<
           LazilyResolvedInterfaceUnion.$Identifier,
           LazilyResolvedInterfaceUnion,
@@ -11201,7 +11228,7 @@ export class LazyPropertiesInterface {
       typeof parameters.optionalStubInterfaceToResolvedInterfaceUnionProperty ===
       "object"
     ) {
-      this.optionalStubInterfaceToResolvedInterfaceUnionProperty =
+      optionalStubInterfaceToResolvedInterfaceUnionProperty =
         new $LazyOptionalObject<
           LazilyResolvedInterfaceUnion.$Identifier,
           LazilyResolvedInterfaceUnion,
@@ -11221,7 +11248,7 @@ export class LazyPropertiesInterface {
       typeof parameters.optionalStubInterfaceToResolvedInterfaceUnionProperty ===
       "undefined"
     ) {
-      this.optionalStubInterfaceToResolvedInterfaceUnionProperty =
+      optionalStubInterfaceToResolvedInterfaceUnionProperty =
         new $LazyOptionalObject<
           LazilyResolvedInterfaceUnion.$Identifier,
           LazilyResolvedInterfaceUnion,
@@ -11233,24 +11260,29 @@ export class LazyPropertiesInterface {
           },
         });
     } else {
-      this.optionalStubInterfaceToResolvedInterfaceUnionProperty =
+      optionalStubInterfaceToResolvedInterfaceUnionProperty =
         parameters.optionalStubInterfaceToResolvedInterfaceUnionProperty satisfies never;
     }
 
+    let optionalStubInterfaceUnionToResolvedInterfaceUnionProperty: $LazyOptionalObject<
+      LazilyResolvedInterfaceUnion.$Identifier,
+      LazilyResolvedInterfaceUnion,
+      StubInterfaceUnion
+    >;
     if (
       typeof parameters.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty ===
         "object" &&
       parameters.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty instanceof
         $LazyOptionalObject
     ) {
-      this.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty =
+      optionalStubInterfaceUnionToResolvedInterfaceUnionProperty =
         parameters.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty;
     } else if (
       purify.Maybe.isMaybe(
         parameters.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty,
       )
     ) {
-      this.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty =
+      optionalStubInterfaceUnionToResolvedInterfaceUnionProperty =
         new $LazyOptionalObject<
           LazilyResolvedInterfaceUnion.$Identifier,
           LazilyResolvedInterfaceUnion,
@@ -11280,7 +11312,7 @@ export class LazyPropertiesInterface {
       typeof parameters.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty ===
       "object"
     ) {
-      this.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty =
+      optionalStubInterfaceUnionToResolvedInterfaceUnionProperty =
         new $LazyOptionalObject<
           LazilyResolvedInterfaceUnion.$Identifier,
           LazilyResolvedInterfaceUnion,
@@ -11308,7 +11340,7 @@ export class LazyPropertiesInterface {
       typeof parameters.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty ===
       "undefined"
     ) {
-      this.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty =
+      optionalStubInterfaceUnionToResolvedInterfaceUnionProperty =
         new $LazyOptionalObject<
           LazilyResolvedInterfaceUnion.$Identifier,
           LazilyResolvedInterfaceUnion,
@@ -11320,21 +11352,26 @@ export class LazyPropertiesInterface {
           },
         });
     } else {
-      this.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty =
+      optionalStubInterfaceUnionToResolvedInterfaceUnionProperty =
         parameters.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty satisfies never;
     }
 
+    let requiredLazyToResolvedInterfaceProperty: $LazyRequiredObject<
+      LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+      LazilyResolvedBlankNodeOrIriInterface,
+      $DefaultStub
+    >;
     if (
       typeof parameters.requiredLazyToResolvedInterfaceProperty === "object" &&
       parameters.requiredLazyToResolvedInterfaceProperty instanceof
         $LazyRequiredObject
     ) {
-      this.requiredLazyToResolvedInterfaceProperty =
+      requiredLazyToResolvedInterfaceProperty =
         parameters.requiredLazyToResolvedInterfaceProperty;
     } else if (
       typeof parameters.requiredLazyToResolvedInterfaceProperty === "object"
     ) {
-      this.requiredLazyToResolvedInterfaceProperty = new $LazyRequiredObject<
+      requiredLazyToResolvedInterfaceProperty = new $LazyRequiredObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
         LazilyResolvedBlankNodeOrIriInterface,
         $DefaultStub
@@ -11348,23 +11385,28 @@ export class LazyPropertiesInterface {
           ),
       });
     } else {
-      this.requiredLazyToResolvedInterfaceProperty =
+      requiredLazyToResolvedInterfaceProperty =
         parameters.requiredLazyToResolvedInterfaceProperty satisfies never;
     }
 
+    let requiredStubInterfaceToResolvedInterfaceProperty: $LazyRequiredObject<
+      LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+      LazilyResolvedBlankNodeOrIriInterface,
+      StubInterface
+    >;
     if (
       typeof parameters.requiredStubInterfaceToResolvedInterfaceProperty ===
         "object" &&
       parameters.requiredStubInterfaceToResolvedInterfaceProperty instanceof
         $LazyRequiredObject
     ) {
-      this.requiredStubInterfaceToResolvedInterfaceProperty =
+      requiredStubInterfaceToResolvedInterfaceProperty =
         parameters.requiredStubInterfaceToResolvedInterfaceProperty;
     } else if (
       typeof parameters.requiredStubInterfaceToResolvedInterfaceProperty ===
       "object"
     ) {
-      this.requiredStubInterfaceToResolvedInterfaceProperty =
+      requiredStubInterfaceToResolvedInterfaceProperty =
         new $LazyRequiredObject<
           LazilyResolvedBlankNodeOrIriInterface.$Identifier,
           LazilyResolvedBlankNodeOrIriInterface,
@@ -11379,20 +11421,25 @@ export class LazyPropertiesInterface {
             ),
         });
     } else {
-      this.requiredStubInterfaceToResolvedInterfaceProperty =
+      requiredStubInterfaceToResolvedInterfaceProperty =
         parameters.requiredStubInterfaceToResolvedInterfaceProperty satisfies never;
     }
 
+    let setLazyToResolvedInterfaceProperty: $LazyObjectSet<
+      LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+      LazilyResolvedBlankNodeOrIriInterface,
+      $DefaultStub
+    >;
     if (
       typeof parameters.setLazyToResolvedInterfaceProperty === "object" &&
       parameters.setLazyToResolvedInterfaceProperty instanceof $LazyObjectSet
     ) {
-      this.setLazyToResolvedInterfaceProperty =
+      setLazyToResolvedInterfaceProperty =
         parameters.setLazyToResolvedInterfaceProperty;
     } else if (
       typeof parameters.setLazyToResolvedInterfaceProperty === "object"
     ) {
-      this.setLazyToResolvedInterfaceProperty = new $LazyObjectSet<
+      setLazyToResolvedInterfaceProperty = new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
         LazilyResolvedBlankNodeOrIriInterface,
         $DefaultStub
@@ -11408,7 +11455,7 @@ export class LazyPropertiesInterface {
     } else if (
       typeof parameters.setLazyToResolvedInterfaceProperty === "undefined"
     ) {
-      this.setLazyToResolvedInterfaceProperty = new $LazyObjectSet<
+      setLazyToResolvedInterfaceProperty = new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
         LazilyResolvedBlankNodeOrIriInterface,
         $DefaultStub
@@ -11419,22 +11466,27 @@ export class LazyPropertiesInterface {
         },
       });
     } else {
-      this.setLazyToResolvedInterfaceProperty =
+      setLazyToResolvedInterfaceProperty =
         parameters.setLazyToResolvedInterfaceProperty satisfies never;
     }
 
+    let setStubInterfaceToResolvedInterfaceProperty: $LazyObjectSet<
+      LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+      LazilyResolvedBlankNodeOrIriInterface,
+      StubInterface
+    >;
     if (
       typeof parameters.setStubInterfaceToResolvedInterfaceProperty ===
         "object" &&
       parameters.setStubInterfaceToResolvedInterfaceProperty instanceof
         $LazyObjectSet
     ) {
-      this.setStubInterfaceToResolvedInterfaceProperty =
+      setStubInterfaceToResolvedInterfaceProperty =
         parameters.setStubInterfaceToResolvedInterfaceProperty;
     } else if (
       typeof parameters.setStubInterfaceToResolvedInterfaceProperty === "object"
     ) {
-      this.setStubInterfaceToResolvedInterfaceProperty = new $LazyObjectSet<
+      setStubInterfaceToResolvedInterfaceProperty = new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
         LazilyResolvedBlankNodeOrIriInterface,
         StubInterface
@@ -11451,7 +11503,7 @@ export class LazyPropertiesInterface {
       typeof parameters.setStubInterfaceToResolvedInterfaceProperty ===
       "undefined"
     ) {
-      this.setStubInterfaceToResolvedInterfaceProperty = new $LazyObjectSet<
+      setStubInterfaceToResolvedInterfaceProperty = new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
         LazilyResolvedBlankNodeOrIriInterface,
         StubInterface
@@ -11462,32 +11514,43 @@ export class LazyPropertiesInterface {
         },
       });
     } else {
-      this.setStubInterfaceToResolvedInterfaceProperty =
+      setStubInterfaceToResolvedInterfaceProperty =
         parameters.setStubInterfaceToResolvedInterfaceProperty satisfies never;
     }
+
+    return {
+      $identifier,
+      $type,
+      optionalLazyToResolvedInterfaceProperty,
+      optionalLazyToResolvedInterfaceUnionProperty,
+      optionalLazyToResolvedIriInterfaceProperty,
+      optionalStubInterfaceToResolvedInterfaceProperty,
+      optionalStubInterfaceToResolvedInterfaceUnionProperty,
+      optionalStubInterfaceUnionToResolvedInterfaceUnionProperty,
+      requiredLazyToResolvedInterfaceProperty,
+      requiredStubInterfaceToResolvedInterfaceProperty,
+      setLazyToResolvedInterfaceProperty,
+      setStubInterfaceToResolvedInterfaceProperty,
+    };
   }
 
-  get $identifier(): LazyPropertiesInterface.$Identifier {
-    if (typeof this._$identifier === "undefined") {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
-  $equals(other: LazyPropertiesInterface): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+  export function $equals(
+    left: LazyPropertiesInterface,
+    right: LazyPropertiesInterface,
+  ): $EqualsResult {
+    return $booleanEquals(left.$identifier, right.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
+        left: left,
+        right: right,
         propertyName: "$identifier",
         propertyValuesUnequal,
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
+        $strictEquals(left.$type, right.$type).mapLeft(
           (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
+            left: left,
+            right: right,
             propertyName: "$type",
             propertyValuesUnequal,
             type: "Property" as const,
@@ -11501,11 +11564,11 @@ export class LazyPropertiesInterface {
             left.stub,
             right.stub,
           ))(
-          this.optionalLazyToResolvedInterfaceProperty,
-          other.optionalLazyToResolvedInterfaceProperty,
+          left.optionalLazyToResolvedInterfaceProperty,
+          right.optionalLazyToResolvedInterfaceProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
+          left: left,
+          right: right,
           propertyName: "optionalLazyToResolvedInterfaceProperty",
           propertyValuesUnequal,
           type: "Property" as const,
@@ -11518,11 +11581,11 @@ export class LazyPropertiesInterface {
             left.stub,
             right.stub,
           ))(
-          this.optionalLazyToResolvedInterfaceUnionProperty,
-          other.optionalLazyToResolvedInterfaceUnionProperty,
+          left.optionalLazyToResolvedInterfaceUnionProperty,
+          right.optionalLazyToResolvedInterfaceUnionProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
+          left: left,
+          right: right,
           propertyName: "optionalLazyToResolvedInterfaceUnionProperty",
           propertyValuesUnequal,
           type: "Property" as const,
@@ -11535,11 +11598,11 @@ export class LazyPropertiesInterface {
             left.stub,
             right.stub,
           ))(
-          this.optionalLazyToResolvedIriInterfaceProperty,
-          other.optionalLazyToResolvedIriInterfaceProperty,
+          left.optionalLazyToResolvedIriInterfaceProperty,
+          right.optionalLazyToResolvedIriInterfaceProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
+          left: left,
+          right: right,
           propertyName: "optionalLazyToResolvedIriInterfaceProperty",
           propertyValuesUnequal,
           type: "Property" as const,
@@ -11551,11 +11614,11 @@ export class LazyPropertiesInterface {
             left.stub,
             right.stub,
           ))(
-          this.optionalStubInterfaceToResolvedInterfaceProperty,
-          other.optionalStubInterfaceToResolvedInterfaceProperty,
+          left.optionalStubInterfaceToResolvedInterfaceProperty,
+          right.optionalStubInterfaceToResolvedInterfaceProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
+          left: left,
+          right: right,
           propertyName: "optionalStubInterfaceToResolvedInterfaceProperty",
           propertyValuesUnequal,
           type: "Property" as const,
@@ -11567,11 +11630,11 @@ export class LazyPropertiesInterface {
             left.stub,
             right.stub,
           ))(
-          this.optionalStubInterfaceToResolvedInterfaceUnionProperty,
-          other.optionalStubInterfaceToResolvedInterfaceUnionProperty,
+          left.optionalStubInterfaceToResolvedInterfaceUnionProperty,
+          right.optionalStubInterfaceToResolvedInterfaceUnionProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
+          left: left,
+          right: right,
           propertyName: "optionalStubInterfaceToResolvedInterfaceUnionProperty",
           propertyValuesUnequal,
           type: "Property" as const,
@@ -11584,11 +11647,11 @@ export class LazyPropertiesInterface {
             left.stub,
             right.stub,
           ))(
-          this.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty,
-          other.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty,
+          left.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty,
+          right.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
+          left: left,
+          right: right,
           propertyName:
             "optionalStubInterfaceUnionToResolvedInterfaceUnionProperty",
           propertyValuesUnequal,
@@ -11598,11 +11661,11 @@ export class LazyPropertiesInterface {
       .chain(() =>
         ((left, right) =>
           ((left, right) => left.$equals(right))(left.stub, right.stub))(
-          this.requiredLazyToResolvedInterfaceProperty,
-          other.requiredLazyToResolvedInterfaceProperty,
+          left.requiredLazyToResolvedInterfaceProperty,
+          right.requiredLazyToResolvedInterfaceProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
+          left: left,
+          right: right,
           propertyName: "requiredLazyToResolvedInterfaceProperty",
           propertyValuesUnequal,
           type: "Property" as const,
@@ -11610,11 +11673,11 @@ export class LazyPropertiesInterface {
       )
       .chain(() =>
         ((left, right) => StubInterface.$equals(left.stub, right.stub))(
-          this.requiredStubInterfaceToResolvedInterfaceProperty,
-          other.requiredStubInterfaceToResolvedInterfaceProperty,
+          left.requiredStubInterfaceToResolvedInterfaceProperty,
+          right.requiredStubInterfaceToResolvedInterfaceProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
+          left: left,
+          right: right,
           propertyName: "requiredStubInterfaceToResolvedInterfaceProperty",
           propertyValuesUnequal,
           type: "Property" as const,
@@ -11627,11 +11690,11 @@ export class LazyPropertiesInterface {
             left.stubs,
             right.stubs,
           ))(
-          this.setLazyToResolvedInterfaceProperty,
-          other.setLazyToResolvedInterfaceProperty,
+          left.setLazyToResolvedInterfaceProperty,
+          right.setLazyToResolvedInterfaceProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
+          left: left,
+          right: right,
           propertyName: "setLazyToResolvedInterfaceProperty",
           propertyValuesUnequal,
           type: "Property" as const,
@@ -11643,11 +11706,11 @@ export class LazyPropertiesInterface {
             left.stubs,
             right.stubs,
           ))(
-          this.setStubInterfaceToResolvedInterfaceProperty,
-          other.setStubInterfaceToResolvedInterfaceProperty,
+          left.setStubInterfaceToResolvedInterfaceProperty,
+          right.setStubInterfaceToResolvedInterfaceProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
+          left: left,
+          right: right,
           propertyName: "setStubInterfaceToResolvedInterfaceProperty",
           propertyValuesUnequal,
           type: "Property" as const,
@@ -11655,225 +11718,6 @@ export class LazyPropertiesInterface {
       );
   }
 
-  $hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    _hasher.update(this.$identifier.value);
-    _hasher.update(this.$type);
-    this.$hashShaclProperties(_hasher);
-    return _hasher;
-  }
-
-  protected $hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    this.optionalLazyToResolvedInterfaceProperty.stub.ifJust((value1) => {
-      value1.$hash(_hasher);
-    });
-    this.optionalLazyToResolvedInterfaceUnionProperty.stub.ifJust((value1) => {
-      value1.$hash(_hasher);
-    });
-    this.optionalLazyToResolvedIriInterfaceProperty.stub.ifJust((value1) => {
-      value1.$hash(_hasher);
-    });
-    this.optionalStubInterfaceToResolvedInterfaceProperty.stub.ifJust(
-      (value1) => {
-        StubInterface.$hash(value1, _hasher);
-      },
-    );
-    this.optionalStubInterfaceToResolvedInterfaceUnionProperty.stub.ifJust(
-      (value1) => {
-        StubInterface.$hash(value1, _hasher);
-      },
-    );
-    this.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty.stub.ifJust(
-      (value1) => {
-        StubInterfaceUnion.$hash(value1, _hasher);
-      },
-    );
-    this.requiredLazyToResolvedInterfaceProperty.stub.$hash(_hasher);
-    StubInterface.$hash(
-      this.requiredStubInterfaceToResolvedInterfaceProperty.stub,
-      _hasher,
-    );
-    for (const item1 of this.setLazyToResolvedInterfaceProperty.stubs) {
-      item1.$hash(_hasher);
-    }
-
-    for (const item1 of this.setStubInterfaceToResolvedInterfaceProperty
-      .stubs) {
-      StubInterface.$hash(item1, _hasher);
-    }
-
-    return _hasher;
-  }
-
-  $toJson(): LazyPropertiesInterface.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
-        $type: this.$type,
-        optionalLazyToResolvedInterfaceProperty:
-          this.optionalLazyToResolvedInterfaceProperty.stub
-            .map((item) => item.$toJson())
-            .extract(),
-        optionalLazyToResolvedInterfaceUnionProperty:
-          this.optionalLazyToResolvedInterfaceUnionProperty.stub
-            .map((item) => item.$toJson())
-            .extract(),
-        optionalLazyToResolvedIriInterfaceProperty:
-          this.optionalLazyToResolvedIriInterfaceProperty.stub
-            .map((item) => item.$toJson())
-            .extract(),
-        optionalStubInterfaceToResolvedInterfaceProperty:
-          this.optionalStubInterfaceToResolvedInterfaceProperty.stub
-            .map((item) => StubInterface.$toJson(item))
-            .extract(),
-        optionalStubInterfaceToResolvedInterfaceUnionProperty:
-          this.optionalStubInterfaceToResolvedInterfaceUnionProperty.stub
-            .map((item) => StubInterface.$toJson(item))
-            .extract(),
-        optionalStubInterfaceUnionToResolvedInterfaceUnionProperty:
-          this.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty.stub
-            .map((item) => StubInterfaceUnion.$toJson(item))
-            .extract(),
-        requiredLazyToResolvedInterfaceProperty:
-          this.requiredLazyToResolvedInterfaceProperty.stub.$toJson(),
-        requiredStubInterfaceToResolvedInterfaceProperty: StubInterface.$toJson(
-          this.requiredStubInterfaceToResolvedInterfaceProperty.stub,
-        ),
-        setLazyToResolvedInterfaceProperty:
-          this.setLazyToResolvedInterfaceProperty.stubs.map((item) =>
-            item.$toJson(),
-          ),
-        setStubInterfaceToResolvedInterfaceProperty:
-          this.setStubInterfaceToResolvedInterfaceProperty.stubs.map((item) =>
-            StubInterface.$toJson(item),
-          ),
-      } satisfies LazyPropertiesInterface.$Json),
-    );
-  }
-
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet?: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const mutateGraph = options?.mutateGraph;
-    const resourceSet =
-      options?.resourceSet ??
-      new rdfjsResource.MutableResourceSet({
-        dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.mutableResource(this.$identifier, {
-      mutateGraph,
-    });
-    resource.add(
-      LazyPropertiesInterface.$properties
-        .optionalLazyToResolvedInterfaceProperty["identifier"],
-      this.optionalLazyToResolvedInterfaceProperty.stub.map((value) =>
-        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    resource.add(
-      LazyPropertiesInterface.$properties
-        .optionalLazyToResolvedInterfaceUnionProperty["identifier"],
-      this.optionalLazyToResolvedInterfaceUnionProperty.stub.map((value) =>
-        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    resource.add(
-      LazyPropertiesInterface.$properties
-        .optionalLazyToResolvedIriInterfaceProperty["identifier"],
-      this.optionalLazyToResolvedIriInterfaceProperty.stub.map((value) =>
-        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    resource.add(
-      LazyPropertiesInterface.$properties
-        .optionalStubInterfaceToResolvedInterfaceProperty["identifier"],
-      this.optionalStubInterfaceToResolvedInterfaceProperty.stub.map((value) =>
-        StubInterface.$toRdf(value, {
-          mutateGraph: mutateGraph,
-          resourceSet: resourceSet,
-        }),
-      ),
-    );
-    resource.add(
-      LazyPropertiesInterface.$properties
-        .optionalStubInterfaceToResolvedInterfaceUnionProperty["identifier"],
-      this.optionalStubInterfaceToResolvedInterfaceUnionProperty.stub.map(
-        (value) =>
-          StubInterface.$toRdf(value, {
-            mutateGraph: mutateGraph,
-            resourceSet: resourceSet,
-          }),
-      ),
-    );
-    resource.add(
-      LazyPropertiesInterface.$properties
-        .optionalStubInterfaceUnionToResolvedInterfaceUnionProperty[
-        "identifier"
-      ],
-      this.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty.stub.map(
-        (value) =>
-          StubInterfaceUnion.$toRdf(value, {
-            mutateGraph: mutateGraph,
-            resourceSet: resourceSet,
-          }),
-      ),
-    );
-    resource.add(
-      LazyPropertiesInterface.$properties
-        .requiredLazyToResolvedInterfaceProperty["identifier"],
-      this.requiredLazyToResolvedInterfaceProperty.stub.$toRdf({
-        mutateGraph: mutateGraph,
-        resourceSet: resourceSet,
-      }),
-    );
-    resource.add(
-      LazyPropertiesInterface.$properties
-        .requiredStubInterfaceToResolvedInterfaceProperty["identifier"],
-      StubInterface.$toRdf(
-        this.requiredStubInterfaceToResolvedInterfaceProperty.stub,
-        { mutateGraph: mutateGraph, resourceSet: resourceSet },
-      ),
-    );
-    resource.add(
-      LazyPropertiesInterface.$properties.setLazyToResolvedInterfaceProperty[
-        "identifier"
-      ],
-      this.setLazyToResolvedInterfaceProperty.stubs.map((item) =>
-        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
-    );
-    resource.add(
-      LazyPropertiesInterface.$properties
-        .setStubInterfaceToResolvedInterfaceProperty["identifier"],
-      this.setStubInterfaceToResolvedInterfaceProperty.stubs.map((item) =>
-        StubInterface.$toRdf(item, {
-          mutateGraph: mutateGraph,
-          resourceSet: resourceSet,
-        }),
-      ),
-    );
-    return resource;
-  }
-
-  toString(): string {
-    return JSON.stringify(this.$toJson());
-  }
-}
-
-export namespace LazyPropertiesInterface {
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -11913,6 +11757,7 @@ export namespace LazyPropertiesInterface {
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      $type: "LazyPropertiesInterface";
       optionalLazyToResolvedInterfaceProperty: $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
         LazilyResolvedBlankNodeOrIriInterface,
@@ -11974,6 +11819,7 @@ export namespace LazyPropertiesInterface {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
+    const $type = "LazyPropertiesInterface" as const;
     const optionalLazyToResolvedInterfaceProperty = new $LazyOptionalObject<
       LazilyResolvedBlankNodeOrIriInterface.$Identifier,
       LazilyResolvedBlankNodeOrIriInterface,
@@ -12149,6 +11995,7 @@ export namespace LazyPropertiesInterface {
     });
     return purify.Either.of({
       $identifier,
+      $type,
       optionalLazyToResolvedInterfaceProperty,
       optionalLazyToResolvedInterfaceUnionProperty,
       optionalLazyToResolvedIriInterfaceProperty,
@@ -12165,9 +12012,7 @@ export namespace LazyPropertiesInterface {
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, LazyPropertiesInterface> {
-    return $propertiesFromJson(json).map(
-      (properties) => new LazyPropertiesInterface(properties),
-    );
+    return $propertiesFromJson(json);
   }
 
   export function $jsonSchema() {
@@ -12231,6 +12076,58 @@ export namespace LazyPropertiesInterface {
     };
   }
 
+  export function $toJson(
+    _lazyPropertiesInterface: LazyPropertiesInterface,
+  ): LazyPropertiesInterface.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _lazyPropertiesInterface.$identifier.termType === "BlankNode"
+            ? `_:${_lazyPropertiesInterface.$identifier.value}`
+            : _lazyPropertiesInterface.$identifier.value,
+        $type: _lazyPropertiesInterface.$type,
+        optionalLazyToResolvedInterfaceProperty:
+          _lazyPropertiesInterface.optionalLazyToResolvedInterfaceProperty.stub
+            .map((item) => item.$toJson())
+            .extract(),
+        optionalLazyToResolvedInterfaceUnionProperty:
+          _lazyPropertiesInterface.optionalLazyToResolvedInterfaceUnionProperty.stub
+            .map((item) => item.$toJson())
+            .extract(),
+        optionalLazyToResolvedIriInterfaceProperty:
+          _lazyPropertiesInterface.optionalLazyToResolvedIriInterfaceProperty.stub
+            .map((item) => item.$toJson())
+            .extract(),
+        optionalStubInterfaceToResolvedInterfaceProperty:
+          _lazyPropertiesInterface.optionalStubInterfaceToResolvedInterfaceProperty.stub
+            .map((item) => StubInterface.$toJson(item))
+            .extract(),
+        optionalStubInterfaceToResolvedInterfaceUnionProperty:
+          _lazyPropertiesInterface.optionalStubInterfaceToResolvedInterfaceUnionProperty.stub
+            .map((item) => StubInterface.$toJson(item))
+            .extract(),
+        optionalStubInterfaceUnionToResolvedInterfaceUnionProperty:
+          _lazyPropertiesInterface.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty.stub
+            .map((item) => StubInterfaceUnion.$toJson(item))
+            .extract(),
+        requiredLazyToResolvedInterfaceProperty:
+          _lazyPropertiesInterface.requiredLazyToResolvedInterfaceProperty.stub.$toJson(),
+        requiredStubInterfaceToResolvedInterfaceProperty: StubInterface.$toJson(
+          _lazyPropertiesInterface
+            .requiredStubInterfaceToResolvedInterfaceProperty.stub,
+        ),
+        setLazyToResolvedInterfaceProperty:
+          _lazyPropertiesInterface.setLazyToResolvedInterfaceProperty.stubs.map(
+            (item) => item.$toJson(),
+          ),
+        setStubInterfaceToResolvedInterfaceProperty:
+          _lazyPropertiesInterface.setStubInterfaceToResolvedInterfaceProperty.stubs.map(
+            (item) => StubInterface.$toJson(item),
+          ),
+      } satisfies LazyPropertiesInterface.$Json),
+    );
+  }
+
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
@@ -12264,6 +12161,82 @@ export namespace LazyPropertiesInterface {
     }) satisfies zod.ZodType<$Json>;
   }
 
+  export function $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(
+    _lazyPropertiesInterface: LazyPropertiesInterface,
+    _hasher: HasherT,
+  ): HasherT {
+    _hasher.update(_lazyPropertiesInterface.$identifier.value);
+    _hasher.update(_lazyPropertiesInterface.$type);
+    LazyPropertiesInterface.$hashShaclProperties(
+      _lazyPropertiesInterface,
+      _hasher,
+    );
+    return _hasher;
+  }
+
+  export function $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(
+    _lazyPropertiesInterface: LazyPropertiesInterface,
+    _hasher: HasherT,
+  ): HasherT {
+    _lazyPropertiesInterface.optionalLazyToResolvedInterfaceProperty.stub.ifJust(
+      (value1) => {
+        value1.$hash(_hasher);
+      },
+    );
+    _lazyPropertiesInterface.optionalLazyToResolvedInterfaceUnionProperty.stub.ifJust(
+      (value1) => {
+        value1.$hash(_hasher);
+      },
+    );
+    _lazyPropertiesInterface.optionalLazyToResolvedIriInterfaceProperty.stub.ifJust(
+      (value1) => {
+        value1.$hash(_hasher);
+      },
+    );
+    _lazyPropertiesInterface.optionalStubInterfaceToResolvedInterfaceProperty.stub.ifJust(
+      (value1) => {
+        StubInterface.$hash(value1, _hasher);
+      },
+    );
+    _lazyPropertiesInterface.optionalStubInterfaceToResolvedInterfaceUnionProperty.stub.ifJust(
+      (value1) => {
+        StubInterface.$hash(value1, _hasher);
+      },
+    );
+    _lazyPropertiesInterface.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty.stub.ifJust(
+      (value1) => {
+        StubInterfaceUnion.$hash(value1, _hasher);
+      },
+    );
+    _lazyPropertiesInterface.requiredLazyToResolvedInterfaceProperty.stub.$hash(
+      _hasher,
+    );
+    StubInterface.$hash(
+      _lazyPropertiesInterface.requiredStubInterfaceToResolvedInterfaceProperty
+        .stub,
+      _hasher,
+    );
+    for (const item1 of _lazyPropertiesInterface
+      .setLazyToResolvedInterfaceProperty.stubs) {
+      item1.$hash(_hasher);
+    }
+
+    for (const item1 of _lazyPropertiesInterface
+      .setStubInterfaceToResolvedInterfaceProperty.stubs) {
+      StubInterface.$hash(item1, _hasher);
+    }
+
+    return _hasher;
+  }
+
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
@@ -12289,7 +12262,7 @@ export namespace LazyPropertiesInterface {
       languageIn,
       objectSet,
       resource,
-    }).map((properties) => new LazyPropertiesInterface(properties));
+    });
   }
 
   export function $propertiesFromRdf({
@@ -12309,6 +12282,7 @@ export namespace LazyPropertiesInterface {
     Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      $type: "LazyPropertiesInterface";
       optionalLazyToResolvedInterfaceProperty: $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
         LazilyResolvedBlankNodeOrIriInterface,
@@ -12363,6 +12337,7 @@ export namespace LazyPropertiesInterface {
   > {
     const $identifier: LazyPropertiesInterface.$Identifier =
       $resource.identifier;
+    const $type = "LazyPropertiesInterface" as const;
     const _optionalLazyToResolvedInterfacePropertyEither: purify.Either<
       Error,
       $LazyOptionalObject<
@@ -12824,6 +12799,7 @@ export namespace LazyPropertiesInterface {
       _setStubInterfaceToResolvedInterfacePropertyEither.unsafeCoerce();
     return purify.Either.of({
       $identifier,
+      $type,
       optionalLazyToResolvedInterfaceProperty,
       optionalLazyToResolvedInterfaceUnionProperty,
       optionalLazyToResolvedIriInterfaceProperty,
@@ -12835,6 +12811,123 @@ export namespace LazyPropertiesInterface {
       setLazyToResolvedInterfaceProperty,
       setStubInterfaceToResolvedInterfaceProperty,
     });
+  }
+
+  export function $toRdf(
+    _lazyPropertiesInterface: LazyPropertiesInterface,
+    options?: {
+      ignoreRdfType?: boolean;
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = resourceSet.mutableResource(
+      _lazyPropertiesInterface.$identifier,
+      { mutateGraph },
+    );
+    resource.add(
+      LazyPropertiesInterface.$properties
+        .optionalLazyToResolvedInterfaceProperty["identifier"],
+      _lazyPropertiesInterface.optionalLazyToResolvedInterfaceProperty.stub.map(
+        (value) =>
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    resource.add(
+      LazyPropertiesInterface.$properties
+        .optionalLazyToResolvedInterfaceUnionProperty["identifier"],
+      _lazyPropertiesInterface.optionalLazyToResolvedInterfaceUnionProperty.stub.map(
+        (value) =>
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    resource.add(
+      LazyPropertiesInterface.$properties
+        .optionalLazyToResolvedIriInterfaceProperty["identifier"],
+      _lazyPropertiesInterface.optionalLazyToResolvedIriInterfaceProperty.stub.map(
+        (value) =>
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    resource.add(
+      LazyPropertiesInterface.$properties
+        .optionalStubInterfaceToResolvedInterfaceProperty["identifier"],
+      _lazyPropertiesInterface.optionalStubInterfaceToResolvedInterfaceProperty.stub.map(
+        (value) =>
+          StubInterface.$toRdf(value, {
+            mutateGraph: mutateGraph,
+            resourceSet: resourceSet,
+          }),
+      ),
+    );
+    resource.add(
+      LazyPropertiesInterface.$properties
+        .optionalStubInterfaceToResolvedInterfaceUnionProperty["identifier"],
+      _lazyPropertiesInterface.optionalStubInterfaceToResolvedInterfaceUnionProperty.stub.map(
+        (value) =>
+          StubInterface.$toRdf(value, {
+            mutateGraph: mutateGraph,
+            resourceSet: resourceSet,
+          }),
+      ),
+    );
+    resource.add(
+      LazyPropertiesInterface.$properties
+        .optionalStubInterfaceUnionToResolvedInterfaceUnionProperty[
+        "identifier"
+      ],
+      _lazyPropertiesInterface.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty.stub.map(
+        (value) =>
+          StubInterfaceUnion.$toRdf(value, {
+            mutateGraph: mutateGraph,
+            resourceSet: resourceSet,
+          }),
+      ),
+    );
+    resource.add(
+      LazyPropertiesInterface.$properties
+        .requiredLazyToResolvedInterfaceProperty["identifier"],
+      _lazyPropertiesInterface.requiredLazyToResolvedInterfaceProperty.stub.$toRdf(
+        { mutateGraph: mutateGraph, resourceSet: resourceSet },
+      ),
+    );
+    resource.add(
+      LazyPropertiesInterface.$properties
+        .requiredStubInterfaceToResolvedInterfaceProperty["identifier"],
+      StubInterface.$toRdf(
+        _lazyPropertiesInterface
+          .requiredStubInterfaceToResolvedInterfaceProperty.stub,
+        { mutateGraph: mutateGraph, resourceSet: resourceSet },
+      ),
+    );
+    resource.add(
+      LazyPropertiesInterface.$properties.setLazyToResolvedInterfaceProperty[
+        "identifier"
+      ],
+      _lazyPropertiesInterface.setLazyToResolvedInterfaceProperty.stubs.map(
+        (item) =>
+          item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    resource.add(
+      LazyPropertiesInterface.$properties
+        .setStubInterfaceToResolvedInterfaceProperty["identifier"],
+      _lazyPropertiesInterface.setStubInterfaceToResolvedInterfaceProperty.stubs.map(
+        (item) =>
+          StubInterface.$toRdf(item, {
+            mutateGraph: mutateGraph,
+            resourceSet: resourceSet,
+          }),
+      ),
+    );
+    return resource;
   }
 
   export const $properties = {
@@ -34151,9 +34244,9 @@ export namespace ClassUnion {
 
   export function $toRdf(
     _classUnion: ClassUnion,
-    _parameters: {
-      mutateGraph: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
+    _parameters?: {
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
     switch (_classUnion.$type) {
@@ -34449,9 +34542,9 @@ export namespace InterfaceUnion {
 
   export function $toRdf(
     _interfaceUnion: InterfaceUnion,
-    _parameters: {
-      mutateGraph: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
+    _parameters?: {
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
     switch (_interfaceUnion.$type) {
@@ -34703,9 +34796,9 @@ export namespace InterfaceUnionMember2 {
 
   export function $toRdf(
     _interfaceUnionMember2: InterfaceUnionMember2,
-    _parameters: {
-      mutateGraph: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
+    _parameters?: {
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
     switch (_interfaceUnionMember2.$type) {
@@ -34971,9 +35064,9 @@ export namespace LazilyResolvedClassUnion {
 
   export function $toRdf(
     _lazilyResolvedClassUnion: LazilyResolvedClassUnion,
-    _parameters: {
-      mutateGraph: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
+    _parameters?: {
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
     switch (_lazilyResolvedClassUnion.$type) {
@@ -35245,9 +35338,9 @@ export namespace LazilyResolvedInterfaceUnion {
 
   export function $toRdf(
     _lazilyResolvedInterfaceUnion: LazilyResolvedInterfaceUnion,
-    _parameters: {
-      mutateGraph: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
+    _parameters?: {
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
     switch (_lazilyResolvedInterfaceUnion.$type) {
@@ -35489,9 +35582,9 @@ export namespace StubClassUnion {
 
   export function $toRdf(
     _stubClassUnion: StubClassUnion,
-    _parameters: {
-      mutateGraph: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
+    _parameters?: {
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
     switch (_stubClassUnion.$type) {
@@ -35741,9 +35834,9 @@ export namespace StubInterfaceUnion {
 
   export function $toRdf(
     _stubInterfaceUnion: StubInterfaceUnion,
-    _parameters: {
-      mutateGraph: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
+    _parameters?: {
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
     switch (_stubInterfaceUnion.$type) {

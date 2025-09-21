@@ -1670,9 +1670,9 @@ export namespace Union {
 
   export function $toRdf(
     _union: Union,
-    _parameters: {
-      mutateGraph: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet: rdfjsResource.MutableResourceSet;
+    _parameters?: {
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
     switch (_union.$type) {

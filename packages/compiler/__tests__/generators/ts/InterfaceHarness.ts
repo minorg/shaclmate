@@ -30,9 +30,9 @@ export class InterfaceHarness<
       $toJson: (instance: T) => any;
       $toRdf: (
         instance: T,
-        options: {
-          mutateGraph: MutableResource.MutateGraph;
-          resourceSet: MutableResourceSet;
+        options?: {
+          mutateGraph?: MutableResource.MutateGraph;
+          resourceSet?: MutableResourceSet;
         },
       ) => Resource<IdentifierT>;
     } & ConstructorParameters<typeof Harness<T, IdentifierT>>[1],

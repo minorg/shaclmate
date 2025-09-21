@@ -645,8 +645,9 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
           type: this.name,
         },
         {
+          hasQuestionToken: true,
           name: parametersVariable,
-          type: "{ mutateGraph: rdfjsResource.MutableResource.MutateGraph, resourceSet: rdfjsResource.MutableResourceSet }",
+          type: "{ mutateGraph?: rdfjsResource.MutableResource.MutateGraph, resourceSet?: rdfjsResource.MutableResourceSet }",
         },
       ],
       returnType: (() => {

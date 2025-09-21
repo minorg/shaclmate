@@ -306,6 +306,82 @@ export const harnesses = {
     }),
     kitchenSink.LazyPropertiesClass,
   ),
+  lazyPropertiesInterfaceEmpty: new InterfaceHarness(
+    kitchenSink.LazyPropertiesInterface.$create({
+      $identifier,
+      // These nested objects won't be resolvable since they're not serialized with $toRdf.
+      // This harness is just intended to test the deserialization/deserialization of the identifiers.
+      requiredLazyToResolvedInterfaceProperty:
+        kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
+          lazilyResolvedStringProperty: "test required empty",
+        }),
+      requiredStubInterfaceToResolvedInterfaceProperty:
+        kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
+          lazilyResolvedStringProperty: "test required empty",
+        }),
+    }),
+    kitchenSink.LazyPropertiesInterface,
+  ),
+  lazyPropertiesInterfaceNonEmpty: new InterfaceHarness(
+    kitchenSink.LazyPropertiesInterface.$create({
+      $identifier,
+      // These nested objects won't be resolvable since they're not serialized with $toRdf.
+      // This harness is just intended to test the deserialization/deserialization of the identifiers.
+      optionalLazyToResolvedInterfaceProperty:
+        kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
+          lazilyResolvedStringProperty:
+            "optionalLazyToResolvedInterfaceProperty",
+        }),
+      optionalLazyToResolvedInterfaceUnionProperty:
+        kitchenSink.LazilyResolvedInterfaceUnionMember1.$create({
+          lazilyResolvedStringProperty:
+            "optionalLazyToResolvedInterfaceUnionProperty",
+        }),
+      optionalLazyToResolvedIriInterfaceProperty:
+        kitchenSink.LazilyResolvedIriInterface.$create({
+          $identifier: dataFactory.namedNode("http://example.com/resolved"),
+          lazilyResolvedStringProperty:
+            "optionalLazyToResolvedIriInterfaceProperty",
+        }),
+      optionalStubInterfaceToResolvedInterfaceProperty:
+        kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
+          lazilyResolvedStringProperty:
+            "optionalStubInterfaceToResolvedInterfaceProperty",
+        }),
+      optionalStubInterfaceToResolvedInterfaceUnionProperty:
+        kitchenSink.LazilyResolvedInterfaceUnionMember1.$create({
+          lazilyResolvedStringProperty:
+            "optionalStubInterfaceToResolvedInterfaceUnionProperty",
+        }),
+      optionalStubInterfaceUnionToResolvedInterfaceUnionProperty:
+        kitchenSink.LazilyResolvedInterfaceUnionMember1.$create({
+          lazilyResolvedStringProperty:
+            "optionalStubInterfaceUnionToResolvedInterfaceUnionProperty",
+        }),
+      requiredLazyToResolvedInterfaceProperty:
+        kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
+          lazilyResolvedStringProperty:
+            "requiredLazyToResolvedInterfaceProperty",
+        }),
+      requiredStubInterfaceToResolvedInterfaceProperty:
+        kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
+          lazilyResolvedStringProperty:
+            "requiredStubInterfaceToResolvedInterfaceProperty",
+        }),
+      setLazyToResolvedInterfaceProperty: [
+        kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
+          lazilyResolvedStringProperty: "setLazyToResolvedInterfaceProperty",
+        }),
+      ],
+      setStubInterfaceToResolvedInterfaceProperty: [
+        kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
+          lazilyResolvedStringProperty:
+            "setStubInterfaceToResolvedInterfaceProperty",
+        }),
+      ],
+    }),
+    kitchenSink.LazyPropertiesInterface,
+  ),
   mutablePropertiesClass: new ClassHarness(
     new kitchenSink.MutablePropertiesClass({
       $identifier,
