@@ -645,8 +645,9 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
           type: this.name,
         },
         {
+          hasQuestionToken: true,
           name: parametersVariable,
-          type: "{ mutateGraph: rdfjsResource.MutableResource.MutateGraph, resourceSet: rdfjsResource.MutableResourceSet }",
+          type: "{ mutateGraph?: rdfjsResource.MutableResource.MutateGraph, resourceSet?: rdfjsResource.MutableResourceSet }",
         },
       ],
       returnType: (() => {
@@ -778,10 +779,7 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
       case "class":
         return `${variables.value}.${syntheticNamePrefix}toJson()`;
       case "interface":
-        throw new Error(
-          "not implemented: need a freestanding toJson function like the toRdf function",
-        );
-      // return `${this.name}.toJson(${variables.value})`;
+        return `${this.staticModuleName}.${syntheticNamePrefix}toJson(${variables.value})`;
     }
   }
 
