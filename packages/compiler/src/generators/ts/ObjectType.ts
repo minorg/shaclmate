@@ -269,7 +269,7 @@ export class ObjectType extends DeclaredType {
       case "class":
         return `new ${this.name}(${parameters})`;
       case "interface":
-        return `${this.staticModuleName}.create(${parameters})`;
+        return `${this.staticModuleName}.${syntheticNamePrefix}create(${parameters})`;
     }
   }
 
