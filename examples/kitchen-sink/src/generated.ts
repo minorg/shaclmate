@@ -1016,17 +1016,6 @@ export namespace UuidV4IriInterface {
         type: "Property" as const,
       }))
       .chain(() =>
-        $strictEquals(left.$identifierPrefix, right.$identifierPrefix).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "$identifierPrefix",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $strictEquals(left.$type, right.$type).mapLeft(
           (propertyValuesUnequal) => ({
             left: left,

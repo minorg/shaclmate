@@ -8,6 +8,7 @@ import {
   Scope,
 } from "ts-morph";
 
+import { Memoize } from "typescript-memoize";
 import type { IdentifierType } from "../IdentifierType.js";
 import type { Import } from "../Import.js";
 import { SnippetDeclarations } from "../SnippetDeclarations.js";
@@ -19,7 +20,6 @@ export class IdentifierPrefixProperty extends Property<StringType> {
   private readonly own: boolean;
 
   override readonly declarationImports: readonly Import[] = [];
-  readonly equalsFunction = `${syntheticNamePrefix}strictEquals`;
   override readonly graphqlField: Property<StringType>["graphqlField"] =
     Maybe.empty();
   override readonly propertySignature: Maybe<
@@ -52,6 +52,13 @@ export class IdentifierPrefixProperty extends Property<StringType> {
       name: this.name,
       type: this.type.name,
     });
+  }
+
+  @Memoize()
+  override get equalsFunction(): Maybe<string> {
+    return this.objectType.declarationType === "class"
+      ? Maybe.of(`${syntheticNamePrefix}strictEquals`)
+      : Maybe.empty();
   }
 
   override constructorStatements({

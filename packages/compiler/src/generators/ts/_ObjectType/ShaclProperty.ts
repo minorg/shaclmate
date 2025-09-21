@@ -42,8 +42,9 @@ export abstract class ShaclProperty<
     this.path = path;
   }
 
-  override get equalsFunction(): string {
-    return this.type.equalsFunction;
+  @Memoize()
+  override get equalsFunction(): Maybe<string> {
+    return Maybe.of(this.type.equalsFunction);
   }
 
   @Memoize()

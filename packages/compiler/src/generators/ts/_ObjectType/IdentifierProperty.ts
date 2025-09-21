@@ -31,7 +31,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
   private readonly typeAlias: string;
 
   readonly abstract: boolean;
-  readonly equalsFunction = `${syntheticNamePrefix}booleanEquals`;
+  readonly equalsFunction = Maybe.of(`${syntheticNamePrefix}booleanEquals`);
   readonly mutable = false;
   readonly recursive = false;
 
