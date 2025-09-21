@@ -333,6 +333,8 @@ export namespace LazyShaclProperty {
           {
             conversionExpression: (value) =>
               `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: purify.Maybe.of(${(this.stubType.itemType as ObjectType).newExpression({ parameters: value })}), resolver: async () => purify.Either.of(${value} as ${this.resolvedType.itemType.name}) })`,
+            // Don't check instanceof value since the ObjectUnionType may be an interface
+            // Rely on the fact that this will be the last type check on an object
             sourceTypeCheckExpression: (value) =>
               `typeof ${value} === "object"`,
             sourceTypeName: this.resolvedType.itemType.name,
@@ -357,6 +359,8 @@ export namespace LazyShaclProperty {
           {
             conversionExpression: (value) =>
               `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: purify.Maybe.of(${value})${maybeMap}, resolver: async () => purify.Either.of(${value} as ${this.resolvedType.itemType.name}) })`,
+            // Don't check instanceof value since the ObjectUnionType may be an interface
+            // Rely on the fact that this will be the last type check on an object
             sourceTypeCheckExpression: (value) =>
               `typeof ${value} === "object"`,
             sourceTypeName: this.resolvedType.itemType.name,
@@ -415,8 +419,9 @@ export namespace LazyShaclProperty {
         conversions.push({
           conversionExpression: (value) =>
             `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${(this.stubType as ObjectType).newExpression({ parameters: value })}, resolver: async () => purify.Either.of(${value} as ${this.resolvedType.name}) })`,
-          sourceTypeCheckExpression: (value) =>
-            `typeof ${value} === "object" && ${value} instanceof ${this.resolvedType.name}`,
+          // Don't check instanceof value since the ObjectType may be an interface
+          // Rely on the fact that this will be the last type check on an object
+          sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
           sourceTypeName: this.resolvedType.name,
         });
       } else if (
@@ -428,8 +433,9 @@ export namespace LazyShaclProperty {
         conversions.push({
           conversionExpression: (value) =>
             `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ((object: ${this.resolvedType.name}) => { ${stubObjectUnionTypeToResolvedObjectUnionTypeSwitchStatement({ resolvedObjectUnionType: this.resolvedType as ObjectUnionType, stubObjectUnionType: this.stubType as ObjectUnionType, variables: { value: "object" } })} })(${value}), resolver: async () => purify.Either.of(${value} as ${this.resolvedType.name}) })`,
-          sourceTypeCheckExpression: (value) =>
-            `typeof ${value} === "object" && ${value} instanceof ${this.resolvedType.name}`,
+          // Don't check instanceof value since the ObjectUnionType may be an interface
+          // Rely on the fact that this will be the last type check on an object
+          sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
           sourceTypeName: this.resolvedType.name,
         });
       }
