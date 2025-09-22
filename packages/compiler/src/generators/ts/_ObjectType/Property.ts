@@ -201,7 +201,7 @@ export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
    * An array of SPARQL.js where patterns for this property as strings (so they can incorporate runtime calls).
    */
   abstract sparqlWherePatterns(parameters: {
-    variables: { subject: string; variablePrefix: string };
+    variables: { languageIn: string; subject: string; variablePrefix: string };
   }): readonly string[];
 
   /**

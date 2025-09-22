@@ -1,5 +1,6 @@
 import type { Literal } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
@@ -60,6 +61,52 @@ export class LiteralType extends TermType<Literal, Literal> {
     TermType<Literal, Literal>["propertyFromRdfResourceValueExpression"]
   >[0]): string {
     return `${variables.resourceValue}.toLiteral()`;
+  }
+
+  override sparqlWherePatterns(
+    parameters: Parameters<Type["sparqlWherePatterns"]>[0] & {
+      ignoreLanguageIn?: boolean;
+    },
+  ): readonly string[] {
+    const { context, ignoreLanguageIn, variables } = parameters;
+
+    const superPatterns = super.sparqlWherePatterns(parameters);
+    if (ignoreLanguageIn || context === "subject") {
+      return superPatterns;
+    }
+
+    invariant(this.name.indexOf("rdfjs.Literal") !== -1, this.name);
+
+    return superPatterns.concat(
+      `...[(${variables.languageIn} ?? ${JSON.stringify(this.languageIn)})]
+        .filter(languagesIn => languagesIn.length > 0)
+        .map(languagesIn =>
+          languagesIn.map(languageIn => 
+            ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                { type: "operation" as const, operator: "lang", args: [${variables.object}] },
+                dataFactory.literal(languageIn)
+              ]
+            })
+          )
+        )
+        .map(langEqualsExpressions => 
+          ({
+            type: "filter" as const,
+            expression:
+              langEqualsExpressions.length === 1
+                ? langEqualsExpressions[0]
+                :
+                  {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: langEqualsExpressions
+                  },
+          })
+        )`,
+    );
   }
 
   override toJsonExpression({

@@ -211,6 +211,7 @@ export abstract class Type {
         allowIgnoreRdfType: boolean;
         context: "object";
         variables: {
+          languageIn: string;
           object: string;
           predicate: string;
           subject: string;
@@ -221,6 +222,7 @@ export abstract class Type {
         allowIgnoreRdfType: boolean;
         context: "subject";
         variables: {
+          languageIn: string;
           subject: string;
           variablePrefix: string;
         };
@@ -245,6 +247,7 @@ export abstract class Type {
             allowIgnoreRdfType,
             context: "subject",
             variables: {
+              languageIn: variables.languageIn,
               subject: variables.object,
               variablePrefix: variables.object.substring(
                 objectPrefix.length,

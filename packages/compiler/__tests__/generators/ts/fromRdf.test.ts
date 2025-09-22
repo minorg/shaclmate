@@ -12,7 +12,7 @@ describe("fromRdf", () => {
   for (const [id, harness] of Object.entries(harnesses)) {
     it(`${id} round trip`, ({ expect }) => {
       const fromRdfInstance = harness
-        .fromRdf(harness.toRdf(), {
+        .fromRdf((harness as any).toRdf(), {
           extra: 1,
         })
         .unsafeCoerce() as any;

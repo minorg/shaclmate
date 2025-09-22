@@ -19,7 +19,11 @@ export function sparqlFunctionDeclarations(
     return [];
   }
 
-  const variables = { subject: "subject", variablePrefix: "variablePrefix" };
+  const variables = {
+    languageIn: "parameters?.languageIn",
+    subject: "subject",
+    variablePrefix: "variablePrefix",
+  };
   const rdfClassVariable = `dataFactory.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
   const rdfTypeVariable = `dataFactory.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
 
@@ -157,7 +161,7 @@ for (const pattern of propertyPatterns) {
         {
           hasQuestionToken: true,
           name: `${nop ? "_" : ""}parameters`,
-          type: '{ ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }',
+          type: '{ ignoreRdfType?: boolean; languageIn?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }',
         },
       ],
       returnType: "readonly sparqljs.Pattern[]",

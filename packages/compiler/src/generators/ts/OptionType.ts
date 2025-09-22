@@ -159,7 +159,7 @@ export class OptionType<ItemTypeT extends Type = Type> extends Type {
   ): readonly string[] {
     switch (parameters.context) {
       case "object": {
-        const patterns = super.sparqlWherePatterns(parameters);
+        const patterns = this.itemType.sparqlWherePatterns(parameters);
         if (patterns.length === 0) {
           return [];
         }
