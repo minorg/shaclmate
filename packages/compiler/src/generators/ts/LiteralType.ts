@@ -1,5 +1,6 @@
 import type { Literal } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
@@ -73,6 +74,8 @@ export class LiteralType extends TermType<Literal, Literal> {
     if (ignoreLanguageIn || context === "subject") {
       return superPatterns;
     }
+
+    invariant(this.name.indexOf("rdfjs.Literal") !== -1, this.name);
 
     return superPatterns.concat(
       `...[(${variables.languageIn} ?? ${JSON.stringify(this.languageIn)})]

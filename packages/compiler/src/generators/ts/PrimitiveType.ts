@@ -63,6 +63,12 @@ export abstract class PrimitiveType<
     return snippetDeclarations;
   }
 
+  override sparqlWherePatterns(
+    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+  ): readonly string[] {
+    return super.sparqlWherePatterns({ ...parameters, ignoreLanguageIn: true });
+  }
+
   override toJsonExpression({
     variables,
   }: Parameters<Type["toJsonExpression"]>[0]): string {
