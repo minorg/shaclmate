@@ -634,11 +634,13 @@ export namespace $NamedDefaultStub {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -652,7 +654,11 @@ export namespace $NamedDefaultStub {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $NamedDefaultStub.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        $NamedDefaultStub.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -660,6 +666,7 @@ export namespace $NamedDefaultStub {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -680,6 +687,7 @@ export namespace $NamedDefaultStub {
 
   export function $sparqlWherePatterns(_parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -918,11 +926,13 @@ export namespace $DefaultStub {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -936,7 +946,11 @@ export namespace $DefaultStub {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $DefaultStub.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        $DefaultStub.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -944,6 +958,7 @@ export namespace $DefaultStub {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -964,6 +979,7 @@ export namespace $DefaultStub {
 
   export function $sparqlWherePatterns(_parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -1067,7 +1083,9 @@ export namespace UuidV4IriInterface {
     readonly uuidV4IriProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.NamedNode;
@@ -1276,11 +1294,13 @@ export namespace UuidV4IriInterface {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -1294,7 +1314,11 @@ export namespace UuidV4IriInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        UuidV4IriInterface.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        UuidV4IriInterface.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -1302,6 +1326,7 @@ export namespace UuidV4IriInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -1333,6 +1358,7 @@ export namespace UuidV4IriInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -1355,6 +1381,7 @@ export namespace UuidV4IriInterface {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -1684,11 +1711,13 @@ export namespace UuidV4IriClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -1702,7 +1731,11 @@ export namespace UuidV4IriClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        UuidV4IriClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        UuidV4IriClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -1710,6 +1743,7 @@ export namespace UuidV4IriClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -1741,6 +1775,7 @@ export namespace UuidV4IriClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -1763,6 +1798,7 @@ export namespace UuidV4IriClass {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -2230,7 +2266,9 @@ export namespace UnionPropertiesClass {
         };
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2622,11 +2660,13 @@ export namespace UnionPropertiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -2640,7 +2680,11 @@ export namespace UnionPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        UnionPropertiesClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        UnionPropertiesClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -2648,6 +2692,7 @@ export namespace UnionPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -2708,6 +2753,7 @@ export namespace UnionPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -3361,7 +3407,9 @@ export namespace TermPropertiesClass {
         };
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3820,11 +3868,13 @@ export namespace TermPropertiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -3838,7 +3888,11 @@ export namespace TermPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        TermPropertiesClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        TermPropertiesClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -3846,6 +3900,7 @@ export namespace TermPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -3917,6 +3972,7 @@ export namespace TermPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -4186,7 +4242,9 @@ export namespace StubInterfaceUnionMember2 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4440,11 +4498,13 @@ export namespace StubInterfaceUnionMember2 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -4460,6 +4520,7 @@ export namespace StubInterfaceUnionMember2 {
       where: (queryParameters.where ?? []).concat(
         StubInterfaceUnionMember2.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -4469,6 +4530,7 @@ export namespace StubInterfaceUnionMember2 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -4522,6 +4584,7 @@ export namespace StubInterfaceUnionMember2 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -4584,6 +4647,7 @@ export namespace StubInterfaceUnionMember2 {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -4688,7 +4752,9 @@ export namespace StubInterfaceUnionMember1 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4942,11 +5008,13 @@ export namespace StubInterfaceUnionMember1 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -4962,6 +5030,7 @@ export namespace StubInterfaceUnionMember1 {
       where: (queryParameters.where ?? []).concat(
         StubInterfaceUnionMember1.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -4971,6 +5040,7 @@ export namespace StubInterfaceUnionMember1 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -5024,6 +5094,7 @@ export namespace StubInterfaceUnionMember1 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -5086,6 +5157,7 @@ export namespace StubInterfaceUnionMember1 {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -5260,7 +5332,9 @@ export namespace StubClassUnionMember2 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5420,11 +5494,13 @@ export namespace StubClassUnionMember2 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -5438,7 +5514,11 @@ export namespace StubClassUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        StubClassUnionMember2.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        StubClassUnionMember2.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -5446,6 +5526,7 @@ export namespace StubClassUnionMember2 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -5499,6 +5580,7 @@ export namespace StubClassUnionMember2 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -5562,6 +5644,7 @@ export namespace StubClassUnionMember2 {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -5736,7 +5819,9 @@ export namespace StubClassUnionMember1 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5896,11 +5981,13 @@ export namespace StubClassUnionMember1 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -5914,7 +6001,11 @@ export namespace StubClassUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        StubClassUnionMember1.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        StubClassUnionMember1.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -5922,6 +6013,7 @@ export namespace StubClassUnionMember1 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -5975,6 +6067,7 @@ export namespace StubClassUnionMember1 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -6038,6 +6131,7 @@ export namespace StubClassUnionMember1 {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -6367,11 +6461,13 @@ export namespace Sha256IriClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -6385,7 +6481,11 @@ export namespace Sha256IriClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        Sha256IriClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        Sha256IriClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -6393,6 +6493,7 @@ export namespace Sha256IriClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -6424,6 +6525,7 @@ export namespace Sha256IriClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -6446,6 +6548,7 @@ export namespace Sha256IriClass {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -6649,7 +6752,9 @@ export namespace PropertyVisibilitiesClass {
     readonly publicProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6834,11 +6939,13 @@ export namespace PropertyVisibilitiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -6854,6 +6961,7 @@ export namespace PropertyVisibilitiesClass {
       where: (queryParameters.where ?? []).concat(
         PropertyVisibilitiesClass.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -6863,6 +6971,7 @@ export namespace PropertyVisibilitiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -6909,6 +7018,7 @@ export namespace PropertyVisibilitiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -6935,6 +7045,7 @@ export namespace PropertyVisibilitiesClass {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
       {
         triples: [
           {
@@ -6948,6 +7059,7 @@ export namespace PropertyVisibilitiesClass {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
       {
         triples: [
           {
@@ -6961,6 +7073,7 @@ export namespace PropertyVisibilitiesClass {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -7241,7 +7354,9 @@ export namespace PropertyCardinalitiesClass {
     readonly requiredStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -7523,11 +7638,13 @@ export namespace PropertyCardinalitiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -7543,6 +7660,7 @@ export namespace PropertyCardinalitiesClass {
       where: (queryParameters.where ?? []).concat(
         PropertyCardinalitiesClass.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -7552,6 +7670,7 @@ export namespace PropertyCardinalitiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -7615,6 +7734,7 @@ export namespace PropertyCardinalitiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -7699,6 +7819,7 @@ export namespace PropertyCardinalitiesClass {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -7902,7 +8023,9 @@ export namespace OrderedPropertiesClass {
     readonly orderedPropertyA: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8093,11 +8216,13 @@ export namespace OrderedPropertiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -8111,7 +8236,11 @@ export namespace OrderedPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        OrderedPropertiesClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        OrderedPropertiesClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -8119,6 +8248,7 @@ export namespace OrderedPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -8165,6 +8295,7 @@ export namespace OrderedPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -8189,6 +8320,7 @@ export namespace OrderedPropertiesClass {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
       {
         triples: [
           {
@@ -8200,6 +8332,7 @@ export namespace OrderedPropertiesClass {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
       {
         triples: [
           {
@@ -8211,6 +8344,7 @@ export namespace OrderedPropertiesClass {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -8508,11 +8642,13 @@ export namespace NonClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -8523,7 +8659,7 @@ export namespace NonClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        NonClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        NonClass.$sparqlWherePatterns({ ignoreRdfType, languageIn, subject }),
       ),
     };
   }
@@ -8531,6 +8667,7 @@ export namespace NonClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -8561,6 +8698,7 @@ export namespace NonClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -8581,6 +8719,7 @@ export namespace NonClass {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -8908,7 +9047,9 @@ export namespace MutablePropertiesClass {
     readonly mutableStringProperty?: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9161,11 +9302,13 @@ export namespace MutablePropertiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -9179,7 +9322,11 @@ export namespace MutablePropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        MutablePropertiesClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        MutablePropertiesClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -9187,6 +9334,7 @@ export namespace MutablePropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -9265,6 +9413,7 @@ export namespace MutablePropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -9741,7 +9890,9 @@ export namespace ListPropertiesClass {
     readonly stringListProperty?: readonly string[];
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9964,11 +10115,13 @@ export namespace ListPropertiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -9982,7 +10135,11 @@ export namespace ListPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ListPropertiesClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        ListPropertiesClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -9990,6 +10147,7 @@ export namespace ListPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -10110,6 +10268,7 @@ export namespace ListPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -10447,7 +10606,9 @@ export namespace StubInterface {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -10663,11 +10824,13 @@ export namespace StubInterface {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -10681,7 +10844,11 @@ export namespace StubInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        StubInterface.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        StubInterface.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -10689,6 +10856,7 @@ export namespace StubInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -10723,6 +10891,7 @@ export namespace StubInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -10749,6 +10918,7 @@ export namespace StubInterface {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -11753,7 +11923,9 @@ export namespace LazyPropertiesInterface {
     readonly setStubInterfaceToResolvedInterfaceProperty?: readonly StubInterface.$Json[];
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12986,11 +13158,13 @@ export namespace LazyPropertiesInterface {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -13006,6 +13180,7 @@ export namespace LazyPropertiesInterface {
       where: (queryParameters.where ?? []).concat(
         LazyPropertiesInterface.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -13015,6 +13190,7 @@ export namespace LazyPropertiesInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -13225,6 +13401,7 @@ export namespace LazyPropertiesInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -13655,7 +13832,9 @@ export namespace StubClass {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13802,11 +13981,13 @@ export namespace StubClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -13817,7 +13998,7 @@ export namespace StubClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        StubClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        StubClass.$sparqlWherePatterns({ ignoreRdfType, languageIn, subject }),
       ),
     };
   }
@@ -13825,6 +14006,7 @@ export namespace StubClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -13858,6 +14040,7 @@ export namespace StubClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -13881,6 +14064,7 @@ export namespace StubClass {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -14992,7 +15176,9 @@ export namespace LazyPropertiesClass {
     readonly setStubClassToResolvedClassProperty?: readonly StubClass.$Json[];
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15957,11 +16143,13 @@ export namespace LazyPropertiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -15975,7 +16163,11 @@ export namespace LazyPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LazyPropertiesClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        LazyPropertiesClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -15983,6 +16175,7 @@ export namespace LazyPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -16193,6 +16386,7 @@ export namespace LazyPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -16563,7 +16757,9 @@ export namespace LazilyResolvedIriInterface {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.NamedNode;
@@ -16800,11 +16996,13 @@ export namespace LazilyResolvedIriInterface {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -16820,6 +17018,7 @@ export namespace LazilyResolvedIriInterface {
       where: (queryParameters.where ?? []).concat(
         LazilyResolvedIriInterface.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -16829,6 +17028,7 @@ export namespace LazilyResolvedIriInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -16868,6 +17068,7 @@ export namespace LazilyResolvedIriInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -16896,6 +17097,7 @@ export namespace LazilyResolvedIriInterface {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -17206,11 +17408,13 @@ export namespace LazilyResolvedIriClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -17224,7 +17428,11 @@ export namespace LazilyResolvedIriClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LazilyResolvedIriClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        LazilyResolvedIriClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -17232,6 +17440,7 @@ export namespace LazilyResolvedIriClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -17270,6 +17479,7 @@ export namespace LazilyResolvedIriClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -17298,6 +17508,7 @@ export namespace LazilyResolvedIriClass {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -17402,7 +17613,9 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -17658,11 +17871,13 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -17678,6 +17893,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       where: (queryParameters.where ?? []).concat(
         LazilyResolvedInterfaceUnionMember2.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -17687,6 +17903,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -17740,6 +17957,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -17803,6 +18021,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -17907,7 +18126,9 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18163,11 +18384,13 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -18183,6 +18406,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       where: (queryParameters.where ?? []).concat(
         LazilyResolvedInterfaceUnionMember1.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -18192,6 +18416,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -18245,6 +18470,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -18308,6 +18534,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -18482,7 +18709,9 @@ export namespace LazilyResolvedClassUnionMember2 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18643,11 +18872,13 @@ export namespace LazilyResolvedClassUnionMember2 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -18663,6 +18894,7 @@ export namespace LazilyResolvedClassUnionMember2 {
       where: (queryParameters.where ?? []).concat(
         LazilyResolvedClassUnionMember2.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -18672,6 +18904,7 @@ export namespace LazilyResolvedClassUnionMember2 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -18725,6 +18958,7 @@ export namespace LazilyResolvedClassUnionMember2 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -18788,6 +19022,7 @@ export namespace LazilyResolvedClassUnionMember2 {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -18962,7 +19197,9 @@ export namespace LazilyResolvedClassUnionMember1 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19123,11 +19360,13 @@ export namespace LazilyResolvedClassUnionMember1 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -19143,6 +19382,7 @@ export namespace LazilyResolvedClassUnionMember1 {
       where: (queryParameters.where ?? []).concat(
         LazilyResolvedClassUnionMember1.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -19152,6 +19392,7 @@ export namespace LazilyResolvedClassUnionMember1 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -19205,6 +19446,7 @@ export namespace LazilyResolvedClassUnionMember1 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -19268,6 +19510,7 @@ export namespace LazilyResolvedClassUnionMember1 {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -19375,7 +19618,9 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19631,11 +19876,13 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -19651,6 +19898,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
       where: (queryParameters.where ?? []).concat(
         LazilyResolvedBlankNodeOrIriInterface.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -19660,6 +19908,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -19713,6 +19962,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -19776,6 +20026,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -19952,7 +20203,9 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -20113,11 +20366,13 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -20133,6 +20388,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
       where: (queryParameters.where ?? []).concat(
         LazilyResolvedBlankNodeOrIriClass.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -20142,6 +20398,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -20195,6 +20452,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -20258,6 +20516,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -20597,7 +20856,9 @@ export namespace LanguageInPropertiesClass {
     };
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -20856,11 +21117,13 @@ export namespace LanguageInPropertiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -20876,6 +21139,7 @@ export namespace LanguageInPropertiesClass {
       where: (queryParameters.where ?? []).concat(
         LanguageInPropertiesClass.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -20885,6 +21149,7 @@ export namespace LanguageInPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -20931,6 +21196,7 @@ export namespace LanguageInPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -21229,11 +21495,13 @@ export namespace IriClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -21244,7 +21512,7 @@ export namespace IriClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        IriClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        IriClass.$sparqlWherePatterns({ ignoreRdfType, languageIn, subject }),
       ),
     };
   }
@@ -21252,6 +21520,7 @@ export namespace IriClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -21272,6 +21541,7 @@ export namespace IriClass {
 
   export function $sparqlWherePatterns(_parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -21367,7 +21637,9 @@ export namespace InterfaceUnionMember2b {
     readonly interfaceUnionMember2bProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -21598,11 +21870,13 @@ export namespace InterfaceUnionMember2b {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -21616,7 +21890,11 @@ export namespace InterfaceUnionMember2b {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceUnionMember2b.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        InterfaceUnionMember2b.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -21624,6 +21902,7 @@ export namespace InterfaceUnionMember2b {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -21662,6 +21941,7 @@ export namespace InterfaceUnionMember2b {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -21690,6 +21970,7 @@ export namespace InterfaceUnionMember2b {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -21791,7 +22072,9 @@ export namespace InterfaceUnionMember2a {
     readonly interfaceUnionMember2aProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -22022,11 +22305,13 @@ export namespace InterfaceUnionMember2a {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -22040,7 +22325,11 @@ export namespace InterfaceUnionMember2a {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceUnionMember2a.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        InterfaceUnionMember2a.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -22048,6 +22337,7 @@ export namespace InterfaceUnionMember2a {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -22086,6 +22376,7 @@ export namespace InterfaceUnionMember2a {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -22114,6 +22405,7 @@ export namespace InterfaceUnionMember2a {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -22215,7 +22507,9 @@ export namespace InterfaceUnionMember1 {
     readonly interfaceUnionMember1Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -22436,11 +22730,13 @@ export namespace InterfaceUnionMember1 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -22454,7 +22750,11 @@ export namespace InterfaceUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceUnionMember1.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        InterfaceUnionMember1.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -22462,6 +22762,7 @@ export namespace InterfaceUnionMember1 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -22500,6 +22801,7 @@ export namespace InterfaceUnionMember1 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -22528,6 +22830,7 @@ export namespace InterfaceUnionMember1 {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -22627,7 +22930,9 @@ export namespace Interface {
     readonly interfaceProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -22827,11 +23132,13 @@ export namespace Interface {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -22842,7 +23149,7 @@ export namespace Interface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        Interface.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        Interface.$sparqlWherePatterns({ ignoreRdfType, languageIn, subject }),
       ),
     };
   }
@@ -22850,6 +23157,7 @@ export namespace Interface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -22880,6 +23188,7 @@ export namespace Interface {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -22900,6 +23209,7 @@ export namespace Interface {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -23084,7 +23394,9 @@ export namespace IndirectRecursiveHelperClass {
     readonly indirectRecursiveProperty?: IndirectRecursiveClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -23253,11 +23565,13 @@ export namespace IndirectRecursiveHelperClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -23273,6 +23587,7 @@ export namespace IndirectRecursiveHelperClass {
       where: (queryParameters.where ?? []).concat(
         IndirectRecursiveHelperClass.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -23282,6 +23597,7 @@ export namespace IndirectRecursiveHelperClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -23330,6 +23646,7 @@ export namespace IndirectRecursiveHelperClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -23558,7 +23875,9 @@ export namespace IndirectRecursiveClass {
     readonly indirectRecursiveHelperProperty?: IndirectRecursiveHelperClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -23725,11 +24044,13 @@ export namespace IndirectRecursiveClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -23743,7 +24064,11 @@ export namespace IndirectRecursiveClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        IndirectRecursiveClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        IndirectRecursiveClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -23751,6 +24076,7 @@ export namespace IndirectRecursiveClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -23771,6 +24097,7 @@ export namespace IndirectRecursiveClass {
 
   export function $sparqlWherePatterns(_parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -24115,7 +24442,9 @@ export namespace InPropertiesClass {
     readonly inStringsProperty?: "text" | "html";
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -24304,21 +24633,23 @@ export namespace InPropertiesClass {
       .values($properties.inBooleansProperty["identifier"], { unique: true })
       .head()
       .chain((value) =>
-        value.toBoolean().chain((value) =>
-          value === true
-            ? purify.Either.of<Error, true>(value)
-            : purify.Left<Error, true>(
-                new rdfjsResource.Resource.MistypedValueError({
-                  actualValue: rdfLiteral.toRdf(value),
-                  expectedValueType: "true",
-                  focusResource: $resource,
-                  predicate:
-                    InPropertiesClass.$properties.inBooleansProperty[
-                      "identifier"
-                    ],
-                }),
-              ),
-        ),
+        value
+          .toBoolean()
+          .chain((value) =>
+            value === true
+              ? purify.Either.of<Error, true>(value)
+              : purify.Left<Error, true>(
+                  new rdfjsResource.Resource.MistypedValueError({
+                    actualValue: rdfLiteral.toRdf(value),
+                    expectedValueType: "true",
+                    focusResource: $resource,
+                    predicate:
+                      InPropertiesClass.$properties.inBooleansProperty[
+                        "identifier"
+                      ],
+                  }),
+                ),
+          ),
       )
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
@@ -24539,11 +24870,13 @@ export namespace InPropertiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -24557,7 +24890,11 @@ export namespace InPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InPropertiesClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        InPropertiesClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -24565,6 +24902,7 @@ export namespace InPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -24617,6 +24955,7 @@ export namespace InPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -24932,7 +25271,9 @@ export namespace InIdentifierClass {
     readonly inIdentifierProperty?: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.NamedNode<
@@ -25115,11 +25456,13 @@ export namespace InIdentifierClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -25133,7 +25476,11 @@ export namespace InIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InIdentifierClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        InIdentifierClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -25141,6 +25488,7 @@ export namespace InIdentifierClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -25173,6 +25521,7 @@ export namespace InIdentifierClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -25427,7 +25776,9 @@ export namespace HasValuePropertiesClass {
     readonly hasLiteralValueProperty?: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -25635,11 +25986,13 @@ export namespace HasValuePropertiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -25655,6 +26008,7 @@ export namespace HasValuePropertiesClass {
       where: (queryParameters.where ?? []).concat(
         HasValuePropertiesClass.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -25664,6 +26018,7 @@ export namespace HasValuePropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -25706,6 +26061,7 @@ export namespace HasValuePropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -25942,7 +26298,9 @@ export namespace ExternClassPropertyClass {
     readonly externClassProperty?: ExternClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -26103,11 +26461,13 @@ export namespace ExternClassPropertyClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -26123,6 +26483,7 @@ export namespace ExternClassPropertyClass {
       where: (queryParameters.where ?? []).concat(
         ExternClassPropertyClass.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -26132,6 +26493,7 @@ export namespace ExternClassPropertyClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -26173,6 +26535,7 @@ export namespace ExternClassPropertyClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -26388,7 +26751,9 @@ export namespace ExplicitRdfTypeClass {
     readonly explicitRdfTypeProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -26547,11 +26912,13 @@ export namespace ExplicitRdfTypeClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -26565,7 +26932,11 @@ export namespace ExplicitRdfTypeClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ExplicitRdfTypeClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        ExplicitRdfTypeClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -26573,6 +26944,7 @@ export namespace ExplicitRdfTypeClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -26622,6 +26994,7 @@ export namespace ExplicitRdfTypeClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -26685,6 +27058,7 @@ export namespace ExplicitRdfTypeClass {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -26868,7 +27242,9 @@ export namespace ExplicitFromToRdfTypesClass {
     readonly explicitFromToRdfTypesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -27029,11 +27405,13 @@ export namespace ExplicitFromToRdfTypesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -27049,6 +27427,7 @@ export namespace ExplicitFromToRdfTypesClass {
       where: (queryParameters.where ?? []).concat(
         ExplicitFromToRdfTypesClass.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -27058,6 +27437,7 @@ export namespace ExplicitFromToRdfTypesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -27112,6 +27492,7 @@ export namespace ExplicitFromToRdfTypesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -27175,6 +27556,7 @@ export namespace ExplicitFromToRdfTypesClass {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -27357,7 +27739,9 @@ export namespace DirectRecursiveClass {
     readonly directRecursiveProperty?: DirectRecursiveClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -27525,11 +27909,13 @@ export namespace DirectRecursiveClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -27543,7 +27929,11 @@ export namespace DirectRecursiveClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        DirectRecursiveClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        DirectRecursiveClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -27551,6 +27941,7 @@ export namespace DirectRecursiveClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -27571,6 +27962,7 @@ export namespace DirectRecursiveClass {
 
   export function $sparqlWherePatterns(_parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -27950,7 +28342,9 @@ export namespace DefaultValuePropertiesClass {
     readonly trueBooleanDefaultValueProperty: boolean;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -28327,11 +28721,13 @@ export namespace DefaultValuePropertiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -28347,6 +28743,7 @@ export namespace DefaultValuePropertiesClass {
       where: (queryParameters.where ?? []).concat(
         DefaultValuePropertiesClass.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -28356,6 +28753,7 @@ export namespace DefaultValuePropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -28444,6 +28842,7 @@ export namespace DefaultValuePropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -28459,119 +28858,96 @@ export namespace DefaultValuePropertiesClass {
         : "defaultValuePropertiesClass");
     const propertyPatterns: readonly sparqljs.Pattern[] = [
       {
-        patterns: [
+        triples: [
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}DateDefaultValueProperty`,
-                ),
-                predicate:
-                  DefaultValuePropertiesClass.$properties
-                    .dateDefaultValueProperty["identifier"],
-                subject,
-              },
-            ],
-            type: "bgp",
+            object: dataFactory.variable!(
+              `${variablePrefix}DateDefaultValueProperty`,
+            ),
+            predicate:
+              DefaultValuePropertiesClass.$properties.dateDefaultValueProperty[
+                "identifier"
+              ],
+            subject,
           },
         ],
-        type: "optional",
+        type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
       {
-        patterns: [
+        triples: [
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}DateTimeDefaultValueProperty`,
-                ),
-                predicate:
-                  DefaultValuePropertiesClass.$properties
-                    .dateTimeDefaultValueProperty["identifier"],
-                subject,
-              },
-            ],
-            type: "bgp",
+            object: dataFactory.variable!(
+              `${variablePrefix}DateTimeDefaultValueProperty`,
+            ),
+            predicate:
+              DefaultValuePropertiesClass.$properties
+                .dateTimeDefaultValueProperty["identifier"],
+            subject,
           },
         ],
-        type: "optional",
+        type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
       {
-        patterns: [
+        triples: [
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}FalseBooleanDefaultValueProperty`,
-                ),
-                predicate:
-                  DefaultValuePropertiesClass.$properties
-                    .falseBooleanDefaultValueProperty["identifier"],
-                subject,
-              },
-            ],
-            type: "bgp",
+            object: dataFactory.variable!(
+              `${variablePrefix}FalseBooleanDefaultValueProperty`,
+            ),
+            predicate:
+              DefaultValuePropertiesClass.$properties
+                .falseBooleanDefaultValueProperty["identifier"],
+            subject,
           },
         ],
-        type: "optional",
+        type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
       {
-        patterns: [
+        triples: [
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}NumberDefaultValueProperty`,
-                ),
-                predicate:
-                  DefaultValuePropertiesClass.$properties
-                    .numberDefaultValueProperty["identifier"],
-                subject,
-              },
-            ],
-            type: "bgp",
+            object: dataFactory.variable!(
+              `${variablePrefix}NumberDefaultValueProperty`,
+            ),
+            predicate:
+              DefaultValuePropertiesClass.$properties
+                .numberDefaultValueProperty["identifier"],
+            subject,
           },
         ],
-        type: "optional",
+        type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
       {
-        patterns: [
+        triples: [
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}StringDefaultValueProperty`,
-                ),
-                predicate:
-                  DefaultValuePropertiesClass.$properties
-                    .stringDefaultValueProperty["identifier"],
-                subject,
-              },
-            ],
-            type: "bgp",
+            object: dataFactory.variable!(
+              `${variablePrefix}StringDefaultValueProperty`,
+            ),
+            predicate:
+              DefaultValuePropertiesClass.$properties
+                .stringDefaultValueProperty["identifier"],
+            subject,
           },
         ],
-        type: "optional",
+        type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
       {
-        patterns: [
+        triples: [
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}TrueBooleanDefaultValueProperty`,
-                ),
-                predicate:
-                  DefaultValuePropertiesClass.$properties
-                    .trueBooleanDefaultValueProperty["identifier"],
-                subject,
-              },
-            ],
-            type: "bgp",
+            object: dataFactory.variable!(
+              `${variablePrefix}TrueBooleanDefaultValueProperty`,
+            ),
+            predicate:
+              DefaultValuePropertiesClass.$properties
+                .trueBooleanDefaultValueProperty["identifier"],
+            subject,
           },
         ],
-        type: "optional",
+        type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -28687,7 +29063,9 @@ export namespace BaseInterfaceWithPropertiesStatic {
     readonly baseInterfaceWithPropertiesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -28970,11 +29348,13 @@ export namespace BaseInterfaceWithPropertiesStatic {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -28990,6 +29370,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
       where: (queryParameters.where ?? []).concat(
         BaseInterfaceWithPropertiesStatic.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -28999,6 +29380,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -29052,6 +29434,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -29115,6 +29498,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -29178,7 +29562,9 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export const $Identifier = BaseInterfaceWithPropertiesStatic.$Identifier;
   export type $Json = BaseInterfaceWithPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -29422,11 +29808,13 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -29442,6 +29830,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       where: (queryParameters.where ?? []).concat(
         BaseInterfaceWithoutPropertiesStatic.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -29451,6 +29840,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -29502,6 +29892,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -29629,7 +30020,9 @@ export namespace ConcreteParentInterfaceStatic {
     readonly concreteParentInterfaceProperty: string;
   } & BaseInterfaceWithoutPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -29912,11 +30305,13 @@ export namespace ConcreteParentInterfaceStatic {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -29932,6 +30327,7 @@ export namespace ConcreteParentInterfaceStatic {
       where: (queryParameters.where ?? []).concat(
         ConcreteParentInterfaceStatic.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -29941,6 +30337,7 @@ export namespace ConcreteParentInterfaceStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -30000,6 +30397,7 @@ export namespace ConcreteParentInterfaceStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -30072,6 +30470,7 @@ export namespace ConcreteParentInterfaceStatic {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -30149,7 +30548,9 @@ export namespace ConcreteChildInterface {
     readonly concreteChildInterfaceProperty: string;
   } & ConcreteParentInterfaceStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -30414,11 +30815,13 @@ export namespace ConcreteChildInterface {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -30432,7 +30835,11 @@ export namespace ConcreteChildInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ConcreteChildInterface.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        ConcreteChildInterface.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -30440,6 +30847,7 @@ export namespace ConcreteChildInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -30500,6 +30908,7 @@ export namespace ConcreteChildInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -30575,6 +30984,7 @@ export namespace ConcreteChildInterface {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -30747,7 +31157,9 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     readonly abstractBaseClassWithPropertiesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -30902,11 +31314,13 @@ export namespace AbstractBaseClassWithPropertiesStatic {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -30922,6 +31336,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       where: (queryParameters.where ?? []).concat(
         AbstractBaseClassWithPropertiesStatic.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -30931,6 +31346,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -30969,6 +31385,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -30997,6 +31414,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -31197,11 +31615,13 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -31216,6 +31636,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
       where: (queryParameters.where ?? []).concat(
         AbstractBaseClassWithoutPropertiesStatic.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -31225,6 +31646,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -31263,6 +31685,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -31334,18 +31757,20 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
   }
 
   override $equals(other: ConcreteParentClass): $EqualsResult {
-    return super.$equals(other).chain(() =>
-      $strictEquals(
-        this.concreteParentClassProperty,
-        other.concreteParentClassProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "concreteParentClassProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .$equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.concreteParentClassProperty,
+          other.concreteParentClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "concreteParentClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override $hash<
@@ -31429,7 +31854,9 @@ export namespace ConcreteParentClassStatic {
     readonly concreteParentClassProperty: string;
   } & AbstractBaseClassWithoutPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -31629,11 +32056,13 @@ export namespace ConcreteParentClassStatic {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -31649,6 +32078,7 @@ export namespace ConcreteParentClassStatic {
       where: (queryParameters.where ?? []).concat(
         ConcreteParentClassStatic.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -31658,6 +32088,7 @@ export namespace ConcreteParentClassStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -31714,6 +32145,7 @@ export namespace ConcreteParentClassStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -31785,6 +32217,7 @@ export namespace ConcreteParentClassStatic {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -31831,18 +32264,20 @@ export class ConcreteChildClass extends ConcreteParentClass {
   }
 
   override $equals(other: ConcreteChildClass): $EqualsResult {
-    return super.$equals(other).chain(() =>
-      $strictEquals(
-        this.concreteChildClassProperty,
-        other.concreteChildClassProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "concreteChildClassProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .$equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.concreteChildClassProperty,
+          other.concreteChildClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "concreteChildClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override $hash<
@@ -31920,7 +32355,9 @@ export namespace ConcreteChildClass {
     readonly concreteChildClassProperty: string;
   } & ConcreteParentClassStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -32099,11 +32536,13 @@ export namespace ConcreteChildClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -32117,7 +32556,11 @@ export namespace ConcreteChildClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ConcreteChildClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        ConcreteChildClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -32125,6 +32568,7 @@ export namespace ConcreteChildClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -32181,6 +32625,7 @@ export namespace ConcreteChildClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -32254,6 +32699,7 @@ export namespace ConcreteChildClass {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -32424,7 +32870,9 @@ export namespace ClassUnionMember2 {
     readonly classUnionMember2Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -32583,11 +33031,13 @@ export namespace ClassUnionMember2 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -32601,7 +33051,11 @@ export namespace ClassUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ClassUnionMember2.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        ClassUnionMember2.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -32609,6 +33063,7 @@ export namespace ClassUnionMember2 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -32658,6 +33113,7 @@ export namespace ClassUnionMember2 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -32719,6 +33175,7 @@ export namespace ClassUnionMember2 {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -32889,7 +33346,9 @@ export namespace ClassUnionMember1 {
     readonly classUnionMember1Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -33048,11 +33507,13 @@ export namespace ClassUnionMember1 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -33066,7 +33527,11 @@ export namespace ClassUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ClassUnionMember1.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        ClassUnionMember1.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -33074,6 +33539,7 @@ export namespace ClassUnionMember1 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -33123,6 +33589,7 @@ export namespace ClassUnionMember1 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -33184,6 +33651,7 @@ export namespace ClassUnionMember1 {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -33442,11 +33910,13 @@ export namespace BlankInterface {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -33460,7 +33930,11 @@ export namespace BlankInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        BlankInterface.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        BlankInterface.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -33468,6 +33942,7 @@ export namespace BlankInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -33488,6 +33963,7 @@ export namespace BlankInterface {
 
   export function $sparqlWherePatterns(_parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -33732,11 +34208,13 @@ export namespace BlankClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -33747,7 +34225,7 @@ export namespace BlankClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        BlankClass.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        BlankClass.$sparqlWherePatterns({ ignoreRdfType, languageIn, subject }),
       ),
     };
   }
@@ -33755,6 +34233,7 @@ export namespace BlankClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -33775,6 +34254,7 @@ export namespace BlankClass {
 
   export function $sparqlWherePatterns(_parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -33917,7 +34397,9 @@ export namespace AbstractBaseClassForExternClassStatic {
     readonly abstractBaseClassForExternClassProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -34073,11 +34555,13 @@ export namespace AbstractBaseClassForExternClassStatic {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -34093,6 +34577,7 @@ export namespace AbstractBaseClassForExternClassStatic {
       where: (queryParameters.where ?? []).concat(
         AbstractBaseClassForExternClassStatic.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -34102,6 +34587,7 @@ export namespace AbstractBaseClassForExternClassStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -34140,6 +34626,7 @@ export namespace AbstractBaseClassForExternClassStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -34168,6 +34655,7 @@ export namespace AbstractBaseClassForExternClassStatic {
         ],
         type: "bgp",
       },
+      ...(parameters?.languageIn ?? []),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -34286,11 +34774,13 @@ export namespace ClassUnion {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -34301,7 +34791,7 @@ export namespace ClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ClassUnion.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        ClassUnion.$sparqlWherePatterns({ ignoreRdfType, languageIn, subject }),
       ),
     };
   }
@@ -34309,6 +34799,7 @@ export namespace ClassUnion {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -34557,11 +35048,13 @@ export namespace InterfaceUnion {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -34575,7 +35068,11 @@ export namespace InterfaceUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceUnion.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        InterfaceUnion.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -34583,6 +35080,7 @@ export namespace InterfaceUnion {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -34831,11 +35329,13 @@ export namespace InterfaceUnionMember2 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -34849,7 +35349,11 @@ export namespace InterfaceUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceUnionMember2.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        InterfaceUnionMember2.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -34857,6 +35361,7 @@ export namespace InterfaceUnionMember2 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -35090,11 +35595,13 @@ export namespace LazilyResolvedClassUnion {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -35110,6 +35617,7 @@ export namespace LazilyResolvedClassUnion {
       where: (queryParameters.where ?? []).concat(
         LazilyResolvedClassUnion.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -35119,6 +35627,7 @@ export namespace LazilyResolvedClassUnion {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -35360,11 +35869,13 @@ export namespace LazilyResolvedInterfaceUnion {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -35380,6 +35891,7 @@ export namespace LazilyResolvedInterfaceUnion {
       where: (queryParameters.where ?? []).concat(
         LazilyResolvedInterfaceUnion.$sparqlWherePatterns({
           ignoreRdfType,
+          languageIn,
           subject,
         }),
       ),
@@ -35389,6 +35901,7 @@ export namespace LazilyResolvedInterfaceUnion {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -35621,11 +36134,13 @@ export namespace StubClassUnion {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -35639,7 +36154,11 @@ export namespace StubClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        StubClassUnion.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        StubClassUnion.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -35647,6 +36166,7 @@ export namespace StubClassUnion {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -35869,11 +36389,13 @@ export namespace StubInterfaceUnion {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, subject, ...queryParameters } = parameters ?? {};
+    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+      parameters ?? {};
 
     return {
       ...queryParameters,
@@ -35887,7 +36409,11 @@ export namespace StubInterfaceUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        StubInterfaceUnion.$sparqlWherePatterns({ ignoreRdfType, subject }),
+        StubInterfaceUnion.$sparqlWherePatterns({
+          ignoreRdfType,
+          languageIn,
+          subject,
+        }),
       ),
     };
   }
@@ -35895,6 +36421,7 @@ export namespace StubInterfaceUnion {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
+      lanugageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &

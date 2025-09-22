@@ -211,6 +211,7 @@ export abstract class Type {
         allowIgnoreRdfType: boolean;
         context: "object";
         variables: {
+          languageIn: string;
           object: string;
           predicate: string;
           subject: string;
