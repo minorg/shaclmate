@@ -666,7 +666,7 @@ export namespace $NamedDefaultStub {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -958,7 +958,7 @@ export namespace $DefaultStub {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -1326,7 +1326,7 @@ export namespace UuidV4IriInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -1381,7 +1381,29 @@ export namespace UuidV4IriInterface {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(`${variablePrefix}UuidV4IriProperty`),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -1743,7 +1765,7 @@ export namespace UuidV4IriClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -1798,7 +1820,29 @@ export namespace UuidV4IriClass {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(`${variablePrefix}UuidV4IriProperty`),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -2692,7 +2736,7 @@ export namespace UnionPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -2811,6 +2855,7 @@ export namespace UnionPropertiesClass {
               {
                 patterns: [
                   ...NonClass.$sparqlWherePatterns({
+                    languageIn: parameters?.languageIn,
                     subject: dataFactory.variable!(
                       `${variablePrefix}UnrelatedTypesProperty`,
                     ),
@@ -3900,7 +3945,7 @@ export namespace TermPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -4530,7 +4575,7 @@ export namespace StubInterfaceUnionMember2 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -4647,7 +4692,31 @@ export namespace StubInterfaceUnionMember2 {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}LazilyResolvedStringProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -5040,7 +5109,7 @@ export namespace StubInterfaceUnionMember1 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -5157,7 +5226,31 @@ export namespace StubInterfaceUnionMember1 {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}LazilyResolvedStringProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -5526,7 +5619,7 @@ export namespace StubClassUnionMember2 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -5644,7 +5737,31 @@ export namespace StubClassUnionMember2 {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}LazilyResolvedStringProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -6013,7 +6130,7 @@ export namespace StubClassUnionMember1 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -6131,7 +6248,31 @@ export namespace StubClassUnionMember1 {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}LazilyResolvedStringProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -6493,7 +6634,7 @@ export namespace Sha256IriClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -6548,7 +6689,29 @@ export namespace Sha256IriClass {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(`${variablePrefix}Sha256IriProperty`),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -6971,7 +7134,7 @@ export namespace PropertyVisibilitiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -7045,7 +7208,29 @@ export namespace PropertyVisibilitiesClass {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(`${variablePrefix}PrivateProperty`),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
       {
         triples: [
           {
@@ -7059,7 +7244,29 @@ export namespace PropertyVisibilitiesClass {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(`${variablePrefix}ProtectedProperty`),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
       {
         triples: [
           {
@@ -7073,7 +7280,29 @@ export namespace PropertyVisibilitiesClass {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(`${variablePrefix}PublicProperty`),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -7670,7 +7899,7 @@ export namespace PropertyCardinalitiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -7819,7 +8048,31 @@ export namespace PropertyCardinalitiesClass {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}RequiredStringProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -8248,7 +8501,7 @@ export namespace OrderedPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -8320,7 +8573,29 @@ export namespace OrderedPropertiesClass {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(`${variablePrefix}OrderedPropertyC`),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
       {
         triples: [
           {
@@ -8332,7 +8607,29 @@ export namespace OrderedPropertiesClass {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(`${variablePrefix}OrderedPropertyB`),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
       {
         triples: [
           {
@@ -8344,7 +8641,29 @@ export namespace OrderedPropertiesClass {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(`${variablePrefix}OrderedPropertyA`),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -8667,7 +8986,7 @@ export namespace NonClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -8719,7 +9038,29 @@ export namespace NonClass {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(`${variablePrefix}NonClassProperty`),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -9334,7 +9675,7 @@ export namespace MutablePropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -10147,7 +10488,7 @@ export namespace ListPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -10316,6 +10657,7 @@ export namespace ListPropertiesClass {
               },
               ...NonClass.$sparqlWherePatterns({
                 ignoreRdfType: true,
+                languageIn: parameters?.languageIn,
                 subject: dataFactory.variable!(
                   `${`${variablePrefix}ObjectListProperty`}Item0`,
                 ),
@@ -10372,6 +10714,7 @@ export namespace ListPropertiesClass {
                   },
                   ...NonClass.$sparqlWherePatterns({
                     ignoreRdfType: true,
+                    languageIn: parameters?.languageIn,
                     subject: dataFactory.variable!(
                       `${`${variablePrefix}ObjectListProperty`}ItemN`,
                     ),
@@ -10856,7 +11199,7 @@ export namespace StubInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -10918,7 +11261,31 @@ export namespace StubInterface {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}LazilyResolvedStringProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -13190,7 +13557,7 @@ export namespace LazyPropertiesInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -13433,6 +13800,7 @@ export namespace LazyPropertiesInterface {
           },
           ...$DefaultStub.$sparqlWherePatterns({
             ignoreRdfType: true,
+            languageIn: parameters?.languageIn,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalLazyToResolvedInterfaceProperty`,
             ),
@@ -13459,6 +13827,7 @@ export namespace LazyPropertiesInterface {
           },
           ...$DefaultStub.$sparqlWherePatterns({
             ignoreRdfType: true,
+            languageIn: parameters?.languageIn,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalLazyToResolvedInterfaceUnionProperty`,
             ),
@@ -13485,6 +13854,7 @@ export namespace LazyPropertiesInterface {
           },
           ...$NamedDefaultStub.$sparqlWherePatterns({
             ignoreRdfType: true,
+            languageIn: parameters?.languageIn,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalLazyToResolvedIriInterfaceProperty`,
             ),
@@ -13513,6 +13883,7 @@ export namespace LazyPropertiesInterface {
           },
           ...StubInterface.$sparqlWherePatterns({
             ignoreRdfType: true,
+            languageIn: parameters?.languageIn,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalStubInterfaceToResolvedInterfaceProperty`,
             ),
@@ -13541,6 +13912,7 @@ export namespace LazyPropertiesInterface {
           },
           ...StubInterface.$sparqlWherePatterns({
             ignoreRdfType: true,
+            languageIn: parameters?.languageIn,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalStubInterfaceToResolvedInterfaceUnionProperty`,
             ),
@@ -13568,6 +13940,7 @@ export namespace LazyPropertiesInterface {
             type: "bgp",
           },
           ...StubInterfaceUnion.$sparqlWherePatterns({
+            languageIn: parameters?.languageIn,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalStubInterfaceUnionToResolvedInterfaceUnionProperty`,
             ),
@@ -13592,6 +13965,7 @@ export namespace LazyPropertiesInterface {
       },
       ...$DefaultStub.$sparqlWherePatterns({
         ignoreRdfType: true,
+        languageIn: parameters?.languageIn,
         subject: dataFactory.variable!(
           `${variablePrefix}RequiredLazyToResolvedInterfaceProperty`,
         ),
@@ -13613,6 +13987,7 @@ export namespace LazyPropertiesInterface {
       },
       ...StubInterface.$sparqlWherePatterns({
         ignoreRdfType: true,
+        languageIn: parameters?.languageIn,
         subject: dataFactory.variable!(
           `${variablePrefix}RequiredStubInterfaceToResolvedInterfaceProperty`,
         ),
@@ -13636,6 +14011,7 @@ export namespace LazyPropertiesInterface {
           },
           ...$DefaultStub.$sparqlWherePatterns({
             ignoreRdfType: true,
+            languageIn: parameters?.languageIn,
             subject: dataFactory.variable!(
               `${variablePrefix}SetLazyToResolvedInterfaceProperty`,
             ),
@@ -13662,6 +14038,7 @@ export namespace LazyPropertiesInterface {
           },
           ...StubInterface.$sparqlWherePatterns({
             ignoreRdfType: true,
+            languageIn: parameters?.languageIn,
             subject: dataFactory.variable!(
               `${variablePrefix}SetStubInterfaceToResolvedInterfaceProperty`,
             ),
@@ -14006,7 +14383,7 @@ export namespace StubClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -14064,7 +14441,31 @@ export namespace StubClass {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}LazilyResolvedStringProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -16175,7 +16576,7 @@ export namespace LazyPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -16416,6 +16817,7 @@ export namespace LazyPropertiesClass {
           },
           ...$DefaultStub.$sparqlWherePatterns({
             ignoreRdfType: true,
+            languageIn: parameters?.languageIn,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalLazyToResolvedClassProperty`,
             ),
@@ -16442,6 +16844,7 @@ export namespace LazyPropertiesClass {
           },
           ...$DefaultStub.$sparqlWherePatterns({
             ignoreRdfType: true,
+            languageIn: parameters?.languageIn,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalLazyToResolvedClassUnionProperty`,
             ),
@@ -16468,6 +16871,7 @@ export namespace LazyPropertiesClass {
           },
           ...$NamedDefaultStub.$sparqlWherePatterns({
             ignoreRdfType: true,
+            languageIn: parameters?.languageIn,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalLazyToResolvedIriClassProperty`,
             ),
@@ -16494,6 +16898,7 @@ export namespace LazyPropertiesClass {
           },
           ...StubClass.$sparqlWherePatterns({
             ignoreRdfType: true,
+            languageIn: parameters?.languageIn,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalStubClassToResolvedClassProperty`,
             ),
@@ -16522,6 +16927,7 @@ export namespace LazyPropertiesClass {
           },
           ...StubClass.$sparqlWherePatterns({
             ignoreRdfType: true,
+            languageIn: parameters?.languageIn,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalStubClassToResolvedClassUnionProperty`,
             ),
@@ -16549,6 +16955,7 @@ export namespace LazyPropertiesClass {
             type: "bgp",
           },
           ...StubClassUnion.$sparqlWherePatterns({
+            languageIn: parameters?.languageIn,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalStubClassUnionToResolvedClassUnionProperty`,
             ),
@@ -16573,6 +16980,7 @@ export namespace LazyPropertiesClass {
       },
       ...$DefaultStub.$sparqlWherePatterns({
         ignoreRdfType: true,
+        languageIn: parameters?.languageIn,
         subject: dataFactory.variable!(
           `${variablePrefix}RequiredLazyToResolvedClassProperty`,
         ),
@@ -16594,6 +17002,7 @@ export namespace LazyPropertiesClass {
       },
       ...StubClass.$sparqlWherePatterns({
         ignoreRdfType: true,
+        languageIn: parameters?.languageIn,
         subject: dataFactory.variable!(
           `${variablePrefix}RequiredStubClassToResolvedClassProperty`,
         ),
@@ -16617,6 +17026,7 @@ export namespace LazyPropertiesClass {
           },
           ...$DefaultStub.$sparqlWherePatterns({
             ignoreRdfType: true,
+            languageIn: parameters?.languageIn,
             subject: dataFactory.variable!(
               `${variablePrefix}SetLazyToResolvedClassProperty`,
             ),
@@ -16643,6 +17053,7 @@ export namespace LazyPropertiesClass {
           },
           ...StubClass.$sparqlWherePatterns({
             ignoreRdfType: true,
+            languageIn: parameters?.languageIn,
             subject: dataFactory.variable!(
               `${variablePrefix}SetStubClassToResolvedClassProperty`,
             ),
@@ -17028,7 +17439,7 @@ export namespace LazilyResolvedIriInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -17097,7 +17508,31 @@ export namespace LazilyResolvedIriInterface {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}LazilyResolvedStringProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -17440,7 +17875,7 @@ export namespace LazilyResolvedIriClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -17508,7 +17943,31 @@ export namespace LazilyResolvedIriClass {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}LazilyResolvedStringProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -17903,7 +18362,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -18021,7 +18480,31 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}LazilyResolvedStringProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -18416,7 +18899,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -18534,7 +19017,31 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}LazilyResolvedStringProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -18904,7 +19411,7 @@ export namespace LazilyResolvedClassUnionMember2 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -19022,7 +19529,31 @@ export namespace LazilyResolvedClassUnionMember2 {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}LazilyResolvedStringProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -19392,7 +19923,7 @@ export namespace LazilyResolvedClassUnionMember1 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -19510,7 +20041,31 @@ export namespace LazilyResolvedClassUnionMember1 {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}LazilyResolvedStringProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -19908,7 +20463,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -20026,7 +20581,31 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}LazilyResolvedStringProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -20398,7 +20977,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -20516,7 +21095,31 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}LazilyResolvedStringProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -21149,7 +21752,7 @@ export namespace LanguageInPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -21520,7 +22123,7 @@ export namespace IriClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -21902,7 +22505,7 @@ export namespace InterfaceUnionMember2b {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -21970,7 +22573,31 @@ export namespace InterfaceUnionMember2b {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}InterfaceUnionMember2bProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -22337,7 +22964,7 @@ export namespace InterfaceUnionMember2a {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -22405,7 +23032,31 @@ export namespace InterfaceUnionMember2a {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}InterfaceUnionMember2aProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -22762,7 +23413,7 @@ export namespace InterfaceUnionMember1 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -22830,7 +23481,31 @@ export namespace InterfaceUnionMember1 {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}InterfaceUnionMember1Property`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -23157,7 +23832,7 @@ export namespace Interface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -23209,7 +23884,29 @@ export namespace Interface {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(`${variablePrefix}InterfaceProperty`),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -23597,7 +24294,7 @@ export namespace IndirectRecursiveHelperClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -23679,6 +24376,7 @@ export namespace IndirectRecursiveHelperClass {
           },
           ...IndirectRecursiveClass.$sparqlWherePatterns({
             ignoreRdfType: true,
+            languageIn: parameters?.languageIn,
             subject: dataFactory.variable!(
               `${variablePrefix}IndirectRecursiveProperty`,
             ),
@@ -24076,7 +24774,7 @@ export namespace IndirectRecursiveClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -24902,7 +25600,7 @@ export namespace InPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -25488,7 +26186,7 @@ export namespace InIdentifierClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -26018,7 +26716,7 @@ export namespace HasValuePropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -26493,7 +27191,7 @@ export namespace ExternClassPropertyClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -26568,6 +27266,7 @@ export namespace ExternClassPropertyClass {
           },
           ...ExternClass.$sparqlWherePatterns({
             ignoreRdfType: true,
+            languageIn: parameters?.languageIn,
             subject: dataFactory.variable!(
               `${variablePrefix}ExternClassProperty`,
             ),
@@ -26944,7 +27643,7 @@ export namespace ExplicitRdfTypeClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -27058,7 +27757,31 @@ export namespace ExplicitRdfTypeClass {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}ExplicitRdfTypeProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -27437,7 +28160,7 @@ export namespace ExplicitFromToRdfTypesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -27556,7 +28279,31 @@ export namespace ExplicitFromToRdfTypesClass {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}ExplicitFromToRdfTypesProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -27941,7 +28688,7 @@ export namespace DirectRecursiveClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -28753,7 +29500,7 @@ export namespace DefaultValuePropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -28858,96 +29605,269 @@ export namespace DefaultValuePropertiesClass {
         : "defaultValuePropertiesClass");
     const propertyPatterns: readonly sparqljs.Pattern[] = [
       {
-        triples: [
+        patterns: [
           {
-            object: dataFactory.variable!(
-              `${variablePrefix}DateDefaultValueProperty`,
-            ),
-            predicate:
-              DefaultValuePropertiesClass.$properties.dateDefaultValueProperty[
-                "identifier"
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}DateDefaultValueProperty`,
+                ),
+                predicate:
+                  DefaultValuePropertiesClass.$properties
+                    .dateDefaultValueProperty["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}DateDefaultValueProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
               ],
-            subject,
+            })),
           },
-        ],
-        type: "bgp",
-      },
-      ...(parameters?.languageIn ?? []),
+        })),
       {
-        triples: [
+        patterns: [
           {
-            object: dataFactory.variable!(
-              `${variablePrefix}DateTimeDefaultValueProperty`,
-            ),
-            predicate:
-              DefaultValuePropertiesClass.$properties
-                .dateTimeDefaultValueProperty["identifier"],
-            subject,
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}DateTimeDefaultValueProperty`,
+                ),
+                predicate:
+                  DefaultValuePropertiesClass.$properties
+                    .dateTimeDefaultValueProperty["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
           },
         ],
-        type: "bgp",
+        type: "optional",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}DateTimeDefaultValueProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
       {
-        triples: [
+        patterns: [
           {
-            object: dataFactory.variable!(
-              `${variablePrefix}FalseBooleanDefaultValueProperty`,
-            ),
-            predicate:
-              DefaultValuePropertiesClass.$properties
-                .falseBooleanDefaultValueProperty["identifier"],
-            subject,
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}FalseBooleanDefaultValueProperty`,
+                ),
+                predicate:
+                  DefaultValuePropertiesClass.$properties
+                    .falseBooleanDefaultValueProperty["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
           },
         ],
-        type: "bgp",
+        type: "optional",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}FalseBooleanDefaultValueProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
       {
-        triples: [
+        patterns: [
           {
-            object: dataFactory.variable!(
-              `${variablePrefix}NumberDefaultValueProperty`,
-            ),
-            predicate:
-              DefaultValuePropertiesClass.$properties
-                .numberDefaultValueProperty["identifier"],
-            subject,
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}NumberDefaultValueProperty`,
+                ),
+                predicate:
+                  DefaultValuePropertiesClass.$properties
+                    .numberDefaultValueProperty["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
           },
         ],
-        type: "bgp",
+        type: "optional",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}NumberDefaultValueProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
       {
-        triples: [
+        patterns: [
           {
-            object: dataFactory.variable!(
-              `${variablePrefix}StringDefaultValueProperty`,
-            ),
-            predicate:
-              DefaultValuePropertiesClass.$properties
-                .stringDefaultValueProperty["identifier"],
-            subject,
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}StringDefaultValueProperty`,
+                ),
+                predicate:
+                  DefaultValuePropertiesClass.$properties
+                    .stringDefaultValueProperty["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
           },
         ],
-        type: "bgp",
+        type: "optional",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}StringDefaultValueProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
       {
-        triples: [
+        patterns: [
           {
-            object: dataFactory.variable!(
-              `${variablePrefix}TrueBooleanDefaultValueProperty`,
-            ),
-            predicate:
-              DefaultValuePropertiesClass.$properties
-                .trueBooleanDefaultValueProperty["identifier"],
-            subject,
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}TrueBooleanDefaultValueProperty`,
+                ),
+                predicate:
+                  DefaultValuePropertiesClass.$properties
+                    .trueBooleanDefaultValueProperty["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
           },
         ],
-        type: "bgp",
+        type: "optional",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}TrueBooleanDefaultValueProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -29380,7 +30300,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -29498,7 +30418,31 @@ export namespace BaseInterfaceWithPropertiesStatic {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}BaseInterfaceWithPropertiesProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -29840,7 +30784,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -30337,7 +31281,7 @@ export namespace ConcreteParentInterfaceStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -30470,7 +31414,31 @@ export namespace ConcreteParentInterfaceStatic {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}ConcreteParentInterfaceProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -30847,7 +31815,7 @@ export namespace ConcreteChildInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -30984,7 +31952,31 @@ export namespace ConcreteChildInterface {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}ConcreteChildInterfaceProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -31346,7 +32338,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -31414,7 +32406,31 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}AbstractBaseClassWithPropertiesProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -31646,7 +32662,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -32088,7 +33104,7 @@ export namespace ConcreteParentClassStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -32217,7 +33233,31 @@ export namespace ConcreteParentClassStatic {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}ConcreteParentClassProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -32568,7 +33608,7 @@ export namespace ConcreteChildClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -32699,7 +33739,31 @@ export namespace ConcreteChildClass {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}ConcreteChildClassProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -33063,7 +34127,7 @@ export namespace ClassUnionMember2 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -33175,7 +34239,31 @@ export namespace ClassUnionMember2 {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}ClassUnionMember2Property`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -33539,7 +34627,7 @@ export namespace ClassUnionMember1 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -33651,7 +34739,31 @@ export namespace ClassUnionMember1 {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}ClassUnionMember1Property`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -33942,7 +35054,7 @@ export namespace BlankInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -34233,7 +35345,7 @@ export namespace BlankClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -34587,7 +35699,7 @@ export namespace AbstractBaseClassForExternClassStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -34655,7 +35767,31 @@ export namespace AbstractBaseClassForExternClassStatic {
         ],
         type: "bgp",
       },
-      ...(parameters?.languageIn ?? []),
+      ...[parameters?.languageIn ?? []]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) => ({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "||",
+            args: languagesIn.map((languageIn) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "functionCall" as const,
+                  function: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}AbstractBaseClassForExternClassProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(languageIn),
+              ],
+            })),
+          },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -34799,7 +35935,7 @@ export namespace ClassUnion {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -34837,6 +35973,7 @@ export namespace ClassUnion {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -35080,7 +36217,7 @@ export namespace InterfaceUnion {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -35126,6 +36263,7 @@ export namespace InterfaceUnion {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -35361,7 +36499,7 @@ export namespace InterfaceUnionMember2 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -35399,6 +36537,7 @@ export namespace InterfaceUnionMember2 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -35627,7 +36766,7 @@ export namespace LazilyResolvedClassUnion {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -35669,6 +36808,7 @@ export namespace LazilyResolvedClassUnion {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -35901,7 +37041,7 @@ export namespace LazilyResolvedInterfaceUnion {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -35943,6 +37083,7 @@ export namespace LazilyResolvedInterfaceUnion {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -36166,7 +37307,7 @@ export namespace StubClassUnion {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -36204,6 +37345,7 @@ export namespace StubClassUnion {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -36421,7 +37563,7 @@ export namespace StubInterfaceUnion {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      lanugageIn?: readonly string[];
+      languageIn?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -36459,6 +37601,7 @@ export namespace StubInterfaceUnion {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
+    languageIn?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
