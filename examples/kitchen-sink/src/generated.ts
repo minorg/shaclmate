@@ -2814,46 +2814,165 @@ export namespace UnionPropertiesClass {
       {
         patterns: [
           {
-            triples: [
+            patterns: [
               {
-                object: dataFactory.variable!(
-                  `${variablePrefix}NarrowLiteralsProperty`,
-                ),
-                predicate:
-                  UnionPropertiesClass.$properties.narrowLiteralsProperty[
-                    "identifier"
-                  ],
-                subject,
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}NarrowLiteralsProperty`,
+                        ),
+                        predicate:
+                          UnionPropertiesClass.$properties
+                            .narrowLiteralsProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                  ...[parameters?.languageIn ?? []]
+                    .filter((languagesIn) => languagesIn.length > 0)
+                    .map((languagesIn) => ({
+                      type: "filter" as const,
+                      expression: {
+                        type: "operation" as const,
+                        operator: "||",
+                        args: languagesIn.map((languageIn) => ({
+                          type: "operation" as const,
+                          operator: "=",
+                          args: [
+                            {
+                              type: "functionCall" as const,
+                              function: "lang",
+                              args: [
+                                dataFactory.variable!(
+                                  `${variablePrefix}NarrowLiteralsProperty`,
+                                ),
+                              ],
+                            },
+                            dataFactory.literal(languageIn),
+                          ],
+                        })),
+                      },
+                    })),
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}NarrowLiteralsProperty`,
+                        ),
+                        predicate:
+                          UnionPropertiesClass.$properties
+                            .narrowLiteralsProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                  ...[parameters?.languageIn ?? []]
+                    .filter((languagesIn) => languagesIn.length > 0)
+                    .map((languagesIn) => ({
+                      type: "filter" as const,
+                      expression: {
+                        type: "operation" as const,
+                        operator: "||",
+                        args: languagesIn.map((languageIn) => ({
+                          type: "operation" as const,
+                          operator: "=",
+                          args: [
+                            {
+                              type: "functionCall" as const,
+                              function: "lang",
+                              args: [
+                                dataFactory.variable!(
+                                  `${variablePrefix}NarrowLiteralsProperty`,
+                                ),
+                              ],
+                            },
+                            dataFactory.literal(languageIn),
+                          ],
+                        })),
+                      },
+                    })),
+                ],
+                type: "group",
               },
             ],
-            type: "bgp",
+            type: "union",
           },
-          { patterns: [{ patterns: [], type: "group" }], type: "union" },
         ],
         type: "optional",
       },
       {
         patterns: [
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}UnrelatedTypesProperty`,
-                ),
-                predicate:
-                  UnionPropertiesClass.$properties.unrelatedTypesProperty[
-                    "identifier"
-                  ],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          {
             patterns: [
-              { patterns: [], type: "group" },
               {
                 patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}UnrelatedTypesProperty`,
+                        ),
+                        predicate:
+                          UnionPropertiesClass.$properties
+                            .unrelatedTypesProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                  ...[parameters?.languageIn ?? []]
+                    .filter((languagesIn) => languagesIn.length > 0)
+                    .map((languagesIn) => ({
+                      type: "filter" as const,
+                      expression: {
+                        type: "operation" as const,
+                        operator: "||",
+                        args: languagesIn.map((languageIn) => ({
+                          type: "operation" as const,
+                          operator: "=",
+                          args: [
+                            {
+                              type: "functionCall" as const,
+                              function: "lang",
+                              args: [
+                                dataFactory.variable!(
+                                  `${variablePrefix}UnrelatedTypesProperty`,
+                                ),
+                              ],
+                            },
+                            dataFactory.literal(languageIn),
+                          ],
+                        })),
+                      },
+                    })),
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}UnrelatedTypesProperty`,
+                        ),
+                        predicate:
+                          UnionPropertiesClass.$properties
+                            .unrelatedTypesProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
                   ...NonClass.$sparqlWherePatterns({
                     languageIn: parameters?.languageIn,
                     subject: dataFactory.variable!(
@@ -2887,6 +3006,31 @@ export namespace UnionPropertiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.languageIn ?? []]
+            .filter((languagesIn) => languagesIn.length > 0)
+            .map((languagesIn) => ({
+              type: "filter" as const,
+              expression: {
+                type: "operation" as const,
+                operator: "||",
+                args: languagesIn.map((languageIn) => ({
+                  type: "operation" as const,
+                  operator: "=",
+                  args: [
+                    {
+                      type: "functionCall" as const,
+                      function: "lang",
+                      args: [
+                        dataFactory.variable!(
+                          `${variablePrefix}WidenedLiteralsProperty`,
+                        ),
+                      ],
+                    },
+                    dataFactory.literal(languageIn),
+                  ],
+                })),
+              },
+            })),
         ],
         type: "optional",
       },
@@ -4046,6 +4190,31 @@ export namespace TermPropertiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.languageIn ?? []]
+            .filter((languagesIn) => languagesIn.length > 0)
+            .map((languagesIn) => ({
+              type: "filter" as const,
+              expression: {
+                type: "operation" as const,
+                operator: "||",
+                args: languagesIn.map((languageIn) => ({
+                  type: "operation" as const,
+                  operator: "=",
+                  args: [
+                    {
+                      type: "functionCall" as const,
+                      function: "lang",
+                      args: [
+                        dataFactory.variable!(
+                          `${variablePrefix}BooleanTermProperty`,
+                        ),
+                      ],
+                    },
+                    dataFactory.literal(languageIn),
+                  ],
+                })),
+              },
+            })),
         ],
         type: "optional",
       },
@@ -4066,6 +4235,31 @@ export namespace TermPropertiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.languageIn ?? []]
+            .filter((languagesIn) => languagesIn.length > 0)
+            .map((languagesIn) => ({
+              type: "filter" as const,
+              expression: {
+                type: "operation" as const,
+                operator: "||",
+                args: languagesIn.map((languageIn) => ({
+                  type: "operation" as const,
+                  operator: "=",
+                  args: [
+                    {
+                      type: "functionCall" as const,
+                      function: "lang",
+                      args: [
+                        dataFactory.variable!(
+                          `${variablePrefix}DateTermProperty`,
+                        ),
+                      ],
+                    },
+                    dataFactory.literal(languageIn),
+                  ],
+                })),
+              },
+            })),
         ],
         type: "optional",
       },
@@ -4086,6 +4280,31 @@ export namespace TermPropertiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.languageIn ?? []]
+            .filter((languagesIn) => languagesIn.length > 0)
+            .map((languagesIn) => ({
+              type: "filter" as const,
+              expression: {
+                type: "operation" as const,
+                operator: "||",
+                args: languagesIn.map((languageIn) => ({
+                  type: "operation" as const,
+                  operator: "=",
+                  args: [
+                    {
+                      type: "functionCall" as const,
+                      function: "lang",
+                      args: [
+                        dataFactory.variable!(
+                          `${variablePrefix}DateTimeTermProperty`,
+                        ),
+                      ],
+                    },
+                    dataFactory.literal(languageIn),
+                  ],
+                })),
+              },
+            })),
         ],
         type: "optional",
       },
@@ -4124,6 +4343,31 @@ export namespace TermPropertiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.languageIn ?? []]
+            .filter((languagesIn) => languagesIn.length > 0)
+            .map((languagesIn) => ({
+              type: "filter" as const,
+              expression: {
+                type: "operation" as const,
+                operator: "||",
+                args: languagesIn.map((languageIn) => ({
+                  type: "operation" as const,
+                  operator: "=",
+                  args: [
+                    {
+                      type: "functionCall" as const,
+                      function: "lang",
+                      args: [
+                        dataFactory.variable!(
+                          `${variablePrefix}LiteralTermProperty`,
+                        ),
+                      ],
+                    },
+                    dataFactory.literal(languageIn),
+                  ],
+                })),
+              },
+            })),
         ],
         type: "optional",
       },
@@ -4144,6 +4388,31 @@ export namespace TermPropertiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.languageIn ?? []]
+            .filter((languagesIn) => languagesIn.length > 0)
+            .map((languagesIn) => ({
+              type: "filter" as const,
+              expression: {
+                type: "operation" as const,
+                operator: "||",
+                args: languagesIn.map((languageIn) => ({
+                  type: "operation" as const,
+                  operator: "=",
+                  args: [
+                    {
+                      type: "functionCall" as const,
+                      function: "lang",
+                      args: [
+                        dataFactory.variable!(
+                          `${variablePrefix}NumberTermProperty`,
+                        ),
+                      ],
+                    },
+                    dataFactory.literal(languageIn),
+                  ],
+                })),
+              },
+            })),
         ],
         type: "optional",
       },
@@ -4164,6 +4433,31 @@ export namespace TermPropertiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.languageIn ?? []]
+            .filter((languagesIn) => languagesIn.length > 0)
+            .map((languagesIn) => ({
+              type: "filter" as const,
+              expression: {
+                type: "operation" as const,
+                operator: "||",
+                args: languagesIn.map((languageIn) => ({
+                  type: "operation" as const,
+                  operator: "=",
+                  args: [
+                    {
+                      type: "functionCall" as const,
+                      function: "lang",
+                      args: [
+                        dataFactory.variable!(
+                          `${variablePrefix}StringTermProperty`,
+                        ),
+                      ],
+                    },
+                    dataFactory.literal(languageIn),
+                  ],
+                })),
+              },
+            })),
         ],
         type: "optional",
       },
@@ -8030,6 +8324,31 @@ export namespace PropertyCardinalitiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.languageIn ?? []]
+            .filter((languagesIn) => languagesIn.length > 0)
+            .map((languagesIn) => ({
+              type: "filter" as const,
+              expression: {
+                type: "operation" as const,
+                operator: "||",
+                args: languagesIn.map((languageIn) => ({
+                  type: "operation" as const,
+                  operator: "=",
+                  args: [
+                    {
+                      type: "functionCall" as const,
+                      function: "lang",
+                      args: [
+                        dataFactory.variable!(
+                          `${variablePrefix}OptionalStringProperty`,
+                        ),
+                      ],
+                    },
+                    dataFactory.literal(languageIn),
+                  ],
+                })),
+              },
+            })),
         ],
         type: "optional",
       },
@@ -9909,6 +10228,31 @@ export namespace MutablePropertiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.languageIn ?? []]
+            .filter((languagesIn) => languagesIn.length > 0)
+            .map((languagesIn) => ({
+              type: "filter" as const,
+              expression: {
+                type: "operation" as const,
+                operator: "||",
+                args: languagesIn.map((languageIn) => ({
+                  type: "operation" as const,
+                  operator: "=",
+                  args: [
+                    {
+                      type: "functionCall" as const,
+                      function: "lang",
+                      args: [
+                        dataFactory.variable!(
+                          `${variablePrefix}MutableStringProperty`,
+                        ),
+                      ],
+                    },
+                    dataFactory.literal(languageIn),
+                  ],
+                })),
+              },
+            })),
         ],
         type: "optional",
       },
@@ -21829,6 +22173,31 @@ export namespace LanguageInPropertiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.languageIn ?? ["en", "fr"]]
+            .filter((languagesIn) => languagesIn.length > 0)
+            .map((languagesIn) => ({
+              type: "filter" as const,
+              expression: {
+                type: "operation" as const,
+                operator: "||",
+                args: languagesIn.map((languageIn) => ({
+                  type: "operation" as const,
+                  operator: "=",
+                  args: [
+                    {
+                      type: "functionCall" as const,
+                      function: "lang",
+                      args: [
+                        dataFactory.variable!(
+                          `${variablePrefix}LanguageInPropertiesLanguageInProperty`,
+                        ),
+                      ],
+                    },
+                    dataFactory.literal(languageIn),
+                  ],
+                })),
+              },
+            })),
         ],
         type: "optional",
       },
@@ -21848,6 +22217,31 @@ export namespace LanguageInPropertiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.languageIn ?? []]
+            .filter((languagesIn) => languagesIn.length > 0)
+            .map((languagesIn) => ({
+              type: "filter" as const,
+              expression: {
+                type: "operation" as const,
+                operator: "||",
+                args: languagesIn.map((languageIn) => ({
+                  type: "operation" as const,
+                  operator: "=",
+                  args: [
+                    {
+                      type: "functionCall" as const,
+                      function: "lang",
+                      args: [
+                        dataFactory.variable!(
+                          `${variablePrefix}LanguageInPropertiesLiteralProperty`,
+                        ),
+                      ],
+                    },
+                    dataFactory.literal(languageIn),
+                  ],
+                })),
+              },
+            })),
         ],
         type: "optional",
       },
@@ -25682,6 +26076,31 @@ export namespace InPropertiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.languageIn ?? []]
+            .filter((languagesIn) => languagesIn.length > 0)
+            .map((languagesIn) => ({
+              type: "filter" as const,
+              expression: {
+                type: "operation" as const,
+                operator: "||",
+                args: languagesIn.map((languageIn) => ({
+                  type: "operation" as const,
+                  operator: "=",
+                  args: [
+                    {
+                      type: "functionCall" as const,
+                      function: "lang",
+                      args: [
+                        dataFactory.variable!(
+                          `${variablePrefix}InBooleansProperty`,
+                        ),
+                      ],
+                    },
+                    dataFactory.literal(languageIn),
+                  ],
+                })),
+              },
+            })),
         ],
         type: "optional",
       },
@@ -25702,6 +26121,31 @@ export namespace InPropertiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.languageIn ?? []]
+            .filter((languagesIn) => languagesIn.length > 0)
+            .map((languagesIn) => ({
+              type: "filter" as const,
+              expression: {
+                type: "operation" as const,
+                operator: "||",
+                args: languagesIn.map((languageIn) => ({
+                  type: "operation" as const,
+                  operator: "=",
+                  args: [
+                    {
+                      type: "functionCall" as const,
+                      function: "lang",
+                      args: [
+                        dataFactory.variable!(
+                          `${variablePrefix}InDateTimesProperty`,
+                        ),
+                      ],
+                    },
+                    dataFactory.literal(languageIn),
+                  ],
+                })),
+              },
+            })),
         ],
         type: "optional",
       },
@@ -25738,6 +26182,31 @@ export namespace InPropertiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.languageIn ?? []]
+            .filter((languagesIn) => languagesIn.length > 0)
+            .map((languagesIn) => ({
+              type: "filter" as const,
+              expression: {
+                type: "operation" as const,
+                operator: "||",
+                args: languagesIn.map((languageIn) => ({
+                  type: "operation" as const,
+                  operator: "=",
+                  args: [
+                    {
+                      type: "functionCall" as const,
+                      function: "lang",
+                      args: [
+                        dataFactory.variable!(
+                          `${variablePrefix}InNumbersProperty`,
+                        ),
+                      ],
+                    },
+                    dataFactory.literal(languageIn),
+                  ],
+                })),
+              },
+            })),
         ],
         type: "optional",
       },
@@ -25756,6 +26225,31 @@ export namespace InPropertiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.languageIn ?? []]
+            .filter((languagesIn) => languagesIn.length > 0)
+            .map((languagesIn) => ({
+              type: "filter" as const,
+              expression: {
+                type: "operation" as const,
+                operator: "||",
+                args: languagesIn.map((languageIn) => ({
+                  type: "operation" as const,
+                  operator: "=",
+                  args: [
+                    {
+                      type: "functionCall" as const,
+                      function: "lang",
+                      args: [
+                        dataFactory.variable!(
+                          `${variablePrefix}InStringsProperty`,
+                        ),
+                      ],
+                    },
+                    dataFactory.literal(languageIn),
+                  ],
+                })),
+              },
+            })),
         ],
         type: "optional",
       },
@@ -26248,6 +26742,31 @@ export namespace InIdentifierClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.languageIn ?? []]
+            .filter((languagesIn) => languagesIn.length > 0)
+            .map((languagesIn) => ({
+              type: "filter" as const,
+              expression: {
+                type: "operation" as const,
+                operator: "||",
+                args: languagesIn.map((languageIn) => ({
+                  type: "operation" as const,
+                  operator: "=",
+                  args: [
+                    {
+                      type: "functionCall" as const,
+                      function: "lang",
+                      args: [
+                        dataFactory.variable!(
+                          `${variablePrefix}InIdentifierProperty`,
+                        ),
+                      ],
+                    },
+                    dataFactory.literal(languageIn),
+                  ],
+                })),
+              },
+            })),
         ],
         type: "optional",
       },
@@ -26810,6 +27329,31 @@ export namespace HasValuePropertiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.languageIn ?? []]
+            .filter((languagesIn) => languagesIn.length > 0)
+            .map((languagesIn) => ({
+              type: "filter" as const,
+              expression: {
+                type: "operation" as const,
+                operator: "||",
+                args: languagesIn.map((languageIn) => ({
+                  type: "operation" as const,
+                  operator: "=",
+                  args: [
+                    {
+                      type: "functionCall" as const,
+                      function: "lang",
+                      args: [
+                        dataFactory.variable!(
+                          `${variablePrefix}HasLiteralValueProperty`,
+                        ),
+                      ],
+                    },
+                    dataFactory.literal(languageIn),
+                  ],
+                })),
+              },
+            })),
         ],
         type: "optional",
       },
