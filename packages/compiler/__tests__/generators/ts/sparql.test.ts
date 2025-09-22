@@ -1,13 +1,58 @@
+import { fail } from "node:assert";
 import type { NamedNode, Quad } from "@rdfjs/types";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import N3, { DataFactory as dataFactory } from "n3";
 import * as oxigraph from "oxigraph";
 import { MutableResourceSet } from "rdfjs-resource";
-import { describe, it } from "vitest";
+import { beforeAll, describe, it } from "vitest";
 import { harnesses } from "./harnesses.js";
 import { quadsToTurtle } from "./quadsToTurtle.js";
 
 describe("sparql", () => {
+  const languageInDataset = new oxigraph.Store();
+
+  beforeAll(() => {
+    const languageInSubject = oxigraph.blankNode();
+    for (const language of ["", "ar", "en", "fr"]) {
+      for (const property of Object.values(
+        kitchenSink.LanguageInPropertiesClass.$properties,
+      )) {
+        languageInDataset.add(
+          oxigraph.quad(
+            languageInSubject,
+            oxigraph.namedNode(property.identifier.value),
+            language.length > 0
+              ? oxigraph.literal(`${language}value`, language)
+              : oxigraph.literal("value"),
+          ),
+        );
+      }
+    }
+  });
+
+  function queryLanguageInDataset(constructQuery: string): oxigraph.Store {
+    // console.log(constructQuery);
+    const constructResultQuads = languageInDataset.query(
+      constructQuery,
+    ) as oxigraph.Quad[];
+    // console.log(constructResultQuads.length);
+    constructResultQuads.sort((left, right) =>
+      left.predicate.value.localeCompare(right.predicate.value),
+    );
+    const constructResultDataset = new oxigraph.Store();
+    for (const quad of constructResultQuads) {
+      constructResultDataset.add(quad);
+      // console.log(quad.toString());
+    }
+    // console.log();
+    // console.log(
+    //   constructResultDataset.dump({
+    //     format: "application/trig",
+    //   }),
+    // );
+    return constructResultDataset;
+  }
+
   for (const [id, harness] of Object.entries(harnesses)) {
     if (harness.instance.$identifier.termType !== "NamedNode") {
       continue;
@@ -52,97 +97,61 @@ describe("sparql", () => {
     });
   }
 
-  it("runtime languageIn (unspecified)", ({ expect }) => {
-    const dataset = new oxigraph.Store();
-    const identifier = dataFactory.blankNode();
-    dataset.add(
-      dataFactory.quad(
-        identifier,
-        kitchenSink.LanguageInPropertiesClass.$properties
-          .languageInPropertiesLiteralProperty.identifier,
-        dataFactory.literal("arvalue", "ar"),
-      ),
+  it("languageIn unspecified", ({ expect }) => {
+    const actualDataset = queryLanguageInDataset(
+      kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString(),
     );
-    dataset.add(
-      dataFactory.quad(
-        identifier,
-        kitchenSink.LanguageInPropertiesClass.$properties
-          .languageInPropertiesLiteralProperty.identifier,
-        dataFactory.literal("envalue", "en"),
-      ),
-    );
-
-    const sparqlConstructQueryString =
-      kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString();
-    const quads = dataset.query(sparqlConstructQueryString) as oxigraph.Quad[];
-    expect(quads).toHaveLength(2);
+    expect(actualDataset.size).toStrictEqual(6); // The sh:languageIn will exclude the lang="" and lang="ar"
   });
 
-  it("runtime languageIn (specified)", ({ expect }) => {
-    const dataset = new oxigraph.Store();
-    const identifier = dataFactory.blankNode();
-    dataset.add(
-      dataFactory.quad(
-        identifier,
-        kitchenSink.LanguageInPropertiesClass.$properties
-          .languageInPropertiesLiteralProperty.identifier,
-        dataFactory.literal("arvalue", "ar"),
-      ),
+  it("languageIn: []", ({ expect }) => {
+    const actualDataset = queryLanguageInDataset(
+      kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString({
+        languageIn: [],
+      }),
     );
-    dataset.add(
-      dataFactory.quad(
-        identifier,
-        kitchenSink.LanguageInPropertiesClass.$properties
-          .languageInPropertiesLiteralProperty.identifier,
-        dataFactory.literal("envalue", "en"),
-      ),
-    );
+    expect(actualDataset.size).toStrictEqual(6); // Same as not specifying languageIn
+  });
 
-    const sparqlConstructQueryString =
+  it("languageIn: ['en']", ({ expect }) => {
+    const actualDataset = queryLanguageInDataset(
       kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString({
         languageIn: ["en"],
-      });
-    const quads = dataset.query(sparqlConstructQueryString) as oxigraph.Quad[];
-    expect(quads).toHaveLength(1);
-    expect((quads[0].object as oxigraph.Literal).value).toStrictEqual(
-      "envalue",
+      }),
     );
+    expect(actualDataset.size).toStrictEqual(2);
+    for (const quad of actualDataset.match()) {
+      expect((quad.object as oxigraph.Literal).value).toStrictEqual("envalue");
+    }
   });
 
-  it("sh:languageIn", ({ expect }) => {
-    const dataset = new oxigraph.Store();
-    const identifier = dataFactory.blankNode();
-    dataset.add(
-      dataFactory.quad(
-        identifier,
-        kitchenSink.LanguageInPropertiesClass.$properties
-          .languageInPropertiesLanguageInProperty.identifier,
-        dataFactory.literal("arvalue", "ar"),
-      ),
+  it("languageIn: ['']", ({ expect }) => {
+    const actualDataset = queryLanguageInDataset(
+      kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString({
+        languageIn: [""],
+      }),
     );
-    // dataset.add(
-    //   dataFactory.quad(
-    //     identifier,
-    //     kitchenSink.LanguageInPropertiesClass.$properties
-    //       .languageInPropertiesLanguageInProperty.identifier,
-    //     dataFactory.literal("frvalue", "fr"),
-    //   ),
-    // );
-    dataset.add(
-      dataFactory.quad(
-        identifier,
-        kitchenSink.LanguageInPropertiesClass.$properties
-          .languageInPropertiesLanguageInProperty.identifier,
-        dataFactory.literal("envalue", "en"),
-      ),
-    );
+    expect(actualDataset.size).toStrictEqual(2);
+    for (const quad of actualDataset.match()) {
+      expect((quad.object as oxigraph.Literal).value).toStrictEqual("value");
+    }
+  });
 
-    const sparqlConstructQueryString =
-      kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString();
-    const quads = dataset.query(sparqlConstructQueryString) as oxigraph.Quad[];
-    expect(quads).toHaveLength(1);
-    expect((quads[0].object as oxigraph.Literal).value).toStrictEqual(
-      "envalue",
+  it("languageIn: ['', 'en']", ({ expect }) => {
+    const actualDataset = queryLanguageInDataset(
+      kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString({
+        languageIn: ["", "en"],
+      }),
     );
+    expect(actualDataset.size).toStrictEqual(4);
+    for (const quad of actualDataset.match()) {
+      switch ((quad.object as oxigraph.Literal).value) {
+        case "envalue":
+        case "value":
+          return;
+        default:
+          fail();
+      }
+    }
   });
 });

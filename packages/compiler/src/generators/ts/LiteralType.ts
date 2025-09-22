@@ -78,7 +78,7 @@ export class LiteralType extends TermType<Literal, Literal> {
     invariant(this.name.indexOf("rdfjs.Literal") !== -1, this.name);
 
     return superPatterns.concat(
-      `...[(${variables.languageIn} ?? ${JSON.stringify(this.languageIn)})]
+      `...[(${variables.languageIn} && ${variables.languageIn}.length > 0) ? ${variables.languageIn} : ${JSON.stringify(this.languageIn)}]
         .filter(languagesIn => languagesIn.length > 0)
         .map(languagesIn =>
           languagesIn.map(languageIn => 

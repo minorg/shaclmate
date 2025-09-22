@@ -2881,7 +2881,11 @@ export namespace UnionPropertiesClass {
             ],
             type: "bgp",
           },
-          ...[parameters?.languageIn ?? []]
+          ...[
+            parameters?.languageIn && parameters?.languageIn.length > 0
+              ? parameters?.languageIn
+              : [],
+          ]
             .filter((languagesIn) => languagesIn.length > 0)
             .map((languagesIn) =>
               languagesIn.map((languageIn) => ({
@@ -4147,7 +4151,11 @@ export namespace TermPropertiesClass {
             ],
             type: "bgp",
           },
-          ...[parameters?.languageIn ?? []]
+          ...[
+            parameters?.languageIn && parameters?.languageIn.length > 0
+              ? parameters?.languageIn
+              : [],
+          ]
             .filter((languagesIn) => languagesIn.length > 0)
             .map((languagesIn) =>
               languagesIn.map((languageIn) => ({
@@ -20593,136 +20601,108 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
 export class LanguageInPropertiesClass {
   private _$identifier?: LanguageInPropertiesClass.$Identifier;
   readonly $type = "LanguageInPropertiesClass";
-  readonly languageInPropertiesLanguageInProperty: purify.Maybe<rdfjs.Literal>;
+  readonly languageInPropertiesLanguageInProperty: rdfjs.Literal;
   /**
    * literal property for testing runtime languageIn
    */
-  readonly languageInPropertiesLiteralProperty: purify.Maybe<rdfjs.Literal>;
+  readonly languageInPropertiesLiteralProperty: rdfjs.Literal;
 
-  constructor(parameters?: {
+  constructor(parameters: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly languageInPropertiesLanguageInProperty?:
+    readonly languageInPropertiesLanguageInProperty:
       | rdfjs.Literal
       | Date
       | boolean
       | number
-      | purify.Maybe<rdfjs.Literal>
       | string;
-    readonly languageInPropertiesLiteralProperty?:
+    readonly languageInPropertiesLiteralProperty:
       | rdfjs.Literal
       | Date
       | boolean
       | number
-      | purify.Maybe<rdfjs.Literal>
       | string;
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this._$identifier = parameters.$identifier satisfies never;
     }
 
     if (
-      purify.Maybe.isMaybe(parameters?.languageInPropertiesLanguageInProperty)
+      typeof parameters.languageInPropertiesLanguageInProperty === "boolean"
+    ) {
+      this.languageInPropertiesLanguageInProperty = rdfLiteral.toRdf(
+        parameters.languageInPropertiesLanguageInProperty,
+        { dataFactory },
+      );
+    } else if (
+      typeof parameters.languageInPropertiesLanguageInProperty === "object" &&
+      parameters.languageInPropertiesLanguageInProperty instanceof Date
+    ) {
+      this.languageInPropertiesLanguageInProperty = rdfLiteral.toRdf(
+        parameters.languageInPropertiesLanguageInProperty,
+        { dataFactory },
+      );
+    } else if (
+      typeof parameters.languageInPropertiesLanguageInProperty === "number"
+    ) {
+      this.languageInPropertiesLanguageInProperty = rdfLiteral.toRdf(
+        parameters.languageInPropertiesLanguageInProperty,
+        { dataFactory },
+      );
+    } else if (
+      typeof parameters.languageInPropertiesLanguageInProperty === "string"
+    ) {
+      this.languageInPropertiesLanguageInProperty = dataFactory.literal(
+        parameters.languageInPropertiesLanguageInProperty,
+      );
+    } else if (
+      typeof parameters.languageInPropertiesLanguageInProperty === "object"
     ) {
       this.languageInPropertiesLanguageInProperty =
-        parameters?.languageInPropertiesLanguageInProperty;
-    } else if (
-      typeof parameters?.languageInPropertiesLanguageInProperty === "boolean"
-    ) {
-      this.languageInPropertiesLanguageInProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.languageInPropertiesLanguageInProperty, {
-          dataFactory,
-        }),
-      );
-    } else if (
-      typeof parameters?.languageInPropertiesLanguageInProperty === "object" &&
-      parameters?.languageInPropertiesLanguageInProperty instanceof Date
-    ) {
-      this.languageInPropertiesLanguageInProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.languageInPropertiesLanguageInProperty, {
-          dataFactory,
-        }),
-      );
-    } else if (
-      typeof parameters?.languageInPropertiesLanguageInProperty === "number"
-    ) {
-      this.languageInPropertiesLanguageInProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.languageInPropertiesLanguageInProperty, {
-          dataFactory,
-        }),
-      );
-    } else if (
-      typeof parameters?.languageInPropertiesLanguageInProperty === "string"
-    ) {
-      this.languageInPropertiesLanguageInProperty = purify.Maybe.of(
-        dataFactory.literal(parameters?.languageInPropertiesLanguageInProperty),
-      );
-    } else if (
-      typeof parameters?.languageInPropertiesLanguageInProperty === "object"
-    ) {
-      this.languageInPropertiesLanguageInProperty = purify.Maybe.of(
-        parameters?.languageInPropertiesLanguageInProperty,
-      );
-    } else if (
-      typeof parameters?.languageInPropertiesLanguageInProperty === "undefined"
-    ) {
-      this.languageInPropertiesLanguageInProperty = purify.Maybe.empty();
+        parameters.languageInPropertiesLanguageInProperty;
     } else {
       this.languageInPropertiesLanguageInProperty =
-        parameters?.languageInPropertiesLanguageInProperty satisfies never;
+        parameters.languageInPropertiesLanguageInProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters?.languageInPropertiesLiteralProperty)) {
+    if (typeof parameters.languageInPropertiesLiteralProperty === "boolean") {
+      this.languageInPropertiesLiteralProperty = rdfLiteral.toRdf(
+        parameters.languageInPropertiesLiteralProperty,
+        { dataFactory },
+      );
+    } else if (
+      typeof parameters.languageInPropertiesLiteralProperty === "object" &&
+      parameters.languageInPropertiesLiteralProperty instanceof Date
+    ) {
+      this.languageInPropertiesLiteralProperty = rdfLiteral.toRdf(
+        parameters.languageInPropertiesLiteralProperty,
+        { dataFactory },
+      );
+    } else if (
+      typeof parameters.languageInPropertiesLiteralProperty === "number"
+    ) {
+      this.languageInPropertiesLiteralProperty = rdfLiteral.toRdf(
+        parameters.languageInPropertiesLiteralProperty,
+        { dataFactory },
+      );
+    } else if (
+      typeof parameters.languageInPropertiesLiteralProperty === "string"
+    ) {
+      this.languageInPropertiesLiteralProperty = dataFactory.literal(
+        parameters.languageInPropertiesLiteralProperty,
+      );
+    } else if (
+      typeof parameters.languageInPropertiesLiteralProperty === "object"
+    ) {
       this.languageInPropertiesLiteralProperty =
-        parameters?.languageInPropertiesLiteralProperty;
-    } else if (
-      typeof parameters?.languageInPropertiesLiteralProperty === "boolean"
-    ) {
-      this.languageInPropertiesLiteralProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.languageInPropertiesLiteralProperty, {
-          dataFactory,
-        }),
-      );
-    } else if (
-      typeof parameters?.languageInPropertiesLiteralProperty === "object" &&
-      parameters?.languageInPropertiesLiteralProperty instanceof Date
-    ) {
-      this.languageInPropertiesLiteralProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.languageInPropertiesLiteralProperty, {
-          dataFactory,
-        }),
-      );
-    } else if (
-      typeof parameters?.languageInPropertiesLiteralProperty === "number"
-    ) {
-      this.languageInPropertiesLiteralProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.languageInPropertiesLiteralProperty, {
-          dataFactory,
-        }),
-      );
-    } else if (
-      typeof parameters?.languageInPropertiesLiteralProperty === "string"
-    ) {
-      this.languageInPropertiesLiteralProperty = purify.Maybe.of(
-        dataFactory.literal(parameters?.languageInPropertiesLiteralProperty),
-      );
-    } else if (
-      typeof parameters?.languageInPropertiesLiteralProperty === "object"
-    ) {
-      this.languageInPropertiesLiteralProperty = purify.Maybe.of(
-        parameters?.languageInPropertiesLiteralProperty,
-      );
-    } else if (
-      typeof parameters?.languageInPropertiesLiteralProperty === "undefined"
-    ) {
-      this.languageInPropertiesLiteralProperty = purify.Maybe.empty();
+        parameters.languageInPropertiesLiteralProperty;
     } else {
       this.languageInPropertiesLiteralProperty =
-        parameters?.languageInPropertiesLiteralProperty satisfies never;
+        parameters.languageInPropertiesLiteralProperty satisfies never;
     }
   }
 
@@ -20754,7 +20734,7 @@ export class LanguageInPropertiesClass {
         ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+        $booleanEquals(
           this.languageInPropertiesLanguageInProperty,
           other.languageInPropertiesLanguageInProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -20766,7 +20746,7 @@ export class LanguageInPropertiesClass {
         })),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+        $booleanEquals(
           this.languageInPropertiesLiteralProperty,
           other.languageInPropertiesLiteralProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -20795,18 +20775,14 @@ export class LanguageInPropertiesClass {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    this.languageInPropertiesLanguageInProperty.ifJust((value0) => {
-      _hasher.update(value0.datatype.value);
-      _hasher.update(value0.language);
-      _hasher.update(value0.termType);
-      _hasher.update(value0.value);
-    });
-    this.languageInPropertiesLiteralProperty.ifJust((value0) => {
-      _hasher.update(value0.datatype.value);
-      _hasher.update(value0.language);
-      _hasher.update(value0.termType);
-      _hasher.update(value0.value);
-    });
+    _hasher.update(this.languageInPropertiesLanguageInProperty.datatype.value);
+    _hasher.update(this.languageInPropertiesLanguageInProperty.language);
+    _hasher.update(this.languageInPropertiesLanguageInProperty.termType);
+    _hasher.update(this.languageInPropertiesLanguageInProperty.value);
+    _hasher.update(this.languageInPropertiesLiteralProperty.datatype.value);
+    _hasher.update(this.languageInPropertiesLiteralProperty.language);
+    _hasher.update(this.languageInPropertiesLiteralProperty.termType);
+    _hasher.update(this.languageInPropertiesLiteralProperty.value);
     return _hasher;
   }
 
@@ -20818,30 +20794,30 @@ export class LanguageInPropertiesClass {
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
         $type: this.$type,
-        languageInPropertiesLanguageInProperty:
-          this.languageInPropertiesLanguageInProperty
-            .map((item) => ({
-              "@language": item.language.length > 0 ? item.language : undefined,
-              "@type":
-                item.datatype.value !==
-                "http://www.w3.org/2001/XMLSchema#string"
-                  ? item.datatype.value
-                  : undefined,
-              "@value": item.value,
-            }))
-            .extract(),
-        languageInPropertiesLiteralProperty:
-          this.languageInPropertiesLiteralProperty
-            .map((item) => ({
-              "@language": item.language.length > 0 ? item.language : undefined,
-              "@type":
-                item.datatype.value !==
-                "http://www.w3.org/2001/XMLSchema#string"
-                  ? item.datatype.value
-                  : undefined,
-              "@value": item.value,
-            }))
-            .extract(),
+        languageInPropertiesLanguageInProperty: {
+          "@language":
+            this.languageInPropertiesLanguageInProperty.language.length > 0
+              ? this.languageInPropertiesLanguageInProperty.language
+              : undefined,
+          "@type":
+            this.languageInPropertiesLanguageInProperty.datatype.value !==
+            "http://www.w3.org/2001/XMLSchema#string"
+              ? this.languageInPropertiesLanguageInProperty.datatype.value
+              : undefined,
+          "@value": this.languageInPropertiesLanguageInProperty.value,
+        },
+        languageInPropertiesLiteralProperty: {
+          "@language":
+            this.languageInPropertiesLiteralProperty.language.length > 0
+              ? this.languageInPropertiesLiteralProperty.language
+              : undefined,
+          "@type":
+            this.languageInPropertiesLiteralProperty.datatype.value !==
+            "http://www.w3.org/2001/XMLSchema#string"
+              ? this.languageInPropertiesLiteralProperty.datatype.value
+              : undefined,
+          "@value": this.languageInPropertiesLiteralProperty.value,
+        },
       } satisfies LanguageInPropertiesClass.$Json),
     );
   }
@@ -20902,12 +20878,12 @@ export namespace LanguageInPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "LanguageInPropertiesClass";
-    readonly languageInPropertiesLanguageInProperty?: {
+    readonly languageInPropertiesLanguageInProperty: {
       readonly "@language"?: string;
       readonly "@type"?: string;
       readonly "@value": string;
     };
-    readonly languageInPropertiesLiteralProperty?: {
+    readonly languageInPropertiesLiteralProperty: {
       readonly "@language"?: string;
       readonly "@type"?: string;
       readonly "@value": string;
@@ -20918,8 +20894,8 @@ export namespace LanguageInPropertiesClass {
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      languageInPropertiesLanguageInProperty: purify.Maybe<rdfjs.Literal>;
-      languageInPropertiesLiteralProperty: purify.Maybe<rdfjs.Literal>;
+      languageInPropertiesLanguageInProperty: rdfjs.Literal;
+      languageInPropertiesLiteralProperty: rdfjs.Literal;
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -20931,29 +20907,31 @@ export namespace LanguageInPropertiesClass {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    const languageInPropertiesLanguageInProperty = purify.Maybe.fromNullable(
-      $jsonObject["languageInPropertiesLanguageInProperty"],
-    ).map((item) =>
-      dataFactory.literal(
-        item["@value"],
-        typeof item["@language"] !== "undefined"
-          ? item["@language"]
-          : typeof item["@type"] !== "undefined"
-            ? dataFactory.namedNode(item["@type"])
-            : undefined,
-      ),
+    const languageInPropertiesLanguageInProperty = dataFactory.literal(
+      $jsonObject["languageInPropertiesLanguageInProperty"]["@value"],
+      typeof $jsonObject["languageInPropertiesLanguageInProperty"][
+        "@language"
+      ] !== "undefined"
+        ? $jsonObject["languageInPropertiesLanguageInProperty"]["@language"]
+        : typeof $jsonObject["languageInPropertiesLanguageInProperty"][
+              "@type"
+            ] !== "undefined"
+          ? dataFactory.namedNode(
+              $jsonObject["languageInPropertiesLanguageInProperty"]["@type"],
+            )
+          : undefined,
     );
-    const languageInPropertiesLiteralProperty = purify.Maybe.fromNullable(
-      $jsonObject["languageInPropertiesLiteralProperty"],
-    ).map((item) =>
-      dataFactory.literal(
-        item["@value"],
-        typeof item["@language"] !== "undefined"
-          ? item["@language"]
-          : typeof item["@type"] !== "undefined"
-            ? dataFactory.namedNode(item["@type"])
-            : undefined,
-      ),
+    const languageInPropertiesLiteralProperty = dataFactory.literal(
+      $jsonObject["languageInPropertiesLiteralProperty"]["@value"],
+      typeof $jsonObject["languageInPropertiesLiteralProperty"]["@language"] !==
+        "undefined"
+        ? $jsonObject["languageInPropertiesLiteralProperty"]["@language"]
+        : typeof $jsonObject["languageInPropertiesLiteralProperty"]["@type"] !==
+            "undefined"
+          ? dataFactory.namedNode(
+              $jsonObject["languageInPropertiesLiteralProperty"]["@type"],
+            )
+          : undefined,
     );
     return purify.Either.of({
       $identifier,
@@ -21012,20 +20990,17 @@ export namespace LanguageInPropertiesClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("LanguageInPropertiesClass"),
-      languageInPropertiesLanguageInProperty: zod
-        .object({
-          "@language": zod.string().optional(),
-          "@type": zod.string().optional(),
-          "@value": zod.string(),
-        })
-        .optional(),
+      languageInPropertiesLanguageInProperty: zod.object({
+        "@language": zod.string().optional(),
+        "@type": zod.string().optional(),
+        "@value": zod.string(),
+      }),
       languageInPropertiesLiteralProperty: zod
         .object({
           "@language": zod.string().optional(),
           "@type": zod.string().optional(),
           "@value": zod.string(),
         })
-        .optional()
         .describe("literal property for testing runtime languageIn"),
     }) satisfies zod.ZodType<$Json>;
   }
@@ -21075,15 +21050,15 @@ export namespace LanguageInPropertiesClass {
     Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      languageInPropertiesLanguageInProperty: purify.Maybe<rdfjs.Literal>;
-      languageInPropertiesLiteralProperty: purify.Maybe<rdfjs.Literal>;
+      languageInPropertiesLanguageInProperty: rdfjs.Literal;
+      languageInPropertiesLiteralProperty: rdfjs.Literal;
     }
   > {
     const $identifier: LanguageInPropertiesClass.$Identifier =
       $resource.identifier;
     const _languageInPropertiesLanguageInPropertyEither: purify.Either<
       Error,
-      purify.Maybe<rdfjs.Literal>
+      rdfjs.Literal
     > = $resource
       .values(
         $properties.languageInPropertiesLanguageInProperty["identifier"],
@@ -21103,13 +21078,7 @@ export namespace LanguageInPropertiesClass {
         );
       })
       .head()
-      .chain((value) => value.toLiteral())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .chain((value) => value.toLiteral());
     if (_languageInPropertiesLanguageInPropertyEither.isLeft()) {
       return _languageInPropertiesLanguageInPropertyEither;
     }
@@ -21118,7 +21087,7 @@ export namespace LanguageInPropertiesClass {
       _languageInPropertiesLanguageInPropertyEither.unsafeCoerce();
     const _languageInPropertiesLiteralPropertyEither: purify.Either<
       Error,
-      purify.Maybe<rdfjs.Literal>
+      rdfjs.Literal
     > = $resource
       .values($properties.languageInPropertiesLiteralProperty["identifier"], {
         unique: true,
@@ -21137,13 +21106,7 @@ export namespace LanguageInPropertiesClass {
         );
       })
       .head()
-      .chain((value) => value.toLiteral())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .chain((value) => value.toLiteral());
     if (_languageInPropertiesLiteralPropertyEither.isLeft()) {
       return _languageInPropertiesLiteralPropertyEither;
     }
@@ -21267,105 +21230,103 @@ export namespace LanguageInPropertiesClass {
         : "languageInPropertiesClass");
     const propertyPatterns: readonly sparqljs.Pattern[] = [
       {
-        patterns: [
+        triples: [
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}LanguageInPropertiesLanguageInProperty`,
-                ),
-                predicate:
-                  LanguageInPropertiesClass.$properties
-                    .languageInPropertiesLanguageInProperty["identifier"],
-                subject,
-              },
-            ],
-            type: "bgp",
+            object: dataFactory.variable!(
+              `${variablePrefix}LanguageInPropertiesLanguageInProperty`,
+            ),
+            predicate:
+              LanguageInPropertiesClass.$properties
+                .languageInPropertiesLanguageInProperty["identifier"],
+            subject,
           },
-          ...[parameters?.languageIn ?? ["en", "fr"]]
-            .filter((languagesIn) => languagesIn.length > 0)
-            .map((languagesIn) =>
-              languagesIn.map((languageIn) => ({
-                type: "operation" as const,
-                operator: "=",
-                args: [
-                  {
-                    type: "operation" as const,
-                    operator: "lang",
-                    args: [
-                      dataFactory.variable!(
-                        `${variablePrefix}LanguageInPropertiesLanguageInProperty`,
-                      ),
-                    ],
-                  },
-                  dataFactory.literal(languageIn),
-                ],
-              })),
-            )
-            .map((langEqualsExpressions) => ({
-              type: "filter" as const,
-              expression:
-                langEqualsExpressions.length === 1
-                  ? langEqualsExpressions[0]
-                  : {
-                      type: "operation" as const,
-                      operator: "||",
-                      args: langEqualsExpressions,
-                    },
-            })),
         ],
-        type: "optional",
+        type: "bgp",
       },
+      ...[
+        parameters?.languageIn && parameters?.languageIn.length > 0
+          ? parameters?.languageIn
+          : ["en", "fr"],
+      ]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) =>
+          languagesIn.map((languageIn) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}LanguageInPropertiesLanguageInProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(languageIn),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression:
+            langEqualsExpressions.length === 1
+              ? langEqualsExpressions[0]
+              : {
+                  type: "operation" as const,
+                  operator: "||",
+                  args: langEqualsExpressions,
+                },
+        })),
       {
-        patterns: [
+        triples: [
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}LanguageInPropertiesLiteralProperty`,
-                ),
-                predicate:
-                  LanguageInPropertiesClass.$properties
-                    .languageInPropertiesLiteralProperty["identifier"],
-                subject,
-              },
-            ],
-            type: "bgp",
+            object: dataFactory.variable!(
+              `${variablePrefix}LanguageInPropertiesLiteralProperty`,
+            ),
+            predicate:
+              LanguageInPropertiesClass.$properties
+                .languageInPropertiesLiteralProperty["identifier"],
+            subject,
           },
-          ...[parameters?.languageIn ?? []]
-            .filter((languagesIn) => languagesIn.length > 0)
-            .map((languagesIn) =>
-              languagesIn.map((languageIn) => ({
-                type: "operation" as const,
-                operator: "=",
-                args: [
-                  {
-                    type: "operation" as const,
-                    operator: "lang",
-                    args: [
-                      dataFactory.variable!(
-                        `${variablePrefix}LanguageInPropertiesLiteralProperty`,
-                      ),
-                    ],
-                  },
-                  dataFactory.literal(languageIn),
-                ],
-              })),
-            )
-            .map((langEqualsExpressions) => ({
-              type: "filter" as const,
-              expression:
-                langEqualsExpressions.length === 1
-                  ? langEqualsExpressions[0]
-                  : {
-                      type: "operation" as const,
-                      operator: "||",
-                      args: langEqualsExpressions,
-                    },
-            })),
         ],
-        type: "optional",
+        type: "bgp",
       },
+      ...[
+        parameters?.languageIn && parameters?.languageIn.length > 0
+          ? parameters?.languageIn
+          : [],
+      ]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) =>
+          languagesIn.map((languageIn) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}LanguageInPropertiesLiteralProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(languageIn),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression:
+            langEqualsExpressions.length === 1
+              ? langEqualsExpressions[0]
+              : {
+                  type: "operation" as const,
+                  operator: "||",
+                  args: langEqualsExpressions,
+                },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
