@@ -166,7 +166,8 @@ export class OptionType<ItemTypeT extends Type = Type> extends Type {
         return [`{ patterns: [${patterns.join(", ")}], type: "optional" }`];
       }
       case "subject": {
-        return this.itemType.sparqlWherePatterns(parameters);
+        throw new Error("should never be called");
+        // return this.itemType.sparqlWherePatterns(parameters);
       }
     }
   }
