@@ -74,10 +74,7 @@ describe("sparql", () => {
 
     const sparqlConstructQueryString =
       kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString();
-    expect(sparqlConstructQueryString.indexOf("FILTER")).toStrictEqual(-1);
-    const quads = dataset.query(
-      kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString(),
-    ) as oxigraph.Quad[];
+    const quads = dataset.query(sparqlConstructQueryString) as oxigraph.Quad[];
     expect(quads).toHaveLength(2);
   });
 
@@ -105,10 +102,44 @@ describe("sparql", () => {
       kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString({
         languageIn: ["en"],
       });
-    expect(sparqlConstructQueryString.indexOf("FILTER")).not.toStrictEqual(-1);
-    const quads = dataset.query(
-      kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString(),
-    ) as oxigraph.Quad[];
+    const quads = dataset.query(sparqlConstructQueryString) as oxigraph.Quad[];
+    expect(quads).toHaveLength(1);
+    expect((quads[0].object as oxigraph.Literal).value).toStrictEqual(
+      "envalue",
+    );
+  });
+
+  it("sh:languageIn", ({ expect }) => {
+    const dataset = new oxigraph.Store();
+    const identifier = dataFactory.blankNode();
+    dataset.add(
+      dataFactory.quad(
+        identifier,
+        kitchenSink.LanguageInPropertiesClass.$properties
+          .languageInPropertiesLanguageInProperty.identifier,
+        dataFactory.literal("arvalue", "ar"),
+      ),
+    );
+    // dataset.add(
+    //   dataFactory.quad(
+    //     identifier,
+    //     kitchenSink.LanguageInPropertiesClass.$properties
+    //       .languageInPropertiesLanguageInProperty.identifier,
+    //     dataFactory.literal("frvalue", "fr"),
+    //   ),
+    // );
+    dataset.add(
+      dataFactory.quad(
+        identifier,
+        kitchenSink.LanguageInPropertiesClass.$properties
+          .languageInPropertiesLanguageInProperty.identifier,
+        dataFactory.literal("envalue", "en"),
+      ),
+    );
+
+    const sparqlConstructQueryString =
+      kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString();
+    const quads = dataset.query(sparqlConstructQueryString) as oxigraph.Quad[];
     expect(quads).toHaveLength(1);
     expect((quads[0].object as oxigraph.Literal).value).toStrictEqual(
       "envalue",

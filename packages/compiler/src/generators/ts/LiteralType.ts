@@ -81,22 +81,29 @@ export class LiteralType extends TermType<Literal, Literal> {
       `...[(${variables.languageIn} ?? ${JSON.stringify(this.languageIn)})]
         .filter(languagesIn => languagesIn.length > 0)
         .map(languagesIn =>
+          languagesIn.map(languageIn => 
+            ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                { type: "operation" as const, operator: "lang", args: [${variables.object}] },
+                dataFactory.literal(languageIn)
+              ]
+            })
+          )
+        )
+        .map(langEqualsExpressions => 
           ({
             type: "filter" as const,
-            expression: {
-              type: "operation" as const,
-              operator: "||",
-              args: languagesIn.map(
-                languageIn => ({
-                  type: "operation" as const,
-                  operator: "=",
-                  args: [
-                    { type: "functionCall" as const, function: "lang", args: [${variables.object}] },
-                    dataFactory.literal(languageIn)
-                  ]
-                })
-              )
-            },
+            expression:
+              langEqualsExpressions.length === 1
+                ? langEqualsExpressions[0]
+                :
+                  {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: langEqualsExpressions
+                  },
           })
         )`,
     );
