@@ -558,7 +558,7 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
           {
             hasQuestionToken: true,
             name: "parameters",
-            type: '{ ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }',
+            type: '{ ignoreRdfType?: boolean; languageIn?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }',
           },
         ],
         returnType: "readonly sparqljs.Pattern[]",
@@ -764,6 +764,7 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
         return [
           `...${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
             {
+              languageIn: parameters.variables.languageIn,
               subject: parameters.variables.subject,
               variablePrefix: parameters.variables.variablePrefix,
             },

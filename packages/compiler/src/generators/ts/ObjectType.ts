@@ -458,6 +458,7 @@ export class ObjectType extends DeclaredType {
           `...${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
             {
               ignoreRdfType: parameters.allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
+              languageIn: parameters.variables.languageIn,
               subject: parameters.variables.subject,
               variablePrefix: parameters.variables.variablePrefix,
             },

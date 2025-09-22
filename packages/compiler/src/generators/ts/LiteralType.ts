@@ -62,6 +62,43 @@ export class LiteralType extends TermType<Literal, Literal> {
     return `${variables.resourceValue}.toLiteral()`;
   }
 
+  override sparqlWherePatterns(
+    parameters: Parameters<Type["sparqlWherePatterns"]>[0] & {
+      ignoreLanguageIn?: boolean;
+    },
+  ): readonly string[] {
+    const { context, ignoreLanguageIn, variables } = parameters;
+
+    const superPatterns = super.sparqlWherePatterns(parameters);
+    if (ignoreLanguageIn || context === "subject") {
+      return superPatterns;
+    }
+
+    return superPatterns.concat(
+      `...[(${variables.languageIn} ?? ${JSON.stringify(this.languageIn)})]
+        .filter(languagesIn => languagesIn.length > 0)
+        .map(languagesIn =>
+          ({
+            type: "filter" as const,
+            expression: {
+              type: "operation" as const,
+              operator: "||",
+              args: languagesIn.map(
+                languageIn => ({
+                  type: "operation" as const,
+                  operator: "=",
+                  args: [
+                    { type: "functionCall" as const, function: "lang", args: [${variables.object}] },
+                    dataFactory.literal(languageIn)
+                  ]
+                })
+              )
+            },
+          })
+        )`,
+    );
+  }
+
   override toJsonExpression({
     variables,
   }: Parameters<TermType<Literal, Literal>["toJsonExpression"]>[0]): string {
