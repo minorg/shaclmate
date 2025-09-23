@@ -338,7 +338,7 @@ ${this.memberTypes
       if (this._discriminator.kind === "syntheticProperty") {
         typeExpression = `${typeExpression}.map(value => ({ ${this._discriminator.name}: "${memberType.discriminatorValues[0]}" as const, value }) as (${this.name}))`;
       }
-      typeExpression = `(${typeExpression} as purify.Either<Error, ${this.name}>)`;
+      typeExpression = `(${typeExpression} as purify.Either<Error, rdfjsResource.Resource.Values<${this.name}>>)`;
       return expression.length > 0
         ? `${expression}.altLazy(() => ${typeExpression})`
         : typeExpression;
