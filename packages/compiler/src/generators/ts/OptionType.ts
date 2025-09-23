@@ -93,7 +93,7 @@ export class OptionType<ItemTypeT extends Type = Type> extends Type {
   override fromRdfExpression(
     parameters: Parameters<Type["fromRdfExpression"]>[0],
   ): string {
-    return `${this.itemType.fromRdfExpression(parameters)}.map(value => purify.Maybe.of(value)).chainLeft(error => error instanceof rdfjsResource.Resource.MissingValueError ? purify.Right(purify.Maybe.empty()) : purify.Left(error))`;
+    return `${this.itemType.fromRdfExpression(parameters)}.map(values => values.head().toMaybe())`;
   }
 
   override graphqlResolveExpression(

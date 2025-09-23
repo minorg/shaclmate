@@ -71,10 +71,10 @@ export class DateTimeType extends PrimitiveType<Date> {
     return `${variables.zod}.string().${this.zodDatatype}()`;
   }
 
-  override propertyFromRdfResourceValueExpression({
+  override fromRdfResourceValueExpression({
     variables,
   }: Parameters<
-    PrimitiveType<number>["propertyFromRdfResourceValueExpression"]
+    PrimitiveType<number>["fromRdfResourceValueExpression"]
   >[0]): string {
     let expression = `${variables.resourceValue}.toDate()`;
     if (this.primitiveIn.length > 0) {

@@ -145,7 +145,7 @@ export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
   }): readonly string[];
 
   /**
-   * Statements to deserialize RDF for this property to a typed value of the property.
+   * Statements to deserialize this property on the given rdfjsResource.Resource to a typed value of the property.
    */
   abstract fromRdfStatements(parameters: {
     variables: {

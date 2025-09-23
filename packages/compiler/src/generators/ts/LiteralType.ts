@@ -35,6 +35,57 @@ export class LiteralType extends TermType<Literal, Literal> {
     return `dataFactory.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? dataFactory.namedNode(${variables.value}["@type"]) : undefined))`;
   }
 
+  protected override fromRdfExpressionChain({
+    variables,
+  }: Parameters<Type["fromRdfExpression"]>[0]): {
+    defaultValue?: string;
+    hasValues?: string;
+    languageIn?: string;
+    valueTo?: string;
+  } {
+    return {
+      ...super.fromRdfExpressionChain({ variables }),
+      languageIn: `${variables.resourceValues}.chain(values => {
+      const literalValuesEither = values.chainMap(value => value.toLiteral());
+      if (literalValuesEither.isLeft()) {
+        return literalValuesEither;
+      }
+      const literalValues = literalValuesEither.unsafeCoerce();
+
+      const nonUniqueLanguageIn = ${variables.languageIn} ?? ${JSON.stringify(this.languageIn)};
+      if (nonUniqueLanguageIn.length === 0) {
+        return literalValues;
+      }
+
+      let uniqueLanguageIn: string[];
+      if (nonUniqueLanguageIn.length === 1) {
+        uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+      } else {
+        uniqueLanguageIn = [];
+        for (const languageIn of nonUniqueLanguageIn) {
+          if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+            uniqueLanguageIn.push(languageIn);
+          }
+        }
+      }
+
+      // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+      // Within a languageIn the literals may be in any order.
+      let filteredLiteralValues: rdfjsResource.Resource.Values<rdfjs.Literal> | undefined;
+      for (const languageIn of uniqueLanguageIn) {
+        if (!filteredLiteralValues) {
+          filteredLiteralValues = literalValues.filter(value => value.language === languageIn);
+        } else {
+          filteredLiteralValues = filteredLiteralValues.concat(literalValues.filter(value => value.language === languageIn));
+        }
+      }
+
+      return purify.Either.of(filteredLiteralValues);
+    })`,
+      valueTo: undefined,
+    };
+  }
+
   override hashStatements({
     depth,
     variables,
@@ -53,14 +104,6 @@ export class LiteralType extends TermType<Literal, Literal> {
     TermType<Literal, Literal>["jsonZodSchema"]
   > {
     return `${variables.zod}.object({ "@language": ${variables.zod}.string().optional(), "@type": ${variables.zod}.string().optional(), "@value": ${variables.zod}.string() })`;
-  }
-
-  override propertyFromRdfResourceValueExpression({
-    variables,
-  }: Parameters<
-    TermType<Literal, Literal>["propertyFromRdfResourceValueExpression"]
-  >[0]): string {
-    return `${variables.resourceValue}.toLiteral()`;
   }
 
   override sparqlWherePatterns(
@@ -113,23 +156,5 @@ export class LiteralType extends TermType<Literal, Literal> {
     variables,
   }: Parameters<TermType<Literal, Literal>["toJsonExpression"]>[0]): string {
     return `{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value }`;
-  }
-
-  protected override propertyFilterRdfResourceValuesExpression({
-    variables,
-  }: Parameters<
-    TermType<Literal, Literal>["propertyFilterRdfResourceValuesExpression"]
-  >[0]): string {
-    return `${variables.resourceValues}.filter(_value => {
-  const _languageInOrDefault = ${variables.languageIn} ?? ${JSON.stringify(this.languageIn)};
-  if (_languageInOrDefault.length === 0) {
-    return true;
-  }
-  const _valueLiteral = _value.toLiteral().toMaybe().extract();
-  if (typeof _valueLiteral === "undefined") {
-    return false;
-  }
-  return _languageInOrDefault.some(_languageIn => _languageIn === _valueLiteral.language);
-})`;
   }
 }

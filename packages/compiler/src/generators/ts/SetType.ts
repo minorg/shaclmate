@@ -115,17 +115,15 @@ export class SetType<ItemTypeT extends Type = Type> extends Type {
       : `${expression}.map(item => (${itemFromJsonExpression}))`;
   }
 
-  override fromRdfExpression({
-    variables,
-  }: Parameters<Type["fromRdfExpression"]>[0]): string {
-    const itemFromRdfExpression = this.itemType.fromRdfExpression({
-      variables: { ...variables, resourceValues: "item.toValues()" },
-    });
-    const arrayFromRdfExpression = `purify.Either.sequence(${variables.resourceValues}.map(item => ${itemFromRdfExpression}))`;
+  override fromRdfExpression(
+    parameters: Parameters<Type["fromRdfExpression"]>[0],
+  ): string {
+    const { variables } = parameters;
+    const itemFromRdfExpression = this.itemType.fromRdfExpression(parameters);
     if (this._mutable || this.minCount === 0) {
-      return arrayFromRdfExpression;
+      return itemFromRdfExpression;
     }
-    return `${arrayFromRdfExpression}.chain(array => purify.NonEmptyList.fromArray(array).toEither(new Error(\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} is an empty set\`)))`;
+    return `${itemFromRdfExpression}.chain(values => purify.NonEmptyList.fromArray(values.toArray()).toEither(new Error(\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} is an empty set\`)))`;
   }
 
   override graphqlResolveExpression({

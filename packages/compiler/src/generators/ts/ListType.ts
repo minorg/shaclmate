@@ -101,12 +101,11 @@ export class ListType extends Type {
     variables,
   }: Parameters<Type["fromRdfExpression"]>[0]): string {
     const chain: string[] = [variables.resourceValues];
-    chain.push("head()");
-    chain.push("chain(value => value.toList())");
+    chain.push("map(values => values.chainMap(value => value.toList())");
     chain.push(
-      `chain(values => purify.Either.sequence(values.map(value => ${this.itemType.fromRdfExpression({ variables: { ...variables, resourceValues: "value.toValues()" } })})))`,
+      `map(values => values.chainMap(value => ${this.itemType.fromRdfExpression({ variables: { ...variables, resourceValues: "value.toValues()" } })}.head()))`,
     );
-    return chain.join(".");
+    return `${variables.resourceValues}.${chain.join(".")}`;
   }
 
   override graphqlResolveExpression({

@@ -48,10 +48,10 @@ export abstract class NumberType extends PrimitiveType<number> {
     }
   }
 
-  override propertyFromRdfResourceValueExpression({
+  protected override fromRdfResourceValueExpression({
     variables,
   }: Parameters<
-    PrimitiveType<number>["propertyFromRdfResourceValueExpression"]
+    PrimitiveType<number>["fromRdfResourceValueExpression"]
   >[0]): string {
     let expression = `${variables.resourceValue}.toNumber()`;
     if (this.primitiveIn.length > 0) {
