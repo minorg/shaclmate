@@ -135,18 +135,27 @@ export function transformPropertyShapeToAstObjectTypeProperty(
             identifierNodeKinds: identifierNodeKinds(type.itemType),
             tsFeatures: type.itemType.tsFeatures,
           });
-        if (type.kind === "OptionType") {
-          stubType = Maybe.of({
-            kind: "OptionType",
-            itemType: stubItemType,
-          });
-        } else {
-          stubType = Maybe.of({
-            kind: "SetType",
-            itemType: stubItemType,
-            minCount: 0,
-            mutable: Maybe.empty(),
-          });
+        switch (type.kind) {
+          case "OptionType":
+            stubType = Maybe.of({
+              kind: "OptionType",
+              itemType: stubItemType,
+            });
+            break;
+          case "PlainType":
+            stubType = Maybe.of({
+              kind: "PlainType",
+              itemType: stubItemType,
+            });
+            break;
+          case "SetType":
+            stubType = Maybe.of({
+              kind: "SetType",
+              itemType: stubItemType,
+              minCount: 0,
+              mutable: Maybe.empty(),
+            });
+            break;
         }
         break;
       }

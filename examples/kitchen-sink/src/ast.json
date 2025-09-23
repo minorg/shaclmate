@@ -24,6 +24,7 @@
               "value": "http://example.com/abstractBaseClassForExternClassProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/abstractBaseClassForExternClassProperty",
           "type": {
             "itemType": {
@@ -35,7 +36,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -63,6 +65,7 @@
               "value": "http://example.com/abstractBaseClassWithPropertiesProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/abstractBaseClassWithPropertiesProperty",
           "type": {
             "itemType": {
@@ -74,7 +77,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -114,6 +118,7 @@
               "value": "http://example.com/baseInterfaceWithPropertiesProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/baseInterfaceWithPropertiesProperty",
           "type": {
             "itemType": {
@@ -125,7 +130,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -189,6 +195,7 @@
               "value": "http://example.com/classUnionMember1Property"
             }
           },
+          "order": 0,
           "path": "http://example.com/classUnionMember1Property",
           "type": {
             "itemType": {
@@ -200,7 +207,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -228,6 +236,7 @@
               "value": "http://example.com/classUnionMember2Property"
             }
           },
+          "order": 0,
           "path": "http://example.com/classUnionMember2Property",
           "type": {
             "itemType": {
@@ -239,7 +248,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -267,6 +277,7 @@
               "value": "http://example.com/concreteChildClassProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/concreteChildClassProperty",
           "type": {
             "itemType": {
@@ -278,7 +289,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -306,6 +318,7 @@
               "value": "http://example.com/concreteParentClassProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/concreteParentClassProperty",
           "type": {
             "itemType": {
@@ -317,7 +330,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -345,6 +359,7 @@
               "value": "http://example.com/concreteChildInterfaceProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/concreteChildInterfaceProperty",
           "type": {
             "itemType": {
@@ -356,7 +371,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -384,6 +400,7 @@
               "value": "http://example.com/concreteParentInterfaceProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/concreteParentInterfaceProperty",
           "type": {
             "itemType": {
@@ -395,7 +412,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -423,6 +441,7 @@
               "value": "http://example.com/stringDefaultValueProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/stringDefaultValueProperty",
           "type": {
             "itemType": {
@@ -430,7 +449,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -445,6 +465,7 @@
               "value": "http://example.com/trueBooleanDefaultValueProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/trueBooleanDefaultValueProperty",
           "type": {
             "itemType": {
@@ -452,7 +473,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -467,6 +489,7 @@
               "value": "http://example.com/falseBooleanDefaultValueProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/falseBooleanDefaultValueProperty",
           "type": {
             "itemType": {
@@ -474,7 +497,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -489,6 +513,7 @@
               "value": "http://example.com/dateDefaultValueProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/dateDefaultValueProperty",
           "type": {
             "itemType": {
@@ -496,7 +521,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -511,6 +537,7 @@
               "value": "http://example.com/dateTimeDefaultValueProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/dateTimeDefaultValueProperty",
           "type": {
             "itemType": {
@@ -518,7 +545,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -533,6 +561,7 @@
               "value": "http://example.com/numberDefaultValueProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/numberDefaultValueProperty",
           "type": {
             "itemType": {
@@ -540,7 +569,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -568,6 +598,7 @@
               "value": "http://example.com/directRecursiveProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/directRecursiveProperty",
           "recursive": true,
           "type": {
@@ -588,7 +619,8 @@
               "identifierMintingStrategy": "blankNode"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -616,6 +648,7 @@
               "value": "http://example.com/explicitFromToRdfTypesProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/explicitFromToRdfTypesProperty",
           "type": {
             "itemType": {
@@ -627,7 +660,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -655,6 +689,7 @@
               "value": "http://example.com/explicitRdfTypeProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/explicitRdfTypeProperty",
           "type": {
             "itemType": {
@@ -666,7 +701,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -706,6 +742,7 @@
               "value": "http://example.com/externClassProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/externClassProperty",
           "type": {
             "itemType": {
@@ -725,7 +762,8 @@
               "identifierMintingStrategy": "blankNode"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -753,6 +791,7 @@
               "value": "http://example.com/hasIriValueProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/hasIriValueProperty",
           "type": {
             "itemType": {
@@ -768,7 +807,8 @@
               ]
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -783,6 +823,7 @@
               "value": "http://example.com/hasLiteralValueProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/hasLiteralValueProperty",
           "type": {
             "itemType": {
@@ -797,7 +838,8 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -825,6 +867,7 @@
               "value": "http://example.com/inIdentifierProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/inIdentifierProperty",
           "type": {
             "itemType": {
@@ -836,7 +879,8 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -864,6 +908,7 @@
               "value": "http://example.com/inBooleansProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/inBooleansProperty",
           "type": {
             "itemType": {
@@ -871,7 +916,8 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -886,6 +932,7 @@
               "value": "http://example.com/inDateTimesProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/inDateTimesProperty",
           "type": {
             "itemType": {
@@ -893,7 +940,8 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -908,6 +956,7 @@
               "value": "http://example.com/inIrisProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/inIrisProperty",
           "type": {
             "itemType": {
@@ -918,7 +967,8 @@
               ]
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -933,6 +983,7 @@
               "value": "http://example.com/inNumbersProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/inNumbersProperty",
           "type": {
             "itemType": {
@@ -940,7 +991,8 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -955,6 +1007,7 @@
               "value": "http://example.com/inStringsProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/inStringsProperty",
           "type": {
             "itemType": {
@@ -962,7 +1015,8 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -990,6 +1044,7 @@
               "value": "http://example.com/indirectRecursiveHelperProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/indirectRecursiveHelperProperty",
           "recursive": true,
           "type": {
@@ -1010,7 +1065,8 @@
               "identifierMintingStrategy": "blankNode"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1038,6 +1094,7 @@
               "value": "http://example.com/indirectRecursiveProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/indirectRecursiveProperty",
           "type": {
             "itemType": {
@@ -1057,7 +1114,8 @@
               "identifierMintingStrategy": "blankNode"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1085,6 +1143,7 @@
               "value": "http://example.com/interfaceProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/interfaceProperty",
           "type": {
             "itemType": {
@@ -1096,7 +1155,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1124,6 +1184,7 @@
               "value": "http://example.com/interfaceUnionMember1Property"
             }
           },
+          "order": 0,
           "path": "http://example.com/interfaceUnionMember1Property",
           "type": {
             "itemType": {
@@ -1135,7 +1196,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1163,6 +1225,7 @@
               "value": "http://example.com/interfaceUnionMember2aProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/interfaceUnionMember2aProperty",
           "type": {
             "itemType": {
@@ -1174,7 +1237,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1202,6 +1266,7 @@
               "value": "http://example.com/interfaceUnionMember2bProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/interfaceUnionMember2bProperty",
           "type": {
             "itemType": {
@@ -1213,7 +1278,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1253,6 +1319,7 @@
               "value": "http://example.com/languageInPropertiesLanguageInProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/languageInPropertiesLanguageInProperty",
           "type": {
             "itemType": {
@@ -1260,9 +1327,11 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         },
         {
+          "comment": "literal property for testing runtime languageIn",
           "name": {
             "identifier": {
               "termType": "BlankNode",
@@ -1275,6 +1344,7 @@
               "value": "http://example.com/languageInPropertiesLiteralProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/languageInPropertiesLiteralProperty",
           "type": {
             "itemType": {
@@ -1282,7 +1352,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1310,6 +1381,7 @@
               "value": "http://example.com/lazilyResolvedStringProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
             "itemType": {
@@ -1321,7 +1393,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1349,6 +1422,7 @@
               "value": "http://example.com/lazilyResolvedStringProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
             "itemType": {
@@ -1360,7 +1434,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1388,6 +1463,7 @@
               "value": "http://example.com/lazilyResolvedStringProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
             "itemType": {
@@ -1399,7 +1475,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1427,6 +1504,7 @@
               "value": "http://example.com/lazilyResolvedStringProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
             "itemType": {
@@ -1438,7 +1516,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1466,6 +1545,7 @@
               "value": "http://example.com/lazilyResolvedStringProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
             "itemType": {
@@ -1477,7 +1557,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1505,6 +1586,7 @@
               "value": "http://example.com/lazilyResolvedStringProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
             "itemType": {
@@ -1516,7 +1598,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1544,6 +1627,7 @@
               "value": "http://example.com/lazilyResolvedStringProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
             "itemType": {
@@ -1555,7 +1639,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1583,6 +1668,7 @@
               "value": "http://example.com/lazilyResolvedStringProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
             "itemType": {
@@ -1594,7 +1680,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1622,7 +1709,24 @@
               "value": "http://example.com/optionalLazyToResolvedClassProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/optionalLazyToResolvedClassProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "termType": "BlankNode",
+                  "value": "n3-293"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ]
+            },
+            "kind": "OptionType"
+          },
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -1651,7 +1755,8 @@
               ]
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -1666,7 +1771,24 @@
               "value": "http://example.com/setLazyToResolvedClassProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/setLazyToResolvedClassProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "termType": "BlankNode",
+                  "value": "n3-294"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ]
+            },
+            "kind": "SetType"
+          },
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -1695,7 +1817,8 @@
               ]
             },
             "kind": "SetType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -1710,7 +1833,24 @@
               "value": "http://example.com/requiredLazyToResolvedClassProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/requiredLazyToResolvedClassProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "termType": "BlankNode",
+                  "value": "n3-295"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ]
+            },
+            "kind": "PlainType"
+          },
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -1739,7 +1879,8 @@
               ]
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -1754,7 +1895,23 @@
               "value": "http://example.com/optionalLazyToResolvedIriClassProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/optionalLazyToResolvedIriClassProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "termType": "BlankNode",
+                  "value": "n3-296"
+                }
+              },
+              "identifierNodeKinds": [
+                "NamedNode"
+              ]
+            },
+            "kind": "OptionType"
+          },
           "type": {
             "itemType": {
               "kind": "ObjectType",
@@ -1771,7 +1928,8 @@
               ]
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -1786,7 +1944,24 @@
               "value": "http://example.com/optionalLazyToResolvedClassUnionProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/optionalLazyToResolvedClassUnionProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "termType": "BlankNode",
+                  "value": "n3-297"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ]
+            },
+            "kind": "OptionType"
+          },
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -1854,7 +2029,8 @@
               ]
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -1869,7 +2045,27 @@
               "value": "http://example.com/optionalStubClassToResolvedClassProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/optionalStubClassToResolvedClassProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":StubClass",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "StubClass",
+                  "value": "http://example.com/StubClass"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode"
+            },
+            "kind": "OptionType"
+          },
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -1898,7 +2094,8 @@
               ]
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -1913,7 +2110,27 @@
               "value": "http://example.com/setStubClassToResolvedClassProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/setStubClassToResolvedClassProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":StubClass",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "StubClass",
+                  "value": "http://example.com/StubClass"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode"
+            },
+            "kind": "SetType"
+          },
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -1942,7 +2159,8 @@
               ]
             },
             "kind": "SetType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -1957,7 +2175,27 @@
               "value": "http://example.com/requiredStubClassToResolvedClassProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/requiredStubClassToResolvedClassProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":StubClass",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "StubClass",
+                  "value": "http://example.com/StubClass"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode"
+            },
+            "kind": "PlainType"
+          },
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -1986,7 +2224,8 @@
               ]
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -2001,7 +2240,27 @@
               "value": "http://example.com/optionalStubClassToResolvedClassUnionProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/optionalStubClassToResolvedClassUnionProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":StubClass",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "StubClass",
+                  "value": "http://example.com/StubClass"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode"
+            },
+            "kind": "OptionType"
+          },
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -2069,7 +2328,8 @@
               ]
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -2084,7 +2344,76 @@
               "value": "http://example.com/optionalStubClassUnionToResolvedClassUnionProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/optionalStubClassUnionToResolvedClassUnionProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectUnionType",
+              "name": {
+                "identifier": {
+                  "curie": ":StubClassUnion",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "StubClassUnion",
+                  "value": "http://example.com/StubClassUnion"
+                }
+              },
+              "types": [
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/StubClassUnionMember1"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":StubClassUnionMember1",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "StubClassUnionMember1",
+                      "value": "http://example.com/StubClassUnionMember1"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/StubClassUnionMember1"
+                    }
+                  ]
+                },
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/StubClassUnionMember2"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":StubClassUnionMember2",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "StubClassUnionMember2",
+                      "value": "http://example.com/StubClassUnionMember2"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/StubClassUnionMember2"
+                    }
+                  ]
+                }
+              ]
+            },
+            "kind": "OptionType"
+          },
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -2152,7 +2481,8 @@
               ]
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -2180,6 +2510,7 @@
               "value": "http://example.com/lazilyResolvedStringProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
             "itemType": {
@@ -2191,7 +2522,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -2219,7 +2551,24 @@
               "value": "http://example.com/optionalLazyToResolvedInterfaceProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/optionalLazyToResolvedInterfaceProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "termType": "BlankNode",
+                  "value": "n3-298"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ]
+            },
+            "kind": "OptionType"
+          },
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -2248,7 +2597,8 @@
               ]
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -2263,7 +2613,24 @@
               "value": "http://example.com/setLazyToResolvedInterfaceProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/setLazyToResolvedInterfaceProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "termType": "BlankNode",
+                  "value": "n3-299"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ]
+            },
+            "kind": "SetType"
+          },
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -2292,7 +2659,8 @@
               ]
             },
             "kind": "SetType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -2307,7 +2675,24 @@
               "value": "http://example.com/requiredLazyToResolvedInterfaceProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/requiredLazyToResolvedInterfaceProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "termType": "BlankNode",
+                  "value": "n3-300"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ]
+            },
+            "kind": "PlainType"
+          },
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -2336,7 +2721,8 @@
               ]
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -2351,7 +2737,23 @@
               "value": "http://example.com/optionalLazyToResolvedIriInterfaceProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/optionalLazyToResolvedIriInterfaceProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "termType": "BlankNode",
+                  "value": "n3-301"
+                }
+              },
+              "identifierNodeKinds": [
+                "NamedNode"
+              ]
+            },
+            "kind": "OptionType"
+          },
           "type": {
             "itemType": {
               "kind": "ObjectType",
@@ -2368,7 +2770,8 @@
               ]
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -2383,7 +2786,24 @@
               "value": "http://example.com/optionalLazyToResolvedInterfaceUnionProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/optionalLazyToResolvedInterfaceUnionProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "termType": "BlankNode",
+                  "value": "n3-302"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ]
+            },
+            "kind": "OptionType"
+          },
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -2451,7 +2871,8 @@
               ]
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -2466,7 +2887,27 @@
               "value": "http://example.com/optionalStubInterfaceToResolvedInterfaceProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/optionalStubInterfaceToResolvedInterfaceProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":StubInterface",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "StubInterface",
+                  "value": "http://example.com/StubInterface"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode"
+            },
+            "kind": "OptionType"
+          },
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -2495,7 +2936,8 @@
               ]
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -2510,7 +2952,27 @@
               "value": "http://example.com/setStubInterfaceToResolvedInterfaceProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/setStubInterfaceToResolvedInterfaceProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":StubInterface",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "StubInterface",
+                  "value": "http://example.com/StubInterface"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode"
+            },
+            "kind": "SetType"
+          },
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -2539,7 +3001,8 @@
               ]
             },
             "kind": "SetType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -2554,7 +3017,27 @@
               "value": "http://example.com/requiredStubInterfaceToResolvedInterfaceProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/requiredStubInterfaceToResolvedInterfaceProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":StubInterface",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "StubInterface",
+                  "value": "http://example.com/StubInterface"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode"
+            },
+            "kind": "PlainType"
+          },
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -2583,7 +3066,8 @@
               ]
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -2598,7 +3082,27 @@
               "value": "http://example.com/optionalStubInterfaceToResolvedInterfaceUnionProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/optionalStubInterfaceToResolvedInterfaceUnionProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":StubInterface",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "StubInterface",
+                  "value": "http://example.com/StubInterface"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode"
+            },
+            "kind": "OptionType"
+          },
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -2666,7 +3170,8 @@
               ]
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -2681,7 +3186,76 @@
               "value": "http://example.com/optionalStubInterfaceUnionToResolvedInterfaceUnionProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/optionalStubInterfaceUnionToResolvedInterfaceUnionProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectUnionType",
+              "name": {
+                "identifier": {
+                  "curie": ":StubInterfaceUnion",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "StubInterfaceUnion",
+                  "value": "http://example.com/StubInterfaceUnion"
+                }
+              },
+              "types": [
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/StubInterfaceUnionMember1"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":StubInterfaceUnionMember1",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "StubInterfaceUnionMember1",
+                      "value": "http://example.com/StubInterfaceUnionMember1"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/StubInterfaceUnionMember1"
+                    }
+                  ]
+                },
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/StubInterfaceUnionMember2"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":StubInterfaceUnionMember2",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "StubInterfaceUnionMember2",
+                      "value": "http://example.com/StubInterfaceUnionMember2"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/StubInterfaceUnionMember2"
+                    }
+                  ]
+                }
+              ]
+            },
+            "kind": "OptionType"
+          },
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -2749,7 +3323,8 @@
               ]
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -2777,6 +3352,7 @@
               "value": "http://example.com/lazilyResolvedStringProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
             "itemType": {
@@ -2788,7 +3364,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -2816,13 +3393,15 @@
               "value": "http://example.com/objectListProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/objectListProperty",
           "type": {
             "itemType": {
               "kind": "TermType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -2837,13 +3416,15 @@
               "value": "http://example.com/stringListProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/stringListProperty",
           "type": {
             "itemType": {
               "kind": "TermType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -2859,6 +3440,8 @@
       },
       "properties": [
         {
+          "description": "String-valued property that can be re-assigned",
+          "mutable": true,
           "name": {
             "identifier": {
               "termType": "BlankNode",
@@ -2871,7 +3454,7 @@
               "value": "http://example.com/mutableStringProperty"
             }
           },
-          "mutable": true,
+          "order": 0,
           "path": "http://example.com/mutableStringProperty",
           "type": {
             "itemType": {
@@ -2883,9 +3466,11 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
+          "description": "List-valued property that can't be reassigned but whose value can be mutated",
           "name": {
             "identifier": {
               "termType": "BlankNode",
@@ -2898,15 +3483,19 @@
               "value": "http://example.com/mutableListProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/mutableListProperty",
           "type": {
             "itemType": {
               "kind": "TermType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
+          "description": "Set-valued property that can't be reassigned but whose value can be mutated",
+          "mutable": true,
           "name": {
             "identifier": {
               "termType": "BlankNode",
@@ -2919,7 +3508,7 @@
               "value": "http://example.com/mutableSetProperty"
             }
           },
-          "mutable": true,
+          "order": 0,
           "path": "http://example.com/mutableSetProperty",
           "type": {
             "itemType": {
@@ -2931,7 +3520,8 @@
               "kind": "LiteralType"
             },
             "kind": "SetType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -2959,6 +3549,7 @@
               "value": "http://example.com/nonClassProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/nonClassProperty",
           "type": {
             "itemType": {
@@ -2970,7 +3561,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -2998,6 +3590,7 @@
               "value": "http://example.com/orderedPropertyC"
             }
           },
+          "order": 1,
           "path": "http://example.com/orderedPropertyC",
           "type": {
             "itemType": {
@@ -3009,7 +3602,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -3024,6 +3618,7 @@
               "value": "http://example.com/orderedPropertyB"
             }
           },
+          "order": 2,
           "path": "http://example.com/orderedPropertyB",
           "type": {
             "itemType": {
@@ -3035,7 +3630,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -3050,6 +3646,7 @@
               "value": "http://example.com/orderedPropertyA"
             }
           },
+          "order": 3,
           "path": "http://example.com/orderedPropertyA",
           "type": {
             "itemType": {
@@ -3061,7 +3658,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -3077,6 +3675,7 @@
       },
       "properties": [
         {
+          "comment": "Required: maxCount=minCount=1",
           "name": {
             "identifier": {
               "termType": "BlankNode",
@@ -3089,6 +3688,7 @@
               "value": "http://example.com/requiredStringProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/requiredStringProperty",
           "type": {
             "itemType": {
@@ -3100,9 +3700,11 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         },
         {
+          "comment": "Option: maxCount=1 minCount=0",
           "name": {
             "identifier": {
               "termType": "BlankNode",
@@ -3115,6 +3717,7 @@
               "value": "http://example.com/optionalStringProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/optionalStringProperty",
           "type": {
             "itemType": {
@@ -3126,9 +3729,11 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
+          "comment": "Set: minCount implicitly=0, no maxCount or maxCount > 1",
           "name": {
             "identifier": {
               "termType": "BlankNode",
@@ -3141,6 +3746,7 @@
               "value": "http://example.com/emptyStringSetProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/emptyStringSetProperty",
           "type": {
             "itemType": {
@@ -3152,9 +3758,11 @@
               "kind": "LiteralType"
             },
             "kind": "SetType"
-          }
+          },
+          "visibility": "public"
         },
         {
+          "comment": "Set: minCount implicitly=1, no maxCount or maxCount > 1",
           "name": {
             "identifier": {
               "termType": "BlankNode",
@@ -3167,6 +3775,7 @@
               "value": "http://example.com/nonEmptyStringSetProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/nonEmptyStringSetProperty",
           "type": {
             "itemType": {
@@ -3178,7 +3787,8 @@
               "kind": "LiteralType"
             },
             "kind": "SetType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -3206,6 +3816,7 @@
               "value": "http://example.com/protectedProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/protectedProperty",
           "type": {
             "itemType": {
@@ -3217,7 +3828,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "protected"
         },
         {
           "name": {
@@ -3232,6 +3844,7 @@
               "value": "http://example.com/privateProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/privateProperty",
           "type": {
             "itemType": {
@@ -3243,7 +3856,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "private"
         },
         {
           "name": {
@@ -3258,6 +3872,7 @@
               "value": "http://example.com/publicProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/publicProperty",
           "type": {
             "itemType": {
@@ -3269,7 +3884,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -3297,6 +3913,7 @@
               "value": "http://example.com/sha256IriProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/sha256IriProperty",
           "type": {
             "itemType": {
@@ -3308,7 +3925,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -3336,6 +3954,7 @@
               "value": "http://example.com/lazilyResolvedStringProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
             "itemType": {
@@ -3347,7 +3966,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -3375,6 +3995,7 @@
               "value": "http://example.com/lazilyResolvedStringProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
             "itemType": {
@@ -3386,7 +4007,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -3414,6 +4036,7 @@
               "value": "http://example.com/lazilyResolvedStringProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
             "itemType": {
@@ -3425,7 +4048,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -3453,6 +4077,7 @@
               "value": "http://example.com/lazilyResolvedStringProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
             "itemType": {
@@ -3464,7 +4089,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -3492,6 +4118,7 @@
               "value": "http://example.com/booleanTermProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/booleanTermProperty",
           "type": {
             "itemType": {
@@ -3503,7 +4130,8 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -3518,6 +4146,7 @@
               "value": "http://example.com/dateTermProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/dateTermProperty",
           "type": {
             "itemType": {
@@ -3529,7 +4158,8 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -3544,6 +4174,7 @@
               "value": "http://example.com/dateTimeTermProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/dateTimeTermProperty",
           "type": {
             "itemType": {
@@ -3555,7 +4186,8 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -3570,6 +4202,7 @@
               "value": "http://example.com/iriTermProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/iriTermProperty",
           "type": {
             "itemType": {
@@ -3580,7 +4213,8 @@
               ]
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -3595,6 +4229,7 @@
               "value": "http://example.com/literalTermProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/literalTermProperty",
           "type": {
             "itemType": {
@@ -3602,7 +4237,8 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -3617,6 +4253,7 @@
               "value": "http://example.com/numberTermProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/numberTermProperty",
           "type": {
             "itemType": {
@@ -3628,7 +4265,8 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -3643,6 +4281,7 @@
               "value": "http://example.com/stringTermProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/stringTermProperty",
           "type": {
             "itemType": {
@@ -3654,7 +4293,8 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -3669,13 +4309,15 @@
               "value": "http://example.com/termProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/termProperty",
           "type": {
             "itemType": {
               "kind": "TermType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -3703,6 +4345,7 @@
               "value": "http://example.com/unrelatedTypesProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/unrelatedTypesProperty",
           "type": {
             "itemType": {
@@ -3741,7 +4384,8 @@
               ]
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -3756,6 +4400,7 @@
               "value": "http://example.com/narrowLiteralsProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/narrowLiteralsProperty",
           "type": {
             "itemType": {
@@ -3786,7 +4431,8 @@
               ]
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -3801,6 +4447,7 @@
               "value": "http://example.com/widenedLiteralsProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/widenedLiteralsProperty",
           "type": {
             "itemType": {
@@ -3808,7 +4455,8 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -3823,13 +4471,15 @@
               "value": "http://example.com/widenedTermsProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/widenedTermsProperty",
           "type": {
             "itemType": {
               "kind": "TermType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -3857,6 +4507,7 @@
               "value": "http://example.com/uuidV4IriProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/uuidV4IriProperty",
           "type": {
             "itemType": {
@@ -3868,7 +4519,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -3896,6 +4548,7 @@
               "value": "http://example.com/uuidV4IriProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/uuidV4IriProperty",
           "type": {
             "itemType": {
@@ -3907,7 +4560,8 @@
               "kind": "LiteralType"
             },
             "kind": "PlainType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
