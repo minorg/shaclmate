@@ -100,12 +100,14 @@ export class ListType extends Type {
   override fromRdfExpression({
     variables,
   }: Parameters<Type["fromRdfExpression"]>[0]): string {
-    const chain: string[] = [variables.resourceValues];
-    chain.push("map(values => values.chainMap(value => value.toList())");
-    chain.push(
-      `map(values => values.chainMap(value => ${this.itemType.fromRdfExpression({ variables: { ...variables, resourceValues: "value.toValues()" } })}.head()))`,
-    );
-    return `${variables.resourceValues}.${chain.join(".")}`;
+    return [
+      variables.resourceValues,
+      "chain(values => values.head())", // Only care about the first list head
+      "chain(value => value.toList())", // Resource.Value to Resource.Value[]
+      `map(values => rdfjsResource.Resource.Values.fromArray({ objects: values, predicate: ${variables.predicate}, subject: ${variables.resource} }))`, // Resource.Value[] to Resource.Values<Resource.Value>
+      `chain(values => values.chainMap(value => ${this.itemType.fromRdfExpression({ variables: { ...variables, resourceValues: "purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(value.toValues())" } })}))`, // Resource.Values<Resource.Value> to Resource.Values<item type arrays>
+      "map(values => values.map(values => values.toArray()))", // Convert inner Resource.Values to arrays
+    ].join(".");
   }
 
   override graphqlResolveExpression({

@@ -182,7 +182,15 @@ export class TermType<
 
     const chain = this.fromRdfExpressionChain(parameters);
     const { variables } = parameters;
-    return `${variables.resourceValues}.${[chain.defaultValue, chain.hasValues, chain.languageIn, chain.valueTo].filter((_) => typeof _ !== "undefined").join(".")}`;
+    return [
+      variables.resourceValues,
+      chain.defaultValue,
+      chain.hasValues,
+      chain.languageIn,
+      chain.valueTo,
+    ]
+      .filter((_) => typeof _ !== "undefined")
+      .join(".");
   }
 
   protected fromRdfExpressionChain({

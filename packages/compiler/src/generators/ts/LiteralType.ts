@@ -45,7 +45,7 @@ export class LiteralType extends TermType<Literal, Literal> {
   } {
     return {
       ...super.fromRdfExpressionChain({ variables }),
-      languageIn: `${variables.resourceValues}.chain(values => {
+      languageIn: `chain(values => {
       const literalValuesEither = values.chainMap(value => value.toLiteral());
       if (literalValuesEither.isLeft()) {
         return literalValuesEither;
@@ -54,7 +54,7 @@ export class LiteralType extends TermType<Literal, Literal> {
 
       const nonUniqueLanguageIn = ${variables.languageIn} ?? ${JSON.stringify(this.languageIn)};
       if (nonUniqueLanguageIn.length === 0) {
-        return literalValues;
+        return purify.Either.of(literalValues);
       }
 
       let uniqueLanguageIn: string[];
@@ -76,11 +76,11 @@ export class LiteralType extends TermType<Literal, Literal> {
         if (!filteredLiteralValues) {
           filteredLiteralValues = literalValues.filter(value => value.language === languageIn);
         } else {
-          filteredLiteralValues = filteredLiteralValues.concat(literalValues.filter(value => value.language === languageIn));
+          filteredLiteralValues = filteredLiteralValues.concat(...literalValues.filter(value => value.language === languageIn).toArray());
         }
       }
 
-      return purify.Either.of(filteredLiteralValues);
+      return purify.Either.of(filteredLiteralValues!);
     })`,
       valueTo: undefined,
     };
