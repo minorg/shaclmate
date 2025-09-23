@@ -1,23 +1,17 @@
-import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { invariant } from "ts-invariant";
+import { CardinalityType } from "./CardinalityType.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export class OptionType<ItemTypeT extends Type = Type> extends Type {
-  override readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty> =
-    Maybe.empty();
-  readonly itemType: ItemTypeT;
+export class OptionType<
+  ItemTypeT extends CardinalityType.ItemType,
+> extends CardinalityType<ItemTypeT> {
   readonly kind = "OptionType";
   readonly typeof = "object";
-
-  constructor({ itemType }: { itemType: ItemTypeT }) {
-    super();
-    this.itemType = itemType;
-  }
 
   @Memoize()
   override get conversions(): readonly Type.Conversion[] {

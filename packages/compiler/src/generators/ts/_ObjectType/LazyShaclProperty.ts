@@ -4,10 +4,12 @@ import { Memoize } from "typescript-memoize";
 
 import { invariant } from "ts-invariant";
 import type { TsFeature } from "../../../enums/TsFeature.js";
+import type { CardinalityType } from "../CardinalityType.js";
 import { Import } from "../Import.js";
 import type { ObjectType } from "../ObjectType.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
 import type { OptionType } from "../OptionType.js";
+import type { PlainType } from "../PlainType.js";
 import type { SetType } from "../SetType.js";
 import { SnippetDeclarations } from "../SnippetDeclarations.js";
 import { Type as _Type } from "../Type.js";
@@ -202,12 +204,9 @@ export namespace LazyShaclProperty {
   }
 
   export namespace Type {
-    export type ResolvedTypeConstraint =
-      | ObjectType
-      | ObjectUnionType
-      | OptionType<ObjectType | ObjectUnionType>
-      | SetType<ObjectType | ObjectUnionType>;
-
+    export type ResolvedTypeConstraint = CardinalityType<
+      ObjectType | ObjectUnionType
+    >;
     export type StubTypeConstraint = ResolvedTypeConstraint;
   }
 
@@ -393,8 +392,8 @@ export namespace LazyShaclProperty {
   }
 
   export class RequiredObjectType<
-    ResolvedTypeT extends ObjectType | ObjectUnionType,
-    StubTypeT extends ObjectType | ObjectUnionType,
+    ResolvedTypeT extends PlainType<ObjectType | ObjectUnionType>,
+    StubTypeT extends PlainType<ObjectType | ObjectUnionType>,
   > extends SingleObjectType<ResolvedTypeT, StubTypeT> {
     constructor({
       resolvedType,
@@ -403,7 +402,7 @@ export namespace LazyShaclProperty {
       super({
         resolvedType,
         runtimeClass: {
-          name: `${syntheticNamePrefix}LazyRequiredObject<${resolvedType.identifierTypeAlias}, ${resolvedType.name}, ${stubType.name}>`,
+          name: `${syntheticNamePrefix}LazyRequiredObject<${resolvedType.itemType.identifierTypeAlias}, ${resolvedType.name}, ${stubType.name}>`,
           rawName: `${syntheticNamePrefix}LazyRequiredObject`,
           snippetDeclaration: SnippetDeclarations.LazyRequiredObject,
           stubPropertyName: "stub",
@@ -415,24 +414,24 @@ export namespace LazyShaclProperty {
     override get conversions(): readonly _Type.Conversion[] {
       const conversions = super.conversions.concat();
 
-      if (this.stubType.kind === "ObjectType") {
+      if (this.stubType.itemType.kind === "ObjectType") {
         conversions.push({
           conversionExpression: (value) =>
-            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${(this.stubType as ObjectType).newExpression({ parameters: value })}, resolver: async () => purify.Either.of(${value} as ${this.resolvedType.name}) })`,
+            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${(this.stubType.itemType as ObjectType).newExpression({ parameters: value })}, resolver: async () => purify.Either.of(${value} as ${this.resolvedType.name}) })`,
           // Don't check instanceof value since the ObjectType may be an interface
           // Rely on the fact that this will be the last type check on an object
           sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
           sourceTypeName: this.resolvedType.name,
         });
       } else if (
-        this.resolvedType.kind === "ObjectUnionType" &&
-        this.stubType.kind === "ObjectUnionType" &&
-        this.resolvedType.memberTypes.length ===
-          this.stubType.memberTypes.length
+        this.resolvedType.itemType.kind === "ObjectUnionType" &&
+        this.stubType.itemType.kind === "ObjectUnionType" &&
+        this.resolvedType.itemType.memberTypes.length ===
+          this.stubType.itemType.memberTypes.length
       ) {
         conversions.push({
           conversionExpression: (value) =>
-            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ((object: ${this.resolvedType.name}) => { ${stubObjectUnionTypeToResolvedObjectUnionTypeSwitchStatement({ resolvedObjectUnionType: this.resolvedType as ObjectUnionType, stubObjectUnionType: this.stubType as ObjectUnionType, variables: { value: "object" } })} })(${value}), resolver: async () => purify.Either.of(${value} as ${this.resolvedType.name}) })`,
+            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ((object: ${this.resolvedType.name}) => { ${stubObjectUnionTypeToResolvedObjectUnionTypeSwitchStatement({ resolvedObjectUnionType: this.resolvedType.itemType as ObjectUnionType, stubObjectUnionType: this.stubType.itemType as ObjectUnionType, variables: { value: "object" } })} })(${value}), resolver: async () => purify.Either.of(${value} as ${this.resolvedType.name}) })`,
           // Don't check instanceof value since the ObjectUnionType may be an interface
           // Rely on the fact that this will be the last type check on an object
           sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
@@ -447,7 +446,7 @@ export namespace LazyShaclProperty {
       parameters: Parameters<_Type["fromRdfExpression"]>[0],
     ): string {
       const { variables } = parameters;
-      return `${this.stubType.fromRdfExpression(parameters)}.map(${this.runtimeClass.stubPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.objectSetMethodNames.object}(identifier) }))`;
+      return `${this.stubType.fromRdfExpression(parameters)}.map(${this.runtimeClass.stubPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.object}(identifier) }))`;
     }
   }
 }

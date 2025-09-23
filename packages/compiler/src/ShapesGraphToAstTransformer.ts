@@ -80,12 +80,7 @@ export class ShapesGraphToAstTransformer {
           nodeShapeAstObjectTypes.push(nodeShapeAstType);
           for (const property of nodeShapeAstType.properties) {
             property.stubType
-              .map((stubType) =>
-                stubType.kind === "ObjectType" ||
-                stubType.kind === "ObjectUnionType"
-                  ? stubType
-                  : stubType.itemType,
-              )
+              .map((stubType) => stubType.itemType)
               .filter((stubItemType) => stubItemType.kind === "ObjectType")
               .filter((stubItemType) => stubItemType.synthetic)
               .ifJust((stubItemType) => {

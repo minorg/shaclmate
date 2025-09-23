@@ -9,8 +9,6 @@ import type {
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 import type { Import } from "../Import.js";
-import { OptionType } from "../OptionType.js";
-import { SetType } from "../SetType.js";
 import type { Type } from "../Type.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { tsComment } from "../tsComment.js";
@@ -217,7 +215,7 @@ export abstract class ShaclProperty<
     // This also accommodates the case where the object of a property is a dangling identifier that's not the
     // subject of any statements.
 
-    let typeFromRdfExpression = this.type.fromRdfExpression({
+    const typeFromRdfExpression = this.type.fromRdfExpression({
       variables: {
         ...variables,
         ignoreRdfType: true,
@@ -225,9 +223,6 @@ export abstract class ShaclProperty<
         resourceValues: `purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(${variables.resource}.values(${syntheticNamePrefix}properties.${this.name}["identifier"], { unique: true }))`,
       },
     });
-    if (!(this.type instanceof OptionType) && !(this.type instanceof SetType)) {
-      typeFromRdfExpression = `${typeFromRdfExpression}.chain(values => values.head())`;
-    }
 
     return [
       `const _${this.name}Either: purify.Either<Error, ${this.type.name}> = ${typeFromRdfExpression};`,
