@@ -3,7 +3,8 @@ import type { Either, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import * as ast from "../ast/index.js";
-import * as input from "../input/index.js";
+import type * as input from "../input/index.js";
+import { transformPropertyShapeToAstCardinalityType } from "./transformPropertyShapeToAstCardinalityType.js";
 
 /**
  * Try to convert a property shape to a type using some heuristics.
@@ -20,13 +21,6 @@ export function transformPropertyShapeToAstType(
     minCount: Maybe<number>;
   },
 ): Either<Error, ast.CardinalityType<ast.CardinalityType.ItemType>> {
-  const defaultValue =
-    shape instanceof input.PropertyShape
-      ? shape.defaultValue.alt(inherited.defaultValue)
-      : inherited.defaultValue;
-  const maxCount = shape.constraints.maxCount.alt(inherited.maxCount);
-  const minCount = shape.constraints.minCount.alt(inherited.minCount);
-
   // Try to transform the property shape into an AST type without cardinality constraints
   return this.transformPropertyShapeToAstCompositeType(shape, inherited)
     .altLazy(() =>
@@ -45,36 +39,10 @@ export function transformPropertyShapeToAstType(
 
       invariant(ast.CardinalityType.isItemType(itemType));
 
-      if (defaultValue.isJust()) {
-        return { itemType, kind: "PlainType" };
-      }
-
-      if (maxCount.isNothing() && minCount.isNothing()) {
-        return {
-          itemType,
-          kind: "SetType",
-          mutable: shape.mutable,
-          minCount: 0,
-        };
-      }
-
-      if (minCount.orDefault(0) === 0 && maxCount.extractNullable() === 1) {
-        return {
-          itemType,
-          kind: "OptionType",
-        };
-      }
-
-      if (minCount.orDefault(0) === 1 && maxCount.extractNullable() === 1) {
-        return { itemType, kind: "PlainType" };
-      }
-
-      invariant(minCount.isJust() || maxCount.isJust());
-      return {
+      return transformPropertyShapeToAstCardinalityType({
+        inherited,
         itemType,
-        kind: "SetType",
-        minCount: minCount.orDefault(0),
-        mutable: shape.mutable,
-      };
+        shape,
+      });
     });
 }

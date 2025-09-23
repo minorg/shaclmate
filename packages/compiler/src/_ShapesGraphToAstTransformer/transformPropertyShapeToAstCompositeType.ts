@@ -8,6 +8,7 @@ import type * as ast from "../ast/index.js";
 import * as input from "../input/index.js";
 import { logger } from "../logger.js";
 import { flattenAstObjectCompositeTypeMemberTypes } from "./flattenAstObjectCompositeTypeMemberTypes.js";
+import { transformPropertyShapeToAstCardinalityType } from "./transformPropertyShapeToAstCardinalityType.js";
 
 /**
  * Try to convert a property shape to a composite type (intersection or union) using some heuristics.
@@ -28,7 +29,10 @@ export function transformPropertyShapeToAstCompositeType(
   const maxCount = shape.constraints.maxCount.alt(inherited.maxCount);
   const minCount = shape.constraints.minCount.alt(inherited.minCount);
 
-  let memberTypeEithers: readonly Either<Error, ast.Type>[];
+  let memberTypeEithers: readonly Either<
+    Error,
+    ast.CardinalityType<ast.CardinalityType.ItemType>
+  >[];
   let compositeTypeKind: "IntersectionType" | "UnionType";
 
   if (shape.constraints.and.length > 0) {
@@ -59,7 +63,13 @@ export function transformPropertyShapeToAstCompositeType(
         );
       }
 
-      return this.transformNodeShapeToAstType(classNodeShape);
+      return this.transformNodeShapeToAstType(classNodeShape).map((itemType) =>
+        transformPropertyShapeToAstCardinalityType({
+          inherited,
+          itemType,
+          shape,
+        }),
+      );
     });
     compositeTypeKind = "IntersectionType";
 
@@ -73,7 +83,13 @@ export function transformPropertyShapeToAstCompositeType(
     }
   } else if (shape.constraints.nodes.length > 0) {
     memberTypeEithers = shape.constraints.nodes.map((nodeShape) =>
-      this.transformNodeShapeToAstType(nodeShape),
+      this.transformNodeShapeToAstType(nodeShape).map((itemType) =>
+        transformPropertyShapeToAstCardinalityType({
+          inherited,
+          itemType,
+          shape,
+        }),
+      ),
     );
     compositeTypeKind = "IntersectionType";
   } else if (shape.constraints.xone.length > 0) {
@@ -90,24 +106,26 @@ export function transformPropertyShapeToAstCompositeType(
   }
   invariant(memberTypeEithers.length > 0);
 
-  let memberObjectTypes: (
+  const memberObjectTypes: (
     | ast.ObjectType
     | ast.ObjectIntersectionType
     | ast.ObjectUnionType
   )[] = [];
-  let memberTypes: ast.Type[] = [];
+  let memberTypes: ast.CardinalityType<ast.CardinalityType.ItemType>[] = [];
   for (const memberTypeEither of memberTypeEithers) {
     if (memberTypeEither.isLeft()) {
       return memberTypeEither;
     }
     const memberType = memberTypeEither.unsafeCoerce();
     memberTypes.push(memberType);
-    switch (memberType.kind) {
-      case "ObjectType":
-      case "ObjectIntersectionType":
-      case "ObjectUnionType":
-        memberObjectTypes.push(memberType);
-        break;
+    if (memberType.kind === "PlainType") {
+      switch (memberType.itemType.kind) {
+        case "ObjectType":
+        case "ObjectIntersectionType":
+        case "ObjectUnionType":
+          memberObjectTypes.push(memberType.itemType);
+          break;
+      }
     }
   }
 
@@ -117,22 +135,24 @@ export function transformPropertyShapeToAstCompositeType(
 
   if (memberTypes.length === memberObjectTypes.length) {
     // If all the member types are ast.ObjectType, flatten them.
-    const flattenedMemberTypesEither = flattenAstObjectCompositeTypeMemberTypes(
-      {
+    const flattenedMemberObjectTypesEither =
+      flattenAstObjectCompositeTypeMemberTypes({
         objectCompositeTypeKind:
           compositeTypeKind === "IntersectionType"
             ? "ObjectIntersectionType"
             : "ObjectUnionType",
         memberTypes: memberObjectTypes,
         shape,
-      },
-    );
-    if (flattenedMemberTypesEither.isLeft()) {
-      return flattenedMemberTypesEither;
+      });
+    if (flattenedMemberObjectTypesEither.isLeft()) {
+      return flattenedMemberObjectTypesEither;
     }
     const { memberTypes: flattenedMemberTypes } =
-      flattenedMemberTypesEither.unsafeCoerce();
-    memberTypes = memberObjectTypes = flattenedMemberTypes.concat();
+      flattenedMemberObjectTypesEither.unsafeCoerce();
+    memberTypes = flattenedMemberTypes.map((memberType) => ({
+      itemType: memberType,
+      kind: "PlainType", // These all came from PlainTypes
+    }));
   }
 
   return widenAstCompositeTypeToSingleType({
@@ -154,7 +174,7 @@ function widenAstCompositeTypeToSingleType({
   shape,
 }: {
   defaultValue: Maybe<Literal | NamedNode>;
-  memberTypes: readonly ast.Type[];
+  memberTypes: readonly ast.CardinalityType<ast.CardinalityType.ItemType>[];
   shape: input.Shape;
 }): Either<Error, ast.Type> {
   if (shape.constraints.hasValues.length > 0) {
