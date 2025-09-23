@@ -54,7 +54,7 @@ export class LiteralType extends TermType<Literal, Literal> {
 
       const nonUniqueLanguageIn = ${variables.languageIn} ?? ${JSON.stringify(this.languageIn)};
       if (nonUniqueLanguageIn.length === 0) {
-        return purify.Either.of(literalValues);
+        return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(literalValues);
       }
 
       let uniqueLanguageIn: string[];
@@ -80,7 +80,7 @@ export class LiteralType extends TermType<Literal, Literal> {
         }
       }
 
-      return purify.Either.of(filteredLiteralValues!);
+      return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(filteredLiteralValues!);
     })`,
       valueTo: undefined,
     };

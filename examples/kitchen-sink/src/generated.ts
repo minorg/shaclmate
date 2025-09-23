@@ -1031,7 +1031,7 @@ export namespace UnionPropertiesClass {
 
               const nonUniqueLanguageIn = $languageIn ?? [];
               if (nonUniqueLanguageIn.length === 0) {
-                return purify.Either.of(literalValues);
+                return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(literalValues);
               }
 
               let uniqueLanguageIn: string[];
@@ -1057,7 +1057,7 @@ export namespace UnionPropertiesClass {
                 }
               }
 
-              return purify.Either.of(filteredLiteralValues!);
+              return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(filteredLiteralValues!);
             }).map(values => values.head().toMaybe());
         if (_widenedLiteralsPropertyEither.isLeft()) { return _widenedLiteralsPropertyEither; }
 
@@ -1318,7 +1318,7 @@ export namespace TermPropertiesClass {
 
               const nonUniqueLanguageIn = $languageIn ?? [];
               if (nonUniqueLanguageIn.length === 0) {
-                return purify.Either.of(literalValues);
+                return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(literalValues);
               }
 
               let uniqueLanguageIn: string[];
@@ -1344,7 +1344,7 @@ export namespace TermPropertiesClass {
                 }
               }
 
-              return purify.Either.of(filteredLiteralValues!);
+              return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(filteredLiteralValues!);
             }).map(values => values.head().toMaybe());
         if (_literalTermPropertyEither.isLeft()) { return _literalTermPropertyEither; }
 
@@ -2660,7 +2660,7 @@ export namespace PropertyCardinalitiesClass {
         // @ts-ignore
         ...$context }: { [_index: string]: any; ignoreRdfType: boolean; languageIn?: readonly string[]; objectSet: $ObjectSet; resource: rdfjsResource.Resource; }): purify.Either<Error, { $identifier: (rdfjs.BlankNode | rdfjs.NamedNode); emptyStringSetProperty: readonly (string)[]; nonEmptyStringSetProperty: purify.NonEmptyList<string>; optionalStringProperty: purify.Maybe<string>; requiredStringProperty: string; }> {
         const $identifier: PropertyCardinalitiesClass.$Identifier = $resource.identifier;
-        const _emptyStringSetPropertyEither: purify.Either<Error, readonly (string)[]> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.emptyStringSetProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toString()));
+        const _emptyStringSetPropertyEither: purify.Either<Error, readonly (string)[]> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.emptyStringSetProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toString())).map(values => values.toArray());
         if (_emptyStringSetPropertyEither.isLeft()) { return _emptyStringSetPropertyEither; }
 
         const emptyStringSetProperty = _emptyStringSetPropertyEither.unsafeCoerce();
@@ -3197,7 +3197,7 @@ export namespace MutablePropertiesClass {
         if (_mutableListPropertyEither.isLeft()) { return _mutableListPropertyEither; }
 
         const mutableListProperty = _mutableListPropertyEither.unsafeCoerce();
-        const _mutableSetPropertyEither: purify.Either<Error, (string)[]> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.mutableSetProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toString()));
+        const _mutableSetPropertyEither: purify.Either<Error, (string)[]> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.mutableSetProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toString())).map(values => values.toArray());
         if (_mutableSetPropertyEither.isLeft()) { return _mutableSetPropertyEither; }
 
         const mutableSetProperty = _mutableSetPropertyEither.unsafeCoerce();
@@ -3804,11 +3804,11 @@ export namespace LazyPropertiesInterface {
         if (_requiredStubInterfaceToResolvedInterfacePropertyEither.isLeft()) { return _requiredStubInterfaceToResolvedInterfacePropertyEither; }
 
         const requiredStubInterfaceToResolvedInterfaceProperty = _requiredStubInterfaceToResolvedInterfacePropertyEither.unsafeCoerce();
-        const _setLazyToResolvedInterfacePropertyEither: purify.Either<Error, $LazyObjectSet<LazilyResolvedBlankNodeOrIriInterface.$Identifier, LazilyResolvedBlankNodeOrIriInterface, $DefaultStub>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.setLazyToResolvedInterfaceProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toResource().chain(resource => $DefaultStub.$fromRdf(resource, { ...$context, ignoreRdfType: true, languageIn: $languageIn, objectSet: $objectSet })))).map(stubs => new $LazyObjectSet<LazilyResolvedBlankNodeOrIriInterface.$Identifier, LazilyResolvedBlankNodeOrIriInterface, $DefaultStub>({ stubs, resolver: (identifiers) => $objectSet.lazilyResolvedBlankNodeOrIriInterfaces({ where: { identifiers, type: "identifiers" }}) })).chain(values => values.head());
+        const _setLazyToResolvedInterfacePropertyEither: purify.Either<Error, $LazyObjectSet<LazilyResolvedBlankNodeOrIriInterface.$Identifier, LazilyResolvedBlankNodeOrIriInterface, $DefaultStub>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.setLazyToResolvedInterfaceProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toResource().chain(resource => $DefaultStub.$fromRdf(resource, { ...$context, ignoreRdfType: true, languageIn: $languageIn, objectSet: $objectSet })))).map(values => values.toArray()).map(stubs => new $LazyObjectSet<LazilyResolvedBlankNodeOrIriInterface.$Identifier, LazilyResolvedBlankNodeOrIriInterface, $DefaultStub>({ stubs, resolver: (identifiers) => $objectSet.lazilyResolvedBlankNodeOrIriInterfaces({ where: { identifiers, type: "identifiers" }}) })).chain(values => values.head());
         if (_setLazyToResolvedInterfacePropertyEither.isLeft()) { return _setLazyToResolvedInterfacePropertyEither; }
 
         const setLazyToResolvedInterfaceProperty = _setLazyToResolvedInterfacePropertyEither.unsafeCoerce();
-        const _setStubInterfaceToResolvedInterfacePropertyEither: purify.Either<Error, $LazyObjectSet<LazilyResolvedBlankNodeOrIriInterface.$Identifier, LazilyResolvedBlankNodeOrIriInterface, StubInterface>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.setStubInterfaceToResolvedInterfaceProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toResource().chain(resource => StubInterface.$fromRdf(resource, { ...$context, ignoreRdfType: true, languageIn: $languageIn, objectSet: $objectSet })))).map(stubs => new $LazyObjectSet<LazilyResolvedBlankNodeOrIriInterface.$Identifier, LazilyResolvedBlankNodeOrIriInterface, StubInterface>({ stubs, resolver: (identifiers) => $objectSet.lazilyResolvedBlankNodeOrIriInterfaces({ where: { identifiers, type: "identifiers" }}) })).chain(values => values.head());
+        const _setStubInterfaceToResolvedInterfacePropertyEither: purify.Either<Error, $LazyObjectSet<LazilyResolvedBlankNodeOrIriInterface.$Identifier, LazilyResolvedBlankNodeOrIriInterface, StubInterface>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.setStubInterfaceToResolvedInterfaceProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toResource().chain(resource => StubInterface.$fromRdf(resource, { ...$context, ignoreRdfType: true, languageIn: $languageIn, objectSet: $objectSet })))).map(values => values.toArray()).map(stubs => new $LazyObjectSet<LazilyResolvedBlankNodeOrIriInterface.$Identifier, LazilyResolvedBlankNodeOrIriInterface, StubInterface>({ stubs, resolver: (identifiers) => $objectSet.lazilyResolvedBlankNodeOrIriInterfaces({ where: { identifiers, type: "identifiers" }}) })).chain(values => values.head());
         if (_setStubInterfaceToResolvedInterfacePropertyEither.isLeft()) { return _setStubInterfaceToResolvedInterfacePropertyEither; }
 
         const setStubInterfaceToResolvedInterfaceProperty = _setStubInterfaceToResolvedInterfacePropertyEither.unsafeCoerce();
@@ -4232,11 +4232,11 @@ export namespace LazyPropertiesClass {
         if (_requiredStubClassToResolvedClassPropertyEither.isLeft()) { return _requiredStubClassToResolvedClassPropertyEither; }
 
         const requiredStubClassToResolvedClassProperty = _requiredStubClassToResolvedClassPropertyEither.unsafeCoerce();
-        const _setLazyToResolvedClassPropertyEither: purify.Either<Error, $LazyObjectSet<LazilyResolvedBlankNodeOrIriClass.$Identifier, LazilyResolvedBlankNodeOrIriClass, $DefaultStub>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.setLazyToResolvedClassProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toResource().chain(resource => $DefaultStub.$fromRdf(resource, { ...$context, ignoreRdfType: true, languageIn: $languageIn, objectSet: $objectSet })))).map(stubs => new $LazyObjectSet<LazilyResolvedBlankNodeOrIriClass.$Identifier, LazilyResolvedBlankNodeOrIriClass, $DefaultStub>({ stubs, resolver: (identifiers) => $objectSet.lazilyResolvedBlankNodeOrIriClasses({ where: { identifiers, type: "identifiers" }}) })).chain(values => values.head());
+        const _setLazyToResolvedClassPropertyEither: purify.Either<Error, $LazyObjectSet<LazilyResolvedBlankNodeOrIriClass.$Identifier, LazilyResolvedBlankNodeOrIriClass, $DefaultStub>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.setLazyToResolvedClassProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toResource().chain(resource => $DefaultStub.$fromRdf(resource, { ...$context, ignoreRdfType: true, languageIn: $languageIn, objectSet: $objectSet })))).map(values => values.toArray()).map(stubs => new $LazyObjectSet<LazilyResolvedBlankNodeOrIriClass.$Identifier, LazilyResolvedBlankNodeOrIriClass, $DefaultStub>({ stubs, resolver: (identifiers) => $objectSet.lazilyResolvedBlankNodeOrIriClasses({ where: { identifiers, type: "identifiers" }}) })).chain(values => values.head());
         if (_setLazyToResolvedClassPropertyEither.isLeft()) { return _setLazyToResolvedClassPropertyEither; }
 
         const setLazyToResolvedClassProperty = _setLazyToResolvedClassPropertyEither.unsafeCoerce();
-        const _setStubClassToResolvedClassPropertyEither: purify.Either<Error, $LazyObjectSet<LazilyResolvedBlankNodeOrIriClass.$Identifier, LazilyResolvedBlankNodeOrIriClass, StubClass>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.setStubClassToResolvedClassProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toResource().chain(resource => StubClass.$fromRdf(resource, { ...$context, ignoreRdfType: true, languageIn: $languageIn, objectSet: $objectSet })))).map(stubs => new $LazyObjectSet<LazilyResolvedBlankNodeOrIriClass.$Identifier, LazilyResolvedBlankNodeOrIriClass, StubClass>({ stubs, resolver: (identifiers) => $objectSet.lazilyResolvedBlankNodeOrIriClasses({ where: { identifiers, type: "identifiers" }}) })).chain(values => values.head());
+        const _setStubClassToResolvedClassPropertyEither: purify.Either<Error, $LazyObjectSet<LazilyResolvedBlankNodeOrIriClass.$Identifier, LazilyResolvedBlankNodeOrIriClass, StubClass>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.setStubClassToResolvedClassProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toResource().chain(resource => StubClass.$fromRdf(resource, { ...$context, ignoreRdfType: true, languageIn: $languageIn, objectSet: $objectSet })))).map(values => values.toArray()).map(stubs => new $LazyObjectSet<LazilyResolvedBlankNodeOrIriClass.$Identifier, LazilyResolvedBlankNodeOrIriClass, StubClass>({ stubs, resolver: (identifiers) => $objectSet.lazilyResolvedBlankNodeOrIriClasses({ where: { identifiers, type: "identifiers" }}) })).chain(values => values.head());
         if (_setStubClassToResolvedClassPropertyEither.isLeft()) { return _setStubClassToResolvedClassPropertyEither; }
 
         const setStubClassToResolvedClassProperty = _setStubClassToResolvedClassPropertyEither.unsafeCoerce();
@@ -5875,7 +5875,7 @@ export namespace LanguageInPropertiesClass {
 
               const nonUniqueLanguageIn = $languageIn ?? ["en","fr"];
               if (nonUniqueLanguageIn.length === 0) {
-                return purify.Either.of(literalValues);
+                return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(literalValues);
               }
 
               let uniqueLanguageIn: string[];
@@ -5901,7 +5901,7 @@ export namespace LanguageInPropertiesClass {
                 }
               }
 
-              return purify.Either.of(filteredLiteralValues!);
+              return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(filteredLiteralValues!);
             }).chain(values => values.head());
         if (_languageInPropertiesLanguageInPropertyEither.isLeft()) { return _languageInPropertiesLanguageInPropertyEither; }
 
@@ -5915,7 +5915,7 @@ export namespace LanguageInPropertiesClass {
 
               const nonUniqueLanguageIn = $languageIn ?? [];
               if (nonUniqueLanguageIn.length === 0) {
-                return purify.Either.of(literalValues);
+                return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(literalValues);
               }
 
               let uniqueLanguageIn: string[];
@@ -5941,7 +5941,7 @@ export namespace LanguageInPropertiesClass {
                 }
               }
 
-              return purify.Either.of(filteredLiteralValues!);
+              return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(filteredLiteralValues!);
             }).chain(values => values.head());
         if (_languageInPropertiesLiteralPropertyEither.isLeft()) { return _languageInPropertiesLiteralPropertyEither; }
 
