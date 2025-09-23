@@ -799,6 +799,10 @@
                 {
                   "termType": "NamedNode",
                   "value": "http://example.com/HasValuePropertiesClassIri1"
+                },
+                {
+                  "termType": "NamedNode",
+                  "value": "http://example.com/HasValuePropertiesClassIri1"
                 }
               ],
               "kind": "IdentifierType",
@@ -828,6 +832,12 @@
           "type": {
             "itemType": {
               "hasValue": [
+                {
+                  "datatype": "http://www.w3.org/2001/XMLSchema#string",
+                  "language": "",
+                  "termType": "Literal",
+                  "value": "test"
+                },
                 {
                   "datatype": "http://www.w3.org/2001/XMLSchema#string",
                   "language": "",
@@ -3398,23 +3408,20 @@
           "type": {
             "itemType": {
               "itemType": {
-                "itemType": {
-                  "kind": "ObjectType",
-                  "name": {
-                    "identifier": {
-                      "curie": ":NonClass",
-                      "termType": "NamedNode",
-                      "uniqueLocalPart": "NonClass",
-                      "value": "http://example.com/NonClass"
-                    }
-                  },
-                  "identifierNodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ],
-                  "identifierMintingStrategy": "blankNode"
+                "kind": "ObjectType",
+                "name": {
+                  "identifier": {
+                    "curie": ":NonClass",
+                    "termType": "NamedNode",
+                    "uniqueLocalPart": "NonClass",
+                    "value": "http://example.com/NonClass"
+                  }
                 },
-                "kind": "PlainType"
+                "identifierNodeKinds": [
+                  "BlankNode",
+                  "NamedNode"
+                ],
+                "identifierMintingStrategy": "blankNode"
               },
               "kind": "ListType"
             },
@@ -3440,15 +3447,12 @@
           "type": {
             "itemType": {
               "itemType": {
-                "itemType": {
-                  "datatype": {
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#string"
-                  },
-                  "hasValue": [],
-                  "kind": "LiteralType"
+                "datatype": {
+                  "termType": "NamedNode",
+                  "value": "http://www.w3.org/2001/XMLSchema#string"
                 },
-                "kind": "PlainType"
+                "hasValue": [],
+                "kind": "LiteralType"
               },
               "kind": "ListType"
             },
@@ -3518,15 +3522,12 @@
           "type": {
             "itemType": {
               "itemType": {
-                "itemType": {
-                  "datatype": {
-                    "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#string"
-                  },
-                  "hasValue": [],
-                  "kind": "LiteralType"
+                "datatype": {
+                  "termType": "NamedNode",
+                  "value": "http://www.w3.org/2001/XMLSchema#string"
                 },
-                "kind": "PlainType"
+                "hasValue": [],
+                "kind": "LiteralType"
               },
               "kind": "ListType",
               "mutable": true

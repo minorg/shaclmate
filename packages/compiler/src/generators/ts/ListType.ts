@@ -106,7 +106,7 @@ export class ListType extends Type {
       "chain(value => value.toList())", // Resource.Value to Resource.Value[]
       `map(values => rdfjsResource.Resource.Values.fromArray({ objects: values, predicate: ${variables.predicate}, subject: ${variables.resource} }))`, // Resource.Value[] to Resource.Values<Resource.Value>
       `chain(values => values.chainMap(value => ${this.itemType.fromRdfExpression({ variables: { ...variables, resourceValues: "purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(value.toValues())" } })}))`, // Resource.Values<Resource.Value> to Resource.Values<item type arrays>
-      "map(values => values.map(values => values.toArray()))", // Convert inner Resource.Values to arrays
+      `map(values => values.map(values => values.toArray()${this.mutable ? ".concat()" : ""}))`, // Convert inner Resource.Values to arrays
     ].join(".");
   }
 

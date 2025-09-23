@@ -80,9 +80,10 @@ function transformPropertyShapeToAstCardinalityType(
   propertyShape: input.PropertyShape,
 ): Either<Error, ast.CardinalityType<ast.CardinalityType.ItemType>> {
   const itemTypeEither = this.transformShapeToAstType(propertyShape, {
-    defaultValue: Maybe.empty(),
-    hasValues: [],
-    in_: [],
+    // Only the top-level property shape has sh:defaultValue
+    defaultValue: propertyShape.defaultValue,
+    hasValues: propertyShape.constraints.hasValues,
+    in_: propertyShape.constraints.in_,
   });
   if (itemTypeEither.isLeft()) {
     return itemTypeEither;

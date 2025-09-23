@@ -118,7 +118,10 @@ export class SetType<
   ): string {
     const { variables } = parameters;
     const itemFromRdfExpression = this.itemType.fromRdfExpression(parameters);
-    if (this._mutable || this.minCount === 0) {
+    if (this._mutable) {
+      return `${itemFromRdfExpression}.map(values => values.toArray().concat())`;
+    }
+    if (this.minCount === 0) {
       return `${itemFromRdfExpression}.map(values => values.toArray())`;
     }
     return `${itemFromRdfExpression}.chain(values => purify.NonEmptyList.fromArray(values.toArray()).toEither(new Error(\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} is an empty set\`)))`;

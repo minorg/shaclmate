@@ -118,7 +118,7 @@ function transformNodeShapeToAstListType(
     );
   }
 
-  listType.itemType = firstProperty.type;
+  listType.itemType = firstProperty.type.itemType;
 
   return Either.of(listType);
 }

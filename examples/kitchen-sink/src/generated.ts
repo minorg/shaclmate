@@ -3193,11 +3193,11 @@ export namespace MutablePropertiesClass {
         // @ts-ignore
         ...$context }: { [_index: string]: any; ignoreRdfType: boolean; languageIn?: readonly string[]; objectSet: $ObjectSet; resource: rdfjsResource.Resource; }): purify.Either<Error, { $identifier: (rdfjs.BlankNode | rdfjs.NamedNode); mutableListProperty: purify.Maybe<string[]>; mutableSetProperty: (string)[]; mutableStringProperty: purify.Maybe<string>; }> {
         const $identifier: MutablePropertiesClass.$Identifier = $resource.identifier;
-        const _mutableListPropertyEither: purify.Either<Error, purify.Maybe<string[]>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.mutableListProperty["identifier"], { unique: true })).chain(values => values.head()).chain(value => value.toList()).map(values => rdfjsResource.Resource.Values.fromArray({ objects: values, predicate: MutablePropertiesClass.$properties.mutableListProperty["identifier"], subject: $resource })).chain(values => values.chainMap(value => purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(value.toValues()).chain(values => values.chainMap(value => value.toString())).chain(values => values.head()))).map(values => values.map(values => values.toArray())).map(values => values.head().toMaybe());
+        const _mutableListPropertyEither: purify.Either<Error, purify.Maybe<string[]>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.mutableListProperty["identifier"], { unique: true })).chain(values => values.head()).chain(value => value.toList()).map(values => rdfjsResource.Resource.Values.fromArray({ objects: values, predicate: MutablePropertiesClass.$properties.mutableListProperty["identifier"], subject: $resource })).chain(values => values.chainMap(value => purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(value.toValues()).chain(values => values.chainMap(value => value.toString())))).map(values => values.map(values => values.toArray().concat())).map(values => values.head().toMaybe());
         if (_mutableListPropertyEither.isLeft()) { return _mutableListPropertyEither; }
 
         const mutableListProperty = _mutableListPropertyEither.unsafeCoerce();
-        const _mutableSetPropertyEither: purify.Either<Error, (string)[]> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.mutableSetProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toString())).map(values => values.toArray());
+        const _mutableSetPropertyEither: purify.Either<Error, (string)[]> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.mutableSetProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toString())).map(values => values.toArray().concat());
         if (_mutableSetPropertyEither.isLeft()) { return _mutableSetPropertyEither; }
 
         const mutableSetProperty = _mutableSetPropertyEither.unsafeCoerce();
@@ -3413,11 +3413,11 @@ export namespace ListPropertiesClass {
         // @ts-ignore
         ...$context }: { [_index: string]: any; ignoreRdfType: boolean; languageIn?: readonly string[]; objectSet: $ObjectSet; resource: rdfjsResource.Resource; }): purify.Either<Error, { $identifier: (rdfjs.BlankNode | rdfjs.NamedNode); objectListProperty: purify.Maybe<readonly NonClass[]>; stringListProperty: purify.Maybe<readonly string[]>; }> {
         const $identifier: ListPropertiesClass.$Identifier = $resource.identifier;
-        const _objectListPropertyEither: purify.Either<Error, purify.Maybe<readonly NonClass[]>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.objectListProperty["identifier"], { unique: true })).chain(values => values.head()).chain(value => value.toList()).map(values => rdfjsResource.Resource.Values.fromArray({ objects: values, predicate: ListPropertiesClass.$properties.objectListProperty["identifier"], subject: $resource })).chain(values => values.chainMap(value => purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(value.toValues()).chain(values => values.chainMap(value => value.toResource().chain(resource => NonClass.$fromRdf(resource, { ...$context, ignoreRdfType: true, languageIn: $languageIn, objectSet: $objectSet })))).chain(values => values.head()))).map(values => values.map(values => values.toArray())).map(values => values.head().toMaybe());
+        const _objectListPropertyEither: purify.Either<Error, purify.Maybe<readonly NonClass[]>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.objectListProperty["identifier"], { unique: true })).chain(values => values.head()).chain(value => value.toList()).map(values => rdfjsResource.Resource.Values.fromArray({ objects: values, predicate: ListPropertiesClass.$properties.objectListProperty["identifier"], subject: $resource })).chain(values => values.chainMap(value => purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(value.toValues()).chain(values => values.chainMap(value => value.toResource().chain(resource => NonClass.$fromRdf(resource, { ...$context, ignoreRdfType: true, languageIn: $languageIn, objectSet: $objectSet })))))).map(values => values.map(values => values.toArray())).map(values => values.head().toMaybe());
         if (_objectListPropertyEither.isLeft()) { return _objectListPropertyEither; }
 
         const objectListProperty = _objectListPropertyEither.unsafeCoerce();
-        const _stringListPropertyEither: purify.Either<Error, purify.Maybe<readonly string[]>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.stringListProperty["identifier"], { unique: true })).chain(values => values.head()).chain(value => value.toList()).map(values => rdfjsResource.Resource.Values.fromArray({ objects: values, predicate: ListPropertiesClass.$properties.stringListProperty["identifier"], subject: $resource })).chain(values => values.chainMap(value => purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(value.toValues()).chain(values => values.chainMap(value => value.toString())).chain(values => values.head()))).map(values => values.map(values => values.toArray())).map(values => values.head().toMaybe());
+        const _stringListPropertyEither: purify.Either<Error, purify.Maybe<readonly string[]>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.stringListProperty["identifier"], { unique: true })).chain(values => values.head()).chain(value => value.toList()).map(values => rdfjsResource.Resource.Values.fromArray({ objects: values, predicate: ListPropertiesClass.$properties.stringListProperty["identifier"], subject: $resource })).chain(values => values.chainMap(value => purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(value.toValues()).chain(values => values.chainMap(value => value.toString())))).map(values => values.map(values => values.toArray())).map(values => values.head().toMaybe());
         if (_stringListPropertyEither.isLeft()) { return _stringListPropertyEither; }
 
         const stringListProperty = _stringListPropertyEither.unsafeCoerce();
@@ -7011,13 +7011,13 @@ export namespace IndirectRecursiveClass {
 export class InPropertiesClass {
     private _$identifier?: InPropertiesClass.$Identifier;
     readonly $type = "InPropertiesClass";
-    readonly inBooleansProperty: purify.Maybe<true>;
+    readonly inBooleansProperty: purify.Maybe<true | true>;
     readonly inDateTimesProperty: purify.Maybe<Date>;
-    readonly inIrisProperty: purify.Maybe<rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">>;
-    readonly inNumbersProperty: purify.Maybe<1 | 2>;
-    readonly inStringsProperty: purify.Maybe<"text" | "html">;
+    readonly inIrisProperty: purify.Maybe<rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2" | "http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">>;
+    readonly inNumbersProperty: purify.Maybe<1 | 2 | 1 | 2>;
+    readonly inStringsProperty: purify.Maybe<"text" | "html" | "text" | "html">;
 
-    constructor(parameters?: { readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string, readonly inBooleansProperty?: purify.Maybe<true> | true, readonly inDateTimesProperty?: Date | purify.Maybe<Date>, readonly inIrisProperty?: "http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2" | purify.Maybe<rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">> | rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">, readonly inNumbersProperty?: 1 | 2 | purify.Maybe<1 | 2>, readonly inStringsProperty?: "text" | "html" | purify.Maybe<"text" | "html"> }) {
+    constructor(parameters?: { readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string, readonly inBooleansProperty?: purify.Maybe<true | true> | true | true, readonly inDateTimesProperty?: Date | purify.Maybe<Date>, readonly inIrisProperty?: "http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2" | "http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2" | purify.Maybe<rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2" | "http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">> | rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2" | "http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">, readonly inNumbersProperty?: 1 | 2 | 1 | 2 | purify.Maybe<1 | 2 | 1 | 2>, readonly inStringsProperty?: "text" | "html" | "text" | "html" | purify.Maybe<"text" | "html" | "text" | "html"> }) {
         if (typeof parameters?.$identifier === "object") { this._$identifier = parameters?.$identifier; } else if (typeof parameters?.$identifier === "string") { this._$identifier = dataFactory.namedNode(parameters?.$identifier); } else if (typeof parameters?.$identifier === "undefined") { } else { this._$identifier = (parameters?.$identifier) satisfies never;
          }
 
@@ -7090,9 +7090,9 @@ export namespace InPropertiesClass {
             toString = rdfjsResource.Resource.Identifier.toString;
     }
 
-    export type $Json = { readonly "@id": string; readonly "$type": "InPropertiesClass"; readonly "inBooleansProperty"?: true; readonly "inDateTimesProperty"?: string; readonly "inIrisProperty"?: { readonly "@id": "http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2" }; readonly "inNumbersProperty"?: 1 | 2; readonly "inStringsProperty"?: "text" | "html" };
+    export type $Json = { readonly "@id": string; readonly "$type": "InPropertiesClass"; readonly "inBooleansProperty"?: true | true; readonly "inDateTimesProperty"?: string; readonly "inIrisProperty"?: { readonly "@id": "http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2" | "http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2" }; readonly "inNumbersProperty"?: 1 | 2 | 1 | 2; readonly "inStringsProperty"?: "text" | "html" | "text" | "html" };
 
-    export function $propertiesFromJson(_json: unknown): purify.Either<zod.ZodError, { $identifier: (rdfjs.BlankNode | rdfjs.NamedNode); inBooleansProperty: purify.Maybe<true>; inDateTimesProperty: purify.Maybe<Date>; inIrisProperty: purify.Maybe<rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">>; inNumbersProperty: purify.Maybe<1 | 2>; inStringsProperty: purify.Maybe<"text" | "html">; }> {
+    export function $propertiesFromJson(_json: unknown): purify.Either<zod.ZodError, { $identifier: (rdfjs.BlankNode | rdfjs.NamedNode); inBooleansProperty: purify.Maybe<true | true>; inDateTimesProperty: purify.Maybe<Date>; inIrisProperty: purify.Maybe<rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2" | "http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">>; inNumbersProperty: purify.Maybe<1 | 2 | 1 | 2>; inStringsProperty: purify.Maybe<"text" | "html" | "text" | "html">; }> {
         const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
         if (!$jsonSafeParseResult.success) { return purify.Left($jsonSafeParseResult.error); }
 
@@ -7120,7 +7120,7 @@ export namespace InPropertiesClass {
     }
 
     export function $jsonZodSchema() {
-        return zod.object({ "@id": zod.string().min(1),"$type": zod.literal("InPropertiesClass"),"inBooleansProperty": zod.literal(true).optional(),"inDateTimesProperty": zod.string().datetime().optional(),"inIrisProperty": zod.object({ "@id": zod.enum(["http://example.com/InPropertiesIri1","http://example.com/InPropertiesIri2"]) }).optional(),"inNumbersProperty": zod.union([zod.literal(1), zod.literal(2)]).optional(),"inStringsProperty": zod.enum(["text","html"]).optional() }) satisfies zod.ZodType<$Json>;
+        return zod.object({ "@id": zod.string().min(1),"$type": zod.literal("InPropertiesClass"),"inBooleansProperty": zod.boolean().optional(),"inDateTimesProperty": zod.string().datetime().optional(),"inIrisProperty": zod.object({ "@id": zod.enum(["http://example.com/InPropertiesIri1","http://example.com/InPropertiesIri2","http://example.com/InPropertiesIri1","http://example.com/InPropertiesIri2"]) }).optional(),"inNumbersProperty": zod.union([zod.literal(1), zod.literal(2), zod.literal(1), zod.literal(2)]).optional(),"inStringsProperty": zod.enum(["text","html","text","html"]).optional() }) satisfies zod.ZodType<$Json>;
     }
 
     export function $fromRdf(resource: rdfjsResource.Resource, options?: { [_index: string]: any; ignoreRdfType?: boolean; languageIn?: readonly string[]; objectSet?: $ObjectSet; }): purify.Either<Error, InPropertiesClass> {
@@ -7132,25 +7132,25 @@ export namespace InPropertiesClass {
 
     export function $propertiesFromRdf({ ignoreRdfType: $ignoreRdfType, languageIn: $languageIn, objectSet: $objectSet, resource: $resource,
         // @ts-ignore
-        ...$context }: { [_index: string]: any; ignoreRdfType: boolean; languageIn?: readonly string[]; objectSet: $ObjectSet; resource: rdfjsResource.Resource; }): purify.Either<Error, { $identifier: (rdfjs.BlankNode | rdfjs.NamedNode); inBooleansProperty: purify.Maybe<true>; inDateTimesProperty: purify.Maybe<Date>; inIrisProperty: purify.Maybe<rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">>; inNumbersProperty: purify.Maybe<1 | 2>; inStringsProperty: purify.Maybe<"text" | "html">; }> {
+        ...$context }: { [_index: string]: any; ignoreRdfType: boolean; languageIn?: readonly string[]; objectSet: $ObjectSet; resource: rdfjsResource.Resource; }): purify.Either<Error, { $identifier: (rdfjs.BlankNode | rdfjs.NamedNode); inBooleansProperty: purify.Maybe<true | true>; inDateTimesProperty: purify.Maybe<Date>; inIrisProperty: purify.Maybe<rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2" | "http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">>; inNumbersProperty: purify.Maybe<1 | 2 | 1 | 2>; inStringsProperty: purify.Maybe<"text" | "html" | "text" | "html">; }> {
         const $identifier: InPropertiesClass.$Identifier = $resource.identifier;
-        const _inBooleansPropertyEither: purify.Either<Error, purify.Maybe<true>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.inBooleansProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toBoolean().chain(value => value === true ? purify.Either.of<Error, true>(value) : purify.Left<Error, true>(new rdfjsResource.Resource.MistypedValueError({ actualValue: rdfLiteral.toRdf(value), expectedValueType: "true", focusResource: $resource, predicate: InPropertiesClass.$properties.inBooleansProperty["identifier"] }))))).map(values => values.head().toMaybe());
+        const _inBooleansPropertyEither: purify.Either<Error, purify.Maybe<true | true>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.inBooleansProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toBoolean())).map(values => values.head().toMaybe());
         if (_inBooleansPropertyEither.isLeft()) { return _inBooleansPropertyEither; }
 
         const inBooleansProperty = _inBooleansPropertyEither.unsafeCoerce();
-        const _inDateTimesPropertyEither: purify.Either<Error, purify.Maybe<Date>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.inDateTimesProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toDate().chain(value => { if (value.getTime() === 1523268000000) { return purify.Either.of<Error, Date>(value); } return purify.Left<Error, Date>(new rdfjsResource.Resource.MistypedValueError({ actualValue: rdfLiteral.toRdf(value, { dataFactory, datatype: $RdfVocabularies.xsd.dateTime }), expectedValueType: "Date", focusResource: $resource, predicate: InPropertiesClass.$properties.inDateTimesProperty["identifier"] })); }))).map(values => values.head().toMaybe());
+        const _inDateTimesPropertyEither: purify.Either<Error, purify.Maybe<Date>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.inDateTimesProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toDate().chain(value => { if (value.getTime() === 1523268000000) { return purify.Either.of<Error, Date>(value); } if (value.getTime() === 1523268000000) { return purify.Either.of<Error, Date>(value); } return purify.Left<Error, Date>(new rdfjsResource.Resource.MistypedValueError({ actualValue: rdfLiteral.toRdf(value, { dataFactory, datatype: $RdfVocabularies.xsd.dateTime }), expectedValueType: "Date", focusResource: $resource, predicate: InPropertiesClass.$properties.inDateTimesProperty["identifier"] })); }))).map(values => values.head().toMaybe());
         if (_inDateTimesPropertyEither.isLeft()) { return _inDateTimesPropertyEither; }
 
         const inDateTimesProperty = _inDateTimesPropertyEither.unsafeCoerce();
-        const _inIrisPropertyEither: purify.Either<Error, purify.Maybe<rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.inIrisProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toIri().chain(iri => { switch (iri.value) { case "http://example.com/InPropertiesIri1": return purify.Either.of<Error, rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">>(iri as rdfjs.NamedNode<"http://example.com/InPropertiesIri1">); case "http://example.com/InPropertiesIri2": return purify.Either.of<Error, rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">>(iri as rdfjs.NamedNode<"http://example.com/InPropertiesIri2">); default: return purify.Left<Error, rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">>(new rdfjsResource.Resource.MistypedValueError({ actualValue: iri, expectedValueType: "rdfjs.NamedNode<\"http://example.com/InPropertiesIri1\" | \"http://example.com/InPropertiesIri2\">", focusResource: $resource, predicate: InPropertiesClass.$properties.inIrisProperty["identifier"] })); } } ))).map(values => values.head().toMaybe());
+        const _inIrisPropertyEither: purify.Either<Error, purify.Maybe<rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2" | "http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.inIrisProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toIri().chain(iri => { switch (iri.value) { case "http://example.com/InPropertiesIri1": return purify.Either.of<Error, rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2" | "http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">>(iri as rdfjs.NamedNode<"http://example.com/InPropertiesIri1">); case "http://example.com/InPropertiesIri2": return purify.Either.of<Error, rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2" | "http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">>(iri as rdfjs.NamedNode<"http://example.com/InPropertiesIri2">); case "http://example.com/InPropertiesIri1": return purify.Either.of<Error, rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2" | "http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">>(iri as rdfjs.NamedNode<"http://example.com/InPropertiesIri1">); case "http://example.com/InPropertiesIri2": return purify.Either.of<Error, rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2" | "http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">>(iri as rdfjs.NamedNode<"http://example.com/InPropertiesIri2">); default: return purify.Left<Error, rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2" | "http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">>(new rdfjsResource.Resource.MistypedValueError({ actualValue: iri, expectedValueType: "rdfjs.NamedNode<\"http://example.com/InPropertiesIri1\" | \"http://example.com/InPropertiesIri2\" | \"http://example.com/InPropertiesIri1\" | \"http://example.com/InPropertiesIri2\">", focusResource: $resource, predicate: InPropertiesClass.$properties.inIrisProperty["identifier"] })); } } ))).map(values => values.head().toMaybe());
         if (_inIrisPropertyEither.isLeft()) { return _inIrisPropertyEither; }
 
         const inIrisProperty = _inIrisPropertyEither.unsafeCoerce();
-        const _inNumbersPropertyEither: purify.Either<Error, purify.Maybe<1 | 2>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.inNumbersProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toNumber().chain(value => { switch (value) { case 1: case 2: return purify.Either.of<Error, 1 | 2>(value); default: return purify.Left<Error, 1 | 2>(new rdfjsResource.Resource.MistypedValueError({ actualValue: rdfLiteral.toRdf(value), expectedValueType: "1 | 2", focusResource: $resource, predicate: InPropertiesClass.$properties.inNumbersProperty["identifier"] })); } }))).map(values => values.head().toMaybe());
+        const _inNumbersPropertyEither: purify.Either<Error, purify.Maybe<1 | 2 | 1 | 2>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.inNumbersProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toNumber().chain(value => { switch (value) { case 1: case 2: case 1: case 2: return purify.Either.of<Error, 1 | 2 | 1 | 2>(value); default: return purify.Left<Error, 1 | 2 | 1 | 2>(new rdfjsResource.Resource.MistypedValueError({ actualValue: rdfLiteral.toRdf(value), expectedValueType: "1 | 2 | 1 | 2", focusResource: $resource, predicate: InPropertiesClass.$properties.inNumbersProperty["identifier"] })); } }))).map(values => values.head().toMaybe());
         if (_inNumbersPropertyEither.isLeft()) { return _inNumbersPropertyEither; }
 
         const inNumbersProperty = _inNumbersPropertyEither.unsafeCoerce();
-        const _inStringsPropertyEither: purify.Either<Error, purify.Maybe<"text" | "html">> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.inStringsProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toString().chain(value => { switch (value) { case "text": case "html": return purify.Either.of<Error, "text" | "html">(value); default: return purify.Left<Error, "text" | "html">(new rdfjsResource.Resource.MistypedValueError({ actualValue: rdfLiteral.toRdf(value), expectedValueType: "\"text\" | \"html\"", focusResource: $resource, predicate: InPropertiesClass.$properties.inStringsProperty["identifier"] })); } }))).map(values => values.head().toMaybe());
+        const _inStringsPropertyEither: purify.Either<Error, purify.Maybe<"text" | "html" | "text" | "html">> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.inStringsProperty["identifier"], { unique: true })).chain(values => values.chainMap(value => value.toString().chain(value => { switch (value) { case "text": case "html": case "text": case "html": return purify.Either.of<Error, "text" | "html" | "text" | "html">(value); default: return purify.Left<Error, "text" | "html" | "text" | "html">(new rdfjsResource.Resource.MistypedValueError({ actualValue: rdfLiteral.toRdf(value), expectedValueType: "\"text\" | \"html\" | \"text\" | \"html\"", focusResource: $resource, predicate: InPropertiesClass.$properties.inStringsProperty["identifier"] })); } }))).map(values => values.head().toMaybe());
         if (_inStringsPropertyEither.isLeft()) { return _inStringsPropertyEither; }
 
         const inStringsProperty = _inStringsPropertyEither.unsafeCoerce();
@@ -7460,7 +7460,7 @@ export namespace HasValuePropertiesClass {
 
         const hasIriValueProperty = _hasIriValuePropertyEither.unsafeCoerce();
         const _hasLiteralValuePropertyEither: purify.Either<Error, purify.Maybe<string>> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.hasLiteralValueProperty["identifier"], { unique: true })).chain(values => {
-          for (const hasValue of [dataFactory.literal("test")]) {
+          for (const hasValue of [dataFactory.literal("test"), dataFactory.literal("test")]) {
             const findResult = values.find(value => value.toTerm().equals(hasValue));
             if (findResult.isLeft()) {
               return findResult;
@@ -8193,29 +8193,29 @@ export class DefaultValuePropertiesClass {
     private _$identifier?: DefaultValuePropertiesClass.$Identifier;
     protected readonly _$identifierPrefix?: string;
     readonly $type = "DefaultValuePropertiesClass";
-    readonly dateDefaultValueProperty: (rdfjs.Literal);
-    readonly dateTimeDefaultValueProperty: (rdfjs.Literal);
-    readonly falseBooleanDefaultValueProperty: (rdfjs.Literal);
-    readonly numberDefaultValueProperty: (rdfjs.Literal);
-    readonly stringDefaultValueProperty: (rdfjs.Literal);
-    readonly trueBooleanDefaultValueProperty: (rdfjs.Literal);
+    readonly dateDefaultValueProperty: Date;
+    readonly dateTimeDefaultValueProperty: Date;
+    readonly falseBooleanDefaultValueProperty: boolean;
+    readonly numberDefaultValueProperty: number;
+    readonly stringDefaultValueProperty: string;
+    readonly trueBooleanDefaultValueProperty: boolean;
 
-    constructor(parameters: { readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string, readonly $identifierPrefix?: string, readonly dateDefaultValueProperty: (rdfjs.Literal) | Date | boolean | number | string, readonly dateTimeDefaultValueProperty: (rdfjs.Literal) | Date | boolean | number | string, readonly falseBooleanDefaultValueProperty: (rdfjs.Literal) | Date | boolean | number | string, readonly numberDefaultValueProperty: (rdfjs.Literal) | Date | boolean | number | string, readonly stringDefaultValueProperty: (rdfjs.Literal) | Date | boolean | number | string, readonly trueBooleanDefaultValueProperty: (rdfjs.Literal) | Date | boolean | number | string }) {
-        if (typeof parameters.$identifier === "object") { this._$identifier = parameters.$identifier; } else if (typeof parameters.$identifier === "string") { this._$identifier = dataFactory.namedNode(parameters.$identifier); } else if (typeof parameters.$identifier === "undefined") { } else { this._$identifier = (parameters.$identifier) satisfies never;
+    constructor(parameters?: { readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string, readonly $identifierPrefix?: string, readonly dateDefaultValueProperty?: Date, readonly dateTimeDefaultValueProperty?: Date, readonly falseBooleanDefaultValueProperty?: boolean, readonly numberDefaultValueProperty?: number, readonly stringDefaultValueProperty?: string, readonly trueBooleanDefaultValueProperty?: boolean }) {
+        if (typeof parameters?.$identifier === "object") { this._$identifier = parameters?.$identifier; } else if (typeof parameters?.$identifier === "string") { this._$identifier = dataFactory.namedNode(parameters?.$identifier); } else if (typeof parameters?.$identifier === "undefined") { } else { this._$identifier = (parameters?.$identifier) satisfies never;
          }
 
-        this._$identifierPrefix = parameters.$identifierPrefix;
-        if (typeof parameters.dateDefaultValueProperty === "boolean") { this.dateDefaultValueProperty = rdfLiteral.toRdf(parameters.dateDefaultValueProperty, { dataFactory }); } else if (typeof parameters.dateDefaultValueProperty === "object" && parameters.dateDefaultValueProperty instanceof Date) { this.dateDefaultValueProperty = rdfLiteral.toRdf(parameters.dateDefaultValueProperty, { dataFactory }); } else if (typeof parameters.dateDefaultValueProperty === "number") { this.dateDefaultValueProperty = rdfLiteral.toRdf(parameters.dateDefaultValueProperty, { dataFactory }); } else if (typeof parameters.dateDefaultValueProperty === "string") { this.dateDefaultValueProperty = dataFactory.literal(parameters.dateDefaultValueProperty); } else if (typeof parameters.dateDefaultValueProperty === "object") { this.dateDefaultValueProperty = parameters.dateDefaultValueProperty; } else { this.dateDefaultValueProperty = (parameters.dateDefaultValueProperty) satisfies never; }
+        this._$identifierPrefix = parameters?.$identifierPrefix;
+        if (typeof parameters?.dateDefaultValueProperty === "object" && parameters?.dateDefaultValueProperty instanceof Date) { this.dateDefaultValueProperty = parameters?.dateDefaultValueProperty; } else if (typeof parameters?.dateDefaultValueProperty === "undefined") { this.dateDefaultValueProperty = new Date("2018-04-09T00:00:00.000Z"); } else { this.dateDefaultValueProperty = (parameters?.dateDefaultValueProperty) satisfies never; }
 
-        if (typeof parameters.dateTimeDefaultValueProperty === "boolean") { this.dateTimeDefaultValueProperty = rdfLiteral.toRdf(parameters.dateTimeDefaultValueProperty, { dataFactory }); } else if (typeof parameters.dateTimeDefaultValueProperty === "object" && parameters.dateTimeDefaultValueProperty instanceof Date) { this.dateTimeDefaultValueProperty = rdfLiteral.toRdf(parameters.dateTimeDefaultValueProperty, { dataFactory }); } else if (typeof parameters.dateTimeDefaultValueProperty === "number") { this.dateTimeDefaultValueProperty = rdfLiteral.toRdf(parameters.dateTimeDefaultValueProperty, { dataFactory }); } else if (typeof parameters.dateTimeDefaultValueProperty === "string") { this.dateTimeDefaultValueProperty = dataFactory.literal(parameters.dateTimeDefaultValueProperty); } else if (typeof parameters.dateTimeDefaultValueProperty === "object") { this.dateTimeDefaultValueProperty = parameters.dateTimeDefaultValueProperty; } else { this.dateTimeDefaultValueProperty = (parameters.dateTimeDefaultValueProperty) satisfies never; }
+        if (typeof parameters?.dateTimeDefaultValueProperty === "object" && parameters?.dateTimeDefaultValueProperty instanceof Date) { this.dateTimeDefaultValueProperty = parameters?.dateTimeDefaultValueProperty; } else if (typeof parameters?.dateTimeDefaultValueProperty === "undefined") { this.dateTimeDefaultValueProperty = new Date("2018-04-09T10:00:00.000Z"); } else { this.dateTimeDefaultValueProperty = (parameters?.dateTimeDefaultValueProperty) satisfies never; }
 
-        if (typeof parameters.falseBooleanDefaultValueProperty === "boolean") { this.falseBooleanDefaultValueProperty = rdfLiteral.toRdf(parameters.falseBooleanDefaultValueProperty, { dataFactory }); } else if (typeof parameters.falseBooleanDefaultValueProperty === "object" && parameters.falseBooleanDefaultValueProperty instanceof Date) { this.falseBooleanDefaultValueProperty = rdfLiteral.toRdf(parameters.falseBooleanDefaultValueProperty, { dataFactory }); } else if (typeof parameters.falseBooleanDefaultValueProperty === "number") { this.falseBooleanDefaultValueProperty = rdfLiteral.toRdf(parameters.falseBooleanDefaultValueProperty, { dataFactory }); } else if (typeof parameters.falseBooleanDefaultValueProperty === "string") { this.falseBooleanDefaultValueProperty = dataFactory.literal(parameters.falseBooleanDefaultValueProperty); } else if (typeof parameters.falseBooleanDefaultValueProperty === "object") { this.falseBooleanDefaultValueProperty = parameters.falseBooleanDefaultValueProperty; } else { this.falseBooleanDefaultValueProperty = (parameters.falseBooleanDefaultValueProperty) satisfies never; }
+        if (typeof parameters?.falseBooleanDefaultValueProperty === "boolean") { this.falseBooleanDefaultValueProperty = parameters?.falseBooleanDefaultValueProperty; } else if (typeof parameters?.falseBooleanDefaultValueProperty === "undefined") { this.falseBooleanDefaultValueProperty = false; } else { this.falseBooleanDefaultValueProperty = (parameters?.falseBooleanDefaultValueProperty) satisfies never; }
 
-        if (typeof parameters.numberDefaultValueProperty === "boolean") { this.numberDefaultValueProperty = rdfLiteral.toRdf(parameters.numberDefaultValueProperty, { dataFactory }); } else if (typeof parameters.numberDefaultValueProperty === "object" && parameters.numberDefaultValueProperty instanceof Date) { this.numberDefaultValueProperty = rdfLiteral.toRdf(parameters.numberDefaultValueProperty, { dataFactory }); } else if (typeof parameters.numberDefaultValueProperty === "number") { this.numberDefaultValueProperty = rdfLiteral.toRdf(parameters.numberDefaultValueProperty, { dataFactory }); } else if (typeof parameters.numberDefaultValueProperty === "string") { this.numberDefaultValueProperty = dataFactory.literal(parameters.numberDefaultValueProperty); } else if (typeof parameters.numberDefaultValueProperty === "object") { this.numberDefaultValueProperty = parameters.numberDefaultValueProperty; } else { this.numberDefaultValueProperty = (parameters.numberDefaultValueProperty) satisfies never; }
+        if (typeof parameters?.numberDefaultValueProperty === "number") { this.numberDefaultValueProperty = parameters?.numberDefaultValueProperty; } else if (typeof parameters?.numberDefaultValueProperty === "undefined") { this.numberDefaultValueProperty = 0; } else { this.numberDefaultValueProperty = (parameters?.numberDefaultValueProperty) satisfies never; }
 
-        if (typeof parameters.stringDefaultValueProperty === "boolean") { this.stringDefaultValueProperty = rdfLiteral.toRdf(parameters.stringDefaultValueProperty, { dataFactory }); } else if (typeof parameters.stringDefaultValueProperty === "object" && parameters.stringDefaultValueProperty instanceof Date) { this.stringDefaultValueProperty = rdfLiteral.toRdf(parameters.stringDefaultValueProperty, { dataFactory }); } else if (typeof parameters.stringDefaultValueProperty === "number") { this.stringDefaultValueProperty = rdfLiteral.toRdf(parameters.stringDefaultValueProperty, { dataFactory }); } else if (typeof parameters.stringDefaultValueProperty === "string") { this.stringDefaultValueProperty = dataFactory.literal(parameters.stringDefaultValueProperty); } else if (typeof parameters.stringDefaultValueProperty === "object") { this.stringDefaultValueProperty = parameters.stringDefaultValueProperty; } else { this.stringDefaultValueProperty = (parameters.stringDefaultValueProperty) satisfies never; }
+        if (typeof parameters?.stringDefaultValueProperty === "string") { this.stringDefaultValueProperty = parameters?.stringDefaultValueProperty; } else if (typeof parameters?.stringDefaultValueProperty === "undefined") { this.stringDefaultValueProperty = ""; } else { this.stringDefaultValueProperty = (parameters?.stringDefaultValueProperty) satisfies never; }
 
-        if (typeof parameters.trueBooleanDefaultValueProperty === "boolean") { this.trueBooleanDefaultValueProperty = rdfLiteral.toRdf(parameters.trueBooleanDefaultValueProperty, { dataFactory }); } else if (typeof parameters.trueBooleanDefaultValueProperty === "object" && parameters.trueBooleanDefaultValueProperty instanceof Date) { this.trueBooleanDefaultValueProperty = rdfLiteral.toRdf(parameters.trueBooleanDefaultValueProperty, { dataFactory }); } else if (typeof parameters.trueBooleanDefaultValueProperty === "number") { this.trueBooleanDefaultValueProperty = rdfLiteral.toRdf(parameters.trueBooleanDefaultValueProperty, { dataFactory }); } else if (typeof parameters.trueBooleanDefaultValueProperty === "string") { this.trueBooleanDefaultValueProperty = dataFactory.literal(parameters.trueBooleanDefaultValueProperty); } else if (typeof parameters.trueBooleanDefaultValueProperty === "object") { this.trueBooleanDefaultValueProperty = parameters.trueBooleanDefaultValueProperty; } else { this.trueBooleanDefaultValueProperty = (parameters.trueBooleanDefaultValueProperty) satisfies never; }
+        if (typeof parameters?.trueBooleanDefaultValueProperty === "boolean") { this.trueBooleanDefaultValueProperty = parameters?.trueBooleanDefaultValueProperty; } else if (typeof parameters?.trueBooleanDefaultValueProperty === "undefined") { this.trueBooleanDefaultValueProperty = true; } else { this.trueBooleanDefaultValueProperty = (parameters?.trueBooleanDefaultValueProperty) satisfies never; }
     }
 
     get $identifier(): DefaultValuePropertiesClass.$Identifier {
@@ -8227,7 +8227,7 @@ export class DefaultValuePropertiesClass {
     }
 
     $equals(other: DefaultValuePropertiesClass): $EqualsResult {
-        return ($booleanEquals)(this.$identifier, other.$identifier).mapLeft(propertyValuesUnequal => ({ left: this, right: other, propertyName: "$identifier", propertyValuesUnequal, type: "Property" as const })).chain(() => ($strictEquals)(this.$identifierPrefix, other.$identifierPrefix).mapLeft(propertyValuesUnequal => ({ left: this, right: other, propertyName: "$identifierPrefix", propertyValuesUnequal, type: "Property" as const }))).chain(() => ($strictEquals)(this.$type, other.$type).mapLeft(propertyValuesUnequal => ({ left: this, right: other, propertyName: "$type", propertyValuesUnequal, type: "Property" as const }))).chain(() => ($booleanEquals)(this.dateDefaultValueProperty, other.dateDefaultValueProperty).mapLeft(propertyValuesUnequal => ({ left: this, right: other, propertyName: "dateDefaultValueProperty", propertyValuesUnequal, type: "Property" as const }))).chain(() => ($booleanEquals)(this.dateTimeDefaultValueProperty, other.dateTimeDefaultValueProperty).mapLeft(propertyValuesUnequal => ({ left: this, right: other, propertyName: "dateTimeDefaultValueProperty", propertyValuesUnequal, type: "Property" as const }))).chain(() => ($booleanEquals)(this.falseBooleanDefaultValueProperty, other.falseBooleanDefaultValueProperty).mapLeft(propertyValuesUnequal => ({ left: this, right: other, propertyName: "falseBooleanDefaultValueProperty", propertyValuesUnequal, type: "Property" as const }))).chain(() => ($booleanEquals)(this.numberDefaultValueProperty, other.numberDefaultValueProperty).mapLeft(propertyValuesUnequal => ({ left: this, right: other, propertyName: "numberDefaultValueProperty", propertyValuesUnequal, type: "Property" as const }))).chain(() => ($booleanEquals)(this.stringDefaultValueProperty, other.stringDefaultValueProperty).mapLeft(propertyValuesUnequal => ({ left: this, right: other, propertyName: "stringDefaultValueProperty", propertyValuesUnequal, type: "Property" as const }))).chain(() => ($booleanEquals)(this.trueBooleanDefaultValueProperty, other.trueBooleanDefaultValueProperty).mapLeft(propertyValuesUnequal => ({ left: this, right: other, propertyName: "trueBooleanDefaultValueProperty", propertyValuesUnequal, type: "Property" as const })));
+        return ($booleanEquals)(this.$identifier, other.$identifier).mapLeft(propertyValuesUnequal => ({ left: this, right: other, propertyName: "$identifier", propertyValuesUnequal, type: "Property" as const })).chain(() => ($strictEquals)(this.$identifierPrefix, other.$identifierPrefix).mapLeft(propertyValuesUnequal => ({ left: this, right: other, propertyName: "$identifierPrefix", propertyValuesUnequal, type: "Property" as const }))).chain(() => ($strictEquals)(this.$type, other.$type).mapLeft(propertyValuesUnequal => ({ left: this, right: other, propertyName: "$type", propertyValuesUnequal, type: "Property" as const }))).chain(() => ($dateEquals)(this.dateDefaultValueProperty, other.dateDefaultValueProperty).mapLeft(propertyValuesUnequal => ({ left: this, right: other, propertyName: "dateDefaultValueProperty", propertyValuesUnequal, type: "Property" as const }))).chain(() => ($dateEquals)(this.dateTimeDefaultValueProperty, other.dateTimeDefaultValueProperty).mapLeft(propertyValuesUnequal => ({ left: this, right: other, propertyName: "dateTimeDefaultValueProperty", propertyValuesUnequal, type: "Property" as const }))).chain(() => ($strictEquals)(this.falseBooleanDefaultValueProperty, other.falseBooleanDefaultValueProperty).mapLeft(propertyValuesUnequal => ({ left: this, right: other, propertyName: "falseBooleanDefaultValueProperty", propertyValuesUnequal, type: "Property" as const }))).chain(() => ($strictEquals)(this.numberDefaultValueProperty, other.numberDefaultValueProperty).mapLeft(propertyValuesUnequal => ({ left: this, right: other, propertyName: "numberDefaultValueProperty", propertyValuesUnequal, type: "Property" as const }))).chain(() => ($strictEquals)(this.stringDefaultValueProperty, other.stringDefaultValueProperty).mapLeft(propertyValuesUnequal => ({ left: this, right: other, propertyName: "stringDefaultValueProperty", propertyValuesUnequal, type: "Property" as const }))).chain(() => ($strictEquals)(this.trueBooleanDefaultValueProperty, other.trueBooleanDefaultValueProperty).mapLeft(propertyValuesUnequal => ({ left: this, right: other, propertyName: "trueBooleanDefaultValueProperty", propertyValuesUnequal, type: "Property" as const })));
     }
 
     $hash<HasherT extends { update: (message: string | number[] | ArrayBuffer | Uint8Array) => void; }>(_hasher: HasherT): HasherT {
@@ -8238,47 +8238,29 @@ export class DefaultValuePropertiesClass {
     }
 
     protected $hashShaclProperties<HasherT extends { update: (message: string | number[] | ArrayBuffer | Uint8Array) => void; }>(_hasher: HasherT): HasherT {
-        _hasher.update(this.dateDefaultValueProperty.datatype.value);
-        _hasher.update(this.dateDefaultValueProperty.language);
-        _hasher.update(this.dateDefaultValueProperty.termType);
-        _hasher.update(this.dateDefaultValueProperty.value);
-        _hasher.update(this.dateTimeDefaultValueProperty.datatype.value);
-        _hasher.update(this.dateTimeDefaultValueProperty.language);
-        _hasher.update(this.dateTimeDefaultValueProperty.termType);
-        _hasher.update(this.dateTimeDefaultValueProperty.value);
-        _hasher.update(this.falseBooleanDefaultValueProperty.datatype.value);
-        _hasher.update(this.falseBooleanDefaultValueProperty.language);
-        _hasher.update(this.falseBooleanDefaultValueProperty.termType);
-        _hasher.update(this.falseBooleanDefaultValueProperty.value);
-        _hasher.update(this.numberDefaultValueProperty.datatype.value);
-        _hasher.update(this.numberDefaultValueProperty.language);
-        _hasher.update(this.numberDefaultValueProperty.termType);
-        _hasher.update(this.numberDefaultValueProperty.value);
-        _hasher.update(this.stringDefaultValueProperty.datatype.value);
-        _hasher.update(this.stringDefaultValueProperty.language);
-        _hasher.update(this.stringDefaultValueProperty.termType);
-        _hasher.update(this.stringDefaultValueProperty.value);
-        _hasher.update(this.trueBooleanDefaultValueProperty.datatype.value);
-        _hasher.update(this.trueBooleanDefaultValueProperty.language);
-        _hasher.update(this.trueBooleanDefaultValueProperty.termType);
-        _hasher.update(this.trueBooleanDefaultValueProperty.value);
+        _hasher.update(this.dateDefaultValueProperty.toISOString());
+        _hasher.update(this.dateTimeDefaultValueProperty.toISOString());
+        _hasher.update(this.falseBooleanDefaultValueProperty.toString());
+        _hasher.update(this.numberDefaultValueProperty.toString());
+        _hasher.update(this.stringDefaultValueProperty);
+        _hasher.update(this.trueBooleanDefaultValueProperty.toString());
         return _hasher;
     }
 
     $toJson(): DefaultValuePropertiesClass.$Json {
-        return JSON.parse(JSON.stringify({ "@id": this.$identifier.termType === "BlankNode" ? `_:${this.$identifier.value}` : this.$identifier.value,$type: this.$type,dateDefaultValueProperty: { "@language": this.dateDefaultValueProperty.language.length > 0 ? this.dateDefaultValueProperty.language : undefined, "@type": this.dateDefaultValueProperty.datatype.value !== "http://www.w3.org/2001/XMLSchema#string" ? this.dateDefaultValueProperty.datatype.value : undefined, "@value": this.dateDefaultValueProperty.value },dateTimeDefaultValueProperty: { "@language": this.dateTimeDefaultValueProperty.language.length > 0 ? this.dateTimeDefaultValueProperty.language : undefined, "@type": this.dateTimeDefaultValueProperty.datatype.value !== "http://www.w3.org/2001/XMLSchema#string" ? this.dateTimeDefaultValueProperty.datatype.value : undefined, "@value": this.dateTimeDefaultValueProperty.value },falseBooleanDefaultValueProperty: { "@language": this.falseBooleanDefaultValueProperty.language.length > 0 ? this.falseBooleanDefaultValueProperty.language : undefined, "@type": this.falseBooleanDefaultValueProperty.datatype.value !== "http://www.w3.org/2001/XMLSchema#string" ? this.falseBooleanDefaultValueProperty.datatype.value : undefined, "@value": this.falseBooleanDefaultValueProperty.value },numberDefaultValueProperty: { "@language": this.numberDefaultValueProperty.language.length > 0 ? this.numberDefaultValueProperty.language : undefined, "@type": this.numberDefaultValueProperty.datatype.value !== "http://www.w3.org/2001/XMLSchema#string" ? this.numberDefaultValueProperty.datatype.value : undefined, "@value": this.numberDefaultValueProperty.value },stringDefaultValueProperty: { "@language": this.stringDefaultValueProperty.language.length > 0 ? this.stringDefaultValueProperty.language : undefined, "@type": this.stringDefaultValueProperty.datatype.value !== "http://www.w3.org/2001/XMLSchema#string" ? this.stringDefaultValueProperty.datatype.value : undefined, "@value": this.stringDefaultValueProperty.value },trueBooleanDefaultValueProperty: { "@language": this.trueBooleanDefaultValueProperty.language.length > 0 ? this.trueBooleanDefaultValueProperty.language : undefined, "@type": this.trueBooleanDefaultValueProperty.datatype.value !== "http://www.w3.org/2001/XMLSchema#string" ? this.trueBooleanDefaultValueProperty.datatype.value : undefined, "@value": this.trueBooleanDefaultValueProperty.value } } satisfies DefaultValuePropertiesClass.$Json));
+        return JSON.parse(JSON.stringify({ "@id": this.$identifier.termType === "BlankNode" ? `_:${this.$identifier.value}` : this.$identifier.value,$type: this.$type,dateDefaultValueProperty: this.dateDefaultValueProperty.toISOString().replace(/T.*$/, ''),dateTimeDefaultValueProperty: this.dateTimeDefaultValueProperty.toISOString(),falseBooleanDefaultValueProperty: this.falseBooleanDefaultValueProperty,numberDefaultValueProperty: this.numberDefaultValueProperty,stringDefaultValueProperty: this.stringDefaultValueProperty,trueBooleanDefaultValueProperty: this.trueBooleanDefaultValueProperty } satisfies DefaultValuePropertiesClass.$Json));
     }
 
     $toRdf(options?: { ignoreRdfType?: boolean; mutateGraph?: rdfjsResource.MutableResource.MutateGraph, resourceSet?: rdfjsResource.MutableResourceSet }): rdfjsResource.MutableResource {
         const mutateGraph = options?.mutateGraph;
         const resourceSet = options?.resourceSet ?? new rdfjsResource.MutableResourceSet({ dataFactory, dataset: datasetFactory.dataset() });
         const resource = resourceSet.mutableResource(this.$identifier, { mutateGraph });
-        resource.add(DefaultValuePropertiesClass.$properties.dateDefaultValueProperty["identifier"], this.dateDefaultValueProperty);
-        resource.add(DefaultValuePropertiesClass.$properties.dateTimeDefaultValueProperty["identifier"], this.dateTimeDefaultValueProperty);
-        resource.add(DefaultValuePropertiesClass.$properties.falseBooleanDefaultValueProperty["identifier"], this.falseBooleanDefaultValueProperty);
-        resource.add(DefaultValuePropertiesClass.$properties.numberDefaultValueProperty["identifier"], this.numberDefaultValueProperty);
-        resource.add(DefaultValuePropertiesClass.$properties.stringDefaultValueProperty["identifier"], this.stringDefaultValueProperty);
-        resource.add(DefaultValuePropertiesClass.$properties.trueBooleanDefaultValueProperty["identifier"], this.trueBooleanDefaultValueProperty);
+        resource.add(DefaultValuePropertiesClass.$properties.dateDefaultValueProperty["identifier"], this.dateDefaultValueProperty.getTime() !== 1523232000000 ? rdfLiteral.toRdf(this.dateDefaultValueProperty, { dataFactory, datatype: $RdfVocabularies.xsd.date }) : undefined);
+        resource.add(DefaultValuePropertiesClass.$properties.dateTimeDefaultValueProperty["identifier"], this.dateTimeDefaultValueProperty.getTime() !== 1523268000000 ? rdfLiteral.toRdf(this.dateTimeDefaultValueProperty, { dataFactory, datatype: $RdfVocabularies.xsd.dateTime }) : undefined);
+        resource.add(DefaultValuePropertiesClass.$properties.falseBooleanDefaultValueProperty["identifier"], this.falseBooleanDefaultValueProperty ? true : undefined);
+        resource.add(DefaultValuePropertiesClass.$properties.numberDefaultValueProperty["identifier"], this.numberDefaultValueProperty !== 0 ? this.numberDefaultValueProperty : undefined);
+        resource.add(DefaultValuePropertiesClass.$properties.stringDefaultValueProperty["identifier"], this.stringDefaultValueProperty !== "" ? this.stringDefaultValueProperty : undefined);
+        resource.add(DefaultValuePropertiesClass.$properties.trueBooleanDefaultValueProperty["identifier"], !this.trueBooleanDefaultValueProperty ? false : undefined);
         return resource;
     }
 
@@ -8299,20 +8281,20 @@ export namespace DefaultValuePropertiesClass {
             toString = rdfjsResource.Resource.Identifier.toString;
     }
 
-    export type $Json = { readonly "@id": string; readonly "$type": "DefaultValuePropertiesClass"; readonly "dateDefaultValueProperty": { readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string }; readonly "dateTimeDefaultValueProperty": { readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string }; readonly "falseBooleanDefaultValueProperty": { readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string }; readonly "numberDefaultValueProperty": { readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string }; readonly "stringDefaultValueProperty": { readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string }; readonly "trueBooleanDefaultValueProperty": { readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string } };
+    export type $Json = { readonly "@id": string; readonly "$type": "DefaultValuePropertiesClass"; readonly "dateDefaultValueProperty": string; readonly "dateTimeDefaultValueProperty": string; readonly "falseBooleanDefaultValueProperty": boolean; readonly "numberDefaultValueProperty": number; readonly "stringDefaultValueProperty": string; readonly "trueBooleanDefaultValueProperty": boolean };
 
-    export function $propertiesFromJson(_json: unknown): purify.Either<zod.ZodError, { $identifier: (rdfjs.BlankNode | rdfjs.NamedNode); dateDefaultValueProperty: (rdfjs.Literal); dateTimeDefaultValueProperty: (rdfjs.Literal); falseBooleanDefaultValueProperty: (rdfjs.Literal); numberDefaultValueProperty: (rdfjs.Literal); stringDefaultValueProperty: (rdfjs.Literal); trueBooleanDefaultValueProperty: (rdfjs.Literal); }> {
+    export function $propertiesFromJson(_json: unknown): purify.Either<zod.ZodError, { $identifier: (rdfjs.BlankNode | rdfjs.NamedNode); dateDefaultValueProperty: Date; dateTimeDefaultValueProperty: Date; falseBooleanDefaultValueProperty: boolean; numberDefaultValueProperty: number; stringDefaultValueProperty: string; trueBooleanDefaultValueProperty: boolean; }> {
         const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
         if (!$jsonSafeParseResult.success) { return purify.Left($jsonSafeParseResult.error); }
 
         const $jsonObject = $jsonSafeParseResult.data;
         const $identifier = ($jsonObject["@id"].startsWith("_:") ? dataFactory.blankNode($jsonObject["@id"].substring(2)) : dataFactory.namedNode($jsonObject["@id"]));
-        const dateDefaultValueProperty = dataFactory.literal($jsonObject["dateDefaultValueProperty"]["@value"], typeof $jsonObject["dateDefaultValueProperty"]["@language"] !== "undefined" ? $jsonObject["dateDefaultValueProperty"]["@language"] : (typeof $jsonObject["dateDefaultValueProperty"]["@type"] !== "undefined" ? dataFactory.namedNode($jsonObject["dateDefaultValueProperty"]["@type"]) : undefined));
-        const dateTimeDefaultValueProperty = dataFactory.literal($jsonObject["dateTimeDefaultValueProperty"]["@value"], typeof $jsonObject["dateTimeDefaultValueProperty"]["@language"] !== "undefined" ? $jsonObject["dateTimeDefaultValueProperty"]["@language"] : (typeof $jsonObject["dateTimeDefaultValueProperty"]["@type"] !== "undefined" ? dataFactory.namedNode($jsonObject["dateTimeDefaultValueProperty"]["@type"]) : undefined));
-        const falseBooleanDefaultValueProperty = dataFactory.literal($jsonObject["falseBooleanDefaultValueProperty"]["@value"], typeof $jsonObject["falseBooleanDefaultValueProperty"]["@language"] !== "undefined" ? $jsonObject["falseBooleanDefaultValueProperty"]["@language"] : (typeof $jsonObject["falseBooleanDefaultValueProperty"]["@type"] !== "undefined" ? dataFactory.namedNode($jsonObject["falseBooleanDefaultValueProperty"]["@type"]) : undefined));
-        const numberDefaultValueProperty = dataFactory.literal($jsonObject["numberDefaultValueProperty"]["@value"], typeof $jsonObject["numberDefaultValueProperty"]["@language"] !== "undefined" ? $jsonObject["numberDefaultValueProperty"]["@language"] : (typeof $jsonObject["numberDefaultValueProperty"]["@type"] !== "undefined" ? dataFactory.namedNode($jsonObject["numberDefaultValueProperty"]["@type"]) : undefined));
-        const stringDefaultValueProperty = dataFactory.literal($jsonObject["stringDefaultValueProperty"]["@value"], typeof $jsonObject["stringDefaultValueProperty"]["@language"] !== "undefined" ? $jsonObject["stringDefaultValueProperty"]["@language"] : (typeof $jsonObject["stringDefaultValueProperty"]["@type"] !== "undefined" ? dataFactory.namedNode($jsonObject["stringDefaultValueProperty"]["@type"]) : undefined));
-        const trueBooleanDefaultValueProperty = dataFactory.literal($jsonObject["trueBooleanDefaultValueProperty"]["@value"], typeof $jsonObject["trueBooleanDefaultValueProperty"]["@language"] !== "undefined" ? $jsonObject["trueBooleanDefaultValueProperty"]["@language"] : (typeof $jsonObject["trueBooleanDefaultValueProperty"]["@type"] !== "undefined" ? dataFactory.namedNode($jsonObject["trueBooleanDefaultValueProperty"]["@type"]) : undefined));
+        const dateDefaultValueProperty = new Date($jsonObject["dateDefaultValueProperty"]);
+        const dateTimeDefaultValueProperty = new Date($jsonObject["dateTimeDefaultValueProperty"]);
+        const falseBooleanDefaultValueProperty = $jsonObject["falseBooleanDefaultValueProperty"];
+        const numberDefaultValueProperty = $jsonObject["numberDefaultValueProperty"];
+        const stringDefaultValueProperty = $jsonObject["stringDefaultValueProperty"];
+        const trueBooleanDefaultValueProperty = $jsonObject["trueBooleanDefaultValueProperty"];
         return purify.Either.of({ $identifier, dateDefaultValueProperty, dateTimeDefaultValueProperty, falseBooleanDefaultValueProperty, numberDefaultValueProperty, stringDefaultValueProperty, trueBooleanDefaultValueProperty })
     }
 
@@ -8330,7 +8312,7 @@ export namespace DefaultValuePropertiesClass {
     }
 
     export function $jsonZodSchema() {
-        return zod.object({ "@id": zod.string().min(1),"$type": zod.literal("DefaultValuePropertiesClass"),"dateDefaultValueProperty": zod.object({ "@language": zod.string().optional(), "@type": zod.string().optional(), "@value": zod.string() }),"dateTimeDefaultValueProperty": zod.object({ "@language": zod.string().optional(), "@type": zod.string().optional(), "@value": zod.string() }),"falseBooleanDefaultValueProperty": zod.object({ "@language": zod.string().optional(), "@type": zod.string().optional(), "@value": zod.string() }),"numberDefaultValueProperty": zod.object({ "@language": zod.string().optional(), "@type": zod.string().optional(), "@value": zod.string() }),"stringDefaultValueProperty": zod.object({ "@language": zod.string().optional(), "@type": zod.string().optional(), "@value": zod.string() }),"trueBooleanDefaultValueProperty": zod.object({ "@language": zod.string().optional(), "@type": zod.string().optional(), "@value": zod.string() }) }) satisfies zod.ZodType<$Json>;
+        return zod.object({ "@id": zod.string().min(1),"$type": zod.literal("DefaultValuePropertiesClass"),"dateDefaultValueProperty": zod.string().date(),"dateTimeDefaultValueProperty": zod.string().datetime(),"falseBooleanDefaultValueProperty": zod.boolean(),"numberDefaultValueProperty": zod.number(),"stringDefaultValueProperty": zod.string(),"trueBooleanDefaultValueProperty": zod.boolean() }) satisfies zod.ZodType<$Json>;
     }
 
     export function $fromRdf(resource: rdfjsResource.Resource, options?: { [_index: string]: any; ignoreRdfType?: boolean; languageIn?: readonly string[]; objectSet?: $ObjectSet; }): purify.Either<Error, DefaultValuePropertiesClass> {
@@ -8342,245 +8324,29 @@ export namespace DefaultValuePropertiesClass {
 
     export function $propertiesFromRdf({ ignoreRdfType: $ignoreRdfType, languageIn: $languageIn, objectSet: $objectSet, resource: $resource,
         // @ts-ignore
-        ...$context }: { [_index: string]: any; ignoreRdfType: boolean; languageIn?: readonly string[]; objectSet: $ObjectSet; resource: rdfjsResource.Resource; }): purify.Either<Error, { $identifier: (rdfjs.BlankNode | rdfjs.NamedNode); dateDefaultValueProperty: (rdfjs.Literal); dateTimeDefaultValueProperty: (rdfjs.Literal); falseBooleanDefaultValueProperty: (rdfjs.Literal); numberDefaultValueProperty: (rdfjs.Literal); stringDefaultValueProperty: (rdfjs.Literal); trueBooleanDefaultValueProperty: (rdfjs.Literal); }> {
+        ...$context }: { [_index: string]: any; ignoreRdfType: boolean; languageIn?: readonly string[]; objectSet: $ObjectSet; resource: rdfjsResource.Resource; }): purify.Either<Error, { $identifier: (rdfjs.BlankNode | rdfjs.NamedNode); dateDefaultValueProperty: Date; dateTimeDefaultValueProperty: Date; falseBooleanDefaultValueProperty: boolean; numberDefaultValueProperty: number; stringDefaultValueProperty: string; trueBooleanDefaultValueProperty: boolean; }> {
         const $identifier: DefaultValuePropertiesClass.$Identifier = $resource.identifier;
-        const _dateDefaultValuePropertyEither: purify.Either<Error, (rdfjs.Literal)> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.dateDefaultValueProperty["identifier"], { unique: true })).chain(values => {
-              const literalValuesEither = values.chainMap(value => value.toLiteral());
-              if (literalValuesEither.isLeft()) {
-                return literalValuesEither;
-              }
-              const literalValues = literalValuesEither.unsafeCoerce();
-
-              const nonUniqueLanguageIn = $languageIn ?? [];
-              if (nonUniqueLanguageIn.length === 0) {
-                return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(literalValues);
-              }
-
-              let uniqueLanguageIn: string[];
-              if (nonUniqueLanguageIn.length === 1) {
-                uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-              } else {
-                uniqueLanguageIn = [];
-                for (const languageIn of nonUniqueLanguageIn) {
-                  if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-                    uniqueLanguageIn.push(languageIn);
-                  }
-                }
-              }
-
-              // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-              // Within a languageIn the literals may be in any order.
-              let filteredLiteralValues: rdfjsResource.Resource.Values<rdfjs.Literal> | undefined;
-              for (const languageIn of uniqueLanguageIn) {
-                if (!filteredLiteralValues) {
-                  filteredLiteralValues = literalValues.filter(value => value.language === languageIn);
-                } else {
-                  filteredLiteralValues = filteredLiteralValues.concat(...literalValues.filter(value => value.language === languageIn).toArray());
-                }
-              }
-
-              return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(filteredLiteralValues!);
-            }).chain(values => values.head());
+        const _dateDefaultValuePropertyEither: purify.Either<Error, Date> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.dateDefaultValueProperty["identifier"], { unique: true })).map(values => values.length > 0 ? values : new rdfjsResource.Resource.Value({ subject: $resource, predicate: DefaultValuePropertiesClass.$properties.dateDefaultValueProperty["identifier"], object: dataFactory.literal("2018-04-09", $RdfVocabularies.xsd.date) }).toValues()).chain(values => values.chainMap(value => value.toDate())).chain(values => values.head());
         if (_dateDefaultValuePropertyEither.isLeft()) { return _dateDefaultValuePropertyEither; }
 
         const dateDefaultValueProperty = _dateDefaultValuePropertyEither.unsafeCoerce();
-        const _dateTimeDefaultValuePropertyEither: purify.Either<Error, (rdfjs.Literal)> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.dateTimeDefaultValueProperty["identifier"], { unique: true })).chain(values => {
-              const literalValuesEither = values.chainMap(value => value.toLiteral());
-              if (literalValuesEither.isLeft()) {
-                return literalValuesEither;
-              }
-              const literalValues = literalValuesEither.unsafeCoerce();
-
-              const nonUniqueLanguageIn = $languageIn ?? [];
-              if (nonUniqueLanguageIn.length === 0) {
-                return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(literalValues);
-              }
-
-              let uniqueLanguageIn: string[];
-              if (nonUniqueLanguageIn.length === 1) {
-                uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-              } else {
-                uniqueLanguageIn = [];
-                for (const languageIn of nonUniqueLanguageIn) {
-                  if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-                    uniqueLanguageIn.push(languageIn);
-                  }
-                }
-              }
-
-              // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-              // Within a languageIn the literals may be in any order.
-              let filteredLiteralValues: rdfjsResource.Resource.Values<rdfjs.Literal> | undefined;
-              for (const languageIn of uniqueLanguageIn) {
-                if (!filteredLiteralValues) {
-                  filteredLiteralValues = literalValues.filter(value => value.language === languageIn);
-                } else {
-                  filteredLiteralValues = filteredLiteralValues.concat(...literalValues.filter(value => value.language === languageIn).toArray());
-                }
-              }
-
-              return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(filteredLiteralValues!);
-            }).chain(values => values.head());
+        const _dateTimeDefaultValuePropertyEither: purify.Either<Error, Date> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.dateTimeDefaultValueProperty["identifier"], { unique: true })).map(values => values.length > 0 ? values : new rdfjsResource.Resource.Value({ subject: $resource, predicate: DefaultValuePropertiesClass.$properties.dateTimeDefaultValueProperty["identifier"], object: dataFactory.literal("2018-04-09T10:00:00Z", $RdfVocabularies.xsd.dateTime) }).toValues()).chain(values => values.chainMap(value => value.toDate())).chain(values => values.head());
         if (_dateTimeDefaultValuePropertyEither.isLeft()) { return _dateTimeDefaultValuePropertyEither; }
 
         const dateTimeDefaultValueProperty = _dateTimeDefaultValuePropertyEither.unsafeCoerce();
-        const _falseBooleanDefaultValuePropertyEither: purify.Either<Error, (rdfjs.Literal)> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.falseBooleanDefaultValueProperty["identifier"], { unique: true })).chain(values => {
-              const literalValuesEither = values.chainMap(value => value.toLiteral());
-              if (literalValuesEither.isLeft()) {
-                return literalValuesEither;
-              }
-              const literalValues = literalValuesEither.unsafeCoerce();
-
-              const nonUniqueLanguageIn = $languageIn ?? [];
-              if (nonUniqueLanguageIn.length === 0) {
-                return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(literalValues);
-              }
-
-              let uniqueLanguageIn: string[];
-              if (nonUniqueLanguageIn.length === 1) {
-                uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-              } else {
-                uniqueLanguageIn = [];
-                for (const languageIn of nonUniqueLanguageIn) {
-                  if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-                    uniqueLanguageIn.push(languageIn);
-                  }
-                }
-              }
-
-              // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-              // Within a languageIn the literals may be in any order.
-              let filteredLiteralValues: rdfjsResource.Resource.Values<rdfjs.Literal> | undefined;
-              for (const languageIn of uniqueLanguageIn) {
-                if (!filteredLiteralValues) {
-                  filteredLiteralValues = literalValues.filter(value => value.language === languageIn);
-                } else {
-                  filteredLiteralValues = filteredLiteralValues.concat(...literalValues.filter(value => value.language === languageIn).toArray());
-                }
-              }
-
-              return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(filteredLiteralValues!);
-            }).chain(values => values.head());
+        const _falseBooleanDefaultValuePropertyEither: purify.Either<Error, boolean> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.falseBooleanDefaultValueProperty["identifier"], { unique: true })).map(values => values.length > 0 ? values : new rdfjsResource.Resource.Value({ subject: $resource, predicate: DefaultValuePropertiesClass.$properties.falseBooleanDefaultValueProperty["identifier"], object: dataFactory.literal("false", $RdfVocabularies.xsd.boolean) }).toValues()).chain(values => values.chainMap(value => value.toBoolean())).chain(values => values.head());
         if (_falseBooleanDefaultValuePropertyEither.isLeft()) { return _falseBooleanDefaultValuePropertyEither; }
 
         const falseBooleanDefaultValueProperty = _falseBooleanDefaultValuePropertyEither.unsafeCoerce();
-        const _numberDefaultValuePropertyEither: purify.Either<Error, (rdfjs.Literal)> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.numberDefaultValueProperty["identifier"], { unique: true })).chain(values => {
-              const literalValuesEither = values.chainMap(value => value.toLiteral());
-              if (literalValuesEither.isLeft()) {
-                return literalValuesEither;
-              }
-              const literalValues = literalValuesEither.unsafeCoerce();
-
-              const nonUniqueLanguageIn = $languageIn ?? [];
-              if (nonUniqueLanguageIn.length === 0) {
-                return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(literalValues);
-              }
-
-              let uniqueLanguageIn: string[];
-              if (nonUniqueLanguageIn.length === 1) {
-                uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-              } else {
-                uniqueLanguageIn = [];
-                for (const languageIn of nonUniqueLanguageIn) {
-                  if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-                    uniqueLanguageIn.push(languageIn);
-                  }
-                }
-              }
-
-              // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-              // Within a languageIn the literals may be in any order.
-              let filteredLiteralValues: rdfjsResource.Resource.Values<rdfjs.Literal> | undefined;
-              for (const languageIn of uniqueLanguageIn) {
-                if (!filteredLiteralValues) {
-                  filteredLiteralValues = literalValues.filter(value => value.language === languageIn);
-                } else {
-                  filteredLiteralValues = filteredLiteralValues.concat(...literalValues.filter(value => value.language === languageIn).toArray());
-                }
-              }
-
-              return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(filteredLiteralValues!);
-            }).chain(values => values.head());
+        const _numberDefaultValuePropertyEither: purify.Either<Error, number> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.numberDefaultValueProperty["identifier"], { unique: true })).map(values => values.length > 0 ? values : new rdfjsResource.Resource.Value({ subject: $resource, predicate: DefaultValuePropertiesClass.$properties.numberDefaultValueProperty["identifier"], object: dataFactory.literal("0", $RdfVocabularies.xsd.integer) }).toValues()).chain(values => values.chainMap(value => value.toNumber())).chain(values => values.head());
         if (_numberDefaultValuePropertyEither.isLeft()) { return _numberDefaultValuePropertyEither; }
 
         const numberDefaultValueProperty = _numberDefaultValuePropertyEither.unsafeCoerce();
-        const _stringDefaultValuePropertyEither: purify.Either<Error, (rdfjs.Literal)> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.stringDefaultValueProperty["identifier"], { unique: true })).chain(values => {
-              const literalValuesEither = values.chainMap(value => value.toLiteral());
-              if (literalValuesEither.isLeft()) {
-                return literalValuesEither;
-              }
-              const literalValues = literalValuesEither.unsafeCoerce();
-
-              const nonUniqueLanguageIn = $languageIn ?? [];
-              if (nonUniqueLanguageIn.length === 0) {
-                return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(literalValues);
-              }
-
-              let uniqueLanguageIn: string[];
-              if (nonUniqueLanguageIn.length === 1) {
-                uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-              } else {
-                uniqueLanguageIn = [];
-                for (const languageIn of nonUniqueLanguageIn) {
-                  if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-                    uniqueLanguageIn.push(languageIn);
-                  }
-                }
-              }
-
-              // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-              // Within a languageIn the literals may be in any order.
-              let filteredLiteralValues: rdfjsResource.Resource.Values<rdfjs.Literal> | undefined;
-              for (const languageIn of uniqueLanguageIn) {
-                if (!filteredLiteralValues) {
-                  filteredLiteralValues = literalValues.filter(value => value.language === languageIn);
-                } else {
-                  filteredLiteralValues = filteredLiteralValues.concat(...literalValues.filter(value => value.language === languageIn).toArray());
-                }
-              }
-
-              return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(filteredLiteralValues!);
-            }).chain(values => values.head());
+        const _stringDefaultValuePropertyEither: purify.Either<Error, string> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.stringDefaultValueProperty["identifier"], { unique: true })).map(values => values.length > 0 ? values : new rdfjsResource.Resource.Value({ subject: $resource, predicate: DefaultValuePropertiesClass.$properties.stringDefaultValueProperty["identifier"], object: dataFactory.literal("") }).toValues()).chain(values => values.chainMap(value => value.toString())).chain(values => values.head());
         if (_stringDefaultValuePropertyEither.isLeft()) { return _stringDefaultValuePropertyEither; }
 
         const stringDefaultValueProperty = _stringDefaultValuePropertyEither.unsafeCoerce();
-        const _trueBooleanDefaultValuePropertyEither: purify.Either<Error, (rdfjs.Literal)> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.trueBooleanDefaultValueProperty["identifier"], { unique: true })).chain(values => {
-              const literalValuesEither = values.chainMap(value => value.toLiteral());
-              if (literalValuesEither.isLeft()) {
-                return literalValuesEither;
-              }
-              const literalValues = literalValuesEither.unsafeCoerce();
-
-              const nonUniqueLanguageIn = $languageIn ?? [];
-              if (nonUniqueLanguageIn.length === 0) {
-                return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(literalValues);
-              }
-
-              let uniqueLanguageIn: string[];
-              if (nonUniqueLanguageIn.length === 1) {
-                uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-              } else {
-                uniqueLanguageIn = [];
-                for (const languageIn of nonUniqueLanguageIn) {
-                  if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-                    uniqueLanguageIn.push(languageIn);
-                  }
-                }
-              }
-
-              // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-              // Within a languageIn the literals may be in any order.
-              let filteredLiteralValues: rdfjsResource.Resource.Values<rdfjs.Literal> | undefined;
-              for (const languageIn of uniqueLanguageIn) {
-                if (!filteredLiteralValues) {
-                  filteredLiteralValues = literalValues.filter(value => value.language === languageIn);
-                } else {
-                  filteredLiteralValues = filteredLiteralValues.concat(...literalValues.filter(value => value.language === languageIn).toArray());
-                }
-              }
-
-              return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(filteredLiteralValues!);
-            }).chain(values => values.head());
+        const _trueBooleanDefaultValuePropertyEither: purify.Either<Error, boolean> = purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>($resource.values($properties.trueBooleanDefaultValueProperty["identifier"], { unique: true })).map(values => values.length > 0 ? values : new rdfjsResource.Resource.Value({ subject: $resource, predicate: DefaultValuePropertiesClass.$properties.trueBooleanDefaultValueProperty["identifier"], object: dataFactory.literal("true", $RdfVocabularies.xsd.boolean) }).toValues()).chain(values => values.chainMap(value => value.toBoolean())).chain(values => values.head());
         if (_trueBooleanDefaultValuePropertyEither.isLeft()) { return _trueBooleanDefaultValuePropertyEither; }
 
         const trueBooleanDefaultValueProperty = _trueBooleanDefaultValuePropertyEither.unsafeCoerce();
@@ -8617,169 +8383,7 @@ export namespace DefaultValuePropertiesClass {
         const requiredPatterns: sparqljs.Pattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("defaultValuePropertiesClass");
         const variablePrefix = parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass");
-        const propertyPatterns: readonly sparqljs.Pattern[] = [{ triples: [{ object: dataFactory.variable!(`${variablePrefix}DateDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$properties.dateDefaultValueProperty["identifier"], subject }], type: "bgp" }, ...[(parameters?.languageIn && parameters?.languageIn.length > 0) ? parameters?.languageIn : []]
-                .filter(languagesIn => languagesIn.length > 0)
-                .map(languagesIn =>
-                  languagesIn.map(languageIn => 
-                    ({
-                      type: "operation" as const,
-                      operator: "=",
-                      args: [
-                        { type: "operation" as const, operator: "lang", args: [dataFactory.variable!(`${variablePrefix}DateDefaultValueProperty`)] },
-                        dataFactory.literal(languageIn)
-                      ]
-                    })
-                  )
-                )
-                .map(langEqualsExpressions => 
-                  ({
-                    type: "filter" as const,
-                    expression:
-                      langEqualsExpressions.length === 1
-                        ? langEqualsExpressions[0]
-                        :
-                          {
-                            type: "operation" as const,
-                            operator: "||",
-                            args: langEqualsExpressions
-                          },
-                  })
-                ), { triples: [{ object: dataFactory.variable!(`${variablePrefix}DateTimeDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$properties.dateTimeDefaultValueProperty["identifier"], subject }], type: "bgp" }, ...[(parameters?.languageIn && parameters?.languageIn.length > 0) ? parameters?.languageIn : []]
-                .filter(languagesIn => languagesIn.length > 0)
-                .map(languagesIn =>
-                  languagesIn.map(languageIn => 
-                    ({
-                      type: "operation" as const,
-                      operator: "=",
-                      args: [
-                        { type: "operation" as const, operator: "lang", args: [dataFactory.variable!(`${variablePrefix}DateTimeDefaultValueProperty`)] },
-                        dataFactory.literal(languageIn)
-                      ]
-                    })
-                  )
-                )
-                .map(langEqualsExpressions => 
-                  ({
-                    type: "filter" as const,
-                    expression:
-                      langEqualsExpressions.length === 1
-                        ? langEqualsExpressions[0]
-                        :
-                          {
-                            type: "operation" as const,
-                            operator: "||",
-                            args: langEqualsExpressions
-                          },
-                  })
-                ), { triples: [{ object: dataFactory.variable!(`${variablePrefix}FalseBooleanDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$properties.falseBooleanDefaultValueProperty["identifier"], subject }], type: "bgp" }, ...[(parameters?.languageIn && parameters?.languageIn.length > 0) ? parameters?.languageIn : []]
-                .filter(languagesIn => languagesIn.length > 0)
-                .map(languagesIn =>
-                  languagesIn.map(languageIn => 
-                    ({
-                      type: "operation" as const,
-                      operator: "=",
-                      args: [
-                        { type: "operation" as const, operator: "lang", args: [dataFactory.variable!(`${variablePrefix}FalseBooleanDefaultValueProperty`)] },
-                        dataFactory.literal(languageIn)
-                      ]
-                    })
-                  )
-                )
-                .map(langEqualsExpressions => 
-                  ({
-                    type: "filter" as const,
-                    expression:
-                      langEqualsExpressions.length === 1
-                        ? langEqualsExpressions[0]
-                        :
-                          {
-                            type: "operation" as const,
-                            operator: "||",
-                            args: langEqualsExpressions
-                          },
-                  })
-                ), { triples: [{ object: dataFactory.variable!(`${variablePrefix}NumberDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$properties.numberDefaultValueProperty["identifier"], subject }], type: "bgp" }, ...[(parameters?.languageIn && parameters?.languageIn.length > 0) ? parameters?.languageIn : []]
-                .filter(languagesIn => languagesIn.length > 0)
-                .map(languagesIn =>
-                  languagesIn.map(languageIn => 
-                    ({
-                      type: "operation" as const,
-                      operator: "=",
-                      args: [
-                        { type: "operation" as const, operator: "lang", args: [dataFactory.variable!(`${variablePrefix}NumberDefaultValueProperty`)] },
-                        dataFactory.literal(languageIn)
-                      ]
-                    })
-                  )
-                )
-                .map(langEqualsExpressions => 
-                  ({
-                    type: "filter" as const,
-                    expression:
-                      langEqualsExpressions.length === 1
-                        ? langEqualsExpressions[0]
-                        :
-                          {
-                            type: "operation" as const,
-                            operator: "||",
-                            args: langEqualsExpressions
-                          },
-                  })
-                ), { triples: [{ object: dataFactory.variable!(`${variablePrefix}StringDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$properties.stringDefaultValueProperty["identifier"], subject }], type: "bgp" }, ...[(parameters?.languageIn && parameters?.languageIn.length > 0) ? parameters?.languageIn : []]
-                .filter(languagesIn => languagesIn.length > 0)
-                .map(languagesIn =>
-                  languagesIn.map(languageIn => 
-                    ({
-                      type: "operation" as const,
-                      operator: "=",
-                      args: [
-                        { type: "operation" as const, operator: "lang", args: [dataFactory.variable!(`${variablePrefix}StringDefaultValueProperty`)] },
-                        dataFactory.literal(languageIn)
-                      ]
-                    })
-                  )
-                )
-                .map(langEqualsExpressions => 
-                  ({
-                    type: "filter" as const,
-                    expression:
-                      langEqualsExpressions.length === 1
-                        ? langEqualsExpressions[0]
-                        :
-                          {
-                            type: "operation" as const,
-                            operator: "||",
-                            args: langEqualsExpressions
-                          },
-                  })
-                ), { triples: [{ object: dataFactory.variable!(`${variablePrefix}TrueBooleanDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$properties.trueBooleanDefaultValueProperty["identifier"], subject }], type: "bgp" }, ...[(parameters?.languageIn && parameters?.languageIn.length > 0) ? parameters?.languageIn : []]
-                .filter(languagesIn => languagesIn.length > 0)
-                .map(languagesIn =>
-                  languagesIn.map(languageIn => 
-                    ({
-                      type: "operation" as const,
-                      operator: "=",
-                      args: [
-                        { type: "operation" as const, operator: "lang", args: [dataFactory.variable!(`${variablePrefix}TrueBooleanDefaultValueProperty`)] },
-                        dataFactory.literal(languageIn)
-                      ]
-                    })
-                  )
-                )
-                .map(langEqualsExpressions => 
-                  ({
-                    type: "filter" as const,
-                    expression:
-                      langEqualsExpressions.length === 1
-                        ? langEqualsExpressions[0]
-                        :
-                          {
-                            type: "operation" as const,
-                            operator: "||",
-                            args: langEqualsExpressions
-                          },
-                  })
-                )];
+        const propertyPatterns: readonly sparqljs.Pattern[] = [{ patterns: [{ triples: [{ object: dataFactory.variable!(`${variablePrefix}DateDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$properties.dateDefaultValueProperty["identifier"], subject }], type: "bgp" }], type: "optional" }, { patterns: [{ triples: [{ object: dataFactory.variable!(`${variablePrefix}DateTimeDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$properties.dateTimeDefaultValueProperty["identifier"], subject }], type: "bgp" }], type: "optional" }, { patterns: [{ triples: [{ object: dataFactory.variable!(`${variablePrefix}FalseBooleanDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$properties.falseBooleanDefaultValueProperty["identifier"], subject }], type: "bgp" }], type: "optional" }, { patterns: [{ triples: [{ object: dataFactory.variable!(`${variablePrefix}NumberDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$properties.numberDefaultValueProperty["identifier"], subject }], type: "bgp" }], type: "optional" }, { patterns: [{ triples: [{ object: dataFactory.variable!(`${variablePrefix}StringDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$properties.stringDefaultValueProperty["identifier"], subject }], type: "bgp" }], type: "optional" }, { patterns: [{ triples: [{ object: dataFactory.variable!(`${variablePrefix}TrueBooleanDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$properties.trueBooleanDefaultValueProperty["identifier"], subject }], type: "bgp" }], type: "optional" }];
         for (const pattern of propertyPatterns) {
           if (pattern.type === "optional") {
             optionalPatterns.push(pattern);
