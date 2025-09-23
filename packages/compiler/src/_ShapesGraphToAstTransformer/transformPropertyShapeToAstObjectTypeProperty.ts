@@ -3,7 +3,7 @@ import N3 from "n3";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
-import type * as ast from "../ast/index.js";
+import * as ast from "../ast/index.js";
 import type { TsFeature } from "../enums/index.js";
 import type * as input from "../input/index.js";
 import { pickLiteral } from "./pickLiteral.js";
@@ -75,6 +75,66 @@ function synthesizeStubAstObjectType({
   };
 }
 
+function transformPropertyShapeToAstCardinalityType(
+  this: ShapesGraphToAstTransformer,
+  propertyShape: input.PropertyShape,
+): Either<Error, ast.CardinalityType<ast.CardinalityType.ItemType>> {
+  const itemTypeEither = this.transformShapeToAstType(propertyShape, {
+    defaultValue: Maybe.empty(),
+    hasValues: [],
+    in_: [],
+  });
+  if (itemTypeEither.isLeft()) {
+    return itemTypeEither;
+  }
+  const itemType = itemTypeEither.unsafeCoerce();
+  invariant(ast.CardinalityType.isItemType(itemType));
+
+  if (propertyShape.defaultValue.isJust()) {
+    return Either.of({ itemType, kind: "PlainType" });
+  }
+
+  if (
+    propertyShape.constraints.maxCount.isNothing() &&
+    propertyShape.constraints.minCount.isNothing()
+  ) {
+    return Either.of({
+      itemType,
+      kind: "SetType",
+      mutable: propertyShape.mutable,
+      minCount: 0,
+    });
+  }
+
+  if (
+    propertyShape.constraints.minCount.orDefault(0) === 0 &&
+    propertyShape.constraints.maxCount.extractNullable() === 1
+  ) {
+    return Either.of({
+      itemType,
+      kind: "OptionType",
+    });
+  }
+
+  if (
+    propertyShape.constraints.minCount.orDefault(0) === 1 &&
+    propertyShape.constraints.maxCount.extractNullable() === 1
+  ) {
+    return Either.of({ itemType, kind: "PlainType" });
+  }
+
+  invariant(
+    propertyShape.constraints.minCount.isJust() ||
+      propertyShape.constraints.maxCount.isJust(),
+  );
+  return Either.of({
+    itemType,
+    kind: "SetType",
+    minCount: propertyShape.constraints.minCount.orDefault(0),
+    mutable: propertyShape.mutable,
+  });
+}
+
 export function transformPropertyShapeToAstObjectTypeProperty(
   this: ShapesGraphToAstTransformer,
   propertyShape: input.PropertyShape,
@@ -88,18 +148,18 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     }
   }
 
-  const typeEither = this.transformPropertyShapeToAstType(propertyShape, {
-    defaultValue: Maybe.empty(),
-    maxCount: Maybe.empty(),
-    minCount: Maybe.empty(),
-  });
-  if (typeEither.isLeft()) {
-    return typeEither;
+  const cardinalityTypeEither =
+    transformPropertyShapeToAstCardinalityType.bind(this)(propertyShape);
+  if (cardinalityTypeEither.isLeft()) {
+    return cardinalityTypeEither;
   }
-  const type = typeEither.unsafeCoerce();
+  const cardinalityType = cardinalityTypeEither.unsafeCoerce();
 
   let stubType: ast.ObjectType.Property["stubType"] = Maybe.empty();
-  let propertyShapeStubType: ast.ObjectType | ast.ObjectUnionType | undefined;
+  let propertyShapeStubItemType:
+    | ast.ObjectType
+    | ast.ObjectUnionType
+    | undefined;
   if (propertyShape.stub.isJust()) {
     const propertyShapeStubTypeEither = this.transformNodeShapeToAstType(
       propertyShape.stub.unsafeCoerce(),
@@ -122,20 +182,20 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     if (propertyShapeStubTypeEither.isLeft()) {
       return propertyShapeStubTypeEither;
     }
-    propertyShapeStubType = propertyShapeStubTypeEither.unsafeCoerce();
+    propertyShapeStubItemType = propertyShapeStubTypeEither.unsafeCoerce();
   }
 
-  if (propertyShapeStubType || propertyShape.lazy.orDefault(false)) {
-    switch (type.itemType.kind) {
+  if (propertyShapeStubItemType || propertyShape.lazy.orDefault(false)) {
+    switch (cardinalityType.itemType.kind) {
       case "ObjectType":
       case "ObjectUnionType": {
         const stubItemType =
-          propertyShapeStubType ??
+          propertyShapeStubItemType ??
           synthesizeStubAstObjectType({
-            identifierNodeKinds: identifierNodeKinds(type.itemType),
-            tsFeatures: type.itemType.tsFeatures,
+            identifierNodeKinds: identifierNodeKinds(cardinalityType.itemType),
+            tsFeatures: cardinalityType.itemType.tsFeatures,
           });
-        switch (type.kind) {
+        switch (cardinalityType.kind) {
           case "OptionType":
             stubType = Maybe.of({
               kind: "OptionType",
@@ -162,7 +222,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
       default:
         return Left(
           new Error(
-            `${propertyShape} marked lazy but has ${type.kind} of ${type.itemType.kind}`,
+            `${propertyShape} marked lazy but has ${cardinalityType.kind} of ${cardinalityType.itemType.kind}`,
           ),
         );
     }
@@ -188,7 +248,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     order: propertyShape.order.orDefault(0),
     path,
     stubType,
-    type,
+    type: cardinalityType,
     visibility: propertyShape.visibility,
   };
   this.astObjectTypePropertiesByIdentifier.set(

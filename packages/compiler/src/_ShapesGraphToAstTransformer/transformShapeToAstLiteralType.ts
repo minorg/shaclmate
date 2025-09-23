@@ -1,31 +1,31 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
-import { Either, Left, Maybe } from "purify-ts";
+import { Either, Left, type Maybe } from "purify-ts";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type * as ast from "../ast/index.js";
-import * as input from "../input/index.js";
+import type * as input from "../input/index.js";
 import { propertyShapeNodeKinds } from "./propertyShapeNodeKinds.js";
 
 /**
  * Try to convert a property shape to an AST LiteralType using some heuristics.
  */
-export function transformPropertyShapeToAstLiteralType(
+export function transformShapeToAstLiteralType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
   inherited: {
     defaultValue: Maybe<Literal | NamedNode>;
-  } | null,
+    hasValues: readonly (Literal | NamedNode)[];
+    in_: readonly (Literal | NamedNode)[];
+  },
 ): Either<Error, ast.LiteralType> {
-  const literalDefaultValue: Maybe<Literal> = (
-    shape instanceof input.PropertyShape ? shape.defaultValue : Maybe.empty()
-  )
-    .alt(inherited !== null ? inherited.defaultValue : Maybe.empty())
-    .filter((term) => term.termType === "Literal") as Maybe<Literal>;
-  const literalHasValues = shape.constraints.hasValues.filter(
+  const literalDefaultValue = inherited.defaultValue.filter(
     (term) => term.termType === "Literal",
-  ) as readonly Literal[];
-  const literalIn = shape.constraints.in_.filter(
-    (term) => term.termType === "Literal",
-  ) as readonly Literal[];
+  ) as Maybe<Literal>;
+  const literalHasValues = inherited.hasValues
+    .concat(shape.constraints.hasValues)
+    .filter((term) => term.termType === "Literal") as readonly Literal[];
+  const literalIn = inherited.in_
+    .concat(shape.constraints.in_)
+    .filter((term) => term.termType === "Literal") as readonly Literal[];
   const nodeKinds = propertyShapeNodeKinds(shape);
 
   if (

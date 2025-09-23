@@ -12,7 +12,6 @@ import type {
 import type { CardinalityType } from "./CardinalityType.js";
 import type { Name } from "./Name.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
-import type { Type } from "./Type.js";
 
 export interface ObjectType {
   /**
@@ -205,7 +204,7 @@ export namespace ObjectType {
     /**
      * Type of this property.
      */
-    readonly type: Type;
+    readonly type: CardinalityType<CardinalityType.ItemType>;
 
     /**
      * Visibility: private, protected, public.

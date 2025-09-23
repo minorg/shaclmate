@@ -1,20 +1,22 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
 import type { NodeKind } from "@shaclmate/shacl-ast";
-import { Either, Maybe } from "purify-ts";
+import { Either, type Maybe } from "purify-ts";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type * as ast from "../ast/index.js";
-import * as input from "../input/index.js";
+import type * as input from "../input/index.js";
 import { propertyShapeNodeKinds } from "./propertyShapeNodeKinds.js";
 
 /**
- * Try to convert a property shape to an AST TermType using some heuristics.
+ * Try to convert a shape to an AST TermType using some heuristics.
  */
-export function transformPropertyShapeToAstTermType(
+export function transformShapeToAstTermType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
   inherited: {
     defaultValue: Maybe<Literal | NamedNode>;
-  } | null,
+    hasValues: readonly (Literal | NamedNode)[];
+    in_: readonly (Literal | NamedNode)[];
+  },
 ): Either<
   Error,
   Omit<ast.TermType, "kind"> & {
@@ -24,12 +26,9 @@ export function transformPropertyShapeToAstTermType(
   const nodeKinds = propertyShapeNodeKinds(shape);
 
   return Either.of({
-    defaultValue: (shape instanceof input.PropertyShape
-      ? shape.defaultValue
-      : Maybe.empty()
-    ).alt(inherited !== null ? inherited.defaultValue : Maybe.empty()),
-    hasValues: shape.constraints.hasValues,
-    in_: shape.constraints.in_,
+    defaultValue: inherited.defaultValue,
+    hasValues: inherited.hasValues.concat(shape.constraints.hasValues),
+    in_: inherited.in_.concat(shape.constraints.in_),
     kind: "TermType",
     nodeKinds:
       nodeKinds.size > 0
