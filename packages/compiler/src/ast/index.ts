@@ -1,4 +1,5 @@
 export * from "./Ast.js";
+export * from "./CardinalityType.js";
 export * from "./IdentifierType.js";
 export * from "./IntersectionType.js";
 export * from "./ListType.js";
@@ -7,6 +8,8 @@ export * from "./Name.js";
 export * from "./ObjectIntersectionType.js";
 export * from "./ObjectType.js";
 export * from "./ObjectUnionType.js";
+export * from "./PlainType.js";
+export * from "./SetType.js";
 export * from "./UnionType.js";
 export * from "./TermType.js";
 export * from "./Type.js";

@@ -1,11 +1,9 @@
-import type { Type } from "./Type.js";
+import type { CardinalityType } from "./CardinalityType.js";
 
 /**
  * A type with zero or one values of an item type.
- *
- * This is a property with sh:minCount 0 and sh:maxCount 1.
  */
-export interface OptionType<ItemTypeT extends Type = Type> {
-  readonly itemType: ItemTypeT;
+export interface OptionType<ItemTypeT extends CardinalityType.ItemType>
+  extends CardinalityType<ItemTypeT> {
   readonly kind: "OptionType";
 }

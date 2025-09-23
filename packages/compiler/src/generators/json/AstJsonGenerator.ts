@@ -138,6 +138,8 @@ function typeToJson(type: ast.Type): AstJson.Type {
       };
     case "PlaceholderType":
       throw new Error(type.kind);
+    case "PlainType":
+      return typeToJson(type.itemType);
     case "SetType":
       return {
         itemType: typeToJson(type.itemType),
