@@ -4,9 +4,10 @@ import type { Maybe } from "purify-ts";
 /**
  * An unordered set of items of a specific type.
  */
-export interface SetType<ItemTypeT extends CardinalityType.ItemType>
-  extends CardinalityType<ItemTypeT> {
+export interface SetType<ItemTypeT extends CardinalityType.ItemType> {
   readonly kind: "SetType";
+
+  readonly itemType: ItemTypeT;
 
   /**
    * Minimum number of items in the set.

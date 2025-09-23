@@ -487,6 +487,7 @@ export class TypeFactory {
           itemType: this.createTypeFromAstType(astType.itemType),
         });
       case "PlaceholderType":
+      case "PlainType":
         throw new Error(astType.kind);
       case "SetType":
         return new SetType({

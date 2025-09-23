@@ -2,7 +2,7 @@ import type { Literal, NamedNode } from "@rdfjs/types";
 import type { Either, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
-import type * as ast from "../ast/index.js";
+import * as ast from "../ast/index.js";
 import * as input from "../input/index.js";
 
 /**
@@ -16,8 +16,17 @@ export function transformPropertyShapeToAstType(
   shape: input.Shape,
   inherited: {
     defaultValue: Maybe<Literal | NamedNode>;
-  } | null,
-): Either<Error, ast.Type> {
+    maxCount: Maybe<number>;
+    minCount: Maybe<number>;
+  },
+): Either<Error, ast.CardinalityType<ast.CardinalityType.ItemType>> {
+  const defaultValue =
+    shape instanceof input.PropertyShape
+      ? shape.defaultValue.alt(inherited.defaultValue)
+      : inherited.defaultValue;
+  const maxCount = shape.constraints.maxCount.alt(inherited.maxCount);
+  const minCount = shape.constraints.minCount.alt(inherited.minCount);
+
   // Try to transform the property shape into an AST type without cardinality constraints
   return this.transformPropertyShapeToAstCompositeType(shape, inherited)
     .altLazy(() =>
@@ -27,36 +36,26 @@ export function transformPropertyShapeToAstType(
       this.transformPropertyShapeToAstLiteralType(shape, inherited),
     )
     .altLazy(() => this.transformPropertyShapeToAstTermType(shape, inherited))
-    .map((itemType) => {
+    .map((itemType): ast.CardinalityType<ast.CardinalityType.ItemType> => {
       // Handle cardinality constraints
 
-      if (
-        (shape instanceof input.PropertyShape && shape.defaultValue.isJust()) ||
-        inherited?.defaultValue.isJust()
-      ) {
-        // Ignore other cardinality constraints if there's a default value and treat the type as minCount=maxCount=1
+      if (ast.CardinalityType.isCardinalityType(itemType)) {
         return itemType;
       }
 
-      const maxCount = shape.constraints.maxCount;
-      const minCount = shape.constraints.minCount;
+      invariant(ast.CardinalityType.isItemType(itemType));
+
+      if (defaultValue.isJust()) {
+        return { itemType, kind: "PlainType" };
+      }
 
       if (maxCount.isNothing() && minCount.isNothing()) {
-        // The shape has no cardinality constraints
-        if (inherited === null) {
-          // The shape is top-level (not an sh:xone/sh:and of a top-level shape)
-          // Treat it as a Set, the default in RDF.
-          // We want Set to be the outermost type unless it's explicitly requested with sh:minCount 0.
-          return {
-            itemType,
-            kind: "SetType",
-            mutable: shape.mutable,
-            minCount: 0,
-          };
-        }
-        // else the shape is not top-level
-        // We want Set to be the outermost type, so just return the itemType here
-        return itemType;
+        return {
+          itemType,
+          kind: "SetType",
+          mutable: shape.mutable,
+          minCount: 0,
+        };
       }
 
       if (minCount.orDefault(0) === 0 && maxCount.extractNullable() === 1) {
@@ -67,11 +66,10 @@ export function transformPropertyShapeToAstType(
       }
 
       if (minCount.orDefault(0) === 1 && maxCount.extractNullable() === 1) {
-        return itemType;
+        return { itemType, kind: "PlainType" };
       }
 
       invariant(minCount.isJust() || maxCount.isJust());
-      // There are cardinality constraints for a Set. It may be an inner type.
       return {
         itemType,
         kind: "SetType",

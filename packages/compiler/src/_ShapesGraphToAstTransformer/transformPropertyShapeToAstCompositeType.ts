@@ -17,11 +17,16 @@ export function transformPropertyShapeToAstCompositeType(
   shape: input.Shape,
   inherited: {
     defaultValue: Maybe<Literal | NamedNode>;
-  } | null,
+    maxCount: Maybe<number>;
+    minCount: Maybe<number>;
+  },
 ): Either<Error, ast.Type> {
-  const defaultValue = (
-    shape instanceof input.PropertyShape ? shape.defaultValue : Maybe.empty()
-  ).alt(inherited !== null ? inherited.defaultValue : Maybe.empty());
+  const defaultValue =
+    shape instanceof input.PropertyShape
+      ? shape.defaultValue.alt(inherited.defaultValue)
+      : inherited.defaultValue;
+  const maxCount = shape.constraints.maxCount.alt(inherited.maxCount);
+  const minCount = shape.constraints.minCount.alt(inherited.minCount);
 
   let memberTypeEithers: readonly Either<Error, ast.Type>[];
   let compositeTypeKind: "IntersectionType" | "UnionType";
@@ -30,6 +35,8 @@ export function transformPropertyShapeToAstCompositeType(
     memberTypeEithers = shape.constraints.and.map((memberShape) =>
       this.transformPropertyShapeToAstType(memberShape, {
         defaultValue,
+        maxCount,
+        minCount,
       }),
     );
     compositeTypeKind = "IntersectionType";
@@ -73,6 +80,8 @@ export function transformPropertyShapeToAstCompositeType(
     memberTypeEithers = shape.constraints.xone.map((memberShape) =>
       this.transformPropertyShapeToAstType(memberShape, {
         defaultValue,
+        maxCount,
+        minCount,
       }),
     );
     compositeTypeKind = "UnionType";

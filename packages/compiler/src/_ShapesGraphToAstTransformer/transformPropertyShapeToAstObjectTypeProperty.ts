@@ -88,7 +88,11 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     }
   }
 
-  const typeEither = this.transformPropertyShapeToAstType(propertyShape, null);
+  const typeEither = this.transformPropertyShapeToAstType(propertyShape, {
+    defaultValue: Maybe.empty(),
+    maxCount: Maybe.empty(),
+    minCount: Maybe.empty(),
+  });
   if (typeEither.isLeft()) {
     return typeEither;
   }
@@ -122,56 +126,35 @@ export function transformPropertyShapeToAstObjectTypeProperty(
   }
 
   if (propertyShapeStubType || propertyShape.lazy.orDefault(false)) {
-    switch (type.kind) {
+    switch (type.itemType.kind) {
       case "ObjectType":
       case "ObjectUnionType": {
-        stubType = Maybe.of(
+        const stubItemType =
           propertyShapeStubType ??
-            synthesizeStubAstObjectType({
-              identifierNodeKinds: identifierNodeKinds(type),
-              tsFeatures: type.tsFeatures,
-            }),
-        );
-        break;
-      }
-      case "OptionType":
-      case "SetType": {
-        switch (type.itemType.kind) {
-          case "ObjectType":
-          case "ObjectUnionType": {
-            const stubItemType =
-              propertyShapeStubType ??
-              synthesizeStubAstObjectType({
-                identifierNodeKinds: identifierNodeKinds(type.itemType),
-                tsFeatures: type.itemType.tsFeatures,
-              });
-            if (type.kind === "OptionType") {
-              stubType = Maybe.of({
-                kind: "OptionType",
-                itemType: stubItemType,
-              });
-            } else {
-              stubType = Maybe.of({
-                kind: "SetType",
-                itemType: stubItemType,
-                minCount: 0,
-                mutable: Maybe.empty(),
-              });
-            }
-            break;
-          }
-          default:
-            return Left(
-              new Error(
-                `${propertyShape} marked lazy but has ${type.kind} of ${type.itemType.kind}`,
-              ),
-            );
+          synthesizeStubAstObjectType({
+            identifierNodeKinds: identifierNodeKinds(type.itemType),
+            tsFeatures: type.itemType.tsFeatures,
+          });
+        if (type.kind === "OptionType") {
+          stubType = Maybe.of({
+            kind: "OptionType",
+            itemType: stubItemType,
+          });
+        } else {
+          stubType = Maybe.of({
+            kind: "SetType",
+            itemType: stubItemType,
+            minCount: 0,
+            mutable: Maybe.empty(),
+          });
         }
         break;
       }
       default:
         return Left(
-          new Error(`${propertyShape} marked lazy but has ${type.kind}`),
+          new Error(
+            `${propertyShape} marked lazy but has ${type.kind} of ${type.itemType.kind}`,
+          ),
         );
     }
   }

@@ -342,6 +342,7 @@ export function transformNodeShapeToAstType(
         return false;
       case "ListType":
       case "OptionType":
+      case "PlainType":
       case "SetType":
         return isPropertyRecursive(astType.itemType);
     }
