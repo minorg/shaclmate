@@ -28200,6 +28200,9 @@ export class DirectRecursiveClass {
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
+    const _x = this.directRecursiveProperty.map((value) =>
+      value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+    );
     resource.add(
       DirectRecursiveClass.$properties.directRecursiveProperty["identifier"],
       this.directRecursiveProperty.map((value) =>

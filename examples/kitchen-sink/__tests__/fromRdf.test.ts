@@ -34,10 +34,6 @@ describe("fromRdf", () => {
   });
 
   for (const [id, harness] of Object.entries(harnesses)) {
-    if (id !== "directRecursive") {
-      continue;
-    }
-
     it(`${id} round trip`, ({ expect }) => {
       const fromRdfInstance = harness
         .fromRdf(harness.toRdf(), {
