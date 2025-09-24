@@ -223,7 +223,15 @@ export namespace BaseShaclCoreShapeStatic {
         ),
       )
       .map((valueLists) => valueLists.map((valueList) => valueList.toArray()))
-      .map((values) => values.toArray());
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate: BaseShaclCoreShapeStatic.$properties.and["identifier"],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
     if (_andEither.isLeft()) {
       return _andEither;
     }
@@ -235,7 +243,16 @@ export namespace BaseShaclCoreShapeStatic {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
       >($resource.values($properties.classes["identifier"], { unique: true }))
         .chain((values) => values.chainMap((value) => value.toIri()))
-        .map((values) => values.toArray());
+        .map((values) => values.toArray())
+        .map((valuesArray) =>
+          rdfjsResource.Resource.Values.fromValue({
+            object: valuesArray,
+            predicate:
+              BaseShaclCoreShapeStatic.$properties.classes["identifier"],
+            subject: $resource,
+          }),
+        )
+        .chain((values) => values.head());
     if (_classesEither.isLeft()) {
       return _classesEither;
     }
@@ -299,7 +316,16 @@ export namespace BaseShaclCoreShapeStatic {
             rdfjsResource.Resource.Values<rdfjs.Literal>
           >(filteredLiteralValues!);
         })
-        .map((values) => values.toArray());
+        .map((values) => values.toArray())
+        .map((valuesArray) =>
+          rdfjsResource.Resource.Values.fromValue({
+            object: valuesArray,
+            predicate:
+              BaseShaclCoreShapeStatic.$properties.comments["identifier"],
+            subject: $resource,
+          }),
+        )
+        .chain((values) => values.head());
     if (_commentsEither.isLeft()) {
       return _commentsEither;
     }
@@ -313,7 +339,19 @@ export namespace BaseShaclCoreShapeStatic {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.datatype["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toIri()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.NamedNode>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                BaseShaclCoreShapeStatic.$properties.datatype["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_datatypeEither.isLeft()) {
       return _datatypeEither;
     }
@@ -327,7 +365,17 @@ export namespace BaseShaclCoreShapeStatic {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.deactivated["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toBoolean()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<boolean>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                BaseShaclCoreShapeStatic.$properties.deactivated["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_deactivatedEither.isLeft()) {
       return _deactivatedEither;
     }
@@ -339,7 +387,15 @@ export namespace BaseShaclCoreShapeStatic {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
       >($resource.values($properties.flags["identifier"], { unique: true }))
         .chain((values) => values.chainMap((value) => value.toString()))
-        .map((values) => values.toArray());
+        .map((values) => values.toArray())
+        .map((valuesArray) =>
+          rdfjsResource.Resource.Values.fromValue({
+            object: valuesArray,
+            predicate: BaseShaclCoreShapeStatic.$properties.flags["identifier"],
+            subject: $resource,
+          }),
+        )
+        .chain((values) => values.head());
     if (_flagsEither.isLeft()) {
       return _flagsEither;
     }
@@ -380,7 +436,16 @@ export namespace BaseShaclCoreShapeStatic {
           }),
         ),
       )
-      .map((values) => values.toArray());
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            BaseShaclCoreShapeStatic.$properties.hasValues["identifier"],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
     if (_hasValuesEither.isLeft()) {
       return _hasValuesEither;
     }
@@ -437,7 +502,18 @@ export namespace BaseShaclCoreShapeStatic {
         ),
       )
       .map((valueLists) => valueLists.map((valueList) => valueList.toArray()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<readonly (rdfjs.Literal | rdfjs.NamedNode)[]>
+            >({
+              object: purify.Maybe.empty(),
+              predicate: BaseShaclCoreShapeStatic.$properties.in_["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_in_Either.isLeft()) {
       return _in_Either;
     }
@@ -451,7 +527,19 @@ export namespace BaseShaclCoreShapeStatic {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.isDefinedBy["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toIdentifier()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                BaseShaclCoreShapeStatic.$properties.isDefinedBy["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_isDefinedByEither.isLeft()) {
       return _isDefinedByEither;
     }
@@ -515,7 +603,16 @@ export namespace BaseShaclCoreShapeStatic {
             rdfjsResource.Resource.Values<rdfjs.Literal>
           >(filteredLiteralValues!);
         })
-        .map((values) => values.toArray());
+        .map((values) => values.toArray())
+        .map((valuesArray) =>
+          rdfjsResource.Resource.Values.fromValue({
+            object: valuesArray,
+            predicate:
+              BaseShaclCoreShapeStatic.$properties.labels["identifier"],
+            subject: $resource,
+          }),
+        )
+        .chain((values) => values.head());
     if (_labelsEither.isLeft()) {
       return _labelsEither;
     }
@@ -545,7 +642,19 @@ export namespace BaseShaclCoreShapeStatic {
         ),
       )
       .map((valueLists) => valueLists.map((valueList) => valueList.toArray()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<readonly string[]>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                BaseShaclCoreShapeStatic.$properties.languageIn["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_languageInEither.isLeft()) {
       return _languageInEither;
     }
@@ -559,7 +668,17 @@ export namespace BaseShaclCoreShapeStatic {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.maxCount["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toNumber()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<number>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                BaseShaclCoreShapeStatic.$properties.maxCount["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_maxCountEither.isLeft()) {
       return _maxCountEither;
     }
@@ -629,7 +748,19 @@ export namespace BaseShaclCoreShapeStatic {
           rdfjsResource.Resource.Values<rdfjs.Literal>
         >(filteredLiteralValues!);
       })
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.Literal>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                BaseShaclCoreShapeStatic.$properties.maxExclusive["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_maxExclusiveEither.isLeft()) {
       return _maxExclusiveEither;
     }
@@ -699,7 +830,19 @@ export namespace BaseShaclCoreShapeStatic {
           rdfjsResource.Resource.Values<rdfjs.Literal>
         >(filteredLiteralValues!);
       })
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.Literal>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                BaseShaclCoreShapeStatic.$properties.maxInclusive["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_maxInclusiveEither.isLeft()) {
       return _maxInclusiveEither;
     }
@@ -713,7 +856,17 @@ export namespace BaseShaclCoreShapeStatic {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.maxLength["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toNumber()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<number>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                BaseShaclCoreShapeStatic.$properties.maxLength["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_maxLengthEither.isLeft()) {
       return _maxLengthEither;
     }
@@ -727,7 +880,17 @@ export namespace BaseShaclCoreShapeStatic {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.minCount["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toNumber()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<number>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                BaseShaclCoreShapeStatic.$properties.minCount["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_minCountEither.isLeft()) {
       return _minCountEither;
     }
@@ -797,7 +960,19 @@ export namespace BaseShaclCoreShapeStatic {
           rdfjsResource.Resource.Values<rdfjs.Literal>
         >(filteredLiteralValues!);
       })
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.Literal>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                BaseShaclCoreShapeStatic.$properties.minExclusive["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_minExclusiveEither.isLeft()) {
       return _minExclusiveEither;
     }
@@ -867,7 +1042,19 @@ export namespace BaseShaclCoreShapeStatic {
           rdfjsResource.Resource.Values<rdfjs.Literal>
         >(filteredLiteralValues!);
       })
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.Literal>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                BaseShaclCoreShapeStatic.$properties.minInclusive["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_minInclusiveEither.isLeft()) {
       return _minInclusiveEither;
     }
@@ -881,7 +1068,17 @@ export namespace BaseShaclCoreShapeStatic {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.minLength["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toNumber()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<number>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                BaseShaclCoreShapeStatic.$properties.minLength["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_minLengthEither.isLeft()) {
       return _minLengthEither;
     }
@@ -1014,7 +1211,28 @@ export namespace BaseShaclCoreShapeStatic {
           }),
         ),
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<
+                rdfjs.NamedNode<
+                  | "http://www.w3.org/ns/shacl#BlankNode"
+                  | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+                  | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+                  | "http://www.w3.org/ns/shacl#IRI"
+                  | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+                  | "http://www.w3.org/ns/shacl#Literal"
+                >
+              >
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                BaseShaclCoreShapeStatic.$properties.nodeKind["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_nodeKindEither.isLeft()) {
       return _nodeKindEither;
     }
@@ -1028,7 +1246,15 @@ export namespace BaseShaclCoreShapeStatic {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.nodes["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toIdentifier()))
-      .map((values) => values.toArray());
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate: BaseShaclCoreShapeStatic.$properties.nodes["identifier"],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
     if (_nodesEither.isLeft()) {
       return _nodesEither;
     }
@@ -1042,7 +1268,15 @@ export namespace BaseShaclCoreShapeStatic {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.not["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toIdentifier()))
-      .map((values) => values.toArray());
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate: BaseShaclCoreShapeStatic.$properties.not["identifier"],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
     if (_notEither.isLeft()) {
       return _notEither;
     }
@@ -1071,7 +1305,15 @@ export namespace BaseShaclCoreShapeStatic {
         ),
       )
       .map((valueLists) => valueLists.map((valueList) => valueList.toArray()))
-      .map((values) => values.toArray());
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate: BaseShaclCoreShapeStatic.$properties.or["identifier"],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
     if (_orEither.isLeft()) {
       return _orEither;
     }
@@ -1083,7 +1325,16 @@ export namespace BaseShaclCoreShapeStatic {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
       >($resource.values($properties.patterns["identifier"], { unique: true }))
         .chain((values) => values.chainMap((value) => value.toString()))
-        .map((values) => values.toArray());
+        .map((values) => values.toArray())
+        .map((valuesArray) =>
+          rdfjsResource.Resource.Values.fromValue({
+            object: valuesArray,
+            predicate:
+              BaseShaclCoreShapeStatic.$properties.patterns["identifier"],
+            subject: $resource,
+          }),
+        )
+        .chain((values) => values.head());
     if (_patternsEither.isLeft()) {
       return _patternsEither;
     }
@@ -1113,7 +1364,15 @@ export namespace BaseShaclCoreShapeStatic {
         ),
       )
       .map((valueLists) => valueLists.map((valueList) => valueList.toArray()))
-      .map((values) => values.toArray());
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate: BaseShaclCoreShapeStatic.$properties.xone["identifier"],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
     if (_xoneEither.isLeft()) {
       return _xoneEither;
     }
@@ -1742,7 +2001,21 @@ export namespace ShaclCorePropertyShapeStatic {
           }),
         ),
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                ShaclCorePropertyShapeStatic.$properties.defaultValue[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_defaultValueEither.isLeft()) {
       return _defaultValueEither;
     }
@@ -1810,7 +2083,18 @@ export namespace ShaclCorePropertyShapeStatic {
             rdfjsResource.Resource.Values<rdfjs.Literal>
           >(filteredLiteralValues!);
         })
-        .map((values) => values.toArray());
+        .map((values) => values.toArray())
+        .map((valuesArray) =>
+          rdfjsResource.Resource.Values.fromValue({
+            object: valuesArray,
+            predicate:
+              ShaclCorePropertyShapeStatic.$properties.descriptions[
+                "identifier"
+              ],
+            subject: $resource,
+          }),
+        )
+        .chain((values) => values.head());
     if (_descriptionsEither.isLeft()) {
       return _descriptionsEither;
     }
@@ -1824,7 +2108,16 @@ export namespace ShaclCorePropertyShapeStatic {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.groups["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toIdentifier()))
-      .map((values) => values.toArray());
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            ShaclCorePropertyShapeStatic.$properties.groups["identifier"],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
     if (_groupsEither.isLeft()) {
       return _groupsEither;
     }
@@ -1888,7 +2181,16 @@ export namespace ShaclCorePropertyShapeStatic {
             rdfjsResource.Resource.Values<rdfjs.Literal>
           >(filteredLiteralValues!);
         })
-        .map((values) => values.toArray());
+        .map((values) => values.toArray())
+        .map((valuesArray) =>
+          rdfjsResource.Resource.Values.fromValue({
+            object: valuesArray,
+            predicate:
+              ShaclCorePropertyShapeStatic.$properties.names["identifier"],
+            subject: $resource,
+          }),
+        )
+        .chain((values) => values.head());
     if (_namesEither.isLeft()) {
       return _namesEither;
     }
@@ -1902,7 +2204,17 @@ export namespace ShaclCorePropertyShapeStatic {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.order["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toNumber()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<number>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                ShaclCorePropertyShapeStatic.$properties.order["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_orderEither.isLeft()) {
       return _orderEither;
     }
@@ -1938,7 +2250,19 @@ export namespace ShaclCorePropertyShapeStatic {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.uniqueLang["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toBoolean()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<boolean>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                ShaclCorePropertyShapeStatic.$properties.uniqueLang[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_uniqueLangEither.isLeft()) {
       return _uniqueLangEither;
     }
@@ -2181,7 +2505,16 @@ export namespace ShaclmatePropertyShape {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.lazy["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toBoolean()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<boolean>>({
+              object: purify.Maybe.empty(),
+              predicate: ShaclmatePropertyShape.$properties.lazy["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_lazyEither.isLeft()) {
       return _lazyEither;
     }
@@ -2195,7 +2528,16 @@ export namespace ShaclmatePropertyShape {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.mutable["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toBoolean()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<boolean>>({
+              object: purify.Maybe.empty(),
+              predicate: ShaclmateNodeShape.$properties.mutable["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_mutableEither.isLeft()) {
       return _mutableEither;
     }
@@ -2209,7 +2551,16 @@ export namespace ShaclmatePropertyShape {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.name["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toString()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
+              object: purify.Maybe.empty(),
+              predicate: ShaclmateNodeShape.$properties.name["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_nameEither.isLeft()) {
       return _nameEither;
     }
@@ -2223,7 +2574,18 @@ export namespace ShaclmatePropertyShape {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.stub["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toIdentifier()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>
+            >({
+              object: purify.Maybe.empty(),
+              predicate: ShaclmatePropertyShape.$properties.stub["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_stubEither.isLeft()) {
       return _stubEither;
     }
@@ -2303,7 +2665,25 @@ export namespace ShaclmatePropertyShape {
           }),
         ),
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<
+                rdfjs.NamedNode<
+                  | "http://purl.org/shaclmate/ontology#_Visibility_Private"
+                  | "http://purl.org/shaclmate/ontology#_Visibility_Protected"
+                  | "http://purl.org/shaclmate/ontology#_Visibility_Public"
+                >
+              >
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                ShaclmatePropertyShape.$properties.visibility["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_visibilityEither.isLeft()) {
       return _visibilityEither;
     }
@@ -2317,7 +2697,16 @@ export namespace ShaclmatePropertyShape {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.widen["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toBoolean()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<boolean>>({
+              object: purify.Maybe.empty(),
+              predicate: ShaclmatePropertyShape.$properties.widen["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_widenEither.isLeft()) {
       return _widenEither;
     }
@@ -2584,7 +2973,15 @@ export namespace OwlOntologyStatic {
             rdfjsResource.Resource.Values<rdfjs.Literal>
           >(filteredLiteralValues!);
         })
-        .map((values) => values.toArray());
+        .map((values) => values.toArray())
+        .map((valuesArray) =>
+          rdfjsResource.Resource.Values.fromValue({
+            object: valuesArray,
+            predicate: OwlOntologyStatic.$properties.labels["identifier"],
+            subject: $resource,
+          }),
+        )
+        .chain((values) => values.head());
     if (_labelsEither.isLeft()) {
       return _labelsEither;
     }
@@ -3028,7 +3425,16 @@ export namespace ShaclmateOntology {
           }),
         ),
       )
-      .map((values) => values.toArray());
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            ShaclmateNodeShape.$properties.tsFeatureExcludes["identifier"],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
     if (_tsFeatureExcludesEither.isLeft()) {
       return _tsFeatureExcludesEither;
     }
@@ -3271,7 +3677,16 @@ export namespace ShaclmateOntology {
           }),
         ),
       )
-      .map((values) => values.toArray());
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            ShaclmateNodeShape.$properties.tsFeatureIncludes["identifier"],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
     if (_tsFeatureIncludesEither.isLeft()) {
       return _tsFeatureIncludesEither;
     }
@@ -3283,7 +3698,15 @@ export namespace ShaclmateOntology {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
       >($resource.values($properties.tsImports["identifier"], { unique: true }))
         .chain((values) => values.chainMap((value) => value.toString()))
-        .map((values) => values.toArray());
+        .map((values) => values.toArray())
+        .map((valuesArray) =>
+          rdfjsResource.Resource.Values.fromValue({
+            object: valuesArray,
+            predicate: ShaclmateNodeShape.$properties.tsImports["identifier"],
+            subject: $resource,
+          }),
+        )
+        .chain((values) => values.head());
     if (_tsImportsEither.isLeft()) {
       return _tsImportsEither;
     }
@@ -3352,7 +3775,26 @@ export namespace ShaclmateOntology {
           }),
         ),
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<
+                rdfjs.NamedNode<
+                  | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
+                  | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
+                >
+              >
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                ShaclmateNodeShape.$properties.tsObjectDeclarationType[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_tsObjectDeclarationTypeEither.isLeft()) {
       return _tsObjectDeclarationTypeEither;
     }
@@ -3553,7 +3995,17 @@ export namespace ShaclCoreNodeShapeStatic {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.closed["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toBoolean()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<boolean>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                ShaclCoreNodeShapeStatic.$properties.closed["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_closedEither.isLeft()) {
       return _closedEither;
     }
@@ -3589,7 +4041,21 @@ export namespace ShaclCoreNodeShapeStatic {
         ),
       )
       .map((valueLists) => valueLists.map((valueList) => valueList.toArray()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<readonly rdfjs.NamedNode[]>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                ShaclCoreNodeShapeStatic.$properties.ignoredProperties[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_ignoredPropertiesEither.isLeft()) {
       return _ignoredPropertiesEither;
     }
@@ -3603,7 +4069,16 @@ export namespace ShaclCoreNodeShapeStatic {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.properties["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toIdentifier()))
-      .map((values) => values.toArray());
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            ShaclCoreNodeShapeStatic.$properties.properties["identifier"],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
     if (_propertiesEither.isLeft()) {
       return _propertiesEither;
     }
@@ -3916,7 +4391,16 @@ export namespace ShaclmateNodeShape {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.abstract["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toBoolean()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<boolean>>({
+              object: purify.Maybe.empty(),
+              predicate: ShaclmateNodeShape.$properties.abstract["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_abstractEither.isLeft()) {
       return _abstractEither;
     }
@@ -3930,7 +4414,16 @@ export namespace ShaclmateNodeShape {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.export_["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toBoolean()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<boolean>>({
+              object: purify.Maybe.empty(),
+              predicate: ShaclmateNodeShape.$properties.export_["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_export_Either.isLeft()) {
       return _export_Either;
     }
@@ -3944,7 +4437,16 @@ export namespace ShaclmateNodeShape {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.extern["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toBoolean()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<boolean>>({
+              object: purify.Maybe.empty(),
+              predicate: ShaclmateNodeShape.$properties.extern["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_externEither.isLeft()) {
       return _externEither;
     }
@@ -3958,7 +4460,19 @@ export namespace ShaclmateNodeShape {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.fromRdfType["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toIri()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.NamedNode>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                ShaclmateNodeShape.$properties.fromRdfType["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_fromRdfTypeEither.isLeft()) {
       return _fromRdfTypeEither;
     }
@@ -4042,7 +4556,27 @@ export namespace ShaclmateNodeShape {
           }),
         ),
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<
+                rdfjs.NamedNode<
+                  | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode"
+                  | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_SHA256"
+                  | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4"
+                >
+              >
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                ShaclmateNodeShape.$properties.identifierMintingStrategy[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_identifierMintingStrategyEither.isLeft()) {
       return _identifierMintingStrategyEither;
     }
@@ -4057,7 +4591,16 @@ export namespace ShaclmateNodeShape {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.mutable["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toBoolean()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<boolean>>({
+              object: purify.Maybe.empty(),
+              predicate: ShaclmateNodeShape.$properties.mutable["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_mutableEither.isLeft()) {
       return _mutableEither;
     }
@@ -4071,7 +4614,16 @@ export namespace ShaclmateNodeShape {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.name["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toString()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
+              object: purify.Maybe.empty(),
+              predicate: ShaclmateNodeShape.$properties.name["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_nameEither.isLeft()) {
       return _nameEither;
     }
@@ -4085,7 +4637,18 @@ export namespace ShaclmateNodeShape {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.rdfType["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toIri()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.NamedNode>
+            >({
+              object: purify.Maybe.empty(),
+              predicate: ShaclmateNodeShape.$properties.rdfType["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_rdfTypeEither.isLeft()) {
       return _rdfTypeEither;
     }
@@ -4101,7 +4664,15 @@ export namespace ShaclmateNodeShape {
         }),
       )
         .chain((values) => values.chainMap((value) => value.toIri()))
-        .map((values) => values.toArray());
+        .map((values) => values.toArray())
+        .map((valuesArray) =>
+          rdfjsResource.Resource.Values.fromValue({
+            object: valuesArray,
+            predicate: ShaclmateNodeShape.$properties.toRdfTypes["identifier"],
+            subject: $resource,
+          }),
+        )
+        .chain((values) => values.head());
     if (_toRdfTypesEither.isLeft()) {
       return _toRdfTypesEither;
     }
@@ -4344,7 +4915,16 @@ export namespace ShaclmateNodeShape {
           }),
         ),
       )
-      .map((values) => values.toArray());
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            ShaclmateNodeShape.$properties.tsFeatureExcludes["identifier"],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
     if (_tsFeatureExcludesEither.isLeft()) {
       return _tsFeatureExcludesEither;
     }
@@ -4587,7 +5167,16 @@ export namespace ShaclmateNodeShape {
           }),
         ),
       )
-      .map((values) => values.toArray());
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            ShaclmateNodeShape.$properties.tsFeatureIncludes["identifier"],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
     if (_tsFeatureIncludesEither.isLeft()) {
       return _tsFeatureIncludesEither;
     }
@@ -4599,7 +5188,15 @@ export namespace ShaclmateNodeShape {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
       >($resource.values($properties.tsImports["identifier"], { unique: true }))
         .chain((values) => values.chainMap((value) => value.toString()))
-        .map((values) => values.toArray());
+        .map((values) => values.toArray())
+        .map((valuesArray) =>
+          rdfjsResource.Resource.Values.fromValue({
+            object: valuesArray,
+            predicate: ShaclmateNodeShape.$properties.tsImports["identifier"],
+            subject: $resource,
+          }),
+        )
+        .chain((values) => values.head());
     if (_tsImportsEither.isLeft()) {
       return _tsImportsEither;
     }
@@ -4668,7 +5265,26 @@ export namespace ShaclmateNodeShape {
           }),
         ),
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<
+                rdfjs.NamedNode<
+                  | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
+                  | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
+                >
+              >
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                ShaclmateNodeShape.$properties.tsObjectDeclarationType[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_tsObjectDeclarationTypeEither.isLeft()) {
       return _tsObjectDeclarationTypeEither;
     }
@@ -5000,7 +5616,16 @@ export namespace ShaclCorePropertyGroup {
             rdfjsResource.Resource.Values<rdfjs.Literal>
           >(filteredLiteralValues!);
         })
-        .map((values) => values.toArray());
+        .map((values) => values.toArray())
+        .map((valuesArray) =>
+          rdfjsResource.Resource.Values.fromValue({
+            object: valuesArray,
+            predicate:
+              ShaclCorePropertyGroup.$properties.comments["identifier"],
+            subject: $resource,
+          }),
+        )
+        .chain((values) => values.head());
     if (_commentsEither.isLeft()) {
       return _commentsEither;
     }
@@ -5064,7 +5689,15 @@ export namespace ShaclCorePropertyGroup {
             rdfjsResource.Resource.Values<rdfjs.Literal>
           >(filteredLiteralValues!);
         })
-        .map((values) => values.toArray());
+        .map((values) => values.toArray())
+        .map((valuesArray) =>
+          rdfjsResource.Resource.Values.fromValue({
+            object: valuesArray,
+            predicate: ShaclCorePropertyGroup.$properties.labels["identifier"],
+            subject: $resource,
+          }),
+        )
+        .chain((values) => values.head());
     if (_labelsEither.isLeft()) {
       return _labelsEither;
     }
