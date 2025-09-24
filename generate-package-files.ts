@@ -48,7 +48,7 @@ const externalDependencyVersions = {
   n3: { n3: "^1.21.3" },
   pino: { pino: "^9.1.0" },
   "purify-ts": { "purify-ts": "^2.1.0" },
-  "rdfjs-resource": { "rdfjs-resource": "1.0.20" },
+  "rdfjs-resource": { "rdfjs-resource": "1.0.21" },
 };
 
 // Packages should be topologically sorted
