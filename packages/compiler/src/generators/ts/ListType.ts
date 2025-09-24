@@ -102,11 +102,17 @@ export class ListType extends Type {
   }: Parameters<Type["fromRdfExpression"]>[0]): string {
     return [
       variables.resourceValues,
-      "chain(values => values.head())", // Only care about the first list head
-      "chain(value => value.toList())", // Resource.Value to Resource.Value[]
-      `map(values => rdfjsResource.Resource.Values.fromArray({ objects: values, predicate: ${variables.predicate}, subject: ${variables.resource} }))`, // Resource.Value[] to Resource.Values<Resource.Value>
-      `chain(values => values.chainMap(value => ${this.itemType.fromRdfExpression({ variables: { ...variables, resourceValues: "purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(value.toValues())" } })}))`, // Resource.Values<Resource.Value> to Resource.Values<item type arrays>
-      `map(values => values.map(values => values.toArray()${this.mutable ? ".concat()" : ""}))`, // Convert inner Resource.Values to arrays
+      "chain(values => values.chainMap(value => value.toList()))", // Resource.Values<Resource.Value> to Resource.Values<Resource.Value[]>
+      `chain(valueLists =>
+        valueLists.chainMap(
+          valueList => ${this.itemType.fromRdfExpression({
+            variables: {
+              ...variables,
+              resourceValues: `purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(rdfjsResource.Resource.Values.fromArray({ objects: valueList, predicate: ${variables.predicate}, subject: ${variables.resource} }))`,
+            },
+          })}
+      ))`, // Resource.Values<Resource.Value[]> to Resource.Values<item type arrays>
+      `map(valueLists => valueLists.map(valueList => valueList.toArray()${this.mutable ? ".concat()" : ""}))`, // Convert inner Resource.Values to arrays
     ].join(".");
   }
 
