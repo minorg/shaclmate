@@ -1488,16 +1488,14 @@ export namespace Child {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value
-            .toResource()
-            .chain((resource) =>
-              $DefaultStub.$fromRdf(resource, {
-                ...$context,
-                ignoreRdfType: true,
-                languageIn: $languageIn,
-                objectSet: $objectSet,
-              }),
-            ),
+          value.toResource().chain((resource) =>
+            $DefaultStub.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
         ),
       )
       .map((values) => values.head().toMaybe())
@@ -1527,16 +1525,14 @@ export namespace Child {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value
-            .toResource()
-            .chain((resource) =>
-              Nested.$fromRdf(resource, {
-                ...$context,
-                ignoreRdfType: true,
-                languageIn: $languageIn,
-                objectSet: $objectSet,
-              }),
-            ),
+          value.toResource().chain((resource) =>
+            Nested.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
         ),
       )
       .map((values) => values.head().toMaybe());
