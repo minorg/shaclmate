@@ -380,6 +380,7 @@ fs.writeFileSync(
         check: "biome check",
         "check:write": "biome check --write",
         "check:write:unsafe": "biome check --write --unsafe",
+        clean: "turbo run clean",
         dev: "turbo run dev",
         "dev:noEmit": "turbo run dev:noEmit",
         link: "npm link --workspaces",
