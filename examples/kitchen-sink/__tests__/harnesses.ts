@@ -1,6 +1,6 @@
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 
-import type { BlankNode, NamedNode } from "@rdfjs/types";
+import type {} from "@rdfjs/types";
 
 import { DataFactory as dataFactory } from "n3";
 import { NonEmptyList } from "purify-ts";
@@ -183,10 +183,7 @@ export const harnesses = {
     }),
     kitchenSink.InPropertiesClass,
   ),
-  interfaceClass: new InterfaceHarness<
-    kitchenSink.Interface,
-    BlankNode | NamedNode
-  >(
+  interfaceClass: new InterfaceHarness<kitchenSink.Interface>(
     {
       $identifier,
       interfaceProperty: "Test",
@@ -194,10 +191,7 @@ export const harnesses = {
     },
     kitchenSink.Interface,
   ),
-  interfaceUnionMember1: new InterfaceHarness<
-    kitchenSink.InterfaceUnion,
-    BlankNode | NamedNode
-  >(
+  interfaceUnionMember1: new InterfaceHarness<kitchenSink.InterfaceUnion>(
     {
       $identifier,
       interfaceUnionMember1Property: "Test1",
@@ -205,10 +199,7 @@ export const harnesses = {
     },
     kitchenSink.InterfaceUnion,
   ),
-  interfaceUnionMember2a: new InterfaceHarness<
-    kitchenSink.InterfaceUnion,
-    BlankNode | NamedNode
-  >(
+  interfaceUnionMember2a: new InterfaceHarness<kitchenSink.InterfaceUnion>(
     {
       $identifier,
       interfaceUnionMember2aProperty: "Test2",

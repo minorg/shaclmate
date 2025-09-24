@@ -1,4 +1,4 @@
-import type { BlankNode, NamedNode } from "@rdfjs/types";
+import type {} from "@rdfjs/types";
 import type { $EqualsResult } from "@shaclmate/kitchen-sink-example";
 import type { Either } from "purify-ts";
 import type {
@@ -9,12 +9,11 @@ import type {
 import type { z as zod } from "zod";
 
 export abstract class Harness<
-  T extends { readonly $identifier: IdentifierT },
-  IdentifierT extends BlankNode | NamedNode,
+  T extends { readonly $identifier: Resource.Identifier },
 > {
   readonly fromJson: (json: unknown) => Either<zod.ZodError, T>;
   readonly fromRdf: (
-    resource: Resource<IdentifierT>,
+    resource: Resource,
     parameters: {
       [_index: string]: any;
     },
@@ -28,12 +27,9 @@ export abstract class Harness<
       $fromRdf,
       $sparqlConstructQueryString,
     }: {
-      $fromJson: Harness<T, IdentifierT>["fromJson"];
-      $fromRdf: Harness<T, IdentifierT>["fromRdf"];
-      $sparqlConstructQueryString: Harness<
-        T,
-        IdentifierT
-      >["sparqlConstructQueryString"];
+      $fromJson: Harness<T>["fromJson"];
+      $fromRdf: Harness<T>["fromRdf"];
+      $sparqlConstructQueryString: Harness<T>["sparqlConstructQueryString"];
     },
   ) {
     this.fromJson = $fromJson;
@@ -48,5 +44,5 @@ export abstract class Harness<
   abstract toRdf(kwds: {
     mutateGraph: MutableResource.MutateGraph;
     resourceSet: MutableResourceSet;
-  }): Resource<IdentifierT>;
+  }): Resource;
 }

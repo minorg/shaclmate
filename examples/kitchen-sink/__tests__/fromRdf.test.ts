@@ -1,12 +1,11 @@
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
+import { harnesses } from "./harnesses.js";
 
 import { rdf } from "@tpluscode/rdf-ns-builders";
 
 import N3, { DataFactory as dataFactory } from "n3";
 import { MutableResourceSet, Resource, ResourceSet } from "rdfjs-resource";
 import { beforeAll, describe, it } from "vitest";
-
-import { harnesses } from "./harnesses.js"; // Must be imported before kitchenSink
 
 describe("fromRdf", () => {
   let languageInResource: Resource;
@@ -37,7 +36,7 @@ describe("fromRdf", () => {
   for (const [id, harness] of Object.entries(harnesses)) {
     it(`${id} round trip`, ({ expect }) => {
       const fromRdfInstance = harness
-        .fromRdf((harness as any).toRdf(), {
+        .fromRdf(harness.toRdf(), {
           extra: 1,
         })
         .unsafeCoerce() as any;
