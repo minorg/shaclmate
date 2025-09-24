@@ -27,15 +27,12 @@
           "order": 0,
           "path": "http://example.com/abstractBaseClassForExternClassProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -68,15 +65,12 @@
           "order": 0,
           "path": "http://example.com/abstractBaseClassWithPropertiesProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -121,15 +115,12 @@
           "order": 0,
           "path": "http://example.com/baseInterfaceWithPropertiesProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -198,15 +189,12 @@
           "order": 0,
           "path": "http://example.com/classUnionMember1Property",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -239,15 +227,12 @@
           "order": 0,
           "path": "http://example.com/classUnionMember2Property",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -280,15 +265,12 @@
           "order": 0,
           "path": "http://example.com/concreteChildClassProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -321,15 +303,12 @@
           "order": 0,
           "path": "http://example.com/concreteParentClassProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -362,15 +341,12 @@
           "order": 0,
           "path": "http://example.com/concreteChildInterfaceProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -403,15 +379,12 @@
           "order": 0,
           "path": "http://example.com/concreteParentInterfaceProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -444,11 +417,8 @@
           "order": 0,
           "path": "http://example.com/stringDefaultValueProperty",
           "type": {
-            "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         },
@@ -468,11 +438,8 @@
           "order": 0,
           "path": "http://example.com/trueBooleanDefaultValueProperty",
           "type": {
-            "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         },
@@ -492,11 +459,8 @@
           "order": 0,
           "path": "http://example.com/falseBooleanDefaultValueProperty",
           "type": {
-            "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         },
@@ -516,11 +480,8 @@
           "order": 0,
           "path": "http://example.com/dateDefaultValueProperty",
           "type": {
-            "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         },
@@ -540,11 +501,8 @@
           "order": 0,
           "path": "http://example.com/dateTimeDefaultValueProperty",
           "type": {
-            "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         },
@@ -564,11 +522,8 @@
           "order": 0,
           "path": "http://example.com/numberDefaultValueProperty",
           "type": {
-            "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -651,15 +606,12 @@
           "order": 0,
           "path": "http://example.com/explicitFromToRdfTypesProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -692,15 +644,12 @@
           "order": 0,
           "path": "http://example.com/explicitRdfTypeProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -794,19 +743,16 @@
           "order": 0,
           "path": "http://example.com/hasIriValueProperty",
           "type": {
-            "itemType": {
-              "hasValue": [
-                {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/HasValuePropertiesClassIri1"
-                }
-              ],
-              "kind": "IdentifierType",
-              "nodeKinds": [
-                "NamedNode"
-              ]
-            },
-            "kind": "PlainType"
+            "hasValue": [
+              {
+                "termType": "NamedNode",
+                "value": "http://example.com/HasValuePropertiesClassIri1"
+              }
+            ],
+            "kind": "IdentifierType",
+            "nodeKinds": [
+              "NamedNode"
+            ]
           },
           "visibility": "public"
         },
@@ -826,18 +772,15 @@
           "order": 0,
           "path": "http://example.com/hasLiteralValueProperty",
           "type": {
-            "itemType": {
-              "hasValue": [
-                {
-                  "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                  "language": "",
-                  "termType": "Literal",
-                  "value": "test"
-                }
-              ],
-              "kind": "LiteralType"
-            },
-            "kind": "PlainType"
+            "hasValue": [
+              {
+                "datatype": "http://www.w3.org/2001/XMLSchema#string",
+                "language": "",
+                "termType": "Literal",
+                "value": "test"
+              }
+            ],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -1146,15 +1089,12 @@
           "order": 0,
           "path": "http://example.com/interfaceProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -1187,15 +1127,12 @@
           "order": 0,
           "path": "http://example.com/interfaceUnionMember1Property",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -1228,15 +1165,12 @@
           "order": 0,
           "path": "http://example.com/interfaceUnionMember2aProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -1269,15 +1203,12 @@
           "order": 0,
           "path": "http://example.com/interfaceUnionMember2bProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -1322,11 +1253,8 @@
           "order": 0,
           "path": "http://example.com/languageInPropertiesLanguageInProperty",
           "type": {
-            "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         },
@@ -1347,11 +1275,8 @@
           "order": 0,
           "path": "http://example.com/languageInPropertiesLiteralProperty",
           "type": {
-            "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -1384,15 +1309,12 @@
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -1425,15 +1347,12 @@
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -1466,15 +1385,12 @@
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -1507,15 +1423,12 @@
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -1548,15 +1461,12 @@
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -1589,15 +1499,12 @@
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -1630,15 +1537,12 @@
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -1671,15 +1575,12 @@
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -1836,49 +1737,43 @@
           "order": 0,
           "path": "http://example.com/requiredLazyToResolvedClassProperty",
           "stubType": {
-            "itemType": {
-              "kind": "ObjectType",
-              "name": {
-                "identifier": {
-                  "termType": "BlankNode",
-                  "value": "n3-295"
-                }
-              },
-              "identifierNodeKinds": [
-                "BlankNode",
-                "NamedNode"
-              ]
+            "kind": "ObjectType",
+            "name": {
+              "identifier": {
+                "termType": "BlankNode",
+                "value": "n3-295"
+              }
             },
-            "kind": "PlainType"
+            "identifierNodeKinds": [
+              "BlankNode",
+              "NamedNode"
+            ]
           },
           "type": {
-            "itemType": {
-              "fromRdfType": {
+            "fromRdfType": {
+              "termType": "NamedNode",
+              "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+            },
+            "kind": "ObjectType",
+            "name": {
+              "identifier": {
+                "curie": ":LazilyResolvedBlankNodeOrIriClass",
+                "termType": "NamedNode",
+                "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriClass",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+              }
+            },
+            "identifierNodeKinds": [
+              "BlankNode",
+              "NamedNode"
+            ],
+            "identifierMintingStrategy": "blankNode",
+            "toRdfTypes": [
+              {
                 "termType": "NamedNode",
                 "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
-              },
-              "kind": "ObjectType",
-              "name": {
-                "identifier": {
-                  "curie": ":LazilyResolvedBlankNodeOrIriClass",
-                  "termType": "NamedNode",
-                  "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriClass",
-                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
-                }
-              },
-              "identifierNodeKinds": [
-                "BlankNode",
-                "NamedNode"
-              ],
-              "identifierMintingStrategy": "blankNode",
-              "toRdfTypes": [
-                {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
-                }
-              ]
-            },
-            "kind": "PlainType"
+              }
+            ]
           },
           "visibility": "public"
         },
@@ -2178,52 +2073,46 @@
           "order": 0,
           "path": "http://example.com/requiredStubClassToResolvedClassProperty",
           "stubType": {
-            "itemType": {
-              "kind": "ObjectType",
-              "name": {
-                "identifier": {
-                  "curie": ":StubClass",
-                  "termType": "NamedNode",
-                  "uniqueLocalPart": "StubClass",
-                  "value": "http://example.com/StubClass"
-                }
-              },
-              "identifierNodeKinds": [
-                "BlankNode",
-                "NamedNode"
-              ],
-              "identifierMintingStrategy": "blankNode"
+            "kind": "ObjectType",
+            "name": {
+              "identifier": {
+                "curie": ":StubClass",
+                "termType": "NamedNode",
+                "uniqueLocalPart": "StubClass",
+                "value": "http://example.com/StubClass"
+              }
             },
-            "kind": "PlainType"
+            "identifierNodeKinds": [
+              "BlankNode",
+              "NamedNode"
+            ],
+            "identifierMintingStrategy": "blankNode"
           },
           "type": {
-            "itemType": {
-              "fromRdfType": {
+            "fromRdfType": {
+              "termType": "NamedNode",
+              "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+            },
+            "kind": "ObjectType",
+            "name": {
+              "identifier": {
+                "curie": ":LazilyResolvedBlankNodeOrIriClass",
+                "termType": "NamedNode",
+                "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriClass",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+              }
+            },
+            "identifierNodeKinds": [
+              "BlankNode",
+              "NamedNode"
+            ],
+            "identifierMintingStrategy": "blankNode",
+            "toRdfTypes": [
+              {
                 "termType": "NamedNode",
                 "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
-              },
-              "kind": "ObjectType",
-              "name": {
-                "identifier": {
-                  "curie": ":LazilyResolvedBlankNodeOrIriClass",
-                  "termType": "NamedNode",
-                  "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriClass",
-                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
-                }
-              },
-              "identifierNodeKinds": [
-                "BlankNode",
-                "NamedNode"
-              ],
-              "identifierMintingStrategy": "blankNode",
-              "toRdfTypes": [
-                {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
-                }
-              ]
-            },
-            "kind": "PlainType"
+              }
+            ]
           },
           "visibility": "public"
         },
@@ -2513,15 +2402,12 @@
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -2678,49 +2564,43 @@
           "order": 0,
           "path": "http://example.com/requiredLazyToResolvedInterfaceProperty",
           "stubType": {
-            "itemType": {
-              "kind": "ObjectType",
-              "name": {
-                "identifier": {
-                  "termType": "BlankNode",
-                  "value": "n3-300"
-                }
-              },
-              "identifierNodeKinds": [
-                "BlankNode",
-                "NamedNode"
-              ]
+            "kind": "ObjectType",
+            "name": {
+              "identifier": {
+                "termType": "BlankNode",
+                "value": "n3-300"
+              }
             },
-            "kind": "PlainType"
+            "identifierNodeKinds": [
+              "BlankNode",
+              "NamedNode"
+            ]
           },
           "type": {
-            "itemType": {
-              "fromRdfType": {
+            "fromRdfType": {
+              "termType": "NamedNode",
+              "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+            },
+            "kind": "ObjectType",
+            "name": {
+              "identifier": {
+                "curie": ":LazilyResolvedBlankNodeOrIriInterface",
+                "termType": "NamedNode",
+                "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriInterface",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+              }
+            },
+            "identifierNodeKinds": [
+              "BlankNode",
+              "NamedNode"
+            ],
+            "identifierMintingStrategy": "blankNode",
+            "toRdfTypes": [
+              {
                 "termType": "NamedNode",
                 "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
-              },
-              "kind": "ObjectType",
-              "name": {
-                "identifier": {
-                  "curie": ":LazilyResolvedBlankNodeOrIriInterface",
-                  "termType": "NamedNode",
-                  "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriInterface",
-                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
-                }
-              },
-              "identifierNodeKinds": [
-                "BlankNode",
-                "NamedNode"
-              ],
-              "identifierMintingStrategy": "blankNode",
-              "toRdfTypes": [
-                {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
-                }
-              ]
-            },
-            "kind": "PlainType"
+              }
+            ]
           },
           "visibility": "public"
         },
@@ -3020,52 +2900,46 @@
           "order": 0,
           "path": "http://example.com/requiredStubInterfaceToResolvedInterfaceProperty",
           "stubType": {
-            "itemType": {
-              "kind": "ObjectType",
-              "name": {
-                "identifier": {
-                  "curie": ":StubInterface",
-                  "termType": "NamedNode",
-                  "uniqueLocalPart": "StubInterface",
-                  "value": "http://example.com/StubInterface"
-                }
-              },
-              "identifierNodeKinds": [
-                "BlankNode",
-                "NamedNode"
-              ],
-              "identifierMintingStrategy": "blankNode"
+            "kind": "ObjectType",
+            "name": {
+              "identifier": {
+                "curie": ":StubInterface",
+                "termType": "NamedNode",
+                "uniqueLocalPart": "StubInterface",
+                "value": "http://example.com/StubInterface"
+              }
             },
-            "kind": "PlainType"
+            "identifierNodeKinds": [
+              "BlankNode",
+              "NamedNode"
+            ],
+            "identifierMintingStrategy": "blankNode"
           },
           "type": {
-            "itemType": {
-              "fromRdfType": {
+            "fromRdfType": {
+              "termType": "NamedNode",
+              "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+            },
+            "kind": "ObjectType",
+            "name": {
+              "identifier": {
+                "curie": ":LazilyResolvedBlankNodeOrIriInterface",
+                "termType": "NamedNode",
+                "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriInterface",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+              }
+            },
+            "identifierNodeKinds": [
+              "BlankNode",
+              "NamedNode"
+            ],
+            "identifierMintingStrategy": "blankNode",
+            "toRdfTypes": [
+              {
                 "termType": "NamedNode",
                 "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
-              },
-              "kind": "ObjectType",
-              "name": {
-                "identifier": {
-                  "curie": ":LazilyResolvedBlankNodeOrIriInterface",
-                  "termType": "NamedNode",
-                  "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriInterface",
-                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
-                }
-              },
-              "identifierNodeKinds": [
-                "BlankNode",
-                "NamedNode"
-              ],
-              "identifierMintingStrategy": "blankNode",
-              "toRdfTypes": [
-                {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
-                }
-              ]
-            },
-            "kind": "PlainType"
+              }
+            ]
           },
           "visibility": "public"
         },
@@ -3355,15 +3229,12 @@
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -3585,15 +3456,12 @@
           "order": 0,
           "path": "http://example.com/nonClassProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -3626,15 +3494,12 @@
           "order": 1,
           "path": "http://example.com/orderedPropertyC",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         },
@@ -3654,15 +3519,12 @@
           "order": 2,
           "path": "http://example.com/orderedPropertyB",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         },
@@ -3682,15 +3544,12 @@
           "order": 3,
           "path": "http://example.com/orderedPropertyA",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -3724,15 +3583,12 @@
           "order": 0,
           "path": "http://example.com/requiredStringProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         },
@@ -3852,15 +3708,12 @@
           "order": 0,
           "path": "http://example.com/protectedProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "protected"
         },
@@ -3880,15 +3733,12 @@
           "order": 0,
           "path": "http://example.com/privateProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "private"
         },
@@ -3908,15 +3758,12 @@
           "order": 0,
           "path": "http://example.com/publicProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -3949,15 +3796,12 @@
           "order": 0,
           "path": "http://example.com/sha256IriProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -3990,15 +3834,12 @@
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -4031,15 +3872,12 @@
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -4072,15 +3910,12 @@
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -4113,15 +3948,12 @@
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -4531,15 +4363,12 @@
           "order": 0,
           "path": "http://example.com/uuidV4IriProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
@@ -4572,15 +4401,12 @@
           "order": 0,
           "path": "http://example.com/uuidV4IriProperty",
           "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "kind": "PlainType"
+            "hasValue": [],
+            "kind": "LiteralType"
           },
           "visibility": "public"
         }
