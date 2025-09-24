@@ -225,7 +225,7 @@ export abstract class ShaclProperty<
     });
 
     return [
-      `const _${this.name}Either: purify.Either<Error, ${this.type.name}> = ${typeFromRdfExpression};`,
+      `const _${this.name}Either: purify.Either<Error, ${this.type.name}> = ${typeFromRdfExpression}.chain(values => values.head());`,
       `if (_${this.name}Either.isLeft()) { return _${this.name}Either; }`,
       `const ${this.name} = _${this.name}Either.unsafeCoerce();`,
     ];

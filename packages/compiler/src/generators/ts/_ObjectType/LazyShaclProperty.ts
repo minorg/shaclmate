@@ -275,7 +275,7 @@ export namespace LazyShaclProperty {
       parameters: Parameters<_Type["fromRdfExpression"]>[0],
     ): string {
       const { variables } = parameters;
-      return `${this.stubType.fromRdfExpression(parameters)}.map(${this.runtimeClass.stubPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}, resolver: (identifiers) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.objects}({ where: { identifiers, type: "identifiers" }}) }))`;
+      return `${this.stubType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.stubPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}, resolver: (identifiers) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.objects}({ where: { identifiers, type: "identifiers" }}) })))`;
     }
   }
 
@@ -381,7 +381,7 @@ export namespace LazyShaclProperty {
       parameters: Parameters<_Type["fromRdfExpression"]>[0],
     ): string {
       const { variables } = parameters;
-      return `${this.stubType.fromRdfExpression(parameters)}.map(${this.runtimeClass.stubPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.object}(identifier) }))`;
+      return `${this.stubType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.stubPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.object}(identifier) })))`;
     }
 
     override graphqlResolveExpression(
@@ -446,7 +446,7 @@ export namespace LazyShaclProperty {
       parameters: Parameters<_Type["fromRdfExpression"]>[0],
     ): string {
       const { variables } = parameters;
-      return `${this.stubType.fromRdfExpression(parameters)}.map(${this.runtimeClass.stubPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.object}(identifier) }))`;
+      return `${this.stubType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.stubPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.object}(identifier) })))`;
     }
   }
 }

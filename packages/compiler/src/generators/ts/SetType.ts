@@ -117,14 +117,20 @@ export class SetType<
     parameters: Parameters<Type["fromRdfExpression"]>[0],
   ): string {
     const { variables } = parameters;
-    const itemFromRdfExpression = this.itemType.fromRdfExpression(parameters);
-    if (this._mutable) {
-      return `${itemFromRdfExpression}.map(values => values.toArray().concat())`;
+    const chain = [this.itemType.fromRdfExpression(parameters)];
+    if (this.minCount === 0 || this._mutable) {
+      chain.push(
+        `map(values => values.toArray()${this._mutable ? ".concat()" : ""})`,
+      );
+    } else {
+      chain.push(
+        `chain(values => purify.NonEmptyList.fromArray(values.toArray()).toEither(new Error(\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} is an empty set\`)))`,
+      );
     }
-    if (this.minCount === 0) {
-      return `${itemFromRdfExpression}.map(values => values.toArray())`;
-    }
-    return `${itemFromRdfExpression}.chain(values => purify.NonEmptyList.fromArray(values.toArray()).toEither(new Error(\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} is an empty set\`)))`;
+    chain.push(
+      `map(valuesArray => rdfjsResource.Resource.Values.fromValue({ object: valuesArray , predicate: ${variables.predicate}, subject: ${variables.resource} }))`,
+    );
+    return chain.join(".");
   }
 
   override graphqlResolveExpression({

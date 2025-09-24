@@ -2509,7 +2509,21 @@ export namespace UnionPropertiesClass {
             rdfjsResource.Resource.Values<number | string>
           >,
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<number | string>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                UnionPropertiesClass.$properties.narrowLiteralsProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_narrowLiteralsPropertyEither.isLeft()) {
       return _narrowLiteralsPropertyEither;
     }
@@ -2557,7 +2571,21 @@ export namespace UnionPropertiesClass {
             rdfjsResource.Resource.Values<number | NonClass>
           >,
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<number | NonClass>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                UnionPropertiesClass.$properties.unrelatedTypesProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_unrelatedTypesPropertyEither.isLeft()) {
       return _unrelatedTypesPropertyEither;
     }
@@ -2627,7 +2655,21 @@ export namespace UnionPropertiesClass {
           rdfjsResource.Resource.Values<rdfjs.Literal>
         >(filteredLiteralValues!);
       })
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.Literal>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                UnionPropertiesClass.$properties.widenedLiteralsProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_widenedLiteralsPropertyEither.isLeft()) {
       return _widenedLiteralsPropertyEither;
     }
@@ -2673,7 +2715,21 @@ export namespace UnionPropertiesClass {
           }),
         ),
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                UnionPropertiesClass.$properties.widenedTermsProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_widenedTermsPropertyEither.isLeft()) {
       return _widenedTermsPropertyEither;
     }
@@ -3797,7 +3853,19 @@ export namespace TermPropertiesClass {
       }),
     )
       .chain((values) => values.chainMap((value) => value.toBoolean()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<boolean>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                TermPropertiesClass.$properties.booleanTermProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_booleanTermPropertyEither.isLeft()) {
       return _booleanTermPropertyEither;
     }
@@ -3815,7 +3883,17 @@ export namespace TermPropertiesClass {
       }),
     )
       .chain((values) => values.chainMap((value) => value.toDate()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<Date>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                TermPropertiesClass.$properties.dateTermProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_dateTermPropertyEither.isLeft()) {
       return _dateTermPropertyEither;
     }
@@ -3833,7 +3911,19 @@ export namespace TermPropertiesClass {
       }),
     )
       .chain((values) => values.chainMap((value) => value.toDate()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<Date>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                TermPropertiesClass.$properties.dateTimeTermProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_dateTimeTermPropertyEither.isLeft()) {
       return _dateTimeTermPropertyEither;
     }
@@ -3851,7 +3941,19 @@ export namespace TermPropertiesClass {
       }),
     )
       .chain((values) => values.chainMap((value) => value.toIri()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.NamedNode>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                TermPropertiesClass.$properties.iriTermProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_iriTermPropertyEither.isLeft()) {
       return _iriTermPropertyEither;
     }
@@ -3921,7 +4023,21 @@ export namespace TermPropertiesClass {
           rdfjsResource.Resource.Values<rdfjs.Literal>
         >(filteredLiteralValues!);
       })
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.Literal>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                TermPropertiesClass.$properties.literalTermProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_literalTermPropertyEither.isLeft()) {
       return _literalTermPropertyEither;
     }
@@ -3939,7 +4055,19 @@ export namespace TermPropertiesClass {
       }),
     )
       .chain((values) => values.chainMap((value) => value.toNumber()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<number>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                TermPropertiesClass.$properties.numberTermProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_numberTermPropertyEither.isLeft()) {
       return _numberTermPropertyEither;
     }
@@ -3957,7 +4085,19 @@ export namespace TermPropertiesClass {
       }),
     )
       .chain((values) => values.chainMap((value) => value.toString()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                TermPropertiesClass.$properties.stringTermProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_stringTermPropertyEither.isLeft()) {
       return _stringTermPropertyEither;
     }
@@ -3982,7 +4122,19 @@ export namespace TermPropertiesClass {
           >(value.toTerm()),
         ),
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                TermPropertiesClass.$properties.termProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_termPropertyEither.isLeft()) {
       return _termPropertyEither;
     }
@@ -7772,7 +7924,18 @@ export namespace PropertyCardinalitiesClass {
       }),
     )
       .chain((values) => values.chainMap((value) => value.toString()))
-      .map((values) => values.toArray());
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
+              "identifier"
+            ],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
     if (_emptyStringSetPropertyEither.isLeft()) {
       return _emptyStringSetPropertyEither;
     }
@@ -7796,7 +7959,18 @@ export namespace PropertyCardinalitiesClass {
             `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} is an empty set`,
           ),
         ),
-      );
+      )
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
+              "identifier"
+            ],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
     if (_nonEmptyStringSetPropertyEither.isLeft()) {
       return _nonEmptyStringSetPropertyEither;
     }
@@ -7815,7 +7989,19 @@ export namespace PropertyCardinalitiesClass {
       }),
     )
       .chain((values) => values.chainMap((value) => value.toString()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                PropertyCardinalitiesClass.$properties.optionalStringProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_optionalStringPropertyEither.isLeft()) {
       return _optionalStringPropertyEither;
     }
@@ -9494,7 +9680,19 @@ export namespace MutablePropertiesClass {
       .map((valueLists) =>
         valueLists.map((valueList) => valueList.toArray().concat()),
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string[]>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                MutablePropertiesClass.$properties.mutableListProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_mutableListPropertyEither.isLeft()) {
       return _mutableListPropertyEither;
     }
@@ -9510,7 +9708,18 @@ export namespace MutablePropertiesClass {
         }),
       )
         .chain((values) => values.chainMap((value) => value.toString()))
-        .map((values) => values.toArray().concat());
+        .map((values) => values.toArray().concat())
+        .map((valuesArray) =>
+          rdfjsResource.Resource.Values.fromValue({
+            object: valuesArray,
+            predicate:
+              MutablePropertiesClass.$properties.mutableSetProperty[
+                "identifier"
+              ],
+            subject: $resource,
+          }),
+        )
+        .chain((values) => values.head());
     if (_mutableSetPropertyEither.isLeft()) {
       return _mutableSetPropertyEither;
     }
@@ -9528,7 +9737,19 @@ export namespace MutablePropertiesClass {
       }),
     )
       .chain((values) => values.chainMap((value) => value.toString()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                MutablePropertiesClass.$properties.mutableStringProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_mutableStringPropertyEither.isLeft()) {
       return _mutableStringPropertyEither;
     }
@@ -10328,7 +10549,21 @@ export namespace ListPropertiesClass {
         ),
       )
       .map((valueLists) => valueLists.map((valueList) => valueList.toArray()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<readonly NonClass[]>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                ListPropertiesClass.$properties.objectListProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_objectListPropertyEither.isLeft()) {
       return _objectListPropertyEither;
     }
@@ -10364,7 +10599,21 @@ export namespace ListPropertiesClass {
         ),
       )
       .map((valueLists) => valueLists.map((valueList) => valueList.toArray()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<readonly string[]>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                ListPropertiesClass.$properties.stringListProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_stringListPropertyEither.isLeft()) {
       return _stringListPropertyEither;
     }
@@ -12818,19 +13067,34 @@ export namespace LazyPropertiesInterface {
           ),
         ),
       )
-      .map((values) => values.head().toMaybe())
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-            LazilyResolvedBlankNodeOrIriInterface,
-            $DefaultStub
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriInterface(identifier),
-          }),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<$DefaultStub>>(
+              {
+                object: purify.Maybe.empty(),
+                predicate:
+                  LazyPropertiesInterface.$properties
+                    .optionalLazyToResolvedInterfaceProperty["identifier"],
+                subject: $resource,
+              },
+            ),
+      )
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+              LazilyResolvedBlankNodeOrIriInterface,
+              $DefaultStub
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriInterface(identifier),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_optionalLazyToResolvedInterfacePropertyEither.isLeft()) {
       return _optionalLazyToResolvedInterfacePropertyEither;
     }
@@ -12865,19 +13129,34 @@ export namespace LazyPropertiesInterface {
           ),
         ),
       )
-      .map((values) => values.head().toMaybe())
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedInterfaceUnion.$Identifier,
-            LazilyResolvedInterfaceUnion,
-            $DefaultStub
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedInterfaceUnion(identifier),
-          }),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<$DefaultStub>>(
+              {
+                object: purify.Maybe.empty(),
+                predicate:
+                  LazyPropertiesInterface.$properties
+                    .optionalLazyToResolvedInterfaceUnionProperty["identifier"],
+                subject: $resource,
+              },
+            ),
+      )
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedInterfaceUnion.$Identifier,
+              LazilyResolvedInterfaceUnion,
+              $DefaultStub
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedInterfaceUnion(identifier),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_optionalLazyToResolvedInterfaceUnionPropertyEither.isLeft()) {
       return _optionalLazyToResolvedInterfaceUnionPropertyEither;
     }
@@ -12912,19 +13191,34 @@ export namespace LazyPropertiesInterface {
           ),
         ),
       )
-      .map((values) => values.head().toMaybe())
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedIriInterface.$Identifier,
-            LazilyResolvedIriInterface,
-            $NamedDefaultStub
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedIriInterface(identifier),
-          }),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<$NamedDefaultStub>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                LazyPropertiesInterface.$properties
+                  .optionalLazyToResolvedIriInterfaceProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedIriInterface.$Identifier,
+              LazilyResolvedIriInterface,
+              $NamedDefaultStub
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedIriInterface(identifier),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_optionalLazyToResolvedIriInterfacePropertyEither.isLeft()) {
       return _optionalLazyToResolvedIriInterfacePropertyEither;
     }
@@ -12961,19 +13255,36 @@ export namespace LazyPropertiesInterface {
           ),
         ),
       )
-      .map((values) => values.head().toMaybe())
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-            LazilyResolvedBlankNodeOrIriInterface,
-            StubInterface
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriInterface(identifier),
-          }),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<StubInterface>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                LazyPropertiesInterface.$properties
+                  .optionalStubInterfaceToResolvedInterfaceProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+              LazilyResolvedBlankNodeOrIriInterface,
+              StubInterface
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriInterface(identifier),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_optionalStubInterfaceToResolvedInterfacePropertyEither.isLeft()) {
       return _optionalStubInterfaceToResolvedInterfacePropertyEither;
     }
@@ -13010,19 +13321,36 @@ export namespace LazyPropertiesInterface {
           ),
         ),
       )
-      .map((values) => values.head().toMaybe())
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedInterfaceUnion.$Identifier,
-            LazilyResolvedInterfaceUnion,
-            StubInterface
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedInterfaceUnion(identifier),
-          }),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<StubInterface>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                LazyPropertiesInterface.$properties
+                  .optionalStubInterfaceToResolvedInterfaceUnionProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedInterfaceUnion.$Identifier,
+              LazilyResolvedInterfaceUnion,
+              StubInterface
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedInterfaceUnion(identifier),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_optionalStubInterfaceToResolvedInterfaceUnionPropertyEither.isLeft()) {
       return _optionalStubInterfaceToResolvedInterfaceUnionPropertyEither;
     }
@@ -13059,19 +13387,36 @@ export namespace LazyPropertiesInterface {
           ),
         ),
       )
-      .map((values) => values.head().toMaybe())
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedInterfaceUnion.$Identifier,
-            LazilyResolvedInterfaceUnion,
-            StubInterfaceUnion
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedInterfaceUnion(identifier),
-          }),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<StubInterfaceUnion>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                LazyPropertiesInterface.$properties
+                  .optionalStubInterfaceUnionToResolvedInterfaceUnionProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedInterfaceUnion.$Identifier,
+              LazilyResolvedInterfaceUnion,
+              StubInterfaceUnion
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedInterfaceUnion(identifier),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (
       _optionalStubInterfaceUnionToResolvedInterfaceUnionPropertyEither.isLeft()
     ) {
@@ -13108,19 +13453,21 @@ export namespace LazyPropertiesInterface {
           ),
         ),
       )
-      .chain((values) => values.head())
-      .map(
-        (stub) =>
-          new $LazyRequiredObject<
-            LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-            LazilyResolvedBlankNodeOrIriInterface,
-            $DefaultStub
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriInterface(identifier),
-          }),
-      );
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyRequiredObject<
+              LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+              LazilyResolvedBlankNodeOrIriInterface,
+              $DefaultStub
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriInterface(identifier),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_requiredLazyToResolvedInterfacePropertyEither.isLeft()) {
       return _requiredLazyToResolvedInterfacePropertyEither;
     }
@@ -13157,19 +13504,21 @@ export namespace LazyPropertiesInterface {
           ),
         ),
       )
-      .chain((values) => values.head())
-      .map(
-        (stub) =>
-          new $LazyRequiredObject<
-            LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-            LazilyResolvedBlankNodeOrIriInterface,
-            StubInterface
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriInterface(identifier),
-          }),
-      );
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyRequiredObject<
+              LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+              LazilyResolvedBlankNodeOrIriInterface,
+              StubInterface
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriInterface(identifier),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_requiredStubInterfaceToResolvedInterfacePropertyEither.isLeft()) {
       return _requiredStubInterfaceToResolvedInterfacePropertyEither;
     }
@@ -13205,20 +13554,32 @@ export namespace LazyPropertiesInterface {
         ),
       )
       .map((values) => values.toArray())
-      .map(
-        (stubs) =>
-          new $LazyObjectSet<
-            LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-            LazilyResolvedBlankNodeOrIriInterface,
-            $DefaultStub
-          >({
-            stubs,
-            resolver: (identifiers) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriInterfaces({
-                where: { identifiers, type: "identifiers" },
-              }),
-          }),
-      );
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            LazyPropertiesInterface.$properties
+              .setLazyToResolvedInterfaceProperty["identifier"],
+          subject: $resource,
+        }),
+      )
+      .map((values) =>
+        values.map(
+          (stubs) =>
+            new $LazyObjectSet<
+              LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+              LazilyResolvedBlankNodeOrIriInterface,
+              $DefaultStub
+            >({
+              stubs,
+              resolver: (identifiers) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriInterfaces({
+                  where: { identifiers, type: "identifiers" },
+                }),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_setLazyToResolvedInterfacePropertyEither.isLeft()) {
       return _setLazyToResolvedInterfacePropertyEither;
     }
@@ -13254,20 +13615,32 @@ export namespace LazyPropertiesInterface {
         ),
       )
       .map((values) => values.toArray())
-      .map(
-        (stubs) =>
-          new $LazyObjectSet<
-            LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-            LazilyResolvedBlankNodeOrIriInterface,
-            StubInterface
-          >({
-            stubs,
-            resolver: (identifiers) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriInterfaces({
-                where: { identifiers, type: "identifiers" },
-              }),
-          }),
-      );
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            LazyPropertiesInterface.$properties
+              .setStubInterfaceToResolvedInterfaceProperty["identifier"],
+          subject: $resource,
+        }),
+      )
+      .map((values) =>
+        values.map(
+          (stubs) =>
+            new $LazyObjectSet<
+              LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+              LazilyResolvedBlankNodeOrIriInterface,
+              StubInterface
+            >({
+              stubs,
+              resolver: (identifiers) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriInterfaces({
+                  where: { identifiers, type: "identifiers" },
+                }),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_setStubInterfaceToResolvedInterfacePropertyEither.isLeft()) {
       return _setStubInterfaceToResolvedInterfacePropertyEither;
     }
@@ -15967,19 +16340,34 @@ export namespace LazyPropertiesClass {
           ),
         ),
       )
-      .map((values) => values.head().toMaybe())
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedBlankNodeOrIriClass.$Identifier,
-            LazilyResolvedBlankNodeOrIriClass,
-            $DefaultStub
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
-          }),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<$DefaultStub>>(
+              {
+                object: purify.Maybe.empty(),
+                predicate:
+                  LazyPropertiesClass.$properties
+                    .optionalLazyToResolvedClassProperty["identifier"],
+                subject: $resource,
+              },
+            ),
+      )
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedBlankNodeOrIriClass.$Identifier,
+              LazilyResolvedBlankNodeOrIriClass,
+              $DefaultStub
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_optionalLazyToResolvedClassPropertyEither.isLeft()) {
       return _optionalLazyToResolvedClassPropertyEither;
     }
@@ -16014,19 +16402,34 @@ export namespace LazyPropertiesClass {
           ),
         ),
       )
-      .map((values) => values.head().toMaybe())
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedClassUnion.$Identifier,
-            LazilyResolvedClassUnion,
-            $DefaultStub
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedClassUnion(identifier),
-          }),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<$DefaultStub>>(
+              {
+                object: purify.Maybe.empty(),
+                predicate:
+                  LazyPropertiesClass.$properties
+                    .optionalLazyToResolvedClassUnionProperty["identifier"],
+                subject: $resource,
+              },
+            ),
+      )
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedClassUnion.$Identifier,
+              LazilyResolvedClassUnion,
+              $DefaultStub
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedClassUnion(identifier),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_optionalLazyToResolvedClassUnionPropertyEither.isLeft()) {
       return _optionalLazyToResolvedClassUnionPropertyEither;
     }
@@ -16061,19 +16464,34 @@ export namespace LazyPropertiesClass {
           ),
         ),
       )
-      .map((values) => values.head().toMaybe())
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedIriClass.$Identifier,
-            LazilyResolvedIriClass,
-            $NamedDefaultStub
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedIriClass(identifier),
-          }),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<$NamedDefaultStub>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                LazyPropertiesClass.$properties
+                  .optionalLazyToResolvedIriClassProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedIriClass.$Identifier,
+              LazilyResolvedIriClass,
+              $NamedDefaultStub
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedIriClass(identifier),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_optionalLazyToResolvedIriClassPropertyEither.isLeft()) {
       return _optionalLazyToResolvedIriClassPropertyEither;
     }
@@ -16108,19 +16526,32 @@ export namespace LazyPropertiesClass {
           ),
         ),
       )
-      .map((values) => values.head().toMaybe())
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedBlankNodeOrIriClass.$Identifier,
-            LazilyResolvedBlankNodeOrIriClass,
-            StubClass
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
-          }),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<StubClass>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                LazyPropertiesClass.$properties
+                  .optionalStubClassToResolvedClassProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedBlankNodeOrIriClass.$Identifier,
+              LazilyResolvedBlankNodeOrIriClass,
+              StubClass
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_optionalStubClassToResolvedClassPropertyEither.isLeft()) {
       return _optionalStubClassToResolvedClassPropertyEither;
     }
@@ -16155,19 +16586,32 @@ export namespace LazyPropertiesClass {
           ),
         ),
       )
-      .map((values) => values.head().toMaybe())
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedClassUnion.$Identifier,
-            LazilyResolvedClassUnion,
-            StubClass
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedClassUnion(identifier),
-          }),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<StubClass>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                LazyPropertiesClass.$properties
+                  .optionalStubClassToResolvedClassUnionProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedClassUnion.$Identifier,
+              LazilyResolvedClassUnion,
+              StubClass
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedClassUnion(identifier),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_optionalStubClassToResolvedClassUnionPropertyEither.isLeft()) {
       return _optionalStubClassToResolvedClassUnionPropertyEither;
     }
@@ -16204,19 +16648,36 @@ export namespace LazyPropertiesClass {
           ),
         ),
       )
-      .map((values) => values.head().toMaybe())
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedClassUnion.$Identifier,
-            LazilyResolvedClassUnion,
-            StubClassUnion
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedClassUnion(identifier),
-          }),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<StubClassUnion>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                LazyPropertiesClass.$properties
+                  .optionalStubClassUnionToResolvedClassUnionProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedClassUnion.$Identifier,
+              LazilyResolvedClassUnion,
+              StubClassUnion
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedClassUnion(identifier),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_optionalStubClassUnionToResolvedClassUnionPropertyEither.isLeft()) {
       return _optionalStubClassUnionToResolvedClassUnionPropertyEither;
     }
@@ -16251,19 +16712,21 @@ export namespace LazyPropertiesClass {
           ),
         ),
       )
-      .chain((values) => values.head())
-      .map(
-        (stub) =>
-          new $LazyRequiredObject<
-            LazilyResolvedBlankNodeOrIriClass.$Identifier,
-            LazilyResolvedBlankNodeOrIriClass,
-            $DefaultStub
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
-          }),
-      );
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyRequiredObject<
+              LazilyResolvedBlankNodeOrIriClass.$Identifier,
+              LazilyResolvedBlankNodeOrIriClass,
+              $DefaultStub
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_requiredLazyToResolvedClassPropertyEither.isLeft()) {
       return _requiredLazyToResolvedClassPropertyEither;
     }
@@ -16298,19 +16761,21 @@ export namespace LazyPropertiesClass {
           ),
         ),
       )
-      .chain((values) => values.head())
-      .map(
-        (stub) =>
-          new $LazyRequiredObject<
-            LazilyResolvedBlankNodeOrIriClass.$Identifier,
-            LazilyResolvedBlankNodeOrIriClass,
-            StubClass
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
-          }),
-      );
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyRequiredObject<
+              LazilyResolvedBlankNodeOrIriClass.$Identifier,
+              LazilyResolvedBlankNodeOrIriClass,
+              StubClass
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_requiredStubClassToResolvedClassPropertyEither.isLeft()) {
       return _requiredStubClassToResolvedClassPropertyEither;
     }
@@ -16346,20 +16811,33 @@ export namespace LazyPropertiesClass {
         ),
       )
       .map((values) => values.toArray())
-      .map(
-        (stubs) =>
-          new $LazyObjectSet<
-            LazilyResolvedBlankNodeOrIriClass.$Identifier,
-            LazilyResolvedBlankNodeOrIriClass,
-            $DefaultStub
-          >({
-            stubs,
-            resolver: (identifiers) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriClasses({
-                where: { identifiers, type: "identifiers" },
-              }),
-          }),
-      );
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            LazyPropertiesClass.$properties.setLazyToResolvedClassProperty[
+              "identifier"
+            ],
+          subject: $resource,
+        }),
+      )
+      .map((values) =>
+        values.map(
+          (stubs) =>
+            new $LazyObjectSet<
+              LazilyResolvedBlankNodeOrIriClass.$Identifier,
+              LazilyResolvedBlankNodeOrIriClass,
+              $DefaultStub
+            >({
+              stubs,
+              resolver: (identifiers) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriClasses({
+                  where: { identifiers, type: "identifiers" },
+                }),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_setLazyToResolvedClassPropertyEither.isLeft()) {
       return _setLazyToResolvedClassPropertyEither;
     }
@@ -16395,20 +16873,33 @@ export namespace LazyPropertiesClass {
         ),
       )
       .map((values) => values.toArray())
-      .map(
-        (stubs) =>
-          new $LazyObjectSet<
-            LazilyResolvedBlankNodeOrIriClass.$Identifier,
-            LazilyResolvedBlankNodeOrIriClass,
-            StubClass
-          >({
-            stubs,
-            resolver: (identifiers) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriClasses({
-                where: { identifiers, type: "identifiers" },
-              }),
-          }),
-      );
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            LazyPropertiesClass.$properties.setStubClassToResolvedClassProperty[
+              "identifier"
+            ],
+          subject: $resource,
+        }),
+      )
+      .map((values) =>
+        values.map(
+          (stubs) =>
+            new $LazyObjectSet<
+              LazilyResolvedBlankNodeOrIriClass.$Identifier,
+              LazilyResolvedBlankNodeOrIriClass,
+              StubClass
+            >({
+              stubs,
+              resolver: (identifiers) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriClasses({
+                  where: { identifiers, type: "identifiers" },
+                }),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_setStubClassToResolvedClassPropertyEither.isLeft()) {
       return _setStubClassToResolvedClassPropertyEither;
     }
@@ -24024,7 +24515,20 @@ export namespace IndirectRecursiveHelperClass {
           ),
         ),
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<IndirectRecursiveClass>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                IndirectRecursiveHelperClass.$properties
+                  .indirectRecursiveProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_indirectRecursivePropertyEither.isLeft()) {
       return _indirectRecursivePropertyEither;
     }
@@ -24504,7 +25008,20 @@ export namespace IndirectRecursiveClass {
           ),
         ),
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<IndirectRecursiveHelperClass>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                IndirectRecursiveClass.$properties
+                  .indirectRecursiveHelperProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_indirectRecursiveHelperPropertyEither.isLeft()) {
       return _indirectRecursiveHelperPropertyEither;
     }
@@ -25135,7 +25652,17 @@ export namespace InPropertiesClass {
           ),
         ),
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<true>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                InPropertiesClass.$properties.inBooleansProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_inBooleansPropertyEither.isLeft()) {
       return _inBooleansPropertyEither;
     }
@@ -25175,7 +25702,17 @@ export namespace InPropertiesClass {
           }),
         ),
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<Date>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                InPropertiesClass.$properties.inDateTimesProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_inDateTimesPropertyEither.isLeft()) {
       return _inDateTimesPropertyEither;
     }
@@ -25244,7 +25781,24 @@ export namespace InPropertiesClass {
           }),
         ),
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<
+                rdfjs.NamedNode<
+                  | "http://example.com/InPropertiesIri1"
+                  | "http://example.com/InPropertiesIri2"
+                >
+              >
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                InPropertiesClass.$properties.inIrisProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_inIrisPropertyEither.isLeft()) {
       return _inIrisPropertyEither;
     }
@@ -25284,7 +25838,17 @@ export namespace InPropertiesClass {
           }),
         ),
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<1 | 2>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                InPropertiesClass.$properties.inNumbersProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_inNumbersPropertyEither.isLeft()) {
       return _inNumbersPropertyEither;
     }
@@ -25324,7 +25888,19 @@ export namespace InPropertiesClass {
           }),
         ),
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<"text" | "html">
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                InPropertiesClass.$properties.inStringsProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_inStringsPropertyEither.isLeft()) {
       return _inStringsPropertyEither;
     }
@@ -25929,7 +26505,19 @@ export namespace InIdentifierClass {
       }),
     )
       .chain((values) => values.chainMap((value) => value.toString()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                InIdentifierClass.$properties.inIdentifierProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_inIdentifierPropertyEither.isLeft()) {
       return _inIdentifierPropertyEither;
     }
@@ -26890,7 +27478,19 @@ export namespace ExternClassPropertyClass {
           ),
         ),
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<ExternClass>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                ExternClassPropertyClass.$properties.externClassProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_externClassPropertyEither.isLeft()) {
       return _externClassPropertyEither;
     }
@@ -28340,7 +28940,21 @@ export namespace DirectRecursiveClass {
           ),
         ),
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<DirectRecursiveClass>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                DirectRecursiveClass.$properties.directRecursiveProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_directRecursivePropertyEither.isLeft()) {
       return _directRecursivePropertyEither;
     }

@@ -44,7 +44,7 @@ export class PlainType<
   override fromRdfExpression(
     parameters: Parameters<Type["fromRdfExpression"]>[0],
   ): string {
-    return `${this.itemType.fromRdfExpression(parameters)}.chain(values => values.head())`;
+    return this.itemType.fromRdfExpression(parameters);
   }
 
   override graphqlResolveExpression(
