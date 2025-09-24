@@ -12,7 +12,7 @@ describe("graphqlSchema", () => {
     });
   };
 
-  it("lazy object", async ({ expect }) => {
+  it("optional lazy object", async ({ expect }) => {
     const result = await execute(
       `query { child(identifier: "<http://example.com/child0>") { _identifier optionalLazyObjectProperty { _identifier } } }`,
     );
@@ -23,6 +23,36 @@ describe("graphqlSchema", () => {
         optionalLazyObjectProperty: {
           _identifier: "<http://example.com/child0/lazy>",
         },
+      },
+    });
+  });
+
+  it("lazy object set", async ({ expect }) => {
+    const result = await execute(
+      `query { child(identifier: "<http://example.com/child0>") { _identifier lazyObjectSetProperty { _identifier } } }`,
+    );
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      child: {
+        _identifier: "<http://example.com/child0>",
+        lazyObjectSetProperty: [
+          {
+            _identifier: "<http://example.com/child0/lazy>",
+          },
+        ],
+      },
+    });
+  });
+
+  it("lazy object set (limit and offset)", async ({ expect }) => {
+    const result = await execute(
+      `query { child(identifier: "<http://example.com/child0>") { _identifier lazyObjectSetProperty(limit: 1, offset: 1) { _identifier } } }`,
+    );
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      child: {
+        _identifier: "<http://example.com/child0>",
+        lazyObjectSetProperty: [],
       },
     });
   });

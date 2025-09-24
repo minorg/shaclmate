@@ -92,6 +92,7 @@ export abstract class Type {
    */
   abstract graphqlResolveExpression(parameters: {
     variables: {
+      args: string;
       value: string;
     };
   }): string;

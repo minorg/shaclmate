@@ -47,13 +47,17 @@ export class LazyShaclProperty<
   override readonly mutable = false;
   override readonly recursive = false;
 
+  @Memoize()
   override get graphqlField(): ShaclProperty<
     LazyShaclProperty.Type<StubTypeT, ResolvedTypeT>
   >["graphqlField"] {
+    const args = this.type.graphqlArgs;
+    const argsVariable = args.isJust() ? "args" : "_args";
     return Maybe.of({
-      description: this.comment.map(JSON.stringify).extract(),
+      args,
+      description: this.comment.map(JSON.stringify),
       name: this.name,
-      resolve: `async (source) => ${this.type.graphqlResolveExpression({ variables: { value: `source.${this.name}` } })}`,
+      resolve: `async (source, ${argsVariable}) => ${this.type.graphqlResolveExpression({ variables: { args: argsVariable, value: `source.${this.name}` } })}`,
       type: this.type.graphqlName.toString(),
     });
   }
@@ -68,6 +72,15 @@ export namespace LazyShaclProperty {
       Maybe.empty();
     override readonly mutable = false;
     override readonly typeof = "object";
+
+    abstract readonly graphqlArgs: Maybe<
+      Record<
+        string,
+        {
+          type: string;
+        }
+      >
+    >;
 
     protected readonly resolvedType: ResolvedTypeT;
     protected readonly runtimeClass: {
@@ -111,12 +124,6 @@ export namespace LazyShaclProperty {
 
     override get graphqlName(): _Type.GraphqlName {
       return this.resolvedType.graphqlName;
-    }
-
-    override graphqlResolveExpression({
-      variables,
-    }: Parameters<_Type["graphqlResolveExpression"]>[0]): string {
-      return `(await ${variables.value}.resolve()).unsafeCoerce()`;
     }
 
     override hashStatements({
@@ -277,6 +284,24 @@ export namespace LazyShaclProperty {
       const { variables } = parameters;
       return `${this.stubType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.stubPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}, resolver: (identifiers) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.objects}({ where: { identifiers, type: "identifiers" }}) })))`;
     }
+
+    @Memoize()
+    override get graphqlArgs() {
+      return Maybe.of({
+        limit: {
+          type: "graphql.GraphQLInt",
+        },
+        offset: {
+          type: "graphql.GraphQLInt",
+        },
+      });
+    }
+
+    override graphqlResolveExpression({
+      variables,
+    }: Parameters<_Type["graphqlResolveExpression"]>[0]): string {
+      return `(await ${variables.value}.resolve({ limit: ${variables.args}.limit, offset: ${variables.args}.offset })).unsafeCoerce()`;
+    }
   }
 
   abstract class SingleObjectType<
@@ -293,6 +318,19 @@ export namespace LazyShaclProperty {
       parameters: Parameters<_Type["fromJsonExpression"]>[0],
     ): string {
       return `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${this.stubType.fromJsonExpression(parameters)}, resolver: (identifier) => Promise.resolve(purify.Left(new Error(\`unable to resolve identifier \${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON\`))) })`;
+    }
+
+    override get graphqlArgs(): Type<
+      ResolvedTypeT,
+      ObjectUnionType
+    >["graphqlArgs"] {
+      return Maybe.empty();
+    }
+
+    override graphqlResolveExpression({
+      variables,
+    }: Parameters<_Type["graphqlResolveExpression"]>[0]): string {
+      return `(await ${variables.value}.resolve()).unsafeCoerce()`;
     }
   }
 

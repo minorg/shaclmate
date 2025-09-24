@@ -16,7 +16,7 @@
     rdfs:comment "Child" ;
     rdfs:subClassOf :Parent ;
     sh:nodeKind sh:IRI ;
-    sh:property :optionalLazyObjectProperty, :optionalObjectProperty, :optionalStringProperty, :requiredStringProperty, [
+    sh:property :lazyObjectSetProperty, :optionalLazyObjectProperty, :optionalObjectProperty, :optionalStringProperty, :requiredStringProperty, [
         rdfs:comment "Child string property" ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
@@ -59,6 +59,13 @@
     rdfs:comment "UnionMember1" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property :optionalStringProperty .
+
+:lazyObjectSetProperty
+    shaclmate:lazy true ;
+    a sh:PropertyShape ;
+    rdfs:comment "Lazy object set property" ;
+    sh:node :Nested ;
+    sh:path :lazyObjectSetProperty .
 
 :optionalLazyObjectProperty
     shaclmate:lazy true ;
