@@ -1,8 +1,9 @@
-import type { Literal, NamedNode } from "@rdfjs/types";
-import type { Either, Maybe } from "purify-ts";
+import type {} from "@rdfjs/types";
+import type { Either } from "purify-ts";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type * as ast from "../ast/index.js";
 import type * as input from "../input/index.js";
+import type { ShapeStack } from "./ShapeStack.js";
 
 /**
  * Try to convert a shape to a type using some heuristics.
@@ -13,15 +14,11 @@ import type * as input from "../input/index.js";
 export function transformShapeToAstType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
-  inherited: {
-    defaultValue: Maybe<Literal | NamedNode>;
-    hasValues: readonly (Literal | NamedNode)[];
-    in_: readonly (Literal | NamedNode)[];
-  },
+  shapeStack: ShapeStack,
 ): Either<Error, ast.CardinalityType.ItemType> {
   // Try to transform the property shape into an AST type without cardinality constraints
-  return this.transformShapeToAstCompositeType(shape, inherited)
-    .altLazy(() => this.transformShapeToAstIdentifierType(shape, inherited))
-    .altLazy(() => this.transformShapeToAstLiteralType(shape, inherited))
-    .altLazy(() => this.transformShapeToAstTermType(shape, inherited));
+  return this.transformShapeToAstCompositeType(shape, shapeStack)
+    .altLazy(() => this.transformShapeToAstIdentifierType(shape, shapeStack))
+    .altLazy(() => this.transformShapeToAstLiteralType(shape, shapeStack))
+    .altLazy(() => this.transformShapeToAstTermType(shape, shapeStack));
 }

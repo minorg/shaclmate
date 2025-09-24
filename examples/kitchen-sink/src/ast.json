@@ -799,10 +799,6 @@
                 {
                   "termType": "NamedNode",
                   "value": "http://example.com/HasValuePropertiesClassIri1"
-                },
-                {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/HasValuePropertiesClassIri1"
                 }
               ],
               "kind": "IdentifierType",
@@ -832,12 +828,6 @@
           "type": {
             "itemType": {
               "hasValue": [
-                {
-                  "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                  "language": "",
-                  "termType": "Literal",
-                  "value": "test"
-                },
                 {
                   "datatype": "http://www.w3.org/2001/XMLSchema#string",
                   "language": "",

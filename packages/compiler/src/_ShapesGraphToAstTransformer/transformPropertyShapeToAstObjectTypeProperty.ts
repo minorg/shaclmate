@@ -6,6 +6,7 @@ import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer
 import * as ast from "../ast/index.js";
 import type { TsFeature } from "../enums/index.js";
 import type * as input from "../input/index.js";
+import { ShapeStack } from "./ShapeStack.js";
 import { pickLiteral } from "./pickLiteral.js";
 
 function identifierNodeKinds(
@@ -79,12 +80,10 @@ function transformPropertyShapeToAstCardinalityType(
   this: ShapesGraphToAstTransformer,
   propertyShape: input.PropertyShape,
 ): Either<Error, ast.CardinalityType<ast.CardinalityType.ItemType>> {
-  const itemTypeEither = this.transformShapeToAstType(propertyShape, {
-    // Only the top-level property shape has sh:defaultValue
-    defaultValue: propertyShape.defaultValue,
-    hasValues: propertyShape.constraints.hasValues,
-    in_: propertyShape.constraints.in_,
-  });
+  const itemTypeEither = this.transformShapeToAstType(
+    propertyShape,
+    new ShapeStack(),
+  );
   if (itemTypeEither.isLeft()) {
     return itemTypeEither;
   }

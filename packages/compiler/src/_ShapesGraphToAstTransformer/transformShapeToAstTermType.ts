@@ -1,9 +1,10 @@
-import type { Literal, NamedNode } from "@rdfjs/types";
+import type {} from "@rdfjs/types";
 import type { NodeKind } from "@shaclmate/shacl-ast";
-import { Either, type Maybe } from "purify-ts";
+import { Either } from "purify-ts";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type * as ast from "../ast/index.js";
 import type * as input from "../input/index.js";
+import type { ShapeStack } from "./ShapeStack.js";
 import { propertyShapeNodeKinds } from "./propertyShapeNodeKinds.js";
 
 /**
@@ -12,27 +13,28 @@ import { propertyShapeNodeKinds } from "./propertyShapeNodeKinds.js";
 export function transformShapeToAstTermType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
-  inherited: {
-    defaultValue: Maybe<Literal | NamedNode>;
-    hasValues: readonly (Literal | NamedNode)[];
-    in_: readonly (Literal | NamedNode)[];
-  },
+  shapeStack: ShapeStack,
 ): Either<
   Error,
   Omit<ast.TermType, "kind"> & {
     readonly kind: "TermType";
   }
 > {
-  const nodeKinds = propertyShapeNodeKinds(shape);
+  shapeStack.push(shape);
+  try {
+    const nodeKinds = propertyShapeNodeKinds(shape);
 
-  return Either.of({
-    defaultValue: inherited.defaultValue,
-    hasValues: inherited.hasValues.concat(shape.constraints.hasValues),
-    in_: inherited.in_.concat(shape.constraints.in_),
-    kind: "TermType",
-    nodeKinds:
-      nodeKinds.size > 0
-        ? nodeKinds
-        : new Set<NodeKind>(["BlankNode", "NamedNode", "Literal"]),
-  });
+    return Either.of({
+      defaultValue: shapeStack.defaultValue,
+      hasValues: shapeStack.constraints.hasValues,
+      in_: shapeStack.constraints.in_,
+      kind: "TermType",
+      nodeKinds:
+        nodeKinds.size > 0
+          ? nodeKinds
+          : new Set<NodeKind>(["BlankNode", "NamedNode", "Literal"]),
+    });
+  } finally {
+    shapeStack.pop(shape);
+  }
 }

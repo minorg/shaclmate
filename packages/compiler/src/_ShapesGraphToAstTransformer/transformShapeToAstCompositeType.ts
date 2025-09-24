@@ -1,4 +1,4 @@
-import type { Literal, NamedNode } from "@rdfjs/types";
+import type { NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind, NodeKind } from "@shaclmate/shacl-ast";
 import { owl, rdfs } from "@tpluscode/rdf-ns-builders";
 import { Either, Left, Maybe } from "purify-ts";
@@ -7,6 +7,7 @@ import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer
 import type * as ast from "../ast/index.js";
 import * as input from "../input/index.js";
 import { logger } from "../logger.js";
+import type { ShapeStack } from "./ShapeStack.js";
 import { flattenAstObjectCompositeTypeMemberTypes } from "./flattenAstObjectCompositeTypeMemberTypes.js";
 
 /**
@@ -15,138 +16,142 @@ import { flattenAstObjectCompositeTypeMemberTypes } from "./flattenAstObjectComp
 export function transformShapeToAstCompositeType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
-  inherited: {
-    defaultValue: Maybe<Literal | NamedNode>;
-    hasValues: readonly (Literal | NamedNode)[];
-    in_: readonly (Literal | NamedNode)[];
-  },
+  shapeStack: ShapeStack,
 ): Either<Error, ast.CardinalityType.ItemType> {
-  let memberTypeEithers: readonly Either<Error, ast.CardinalityType.ItemType>[];
-  let compositeTypeKind: "IntersectionType" | "UnionType";
+  shapeStack.push(shape);
+  try {
+    let memberTypeEithers: readonly Either<
+      Error,
+      ast.CardinalityType.ItemType
+    >[];
+    let compositeTypeKind: "IntersectionType" | "UnionType";
 
-  if (shape.constraints.and.length > 0) {
-    memberTypeEithers = shape.constraints.and.map((memberShape) =>
-      this.transformShapeToAstType(memberShape, inherited),
-    );
-    compositeTypeKind = "IntersectionType";
-  } else if (shape.constraints.classes.length > 0) {
-    memberTypeEithers = shape.constraints.classes.map((classIri) => {
-      if (
-        classIri.equals(owl.Class) ||
-        classIri.equals(owl.Thing) ||
-        classIri.equals(rdfs.Class)
-      ) {
-        return Left(new Error(`class ${classIri.value} is not transformable`));
-      }
-
-      const classNodeShape = this.shapesGraph
-        .nodeShapeByIdentifier(classIri)
-        .extractNullable();
-      if (classNodeShape === null) {
-        return Left(
-          new Error(`class ${classIri.value} did not resolve to a node shape`),
-        );
-      }
-
-      return this.transformNodeShapeToAstType(classNodeShape);
-    });
-    compositeTypeKind = "IntersectionType";
-
-    if (Either.rights(memberTypeEithers).length === 0) {
-      // This frequently happens with e.g., sh:class skos:Concept
-      logger.debug(
-        "shape %s sh:class(es) did not map to any node shapes",
-        shape,
+    if (shape.constraints.and.length > 0) {
+      memberTypeEithers = shape.constraints.and.map((memberShape) =>
+        this.transformShapeToAstType(memberShape, shapeStack),
       );
-      return memberTypeEithers[0];
-    }
-  } else if (shape.constraints.nodes.length > 0) {
-    memberTypeEithers = shape.constraints.nodes.map((nodeShape) =>
-      this.transformNodeShapeToAstType(nodeShape),
-    );
-    compositeTypeKind = "IntersectionType";
-  } else if (shape.constraints.xone.length > 0) {
-    memberTypeEithers = shape.constraints.xone.map((memberShape) =>
-      this.transformShapeToAstType(memberShape, inherited),
-    );
-    compositeTypeKind = "UnionType";
-  } else {
-    return Left(new Error(`unable to transform ${shape} into an AST type`));
-  }
-  invariant(memberTypeEithers.length > 0);
+      compositeTypeKind = "IntersectionType";
+    } else if (shape.constraints.classes.length > 0) {
+      memberTypeEithers = shape.constraints.classes.map((classIri) => {
+        if (
+          classIri.equals(owl.Class) ||
+          classIri.equals(owl.Thing) ||
+          classIri.equals(rdfs.Class)
+        ) {
+          return Left(
+            new Error(`class ${classIri.value} is not transformable`),
+          );
+        }
 
-  const memberObjectTypes: (
-    | ast.ObjectType
-    | ast.ObjectIntersectionType
-    | ast.ObjectUnionType
-  )[] = [];
-  let memberTypes: ast.CardinalityType.ItemType[] = [];
-  for (const memberTypeEither of memberTypeEithers) {
-    if (memberTypeEither.isLeft()) {
-      return memberTypeEither;
-    }
-    const memberType = memberTypeEither.unsafeCoerce();
-    memberTypes.push(memberType);
-    switch (memberType.kind) {
-      case "ObjectType":
-      case "ObjectIntersectionType":
-      case "ObjectUnionType":
-        memberObjectTypes.push(memberType);
-        break;
-    }
-  }
+        const classNodeShape = this.shapesGraph
+          .nodeShapeByIdentifier(classIri)
+          .extractNullable();
+        if (classNodeShape === null) {
+          return Left(
+            new Error(
+              `class ${classIri.value} did not resolve to a node shape`,
+            ),
+          );
+        }
 
-  if (memberTypes.length === 1) {
-    return Either.of(memberTypes[0]);
-  }
-
-  if (memberTypes.length === memberObjectTypes.length) {
-    // If all the member types are ast.ObjectType, flatten them.
-    const flattenedMemberObjectTypesEither =
-      flattenAstObjectCompositeTypeMemberTypes({
-        objectCompositeTypeKind:
-          compositeTypeKind === "IntersectionType"
-            ? "ObjectIntersectionType"
-            : "ObjectUnionType",
-        memberTypes: memberObjectTypes,
-        shape,
+        return this.transformNodeShapeToAstType(classNodeShape);
       });
-    if (flattenedMemberObjectTypesEither.isLeft()) {
-      return flattenedMemberObjectTypesEither;
-    }
-    const { memberTypes: flattenedMemberTypes } =
-      flattenedMemberObjectTypesEither.unsafeCoerce();
-    memberTypes = flattenedMemberTypes.concat();
-  }
+      compositeTypeKind = "IntersectionType";
 
-  return widenAstCompositeTypeToSingleType({
-    inherited,
-    memberTypes,
-    shape,
-  }).altLazy(() =>
-    // True composite type
-    Either.of({
-      kind: compositeTypeKind,
+      if (Either.rights(memberTypeEithers).length === 0) {
+        // This frequently happens with e.g., sh:class skos:Concept
+        logger.debug(
+          "shape %s sh:class(es) did not map to any node shapes",
+          shape,
+        );
+        return memberTypeEithers[0];
+      }
+    } else if (shape.constraints.nodes.length > 0) {
+      memberTypeEithers = shape.constraints.nodes.map((nodeShape) =>
+        this.transformNodeShapeToAstType(nodeShape),
+      );
+      compositeTypeKind = "IntersectionType";
+    } else if (shape.constraints.xone.length > 0) {
+      memberTypeEithers = shape.constraints.xone.map((memberShape) =>
+        this.transformShapeToAstType(memberShape, shapeStack),
+      );
+      compositeTypeKind = "UnionType";
+    } else {
+      return Left(new Error(`unable to transform ${shape} into an AST type`));
+    }
+    invariant(memberTypeEithers.length > 0);
+
+    const memberObjectTypes: (
+      | ast.ObjectType
+      | ast.ObjectIntersectionType
+      | ast.ObjectUnionType
+    )[] = [];
+    let memberTypes: ast.CardinalityType.ItemType[] = [];
+    for (const memberTypeEither of memberTypeEithers) {
+      if (memberTypeEither.isLeft()) {
+        return memberTypeEither;
+      }
+      const memberType = memberTypeEither.unsafeCoerce();
+      memberTypes.push(memberType);
+      switch (memberType.kind) {
+        case "ObjectType":
+        case "ObjectIntersectionType":
+        case "ObjectUnionType":
+          memberObjectTypes.push(memberType);
+          break;
+      }
+    }
+
+    if (memberTypes.length === 1) {
+      return Either.of(memberTypes[0]);
+    }
+
+    if (memberTypes.length === memberObjectTypes.length) {
+      // If all the member types are ast.ObjectType, flatten them.
+      const flattenedMemberObjectTypesEither =
+        flattenAstObjectCompositeTypeMemberTypes({
+          objectCompositeTypeKind:
+            compositeTypeKind === "IntersectionType"
+              ? "ObjectIntersectionType"
+              : "ObjectUnionType",
+          memberTypes: memberObjectTypes,
+          shape,
+        });
+      if (flattenedMemberObjectTypesEither.isLeft()) {
+        return flattenedMemberObjectTypesEither;
+      }
+      const { memberTypes: flattenedMemberTypes } =
+        flattenedMemberObjectTypesEither.unsafeCoerce();
+      memberTypes = flattenedMemberTypes.concat();
+    }
+
+    return widenAstCompositeTypeToSingleType({
       memberTypes,
-    }),
-  );
+      shape,
+      shapeStack,
+    }).altLazy(() =>
+      // True composite type
+      Either.of({
+        kind: compositeTypeKind,
+        memberTypes,
+      }),
+    );
+  } finally {
+    shapeStack.pop(shape);
+  }
 }
 
 function widenAstCompositeTypeToSingleType({
-  inherited,
   memberTypes,
   shape,
+  shapeStack,
 }: {
-  inherited: {
-    defaultValue: Maybe<Literal | NamedNode>;
-    hasValues: readonly (Literal | NamedNode)[];
-    in_: readonly (Literal | NamedNode)[];
-  };
   memberTypes: readonly ast.CardinalityType.ItemType[];
   shape: input.Shape;
+  shapeStack: ShapeStack;
 }): Either<Error, ast.CardinalityType.ItemType> {
-  const defaultValue = inherited.defaultValue;
-  const hasValues = inherited.hasValues.concat(shape.constraints.hasValues);
+  const defaultValue = shapeStack.defaultValue;
+  const hasValues = shapeStack.constraints.hasValues;
 
   if (hasValues.length > 0) {
     return Left(
