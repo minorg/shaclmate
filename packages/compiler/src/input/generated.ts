@@ -243,7 +243,7 @@ export namespace BaseShaclCoreShapeStatic {
       .chain((value) => value.toIri())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -261,7 +261,7 @@ export namespace BaseShaclCoreShapeStatic {
       .chain((value) => value.toBoolean())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -379,7 +379,7 @@ export namespace BaseShaclCoreShapeStatic {
       )
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -397,7 +397,7 @@ export namespace BaseShaclCoreShapeStatic {
       .chain((value) => value.toIdentifier())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -454,7 +454,7 @@ export namespace BaseShaclCoreShapeStatic {
       )
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -472,7 +472,7 @@ export namespace BaseShaclCoreShapeStatic {
       .chain((value) => value.toNumber())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -503,7 +503,7 @@ export namespace BaseShaclCoreShapeStatic {
       .chain((value) => value.toLiteral())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -534,7 +534,7 @@ export namespace BaseShaclCoreShapeStatic {
       .chain((value) => value.toLiteral())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -552,7 +552,7 @@ export namespace BaseShaclCoreShapeStatic {
       .chain((value) => value.toNumber())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -570,7 +570,7 @@ export namespace BaseShaclCoreShapeStatic {
       .chain((value) => value.toNumber())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -601,7 +601,7 @@ export namespace BaseShaclCoreShapeStatic {
       .chain((value) => value.toLiteral())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -632,7 +632,7 @@ export namespace BaseShaclCoreShapeStatic {
       .chain((value) => value.toLiteral())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -650,7 +650,7 @@ export namespace BaseShaclCoreShapeStatic {
       .chain((value) => value.toNumber())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -781,7 +781,7 @@ export namespace BaseShaclCoreShapeStatic {
       )
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -1495,7 +1495,7 @@ export namespace ShaclCorePropertyShapeStatic {
       )
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -1586,7 +1586,7 @@ export namespace ShaclCorePropertyShapeStatic {
       .chain((value) => value.toNumber())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -1621,7 +1621,7 @@ export namespace ShaclCorePropertyShapeStatic {
       .chain((value) => value.toBoolean())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -1848,7 +1848,7 @@ export namespace ShaclmatePropertyShape {
       .chain((value) => value.toBoolean())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -1866,7 +1866,7 @@ export namespace ShaclmatePropertyShape {
       .chain((value) => value.toBoolean())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -1881,7 +1881,7 @@ export namespace ShaclmatePropertyShape {
       .chain((value) => value.toString())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -1899,7 +1899,7 @@ export namespace ShaclmatePropertyShape {
       .chain((value) => value.toIdentifier())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -1979,7 +1979,7 @@ export namespace ShaclmatePropertyShape {
       )
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -1994,7 +1994,7 @@ export namespace ShaclmatePropertyShape {
       .chain((value) => value.toBoolean())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -2939,7 +2939,7 @@ export namespace ShaclmateOntology {
       )
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -3106,7 +3106,7 @@ export namespace ShaclCoreNodeShapeStatic {
       .chain((value) => value.toBoolean())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -3134,7 +3134,7 @@ export namespace ShaclCoreNodeShapeStatic {
       )
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -3450,7 +3450,7 @@ export namespace ShaclmateNodeShape {
       .chain((value) => value.toBoolean())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -3468,7 +3468,7 @@ export namespace ShaclmateNodeShape {
       .chain((value) => value.toBoolean())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -3483,7 +3483,7 @@ export namespace ShaclmateNodeShape {
       .chain((value) => value.toBoolean())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -3501,7 +3501,7 @@ export namespace ShaclmateNodeShape {
       .chain((value) => value.toIri())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -3585,7 +3585,7 @@ export namespace ShaclmateNodeShape {
       )
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -3604,7 +3604,7 @@ export namespace ShaclmateNodeShape {
       .chain((value) => value.toBoolean())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -3619,7 +3619,7 @@ export namespace ShaclmateNodeShape {
       .chain((value) => value.toString())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -3637,7 +3637,7 @@ export namespace ShaclmateNodeShape {
       .chain((value) => value.toIri())
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
@@ -4220,7 +4220,7 @@ export namespace ShaclmateNodeShape {
       )
       .map((value) => purify.Maybe.of(value))
       .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
+        error instanceof Error
           ? purify.Right(purify.Maybe.empty())
           : purify.Left(error),
       );
