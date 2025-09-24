@@ -2,14 +2,11 @@ import type { NamedNode } from "@rdfjs/types";
 import { dash, schema, xsd } from "@tpluscode/rdf-ns-builders";
 import { DataFactory as dataFactory } from "n3";
 import { describe, expect, it } from "vitest";
-import { RdfjsShapesGraph, defaultFactory } from "../src/index.js";
+import {} from "../src/index.js";
 import { testData } from "./testData.js";
 
 describe("RdfjsShape", () => {
-  const shapesGraph = new RdfjsShapesGraph({
-    dataset: testData.shapesGraph,
-    factory: defaultFactory,
-  });
+  const shapesGraph = testData.schema.shapesGraph;
 
   const findPropertyShape = (
     nodeShapeIdentifier: NamedNode,

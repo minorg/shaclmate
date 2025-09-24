@@ -1,24 +1,39 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { DatasetCore } from "@rdfjs/types";
 import { Parser, Store } from "n3";
+import { RdfjsShapesGraph, defaultFactory } from "../src/index.js";
 
-function parseTurtleFile(fileName: string): DatasetCore {
+const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
+
+function parseShapesGraph(filePath: string) {
   const parser = new Parser({ format: "Turtle" });
   const store = new Store();
-  store.addQuads(
-    parser.parse(
-      fs
-        .readFileSync(
-          path.join(path.dirname(fileURLToPath(import.meta.url)), fileName),
-        )
-        .toString(),
-    ),
-  );
-  return store;
+  store.addQuads(parser.parse(fs.readFileSync(filePath).toString()));
+  return new RdfjsShapesGraph({
+    factory: defaultFactory,
+    dataset: store,
+  });
 }
 
 export const testData = {
-  shapesGraph: parseTurtleFile("testShapesGraph.ttl"),
+  kitchenSink: {
+    shapesGraph: parseShapesGraph(
+      path.join(
+        thisDirectoryPath,
+        "..",
+        "..",
+        "..",
+        "examples",
+        "kitchen-sink",
+        "src",
+        "kitchen-sink.shaclmate.ttl",
+      ),
+    ),
+  },
+  schema: {
+    shapesGraph: parseShapesGraph(
+      path.join(thisDirectoryPath, "schemashacl.ttl"),
+    ),
+  },
 };

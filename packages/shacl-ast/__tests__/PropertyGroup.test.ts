@@ -1,13 +1,10 @@
 import { dash } from "@tpluscode/rdf-ns-builders";
 import { describe, it } from "vitest";
-import { RdfjsShapesGraph, defaultFactory } from "../src/index.js";
+import {} from "../src/index.js";
 import { testData } from "./testData.js";
 
 describe("PropertyGroup", () => {
-  const shapesGraph = new RdfjsShapesGraph({
-    dataset: testData.shapesGraph,
-    factory: defaultFactory,
-  });
+  const shapesGraph = testData.schema.shapesGraph;
 
   it("should have a label", ({ expect }) => {
     const propertyGroup = shapesGraph
