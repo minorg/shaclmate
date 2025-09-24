@@ -49,6 +49,54 @@ export namespace $RdfVocabularies {
 }
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 /**
+ * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ */
+export class $LazyObjectSet<
+  ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
+  StubObjectT extends { $identifier: ObjectIdentifierT },
+> {
+  private readonly resolver: (
+    identifiers: readonly ObjectIdentifierT[],
+  ) => Promise<purify.Either<Error, readonly ResolvedObjectT[]>>;
+  readonly stubs: readonly StubObjectT[];
+
+  constructor({
+    resolver,
+    stubs,
+  }: {
+    resolver: (
+      identifiers: readonly ObjectIdentifierT[],
+    ) => Promise<purify.Either<Error, readonly ResolvedObjectT[]>>;
+    stubs: readonly StubObjectT[];
+  }) {
+    this.resolver = resolver;
+    this.stubs = stubs;
+  }
+
+  async resolve(options?: { limit?: number; offset?: number }): Promise<
+    purify.Either<Error, readonly ResolvedObjectT[]>
+  > {
+    if (this.stubs.length === 0) {
+      return purify.Either.of([]);
+    }
+
+    const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return purify.Either.of([]);
+    }
+
+    let offset = options?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    return await this.resolver(
+      this.stubs.slice(offset, offset + limit).map((stub) => stub.$identifier),
+    );
+  }
+}
+/**
  * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
 export class $LazyOptionalObject<
@@ -276,13 +324,16 @@ export namespace UnionMember2 {
     description: "UnionMember1",
     fields: () => ({
       _identifier: {
+        name: "_identifier",
         resolve: (source) =>
           UnionMember2.$Identifier.toString(source.$identifier),
         type: new graphql.GraphQLNonNull(graphql.GraphQLString),
       },
       optionalStringProperty: {
-        description: "Optional string property",
-        resolve: (source) => source.optionalStringProperty.extractNullable(),
+        description: '"Optional string property"',
+        name: "optionalStringProperty",
+        resolve: (source, _args) =>
+          source.optionalStringProperty.extractNullable(),
         type: new graphql.GraphQLNonNull(graphql.GraphQLString),
       },
     }),
@@ -380,7 +431,17 @@ export namespace UnionMember2 {
       }),
     )
       .chain((values) => values.chainMap((value) => value.toString()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                UnionMember2.$properties.optionalStringProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_optionalStringPropertyEither.isLeft()) {
       return _optionalStringPropertyEither;
     }
@@ -484,13 +545,16 @@ export namespace UnionMember1 {
     description: "UnionMember1",
     fields: () => ({
       _identifier: {
+        name: "_identifier",
         resolve: (source) =>
           UnionMember1.$Identifier.toString(source.$identifier),
         type: new graphql.GraphQLNonNull(graphql.GraphQLString),
       },
       optionalNumberProperty: {
-        description: "Optional number property",
-        resolve: (source) => source.optionalNumberProperty.extractNullable(),
+        description: '"Optional number property"',
+        name: "optionalNumberProperty",
+        resolve: (source, _args) =>
+          source.optionalNumberProperty.extractNullable(),
         type: new graphql.GraphQLNonNull(graphql.GraphQLFloat),
       },
     }),
@@ -588,7 +652,17 @@ export namespace UnionMember1 {
       }),
     )
       .chain((values) => values.chainMap((value) => value.toNumber()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<number>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                UnionMember1.$properties.optionalNumberProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_optionalNumberPropertyEither.isLeft()) {
       return _optionalNumberPropertyEither;
     }
@@ -725,22 +799,28 @@ export namespace Nested {
     description: "Nested",
     fields: () => ({
       _identifier: {
+        name: "_identifier",
         resolve: (source) => Nested.$Identifier.toString(source.$identifier),
         type: new graphql.GraphQLNonNull(graphql.GraphQLString),
       },
       optionalNumberProperty: {
-        description: "Optional number property",
-        resolve: (source) => source.optionalNumberProperty.extractNullable(),
+        description: '"Optional number property"',
+        name: "optionalNumberProperty",
+        resolve: (source, _args) =>
+          source.optionalNumberProperty.extractNullable(),
         type: new graphql.GraphQLNonNull(graphql.GraphQLFloat),
       },
       optionalStringProperty: {
-        description: "Optional string property",
-        resolve: (source) => source.optionalStringProperty.extractNullable(),
+        description: '"Optional string property"',
+        name: "optionalStringProperty",
+        resolve: (source, _args) =>
+          source.optionalStringProperty.extractNullable(),
         type: new graphql.GraphQLNonNull(graphql.GraphQLString),
       },
       requiredStringProperty: {
-        description: "Required string property",
-        resolve: (source) => source.requiredStringProperty,
+        description: '"Required string property"',
+        name: "requiredStringProperty",
+        resolve: (source, _args) => source.requiredStringProperty,
         type: new graphql.GraphQLNonNull(graphql.GraphQLString),
       },
     }),
@@ -840,7 +920,17 @@ export namespace Nested {
       }),
     )
       .chain((values) => values.chainMap((value) => value.toNumber()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<number>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                UnionMember1.$properties.optionalNumberProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_optionalNumberPropertyEither.isLeft()) {
       return _optionalNumberPropertyEither;
     }
@@ -858,7 +948,17 @@ export namespace Nested {
       }),
     )
       .chain((values) => values.chainMap((value) => value.toString()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                UnionMember2.$properties.optionalStringProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_optionalStringPropertyEither.isLeft()) {
       return _optionalStringPropertyEither;
     }
@@ -985,13 +1085,16 @@ export namespace ParentStatic {
     description: "Parent",
     fields: () => ({
       _identifier: {
+        name: "_identifier",
         resolve: (source) =>
           ParentStatic.$Identifier.toString(source.$identifier),
         type: new graphql.GraphQLNonNull(graphql.GraphQLString),
       },
       parentStringProperty: {
-        description: "Parent string property",
-        resolve: (source) => source.parentStringProperty.extractNullable(),
+        description: '"Parent string property"',
+        name: "parentStringProperty",
+        resolve: (source, _args) =>
+          source.parentStringProperty.extractNullable(),
         type: new graphql.GraphQLNonNull(graphql.GraphQLString),
       },
     }),
@@ -1109,7 +1212,17 @@ export namespace ParentStatic {
       }),
     )
       .chain((values) => values.chainMap((value) => value.toString()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                ParentStatic.$properties.parentStringProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_parentStringPropertyEither.isLeft()) {
       return _parentStringPropertyEither;
     }
@@ -1136,6 +1249,14 @@ export class Child extends Parent {
    */
   readonly childStringProperty: purify.Maybe<string>;
   /**
+   * Lazy object set property
+   */
+  readonly lazyObjectSetProperty: $LazyObjectSet<
+    Nested.$Identifier,
+    Nested,
+    $DefaultStub
+  >;
+  /**
    * Optional lazy object property
    */
   readonly optionalLazyObjectProperty: $LazyOptionalObject<
@@ -1160,6 +1281,9 @@ export class Child extends Parent {
     parameters: {
       readonly $identifier: rdfjs.NamedNode | string;
       readonly childStringProperty?: purify.Maybe<string> | string;
+      readonly lazyObjectSetProperty?:
+        | $LazyObjectSet<Nested.$Identifier, Nested, $DefaultStub>
+        | readonly Nested[];
       readonly optionalLazyObjectProperty?:
         | $LazyOptionalObject<Nested.$Identifier, Nested, $DefaultStub>
         | Nested
@@ -1180,6 +1304,41 @@ export class Child extends Parent {
       this.childStringProperty = purify.Maybe.empty();
     } else {
       this.childStringProperty = parameters.childStringProperty satisfies never;
+    }
+
+    if (
+      typeof parameters.lazyObjectSetProperty === "object" &&
+      parameters.lazyObjectSetProperty instanceof $LazyObjectSet
+    ) {
+      this.lazyObjectSetProperty = parameters.lazyObjectSetProperty;
+    } else if (typeof parameters.lazyObjectSetProperty === "object") {
+      this.lazyObjectSetProperty = new $LazyObjectSet<
+        Nested.$Identifier,
+        Nested,
+        $DefaultStub
+      >({
+        stubs: parameters.lazyObjectSetProperty.map(
+          (object) => new $DefaultStub(object),
+        ),
+        resolver: async () =>
+          purify.Either.of(
+            parameters.lazyObjectSetProperty as readonly Nested[],
+          ),
+      });
+    } else if (typeof parameters.lazyObjectSetProperty === "undefined") {
+      this.lazyObjectSetProperty = new $LazyObjectSet<
+        Nested.$Identifier,
+        Nested,
+        $DefaultStub
+      >({
+        stubs: [],
+        resolver: async () => {
+          throw new Error("should never be called");
+        },
+      });
+    } else {
+      this.lazyObjectSetProperty =
+        parameters.lazyObjectSetProperty satisfies never;
     }
 
     if (
@@ -1293,6 +1452,12 @@ export class Child extends Parent {
       this.childStringProperty,
     );
     resource.add(
+      Child.$properties.lazyObjectSetProperty["identifier"],
+      this.lazyObjectSetProperty.stubs.map((item) =>
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ),
+    );
+    resource.add(
       Child.$properties.optionalLazyObjectProperty["identifier"],
       this.optionalLazyObjectProperty.stub.map((value) =>
         value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
@@ -1327,35 +1492,62 @@ export namespace Child {
     description: "Child",
     fields: () => ({
       _identifier: {
+        name: "_identifier",
         resolve: (source) => Child.$Identifier.toString(source.$identifier),
         type: new graphql.GraphQLNonNull(graphql.GraphQLString),
       },
       childStringProperty: {
-        description: "Child string property",
-        resolve: (source) => source.childStringProperty.extractNullable(),
+        description: '"Child string property"',
+        name: "childStringProperty",
+        resolve: (source, _args) =>
+          source.childStringProperty.extractNullable(),
         type: new graphql.GraphQLNonNull(graphql.GraphQLString),
       },
+      lazyObjectSetProperty: {
+        args: {
+          limit: { type: graphql.GraphQLInt },
+          offset: { type: graphql.GraphQLInt },
+        },
+        description: '"Lazy object set property"',
+        name: "lazyObjectSetProperty",
+        resolve: async (source, args) =>
+          (
+            await source.lazyObjectSetProperty.resolve({
+              limit: args.limit,
+              offset: args.offset,
+            })
+          ).unsafeCoerce(),
+        type: new graphql.GraphQLNonNull(
+          new graphql.GraphQLList(new graphql.GraphQLNonNull(Nested.$GraphQL)),
+        ),
+      },
       optionalLazyObjectProperty: {
-        description: "Optional lazy object property",
-        resolve: async (source) =>
+        description: '"Optional lazy object property"',
+        name: "optionalLazyObjectProperty",
+        resolve: async (source, _args) =>
           (await source.optionalLazyObjectProperty.resolve())
             .unsafeCoerce()
             .extractNullable(),
         type: new graphql.GraphQLNonNull(Nested.$GraphQL),
       },
       optionalObjectProperty: {
-        description: "Optional object property",
-        resolve: (source) => source.optionalObjectProperty.extractNullable(),
+        description: '"Optional object property"',
+        name: "optionalObjectProperty",
+        resolve: (source, _args) =>
+          source.optionalObjectProperty.extractNullable(),
         type: new graphql.GraphQLNonNull(Nested.$GraphQL),
       },
       optionalStringProperty: {
-        description: "Optional string property",
-        resolve: (source) => source.optionalStringProperty.extractNullable(),
+        description: '"Optional string property"',
+        name: "optionalStringProperty",
+        resolve: (source, _args) =>
+          source.optionalStringProperty.extractNullable(),
         type: new graphql.GraphQLNonNull(graphql.GraphQLString),
       },
       requiredStringProperty: {
-        description: "Required string property",
-        resolve: (source) => source.requiredStringProperty,
+        description: '"Required string property"',
+        name: "requiredStringProperty",
+        resolve: (source, _args) => source.requiredStringProperty,
         type: new graphql.GraphQLNonNull(graphql.GraphQLString),
       },
     }),
@@ -1410,6 +1602,11 @@ export namespace Child {
     {
       $identifier: rdfjs.NamedNode;
       childStringProperty: purify.Maybe<string>;
+      lazyObjectSetProperty: $LazyObjectSet<
+        Nested.$Identifier,
+        Nested,
+        $DefaultStub
+      >;
       optionalLazyObjectProperty: $LazyOptionalObject<
         Nested.$Identifier,
         Nested,
@@ -1469,12 +1666,70 @@ export namespace Child {
       }),
     )
       .chain((values) => values.chainMap((value) => value.toString()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
+              object: purify.Maybe.empty(),
+              predicate: Child.$properties.childStringProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_childStringPropertyEither.isLeft()) {
       return _childStringPropertyEither;
     }
 
     const childStringProperty = _childStringPropertyEither.unsafeCoerce();
+    const _lazyObjectSetPropertyEither: purify.Either<
+      Error,
+      $LazyObjectSet<Nested.$Identifier, Nested, $DefaultStub>
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.lazyObjectSetProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            $DefaultStub.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
+      )
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate: Child.$properties.lazyObjectSetProperty["identifier"],
+          subject: $resource,
+        }),
+      )
+      .map((values) =>
+        values.map(
+          (stubs) =>
+            new $LazyObjectSet<Nested.$Identifier, Nested, $DefaultStub>({
+              stubs,
+              resolver: (identifiers) =>
+                $objectSet.nesteds({
+                  where: { identifiers, type: "identifiers" },
+                }),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
+    if (_lazyObjectSetPropertyEither.isLeft()) {
+      return _lazyObjectSetPropertyEither;
+    }
+
+    const lazyObjectSetProperty = _lazyObjectSetPropertyEither.unsafeCoerce();
     const _optionalLazyObjectPropertyEither: purify.Either<
       Error,
       $LazyOptionalObject<Nested.$Identifier, Nested, $DefaultStub>
@@ -1498,14 +1753,28 @@ export namespace Child {
           ),
         ),
       )
-      .map((values) => values.head().toMaybe())
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<Nested.$Identifier, Nested, $DefaultStub>({
-            stub,
-            resolver: (identifier) => $objectSet.nested(identifier),
-          }),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<$DefaultStub>>(
+              {
+                object: purify.Maybe.empty(),
+                predicate:
+                  Child.$properties.optionalLazyObjectProperty["identifier"],
+                subject: $resource,
+              },
+            ),
+      )
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<Nested.$Identifier, Nested, $DefaultStub>({
+              stub,
+              resolver: (identifier) => $objectSet.nested(identifier),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_optionalLazyObjectPropertyEither.isLeft()) {
       return _optionalLazyObjectPropertyEither;
     }
@@ -1535,7 +1804,16 @@ export namespace Child {
           ),
         ),
       )
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<Nested>>({
+              object: purify.Maybe.empty(),
+              predicate: Child.$properties.optionalObjectProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_optionalObjectPropertyEither.isLeft()) {
       return _optionalObjectPropertyEither;
     }
@@ -1553,7 +1831,17 @@ export namespace Child {
       }),
     )
       .chain((values) => values.chainMap((value) => value.toString()))
-      .map((values) => values.head().toMaybe());
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                UnionMember2.$properties.optionalStringProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_optionalStringPropertyEither.isLeft()) {
       return _optionalStringPropertyEither;
     }
@@ -1579,6 +1867,7 @@ export namespace Child {
       ...$super0,
       $identifier,
       childStringProperty,
+      lazyObjectSetProperty,
       optionalLazyObjectProperty,
       optionalObjectProperty,
       optionalStringProperty,
@@ -1591,6 +1880,11 @@ export namespace Child {
     childStringProperty: {
       identifier: dataFactory.namedNode(
         "http://example.com/childStringProperty",
+      ),
+    },
+    lazyObjectSetProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/lazyObjectSetProperty",
       ),
     },
     optionalLazyObjectProperty: {

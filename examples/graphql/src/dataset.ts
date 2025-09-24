@@ -25,6 +25,7 @@ for (let i = 0; i < 4; i++) {
   new Child({
     $identifier: N3.DataFactory.namedNode(`http://example.com/child${i}`),
     childStringProperty: "child string property",
+    lazyObjectSetProperty: [lazyObject],
     optionalLazyObjectProperty: lazyObject,
     optionalObjectProperty: new Nested({
       $identifier: N3.DataFactory.namedNode(

@@ -36,8 +36,17 @@ export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
    * GraphQL.js field definition.
    */
   abstract readonly graphqlField: Maybe<{
+    args: Maybe<
+      Record<
+        string,
+        {
+          type: string;
+        }
+      >
+    >;
+    description: Maybe<string>;
     name: string;
-    description?: string;
+    resolve: string;
     type: string;
   }>;
 

@@ -27,9 +27,10 @@ export class EagerShaclProperty<
   @Memoize()
   override get graphqlField(): ShaclProperty<TypeT>["graphqlField"] {
     return Maybe.of({
-      description: this.comment.map(JSON.stringify).extract(),
+      args: Maybe.empty(),
+      description: this.comment.map(JSON.stringify),
       name: this.name,
-      resolve: `(source) => ${this.type.graphqlResolveExpression({ variables: { value: `source.${this.name}` } })}`,
+      resolve: `(source, _args) => ${this.type.graphqlResolveExpression({ variables: { args: "_args", value: `source.${this.name}` } })}`,
       type: this.type.graphqlName.toString(),
     });
   }

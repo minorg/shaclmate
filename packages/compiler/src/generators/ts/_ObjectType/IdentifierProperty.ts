@@ -171,6 +171,8 @@ export class IdentifierProperty extends Property<IdentifierType> {
   override get graphqlField(): Property<IdentifierType>["graphqlField"] {
     invariant(this.name.startsWith(syntheticNamePrefix));
     return Maybe.of({
+      args: Maybe.empty(),
+      description: Maybe.empty(),
       name: `_${this.name.substring(syntheticNamePrefix.length)}`,
       resolve: `(source) => ${this.typeAlias}.toString(source.${this.name})`,
       type: this.type.graphqlName.toString(),

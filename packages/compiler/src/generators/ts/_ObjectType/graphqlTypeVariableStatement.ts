@@ -37,8 +37,27 @@ export function graphqlTypeVariableStatement(
               this.properties.reduce(
                 (fields, property) => {
                   property.graphqlField.ifJust((field) => {
-                    const { name: fieldName, ...fieldProps } = field;
-                    fields[fieldName] = objectInitializer(fieldProps);
+                    fields[field.name] = objectInitializer({
+                      args: field.args
+                        .map((args) =>
+                          objectInitializer(
+                            Object.entries(args).reduce(
+                              (argObjects, [argName, arg]) => {
+                                argObjects[argName] = objectInitializer(arg);
+                                return argObjects;
+                              },
+                              {} as Record<string, string>,
+                            ),
+                          ),
+                        )
+                        .extract(),
+                      description: field.description
+                        .map(JSON.stringify)
+                        .extract(),
+                      name: JSON.stringify(field.name),
+                      resolve: field.resolve,
+                      type: field.type,
+                    });
                   });
                   return fields;
                 },
