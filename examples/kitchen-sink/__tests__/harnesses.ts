@@ -142,17 +142,11 @@ export const harnesses = {
     }),
     kitchenSink.IndirectRecursiveClass,
   ),
-  hasIriValuePropertiesClass: new ClassHarness(
+  hasValuePropertiesClass: new ClassHarness(
     new kitchenSink.HasValuePropertiesClass({
       hasIriValueProperty: dataFactory.namedNode(
         "http://example.com/HasValuePropertiesClassIri1",
       ),
-      $identifier,
-    }),
-    kitchenSink.HasValuePropertiesClass,
-  ),
-  hasLiteralValuePropertiesClass: new ClassHarness(
-    new kitchenSink.HasValuePropertiesClass({
       hasLiteralValueProperty: "test",
       $identifier,
     }),

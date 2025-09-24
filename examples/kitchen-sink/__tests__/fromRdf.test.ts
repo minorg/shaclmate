@@ -103,41 +103,17 @@ describe("fromRdf", () => {
     expect(fromRdfInstance.isRight()).toBe(true);
   });
 
-  it("ensure hasValue (sh:hasValue)", ({ expect }) => {
-    const dataset = new N3.Store();
-    const identifier = dataFactory.blankNode();
-    const object = dataFactory.namedNode(
-      "http://example.com/HasValuePropertiesClassIri1",
-    );
-    dataset.add(
-      dataFactory.quad(
-        identifier,
-        kitchenSink.HasValuePropertiesClass.$properties.hasIriValueProperty
-          .identifier,
-        object,
-      ),
-    );
-    // Add an extra object of the same predicate, which should be ignored
-    dataset.add(
-      dataFactory.quad(
-        identifier,
-        kitchenSink.HasValuePropertiesClass.$properties.hasIriValueProperty
-          .identifier,
-        dataFactory.namedNode("http://example.com/HasValuePropertiesClassIri2"),
-      ),
-    );
-    const instance = kitchenSink.HasValuePropertiesClass.$fromRdf(
-      new MutableResourceSet({
-        dataFactory,
-        dataset: dataset,
-      }).resource(identifier),
-    ).unsafeCoerce();
-    expect(instance.hasIriValueProperty.unsafeCoerce().equals(object));
-  });
-
   it("reject invalid values (sh:hasValue)", ({ expect }) => {
     const dataset = new N3.Store();
     const identifier = dataFactory.blankNode();
+    dataset.add(
+      dataFactory.quad(
+        identifier,
+        kitchenSink.HasValuePropertiesClass.$properties.hasIriValueProperty
+          .identifier,
+        dataFactory.namedNode("http://example.com/HasValuePropertiesClassIri1"),
+      ),
+    );
     dataset.add(
       dataFactory.quad(
         identifier,

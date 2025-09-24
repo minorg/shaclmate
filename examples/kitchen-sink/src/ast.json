@@ -806,7 +806,7 @@
                 "NamedNode"
               ]
             },
-            "kind": "OptionType"
+            "kind": "PlainType"
           },
           "visibility": "public"
         },
@@ -837,7 +837,7 @@
               ],
               "kind": "LiteralType"
             },
-            "kind": "OptionType"
+            "kind": "PlainType"
           },
           "visibility": "public"
         }

@@ -26064,55 +26064,34 @@ export namespace InIdentifierClass {
 export class HasValuePropertiesClass {
   private _$identifier?: HasValuePropertiesClass.$Identifier;
   readonly $type = "HasValuePropertiesClass";
-  readonly hasIriValueProperty: purify.Maybe<rdfjs.NamedNode>;
-  readonly hasLiteralValueProperty: purify.Maybe<string>;
+  readonly hasIriValueProperty: rdfjs.NamedNode;
+  readonly hasLiteralValueProperty: string;
 
-  constructor(parameters?: {
+  constructor(parameters: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly hasIriValueProperty?:
-      | rdfjs.NamedNode
-      | purify.Maybe<rdfjs.NamedNode>
-      | string;
-    readonly hasLiteralValueProperty?: purify.Maybe<string> | string;
+    readonly hasIriValueProperty: rdfjs.NamedNode | string;
+    readonly hasLiteralValueProperty: string;
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this._$identifier = parameters.$identifier satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters?.hasIriValueProperty)) {
-      this.hasIriValueProperty = parameters?.hasIriValueProperty;
-    } else if (typeof parameters?.hasIriValueProperty === "object") {
-      this.hasIriValueProperty = purify.Maybe.of(
-        parameters?.hasIriValueProperty,
+    if (typeof parameters.hasIriValueProperty === "object") {
+      this.hasIriValueProperty = parameters.hasIriValueProperty;
+    } else if (typeof parameters.hasIriValueProperty === "string") {
+      this.hasIriValueProperty = dataFactory.namedNode(
+        parameters.hasIriValueProperty,
       );
-    } else if (typeof parameters?.hasIriValueProperty === "string") {
-      this.hasIriValueProperty = purify.Maybe.of(
-        dataFactory.namedNode(parameters?.hasIriValueProperty),
-      );
-    } else if (typeof parameters?.hasIriValueProperty === "undefined") {
-      this.hasIriValueProperty = purify.Maybe.empty();
     } else {
-      this.hasIriValueProperty =
-        parameters?.hasIriValueProperty satisfies never;
+      this.hasIriValueProperty = parameters.hasIriValueProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters?.hasLiteralValueProperty)) {
-      this.hasLiteralValueProperty = parameters?.hasLiteralValueProperty;
-    } else if (typeof parameters?.hasLiteralValueProperty === "string") {
-      this.hasLiteralValueProperty = purify.Maybe.of(
-        parameters?.hasLiteralValueProperty,
-      );
-    } else if (typeof parameters?.hasLiteralValueProperty === "undefined") {
-      this.hasLiteralValueProperty = purify.Maybe.empty();
-    } else {
-      this.hasLiteralValueProperty =
-        parameters?.hasLiteralValueProperty satisfies never;
-    }
+    this.hasLiteralValueProperty = parameters.hasLiteralValueProperty;
   }
 
   get $identifier(): HasValuePropertiesClass.$Identifier {
@@ -26143,7 +26122,7 @@ export class HasValuePropertiesClass {
         ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+        $booleanEquals(
           this.hasIriValueProperty,
           other.hasIriValueProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -26155,7 +26134,7 @@ export class HasValuePropertiesClass {
         })),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+        $strictEquals(
           this.hasLiteralValueProperty,
           other.hasLiteralValueProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -26184,13 +26163,9 @@ export class HasValuePropertiesClass {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    this.hasIriValueProperty.ifJust((value0) => {
-      _hasher.update(value0.termType);
-      _hasher.update(value0.value);
-    });
-    this.hasLiteralValueProperty.ifJust((value0) => {
-      _hasher.update(value0);
-    });
+    _hasher.update(this.hasIriValueProperty.termType);
+    _hasher.update(this.hasIriValueProperty.value);
+    _hasher.update(this.hasLiteralValueProperty);
     return _hasher;
   }
 
@@ -26202,12 +26177,8 @@ export class HasValuePropertiesClass {
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
         $type: this.$type,
-        hasIriValueProperty: this.hasIriValueProperty
-          .map((item) => ({ "@id": item.value }))
-          .extract(),
-        hasLiteralValueProperty: this.hasLiteralValueProperty
-          .map((item) => item)
-          .extract(),
+        hasIriValueProperty: { "@id": this.hasIriValueProperty.value },
+        hasLiteralValueProperty: this.hasLiteralValueProperty,
       } satisfies HasValuePropertiesClass.$Json),
     );
   }
@@ -26265,16 +26236,16 @@ export namespace HasValuePropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "HasValuePropertiesClass";
-    readonly hasIriValueProperty?: { readonly "@id": string };
-    readonly hasLiteralValueProperty?: string;
+    readonly hasIriValueProperty: { readonly "@id": string };
+    readonly hasLiteralValueProperty: string;
   };
 
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      hasIriValueProperty: purify.Maybe<rdfjs.NamedNode>;
-      hasLiteralValueProperty: purify.Maybe<string>;
+      hasIriValueProperty: rdfjs.NamedNode;
+      hasLiteralValueProperty: string;
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -26286,12 +26257,10 @@ export namespace HasValuePropertiesClass {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    const hasIriValueProperty = purify.Maybe.fromNullable(
-      $jsonObject["hasIriValueProperty"],
-    ).map((item) => dataFactory.namedNode(item["@id"]));
-    const hasLiteralValueProperty = purify.Maybe.fromNullable(
-      $jsonObject["hasLiteralValueProperty"],
+    const hasIriValueProperty = dataFactory.namedNode(
+      $jsonObject["hasIriValueProperty"]["@id"],
     );
+    const hasLiteralValueProperty = $jsonObject["hasLiteralValueProperty"];
     return purify.Either.of({
       $identifier,
       hasIriValueProperty,
@@ -26349,10 +26318,8 @@ export namespace HasValuePropertiesClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("HasValuePropertiesClass"),
-      hasIriValueProperty: zod
-        .object({ "@id": zod.string().min(1) })
-        .optional(),
-      hasLiteralValueProperty: zod.string().optional(),
+      hasIriValueProperty: zod.object({ "@id": zod.string().min(1) }),
+      hasLiteralValueProperty: zod.string(),
     }) satisfies zod.ZodType<$Json>;
   }
 
@@ -26401,57 +26368,53 @@ export namespace HasValuePropertiesClass {
     Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      hasIriValueProperty: purify.Maybe<rdfjs.NamedNode>;
-      hasLiteralValueProperty: purify.Maybe<string>;
+      hasIriValueProperty: rdfjs.NamedNode;
+      hasLiteralValueProperty: string;
     }
   > {
     const $identifier: HasValuePropertiesClass.$Identifier =
       $resource.identifier;
-    const _hasIriValuePropertyEither: purify.Either<
-      Error,
-      purify.Maybe<rdfjs.NamedNode>
-    > = purify.Either.of<
-      Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-    >(
-      $resource.values($properties.hasIriValueProperty["identifier"], {
-        unique: true,
-      }),
-    )
-      .chain((values) => values.chainMap((value) => value.toIri()))
-      .map((values) => values.head().toMaybe());
+    const _hasIriValuePropertyEither: purify.Either<Error, rdfjs.NamedNode> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.hasIriValueProperty["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toIri()))
+        .chain((values) => values.head());
     if (_hasIriValuePropertyEither.isLeft()) {
       return _hasIriValuePropertyEither;
     }
 
     const hasIriValueProperty = _hasIriValuePropertyEither.unsafeCoerce();
-    const _hasLiteralValuePropertyEither: purify.Either<
-      Error,
-      purify.Maybe<string>
-    > = purify.Either.of<
-      Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-    >(
-      $resource.values($properties.hasLiteralValueProperty["identifier"], {
-        unique: true,
-      }),
-    )
-      .chain((values) => {
-        for (const hasValue of [dataFactory.literal("test")]) {
-          const findResult = values.find((value) =>
-            value.toTerm().equals(hasValue),
-          );
-          if (findResult.isLeft()) {
-            return findResult;
+    const _hasLiteralValuePropertyEither: purify.Either<Error, string> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.hasLiteralValueProperty["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => {
+          for (const hasValue of [dataFactory.literal("test")]) {
+            const findResult = values.find((value) =>
+              value.toTerm().equals(hasValue),
+            );
+            if (findResult.isLeft()) {
+              return findResult;
+            }
           }
-        }
-        return purify.Either.of<
-          Error,
-          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-        >(values);
-      })
-      .chain((values) => values.chainMap((value) => value.toString()))
-      .map((values) => values.head().toMaybe());
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        })
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_hasLiteralValuePropertyEither.isLeft()) {
       return _hasLiteralValuePropertyEither;
     }
@@ -26571,44 +26534,34 @@ export namespace HasValuePropertiesClass {
         : "hasValuePropertiesClass");
     const propertyPatterns: readonly sparqljs.Pattern[] = [
       {
-        patterns: [
+        triples: [
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}HasIriValueProperty`,
-                ),
-                predicate:
-                  HasValuePropertiesClass.$properties.hasIriValueProperty[
-                    "identifier"
-                  ],
-                subject,
-              },
-            ],
-            type: "bgp",
+            object: dataFactory.variable!(
+              `${variablePrefix}HasIriValueProperty`,
+            ),
+            predicate:
+              HasValuePropertiesClass.$properties.hasIriValueProperty[
+                "identifier"
+              ],
+            subject,
           },
         ],
-        type: "optional",
+        type: "bgp",
       },
       {
-        patterns: [
+        triples: [
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}HasLiteralValueProperty`,
-                ),
-                predicate:
-                  HasValuePropertiesClass.$properties.hasLiteralValueProperty[
-                    "identifier"
-                  ],
-                subject,
-              },
-            ],
-            type: "bgp",
+            object: dataFactory.variable!(
+              `${variablePrefix}HasLiteralValueProperty`,
+            ),
+            predicate:
+              HasValuePropertiesClass.$properties.hasLiteralValueProperty[
+                "identifier"
+              ],
+            subject,
           },
         ],
-        type: "optional",
+        type: "bgp",
       },
     ];
     for (const pattern of propertyPatterns) {
@@ -28200,9 +28153,6 @@ export class DirectRecursiveClass {
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
-    const _x = this.directRecursiveProperty.map((value) =>
-      value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-    );
     resource.add(
       DirectRecursiveClass.$properties.directRecursiveProperty["identifier"],
       this.directRecursiveProperty.map((value) =>

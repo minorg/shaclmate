@@ -106,20 +106,28 @@ function transformPropertyShapeToAstCardinalityType(
     });
   }
 
-  if (
-    propertyShape.constraints.minCount.orDefault(0) === 0 &&
-    propertyShape.constraints.maxCount.extractNullable() === 1
-  ) {
+  let maxCount = propertyShape.constraints.maxCount.orDefault(
+    Number.MAX_SAFE_INTEGER,
+  );
+  let minCount = propertyShape.constraints.minCount.orDefault(0);
+  if (minCount < 0) {
+    minCount = 0;
+  }
+  if (propertyShape.constraints.hasValues.length > minCount) {
+    minCount = propertyShape.constraints.hasValues.length;
+  }
+  if (maxCount < minCount) {
+    maxCount = minCount;
+  }
+
+  if (minCount === 0 && maxCount === 1) {
     return Either.of({
       itemType,
       kind: "OptionType",
     });
   }
 
-  if (
-    propertyShape.constraints.minCount.orDefault(0) === 1 &&
-    propertyShape.constraints.maxCount.extractNullable() === 1
-  ) {
+  if (minCount === 1 && maxCount === 1) {
     return Either.of({ itemType, kind: "PlainType" });
   }
 
@@ -130,7 +138,7 @@ function transformPropertyShapeToAstCardinalityType(
   return Either.of({
     itemType,
     kind: "SetType",
-    minCount: propertyShape.constraints.minCount.orDefault(0),
+    minCount,
     mutable: propertyShape.mutable,
   });
 }
