@@ -3,7 +3,7 @@ import N3 from "n3";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
-import * as ast from "../ast/index.js";
+import type * as ast from "../ast/index.js";
 import type { TsFeature } from "../enums/index.js";
 import type * as input from "../input/index.js";
 import { ShapeStack } from "./ShapeStack.js";
@@ -76,10 +76,10 @@ function synthesizeStubAstObjectType({
   };
 }
 
-function transformPropertyShapeToAstCardinalityType(
+function transformPropertyShapeToAstType(
   this: ShapesGraphToAstTransformer,
   propertyShape: input.PropertyShape,
-): Either<Error, ast.CardinalityType<ast.CardinalityType.ItemType>> {
+): Either<Error, ast.Type> {
   const itemTypeEither = this.transformShapeToAstType(
     propertyShape,
     new ShapeStack(),
@@ -88,10 +88,9 @@ function transformPropertyShapeToAstCardinalityType(
     return itemTypeEither;
   }
   const itemType = itemTypeEither.unsafeCoerce();
-  invariant(ast.CardinalityType.isItemType(itemType));
 
   if (propertyShape.defaultValue.isJust()) {
-    return Either.of({ itemType, kind: "PlainType" });
+    return Either.of(itemType);
   }
 
   if (
@@ -128,7 +127,7 @@ function transformPropertyShapeToAstCardinalityType(
   }
 
   if (minCount === 1 && maxCount === 1) {
-    return Either.of({ itemType, kind: "PlainType" });
+    return Either.of(itemType);
   }
 
   invariant(
@@ -156,12 +155,11 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     }
   }
 
-  const cardinalityTypeEither =
-    transformPropertyShapeToAstCardinalityType.bind(this)(propertyShape);
-  if (cardinalityTypeEither.isLeft()) {
-    return cardinalityTypeEither;
+  const typeEither = transformPropertyShapeToAstType.bind(this)(propertyShape);
+  if (typeEither.isLeft()) {
+    return typeEither;
   }
-  const cardinalityType = cardinalityTypeEither.unsafeCoerce();
+  const type = typeEither.unsafeCoerce();
 
   let stubType: ast.ObjectType.Property["stubType"] = Maybe.empty();
   let propertyShapeStubItemType:
@@ -194,25 +192,41 @@ export function transformPropertyShapeToAstObjectTypeProperty(
   }
 
   if (propertyShapeStubItemType || propertyShape.lazy.orDefault(false)) {
-    switch (cardinalityType.itemType.kind) {
+    switch (type.kind) {
       case "ObjectType":
-      case "ObjectUnionType": {
+      case "ObjectUnionType":
+        stubType = Maybe.of(
+          propertyShapeStubItemType ??
+            synthesizeStubAstObjectType({
+              identifierNodeKinds: identifierNodeKinds(type),
+              tsFeatures: type.tsFeatures,
+            }),
+        );
+        break;
+      case "OptionType":
+      case "SetType": {
+        switch (type.itemType.kind) {
+          case "ObjectType":
+          case "ObjectUnionType":
+            break;
+          default:
+            return Left(
+              new Error(
+                `${propertyShape} marked lazy but has ${type.kind} of ${type.itemType.kind}`,
+              ),
+            );
+        }
+
         const stubItemType =
           propertyShapeStubItemType ??
           synthesizeStubAstObjectType({
-            identifierNodeKinds: identifierNodeKinds(cardinalityType.itemType),
-            tsFeatures: cardinalityType.itemType.tsFeatures,
+            identifierNodeKinds: identifierNodeKinds(type.itemType),
+            tsFeatures: type.itemType.tsFeatures,
           });
-        switch (cardinalityType.kind) {
+        switch (type.kind) {
           case "OptionType":
             stubType = Maybe.of({
               kind: "OptionType",
-              itemType: stubItemType,
-            });
-            break;
-          case "PlainType":
-            stubType = Maybe.of({
-              kind: "PlainType",
               itemType: stubItemType,
             });
             break;
@@ -229,9 +243,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
       }
       default:
         return Left(
-          new Error(
-            `${propertyShape} marked lazy but has ${cardinalityType.kind} of ${cardinalityType.itemType.kind}`,
-          ),
+          new Error(`${propertyShape} marked lazy but has ${type.kind}`),
         );
     }
   }
@@ -256,7 +268,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     order: propertyShape.order.orDefault(0),
     path,
     stubType,
-    type: cardinalityType,
+    type: type,
     visibility: propertyShape.visibility,
   };
   this.astObjectTypePropertiesByIdentifier.set(

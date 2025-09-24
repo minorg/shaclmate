@@ -17,13 +17,10 @@ export function transformShapeToAstCompositeType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
   shapeStack: ShapeStack,
-): Either<Error, ast.CardinalityType.ItemType> {
+): Either<Error, ast.Type> {
   shapeStack.push(shape);
   try {
-    let memberTypeEithers: readonly Either<
-      Error,
-      ast.CardinalityType.ItemType
-    >[];
+    let memberTypeEithers: readonly Either<Error, ast.Type>[];
     let compositeTypeKind: "IntersectionType" | "UnionType";
 
     if (shape.constraints.and.length > 0) {
@@ -86,7 +83,7 @@ export function transformShapeToAstCompositeType(
       | ast.ObjectIntersectionType
       | ast.ObjectUnionType
     )[] = [];
-    let memberTypes: ast.CardinalityType.ItemType[] = [];
+    let memberTypes: ast.Type[] = [];
     for (const memberTypeEither of memberTypeEithers) {
       if (memberTypeEither.isLeft()) {
         return memberTypeEither;
@@ -146,10 +143,10 @@ function widenAstCompositeTypeToSingleType({
   shape,
   shapeStack,
 }: {
-  memberTypes: readonly ast.CardinalityType.ItemType[];
+  memberTypes: readonly ast.Type[];
   shape: input.Shape;
   shapeStack: ShapeStack;
-}): Either<Error, ast.CardinalityType.ItemType> {
+}): Either<Error, ast.Type> {
   const defaultValue = shapeStack.defaultValue;
   const hasValues = shapeStack.constraints.hasValues;
 

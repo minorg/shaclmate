@@ -1,10 +1,10 @@
-import type { CardinalityType } from "ast/CardinalityType.js";
 import type { Maybe } from "purify-ts";
+import type { Type } from "./Type.js";
 
 /**
  * An unordered set of items of a specific type.
  */
-export interface SetType<ItemTypeT extends CardinalityType.ItemType> {
+export interface SetType<ItemTypeT extends Type = Type> {
   readonly kind: "SetType";
 
   readonly itemType: ItemTypeT;

@@ -9,9 +9,11 @@ import type {
   TsFeature,
   TsObjectDeclarationType,
 } from "../enums/index.js";
-import type { CardinalityType } from "./CardinalityType.js";
 import type { Name } from "./Name.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
+import type { OptionType } from "./OptionType.js";
+import type { SetType } from "./SetType.js";
+import type { Type } from "./Type.js";
 
 export interface ObjectType {
   /**
@@ -199,12 +201,17 @@ export namespace ObjectType {
      *
      * This type will mirror type: if type is an OptionType<ObjectType>, this will also be an OptionType<ObjectType>.
      */
-    readonly stubType: Maybe<CardinalityType<ObjectType | ObjectUnionType>>;
+    readonly stubType: Maybe<
+      | ObjectType
+      | ObjectUnionType
+      | OptionType<ObjectType | ObjectUnionType>
+      | SetType<ObjectType | ObjectUnionType>
+    >;
 
     /**
      * Type of this property.
      */
-    readonly type: CardinalityType<CardinalityType.ItemType>;
+    readonly type: Type;
 
     /**
      * Visibility: private, protected, public.

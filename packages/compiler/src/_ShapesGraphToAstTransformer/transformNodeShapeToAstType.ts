@@ -69,9 +69,6 @@ function transformNodeShapeToAstListType(
   if (!firstProperty) {
     return Left(new Error(`${nodeShape} does not have an rdf:first property`));
   }
-  if (firstProperty.type.kind !== "PlainType") {
-    return Left(new Error(`${nodeShape} rdf:first property is not required`));
-  }
 
   const restProperty = properties.find((property) =>
     property.path.iri.equals(rdf.rest),
@@ -79,13 +76,10 @@ function transformNodeShapeToAstListType(
   if (!restProperty) {
     return Left(new Error(`${nodeShape} does not have an rdf:rest property`));
   }
-  if (restProperty.type.kind !== "PlainType") {
-    return Left(new Error(`${nodeShape} rdf:rest property is not required`));
-  }
-  if (restProperty.type.itemType.kind !== "UnionType") {
+  if (restProperty.type.kind !== "UnionType") {
     return Left(new Error(`${nodeShape} rdf:rest property is not sh:xone`));
   }
-  if (restProperty.type.itemType.memberTypes.length !== 2) {
+  if (restProperty.type.memberTypes.length !== 2) {
     return Left(
       new Error(
         `${nodeShape} rdf:rest property sh:xone does not have exactly two member types`,
@@ -94,7 +88,7 @@ function transformNodeShapeToAstListType(
   }
   // rdf:rest should be sh:xone ( [ sh:class nodeShape ] [ sh:hasValue rdf:nil ] )
   if (
-    !restProperty.type.itemType.memberTypes.find(
+    !restProperty.type.memberTypes.find(
       (type) =>
         type.kind === "ListType" &&
         type.name.identifier.equals(nodeShape.identifier),
@@ -107,7 +101,7 @@ function transformNodeShapeToAstListType(
     );
   }
   if (
-    !restProperty.type.itemType.memberTypes.find(
+    !restProperty.type.memberTypes.find(
       (type) => type.kind === "IdentifierType",
     )
   ) {
@@ -118,7 +112,7 @@ function transformNodeShapeToAstListType(
     );
   }
 
-  listType.itemType = firstProperty.type.itemType;
+  listType.itemType = firstProperty.type;
 
   return Either.of(listType);
 }
@@ -348,7 +342,6 @@ export function transformNodeShapeToAstType(
         return false;
       case "ListType":
       case "OptionType":
-      case "PlainType":
       case "SetType":
         return isPropertyRecursive(astType.itemType);
     }

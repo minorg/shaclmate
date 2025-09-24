@@ -1,9 +1,9 @@
-import type { CardinalityType } from "./CardinalityType.js";
+import type { Type } from "./Type.js";
 
 /**
  * A type with zero or one values of an item type.
  */
-export interface OptionType<ItemTypeT extends CardinalityType.ItemType> {
+export interface OptionType<ItemTypeT extends Type = Type> {
   readonly itemType: ItemTypeT;
   readonly kind: "OptionType";
 }

@@ -15,7 +15,7 @@ export function transformShapeToAstType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
   shapeStack: ShapeStack,
-): Either<Error, ast.CardinalityType.ItemType> {
+): Either<Error, ast.Type> {
   // Try to transform the property shape into an AST type without cardinality constraints
   return this.transformShapeToAstCompositeType(shape, shapeStack)
     .altLazy(() => this.transformShapeToAstIdentifierType(shape, shapeStack))

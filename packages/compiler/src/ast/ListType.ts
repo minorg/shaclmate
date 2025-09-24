@@ -2,8 +2,8 @@ import type { NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import type { Maybe } from "purify-ts";
 import type { IdentifierMintingStrategy } from "../enums/IdentifierMintingStrategy.js";
-import type { CardinalityType } from "./CardinalityType.js";
 import type { Name } from "./Name.js";
+import type { Type } from "./Type.js";
 
 /**
  * An ordered sequence of items with zero or one values of an item type.
@@ -28,7 +28,7 @@ export interface ListType {
    *
    * Mutable to support cycle-handling logic in the compiler.
    */
-  itemType: CardinalityType.ItemType;
+  itemType: Type;
 
   readonly kind: "ListType";
 

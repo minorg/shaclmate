@@ -13,7 +13,6 @@ import type * as ast from "../../ast/index.js";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { logger } from "../../logger.js";
 import { BooleanType } from "./BooleanType.js";
-import { CardinalityType } from "./CardinalityType.js";
 import { DateTimeType } from "./DateTimeType.js";
 import { DateType } from "./DateType.js";
 import { FloatType } from "./FloatType.js";
@@ -24,7 +23,6 @@ import { LiteralType } from "./LiteralType.js";
 import { ObjectType } from "./ObjectType.js";
 import { ObjectUnionType } from "./ObjectUnionType.js";
 import { OptionType } from "./OptionType.js";
-import { PlainType } from "./PlainType.js";
 import { SetType } from "./SetType.js";
 import { StringType } from "./StringType.js";
 import { TermType } from "./TermType.js";
@@ -484,31 +482,18 @@ export class TypeFactory {
         return this.createObjectTypeFromAstType(astType);
       case "ObjectUnionType":
         return this.createObjectUnionTypeFromAstType(astType);
-      case "OptionType": {
-        const itemType = this.createTypeFromAstType(astType.itemType);
-        invariant(CardinalityType.isItemType(itemType));
+      case "OptionType":
         return new OptionType({
-          itemType,
+          itemType: this.createTypeFromAstType(astType.itemType),
         });
-      }
       case "PlaceholderType":
         throw new Error(astType.kind);
-      case "PlainType": {
-        const itemType = this.createTypeFromAstType(astType.itemType);
-        invariant(CardinalityType.isItemType(itemType));
-        return new PlainType({
-          itemType,
-        });
-      }
-      case "SetType": {
-        const itemType = this.createTypeFromAstType(astType.itemType);
-        invariant(CardinalityType.isItemType(itemType));
+      case "SetType":
         return new SetType({
-          itemType,
+          itemType: this.createTypeFromAstType(astType.itemType),
           mutable: astType.mutable.orDefault(false),
           minCount: astType.minCount,
         });
-      }
       case "TermType":
         return new TermType({
           defaultValue: astType["defaultValue"],
@@ -572,14 +557,12 @@ export class TypeFactory {
           resolvedType,
           stubType,
         });
-      } else if (resolvedType instanceof PlainType) {
+      } else if (
+        resolvedType instanceof ObjectType ||
+        resolvedType instanceof ObjectUnionType
+      ) {
         invariant(
-          resolvedType.itemType instanceof ObjectType ||
-            resolvedType.itemType instanceof ObjectUnionType,
-          `lazy property ${name} on ${objectType.name} has ${resolvedType.kind} ${resolvedType.itemType.kind} items`,
-        );
-        invariant(
-          stubType instanceof PlainType,
+          stubType instanceof ObjectType || stubType instanceof ObjectUnionType,
           `lazy property ${name} on ${objectType.name} has ${(stubType as any).kind} stubs`,
         );
 

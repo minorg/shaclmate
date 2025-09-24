@@ -1,15 +1,15 @@
+import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-
-import { CardinalityType } from "./CardinalityType.js";
 import type { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export class SetType<
-  ItemTypeT extends CardinalityType.ItemType,
-> extends CardinalityType<ItemTypeT> {
+export class SetType<ItemTypeT extends Type> extends Type {
+  override readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty> =
+    Maybe.empty();
+  readonly itemType: ItemTypeT;
   private readonly _mutable: boolean;
   private readonly minCount: number;
 
@@ -25,7 +25,8 @@ export class SetType<
     mutable: boolean;
     minCount: number;
   }) {
-    super({ itemType });
+    super();
+    this.itemType = itemType;
     this.minCount = minCount;
     invariant(this.minCount >= 0);
     this._mutable = mutable;
