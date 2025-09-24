@@ -1245,10 +1245,17 @@ export namespace UuidV4IriInterface {
 
     const $identifier: UuidV4IriInterface.$Identifier = $resource.identifier;
     const $type = "UuidV4IriInterface" as const;
-    const _uuidV4IriPropertyEither: purify.Either<Error, string> = $resource
-      .values($properties.uuidV4IriProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toString());
+    const _uuidV4IriPropertyEither: purify.Either<Error, string> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.uuidV4IriProperty["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_uuidV4IriPropertyEither.isLeft()) {
       return _uuidV4IriPropertyEither;
     }
@@ -1687,10 +1694,17 @@ export namespace UuidV4IriClass {
     }
 
     const $identifier: UuidV4IriClass.$Identifier = $resource.identifier;
-    const _uuidV4IriPropertyEither: purify.Either<Error, string> = $resource
-      .values($properties.uuidV4IriProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toString());
+    const _uuidV4IriPropertyEither: purify.Either<Error, string> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.uuidV4IriProperty["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_uuidV4IriPropertyEither.isLeft()) {
       return _uuidV4IriPropertyEither;
     }
@@ -2468,34 +2482,48 @@ export namespace UnionPropertiesClass {
       Error,
       purify.Maybe<number | string>
     > = (
-      $resource
-        .values($properties.narrowLiteralsProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toNumber()) as purify.Either<
+      purify.Either.of<
         Error,
-        number | string
-      >
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.narrowLiteralsProperty["identifier"], {
+          unique: true,
+        }),
+      ).chain((values) =>
+        values.chainMap((value) => value.toNumber()),
+      ) as purify.Either<Error, rdfjsResource.Resource.Values<number | string>>
     )
       .altLazy(
         () =>
-          $resource
-            .values($properties.narrowLiteralsProperty["identifier"], {
-              unique: true,
-            })
-            .head()
-            .chain((value) => value.toString()) as purify.Either<
+          purify.Either.of<
             Error,
-            number | string
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            $resource.values($properties.narrowLiteralsProperty["identifier"], {
+              unique: true,
+            }),
+          ).chain((values) =>
+            values.chainMap((value) => value.toString()),
+          ) as purify.Either<
+            Error,
+            rdfjsResource.Resource.Values<number | string>
           >,
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<number | string>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                UnionPropertiesClass.$properties.narrowLiteralsProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_narrowLiteralsPropertyEither.isLeft()) {
       return _narrowLiteralsPropertyEither;
     }
@@ -2505,38 +2533,59 @@ export namespace UnionPropertiesClass {
       Error,
       purify.Maybe<number | NonClass>
     > = (
-      $resource
-        .values($properties.unrelatedTypesProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toNumber()) as purify.Either<
+      purify.Either.of<
         Error,
-        number | NonClass
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.unrelatedTypesProperty["identifier"], {
+          unique: true,
+        }),
+      ).chain((values) =>
+        values.chainMap((value) => value.toNumber()),
+      ) as purify.Either<
+        Error,
+        rdfjsResource.Resource.Values<number | NonClass>
       >
     )
       .altLazy(
         () =>
-          $resource
-            .values($properties.unrelatedTypesProperty["identifier"], {
+          purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            $resource.values($properties.unrelatedTypesProperty["identifier"], {
               unique: true,
-            })
-            .head()
-            .chain((value) => value.toResource())
-            .chain((resource) =>
-              NonClass.$fromRdf(resource, {
-                ...$context,
-                languageIn: $languageIn,
-                objectSet: $objectSet,
-              }),
-            ) as purify.Either<Error, number | NonClass>,
+            }),
+          ).chain((values) =>
+            values.chainMap((value) =>
+              value.toResource().chain((resource) =>
+                NonClass.$fromRdf(resource, {
+                  ...$context,
+                  languageIn: $languageIn,
+                  objectSet: $objectSet,
+                }),
+              ),
+            ),
+          ) as purify.Either<
+            Error,
+            rdfjsResource.Resource.Values<number | NonClass>
+          >,
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<number | NonClass>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                UnionPropertiesClass.$properties.unrelatedTypesProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_unrelatedTypesPropertyEither.isLeft()) {
       return _unrelatedTypesPropertyEither;
     }
@@ -2545,31 +2594,82 @@ export namespace UnionPropertiesClass {
     const _widenedLiteralsPropertyEither: purify.Either<
       Error,
       purify.Maybe<rdfjs.Literal>
-    > = $resource
-      .values($properties.widenedLiteralsProperty["identifier"], {
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.widenedLiteralsProperty["identifier"], {
         unique: true,
-      })
-      .filter((_value) => {
-        const _languageInOrDefault = $languageIn ?? [];
-        if (_languageInOrDefault.length === 0) {
-          return true;
-        }
-        const _valueLiteral = _value.toLiteral().toMaybe().extract();
-        if (typeof _valueLiteral === "undefined") {
-          return false;
-        }
-        return _languageInOrDefault.some(
-          (_languageIn) => _languageIn === _valueLiteral.language,
+      }),
+    )
+      .chain((values) => {
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
         );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        const nonUniqueLanguageIn = $languageIn ?? [];
+        if (nonUniqueLanguageIn.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(literalValues);
+        }
+
+        let uniqueLanguageIn: string[];
+        if (nonUniqueLanguageIn.length === 1) {
+          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+        } else {
+          uniqueLanguageIn = [];
+          for (const languageIn of nonUniqueLanguageIn) {
+            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+              uniqueLanguageIn.push(languageIn);
+            }
+          }
+        }
+
+        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+        // Within a languageIn the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const languageIn of uniqueLanguageIn) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === languageIn,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === languageIn)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjs.Literal>
+        >(filteredLiteralValues!);
       })
-      .head()
-      .chain((value) => value.toLiteral())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.Literal>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                UnionPropertiesClass.$properties.widenedLiteralsProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_widenedLiteralsPropertyEither.isLeft()) {
       return _widenedLiteralsPropertyEither;
     }
@@ -2579,41 +2679,57 @@ export namespace UnionPropertiesClass {
     const _widenedTermsPropertyEither: purify.Either<
       Error,
       purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>
-    > = $resource
-      .values($properties.widenedTermsProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) =>
-        purify.Either.of<
-          Error,
-          rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
-        >(value.toTerm()).chain((term) => {
-          switch (term.termType) {
-            case "Literal":
-            case "NamedNode":
-              return purify.Either.of<Error, rdfjs.Literal | rdfjs.NamedNode>(
-                term,
-              );
-            default:
-              return purify.Left<Error, rdfjs.Literal | rdfjs.NamedNode>(
-                new rdfjsResource.Resource.MistypedValueError({
-                  actualValue: term,
-                  expectedValueType: "(rdfjs.Literal | rdfjs.NamedNode)",
-                  focusResource: $resource,
-                  predicate:
-                    UnionPropertiesClass.$properties.widenedTermsProperty[
-                      "identifier"
-                    ],
-                }),
-              );
-          }
-        }),
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.widenedTermsProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          purify.Either.of<
+            Error,
+            rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
+          >(value.toTerm()).chain((term) => {
+            switch (term.termType) {
+              case "Literal":
+              case "NamedNode":
+                return purify.Either.of<Error, rdfjs.Literal | rdfjs.NamedNode>(
+                  term,
+                );
+              default:
+                return purify.Left<Error, rdfjs.Literal | rdfjs.NamedNode>(
+                  new rdfjsResource.Resource.MistypedValueError({
+                    actualValue: term,
+                    expectedValueType: "(rdfjs.Literal | rdfjs.NamedNode)",
+                    focusResource: $resource,
+                    predicate:
+                      UnionPropertiesClass.$properties.widenedTermsProperty[
+                        "identifier"
+                      ],
+                  }),
+                );
+            }
+          }),
+        ),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                UnionPropertiesClass.$properties.widenedTermsProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_widenedTermsPropertyEither.isLeft()) {
       return _widenedTermsPropertyEither;
     }
@@ -2881,7 +2997,11 @@ export namespace UnionPropertiesClass {
             ],
             type: "bgp",
           },
-          ...[parameters?.languageIn ?? []]
+          ...[
+            parameters?.languageIn && parameters?.languageIn.length > 0
+              ? parameters?.languageIn
+              : [],
+          ]
             .filter((languagesIn) => languagesIn.length > 0)
             .map((languagesIn) =>
               languagesIn.map((languageIn) => ({
@@ -3724,16 +3844,28 @@ export namespace TermPropertiesClass {
     const _booleanTermPropertyEither: purify.Either<
       Error,
       purify.Maybe<boolean>
-    > = $resource
-      .values($properties.booleanTermProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toBoolean())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.booleanTermProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toBoolean()))
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<boolean>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                TermPropertiesClass.$properties.booleanTermProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_booleanTermPropertyEither.isLeft()) {
       return _booleanTermPropertyEither;
     }
@@ -3742,16 +3874,26 @@ export namespace TermPropertiesClass {
     const _dateTermPropertyEither: purify.Either<
       Error,
       purify.Maybe<Date>
-    > = $resource
-      .values($properties.dateTermProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toDate())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.dateTermProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toDate()))
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<Date>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                TermPropertiesClass.$properties.dateTermProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_dateTermPropertyEither.isLeft()) {
       return _dateTermPropertyEither;
     }
@@ -3760,16 +3902,28 @@ export namespace TermPropertiesClass {
     const _dateTimeTermPropertyEither: purify.Either<
       Error,
       purify.Maybe<Date>
-    > = $resource
-      .values($properties.dateTimeTermProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toDate())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.dateTimeTermProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toDate()))
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<Date>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                TermPropertiesClass.$properties.dateTimeTermProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_dateTimeTermPropertyEither.isLeft()) {
       return _dateTimeTermPropertyEither;
     }
@@ -3778,16 +3932,28 @@ export namespace TermPropertiesClass {
     const _iriTermPropertyEither: purify.Either<
       Error,
       purify.Maybe<rdfjs.NamedNode>
-    > = $resource
-      .values($properties.iriTermProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toIri())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.iriTermProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toIri()))
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.NamedNode>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                TermPropertiesClass.$properties.iriTermProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_iriTermPropertyEither.isLeft()) {
       return _iriTermPropertyEither;
     }
@@ -3796,29 +3962,82 @@ export namespace TermPropertiesClass {
     const _literalTermPropertyEither: purify.Either<
       Error,
       purify.Maybe<rdfjs.Literal>
-    > = $resource
-      .values($properties.literalTermProperty["identifier"], { unique: true })
-      .filter((_value) => {
-        const _languageInOrDefault = $languageIn ?? [];
-        if (_languageInOrDefault.length === 0) {
-          return true;
-        }
-        const _valueLiteral = _value.toLiteral().toMaybe().extract();
-        if (typeof _valueLiteral === "undefined") {
-          return false;
-        }
-        return _languageInOrDefault.some(
-          (_languageIn) => _languageIn === _valueLiteral.language,
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.literalTermProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => {
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
         );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        const nonUniqueLanguageIn = $languageIn ?? [];
+        if (nonUniqueLanguageIn.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(literalValues);
+        }
+
+        let uniqueLanguageIn: string[];
+        if (nonUniqueLanguageIn.length === 1) {
+          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+        } else {
+          uniqueLanguageIn = [];
+          for (const languageIn of nonUniqueLanguageIn) {
+            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+              uniqueLanguageIn.push(languageIn);
+            }
+          }
+        }
+
+        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+        // Within a languageIn the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const languageIn of uniqueLanguageIn) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === languageIn,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === languageIn)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjs.Literal>
+        >(filteredLiteralValues!);
       })
-      .head()
-      .chain((value) => value.toLiteral())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.Literal>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                TermPropertiesClass.$properties.literalTermProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_literalTermPropertyEither.isLeft()) {
       return _literalTermPropertyEither;
     }
@@ -3827,16 +4046,28 @@ export namespace TermPropertiesClass {
     const _numberTermPropertyEither: purify.Either<
       Error,
       purify.Maybe<number>
-    > = $resource
-      .values($properties.numberTermProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toNumber())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.numberTermProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toNumber()))
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<number>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                TermPropertiesClass.$properties.numberTermProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_numberTermPropertyEither.isLeft()) {
       return _numberTermPropertyEither;
     }
@@ -3845,16 +4076,28 @@ export namespace TermPropertiesClass {
     const _stringTermPropertyEither: purify.Either<
       Error,
       purify.Maybe<string>
-    > = $resource
-      .values($properties.stringTermProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toString())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.stringTermProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                TermPropertiesClass.$properties.stringTermProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_stringTermPropertyEither.isLeft()) {
       return _stringTermPropertyEither;
     }
@@ -3863,21 +4106,35 @@ export namespace TermPropertiesClass {
     const _termPropertyEither: purify.Either<
       Error,
       purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
-    > = $resource
-      .values($properties.termProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) =>
-        purify.Either.of<
-          Error,
-          rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
-        >(value.toTerm()),
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.termProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          purify.Either.of<
+            Error,
+            rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
+          >(value.toTerm()),
+        ),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                TermPropertiesClass.$properties.termProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_termPropertyEither.isLeft()) {
       return _termPropertyEither;
     }
@@ -4147,7 +4404,11 @@ export namespace TermPropertiesClass {
             ],
             type: "bgp",
           },
-          ...[parameters?.languageIn ?? []]
+          ...[
+            parameters?.languageIn && parameters?.languageIn.length > 0
+              ? parameters?.languageIn
+              : [],
+          ]
             .filter((languagesIn) => languagesIn.length > 0)
             .map((languagesIn) =>
               languagesIn.map((languageIn) => ({
@@ -4527,12 +4788,17 @@ export namespace StubInterfaceUnionMember2 {
       $resource.identifier;
     const $type = "StubInterfaceUnionMember2" as const;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.lazilyResolvedStringProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.lazilyResolvedStringProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
     }
@@ -5034,12 +5300,17 @@ export namespace StubInterfaceUnionMember1 {
       $resource.identifier;
     const $type = "StubInterfaceUnionMember1" as const;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.lazilyResolvedStringProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.lazilyResolvedStringProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
     }
@@ -5559,12 +5830,17 @@ export namespace StubClassUnionMember2 {
 
     const $identifier: StubClassUnionMember2.$Identifier = $resource.identifier;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.lazilyResolvedStringProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.lazilyResolvedStringProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
     }
@@ -6043,12 +6319,17 @@ export namespace StubClassUnionMember1 {
 
     const $identifier: StubClassUnionMember1.$Identifier = $resource.identifier;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.lazilyResolvedStringProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.lazilyResolvedStringProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
     }
@@ -6527,10 +6808,17 @@ export namespace Sha256IriClass {
     }
 
     const $identifier: Sha256IriClass.$Identifier = $resource.identifier;
-    const _sha256IriPropertyEither: purify.Either<Error, string> = $resource
-      .values($properties.sha256IriProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toString());
+    const _sha256IriPropertyEither: purify.Either<Error, string> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.sha256IriProperty["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_sha256IriPropertyEither.isLeft()) {
       return _sha256IriPropertyEither;
     }
@@ -6973,28 +7261,49 @@ export namespace PropertyVisibilitiesClass {
   > {
     const $identifier: PropertyVisibilitiesClass.$Identifier =
       $resource.identifier;
-    const _privatePropertyEither: purify.Either<Error, string> = $resource
-      .values($properties.privateProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toString());
+    const _privatePropertyEither: purify.Either<Error, string> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.privateProperty["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_privatePropertyEither.isLeft()) {
       return _privatePropertyEither;
     }
 
     const privateProperty = _privatePropertyEither.unsafeCoerce();
-    const _protectedPropertyEither: purify.Either<Error, string> = $resource
-      .values($properties.protectedProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toString());
+    const _protectedPropertyEither: purify.Either<Error, string> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.protectedProperty["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_protectedPropertyEither.isLeft()) {
       return _protectedPropertyEither;
     }
 
     const protectedProperty = _protectedPropertyEither.unsafeCoerce();
-    const _publicPropertyEither: purify.Either<Error, string> = $resource
-      .values($properties.publicProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toString());
+    const _publicPropertyEither: purify.Either<Error, string> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.publicProperty["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_publicPropertyEither.isLeft()) {
       return _publicPropertyEither;
     }
@@ -7606,18 +7915,27 @@ export namespace PropertyCardinalitiesClass {
     const _emptyStringSetPropertyEither: purify.Either<
       Error,
       readonly string[]
-    > = purify.Either.sequence(
-      $resource
-        .values($properties.emptyStringSetProperty["identifier"], {
-          unique: true,
-        })
-        .map((item) =>
-          item
-            .toValues()
-            .head()
-            .chain((value) => value.toString()),
-        ),
-    );
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.emptyStringSetProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
+              "identifier"
+            ],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
     if (_emptyStringSetPropertyEither.isLeft()) {
       return _emptyStringSetPropertyEither;
     }
@@ -7626,24 +7944,33 @@ export namespace PropertyCardinalitiesClass {
     const _nonEmptyStringSetPropertyEither: purify.Either<
       Error,
       purify.NonEmptyList<string>
-    > = purify.Either.sequence(
-      $resource
-        .values($properties.nonEmptyStringSetProperty["identifier"], {
-          unique: true,
-        })
-        .map((item) =>
-          item
-            .toValues()
-            .head()
-            .chain((value) => value.toString()),
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.nonEmptyStringSetProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .chain((values) =>
+        purify.NonEmptyList.fromArray(values.toArray()).toEither(
+          new Error(
+            `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} is an empty set`,
+          ),
         ),
-    ).chain((array) =>
-      purify.NonEmptyList.fromArray(array).toEither(
-        new Error(
-          `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} is an empty set`,
-        ),
-      ),
-    );
+      )
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
+              "identifier"
+            ],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
     if (_nonEmptyStringSetPropertyEither.isLeft()) {
       return _nonEmptyStringSetPropertyEither;
     }
@@ -7653,30 +7980,44 @@ export namespace PropertyCardinalitiesClass {
     const _optionalStringPropertyEither: purify.Either<
       Error,
       purify.Maybe<string>
-    > = $resource
-      .values($properties.optionalStringProperty["identifier"], {
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.optionalStringProperty["identifier"], {
         unique: true,
-      })
-      .head()
-      .chain((value) => value.toString())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                PropertyCardinalitiesClass.$properties.optionalStringProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_optionalStringPropertyEither.isLeft()) {
       return _optionalStringPropertyEither;
     }
 
     const optionalStringProperty = _optionalStringPropertyEither.unsafeCoerce();
     const _requiredStringPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.requiredStringProperty["identifier"], {
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.requiredStringProperty["identifier"], {
           unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_requiredStringPropertyEither.isLeft()) {
       return _requiredStringPropertyEither;
     }
@@ -8242,28 +8583,49 @@ export namespace OrderedPropertiesClass {
   > {
     const $identifier: OrderedPropertiesClass.$Identifier =
       $resource.identifier;
-    const _orderedPropertyCEither: purify.Either<Error, string> = $resource
-      .values($properties.orderedPropertyC["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toString());
+    const _orderedPropertyCEither: purify.Either<Error, string> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.orderedPropertyC["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_orderedPropertyCEither.isLeft()) {
       return _orderedPropertyCEither;
     }
 
     const orderedPropertyC = _orderedPropertyCEither.unsafeCoerce();
-    const _orderedPropertyBEither: purify.Either<Error, string> = $resource
-      .values($properties.orderedPropertyB["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toString());
+    const _orderedPropertyBEither: purify.Either<Error, string> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.orderedPropertyB["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_orderedPropertyBEither.isLeft()) {
       return _orderedPropertyBEither;
     }
 
     const orderedPropertyB = _orderedPropertyBEither.unsafeCoerce();
-    const _orderedPropertyAEither: purify.Either<Error, string> = $resource
-      .values($properties.orderedPropertyA["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toString());
+    const _orderedPropertyAEither: purify.Either<Error, string> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.orderedPropertyA["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_orderedPropertyAEither.isLeft()) {
       return _orderedPropertyAEither;
     }
@@ -8694,10 +9056,17 @@ export namespace NonClass {
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode; nonClassProperty: string }
   > {
     const $identifier: NonClass.$Identifier = $resource.identifier;
-    const _nonClassPropertyEither: purify.Either<Error, string> = $resource
-      .values($properties.nonClassProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toString());
+    const _nonClassPropertyEither: purify.Either<Error, string> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.nonClassProperty["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_nonClassPropertyEither.isLeft()) {
       return _nonClassPropertyEither;
     }
@@ -9282,44 +9651,75 @@ export namespace MutablePropertiesClass {
     const _mutableListPropertyEither: purify.Either<
       Error,
       purify.Maybe<string[]>
-    > = $resource
-      .values($properties.mutableListProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toList())
-      .chain((values) =>
-        purify.Either.sequence(
-          values.map((value) =>
-            value
-              .toValues()
-              .head()
-              .chain((value) => value.toString()),
-          ),
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.mutableListProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toList()))
+      .chain((valueLists) =>
+        valueLists.chainMap((valueList) =>
+          purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            rdfjsResource.Resource.Values.fromArray({
+              objects: valueList,
+              predicate:
+                MutablePropertiesClass.$properties.mutableListProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+          ).chain((values) => values.chainMap((value) => value.toString())),
         ),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .map((valueLists) =>
+        valueLists.map((valueList) => valueList.toArray().concat()),
+      )
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string[]>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                MutablePropertiesClass.$properties.mutableListProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_mutableListPropertyEither.isLeft()) {
       return _mutableListPropertyEither;
     }
 
     const mutableListProperty = _mutableListPropertyEither.unsafeCoerce();
     const _mutableSetPropertyEither: purify.Either<Error, string[]> =
-      purify.Either.sequence(
-        $resource
-          .values($properties.mutableSetProperty["identifier"], {
-            unique: true,
-          })
-          .map((item) =>
-            item
-              .toValues()
-              .head()
-              .chain((value) => value.toString()),
-          ),
-      );
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.mutableSetProperty["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .map((values) => values.toArray().concat())
+        .map((valuesArray) =>
+          rdfjsResource.Resource.Values.fromValue({
+            object: valuesArray,
+            predicate:
+              MutablePropertiesClass.$properties.mutableSetProperty[
+                "identifier"
+              ],
+            subject: $resource,
+          }),
+        )
+        .chain((values) => values.head());
     if (_mutableSetPropertyEither.isLeft()) {
       return _mutableSetPropertyEither;
     }
@@ -9328,16 +9728,28 @@ export namespace MutablePropertiesClass {
     const _mutableStringPropertyEither: purify.Either<
       Error,
       purify.Maybe<string>
-    > = $resource
-      .values($properties.mutableStringProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toString())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.mutableStringProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                MutablePropertiesClass.$properties.mutableStringProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_mutableStringPropertyEither.isLeft()) {
       return _mutableStringPropertyEither;
     }
@@ -10099,18 +10511,32 @@ export namespace ListPropertiesClass {
     const _objectListPropertyEither: purify.Either<
       Error,
       purify.Maybe<readonly NonClass[]>
-    > = $resource
-      .values($properties.objectListProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toList())
-      .chain((values) =>
-        purify.Either.sequence(
-          values.map((value) =>
-            value
-              .toValues()
-              .head()
-              .chain((value) => value.toResource())
-              .chain((resource) =>
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.objectListProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toList()))
+      .chain((valueLists) =>
+        valueLists.chainMap((valueList) =>
+          purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            rdfjsResource.Resource.Values.fromArray({
+              objects: valueList,
+              predicate:
+                ListPropertiesClass.$properties.objectListProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+          ).chain((values) =>
+            values.chainMap((value) =>
+              value.toResource().chain((resource) =>
                 NonClass.$fromRdf(resource, {
                   ...$context,
                   ignoreRdfType: true,
@@ -10118,15 +10544,26 @@ export namespace ListPropertiesClass {
                   objectSet: $objectSet,
                 }),
               ),
+            ),
           ),
         ),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .map((valueLists) => valueLists.map((valueList) => valueList.toArray()))
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<readonly NonClass[]>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                ListPropertiesClass.$properties.objectListProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_objectListPropertyEither.isLeft()) {
       return _objectListPropertyEither;
     }
@@ -10135,26 +10572,48 @@ export namespace ListPropertiesClass {
     const _stringListPropertyEither: purify.Either<
       Error,
       purify.Maybe<readonly string[]>
-    > = $resource
-      .values($properties.stringListProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toList())
-      .chain((values) =>
-        purify.Either.sequence(
-          values.map((value) =>
-            value
-              .toValues()
-              .head()
-              .chain((value) => value.toString()),
-          ),
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.stringListProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toList()))
+      .chain((valueLists) =>
+        valueLists.chainMap((valueList) =>
+          purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            rdfjsResource.Resource.Values.fromArray({
+              objects: valueList,
+              predicate:
+                ListPropertiesClass.$properties.stringListProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+          ).chain((values) => values.chainMap((value) => value.toString())),
         ),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .map((valueLists) => valueLists.map((valueList) => valueList.toArray()))
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<readonly string[]>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                ListPropertiesClass.$properties.stringListProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_stringListPropertyEither.isLeft()) {
       return _stringListPropertyEither;
     }
@@ -10837,12 +11296,17 @@ export namespace StubInterface {
     const $identifier: StubInterface.$Identifier = $resource.identifier;
     const $type = "StubInterface" as const;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.lazilyResolvedStringProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.lazilyResolvedStringProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
     }
@@ -12582,39 +13046,55 @@ export namespace LazyPropertiesInterface {
         LazilyResolvedBlankNodeOrIriInterface,
         $DefaultStub
       >
-    > = $resource
-      .values(
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
         $properties.optionalLazyToResolvedInterfaceProperty["identifier"],
         { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            $DefaultStub.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        $DefaultStub.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<$DefaultStub>>(
+              {
+                object: purify.Maybe.empty(),
+                predicate:
+                  LazyPropertiesInterface.$properties
+                    .optionalLazyToResolvedInterfaceProperty["identifier"],
+                subject: $resource,
+              },
+            ),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+              LazilyResolvedBlankNodeOrIriInterface,
+              $DefaultStub
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriInterface(identifier),
+            }),
+        ),
       )
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-            LazilyResolvedBlankNodeOrIriInterface,
-            $DefaultStub
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriInterface(identifier),
-          }),
-      );
+      .chain((values) => values.head());
     if (_optionalLazyToResolvedInterfacePropertyEither.isLeft()) {
       return _optionalLazyToResolvedInterfacePropertyEither;
     }
@@ -12628,39 +13108,55 @@ export namespace LazyPropertiesInterface {
         LazilyResolvedInterfaceUnion,
         $DefaultStub
       >
-    > = $resource
-      .values(
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
         $properties.optionalLazyToResolvedInterfaceUnionProperty["identifier"],
         { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            $DefaultStub.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        $DefaultStub.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<$DefaultStub>>(
+              {
+                object: purify.Maybe.empty(),
+                predicate:
+                  LazyPropertiesInterface.$properties
+                    .optionalLazyToResolvedInterfaceUnionProperty["identifier"],
+                subject: $resource,
+              },
+            ),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedInterfaceUnion.$Identifier,
+              LazilyResolvedInterfaceUnion,
+              $DefaultStub
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedInterfaceUnion(identifier),
+            }),
+        ),
       )
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedInterfaceUnion.$Identifier,
-            LazilyResolvedInterfaceUnion,
-            $DefaultStub
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedInterfaceUnion(identifier),
-          }),
-      );
+      .chain((values) => values.head());
     if (_optionalLazyToResolvedInterfaceUnionPropertyEither.isLeft()) {
       return _optionalLazyToResolvedInterfaceUnionPropertyEither;
     }
@@ -12674,39 +13170,55 @@ export namespace LazyPropertiesInterface {
         LazilyResolvedIriInterface,
         $NamedDefaultStub
       >
-    > = $resource
-      .values(
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
         $properties.optionalLazyToResolvedIriInterfaceProperty["identifier"],
         { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            $NamedDefaultStub.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        $NamedDefaultStub.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<$NamedDefaultStub>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                LazyPropertiesInterface.$properties
+                  .optionalLazyToResolvedIriInterfaceProperty["identifier"],
+              subject: $resource,
+            }),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedIriInterface.$Identifier,
+              LazilyResolvedIriInterface,
+              $NamedDefaultStub
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedIriInterface(identifier),
+            }),
+        ),
       )
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedIriInterface.$Identifier,
-            LazilyResolvedIriInterface,
-            $NamedDefaultStub
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedIriInterface(identifier),
-          }),
-      );
+      .chain((values) => values.head());
     if (_optionalLazyToResolvedIriInterfacePropertyEither.isLeft()) {
       return _optionalLazyToResolvedIriInterfacePropertyEither;
     }
@@ -12720,41 +13232,59 @@ export namespace LazyPropertiesInterface {
         LazilyResolvedBlankNodeOrIriInterface,
         StubInterface
       >
-    > = $resource
-      .values(
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
         $properties.optionalStubInterfaceToResolvedInterfaceProperty[
           "identifier"
         ],
         { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            StubInterface.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        StubInterface.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<StubInterface>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                LazyPropertiesInterface.$properties
+                  .optionalStubInterfaceToResolvedInterfaceProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+              LazilyResolvedBlankNodeOrIriInterface,
+              StubInterface
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriInterface(identifier),
+            }),
+        ),
       )
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-            LazilyResolvedBlankNodeOrIriInterface,
-            StubInterface
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriInterface(identifier),
-          }),
-      );
+      .chain((values) => values.head());
     if (_optionalStubInterfaceToResolvedInterfacePropertyEither.isLeft()) {
       return _optionalStubInterfaceToResolvedInterfacePropertyEither;
     }
@@ -12768,41 +13298,59 @@ export namespace LazyPropertiesInterface {
         LazilyResolvedInterfaceUnion,
         StubInterface
       >
-    > = $resource
-      .values(
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
         $properties.optionalStubInterfaceToResolvedInterfaceUnionProperty[
           "identifier"
         ],
         { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            StubInterface.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        StubInterface.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<StubInterface>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                LazyPropertiesInterface.$properties
+                  .optionalStubInterfaceToResolvedInterfaceUnionProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedInterfaceUnion.$Identifier,
+              LazilyResolvedInterfaceUnion,
+              StubInterface
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedInterfaceUnion(identifier),
+            }),
+        ),
       )
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedInterfaceUnion.$Identifier,
-            LazilyResolvedInterfaceUnion,
-            StubInterface
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedInterfaceUnion(identifier),
-          }),
-      );
+      .chain((values) => values.head());
     if (_optionalStubInterfaceToResolvedInterfaceUnionPropertyEither.isLeft()) {
       return _optionalStubInterfaceToResolvedInterfaceUnionPropertyEither;
     }
@@ -12816,41 +13364,59 @@ export namespace LazyPropertiesInterface {
         LazilyResolvedInterfaceUnion,
         StubInterfaceUnion
       >
-    > = $resource
-      .values(
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
         $properties.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty[
           "identifier"
         ],
         { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            StubInterfaceUnion.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: false,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        StubInterfaceUnion.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: false,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<StubInterfaceUnion>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                LazyPropertiesInterface.$properties
+                  .optionalStubInterfaceUnionToResolvedInterfaceUnionProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedInterfaceUnion.$Identifier,
+              LazilyResolvedInterfaceUnion,
+              StubInterfaceUnion
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedInterfaceUnion(identifier),
+            }),
+        ),
       )
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedInterfaceUnion.$Identifier,
-            LazilyResolvedInterfaceUnion,
-            StubInterfaceUnion
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedInterfaceUnion(identifier),
-          }),
-      );
+      .chain((values) => values.head());
     if (
       _optionalStubInterfaceUnionToResolvedInterfaceUnionPropertyEither.isLeft()
     ) {
@@ -12866,33 +13432,42 @@ export namespace LazyPropertiesInterface {
         LazilyResolvedBlankNodeOrIriInterface,
         $DefaultStub
       >
-    > = $resource
-      .values(
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
         $properties.requiredLazyToResolvedInterfaceProperty["identifier"],
         { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            $DefaultStub.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        $DefaultStub.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyRequiredObject<
+              LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+              LazilyResolvedBlankNodeOrIriInterface,
+              $DefaultStub
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriInterface(identifier),
+            }),
+        ),
       )
-      .map(
-        (stub) =>
-          new $LazyRequiredObject<
-            LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-            LazilyResolvedBlankNodeOrIriInterface,
-            $DefaultStub
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriInterface(identifier),
-          }),
-      );
+      .chain((values) => values.head());
     if (_requiredLazyToResolvedInterfacePropertyEither.isLeft()) {
       return _requiredLazyToResolvedInterfacePropertyEither;
     }
@@ -12906,35 +13481,44 @@ export namespace LazyPropertiesInterface {
         LazilyResolvedBlankNodeOrIriInterface,
         StubInterface
       >
-    > = $resource
-      .values(
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
         $properties.requiredStubInterfaceToResolvedInterfaceProperty[
           "identifier"
         ],
         { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            StubInterface.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        StubInterface.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyRequiredObject<
+              LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+              LazilyResolvedBlankNodeOrIriInterface,
+              StubInterface
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriInterface(identifier),
+            }),
+        ),
       )
-      .map(
-        (stub) =>
-          new $LazyRequiredObject<
-            LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-            LazilyResolvedBlankNodeOrIriInterface,
-            StubInterface
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriInterface(identifier),
-          }),
-      );
+      .chain((values) => values.head());
     if (_requiredStubInterfaceToResolvedInterfacePropertyEither.isLeft()) {
       return _requiredStubInterfaceToResolvedInterfacePropertyEither;
     }
@@ -12948,39 +13532,54 @@ export namespace LazyPropertiesInterface {
         LazilyResolvedBlankNodeOrIriInterface,
         $DefaultStub
       >
-    > = purify.Either.sequence(
-      $resource
-        .values($properties.setLazyToResolvedInterfaceProperty["identifier"], {
-          unique: true,
-        })
-        .map((item) =>
-          item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((resource) =>
-              $DefaultStub.$fromRdf(resource, {
-                ...$context,
-                ignoreRdfType: true,
-                languageIn: $languageIn,
-                objectSet: $objectSet,
-              }),
-            ),
-        ),
-    ).map(
-      (stubs) =>
-        new $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-          LazilyResolvedBlankNodeOrIriInterface,
-          $DefaultStub
-        >({
-          stubs,
-          resolver: (identifiers) =>
-            $objectSet.lazilyResolvedBlankNodeOrIriInterfaces({
-              where: { identifiers, type: "identifiers" },
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.setLazyToResolvedInterfaceProperty["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            $DefaultStub.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
             }),
+          ),
+        ),
+      )
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            LazyPropertiesInterface.$properties
+              .setLazyToResolvedInterfaceProperty["identifier"],
+          subject: $resource,
         }),
-    );
+      )
+      .map((values) =>
+        values.map(
+          (stubs) =>
+            new $LazyObjectSet<
+              LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+              LazilyResolvedBlankNodeOrIriInterface,
+              $DefaultStub
+            >({
+              stubs,
+              resolver: (identifiers) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriInterfaces({
+                  where: { identifiers, type: "identifiers" },
+                }),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_setLazyToResolvedInterfacePropertyEither.isLeft()) {
       return _setLazyToResolvedInterfacePropertyEither;
     }
@@ -12994,40 +13593,54 @@ export namespace LazyPropertiesInterface {
         LazilyResolvedBlankNodeOrIriInterface,
         StubInterface
       >
-    > = purify.Either.sequence(
-      $resource
-        .values(
-          $properties.setStubInterfaceToResolvedInterfaceProperty["identifier"],
-          { unique: true },
-        )
-        .map((item) =>
-          item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((resource) =>
-              StubInterface.$fromRdf(resource, {
-                ...$context,
-                ignoreRdfType: true,
-                languageIn: $languageIn,
-                objectSet: $objectSet,
-              }),
-            ),
-        ),
-    ).map(
-      (stubs) =>
-        new $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-          LazilyResolvedBlankNodeOrIriInterface,
-          StubInterface
-        >({
-          stubs,
-          resolver: (identifiers) =>
-            $objectSet.lazilyResolvedBlankNodeOrIriInterfaces({
-              where: { identifiers, type: "identifiers" },
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.setStubInterfaceToResolvedInterfaceProperty["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            StubInterface.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
             }),
+          ),
+        ),
+      )
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            LazyPropertiesInterface.$properties
+              .setStubInterfaceToResolvedInterfaceProperty["identifier"],
+          subject: $resource,
         }),
-    );
+      )
+      .map((values) =>
+        values.map(
+          (stubs) =>
+            new $LazyObjectSet<
+              LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+              LazilyResolvedBlankNodeOrIriInterface,
+              StubInterface
+            >({
+              stubs,
+              resolver: (identifiers) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriInterfaces({
+                  where: { identifiers, type: "identifiers" },
+                }),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_setStubInterfaceToResolvedInterfacePropertyEither.isLeft()) {
       return _setStubInterfaceToResolvedInterfacePropertyEither;
     }
@@ -14028,12 +14641,17 @@ export namespace StubClass {
   > {
     const $identifier: StubClass.$Identifier = $resource.identifier;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.lazilyResolvedStringProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.lazilyResolvedStringProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
     }
@@ -15701,38 +16319,55 @@ export namespace LazyPropertiesClass {
         LazilyResolvedBlankNodeOrIriClass,
         $DefaultStub
       >
-    > = $resource
-      .values($properties.optionalLazyToResolvedClassProperty["identifier"], {
-        unique: true,
-      })
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        $DefaultStub.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.optionalLazyToResolvedClassProperty["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            $DefaultStub.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<$DefaultStub>>(
+              {
+                object: purify.Maybe.empty(),
+                predicate:
+                  LazyPropertiesClass.$properties
+                    .optionalLazyToResolvedClassProperty["identifier"],
+                subject: $resource,
+              },
+            ),
       )
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedBlankNodeOrIriClass.$Identifier,
-            LazilyResolvedBlankNodeOrIriClass,
-            $DefaultStub
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
-          }),
-      );
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedBlankNodeOrIriClass.$Identifier,
+              LazilyResolvedBlankNodeOrIriClass,
+              $DefaultStub
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_optionalLazyToResolvedClassPropertyEither.isLeft()) {
       return _optionalLazyToResolvedClassPropertyEither;
     }
@@ -15746,39 +16381,55 @@ export namespace LazyPropertiesClass {
         LazilyResolvedClassUnion,
         $DefaultStub
       >
-    > = $resource
-      .values(
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
         $properties.optionalLazyToResolvedClassUnionProperty["identifier"],
         { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            $DefaultStub.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        $DefaultStub.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<$DefaultStub>>(
+              {
+                object: purify.Maybe.empty(),
+                predicate:
+                  LazyPropertiesClass.$properties
+                    .optionalLazyToResolvedClassUnionProperty["identifier"],
+                subject: $resource,
+              },
+            ),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedClassUnion.$Identifier,
+              LazilyResolvedClassUnion,
+              $DefaultStub
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedClassUnion(identifier),
+            }),
+        ),
       )
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedClassUnion.$Identifier,
-            LazilyResolvedClassUnion,
-            $DefaultStub
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedClassUnion(identifier),
-          }),
-      );
+      .chain((values) => values.head());
     if (_optionalLazyToResolvedClassUnionPropertyEither.isLeft()) {
       return _optionalLazyToResolvedClassUnionPropertyEither;
     }
@@ -15792,39 +16443,55 @@ export namespace LazyPropertiesClass {
         LazilyResolvedIriClass,
         $NamedDefaultStub
       >
-    > = $resource
-      .values(
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
         $properties.optionalLazyToResolvedIriClassProperty["identifier"],
         { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            $NamedDefaultStub.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        $NamedDefaultStub.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<$NamedDefaultStub>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                LazyPropertiesClass.$properties
+                  .optionalLazyToResolvedIriClassProperty["identifier"],
+              subject: $resource,
+            }),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedIriClass.$Identifier,
+              LazilyResolvedIriClass,
+              $NamedDefaultStub
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedIriClass(identifier),
+            }),
+        ),
       )
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedIriClass.$Identifier,
-            LazilyResolvedIriClass,
-            $NamedDefaultStub
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedIriClass(identifier),
-          }),
-      );
+      .chain((values) => values.head());
     if (_optionalLazyToResolvedIriClassPropertyEither.isLeft()) {
       return _optionalLazyToResolvedIriClassPropertyEither;
     }
@@ -15838,39 +16505,53 @@ export namespace LazyPropertiesClass {
         LazilyResolvedBlankNodeOrIriClass,
         StubClass
       >
-    > = $resource
-      .values(
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
         $properties.optionalStubClassToResolvedClassProperty["identifier"],
         { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            StubClass.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        StubClass.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<StubClass>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                LazyPropertiesClass.$properties
+                  .optionalStubClassToResolvedClassProperty["identifier"],
+              subject: $resource,
+            }),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedBlankNodeOrIriClass.$Identifier,
+              LazilyResolvedBlankNodeOrIriClass,
+              StubClass
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
+            }),
+        ),
       )
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedBlankNodeOrIriClass.$Identifier,
-            LazilyResolvedBlankNodeOrIriClass,
-            StubClass
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
-          }),
-      );
+      .chain((values) => values.head());
     if (_optionalStubClassToResolvedClassPropertyEither.isLeft()) {
       return _optionalStubClassToResolvedClassPropertyEither;
     }
@@ -15884,39 +16565,53 @@ export namespace LazyPropertiesClass {
         LazilyResolvedClassUnion,
         StubClass
       >
-    > = $resource
-      .values(
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
         $properties.optionalStubClassToResolvedClassUnionProperty["identifier"],
         { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            StubClass.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        StubClass.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<StubClass>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                LazyPropertiesClass.$properties
+                  .optionalStubClassToResolvedClassUnionProperty["identifier"],
+              subject: $resource,
+            }),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedClassUnion.$Identifier,
+              LazilyResolvedClassUnion,
+              StubClass
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedClassUnion(identifier),
+            }),
+        ),
       )
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedClassUnion.$Identifier,
-            LazilyResolvedClassUnion,
-            StubClass
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedClassUnion(identifier),
-          }),
-      );
+      .chain((values) => values.head());
     if (_optionalStubClassToResolvedClassUnionPropertyEither.isLeft()) {
       return _optionalStubClassToResolvedClassUnionPropertyEither;
     }
@@ -15930,41 +16625,59 @@ export namespace LazyPropertiesClass {
         LazilyResolvedClassUnion,
         StubClassUnion
       >
-    > = $resource
-      .values(
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
         $properties.optionalStubClassUnionToResolvedClassUnionProperty[
           "identifier"
         ],
         { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            StubClassUnion.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: false,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        StubClassUnion.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: false,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<StubClassUnion>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                LazyPropertiesClass.$properties
+                  .optionalStubClassUnionToResolvedClassUnionProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyOptionalObject<
+              LazilyResolvedClassUnion.$Identifier,
+              LazilyResolvedClassUnion,
+              StubClassUnion
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedClassUnion(identifier),
+            }),
+        ),
       )
-      .map(
-        (stub) =>
-          new $LazyOptionalObject<
-            LazilyResolvedClassUnion.$Identifier,
-            LazilyResolvedClassUnion,
-            StubClassUnion
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedClassUnion(identifier),
-          }),
-      );
+      .chain((values) => values.head());
     if (_optionalStubClassUnionToResolvedClassUnionPropertyEither.isLeft()) {
       return _optionalStubClassUnionToResolvedClassUnionPropertyEither;
     }
@@ -15978,32 +16691,42 @@ export namespace LazyPropertiesClass {
         LazilyResolvedBlankNodeOrIriClass,
         $DefaultStub
       >
-    > = $resource
-      .values($properties.requiredLazyToResolvedClassProperty["identifier"], {
-        unique: true,
-      })
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        $DefaultStub.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.requiredLazyToResolvedClassProperty["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            $DefaultStub.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .map(
-        (stub) =>
-          new $LazyRequiredObject<
-            LazilyResolvedBlankNodeOrIriClass.$Identifier,
-            LazilyResolvedBlankNodeOrIriClass,
-            $DefaultStub
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
-          }),
-      );
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyRequiredObject<
+              LazilyResolvedBlankNodeOrIriClass.$Identifier,
+              LazilyResolvedBlankNodeOrIriClass,
+              $DefaultStub
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_requiredLazyToResolvedClassPropertyEither.isLeft()) {
       return _requiredLazyToResolvedClassPropertyEither;
     }
@@ -16017,33 +16740,42 @@ export namespace LazyPropertiesClass {
         LazilyResolvedBlankNodeOrIriClass,
         StubClass
       >
-    > = $resource
-      .values(
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
         $properties.requiredStubClassToResolvedClassProperty["identifier"],
         { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            StubClass.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        StubClass.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+      .map((values) =>
+        values.map(
+          (stub) =>
+            new $LazyRequiredObject<
+              LazilyResolvedBlankNodeOrIriClass.$Identifier,
+              LazilyResolvedBlankNodeOrIriClass,
+              StubClass
+            >({
+              stub,
+              resolver: (identifier) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
+            }),
+        ),
       )
-      .map(
-        (stub) =>
-          new $LazyRequiredObject<
-            LazilyResolvedBlankNodeOrIriClass.$Identifier,
-            LazilyResolvedBlankNodeOrIriClass,
-            StubClass
-          >({
-            stub,
-            resolver: (identifier) =>
-              $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
-          }),
-      );
+      .chain((values) => values.head());
     if (_requiredStubClassToResolvedClassPropertyEither.isLeft()) {
       return _requiredStubClassToResolvedClassPropertyEither;
     }
@@ -16057,39 +16789,55 @@ export namespace LazyPropertiesClass {
         LazilyResolvedBlankNodeOrIriClass,
         $DefaultStub
       >
-    > = purify.Either.sequence(
-      $resource
-        .values($properties.setLazyToResolvedClassProperty["identifier"], {
-          unique: true,
-        })
-        .map((item) =>
-          item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((resource) =>
-              $DefaultStub.$fromRdf(resource, {
-                ...$context,
-                ignoreRdfType: true,
-                languageIn: $languageIn,
-                objectSet: $objectSet,
-              }),
-            ),
-        ),
-    ).map(
-      (stubs) =>
-        new $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriClass.$Identifier,
-          LazilyResolvedBlankNodeOrIriClass,
-          $DefaultStub
-        >({
-          stubs,
-          resolver: (identifiers) =>
-            $objectSet.lazilyResolvedBlankNodeOrIriClasses({
-              where: { identifiers, type: "identifiers" },
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.setLazyToResolvedClassProperty["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            $DefaultStub.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
             }),
+          ),
+        ),
+      )
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            LazyPropertiesClass.$properties.setLazyToResolvedClassProperty[
+              "identifier"
+            ],
+          subject: $resource,
         }),
-    );
+      )
+      .map((values) =>
+        values.map(
+          (stubs) =>
+            new $LazyObjectSet<
+              LazilyResolvedBlankNodeOrIriClass.$Identifier,
+              LazilyResolvedBlankNodeOrIriClass,
+              $DefaultStub
+            >({
+              stubs,
+              resolver: (identifiers) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriClasses({
+                  where: { identifiers, type: "identifiers" },
+                }),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_setLazyToResolvedClassPropertyEither.isLeft()) {
       return _setLazyToResolvedClassPropertyEither;
     }
@@ -16103,39 +16851,55 @@ export namespace LazyPropertiesClass {
         LazilyResolvedBlankNodeOrIriClass,
         StubClass
       >
-    > = purify.Either.sequence(
-      $resource
-        .values($properties.setStubClassToResolvedClassProperty["identifier"], {
-          unique: true,
-        })
-        .map((item) =>
-          item
-            .toValues()
-            .head()
-            .chain((value) => value.toResource())
-            .chain((resource) =>
-              StubClass.$fromRdf(resource, {
-                ...$context,
-                ignoreRdfType: true,
-                languageIn: $languageIn,
-                objectSet: $objectSet,
-              }),
-            ),
-        ),
-    ).map(
-      (stubs) =>
-        new $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriClass.$Identifier,
-          LazilyResolvedBlankNodeOrIriClass,
-          StubClass
-        >({
-          stubs,
-          resolver: (identifiers) =>
-            $objectSet.lazilyResolvedBlankNodeOrIriClasses({
-              where: { identifiers, type: "identifiers" },
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.setStubClassToResolvedClassProperty["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            StubClass.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
             }),
+          ),
+        ),
+      )
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            LazyPropertiesClass.$properties.setStubClassToResolvedClassProperty[
+              "identifier"
+            ],
+          subject: $resource,
         }),
-    );
+      )
+      .map((values) =>
+        values.map(
+          (stubs) =>
+            new $LazyObjectSet<
+              LazilyResolvedBlankNodeOrIriClass.$Identifier,
+              LazilyResolvedBlankNodeOrIriClass,
+              StubClass
+            >({
+              stubs,
+              resolver: (identifiers) =>
+                $objectSet.lazilyResolvedBlankNodeOrIriClasses({
+                  where: { identifiers, type: "identifiers" },
+                }),
+            }),
+        ),
+      )
+      .chain((values) => values.head());
     if (_setStubClassToResolvedClassPropertyEither.isLeft()) {
       return _setStubClassToResolvedClassPropertyEither;
     }
@@ -17016,12 +17780,17 @@ export namespace LazilyResolvedIriInterface {
       $resource.identifier;
     const $type = "LazilyResolvedIriInterface" as const;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.lazilyResolvedStringProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.lazilyResolvedStringProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
     }
@@ -17459,12 +18228,17 @@ export namespace LazilyResolvedIriClass {
     const $identifier: LazilyResolvedIriClass.$Identifier =
       $resource.identifier;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.lazilyResolvedStringProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.lazilyResolvedStringProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
     }
@@ -17878,12 +18652,17 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       $resource.identifier;
     const $type = "LazilyResolvedInterfaceUnionMember2" as const;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.lazilyResolvedStringProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.lazilyResolvedStringProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
     }
@@ -18388,12 +19167,17 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       $resource.identifier;
     const $type = "LazilyResolvedInterfaceUnionMember1" as const;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.lazilyResolvedStringProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.lazilyResolvedStringProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
     }
@@ -18914,12 +19698,17 @@ export namespace LazilyResolvedClassUnionMember2 {
     const $identifier: LazilyResolvedClassUnionMember2.$Identifier =
       $resource.identifier;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.lazilyResolvedStringProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.lazilyResolvedStringProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
     }
@@ -19399,12 +20188,17 @@ export namespace LazilyResolvedClassUnionMember1 {
     const $identifier: LazilyResolvedClassUnionMember1.$Identifier =
       $resource.identifier;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.lazilyResolvedStringProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.lazilyResolvedStringProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
     }
@@ -19871,12 +20665,17 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
       $resource.identifier;
     const $type = "LazilyResolvedBlankNodeOrIriInterface" as const;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.lazilyResolvedStringProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.lazilyResolvedStringProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
     }
@@ -20399,12 +21198,17 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
     const $identifier: LazilyResolvedBlankNodeOrIriClass.$Identifier =
       $resource.identifier;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.lazilyResolvedStringProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.lazilyResolvedStringProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
     }
@@ -20593,136 +21397,108 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
 export class LanguageInPropertiesClass {
   private _$identifier?: LanguageInPropertiesClass.$Identifier;
   readonly $type = "LanguageInPropertiesClass";
-  readonly languageInPropertiesLanguageInProperty: purify.Maybe<rdfjs.Literal>;
+  readonly languageInPropertiesLanguageInProperty: rdfjs.Literal;
   /**
    * literal property for testing runtime languageIn
    */
-  readonly languageInPropertiesLiteralProperty: purify.Maybe<rdfjs.Literal>;
+  readonly languageInPropertiesLiteralProperty: rdfjs.Literal;
 
-  constructor(parameters?: {
+  constructor(parameters: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly languageInPropertiesLanguageInProperty?:
+    readonly languageInPropertiesLanguageInProperty:
       | rdfjs.Literal
       | Date
       | boolean
       | number
-      | purify.Maybe<rdfjs.Literal>
       | string;
-    readonly languageInPropertiesLiteralProperty?:
+    readonly languageInPropertiesLiteralProperty:
       | rdfjs.Literal
       | Date
       | boolean
       | number
-      | purify.Maybe<rdfjs.Literal>
       | string;
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this._$identifier = parameters.$identifier satisfies never;
     }
 
     if (
-      purify.Maybe.isMaybe(parameters?.languageInPropertiesLanguageInProperty)
+      typeof parameters.languageInPropertiesLanguageInProperty === "boolean"
+    ) {
+      this.languageInPropertiesLanguageInProperty = rdfLiteral.toRdf(
+        parameters.languageInPropertiesLanguageInProperty,
+        { dataFactory },
+      );
+    } else if (
+      typeof parameters.languageInPropertiesLanguageInProperty === "object" &&
+      parameters.languageInPropertiesLanguageInProperty instanceof Date
+    ) {
+      this.languageInPropertiesLanguageInProperty = rdfLiteral.toRdf(
+        parameters.languageInPropertiesLanguageInProperty,
+        { dataFactory },
+      );
+    } else if (
+      typeof parameters.languageInPropertiesLanguageInProperty === "number"
+    ) {
+      this.languageInPropertiesLanguageInProperty = rdfLiteral.toRdf(
+        parameters.languageInPropertiesLanguageInProperty,
+        { dataFactory },
+      );
+    } else if (
+      typeof parameters.languageInPropertiesLanguageInProperty === "string"
+    ) {
+      this.languageInPropertiesLanguageInProperty = dataFactory.literal(
+        parameters.languageInPropertiesLanguageInProperty,
+      );
+    } else if (
+      typeof parameters.languageInPropertiesLanguageInProperty === "object"
     ) {
       this.languageInPropertiesLanguageInProperty =
-        parameters?.languageInPropertiesLanguageInProperty;
-    } else if (
-      typeof parameters?.languageInPropertiesLanguageInProperty === "boolean"
-    ) {
-      this.languageInPropertiesLanguageInProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.languageInPropertiesLanguageInProperty, {
-          dataFactory,
-        }),
-      );
-    } else if (
-      typeof parameters?.languageInPropertiesLanguageInProperty === "object" &&
-      parameters?.languageInPropertiesLanguageInProperty instanceof Date
-    ) {
-      this.languageInPropertiesLanguageInProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.languageInPropertiesLanguageInProperty, {
-          dataFactory,
-        }),
-      );
-    } else if (
-      typeof parameters?.languageInPropertiesLanguageInProperty === "number"
-    ) {
-      this.languageInPropertiesLanguageInProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.languageInPropertiesLanguageInProperty, {
-          dataFactory,
-        }),
-      );
-    } else if (
-      typeof parameters?.languageInPropertiesLanguageInProperty === "string"
-    ) {
-      this.languageInPropertiesLanguageInProperty = purify.Maybe.of(
-        dataFactory.literal(parameters?.languageInPropertiesLanguageInProperty),
-      );
-    } else if (
-      typeof parameters?.languageInPropertiesLanguageInProperty === "object"
-    ) {
-      this.languageInPropertiesLanguageInProperty = purify.Maybe.of(
-        parameters?.languageInPropertiesLanguageInProperty,
-      );
-    } else if (
-      typeof parameters?.languageInPropertiesLanguageInProperty === "undefined"
-    ) {
-      this.languageInPropertiesLanguageInProperty = purify.Maybe.empty();
+        parameters.languageInPropertiesLanguageInProperty;
     } else {
       this.languageInPropertiesLanguageInProperty =
-        parameters?.languageInPropertiesLanguageInProperty satisfies never;
+        parameters.languageInPropertiesLanguageInProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters?.languageInPropertiesLiteralProperty)) {
+    if (typeof parameters.languageInPropertiesLiteralProperty === "boolean") {
+      this.languageInPropertiesLiteralProperty = rdfLiteral.toRdf(
+        parameters.languageInPropertiesLiteralProperty,
+        { dataFactory },
+      );
+    } else if (
+      typeof parameters.languageInPropertiesLiteralProperty === "object" &&
+      parameters.languageInPropertiesLiteralProperty instanceof Date
+    ) {
+      this.languageInPropertiesLiteralProperty = rdfLiteral.toRdf(
+        parameters.languageInPropertiesLiteralProperty,
+        { dataFactory },
+      );
+    } else if (
+      typeof parameters.languageInPropertiesLiteralProperty === "number"
+    ) {
+      this.languageInPropertiesLiteralProperty = rdfLiteral.toRdf(
+        parameters.languageInPropertiesLiteralProperty,
+        { dataFactory },
+      );
+    } else if (
+      typeof parameters.languageInPropertiesLiteralProperty === "string"
+    ) {
+      this.languageInPropertiesLiteralProperty = dataFactory.literal(
+        parameters.languageInPropertiesLiteralProperty,
+      );
+    } else if (
+      typeof parameters.languageInPropertiesLiteralProperty === "object"
+    ) {
       this.languageInPropertiesLiteralProperty =
-        parameters?.languageInPropertiesLiteralProperty;
-    } else if (
-      typeof parameters?.languageInPropertiesLiteralProperty === "boolean"
-    ) {
-      this.languageInPropertiesLiteralProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.languageInPropertiesLiteralProperty, {
-          dataFactory,
-        }),
-      );
-    } else if (
-      typeof parameters?.languageInPropertiesLiteralProperty === "object" &&
-      parameters?.languageInPropertiesLiteralProperty instanceof Date
-    ) {
-      this.languageInPropertiesLiteralProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.languageInPropertiesLiteralProperty, {
-          dataFactory,
-        }),
-      );
-    } else if (
-      typeof parameters?.languageInPropertiesLiteralProperty === "number"
-    ) {
-      this.languageInPropertiesLiteralProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.languageInPropertiesLiteralProperty, {
-          dataFactory,
-        }),
-      );
-    } else if (
-      typeof parameters?.languageInPropertiesLiteralProperty === "string"
-    ) {
-      this.languageInPropertiesLiteralProperty = purify.Maybe.of(
-        dataFactory.literal(parameters?.languageInPropertiesLiteralProperty),
-      );
-    } else if (
-      typeof parameters?.languageInPropertiesLiteralProperty === "object"
-    ) {
-      this.languageInPropertiesLiteralProperty = purify.Maybe.of(
-        parameters?.languageInPropertiesLiteralProperty,
-      );
-    } else if (
-      typeof parameters?.languageInPropertiesLiteralProperty === "undefined"
-    ) {
-      this.languageInPropertiesLiteralProperty = purify.Maybe.empty();
+        parameters.languageInPropertiesLiteralProperty;
     } else {
       this.languageInPropertiesLiteralProperty =
-        parameters?.languageInPropertiesLiteralProperty satisfies never;
+        parameters.languageInPropertiesLiteralProperty satisfies never;
     }
   }
 
@@ -20754,7 +21530,7 @@ export class LanguageInPropertiesClass {
         ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+        $booleanEquals(
           this.languageInPropertiesLanguageInProperty,
           other.languageInPropertiesLanguageInProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -20766,7 +21542,7 @@ export class LanguageInPropertiesClass {
         })),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+        $booleanEquals(
           this.languageInPropertiesLiteralProperty,
           other.languageInPropertiesLiteralProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -20795,18 +21571,14 @@ export class LanguageInPropertiesClass {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    this.languageInPropertiesLanguageInProperty.ifJust((value0) => {
-      _hasher.update(value0.datatype.value);
-      _hasher.update(value0.language);
-      _hasher.update(value0.termType);
-      _hasher.update(value0.value);
-    });
-    this.languageInPropertiesLiteralProperty.ifJust((value0) => {
-      _hasher.update(value0.datatype.value);
-      _hasher.update(value0.language);
-      _hasher.update(value0.termType);
-      _hasher.update(value0.value);
-    });
+    _hasher.update(this.languageInPropertiesLanguageInProperty.datatype.value);
+    _hasher.update(this.languageInPropertiesLanguageInProperty.language);
+    _hasher.update(this.languageInPropertiesLanguageInProperty.termType);
+    _hasher.update(this.languageInPropertiesLanguageInProperty.value);
+    _hasher.update(this.languageInPropertiesLiteralProperty.datatype.value);
+    _hasher.update(this.languageInPropertiesLiteralProperty.language);
+    _hasher.update(this.languageInPropertiesLiteralProperty.termType);
+    _hasher.update(this.languageInPropertiesLiteralProperty.value);
     return _hasher;
   }
 
@@ -20818,30 +21590,30 @@ export class LanguageInPropertiesClass {
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
         $type: this.$type,
-        languageInPropertiesLanguageInProperty:
-          this.languageInPropertiesLanguageInProperty
-            .map((item) => ({
-              "@language": item.language.length > 0 ? item.language : undefined,
-              "@type":
-                item.datatype.value !==
-                "http://www.w3.org/2001/XMLSchema#string"
-                  ? item.datatype.value
-                  : undefined,
-              "@value": item.value,
-            }))
-            .extract(),
-        languageInPropertiesLiteralProperty:
-          this.languageInPropertiesLiteralProperty
-            .map((item) => ({
-              "@language": item.language.length > 0 ? item.language : undefined,
-              "@type":
-                item.datatype.value !==
-                "http://www.w3.org/2001/XMLSchema#string"
-                  ? item.datatype.value
-                  : undefined,
-              "@value": item.value,
-            }))
-            .extract(),
+        languageInPropertiesLanguageInProperty: {
+          "@language":
+            this.languageInPropertiesLanguageInProperty.language.length > 0
+              ? this.languageInPropertiesLanguageInProperty.language
+              : undefined,
+          "@type":
+            this.languageInPropertiesLanguageInProperty.datatype.value !==
+            "http://www.w3.org/2001/XMLSchema#string"
+              ? this.languageInPropertiesLanguageInProperty.datatype.value
+              : undefined,
+          "@value": this.languageInPropertiesLanguageInProperty.value,
+        },
+        languageInPropertiesLiteralProperty: {
+          "@language":
+            this.languageInPropertiesLiteralProperty.language.length > 0
+              ? this.languageInPropertiesLiteralProperty.language
+              : undefined,
+          "@type":
+            this.languageInPropertiesLiteralProperty.datatype.value !==
+            "http://www.w3.org/2001/XMLSchema#string"
+              ? this.languageInPropertiesLiteralProperty.datatype.value
+              : undefined,
+          "@value": this.languageInPropertiesLiteralProperty.value,
+        },
       } satisfies LanguageInPropertiesClass.$Json),
     );
   }
@@ -20902,12 +21674,12 @@ export namespace LanguageInPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "LanguageInPropertiesClass";
-    readonly languageInPropertiesLanguageInProperty?: {
+    readonly languageInPropertiesLanguageInProperty: {
       readonly "@language"?: string;
       readonly "@type"?: string;
       readonly "@value": string;
     };
-    readonly languageInPropertiesLiteralProperty?: {
+    readonly languageInPropertiesLiteralProperty: {
       readonly "@language"?: string;
       readonly "@type"?: string;
       readonly "@value": string;
@@ -20918,8 +21690,8 @@ export namespace LanguageInPropertiesClass {
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      languageInPropertiesLanguageInProperty: purify.Maybe<rdfjs.Literal>;
-      languageInPropertiesLiteralProperty: purify.Maybe<rdfjs.Literal>;
+      languageInPropertiesLanguageInProperty: rdfjs.Literal;
+      languageInPropertiesLiteralProperty: rdfjs.Literal;
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -20931,29 +21703,31 @@ export namespace LanguageInPropertiesClass {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    const languageInPropertiesLanguageInProperty = purify.Maybe.fromNullable(
-      $jsonObject["languageInPropertiesLanguageInProperty"],
-    ).map((item) =>
-      dataFactory.literal(
-        item["@value"],
-        typeof item["@language"] !== "undefined"
-          ? item["@language"]
-          : typeof item["@type"] !== "undefined"
-            ? dataFactory.namedNode(item["@type"])
-            : undefined,
-      ),
+    const languageInPropertiesLanguageInProperty = dataFactory.literal(
+      $jsonObject["languageInPropertiesLanguageInProperty"]["@value"],
+      typeof $jsonObject["languageInPropertiesLanguageInProperty"][
+        "@language"
+      ] !== "undefined"
+        ? $jsonObject["languageInPropertiesLanguageInProperty"]["@language"]
+        : typeof $jsonObject["languageInPropertiesLanguageInProperty"][
+              "@type"
+            ] !== "undefined"
+          ? dataFactory.namedNode(
+              $jsonObject["languageInPropertiesLanguageInProperty"]["@type"],
+            )
+          : undefined,
     );
-    const languageInPropertiesLiteralProperty = purify.Maybe.fromNullable(
-      $jsonObject["languageInPropertiesLiteralProperty"],
-    ).map((item) =>
-      dataFactory.literal(
-        item["@value"],
-        typeof item["@language"] !== "undefined"
-          ? item["@language"]
-          : typeof item["@type"] !== "undefined"
-            ? dataFactory.namedNode(item["@type"])
-            : undefined,
-      ),
+    const languageInPropertiesLiteralProperty = dataFactory.literal(
+      $jsonObject["languageInPropertiesLiteralProperty"]["@value"],
+      typeof $jsonObject["languageInPropertiesLiteralProperty"]["@language"] !==
+        "undefined"
+        ? $jsonObject["languageInPropertiesLiteralProperty"]["@language"]
+        : typeof $jsonObject["languageInPropertiesLiteralProperty"]["@type"] !==
+            "undefined"
+          ? dataFactory.namedNode(
+              $jsonObject["languageInPropertiesLiteralProperty"]["@type"],
+            )
+          : undefined,
     );
     return purify.Either.of({
       $identifier,
@@ -21012,20 +21786,17 @@ export namespace LanguageInPropertiesClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("LanguageInPropertiesClass"),
-      languageInPropertiesLanguageInProperty: zod
-        .object({
-          "@language": zod.string().optional(),
-          "@type": zod.string().optional(),
-          "@value": zod.string(),
-        })
-        .optional(),
+      languageInPropertiesLanguageInProperty: zod.object({
+        "@language": zod.string().optional(),
+        "@type": zod.string().optional(),
+        "@value": zod.string(),
+      }),
       languageInPropertiesLiteralProperty: zod
         .object({
           "@language": zod.string().optional(),
           "@type": zod.string().optional(),
           "@value": zod.string(),
         })
-        .optional()
         .describe("literal property for testing runtime languageIn"),
     }) satisfies zod.ZodType<$Json>;
   }
@@ -21075,41 +21846,78 @@ export namespace LanguageInPropertiesClass {
     Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      languageInPropertiesLanguageInProperty: purify.Maybe<rdfjs.Literal>;
-      languageInPropertiesLiteralProperty: purify.Maybe<rdfjs.Literal>;
+      languageInPropertiesLanguageInProperty: rdfjs.Literal;
+      languageInPropertiesLiteralProperty: rdfjs.Literal;
     }
   > {
     const $identifier: LanguageInPropertiesClass.$Identifier =
       $resource.identifier;
     const _languageInPropertiesLanguageInPropertyEither: purify.Either<
       Error,
-      purify.Maybe<rdfjs.Literal>
-    > = $resource
-      .values(
+      rdfjs.Literal
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
         $properties.languageInPropertiesLanguageInProperty["identifier"],
         { unique: true },
-      )
-      .filter((_value) => {
-        const _languageInOrDefault = $languageIn ?? ["en", "fr"];
-        if (_languageInOrDefault.length === 0) {
-          return true;
-        }
-        const _valueLiteral = _value.toLiteral().toMaybe().extract();
-        if (typeof _valueLiteral === "undefined") {
-          return false;
-        }
-        return _languageInOrDefault.some(
-          (_languageIn) => _languageIn === _valueLiteral.language,
+      ),
+    )
+      .chain((values) => {
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
         );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        const nonUniqueLanguageIn = $languageIn ?? ["en", "fr"];
+        if (nonUniqueLanguageIn.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(literalValues);
+        }
+
+        let uniqueLanguageIn: string[];
+        if (nonUniqueLanguageIn.length === 1) {
+          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+        } else {
+          uniqueLanguageIn = [];
+          for (const languageIn of nonUniqueLanguageIn) {
+            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+              uniqueLanguageIn.push(languageIn);
+            }
+          }
+        }
+
+        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+        // Within a languageIn the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const languageIn of uniqueLanguageIn) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === languageIn,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === languageIn)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjs.Literal>
+        >(filteredLiteralValues!);
       })
-      .head()
-      .chain((value) => value.toLiteral())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .chain((values) => values.head());
     if (_languageInPropertiesLanguageInPropertyEither.isLeft()) {
       return _languageInPropertiesLanguageInPropertyEither;
     }
@@ -21118,32 +21926,70 @@ export namespace LanguageInPropertiesClass {
       _languageInPropertiesLanguageInPropertyEither.unsafeCoerce();
     const _languageInPropertiesLiteralPropertyEither: purify.Either<
       Error,
-      purify.Maybe<rdfjs.Literal>
-    > = $resource
-      .values($properties.languageInPropertiesLiteralProperty["identifier"], {
-        unique: true,
-      })
-      .filter((_value) => {
-        const _languageInOrDefault = $languageIn ?? [];
-        if (_languageInOrDefault.length === 0) {
-          return true;
-        }
-        const _valueLiteral = _value.toLiteral().toMaybe().extract();
-        if (typeof _valueLiteral === "undefined") {
-          return false;
-        }
-        return _languageInOrDefault.some(
-          (_languageIn) => _languageIn === _valueLiteral.language,
+      rdfjs.Literal
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.languageInPropertiesLiteralProperty["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) => {
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
         );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        const nonUniqueLanguageIn = $languageIn ?? [];
+        if (nonUniqueLanguageIn.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(literalValues);
+        }
+
+        let uniqueLanguageIn: string[];
+        if (nonUniqueLanguageIn.length === 1) {
+          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+        } else {
+          uniqueLanguageIn = [];
+          for (const languageIn of nonUniqueLanguageIn) {
+            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+              uniqueLanguageIn.push(languageIn);
+            }
+          }
+        }
+
+        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+        // Within a languageIn the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const languageIn of uniqueLanguageIn) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === languageIn,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === languageIn)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjs.Literal>
+        >(filteredLiteralValues!);
       })
-      .head()
-      .chain((value) => value.toLiteral())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .chain((values) => values.head());
     if (_languageInPropertiesLiteralPropertyEither.isLeft()) {
       return _languageInPropertiesLiteralPropertyEither;
     }
@@ -21267,105 +22113,103 @@ export namespace LanguageInPropertiesClass {
         : "languageInPropertiesClass");
     const propertyPatterns: readonly sparqljs.Pattern[] = [
       {
-        patterns: [
+        triples: [
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}LanguageInPropertiesLanguageInProperty`,
-                ),
-                predicate:
-                  LanguageInPropertiesClass.$properties
-                    .languageInPropertiesLanguageInProperty["identifier"],
-                subject,
-              },
-            ],
-            type: "bgp",
+            object: dataFactory.variable!(
+              `${variablePrefix}LanguageInPropertiesLanguageInProperty`,
+            ),
+            predicate:
+              LanguageInPropertiesClass.$properties
+                .languageInPropertiesLanguageInProperty["identifier"],
+            subject,
           },
-          ...[parameters?.languageIn ?? ["en", "fr"]]
-            .filter((languagesIn) => languagesIn.length > 0)
-            .map((languagesIn) =>
-              languagesIn.map((languageIn) => ({
-                type: "operation" as const,
-                operator: "=",
-                args: [
-                  {
-                    type: "operation" as const,
-                    operator: "lang",
-                    args: [
-                      dataFactory.variable!(
-                        `${variablePrefix}LanguageInPropertiesLanguageInProperty`,
-                      ),
-                    ],
-                  },
-                  dataFactory.literal(languageIn),
-                ],
-              })),
-            )
-            .map((langEqualsExpressions) => ({
-              type: "filter" as const,
-              expression:
-                langEqualsExpressions.length === 1
-                  ? langEqualsExpressions[0]
-                  : {
-                      type: "operation" as const,
-                      operator: "||",
-                      args: langEqualsExpressions,
-                    },
-            })),
         ],
-        type: "optional",
+        type: "bgp",
       },
+      ...[
+        parameters?.languageIn && parameters?.languageIn.length > 0
+          ? parameters?.languageIn
+          : ["en", "fr"],
+      ]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) =>
+          languagesIn.map((languageIn) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}LanguageInPropertiesLanguageInProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(languageIn),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression:
+            langEqualsExpressions.length === 1
+              ? langEqualsExpressions[0]
+              : {
+                  type: "operation" as const,
+                  operator: "||",
+                  args: langEqualsExpressions,
+                },
+        })),
       {
-        patterns: [
+        triples: [
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}LanguageInPropertiesLiteralProperty`,
-                ),
-                predicate:
-                  LanguageInPropertiesClass.$properties
-                    .languageInPropertiesLiteralProperty["identifier"],
-                subject,
-              },
-            ],
-            type: "bgp",
+            object: dataFactory.variable!(
+              `${variablePrefix}LanguageInPropertiesLiteralProperty`,
+            ),
+            predicate:
+              LanguageInPropertiesClass.$properties
+                .languageInPropertiesLiteralProperty["identifier"],
+            subject,
           },
-          ...[parameters?.languageIn ?? []]
-            .filter((languagesIn) => languagesIn.length > 0)
-            .map((languagesIn) =>
-              languagesIn.map((languageIn) => ({
-                type: "operation" as const,
-                operator: "=",
-                args: [
-                  {
-                    type: "operation" as const,
-                    operator: "lang",
-                    args: [
-                      dataFactory.variable!(
-                        `${variablePrefix}LanguageInPropertiesLiteralProperty`,
-                      ),
-                    ],
-                  },
-                  dataFactory.literal(languageIn),
-                ],
-              })),
-            )
-            .map((langEqualsExpressions) => ({
-              type: "filter" as const,
-              expression:
-                langEqualsExpressions.length === 1
-                  ? langEqualsExpressions[0]
-                  : {
-                      type: "operation" as const,
-                      operator: "||",
-                      args: langEqualsExpressions,
-                    },
-            })),
         ],
-        type: "optional",
+        type: "bgp",
       },
+      ...[
+        parameters?.languageIn && parameters?.languageIn.length > 0
+          ? parameters?.languageIn
+          : [],
+      ]
+        .filter((languagesIn) => languagesIn.length > 0)
+        .map((languagesIn) =>
+          languagesIn.map((languageIn) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}LanguageInPropertiesLiteralProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(languageIn),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression:
+            langEqualsExpressions.length === 1
+              ? langEqualsExpressions[0]
+              : {
+                  type: "operation" as const,
+                  operator: "||",
+                  args: langEqualsExpressions,
+                },
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -21928,12 +22772,17 @@ export namespace InterfaceUnionMember2b {
       $resource.identifier;
     const $type = "InterfaceUnionMember2b" as const;
     const _interfaceUnionMember2bPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.interfaceUnionMember2bProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.interfaceUnionMember2bProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_interfaceUnionMember2bPropertyEither.isLeft()) {
       return _interfaceUnionMember2bPropertyEither;
     }
@@ -22360,12 +23209,17 @@ export namespace InterfaceUnionMember2a {
       $resource.identifier;
     const $type = "InterfaceUnionMember2a" as const;
     const _interfaceUnionMember2aPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.interfaceUnionMember2aProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.interfaceUnionMember2aProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_interfaceUnionMember2aPropertyEither.isLeft()) {
       return _interfaceUnionMember2aPropertyEither;
     }
@@ -22782,12 +23636,17 @@ export namespace InterfaceUnionMember1 {
     const $identifier: InterfaceUnionMember1.$Identifier = $resource.identifier;
     const $type = "InterfaceUnionMember1" as const;
     const _interfaceUnionMember1PropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.interfaceUnionMember1Property["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.interfaceUnionMember1Property["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_interfaceUnionMember1PropertyEither.isLeft()) {
       return _interfaceUnionMember1PropertyEither;
     }
@@ -23193,10 +24052,17 @@ export namespace Interface {
   > {
     const $identifier: Interface.$Identifier = $resource.identifier;
     const $type = "Interface" as const;
-    const _interfacePropertyEither: purify.Either<Error, string> = $resource
-      .values($properties.interfaceProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toString());
+    const _interfacePropertyEither: purify.Either<Error, string> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.interfaceProperty["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_interfacePropertyEither.isLeft()) {
       return _interfacePropertyEither;
     }
@@ -23629,26 +24495,40 @@ export namespace IndirectRecursiveHelperClass {
     const _indirectRecursivePropertyEither: purify.Either<
       Error,
       purify.Maybe<IndirectRecursiveClass>
-    > = $resource
-      .values($properties.indirectRecursiveProperty["identifier"], {
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.indirectRecursiveProperty["identifier"], {
         unique: true,
-      })
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        IndirectRecursiveClass.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            IndirectRecursiveClass.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<IndirectRecursiveClass>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                IndirectRecursiveHelperClass.$properties
+                  .indirectRecursiveProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_indirectRecursivePropertyEither.isLeft()) {
       return _indirectRecursivePropertyEither;
     }
@@ -24107,26 +24987,41 @@ export namespace IndirectRecursiveClass {
     const _indirectRecursiveHelperPropertyEither: purify.Either<
       Error,
       purify.Maybe<IndirectRecursiveHelperClass>
-    > = $resource
-      .values($properties.indirectRecursiveHelperProperty["identifier"], {
-        unique: true,
-      })
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        IndirectRecursiveHelperClass.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.indirectRecursiveHelperProperty["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            IndirectRecursiveHelperClass.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<IndirectRecursiveHelperClass>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                IndirectRecursiveClass.$properties
+                  .indirectRecursiveHelperProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_indirectRecursiveHelperPropertyEither.isLeft()) {
       return _indirectRecursiveHelperPropertyEither;
     }
@@ -24730,32 +25625,44 @@ export namespace InPropertiesClass {
     const _inBooleansPropertyEither: purify.Either<
       Error,
       purify.Maybe<true>
-    > = $resource
-      .values($properties.inBooleansProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) =>
-        value.toBoolean().chain((value) =>
-          value === true
-            ? purify.Either.of<Error, true>(value)
-            : purify.Left<Error, true>(
-                new rdfjsResource.Resource.MistypedValueError({
-                  actualValue: rdfLiteral.toRdf(value),
-                  expectedValueType: "true",
-                  focusResource: $resource,
-                  predicate:
-                    InPropertiesClass.$properties.inBooleansProperty[
-                      "identifier"
-                    ],
-                }),
-              ),
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.inBooleansProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toBoolean().chain((value) =>
+            value === true
+              ? purify.Either.of<Error, true>(value)
+              : purify.Left<Error, true>(
+                  new rdfjsResource.Resource.MistypedValueError({
+                    actualValue: rdfLiteral.toRdf(value),
+                    expectedValueType: "true",
+                    focusResource: $resource,
+                    predicate:
+                      InPropertiesClass.$properties.inBooleansProperty[
+                        "identifier"
+                      ],
+                  }),
+                ),
+          ),
         ),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<true>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                InPropertiesClass.$properties.inBooleansProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_inBooleansPropertyEither.isLeft()) {
       return _inBooleansPropertyEither;
     }
@@ -24764,34 +25671,48 @@ export namespace InPropertiesClass {
     const _inDateTimesPropertyEither: purify.Either<
       Error,
       purify.Maybe<Date>
-    > = $resource
-      .values($properties.inDateTimesProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) =>
-        value.toDate().chain((value) => {
-          if (value.getTime() === 1523268000000) {
-            return purify.Either.of<Error, Date>(value);
-          }
-          return purify.Left<Error, Date>(
-            new rdfjsResource.Resource.MistypedValueError({
-              actualValue: rdfLiteral.toRdf(value, {
-                dataFactory,
-                datatype: $RdfVocabularies.xsd.dateTime,
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.inDateTimesProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toDate().chain((value) => {
+            if (value.getTime() === 1523268000000) {
+              return purify.Either.of<Error, Date>(value);
+            }
+            return purify.Left<Error, Date>(
+              new rdfjsResource.Resource.MistypedValueError({
+                actualValue: rdfLiteral.toRdf(value, {
+                  dataFactory,
+                  datatype: $RdfVocabularies.xsd.dateTime,
+                }),
+                expectedValueType: "Date",
+                focusResource: $resource,
+                predicate:
+                  InPropertiesClass.$properties.inDateTimesProperty[
+                    "identifier"
+                  ],
               }),
-              expectedValueType: "Date",
-              focusResource: $resource,
+            );
+          }),
+        ),
+      )
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<Date>>({
+              object: purify.Maybe.empty(),
               predicate:
                 InPropertiesClass.$properties.inDateTimesProperty["identifier"],
+              subject: $resource,
             }),
-          );
-        }),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .chain((values) => values.head());
     if (_inDateTimesPropertyEither.isLeft()) {
       return _inDateTimesPropertyEither;
     }
@@ -24805,54 +25726,79 @@ export namespace InPropertiesClass {
           | "http://example.com/InPropertiesIri2"
         >
       >
-    > = $resource
-      .values($properties.inIrisProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) =>
-        value.toIri().chain((iri) => {
-          switch (iri.value) {
-            case "http://example.com/InPropertiesIri1":
-              return purify.Either.of<
-                Error,
-                rdfjs.NamedNode<
-                  | "http://example.com/InPropertiesIri1"
-                  | "http://example.com/InPropertiesIri2"
-                >
-              >(iri as rdfjs.NamedNode<"http://example.com/InPropertiesIri1">);
-            case "http://example.com/InPropertiesIri2":
-              return purify.Either.of<
-                Error,
-                rdfjs.NamedNode<
-                  | "http://example.com/InPropertiesIri1"
-                  | "http://example.com/InPropertiesIri2"
-                >
-              >(iri as rdfjs.NamedNode<"http://example.com/InPropertiesIri2">);
-            default:
-              return purify.Left<
-                Error,
-                rdfjs.NamedNode<
-                  | "http://example.com/InPropertiesIri1"
-                  | "http://example.com/InPropertiesIri2"
-                >
-              >(
-                new rdfjsResource.Resource.MistypedValueError({
-                  actualValue: iri,
-                  expectedValueType:
-                    'rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">',
-                  focusResource: $resource,
-                  predicate:
-                    InPropertiesClass.$properties.inIrisProperty["identifier"],
-                }),
-              );
-          }
-        }),
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.inIrisProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toIri().chain((iri) => {
+            switch (iri.value) {
+              case "http://example.com/InPropertiesIri1":
+                return purify.Either.of<
+                  Error,
+                  rdfjs.NamedNode<
+                    | "http://example.com/InPropertiesIri1"
+                    | "http://example.com/InPropertiesIri2"
+                  >
+                >(
+                  iri as rdfjs.NamedNode<"http://example.com/InPropertiesIri1">,
+                );
+              case "http://example.com/InPropertiesIri2":
+                return purify.Either.of<
+                  Error,
+                  rdfjs.NamedNode<
+                    | "http://example.com/InPropertiesIri1"
+                    | "http://example.com/InPropertiesIri2"
+                  >
+                >(
+                  iri as rdfjs.NamedNode<"http://example.com/InPropertiesIri2">,
+                );
+              default:
+                return purify.Left<
+                  Error,
+                  rdfjs.NamedNode<
+                    | "http://example.com/InPropertiesIri1"
+                    | "http://example.com/InPropertiesIri2"
+                  >
+                >(
+                  new rdfjsResource.Resource.MistypedValueError({
+                    actualValue: iri,
+                    expectedValueType:
+                      'rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">',
+                    focusResource: $resource,
+                    predicate:
+                      InPropertiesClass.$properties.inIrisProperty[
+                        "identifier"
+                      ],
+                  }),
+                );
+            }
+          }),
+        ),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<
+                rdfjs.NamedNode<
+                  | "http://example.com/InPropertiesIri1"
+                  | "http://example.com/InPropertiesIri2"
+                >
+              >
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                InPropertiesClass.$properties.inIrisProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_inIrisPropertyEither.isLeft()) {
       return _inIrisPropertyEither;
     }
@@ -24861,36 +25807,48 @@ export namespace InPropertiesClass {
     const _inNumbersPropertyEither: purify.Either<
       Error,
       purify.Maybe<1 | 2>
-    > = $resource
-      .values($properties.inNumbersProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) =>
-        value.toNumber().chain((value) => {
-          switch (value) {
-            case 1:
-            case 2:
-              return purify.Either.of<Error, 1 | 2>(value);
-            default:
-              return purify.Left<Error, 1 | 2>(
-                new rdfjsResource.Resource.MistypedValueError({
-                  actualValue: rdfLiteral.toRdf(value),
-                  expectedValueType: "1 | 2",
-                  focusResource: $resource,
-                  predicate:
-                    InPropertiesClass.$properties.inNumbersProperty[
-                      "identifier"
-                    ],
-                }),
-              );
-          }
-        }),
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.inNumbersProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toNumber().chain((value) => {
+            switch (value) {
+              case 1:
+              case 2:
+                return purify.Either.of<Error, 1 | 2>(value);
+              default:
+                return purify.Left<Error, 1 | 2>(
+                  new rdfjsResource.Resource.MistypedValueError({
+                    actualValue: rdfLiteral.toRdf(value),
+                    expectedValueType: "1 | 2",
+                    focusResource: $resource,
+                    predicate:
+                      InPropertiesClass.$properties.inNumbersProperty[
+                        "identifier"
+                      ],
+                  }),
+                );
+            }
+          }),
+        ),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<1 | 2>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                InPropertiesClass.$properties.inNumbersProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_inNumbersPropertyEither.isLeft()) {
       return _inNumbersPropertyEither;
     }
@@ -24899,36 +25857,50 @@ export namespace InPropertiesClass {
     const _inStringsPropertyEither: purify.Either<
       Error,
       purify.Maybe<"text" | "html">
-    > = $resource
-      .values($properties.inStringsProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) =>
-        value.toString().chain((value) => {
-          switch (value) {
-            case "text":
-            case "html":
-              return purify.Either.of<Error, "text" | "html">(value);
-            default:
-              return purify.Left<Error, "text" | "html">(
-                new rdfjsResource.Resource.MistypedValueError({
-                  actualValue: rdfLiteral.toRdf(value),
-                  expectedValueType: '"text" | "html"',
-                  focusResource: $resource,
-                  predicate:
-                    InPropertiesClass.$properties.inStringsProperty[
-                      "identifier"
-                    ],
-                }),
-              );
-          }
-        }),
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.inStringsProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toString().chain((value) => {
+            switch (value) {
+              case "text":
+              case "html":
+                return purify.Either.of<Error, "text" | "html">(value);
+              default:
+                return purify.Left<Error, "text" | "html">(
+                  new rdfjsResource.Resource.MistypedValueError({
+                    actualValue: rdfLiteral.toRdf(value),
+                    expectedValueType: '"text" | "html"',
+                    focusResource: $resource,
+                    predicate:
+                      InPropertiesClass.$properties.inStringsProperty[
+                        "identifier"
+                      ],
+                  }),
+                );
+            }
+          }),
+        ),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<"text" | "html">
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                InPropertiesClass.$properties.inStringsProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_inStringsPropertyEither.isLeft()) {
       return _inStringsPropertyEither;
     }
@@ -25524,16 +26496,28 @@ export namespace InIdentifierClass {
     const _inIdentifierPropertyEither: purify.Either<
       Error,
       purify.Maybe<string>
-    > = $resource
-      .values($properties.inIdentifierProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toString())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.inIdentifierProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                InIdentifierClass.$properties.inIdentifierProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_inIdentifierPropertyEither.isLeft()) {
       return _inIdentifierPropertyEither;
     }
@@ -25668,55 +26652,34 @@ export namespace InIdentifierClass {
 export class HasValuePropertiesClass {
   private _$identifier?: HasValuePropertiesClass.$Identifier;
   readonly $type = "HasValuePropertiesClass";
-  readonly hasIriValueProperty: purify.Maybe<rdfjs.NamedNode>;
-  readonly hasLiteralValueProperty: purify.Maybe<string>;
+  readonly hasIriValueProperty: rdfjs.NamedNode;
+  readonly hasLiteralValueProperty: string;
 
-  constructor(parameters?: {
+  constructor(parameters: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly hasIriValueProperty?:
-      | rdfjs.NamedNode
-      | purify.Maybe<rdfjs.NamedNode>
-      | string;
-    readonly hasLiteralValueProperty?: purify.Maybe<string> | string;
+    readonly hasIriValueProperty: rdfjs.NamedNode | string;
+    readonly hasLiteralValueProperty: string;
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this._$identifier = parameters.$identifier satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters?.hasIriValueProperty)) {
-      this.hasIriValueProperty = parameters?.hasIriValueProperty;
-    } else if (typeof parameters?.hasIriValueProperty === "object") {
-      this.hasIriValueProperty = purify.Maybe.of(
-        parameters?.hasIriValueProperty,
+    if (typeof parameters.hasIriValueProperty === "object") {
+      this.hasIriValueProperty = parameters.hasIriValueProperty;
+    } else if (typeof parameters.hasIriValueProperty === "string") {
+      this.hasIriValueProperty = dataFactory.namedNode(
+        parameters.hasIriValueProperty,
       );
-    } else if (typeof parameters?.hasIriValueProperty === "string") {
-      this.hasIriValueProperty = purify.Maybe.of(
-        dataFactory.namedNode(parameters?.hasIriValueProperty),
-      );
-    } else if (typeof parameters?.hasIriValueProperty === "undefined") {
-      this.hasIriValueProperty = purify.Maybe.empty();
     } else {
-      this.hasIriValueProperty =
-        parameters?.hasIriValueProperty satisfies never;
+      this.hasIriValueProperty = parameters.hasIriValueProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters?.hasLiteralValueProperty)) {
-      this.hasLiteralValueProperty = parameters?.hasLiteralValueProperty;
-    } else if (typeof parameters?.hasLiteralValueProperty === "string") {
-      this.hasLiteralValueProperty = purify.Maybe.of(
-        parameters?.hasLiteralValueProperty,
-      );
-    } else if (typeof parameters?.hasLiteralValueProperty === "undefined") {
-      this.hasLiteralValueProperty = purify.Maybe.empty();
-    } else {
-      this.hasLiteralValueProperty =
-        parameters?.hasLiteralValueProperty satisfies never;
-    }
+    this.hasLiteralValueProperty = parameters.hasLiteralValueProperty;
   }
 
   get $identifier(): HasValuePropertiesClass.$Identifier {
@@ -25747,7 +26710,7 @@ export class HasValuePropertiesClass {
         ),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+        $booleanEquals(
           this.hasIriValueProperty,
           other.hasIriValueProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -25759,7 +26722,7 @@ export class HasValuePropertiesClass {
         })),
       )
       .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+        $strictEquals(
           this.hasLiteralValueProperty,
           other.hasLiteralValueProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -25788,13 +26751,9 @@ export class HasValuePropertiesClass {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    this.hasIriValueProperty.ifJust((value0) => {
-      _hasher.update(value0.termType);
-      _hasher.update(value0.value);
-    });
-    this.hasLiteralValueProperty.ifJust((value0) => {
-      _hasher.update(value0);
-    });
+    _hasher.update(this.hasIriValueProperty.termType);
+    _hasher.update(this.hasIriValueProperty.value);
+    _hasher.update(this.hasLiteralValueProperty);
     return _hasher;
   }
 
@@ -25806,12 +26765,8 @@ export class HasValuePropertiesClass {
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
         $type: this.$type,
-        hasIriValueProperty: this.hasIriValueProperty
-          .map((item) => ({ "@id": item.value }))
-          .extract(),
-        hasLiteralValueProperty: this.hasLiteralValueProperty
-          .map((item) => item)
-          .extract(),
+        hasIriValueProperty: { "@id": this.hasIriValueProperty.value },
+        hasLiteralValueProperty: this.hasLiteralValueProperty,
       } satisfies HasValuePropertiesClass.$Json),
     );
   }
@@ -25869,16 +26824,16 @@ export namespace HasValuePropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "HasValuePropertiesClass";
-    readonly hasIriValueProperty?: { readonly "@id": string };
-    readonly hasLiteralValueProperty?: string;
+    readonly hasIriValueProperty: { readonly "@id": string };
+    readonly hasLiteralValueProperty: string;
   };
 
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      hasIriValueProperty: purify.Maybe<rdfjs.NamedNode>;
-      hasLiteralValueProperty: purify.Maybe<string>;
+      hasIriValueProperty: rdfjs.NamedNode;
+      hasLiteralValueProperty: string;
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -25890,12 +26845,10 @@ export namespace HasValuePropertiesClass {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    const hasIriValueProperty = purify.Maybe.fromNullable(
-      $jsonObject["hasIriValueProperty"],
-    ).map((item) => dataFactory.namedNode(item["@id"]));
-    const hasLiteralValueProperty = purify.Maybe.fromNullable(
-      $jsonObject["hasLiteralValueProperty"],
+    const hasIriValueProperty = dataFactory.namedNode(
+      $jsonObject["hasIriValueProperty"]["@id"],
     );
+    const hasLiteralValueProperty = $jsonObject["hasLiteralValueProperty"];
     return purify.Either.of({
       $identifier,
       hasIriValueProperty,
@@ -25953,10 +26906,8 @@ export namespace HasValuePropertiesClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("HasValuePropertiesClass"),
-      hasIriValueProperty: zod
-        .object({ "@id": zod.string().min(1) })
-        .optional(),
-      hasLiteralValueProperty: zod.string().optional(),
+      hasIriValueProperty: zod.object({ "@id": zod.string().min(1) }),
+      hasLiteralValueProperty: zod.string(),
     }) satisfies zod.ZodType<$Json>;
   }
 
@@ -26005,53 +26956,53 @@ export namespace HasValuePropertiesClass {
     Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      hasIriValueProperty: purify.Maybe<rdfjs.NamedNode>;
-      hasLiteralValueProperty: purify.Maybe<string>;
+      hasIriValueProperty: rdfjs.NamedNode;
+      hasLiteralValueProperty: string;
     }
   > {
     const $identifier: HasValuePropertiesClass.$Identifier =
       $resource.identifier;
-    const _hasIriValuePropertyEither: purify.Either<
-      Error,
-      purify.Maybe<rdfjs.NamedNode>
-    > = $resource
-      .values($properties.hasIriValueProperty["identifier"], { unique: true })
-      .find((value) =>
-        value
-          .toTerm()
-          .equals(
-            dataFactory.namedNode(
-              "http://example.com/HasValuePropertiesClassIri1",
-            ),
-          ),
+    const _hasIriValuePropertyEither: purify.Either<Error, rdfjs.NamedNode> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.hasIriValueProperty["identifier"], {
+          unique: true,
+        }),
       )
-      .chain((value) => value.toIri())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+        .chain((values) => values.chainMap((value) => value.toIri()))
+        .chain((values) => values.head());
     if (_hasIriValuePropertyEither.isLeft()) {
       return _hasIriValuePropertyEither;
     }
 
     const hasIriValueProperty = _hasIriValuePropertyEither.unsafeCoerce();
-    const _hasLiteralValuePropertyEither: purify.Either<
-      Error,
-      purify.Maybe<string>
-    > = $resource
-      .values($properties.hasLiteralValueProperty["identifier"], {
-        unique: true,
-      })
-      .find((value) => value.toTerm().equals(dataFactory.literal("test")))
-      .chain((value) => value.toString())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+    const _hasLiteralValuePropertyEither: purify.Either<Error, string> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.hasLiteralValueProperty["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => {
+          for (const hasValue of [dataFactory.literal("test")]) {
+            const findResult = values.find((value) =>
+              value.toTerm().equals(hasValue),
+            );
+            if (findResult.isLeft()) {
+              return findResult;
+            }
+          }
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        })
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_hasLiteralValuePropertyEither.isLeft()) {
       return _hasLiteralValuePropertyEither;
     }
@@ -26171,44 +27122,34 @@ export namespace HasValuePropertiesClass {
         : "hasValuePropertiesClass");
     const propertyPatterns: readonly sparqljs.Pattern[] = [
       {
-        patterns: [
+        triples: [
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}HasIriValueProperty`,
-                ),
-                predicate:
-                  HasValuePropertiesClass.$properties.hasIriValueProperty[
-                    "identifier"
-                  ],
-                subject,
-              },
-            ],
-            type: "bgp",
+            object: dataFactory.variable!(
+              `${variablePrefix}HasIriValueProperty`,
+            ),
+            predicate:
+              HasValuePropertiesClass.$properties.hasIriValueProperty[
+                "identifier"
+              ],
+            subject,
           },
         ],
-        type: "optional",
+        type: "bgp",
       },
       {
-        patterns: [
+        triples: [
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}HasLiteralValueProperty`,
-                ),
-                predicate:
-                  HasValuePropertiesClass.$properties.hasLiteralValueProperty[
-                    "identifier"
-                  ],
-                subject,
-              },
-            ],
-            type: "bgp",
+            object: dataFactory.variable!(
+              `${variablePrefix}HasLiteralValueProperty`,
+            ),
+            predicate:
+              HasValuePropertiesClass.$properties.hasLiteralValueProperty[
+                "identifier"
+              ],
+            subject,
           },
         ],
-        type: "optional",
+        type: "bgp",
       },
     ];
     for (const pattern of propertyPatterns) {
@@ -26517,24 +27458,39 @@ export namespace ExternClassPropertyClass {
     const _externClassPropertyEither: purify.Either<
       Error,
       purify.Maybe<ExternClass>
-    > = $resource
-      .values($properties.externClassProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        ExternClass.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.externClassProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            ExternClass.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<ExternClass>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                ExternClassPropertyClass.$properties.externClassProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_externClassPropertyEither.isLeft()) {
       return _externClassPropertyEither;
     }
@@ -26978,12 +27934,16 @@ export namespace ExplicitRdfTypeClass {
 
     const $identifier: ExplicitRdfTypeClass.$Identifier = $resource.identifier;
     const _explicitRdfTypePropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.explicitRdfTypeProperty["identifier"], {
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.explicitRdfTypeProperty["identifier"], {
           unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_explicitRdfTypePropertyEither.isLeft()) {
       return _explicitRdfTypePropertyEither;
     }
@@ -27468,12 +28428,17 @@ export namespace ExplicitFromToRdfTypesClass {
     const $identifier: ExplicitFromToRdfTypesClass.$Identifier =
       $resource.identifier;
     const _explicitFromToRdfTypesPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.explicitFromToRdfTypesProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.explicitFromToRdfTypesProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_explicitFromToRdfTypesPropertyEither.isLeft()) {
       return _explicitFromToRdfTypesPropertyEither;
     }
@@ -27955,26 +28920,41 @@ export namespace DirectRecursiveClass {
     const _directRecursivePropertyEither: purify.Either<
       Error,
       purify.Maybe<DirectRecursiveClass>
-    > = $resource
-      .values($properties.directRecursiveProperty["identifier"], {
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.directRecursiveProperty["identifier"], {
         unique: true,
-      })
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        DirectRecursiveClass.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            DirectRecursiveClass.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<DirectRecursiveClass>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                DirectRecursiveClass.$properties.directRecursiveProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
     if (_directRecursivePropertyEither.isLeft()) {
       return _directRecursivePropertyEither;
     }
@@ -28605,26 +29585,30 @@ export namespace DefaultValuePropertiesClass {
     const $identifier: DefaultValuePropertiesClass.$Identifier =
       $resource.identifier;
     const _dateDefaultValuePropertyEither: purify.Either<Error, Date> =
-      $resource
-        .values($properties.dateDefaultValueProperty["identifier"], {
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.dateDefaultValueProperty["identifier"], {
           unique: true,
-        })
-        .head()
-        .alt(
-          purify.Either.of(
-            new rdfjsResource.Resource.Value({
-              subject: $resource,
-              predicate:
-                DefaultValuePropertiesClass.$properties
-                  .dateDefaultValueProperty["identifier"],
-              object: dataFactory.literal(
-                "2018-04-09",
-                $RdfVocabularies.xsd.date,
-              ),
-            }),
-          ),
+        }),
+      )
+        .map((values) =>
+          values.length > 0
+            ? values
+            : new rdfjsResource.Resource.Value({
+                subject: $resource,
+                predicate:
+                  DefaultValuePropertiesClass.$properties
+                    .dateDefaultValueProperty["identifier"],
+                object: dataFactory.literal(
+                  "2018-04-09",
+                  $RdfVocabularies.xsd.date,
+                ),
+              }).toValues(),
         )
-        .chain((value) => value.toDate());
+        .chain((values) => values.chainMap((value) => value.toDate()))
+        .chain((values) => values.head());
     if (_dateDefaultValuePropertyEither.isLeft()) {
       return _dateDefaultValuePropertyEither;
     }
@@ -28632,26 +29616,31 @@ export namespace DefaultValuePropertiesClass {
     const dateDefaultValueProperty =
       _dateDefaultValuePropertyEither.unsafeCoerce();
     const _dateTimeDefaultValuePropertyEither: purify.Either<Error, Date> =
-      $resource
-        .values($properties.dateTimeDefaultValueProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .alt(
-          purify.Either.of(
-            new rdfjsResource.Resource.Value({
-              subject: $resource,
-              predicate:
-                DefaultValuePropertiesClass.$properties
-                  .dateTimeDefaultValueProperty["identifier"],
-              object: dataFactory.literal(
-                "2018-04-09T10:00:00Z",
-                $RdfVocabularies.xsd.dateTime,
-              ),
-            }),
-          ),
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.dateTimeDefaultValueProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .map((values) =>
+          values.length > 0
+            ? values
+            : new rdfjsResource.Resource.Value({
+                subject: $resource,
+                predicate:
+                  DefaultValuePropertiesClass.$properties
+                    .dateTimeDefaultValueProperty["identifier"],
+                object: dataFactory.literal(
+                  "2018-04-09T10:00:00Z",
+                  $RdfVocabularies.xsd.dateTime,
+                ),
+              }).toValues(),
         )
-        .chain((value) => value.toDate());
+        .chain((values) => values.chainMap((value) => value.toDate()))
+        .chain((values) => values.head());
     if (_dateTimeDefaultValuePropertyEither.isLeft()) {
       return _dateTimeDefaultValuePropertyEither;
     }
@@ -28661,23 +29650,31 @@ export namespace DefaultValuePropertiesClass {
     const _falseBooleanDefaultValuePropertyEither: purify.Either<
       Error,
       boolean
-    > = $resource
-      .values($properties.falseBooleanDefaultValueProperty["identifier"], {
-        unique: true,
-      })
-      .head()
-      .alt(
-        purify.Either.of(
-          new rdfjsResource.Resource.Value({
-            subject: $resource,
-            predicate:
-              DefaultValuePropertiesClass.$properties
-                .falseBooleanDefaultValueProperty["identifier"],
-            object: dataFactory.literal("false", $RdfVocabularies.xsd.boolean),
-          }),
-        ),
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.falseBooleanDefaultValueProperty["identifier"],
+        { unique: true },
+      ),
+    )
+      .map((values) =>
+        values.length > 0
+          ? values
+          : new rdfjsResource.Resource.Value({
+              subject: $resource,
+              predicate:
+                DefaultValuePropertiesClass.$properties
+                  .falseBooleanDefaultValueProperty["identifier"],
+              object: dataFactory.literal(
+                "false",
+                $RdfVocabularies.xsd.boolean,
+              ),
+            }).toValues(),
       )
-      .chain((value) => value.toBoolean());
+      .chain((values) => values.chainMap((value) => value.toBoolean()))
+      .chain((values) => values.head());
     if (_falseBooleanDefaultValuePropertyEither.isLeft()) {
       return _falseBooleanDefaultValuePropertyEither;
     }
@@ -28685,23 +29682,27 @@ export namespace DefaultValuePropertiesClass {
     const falseBooleanDefaultValueProperty =
       _falseBooleanDefaultValuePropertyEither.unsafeCoerce();
     const _numberDefaultValuePropertyEither: purify.Either<Error, number> =
-      $resource
-        .values($properties.numberDefaultValueProperty["identifier"], {
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.numberDefaultValueProperty["identifier"], {
           unique: true,
-        })
-        .head()
-        .alt(
-          purify.Either.of(
-            new rdfjsResource.Resource.Value({
-              subject: $resource,
-              predicate:
-                DefaultValuePropertiesClass.$properties
-                  .numberDefaultValueProperty["identifier"],
-              object: dataFactory.literal("0", $RdfVocabularies.xsd.integer),
-            }),
-          ),
+        }),
+      )
+        .map((values) =>
+          values.length > 0
+            ? values
+            : new rdfjsResource.Resource.Value({
+                subject: $resource,
+                predicate:
+                  DefaultValuePropertiesClass.$properties
+                    .numberDefaultValueProperty["identifier"],
+                object: dataFactory.literal("0", $RdfVocabularies.xsd.integer),
+              }).toValues(),
         )
-        .chain((value) => value.toNumber());
+        .chain((values) => values.chainMap((value) => value.toNumber()))
+        .chain((values) => values.head());
     if (_numberDefaultValuePropertyEither.isLeft()) {
       return _numberDefaultValuePropertyEither;
     }
@@ -28709,23 +29710,27 @@ export namespace DefaultValuePropertiesClass {
     const numberDefaultValueProperty =
       _numberDefaultValuePropertyEither.unsafeCoerce();
     const _stringDefaultValuePropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.stringDefaultValueProperty["identifier"], {
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.stringDefaultValueProperty["identifier"], {
           unique: true,
-        })
-        .head()
-        .alt(
-          purify.Either.of(
-            new rdfjsResource.Resource.Value({
-              subject: $resource,
-              predicate:
-                DefaultValuePropertiesClass.$properties
-                  .stringDefaultValueProperty["identifier"],
-              object: dataFactory.literal(""),
-            }),
-          ),
+        }),
+      )
+        .map((values) =>
+          values.length > 0
+            ? values
+            : new rdfjsResource.Resource.Value({
+                subject: $resource,
+                predicate:
+                  DefaultValuePropertiesClass.$properties
+                    .stringDefaultValueProperty["identifier"],
+                object: dataFactory.literal(""),
+              }).toValues(),
         )
-        .chain((value) => value.toString());
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_stringDefaultValuePropertyEither.isLeft()) {
       return _stringDefaultValuePropertyEither;
     }
@@ -28735,23 +29740,28 @@ export namespace DefaultValuePropertiesClass {
     const _trueBooleanDefaultValuePropertyEither: purify.Either<
       Error,
       boolean
-    > = $resource
-      .values($properties.trueBooleanDefaultValueProperty["identifier"], {
-        unique: true,
-      })
-      .head()
-      .alt(
-        purify.Either.of(
-          new rdfjsResource.Resource.Value({
-            subject: $resource,
-            predicate:
-              DefaultValuePropertiesClass.$properties
-                .trueBooleanDefaultValueProperty["identifier"],
-            object: dataFactory.literal("true", $RdfVocabularies.xsd.boolean),
-          }),
-        ),
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.trueBooleanDefaultValueProperty["identifier"],
+        { unique: true },
+      ),
+    )
+      .map((values) =>
+        values.length > 0
+          ? values
+          : new rdfjsResource.Resource.Value({
+              subject: $resource,
+              predicate:
+                DefaultValuePropertiesClass.$properties
+                  .trueBooleanDefaultValueProperty["identifier"],
+              object: dataFactory.literal("true", $RdfVocabularies.xsd.boolean),
+            }).toValues(),
       )
-      .chain((value) => value.toBoolean());
+      .chain((values) => values.chainMap((value) => value.toBoolean()))
+      .chain((values) => values.head());
     if (_trueBooleanDefaultValuePropertyEither.isLeft()) {
       return _trueBooleanDefaultValuePropertyEither;
     }
@@ -29386,12 +30396,17 @@ export namespace BaseInterfaceWithPropertiesStatic {
     const _baseInterfaceWithPropertiesPropertyEither: purify.Either<
       Error,
       string
-    > = $resource
-      .values($properties.baseInterfaceWithPropertiesProperty["identifier"], {
-        unique: true,
-      })
-      .head()
-      .chain((value) => value.toString());
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.baseInterfaceWithPropertiesProperty["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .chain((values) => values.head());
     if (_baseInterfaceWithPropertiesPropertyEither.isLeft()) {
       return _baseInterfaceWithPropertiesPropertyEither;
     }
@@ -30335,12 +31350,17 @@ export namespace ConcreteParentInterfaceStatic {
       $resource.identifier;
     const $type = "ConcreteParentInterface" as const;
     const _concreteParentInterfacePropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.concreteParentInterfaceProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.concreteParentInterfaceProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_concreteParentInterfacePropertyEither.isLeft()) {
       return _concreteParentInterfacePropertyEither;
     }
@@ -30842,12 +31862,17 @@ export namespace ConcreteChildInterface {
       $resource.identifier;
     const $type = "ConcreteChildInterface" as const;
     const _concreteChildInterfacePropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.concreteChildInterfaceProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.concreteChildInterfaceProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_concreteChildInterfacePropertyEither.isLeft()) {
       return _concreteChildInterfacePropertyEither;
     }
@@ -31378,13 +32403,17 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     const _abstractBaseClassWithPropertiesPropertyEither: purify.Either<
       Error,
       string
-    > = $resource
-      .values(
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
         $properties.abstractBaseClassWithPropertiesProperty["identifier"],
         { unique: true },
-      )
-      .head()
-      .chain((value) => value.toString());
+      ),
+    )
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .chain((values) => values.head());
     if (_abstractBaseClassWithPropertiesPropertyEither.isLeft()) {
       return _abstractBaseClassWithPropertiesPropertyEither;
     }
@@ -32114,12 +33143,17 @@ export namespace ConcreteParentClassStatic {
     const $identifier: ConcreteParentClassStatic.$Identifier =
       $resource.identifier;
     const _concreteParentClassPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.concreteParentClassProperty["identifier"], {
-          unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values(
+          $properties.concreteParentClassProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_concreteParentClassPropertyEither.isLeft()) {
       return _concreteParentClassPropertyEither;
     }
@@ -32589,12 +33623,16 @@ export namespace ConcreteChildClass {
 
     const $identifier: ConcreteChildClass.$Identifier = $resource.identifier;
     const _concreteChildClassPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.concreteChildClassProperty["identifier"], {
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.concreteChildClassProperty["identifier"], {
           unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_concreteChildClassPropertyEither.isLeft()) {
       return _concreteChildClassPropertyEither;
     }
@@ -33086,12 +34124,16 @@ export namespace ClassUnionMember2 {
 
     const $identifier: ClassUnionMember2.$Identifier = $resource.identifier;
     const _classUnionMember2PropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.classUnionMember2Property["identifier"], {
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.classUnionMember2Property["identifier"], {
           unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_classUnionMember2PropertyEither.isLeft()) {
       return _classUnionMember2PropertyEither;
     }
@@ -33559,12 +34601,16 @@ export namespace ClassUnionMember1 {
 
     const $identifier: ClassUnionMember1.$Identifier = $resource.identifier;
     const _classUnionMember1PropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.classUnionMember1Property["identifier"], {
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.classUnionMember1Property["identifier"], {
           unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_classUnionMember1PropertyEither.isLeft()) {
       return _classUnionMember1PropertyEither;
     }
@@ -34600,13 +35646,17 @@ export namespace AbstractBaseClassForExternClassStatic {
     const _abstractBaseClassForExternClassPropertyEither: purify.Either<
       Error,
       string
-    > = $resource
-      .values(
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
         $properties.abstractBaseClassForExternClassProperty["identifier"],
         { unique: true },
-      )
-      .head()
-      .chain((value) => value.toString());
+      ),
+    )
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .chain((values) => values.head());
     if (_abstractBaseClassForExternClassPropertyEither.isLeft()) {
       return _abstractBaseClassForExternClassPropertyEither;
     }

@@ -171,38 +171,68 @@ export class TermType<
     }, "");
   }
 
-  override fromRdfExpression({
+  override fromRdfExpression(
+    parameters: Parameters<Type["fromRdfExpression"]>[0],
+  ): string {
+    // invariant(
+    //   this.nodeKinds.has("Literal") &&
+    //     (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("NamedNode")),
+    //   "IdentifierType and LiteralType should override",
+    // );
+
+    const chain = this.fromRdfExpressionChain(parameters);
+    const { variables } = parameters;
+    return [
+      variables.resourceValues,
+      chain.defaultValue,
+      chain.hasValues,
+      chain.languageIn,
+      chain.valueTo,
+    ]
+      .filter((_) => typeof _ !== "undefined")
+      .join(".");
+  }
+
+  protected fromRdfExpressionChain({
     variables,
-  }: Parameters<Type["fromRdfExpression"]>[0]): string {
-    const chain: string[] = [
-      this.propertyFilterRdfResourceValuesExpression({ variables }),
-    ];
-    // Have an rdfjsResource.Resource.Values here
-    if (this.hasValues.length === 1) {
-      chain.push(
-        `find(value => value.toTerm().equals(${rdfjsTermExpression(this.hasValues[0])}))`,
-      );
-    } else {
-      chain.push("head()");
+  }: Parameters<Type["fromRdfExpression"]>[0]): {
+    defaultValue?: string;
+    hasValues?: string;
+    languageIn?: string;
+    valueTo?: string;
+  } {
+    let valueToExpression =
+      "purify.Either.of<Error, rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>(value.toTerm())";
+    if (this.nodeKinds.size < 3) {
+      const eitherTypeParameters = `<Error, ${this.name}>`;
+      valueToExpression = `${valueToExpression}.chain(term => {
+  switch (term.termType) {
+  ${[...this.nodeKinds].map((nodeKind) => `case "${nodeKind}":`).join("\n")} return purify.Either.of${eitherTypeParameters}(term);
+  default: return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: "term", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })}));         
+}})`;
     }
-    // Have an rdfjsResource.Resource.Value here
-    this.defaultValue.ifJust((defaultValue) => {
-      // alt the default value before trying to convert the rdfjsResource.Resource.Value to the type
-      chain.push(
-        `alt(purify.Either.of(new rdfjsResource.Resource.Value(${objectInitializer({ subject: variables.resource, predicate: variables.predicate, object: rdfjsTermExpression(defaultValue) })})))`,
-      );
-    });
-    // Last step: convert the rdfjsResource.Resource.Value to the type
-    chain.push(
-      `chain(value => ${this.propertyFromRdfResourceValueExpression({
-        variables: {
-          predicate: variables.predicate,
-          resource: variables.resource,
-          resourceValue: "value",
-        },
-      })})`,
-    );
-    return chain.join(".");
+
+    return {
+      defaultValue: this.defaultValue
+        .map(
+          (defaultValue) =>
+            `map(values => values.length > 0 ? values : new rdfjsResource.Resource.Value(${objectInitializer({ subject: variables.resource, predicate: variables.predicate, object: rdfjsTermExpression(defaultValue) })}).toValues())`,
+        )
+        .extract(),
+      hasValues:
+        this.hasValues.length > 0
+          ? `chain(values => {
+  for (const hasValue of [${this.hasValues.map(rdfjsTermExpression).join(", ")}]) {
+    const findResult = values.find(value => value.toTerm().equals(hasValue));
+    if (findResult.isLeft()) {
+      return findResult;
+    }
+  }
+  return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(values);
+})`
+          : undefined,
+      valueTo: `chain(values => values.chainMap(value => ${valueToExpression}))`,
+    };
   }
 
   override graphqlResolveExpression(
@@ -323,43 +353,5 @@ export class TermType<
       imports.push(Import.RDF_LITERAL);
     }
     return imports;
-  }
-
-  /**
-   * Filter the rdfjsResource.Resource.Values to those that are relevant to the type.
-   *
-   * This is done before
-   */
-  protected propertyFilterRdfResourceValuesExpression({
-    variables,
-  }: Parameters<Type["fromRdfExpression"]>[0]): string {
-    return variables.resourceValues;
-  }
-
-  /**
-   * Convert an rdfjsResource.Resource.Value to a value of this type.
-   * @param variables
-   * @protected
-   */
-  protected propertyFromRdfResourceValueExpression({
-    variables,
-  }: {
-    variables: { predicate: string; resource: string; resourceValue: string };
-  }): string {
-    invariant(
-      this.nodeKinds.has("Literal") &&
-        (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("NamedNode")),
-      "IdentifierType and LiteralType should override",
-    );
-    let expression = `purify.Either.of<Error, rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>(${variables.resourceValue}.toTerm())`;
-    if (this.nodeKinds.size < 3) {
-      const eitherTypeParameters = `<Error, ${this.name}>`;
-      expression = `${expression}.chain(term => {
-  switch (term.termType) {
-  ${[...this.nodeKinds].map((nodeKind) => `case "${nodeKind}":`).join("\n")} return purify.Either.of${eitherTypeParameters}(term);
-  default: return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: "term", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })}));         
-}})`;
-    }
-    return expression;
   }
 }

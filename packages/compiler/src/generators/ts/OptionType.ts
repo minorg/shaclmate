@@ -1,13 +1,13 @@
-import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
+import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export class OptionType<ItemTypeT extends Type = Type> extends Type {
+export class OptionType<ItemTypeT extends Type> extends Type {
   override readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty> =
     Maybe.empty();
   readonly itemType: ItemTypeT;
@@ -93,7 +93,8 @@ export class OptionType<ItemTypeT extends Type = Type> extends Type {
   override fromRdfExpression(
     parameters: Parameters<Type["fromRdfExpression"]>[0],
   ): string {
-    return `${this.itemType.fromRdfExpression(parameters)}.map(value => purify.Maybe.of(value)).chainLeft(error => error instanceof rdfjsResource.Resource.MissingValueError ? purify.Right(purify.Maybe.empty()) : purify.Left(error))`;
+    const { variables } = parameters;
+    return `${this.itemType.fromRdfExpression(parameters)}.map(values => values.length > 0 ? values.map(value => purify.Maybe.of(value)) : rdfjsResource.Resource.Values.fromValue<purify.Maybe<${this.itemType.name}>>({ object: purify.Maybe.empty(), predicate: ${variables.predicate}, subject: ${variables.resource} }))`;
   }
 
   override graphqlResolveExpression(

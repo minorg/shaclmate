@@ -6,6 +6,7 @@ import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer
 import type * as ast from "../ast/index.js";
 import type { TsFeature } from "../enums/index.js";
 import type * as input from "../input/index.js";
+import { ShapeStack } from "./ShapeStack.js";
 import { pickLiteral } from "./pickLiteral.js";
 
 function identifierNodeKinds(
@@ -75,6 +76,72 @@ function synthesizeStubAstObjectType({
   };
 }
 
+function transformPropertyShapeToAstType(
+  this: ShapesGraphToAstTransformer,
+  propertyShape: input.PropertyShape,
+): Either<Error, ast.Type> {
+  const itemTypeEither = this.transformShapeToAstType(
+    propertyShape,
+    new ShapeStack(),
+  );
+  if (itemTypeEither.isLeft()) {
+    return itemTypeEither;
+  }
+  const itemType = itemTypeEither.unsafeCoerce();
+
+  if (propertyShape.defaultValue.isJust()) {
+    return Either.of(itemType);
+  }
+
+  if (
+    propertyShape.constraints.maxCount.isNothing() &&
+    propertyShape.constraints.minCount.isNothing()
+  ) {
+    return Either.of({
+      itemType,
+      kind: "SetType",
+      mutable: propertyShape.mutable,
+      minCount: 0,
+    });
+  }
+
+  let maxCount = propertyShape.constraints.maxCount.orDefault(
+    Number.MAX_SAFE_INTEGER,
+  );
+  let minCount = propertyShape.constraints.minCount.orDefault(0);
+  if (minCount < 0) {
+    minCount = 0;
+  }
+  if (propertyShape.constraints.hasValues.length > minCount) {
+    minCount = propertyShape.constraints.hasValues.length;
+  }
+  if (maxCount < minCount) {
+    maxCount = minCount;
+  }
+
+  if (minCount === 0 && maxCount === 1) {
+    return Either.of({
+      itemType,
+      kind: "OptionType",
+    });
+  }
+
+  if (minCount === 1 && maxCount === 1) {
+    return Either.of(itemType);
+  }
+
+  invariant(
+    propertyShape.constraints.minCount.isJust() ||
+      propertyShape.constraints.maxCount.isJust(),
+  );
+  return Either.of({
+    itemType,
+    kind: "SetType",
+    minCount,
+    mutable: propertyShape.mutable,
+  });
+}
+
 export function transformPropertyShapeToAstObjectTypeProperty(
   this: ShapesGraphToAstTransformer,
   propertyShape: input.PropertyShape,
@@ -88,14 +155,17 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     }
   }
 
-  const typeEither = this.transformPropertyShapeToAstType(propertyShape, null);
+  const typeEither = transformPropertyShapeToAstType.bind(this)(propertyShape);
   if (typeEither.isLeft()) {
     return typeEither;
   }
   const type = typeEither.unsafeCoerce();
 
   let stubType: ast.ObjectType.Property["stubType"] = Maybe.empty();
-  let propertyShapeStubType: ast.ObjectType | ast.ObjectUnionType | undefined;
+  let propertyShapeStubItemType:
+    | ast.ObjectType
+    | ast.ObjectUnionType
+    | undefined;
   if (propertyShape.stub.isJust()) {
     const propertyShapeStubTypeEither = this.transformNodeShapeToAstType(
       propertyShape.stub.unsafeCoerce(),
@@ -118,54 +188,56 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     if (propertyShapeStubTypeEither.isLeft()) {
       return propertyShapeStubTypeEither;
     }
-    propertyShapeStubType = propertyShapeStubTypeEither.unsafeCoerce();
+    propertyShapeStubItemType = propertyShapeStubTypeEither.unsafeCoerce();
   }
 
-  if (propertyShapeStubType || propertyShape.lazy.orDefault(false)) {
+  if (propertyShapeStubItemType || propertyShape.lazy.orDefault(false)) {
     switch (type.kind) {
       case "ObjectType":
-      case "ObjectUnionType": {
+      case "ObjectUnionType":
         stubType = Maybe.of(
-          propertyShapeStubType ??
+          propertyShapeStubItemType ??
             synthesizeStubAstObjectType({
               identifierNodeKinds: identifierNodeKinds(type),
               tsFeatures: type.tsFeatures,
             }),
         );
         break;
-      }
       case "OptionType":
       case "SetType": {
         switch (type.itemType.kind) {
           case "ObjectType":
-          case "ObjectUnionType": {
-            const stubItemType =
-              propertyShapeStubType ??
-              synthesizeStubAstObjectType({
-                identifierNodeKinds: identifierNodeKinds(type.itemType),
-                tsFeatures: type.itemType.tsFeatures,
-              });
-            if (type.kind === "OptionType") {
-              stubType = Maybe.of({
-                kind: "OptionType",
-                itemType: stubItemType,
-              });
-            } else {
-              stubType = Maybe.of({
-                kind: "SetType",
-                itemType: stubItemType,
-                minCount: 0,
-                mutable: Maybe.empty(),
-              });
-            }
+          case "ObjectUnionType":
             break;
-          }
           default:
             return Left(
               new Error(
                 `${propertyShape} marked lazy but has ${type.kind} of ${type.itemType.kind}`,
               ),
             );
+        }
+
+        const stubItemType =
+          propertyShapeStubItemType ??
+          synthesizeStubAstObjectType({
+            identifierNodeKinds: identifierNodeKinds(type.itemType),
+            tsFeatures: type.itemType.tsFeatures,
+          });
+        switch (type.kind) {
+          case "OptionType":
+            stubType = Maybe.of({
+              kind: "OptionType",
+              itemType: stubItemType,
+            });
+            break;
+          case "SetType":
+            stubType = Maybe.of({
+              kind: "SetType",
+              itemType: stubItemType,
+              minCount: 0,
+              mutable: Maybe.empty(),
+            });
+            break;
         }
         break;
       }
@@ -196,7 +268,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     order: propertyShape.order.orDefault(0),
     path,
     stubType,
-    type,
+    type: type,
     visibility: propertyShape.visibility,
   };
   this.astObjectTypePropertiesByIdentifier.set(

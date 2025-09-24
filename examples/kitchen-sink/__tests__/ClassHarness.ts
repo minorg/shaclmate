@@ -1,4 +1,4 @@
-import type { BlankNode, NamedNode } from "@rdfjs/types";
+import type {} from "@rdfjs/types";
 import type { $EqualsResult } from "@shaclmate/kitchen-sink-example";
 import type {
   MutableResource,
@@ -10,15 +10,14 @@ import { Harness } from "./Harness.js";
 export class ClassHarness<
   T extends {
     $equals: (other: T) => $EqualsResult;
-    $identifier: IdentifierT;
+    $identifier: Resource.Identifier;
     $toJson: () => any;
     $toRdf: (options?: {
       mutateGraph: MutableResource.MutateGraph;
       resourceSet: MutableResourceSet;
-    }) => Resource<IdentifierT>;
+    }) => Resource;
   },
-  IdentifierT extends BlankNode | NamedNode,
-> extends Harness<T, IdentifierT> {
+> extends Harness<T> {
   override equals(other: T): $EqualsResult {
     return this.instance.$equals(other);
   }
@@ -30,7 +29,7 @@ export class ClassHarness<
   override toRdf(options?: {
     mutateGraph: MutableResource.MutateGraph;
     resourceSet: MutableResourceSet;
-  }): Resource<IdentifierT> {
+  }): Resource {
     return this.instance.$toRdf(options);
   }
 }

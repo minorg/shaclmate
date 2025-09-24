@@ -380,10 +380,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             "fr"
         ) ;
         sh:maxCount 1 ;
+        sh:minCount 1 ;
         sh:path :languageInPropertiesLanguageInProperty
     ], [
         rdfs:comment "literal property for testing runtime languageIn" ;
         sh:maxCount 1 ;
+        sh:minCount 1 ;
         sh:nodeKind sh:Literal ;
         sh:path :languageInPropertiesLiteralProperty
     ] .

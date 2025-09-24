@@ -214,8 +214,18 @@ export abstract class ShaclProperty<
     // Assume the property has the correct range and ignore the object's RDF type.
     // This also accommodates the case where the object of a property is a dangling identifier that's not the
     // subject of any statements.
+
+    const typeFromRdfExpression = this.type.fromRdfExpression({
+      variables: {
+        ...variables,
+        ignoreRdfType: true,
+        predicate: this.predicate,
+        resourceValues: `purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(${variables.resource}.values(${syntheticNamePrefix}properties.${this.name}["identifier"], { unique: true }))`,
+      },
+    });
+
     return [
-      `const _${this.name}Either: purify.Either<Error, ${this.type.name}> = ${this.type.fromRdfExpression({ variables: { ...variables, ignoreRdfType: true, predicate: this.predicate, resourceValues: `${variables.resource}.values(${syntheticNamePrefix}properties.${this.name}["identifier"], { unique: true })` } })};`,
+      `const _${this.name}Either: purify.Either<Error, ${this.type.name}> = ${typeFromRdfExpression}.chain(values => values.head());`,
       `if (_${this.name}Either.isLeft()) { return _${this.name}Either; }`,
       `const ${this.name} = _${this.name}Either.unsafeCoerce();`,
     ];

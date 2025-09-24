@@ -371,18 +371,16 @@ export namespace UnionMember2 {
     const _optionalStringPropertyEither: purify.Either<
       Error,
       purify.Maybe<string>
-    > = $resource
-      .values($properties.optionalStringProperty["identifier"], {
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.optionalStringProperty["identifier"], {
         unique: true,
-      })
-      .head()
-      .chain((value) => value.toString())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .map((values) => values.head().toMaybe());
     if (_optionalStringPropertyEither.isLeft()) {
       return _optionalStringPropertyEither;
     }
@@ -581,18 +579,16 @@ export namespace UnionMember1 {
     const _optionalNumberPropertyEither: purify.Either<
       Error,
       purify.Maybe<number>
-    > = $resource
-      .values($properties.optionalNumberProperty["identifier"], {
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.optionalNumberProperty["identifier"], {
         unique: true,
-      })
-      .head()
-      .chain((value) => value.toNumber())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toNumber()))
+      .map((values) => values.head().toMaybe());
     if (_optionalNumberPropertyEither.isLeft()) {
       return _optionalNumberPropertyEither;
     }
@@ -835,18 +831,16 @@ export namespace Nested {
     const _optionalNumberPropertyEither: purify.Either<
       Error,
       purify.Maybe<number>
-    > = $resource
-      .values($properties.optionalNumberProperty["identifier"], {
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.optionalNumberProperty["identifier"], {
         unique: true,
-      })
-      .head()
-      .chain((value) => value.toNumber())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toNumber()))
+      .map((values) => values.head().toMaybe());
     if (_optionalNumberPropertyEither.isLeft()) {
       return _optionalNumberPropertyEither;
     }
@@ -855,30 +849,32 @@ export namespace Nested {
     const _optionalStringPropertyEither: purify.Either<
       Error,
       purify.Maybe<string>
-    > = $resource
-      .values($properties.optionalStringProperty["identifier"], {
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.optionalStringProperty["identifier"], {
         unique: true,
-      })
-      .head()
-      .chain((value) => value.toString())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .map((values) => values.head().toMaybe());
     if (_optionalStringPropertyEither.isLeft()) {
       return _optionalStringPropertyEither;
     }
 
     const optionalStringProperty = _optionalStringPropertyEither.unsafeCoerce();
     const _requiredStringPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.requiredStringProperty["identifier"], {
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.requiredStringProperty["identifier"], {
           unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_requiredStringPropertyEither.isLeft()) {
       return _requiredStringPropertyEither;
     }
@@ -1104,16 +1100,16 @@ export namespace ParentStatic {
     const _parentStringPropertyEither: purify.Either<
       Error,
       purify.Maybe<string>
-    > = $resource
-      .values($properties.parentStringProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toString())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.parentStringProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .map((values) => values.head().toMaybe());
     if (_parentStringPropertyEither.isLeft()) {
       return _parentStringPropertyEither;
     }
@@ -1464,16 +1460,16 @@ export namespace Child {
     const _childStringPropertyEither: purify.Either<
       Error,
       purify.Maybe<string>
-    > = $resource
-      .values($properties.childStringProperty["identifier"], { unique: true })
-      .head()
-      .chain((value) => value.toString())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.childStringProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .map((values) => values.head().toMaybe());
     if (_childStringPropertyEither.isLeft()) {
       return _childStringPropertyEither;
     }
@@ -1482,26 +1478,27 @@ export namespace Child {
     const _optionalLazyObjectPropertyEither: purify.Either<
       Error,
       $LazyOptionalObject<Nested.$Identifier, Nested, $DefaultStub>
-    > = $resource
-      .values($properties.optionalLazyObjectProperty["identifier"], {
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.optionalLazyObjectProperty["identifier"], {
         unique: true,
-      })
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        $DefaultStub.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            $DefaultStub.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      )
+      .map((values) => values.head().toMaybe())
       .map(
         (stub) =>
           new $LazyOptionalObject<Nested.$Identifier, Nested, $DefaultStub>({
@@ -1518,26 +1515,27 @@ export namespace Child {
     const _optionalObjectPropertyEither: purify.Either<
       Error,
       purify.Maybe<Nested>
-    > = $resource
-      .values($properties.optionalObjectProperty["identifier"], {
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.optionalObjectProperty["identifier"], {
         unique: true,
-      })
-      .head()
-      .chain((value) => value.toResource())
-      .chain((resource) =>
-        Nested.$fromRdf(resource, {
-          ...$context,
-          ignoreRdfType: true,
-          languageIn: $languageIn,
-          objectSet: $objectSet,
-        }),
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            Nested.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              languageIn: $languageIn,
+              objectSet: $objectSet,
+            }),
+          ),
+        ),
       )
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      .map((values) => values.head().toMaybe());
     if (_optionalObjectPropertyEither.isLeft()) {
       return _optionalObjectPropertyEither;
     }
@@ -1546,30 +1544,32 @@ export namespace Child {
     const _optionalStringPropertyEither: purify.Either<
       Error,
       purify.Maybe<string>
-    > = $resource
-      .values($properties.optionalStringProperty["identifier"], {
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.optionalStringProperty["identifier"], {
         unique: true,
-      })
-      .head()
-      .chain((value) => value.toString())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .map((values) => values.head().toMaybe());
     if (_optionalStringPropertyEither.isLeft()) {
       return _optionalStringPropertyEither;
     }
 
     const optionalStringProperty = _optionalStringPropertyEither.unsafeCoerce();
     const _requiredStringPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.requiredStringProperty["identifier"], {
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.requiredStringProperty["identifier"], {
           unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_requiredStringPropertyEither.isLeft()) {
       return _requiredStringPropertyEither;
     }

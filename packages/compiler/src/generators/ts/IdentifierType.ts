@@ -161,6 +161,33 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
     }
   }
 
+  protected override fromRdfExpressionChain({
+    variables,
+  }: Parameters<Type["fromRdfExpression"]>[0]): {
+    defaultValue?: string;
+    hasValues?: string;
+    languageIn?: string;
+    valueTo?: string;
+  } {
+    let valueToExpression: string;
+    if (this.nodeKinds.size === 2) {
+      valueToExpression = "value.toIdentifier()";
+    } else if (this.isNamedNodeKind) {
+      valueToExpression = "value.toIri()";
+      if (this.in_.length > 0) {
+        const eitherTypeParameters = `<Error, ${this.name}>`;
+        valueToExpression = `${valueToExpression}.chain(iri => { switch (iri.value) { ${this.in_.map((iri) => `case "${iri.value}": return purify.Either.of${eitherTypeParameters}(iri as rdfjs.NamedNode<"${iri.value}">);`).join(" ")} default: return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedValueError({ actualValue: iri, expectedValueType: ${JSON.stringify(this.name)}, focusResource: ${variables.resource}, predicate: ${variables.predicate} })); } } )`;
+      }
+    } else {
+      throw new Error("not implemented");
+    }
+
+    return {
+      ...super.fromRdfExpressionChain,
+      valueTo: `chain(values => values.chainMap(value => ${valueToExpression}))`,
+    };
+  }
+
   override graphqlResolveExpression({
     variables: { value },
   }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
@@ -202,29 +229,5 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
       case "NamedNode":
         return valueToNamedNode;
     }
-  }
-
-  protected override propertyFromRdfResourceValueExpression({
-    variables,
-  }: Parameters<
-    TermType<
-      NamedNode,
-      BlankNode | NamedNode
-    >["propertyFromRdfResourceValueExpression"]
-  >[0]): string {
-    if (this.nodeKinds.size === 2) {
-      return `${variables.resourceValue}.toIdentifier()`;
-    }
-
-    if (this.isNamedNodeKind) {
-      let expression = `${variables.resourceValue}.toIri()`;
-      if (this.in_.length > 0) {
-        const eitherTypeParameters = `<Error, ${this.name}>`;
-        expression = `${expression}.chain(iri => { switch (iri.value) { ${this.in_.map((iri) => `case "${iri.value}": return purify.Either.of${eitherTypeParameters}(iri as rdfjs.NamedNode<"${iri.value}">);`).join(" ")} default: return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedValueError({ actualValue: iri, expectedValueType: ${JSON.stringify(this.name)}, focusResource: ${variables.resource}, predicate: ${variables.predicate} })); } } )`;
-      }
-      return expression;
-    }
-
-    throw new Error(`not implemented: ${this.name}`);
   }
 }

@@ -41,6 +41,29 @@ export abstract class PrimitiveType<
     return variables.value;
   }
 
+  protected override fromRdfExpressionChain({
+    variables,
+  }: Parameters<Type["fromRdfExpression"]>[0]): {
+    defaultValue?: string;
+    hasValues?: string;
+    languageIn?: string;
+    valueTo?: string;
+  } {
+    return {
+      ...super.fromRdfExpressionChain({ variables }),
+      languageIn: undefined,
+      valueTo: `chain(values => values.chainMap(value => ${this.fromRdfResourceValueExpression(
+        {
+          variables: {
+            predicate: variables.predicate,
+            resource: variables.resource,
+            resourceValue: "value",
+          },
+        },
+      )}))`,
+    };
+  }
+
   override graphqlResolveExpression({
     variables,
   }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
@@ -75,11 +98,14 @@ export abstract class PrimitiveType<
     return variables.value;
   }
 
-  protected override propertyFilterRdfResourceValuesExpression({
+  /**
+   * Convert an rdfjsResource.Resource.Value to a value of this type.
+   * @param variables
+   * @protected
+   */
+  protected abstract fromRdfResourceValueExpression({
     variables,
-  }: Parameters<
-    LiteralType["propertyFilterRdfResourceValuesExpression"]
-  >[0]): string {
-    return variables.resourceValues;
-  }
+  }: {
+    variables: { predicate: string; resource: string; resourceValue: string };
+  }): string;
 }

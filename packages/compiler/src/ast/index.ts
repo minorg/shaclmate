@@ -7,6 +7,7 @@ export * from "./Name.js";
 export * from "./ObjectIntersectionType.js";
 export * from "./ObjectType.js";
 export * from "./ObjectUnionType.js";
+export * from "./SetType.js";
 export * from "./UnionType.js";
 export * from "./TermType.js";
 export * from "./Type.js";

@@ -23,18 +23,18 @@ export class ShapesGraphToAstTransformer {
   protected readonly shapesGraph: input.ShapesGraph;
   protected transformNodeShapeToAstType =
     _ShapesGraphToAstTransformer.transformNodeShapeToAstType;
-  protected transformPropertyShapeToAstCompositeType =
-    _ShapesGraphToAstTransformer.transformPropertyShapeToAstCompositeType;
-  protected transformPropertyShapeToAstIdentifierType =
-    _ShapesGraphToAstTransformer.transformPropertyShapeToAstIdentifierType;
-  protected transformPropertyShapeToAstLiteralType =
-    _ShapesGraphToAstTransformer.transformPropertyShapeToAstLiteralType;
   protected transformPropertyShapeToAstObjectTypeProperty =
     _ShapesGraphToAstTransformer.transformPropertyShapeToAstObjectTypeProperty;
-  protected transformPropertyShapeToAstTermType =
-    _ShapesGraphToAstTransformer.transformPropertyShapeToAstTermType;
-  protected transformPropertyShapeToAstType =
-    _ShapesGraphToAstTransformer.transformPropertyShapeToAstType;
+  protected transformShapeToAstCompositeType =
+    _ShapesGraphToAstTransformer.transformShapeToAstCompositeType;
+  protected transformShapeToAstIdentifierType =
+    _ShapesGraphToAstTransformer.transformShapeToAstIdentifierType;
+  protected transformShapeToAstLiteralType =
+    _ShapesGraphToAstTransformer.transformShapeToAstLiteralType;
+  protected transformShapeToAstTermType =
+    _ShapesGraphToAstTransformer.transformShapeToAstTermType;
+  protected transformShapeToAstType =
+    _ShapesGraphToAstTransformer.transformShapeToAstType;
 
   constructor({
     iriPrefixMap,

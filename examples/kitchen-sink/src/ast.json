@@ -24,6 +24,7 @@
               "value": "http://example.com/abstractBaseClassForExternClassProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/abstractBaseClassForExternClassProperty",
           "type": {
             "datatype": {
@@ -32,7 +33,8 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -60,6 +62,7 @@
               "value": "http://example.com/abstractBaseClassWithPropertiesProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/abstractBaseClassWithPropertiesProperty",
           "type": {
             "datatype": {
@@ -68,7 +71,8 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -108,6 +112,7 @@
               "value": "http://example.com/baseInterfaceWithPropertiesProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/baseInterfaceWithPropertiesProperty",
           "type": {
             "datatype": {
@@ -116,7 +121,8 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -148,6 +154,18 @@
       "kind": "ObjectType",
       "name": {
         "identifier": {
+          "curie": ":BlankInterface",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "BlankInterface",
+          "value": "http://example.com/BlankInterface"
+        }
+      },
+      "properties": []
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
           "curie": ":ClassUnionMember1",
           "termType": "NamedNode",
           "uniqueLocalPart": "ClassUnionMember1",
@@ -168,6 +186,7 @@
               "value": "http://example.com/classUnionMember1Property"
             }
           },
+          "order": 0,
           "path": "http://example.com/classUnionMember1Property",
           "type": {
             "datatype": {
@@ -176,7 +195,8 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -204,6 +224,7 @@
               "value": "http://example.com/classUnionMember2Property"
             }
           },
+          "order": 0,
           "path": "http://example.com/classUnionMember2Property",
           "type": {
             "datatype": {
@@ -212,7 +233,8 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -240,6 +262,7 @@
               "value": "http://example.com/concreteChildClassProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/concreteChildClassProperty",
           "type": {
             "datatype": {
@@ -248,7 +271,8 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -276,6 +300,7 @@
               "value": "http://example.com/concreteParentClassProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/concreteParentClassProperty",
           "type": {
             "datatype": {
@@ -284,7 +309,8 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -312,6 +338,7 @@
               "value": "http://example.com/concreteChildInterfaceProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/concreteChildInterfaceProperty",
           "type": {
             "datatype": {
@@ -320,7 +347,8 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -348,6 +376,7 @@
               "value": "http://example.com/concreteParentInterfaceProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/concreteParentInterfaceProperty",
           "type": {
             "datatype": {
@@ -356,7 +385,8 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -384,11 +414,13 @@
               "value": "http://example.com/stringDefaultValueProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/stringDefaultValueProperty",
           "type": {
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -403,11 +435,13 @@
               "value": "http://example.com/trueBooleanDefaultValueProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/trueBooleanDefaultValueProperty",
           "type": {
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -422,11 +456,13 @@
               "value": "http://example.com/falseBooleanDefaultValueProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/falseBooleanDefaultValueProperty",
           "type": {
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -441,11 +477,13 @@
               "value": "http://example.com/dateDefaultValueProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/dateDefaultValueProperty",
           "type": {
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -460,11 +498,13 @@
               "value": "http://example.com/dateTimeDefaultValueProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/dateTimeDefaultValueProperty",
           "type": {
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
@@ -479,11 +519,13 @@
               "value": "http://example.com/numberDefaultValueProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/numberDefaultValueProperty",
           "type": {
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -511,6 +553,7 @@
               "value": "http://example.com/directRecursiveProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/directRecursiveProperty",
           "recursive": true,
           "type": {
@@ -531,7 +574,392 @@
               "identifierMintingStrategy": "blankNode"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":ExplicitFromToRdfTypesClass",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "ExplicitFromToRdfTypesClass",
+          "value": "http://example.com/ExplicitFromToRdfTypesClass"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-157"
+            },
+            "propertyPath": {
+              "curie": ":explicitFromToRdfTypesProperty",
+              "uniqueLocalPart": "explicitFromToRdfTypesProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/explicitFromToRdfTypesProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/explicitFromToRdfTypesProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":ExplicitRdfTypeClass",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "ExplicitRdfTypeClass",
+          "value": "http://example.com/ExplicitRdfTypeClass"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-158"
+            },
+            "propertyPath": {
+              "curie": ":explicitRdfTypeProperty",
+              "uniqueLocalPart": "explicitRdfTypeProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/explicitRdfTypeProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/explicitRdfTypeProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":ExternClass",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "ExternClass",
+          "value": "http://example.com/ExternClass"
+        }
+      },
+      "properties": []
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":ExternClassPropertyClass",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "ExternClassPropertyClass",
+          "value": "http://example.com/ExternClassPropertyClass"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-159"
+            },
+            "propertyPath": {
+              "curie": ":externClassProperty",
+              "uniqueLocalPart": "externClassProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/externClassProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/externClassProperty",
+          "type": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":ExternClass",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "ExternClass",
+                  "value": "http://example.com/ExternClass"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode"
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":HasValuePropertiesClass",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "HasValuePropertiesClass",
+          "value": "http://example.com/HasValuePropertiesClass"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-160"
+            },
+            "propertyPath": {
+              "curie": ":hasIriValueProperty",
+              "uniqueLocalPart": "hasIriValueProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/hasIriValueProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/hasIriValueProperty",
+          "type": {
+            "hasValue": [
+              {
+                "termType": "NamedNode",
+                "value": "http://example.com/HasValuePropertiesClassIri1"
+              }
+            ],
+            "kind": "IdentifierType",
+            "nodeKinds": [
+              "NamedNode"
+            ]
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-161"
+            },
+            "propertyPath": {
+              "curie": ":hasLiteralValueProperty",
+              "uniqueLocalPart": "hasLiteralValueProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/hasLiteralValueProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/hasLiteralValueProperty",
+          "type": {
+            "hasValue": [
+              {
+                "datatype": "http://www.w3.org/2001/XMLSchema#string",
+                "language": "",
+                "termType": "Literal",
+                "value": "test"
+              }
+            ],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":InIdentifierClass",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "InIdentifierClass",
+          "value": "http://example.com/InIdentifierClass"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-164"
+            },
+            "propertyPath": {
+              "curie": ":inIdentifierProperty",
+              "uniqueLocalPart": "inIdentifierProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/inIdentifierProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/inIdentifierProperty",
+          "type": {
+            "itemType": {
+              "datatype": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#string"
+              },
+              "hasValue": [],
+              "kind": "LiteralType"
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":InPropertiesClass",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "InPropertiesClass",
+          "value": "http://example.com/InPropertiesClass"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-165"
+            },
+            "propertyPath": {
+              "curie": ":inBooleansProperty",
+              "uniqueLocalPart": "inBooleansProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/inBooleansProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/inBooleansProperty",
+          "type": {
+            "itemType": {
+              "hasValue": [],
+              "kind": "LiteralType"
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-167"
+            },
+            "propertyPath": {
+              "curie": ":inDateTimesProperty",
+              "uniqueLocalPart": "inDateTimesProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/inDateTimesProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/inDateTimesProperty",
+          "type": {
+            "itemType": {
+              "hasValue": [],
+              "kind": "LiteralType"
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-169"
+            },
+            "propertyPath": {
+              "curie": ":inIrisProperty",
+              "uniqueLocalPart": "inIrisProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/inIrisProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/inIrisProperty",
+          "type": {
+            "itemType": {
+              "hasValue": [],
+              "kind": "IdentifierType",
+              "nodeKinds": [
+                "NamedNode"
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-172"
+            },
+            "propertyPath": {
+              "curie": ":inNumbersProperty",
+              "uniqueLocalPart": "inNumbersProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/inNumbersProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/inNumbersProperty",
+          "type": {
+            "itemType": {
+              "hasValue": [],
+              "kind": "LiteralType"
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-175"
+            },
+            "propertyPath": {
+              "curie": ":inStringsProperty",
+              "uniqueLocalPart": "inStringsProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/inStringsProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/inStringsProperty",
+          "type": {
+            "itemType": {
+              "hasValue": [],
+              "kind": "LiteralType"
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -550,7 +978,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-157"
+              "value": "n3-178"
             },
             "propertyPath": {
               "curie": ":indirectRecursiveHelperProperty",
@@ -559,6 +987,7 @@
               "value": "http://example.com/indirectRecursiveHelperProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/indirectRecursiveHelperProperty",
           "recursive": true,
           "type": {
@@ -579,7 +1008,8 @@
               "identifierMintingStrategy": "blankNode"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -598,7 +1028,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-158"
+              "value": "n3-179"
             },
             "propertyPath": {
               "curie": ":indirectRecursiveProperty",
@@ -607,6 +1037,7 @@
               "value": "http://example.com/indirectRecursiveProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/indirectRecursiveProperty",
           "type": {
             "itemType": {
@@ -626,507 +1057,8 @@
               "identifierMintingStrategy": "blankNode"
             },
             "kind": "OptionType"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
-      "name": {
-        "identifier": {
-          "curie": ":ExplicitFromToRdfTypesClass",
-          "termType": "NamedNode",
-          "uniqueLocalPart": "ExplicitFromToRdfTypesClass",
-          "value": "http://example.com/ExplicitFromToRdfTypesClass"
-        }
-      },
-      "properties": [
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-159"
-            },
-            "propertyPath": {
-              "curie": ":explicitFromToRdfTypesProperty",
-              "uniqueLocalPart": "explicitFromToRdfTypesProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/explicitFromToRdfTypesProperty"
-            }
           },
-          "path": "http://example.com/explicitFromToRdfTypesProperty",
-          "type": {
-            "datatype": {
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            },
-            "hasValue": [],
-            "kind": "LiteralType"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
-      "name": {
-        "identifier": {
-          "curie": ":ExplicitRdfTypeClass",
-          "termType": "NamedNode",
-          "uniqueLocalPart": "ExplicitRdfTypeClass",
-          "value": "http://example.com/ExplicitRdfTypeClass"
-        }
-      },
-      "properties": [
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-160"
-            },
-            "propertyPath": {
-              "curie": ":explicitRdfTypeProperty",
-              "uniqueLocalPart": "explicitRdfTypeProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/explicitRdfTypeProperty"
-            }
-          },
-          "path": "http://example.com/explicitRdfTypeProperty",
-          "type": {
-            "datatype": {
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            },
-            "hasValue": [],
-            "kind": "LiteralType"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
-      "name": {
-        "identifier": {
-          "curie": ":ExternClass",
-          "termType": "NamedNode",
-          "uniqueLocalPart": "ExternClass",
-          "value": "http://example.com/ExternClass"
-        }
-      },
-      "properties": []
-    },
-    {
-      "kind": "ObjectType",
-      "name": {
-        "identifier": {
-          "curie": ":ExternPropertiesClass",
-          "termType": "NamedNode",
-          "uniqueLocalPart": "ExternPropertiesClass",
-          "value": "http://example.com/ExternPropertiesClass"
-        }
-      },
-      "properties": [
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-161"
-            },
-            "propertyPath": {
-              "curie": ":externClassProperty",
-              "uniqueLocalPart": "externClassProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/externClassProperty"
-            }
-          },
-          "path": "http://example.com/externClassProperty",
-          "type": {
-            "itemType": {
-              "kind": "ObjectType",
-              "name": {
-                "identifier": {
-                  "curie": ":ExternClass",
-                  "termType": "NamedNode",
-                  "uniqueLocalPart": "ExternClass",
-                  "value": "http://example.com/ExternClass"
-                }
-              },
-              "identifierNodeKinds": [
-                "BlankNode",
-                "NamedNode"
-              ],
-              "identifierMintingStrategy": "blankNode"
-            },
-            "kind": "OptionType"
-          }
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-162"
-            },
-            "propertyPath": {
-              "curie": ":externNestedProperty",
-              "uniqueLocalPart": "externNestedProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/externNestedProperty"
-            }
-          },
-          "path": "http://example.com/externNestedProperty",
-          "type": {
-            "itemType": {
-              "hasValue": [],
-              "kind": "IdentifierType",
-              "nodeKinds": [
-                "BlankNode",
-                "NamedNode"
-              ]
-            },
-            "kind": "OptionType"
-          }
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-163"
-            },
-            "propertyPath": {
-              "curie": ":inlineNestedProperty",
-              "uniqueLocalPart": "inlineNestedProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/inlineNestedProperty"
-            }
-          },
-          "path": "http://example.com/inlineNestedProperty",
-          "type": {
-            "itemType": {
-              "kind": "ObjectType",
-              "name": {
-                "identifier": {
-                  "curie": ":ExternPropertiesInlineNestedClass",
-                  "termType": "NamedNode",
-                  "uniqueLocalPart": "ExternPropertiesInlineNestedClass",
-                  "value": "http://example.com/ExternPropertiesInlineNestedClass"
-                }
-              },
-              "identifierNodeKinds": [
-                "BlankNode",
-                "NamedNode"
-              ],
-              "identifierMintingStrategy": "blankNode"
-            },
-            "kind": "OptionType"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
-      "name": {
-        "identifier": {
-          "curie": ":ExternPropertiesExternNestedClass",
-          "termType": "NamedNode",
-          "uniqueLocalPart": "ExternPropertiesExternNestedClass",
-          "value": "http://example.com/ExternPropertiesExternNestedClass"
-        }
-      },
-      "properties": [
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-164"
-            },
-            "propertyPath": {
-              "curie": ":externPropertiesExternNestedStringProperty",
-              "uniqueLocalPart": "externPropertiesExternNestedStringProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/externPropertiesExternNestedStringProperty"
-            }
-          },
-          "path": "http://example.com/externPropertiesExternNestedStringProperty",
-          "type": {
-            "datatype": {
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            },
-            "hasValue": [],
-            "kind": "LiteralType"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
-      "name": {
-        "identifier": {
-          "curie": ":ExternPropertiesInlineNestedClass",
-          "termType": "NamedNode",
-          "uniqueLocalPart": "ExternPropertiesInlineNestedClass",
-          "value": "http://example.com/ExternPropertiesInlineNestedClass"
-        }
-      },
-      "properties": [
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-165"
-            },
-            "propertyPath": {
-              "curie": ":externPropertiesInlineNestedStringProperty",
-              "uniqueLocalPart": "externPropertiesInlineNestedStringProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/externPropertiesInlineNestedStringProperty"
-            }
-          },
-          "path": "http://example.com/externPropertiesInlineNestedStringProperty",
-          "type": {
-            "datatype": {
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            },
-            "hasValue": [],
-            "kind": "LiteralType"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
-      "name": {
-        "identifier": {
-          "curie": ":HasValuePropertiesClass",
-          "termType": "NamedNode",
-          "uniqueLocalPart": "HasValuePropertiesClass",
-          "value": "http://example.com/HasValuePropertiesClass"
-        }
-      },
-      "properties": [
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-166"
-            },
-            "propertyPath": {
-              "curie": ":hasIriValueProperty",
-              "uniqueLocalPart": "hasIriValueProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/hasIriValueProperty"
-            }
-          },
-          "path": "http://example.com/hasIriValueProperty",
-          "type": {
-            "itemType": {
-              "hasValue": [
-                {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/HasValuePropertiesClassIri1"
-                }
-              ],
-              "kind": "IdentifierType",
-              "nodeKinds": [
-                "NamedNode"
-              ]
-            },
-            "kind": "OptionType"
-          }
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-167"
-            },
-            "propertyPath": {
-              "curie": ":hasLiteralValueProperty",
-              "uniqueLocalPart": "hasLiteralValueProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/hasLiteralValueProperty"
-            }
-          },
-          "path": "http://example.com/hasLiteralValueProperty",
-          "type": {
-            "itemType": {
-              "hasValue": [
-                {
-                  "datatype": "http://www.w3.org/2001/XMLSchema#string",
-                  "language": "",
-                  "termType": "Literal",
-                  "value": "test"
-                }
-              ],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
-      "name": {
-        "identifier": {
-          "curie": ":InIdentifierClass",
-          "termType": "NamedNode",
-          "uniqueLocalPart": "InIdentifierClass",
-          "value": "http://example.com/InIdentifierClass"
-        }
-      },
-      "properties": [
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-170"
-            },
-            "propertyPath": {
-              "curie": ":inIdentifierProperty",
-              "uniqueLocalPart": "inIdentifierProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/inIdentifierProperty"
-            }
-          },
-          "path": "http://example.com/inIdentifierProperty",
-          "type": {
-            "itemType": {
-              "datatype": {
-                "termType": "NamedNode",
-                "value": "http://www.w3.org/2001/XMLSchema#string"
-              },
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
-      "name": {
-        "identifier": {
-          "curie": ":InPropertiesClass",
-          "termType": "NamedNode",
-          "uniqueLocalPart": "InPropertiesClass",
-          "value": "http://example.com/InPropertiesClass"
-        }
-      },
-      "properties": [
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-171"
-            },
-            "propertyPath": {
-              "curie": ":inBooleansProperty",
-              "uniqueLocalPart": "inBooleansProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/inBooleansProperty"
-            }
-          },
-          "path": "http://example.com/inBooleansProperty",
-          "type": {
-            "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
-          }
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-173"
-            },
-            "propertyPath": {
-              "curie": ":inDateTimesProperty",
-              "uniqueLocalPart": "inDateTimesProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/inDateTimesProperty"
-            }
-          },
-          "path": "http://example.com/inDateTimesProperty",
-          "type": {
-            "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
-          }
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-175"
-            },
-            "propertyPath": {
-              "curie": ":inIrisProperty",
-              "uniqueLocalPart": "inIrisProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/inIrisProperty"
-            }
-          },
-          "path": "http://example.com/inIrisProperty",
-          "type": {
-            "itemType": {
-              "hasValue": [],
-              "kind": "IdentifierType",
-              "nodeKinds": [
-                "NamedNode"
-              ]
-            },
-            "kind": "OptionType"
-          }
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-178"
-            },
-            "propertyPath": {
-              "curie": ":inNumbersProperty",
-              "uniqueLocalPart": "inNumbersProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/inNumbersProperty"
-            }
-          },
-          "path": "http://example.com/inNumbersProperty",
-          "type": {
-            "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
-          }
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-181"
-            },
-            "propertyPath": {
-              "curie": ":inStringsProperty",
-              "uniqueLocalPart": "inStringsProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/inStringsProperty"
-            }
-          },
-          "path": "http://example.com/inStringsProperty",
-          "type": {
-            "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
-          }
+          "visibility": "public"
         }
       ]
     },
@@ -1145,7 +1077,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-184"
+              "value": "n3-180"
             },
             "propertyPath": {
               "curie": ":interfaceProperty",
@@ -1154,6 +1086,7 @@
               "value": "http://example.com/interfaceProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/interfaceProperty",
           "type": {
             "datatype": {
@@ -1162,7 +1095,8 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1181,7 +1115,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-187"
+              "value": "n3-183"
             },
             "propertyPath": {
               "curie": ":interfaceUnionMember1Property",
@@ -1190,6 +1124,7 @@
               "value": "http://example.com/interfaceUnionMember1Property"
             }
           },
+          "order": 0,
           "path": "http://example.com/interfaceUnionMember1Property",
           "type": {
             "datatype": {
@@ -1198,7 +1133,8 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1217,7 +1153,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-190"
+              "value": "n3-186"
             },
             "propertyPath": {
               "curie": ":interfaceUnionMember2aProperty",
@@ -1226,6 +1162,7 @@
               "value": "http://example.com/interfaceUnionMember2aProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/interfaceUnionMember2aProperty",
           "type": {
             "datatype": {
@@ -1234,7 +1171,8 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1253,7 +1191,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-191"
+              "value": "n3-187"
             },
             "propertyPath": {
               "curie": ":interfaceUnionMember2bProperty",
@@ -1262,6 +1200,7 @@
               "value": "http://example.com/interfaceUnionMember2bProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/interfaceUnionMember2bProperty",
           "type": {
             "datatype": {
@@ -1270,7 +1209,8 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1301,7 +1241,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-192"
+              "value": "n3-188"
             },
             "propertyPath": {
               "curie": ":languageInPropertiesLanguageInProperty",
@@ -1310,20 +1250,20 @@
               "value": "http://example.com/languageInPropertiesLanguageInProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/languageInPropertiesLanguageInProperty",
           "type": {
-            "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
-          }
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
         },
         {
+          "comment": "literal property for testing runtime languageIn",
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-195"
+              "value": "n3-191"
             },
             "propertyPath": {
               "curie": ":languageInPropertiesLiteralProperty",
@@ -1332,14 +1272,1971 @@
               "value": "http://example.com/languageInPropertiesLiteralProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/languageInPropertiesLiteralProperty",
           "type": {
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":LazilyResolvedBlankNodeOrIriClass",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriClass",
+          "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-192"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":LazilyResolvedBlankNodeOrIriInterface",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriInterface",
+          "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-193"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":LazilyResolvedClassUnionMember1",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "LazilyResolvedClassUnionMember1",
+          "value": "http://example.com/LazilyResolvedClassUnionMember1"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-196"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":LazilyResolvedClassUnionMember2",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "LazilyResolvedClassUnionMember2",
+          "value": "http://example.com/LazilyResolvedClassUnionMember2"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-197"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":LazilyResolvedInterfaceUnionMember1",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "LazilyResolvedInterfaceUnionMember1",
+          "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-200"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":LazilyResolvedInterfaceUnionMember2",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "LazilyResolvedInterfaceUnionMember2",
+          "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-201"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":LazilyResolvedIriClass",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "LazilyResolvedIriClass",
+          "value": "http://example.com/LazilyResolvedIriClass"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-202"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":LazilyResolvedIriInterface",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "LazilyResolvedIriInterface",
+          "value": "http://example.com/LazilyResolvedIriInterface"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-203"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":LazyPropertiesClass",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "LazyPropertiesClass",
+          "value": "http://example.com/LazyPropertiesClass"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-204"
+            },
+            "propertyPath": {
+              "curie": ":optionalLazyToResolvedClassProperty",
+              "uniqueLocalPart": "optionalLazyToResolvedClassProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/optionalLazyToResolvedClassProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/optionalLazyToResolvedClassProperty",
+          "stubType": {
             "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "termType": "BlankNode",
+                  "value": "n3-293"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ]
             },
             "kind": "OptionType"
-          }
+          },
+          "type": {
+            "itemType": {
+              "fromRdfType": {
+                "termType": "NamedNode",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+              },
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":LazilyResolvedBlankNodeOrIriClass",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriClass",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode",
+              "toRdfTypes": [
+                {
+                  "termType": "NamedNode",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+                }
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-205"
+            },
+            "propertyPath": {
+              "curie": ":setLazyToResolvedClassProperty",
+              "uniqueLocalPart": "setLazyToResolvedClassProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/setLazyToResolvedClassProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/setLazyToResolvedClassProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "termType": "BlankNode",
+                  "value": "n3-294"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ]
+            },
+            "kind": "SetType"
+          },
+          "type": {
+            "itemType": {
+              "fromRdfType": {
+                "termType": "NamedNode",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+              },
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":LazilyResolvedBlankNodeOrIriClass",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriClass",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode",
+              "toRdfTypes": [
+                {
+                  "termType": "NamedNode",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+                }
+              ]
+            },
+            "kind": "SetType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-206"
+            },
+            "propertyPath": {
+              "curie": ":requiredLazyToResolvedClassProperty",
+              "uniqueLocalPart": "requiredLazyToResolvedClassProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/requiredLazyToResolvedClassProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/requiredLazyToResolvedClassProperty",
+          "stubType": {
+            "kind": "ObjectType",
+            "name": {
+              "identifier": {
+                "termType": "BlankNode",
+                "value": "n3-295"
+              }
+            },
+            "identifierNodeKinds": [
+              "BlankNode",
+              "NamedNode"
+            ]
+          },
+          "type": {
+            "fromRdfType": {
+              "termType": "NamedNode",
+              "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+            },
+            "kind": "ObjectType",
+            "name": {
+              "identifier": {
+                "curie": ":LazilyResolvedBlankNodeOrIriClass",
+                "termType": "NamedNode",
+                "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriClass",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+              }
+            },
+            "identifierNodeKinds": [
+              "BlankNode",
+              "NamedNode"
+            ],
+            "identifierMintingStrategy": "blankNode",
+            "toRdfTypes": [
+              {
+                "termType": "NamedNode",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+              }
+            ]
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-207"
+            },
+            "propertyPath": {
+              "curie": ":optionalLazyToResolvedIriClassProperty",
+              "uniqueLocalPart": "optionalLazyToResolvedIriClassProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/optionalLazyToResolvedIriClassProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/optionalLazyToResolvedIriClassProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "termType": "BlankNode",
+                  "value": "n3-296"
+                }
+              },
+              "identifierNodeKinds": [
+                "NamedNode"
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "type": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":LazilyResolvedIriClass",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "LazilyResolvedIriClass",
+                  "value": "http://example.com/LazilyResolvedIriClass"
+                }
+              },
+              "identifierNodeKinds": [
+                "NamedNode"
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-208"
+            },
+            "propertyPath": {
+              "curie": ":optionalLazyToResolvedClassUnionProperty",
+              "uniqueLocalPart": "optionalLazyToResolvedClassUnionProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/optionalLazyToResolvedClassUnionProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/optionalLazyToResolvedClassUnionProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "termType": "BlankNode",
+                  "value": "n3-297"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "type": {
+            "itemType": {
+              "kind": "ObjectUnionType",
+              "name": {
+                "identifier": {
+                  "curie": ":LazilyResolvedClassUnion",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "LazilyResolvedClassUnion",
+                  "value": "http://example.com/LazilyResolvedClassUnion"
+                }
+              },
+              "types": [
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/LazilyResolvedClassUnionMember1"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":LazilyResolvedClassUnionMember1",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "LazilyResolvedClassUnionMember1",
+                      "value": "http://example.com/LazilyResolvedClassUnionMember1"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/LazilyResolvedClassUnionMember1"
+                    }
+                  ]
+                },
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/LazilyResolvedClassUnionMember2"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":LazilyResolvedClassUnionMember2",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "LazilyResolvedClassUnionMember2",
+                      "value": "http://example.com/LazilyResolvedClassUnionMember2"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/LazilyResolvedClassUnionMember2"
+                    }
+                  ]
+                }
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-209"
+            },
+            "propertyPath": {
+              "curie": ":optionalStubClassToResolvedClassProperty",
+              "uniqueLocalPart": "optionalStubClassToResolvedClassProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/optionalStubClassToResolvedClassProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/optionalStubClassToResolvedClassProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":StubClass",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "StubClass",
+                  "value": "http://example.com/StubClass"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode"
+            },
+            "kind": "OptionType"
+          },
+          "type": {
+            "itemType": {
+              "fromRdfType": {
+                "termType": "NamedNode",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+              },
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":LazilyResolvedBlankNodeOrIriClass",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriClass",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode",
+              "toRdfTypes": [
+                {
+                  "termType": "NamedNode",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+                }
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-210"
+            },
+            "propertyPath": {
+              "curie": ":setStubClassToResolvedClassProperty",
+              "uniqueLocalPart": "setStubClassToResolvedClassProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/setStubClassToResolvedClassProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/setStubClassToResolvedClassProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":StubClass",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "StubClass",
+                  "value": "http://example.com/StubClass"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode"
+            },
+            "kind": "SetType"
+          },
+          "type": {
+            "itemType": {
+              "fromRdfType": {
+                "termType": "NamedNode",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+              },
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":LazilyResolvedBlankNodeOrIriClass",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriClass",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode",
+              "toRdfTypes": [
+                {
+                  "termType": "NamedNode",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+                }
+              ]
+            },
+            "kind": "SetType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-211"
+            },
+            "propertyPath": {
+              "curie": ":requiredStubClassToResolvedClassProperty",
+              "uniqueLocalPart": "requiredStubClassToResolvedClassProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/requiredStubClassToResolvedClassProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/requiredStubClassToResolvedClassProperty",
+          "stubType": {
+            "kind": "ObjectType",
+            "name": {
+              "identifier": {
+                "curie": ":StubClass",
+                "termType": "NamedNode",
+                "uniqueLocalPart": "StubClass",
+                "value": "http://example.com/StubClass"
+              }
+            },
+            "identifierNodeKinds": [
+              "BlankNode",
+              "NamedNode"
+            ],
+            "identifierMintingStrategy": "blankNode"
+          },
+          "type": {
+            "fromRdfType": {
+              "termType": "NamedNode",
+              "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+            },
+            "kind": "ObjectType",
+            "name": {
+              "identifier": {
+                "curie": ":LazilyResolvedBlankNodeOrIriClass",
+                "termType": "NamedNode",
+                "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriClass",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+              }
+            },
+            "identifierNodeKinds": [
+              "BlankNode",
+              "NamedNode"
+            ],
+            "identifierMintingStrategy": "blankNode",
+            "toRdfTypes": [
+              {
+                "termType": "NamedNode",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriClass"
+              }
+            ]
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-212"
+            },
+            "propertyPath": {
+              "curie": ":optionalStubClassToResolvedClassUnionProperty",
+              "uniqueLocalPart": "optionalStubClassToResolvedClassUnionProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/optionalStubClassToResolvedClassUnionProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/optionalStubClassToResolvedClassUnionProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":StubClass",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "StubClass",
+                  "value": "http://example.com/StubClass"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode"
+            },
+            "kind": "OptionType"
+          },
+          "type": {
+            "itemType": {
+              "kind": "ObjectUnionType",
+              "name": {
+                "identifier": {
+                  "curie": ":LazilyResolvedClassUnion",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "LazilyResolvedClassUnion",
+                  "value": "http://example.com/LazilyResolvedClassUnion"
+                }
+              },
+              "types": [
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/LazilyResolvedClassUnionMember1"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":LazilyResolvedClassUnionMember1",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "LazilyResolvedClassUnionMember1",
+                      "value": "http://example.com/LazilyResolvedClassUnionMember1"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/LazilyResolvedClassUnionMember1"
+                    }
+                  ]
+                },
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/LazilyResolvedClassUnionMember2"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":LazilyResolvedClassUnionMember2",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "LazilyResolvedClassUnionMember2",
+                      "value": "http://example.com/LazilyResolvedClassUnionMember2"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/LazilyResolvedClassUnionMember2"
+                    }
+                  ]
+                }
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-213"
+            },
+            "propertyPath": {
+              "curie": ":optionalStubClassUnionToResolvedClassUnionProperty",
+              "uniqueLocalPart": "optionalStubClassUnionToResolvedClassUnionProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/optionalStubClassUnionToResolvedClassUnionProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/optionalStubClassUnionToResolvedClassUnionProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectUnionType",
+              "name": {
+                "identifier": {
+                  "curie": ":StubClassUnion",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "StubClassUnion",
+                  "value": "http://example.com/StubClassUnion"
+                }
+              },
+              "types": [
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/StubClassUnionMember1"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":StubClassUnionMember1",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "StubClassUnionMember1",
+                      "value": "http://example.com/StubClassUnionMember1"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/StubClassUnionMember1"
+                    }
+                  ]
+                },
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/StubClassUnionMember2"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":StubClassUnionMember2",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "StubClassUnionMember2",
+                      "value": "http://example.com/StubClassUnionMember2"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/StubClassUnionMember2"
+                    }
+                  ]
+                }
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "type": {
+            "itemType": {
+              "kind": "ObjectUnionType",
+              "name": {
+                "identifier": {
+                  "curie": ":LazilyResolvedClassUnion",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "LazilyResolvedClassUnion",
+                  "value": "http://example.com/LazilyResolvedClassUnion"
+                }
+              },
+              "types": [
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/LazilyResolvedClassUnionMember1"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":LazilyResolvedClassUnionMember1",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "LazilyResolvedClassUnionMember1",
+                      "value": "http://example.com/LazilyResolvedClassUnionMember1"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/LazilyResolvedClassUnionMember1"
+                    }
+                  ]
+                },
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/LazilyResolvedClassUnionMember2"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":LazilyResolvedClassUnionMember2",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "LazilyResolvedClassUnionMember2",
+                      "value": "http://example.com/LazilyResolvedClassUnionMember2"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/LazilyResolvedClassUnionMember2"
+                    }
+                  ]
+                }
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":StubClass",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "StubClass",
+          "value": "http://example.com/StubClass"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-253"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":LazyPropertiesInterface",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "LazyPropertiesInterface",
+          "value": "http://example.com/LazyPropertiesInterface"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-214"
+            },
+            "propertyPath": {
+              "curie": ":optionalLazyToResolvedInterfaceProperty",
+              "uniqueLocalPart": "optionalLazyToResolvedInterfaceProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/optionalLazyToResolvedInterfaceProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/optionalLazyToResolvedInterfaceProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "termType": "BlankNode",
+                  "value": "n3-298"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "type": {
+            "itemType": {
+              "fromRdfType": {
+                "termType": "NamedNode",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+              },
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":LazilyResolvedBlankNodeOrIriInterface",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriInterface",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode",
+              "toRdfTypes": [
+                {
+                  "termType": "NamedNode",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+                }
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-215"
+            },
+            "propertyPath": {
+              "curie": ":setLazyToResolvedInterfaceProperty",
+              "uniqueLocalPart": "setLazyToResolvedInterfaceProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/setLazyToResolvedInterfaceProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/setLazyToResolvedInterfaceProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "termType": "BlankNode",
+                  "value": "n3-299"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ]
+            },
+            "kind": "SetType"
+          },
+          "type": {
+            "itemType": {
+              "fromRdfType": {
+                "termType": "NamedNode",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+              },
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":LazilyResolvedBlankNodeOrIriInterface",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriInterface",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode",
+              "toRdfTypes": [
+                {
+                  "termType": "NamedNode",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+                }
+              ]
+            },
+            "kind": "SetType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-216"
+            },
+            "propertyPath": {
+              "curie": ":requiredLazyToResolvedInterfaceProperty",
+              "uniqueLocalPart": "requiredLazyToResolvedInterfaceProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/requiredLazyToResolvedInterfaceProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/requiredLazyToResolvedInterfaceProperty",
+          "stubType": {
+            "kind": "ObjectType",
+            "name": {
+              "identifier": {
+                "termType": "BlankNode",
+                "value": "n3-300"
+              }
+            },
+            "identifierNodeKinds": [
+              "BlankNode",
+              "NamedNode"
+            ]
+          },
+          "type": {
+            "fromRdfType": {
+              "termType": "NamedNode",
+              "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+            },
+            "kind": "ObjectType",
+            "name": {
+              "identifier": {
+                "curie": ":LazilyResolvedBlankNodeOrIriInterface",
+                "termType": "NamedNode",
+                "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriInterface",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+              }
+            },
+            "identifierNodeKinds": [
+              "BlankNode",
+              "NamedNode"
+            ],
+            "identifierMintingStrategy": "blankNode",
+            "toRdfTypes": [
+              {
+                "termType": "NamedNode",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+              }
+            ]
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-217"
+            },
+            "propertyPath": {
+              "curie": ":optionalLazyToResolvedIriInterfaceProperty",
+              "uniqueLocalPart": "optionalLazyToResolvedIriInterfaceProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/optionalLazyToResolvedIriInterfaceProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/optionalLazyToResolvedIriInterfaceProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "termType": "BlankNode",
+                  "value": "n3-301"
+                }
+              },
+              "identifierNodeKinds": [
+                "NamedNode"
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "type": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":LazilyResolvedIriInterface",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "LazilyResolvedIriInterface",
+                  "value": "http://example.com/LazilyResolvedIriInterface"
+                }
+              },
+              "identifierNodeKinds": [
+                "NamedNode"
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-218"
+            },
+            "propertyPath": {
+              "curie": ":optionalLazyToResolvedInterfaceUnionProperty",
+              "uniqueLocalPart": "optionalLazyToResolvedInterfaceUnionProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/optionalLazyToResolvedInterfaceUnionProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/optionalLazyToResolvedInterfaceUnionProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "termType": "BlankNode",
+                  "value": "n3-302"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "type": {
+            "itemType": {
+              "kind": "ObjectUnionType",
+              "name": {
+                "identifier": {
+                  "curie": ":LazilyResolvedInterfaceUnion",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "LazilyResolvedInterfaceUnion",
+                  "value": "http://example.com/LazilyResolvedInterfaceUnion"
+                }
+              },
+              "types": [
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":LazilyResolvedInterfaceUnionMember1",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "LazilyResolvedInterfaceUnionMember1",
+                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
+                    }
+                  ]
+                },
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":LazilyResolvedInterfaceUnionMember2",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "LazilyResolvedInterfaceUnionMember2",
+                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
+                    }
+                  ]
+                }
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-219"
+            },
+            "propertyPath": {
+              "curie": ":optionalStubInterfaceToResolvedInterfaceProperty",
+              "uniqueLocalPart": "optionalStubInterfaceToResolvedInterfaceProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/optionalStubInterfaceToResolvedInterfaceProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/optionalStubInterfaceToResolvedInterfaceProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":StubInterface",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "StubInterface",
+                  "value": "http://example.com/StubInterface"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode"
+            },
+            "kind": "OptionType"
+          },
+          "type": {
+            "itemType": {
+              "fromRdfType": {
+                "termType": "NamedNode",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+              },
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":LazilyResolvedBlankNodeOrIriInterface",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriInterface",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode",
+              "toRdfTypes": [
+                {
+                  "termType": "NamedNode",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+                }
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-220"
+            },
+            "propertyPath": {
+              "curie": ":setStubInterfaceToResolvedInterfaceProperty",
+              "uniqueLocalPart": "setStubInterfaceToResolvedInterfaceProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/setStubInterfaceToResolvedInterfaceProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/setStubInterfaceToResolvedInterfaceProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":StubInterface",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "StubInterface",
+                  "value": "http://example.com/StubInterface"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode"
+            },
+            "kind": "SetType"
+          },
+          "type": {
+            "itemType": {
+              "fromRdfType": {
+                "termType": "NamedNode",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+              },
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":LazilyResolvedBlankNodeOrIriInterface",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriInterface",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode",
+              "toRdfTypes": [
+                {
+                  "termType": "NamedNode",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+                }
+              ]
+            },
+            "kind": "SetType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-221"
+            },
+            "propertyPath": {
+              "curie": ":requiredStubInterfaceToResolvedInterfaceProperty",
+              "uniqueLocalPart": "requiredStubInterfaceToResolvedInterfaceProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/requiredStubInterfaceToResolvedInterfaceProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/requiredStubInterfaceToResolvedInterfaceProperty",
+          "stubType": {
+            "kind": "ObjectType",
+            "name": {
+              "identifier": {
+                "curie": ":StubInterface",
+                "termType": "NamedNode",
+                "uniqueLocalPart": "StubInterface",
+                "value": "http://example.com/StubInterface"
+              }
+            },
+            "identifierNodeKinds": [
+              "BlankNode",
+              "NamedNode"
+            ],
+            "identifierMintingStrategy": "blankNode"
+          },
+          "type": {
+            "fromRdfType": {
+              "termType": "NamedNode",
+              "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+            },
+            "kind": "ObjectType",
+            "name": {
+              "identifier": {
+                "curie": ":LazilyResolvedBlankNodeOrIriInterface",
+                "termType": "NamedNode",
+                "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriInterface",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+              }
+            },
+            "identifierNodeKinds": [
+              "BlankNode",
+              "NamedNode"
+            ],
+            "identifierMintingStrategy": "blankNode",
+            "toRdfTypes": [
+              {
+                "termType": "NamedNode",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+              }
+            ]
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-222"
+            },
+            "propertyPath": {
+              "curie": ":optionalStubInterfaceToResolvedInterfaceUnionProperty",
+              "uniqueLocalPart": "optionalStubInterfaceToResolvedInterfaceUnionProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/optionalStubInterfaceToResolvedInterfaceUnionProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/optionalStubInterfaceToResolvedInterfaceUnionProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":StubInterface",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "StubInterface",
+                  "value": "http://example.com/StubInterface"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode"
+            },
+            "kind": "OptionType"
+          },
+          "type": {
+            "itemType": {
+              "kind": "ObjectUnionType",
+              "name": {
+                "identifier": {
+                  "curie": ":LazilyResolvedInterfaceUnion",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "LazilyResolvedInterfaceUnion",
+                  "value": "http://example.com/LazilyResolvedInterfaceUnion"
+                }
+              },
+              "types": [
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":LazilyResolvedInterfaceUnionMember1",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "LazilyResolvedInterfaceUnionMember1",
+                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
+                    }
+                  ]
+                },
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":LazilyResolvedInterfaceUnionMember2",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "LazilyResolvedInterfaceUnionMember2",
+                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
+                    }
+                  ]
+                }
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-223"
+            },
+            "propertyPath": {
+              "curie": ":optionalStubInterfaceUnionToResolvedInterfaceUnionProperty",
+              "uniqueLocalPart": "optionalStubInterfaceUnionToResolvedInterfaceUnionProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/optionalStubInterfaceUnionToResolvedInterfaceUnionProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/optionalStubInterfaceUnionToResolvedInterfaceUnionProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectUnionType",
+              "name": {
+                "identifier": {
+                  "curie": ":StubInterfaceUnion",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "StubInterfaceUnion",
+                  "value": "http://example.com/StubInterfaceUnion"
+                }
+              },
+              "types": [
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/StubInterfaceUnionMember1"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":StubInterfaceUnionMember1",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "StubInterfaceUnionMember1",
+                      "value": "http://example.com/StubInterfaceUnionMember1"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/StubInterfaceUnionMember1"
+                    }
+                  ]
+                },
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/StubInterfaceUnionMember2"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":StubInterfaceUnionMember2",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "StubInterfaceUnionMember2",
+                      "value": "http://example.com/StubInterfaceUnionMember2"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/StubInterfaceUnionMember2"
+                    }
+                  ]
+                }
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "type": {
+            "itemType": {
+              "kind": "ObjectUnionType",
+              "name": {
+                "identifier": {
+                  "curie": ":LazilyResolvedInterfaceUnion",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "LazilyResolvedInterfaceUnion",
+                  "value": "http://example.com/LazilyResolvedInterfaceUnion"
+                }
+              },
+              "types": [
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":LazilyResolvedInterfaceUnionMember1",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "LazilyResolvedInterfaceUnionMember1",
+                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
+                    }
+                  ]
+                },
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":LazilyResolvedInterfaceUnionMember2",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "LazilyResolvedInterfaceUnionMember2",
+                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
+                    }
+                  ]
+                }
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":StubInterface",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "StubInterface",
+          "value": "http://example.com/StubInterface"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-258"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1358,7 +3255,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-196"
+              "value": "n3-224"
             },
             "propertyPath": {
               "curie": ":objectListProperty",
@@ -1367,6 +3264,7 @@
               "value": "http://example.com/objectListProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/objectListProperty",
           "type": {
             "itemType": {
@@ -1389,13 +3287,14 @@
               "kind": "ListType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-197"
+              "value": "n3-225"
             },
             "propertyPath": {
               "curie": ":stringListProperty",
@@ -1404,6 +3303,7 @@
               "value": "http://example.com/stringListProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/stringListProperty",
           "type": {
             "itemType": {
@@ -1418,7 +3318,8 @@
               "kind": "ListType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1434,10 +3335,12 @@
       },
       "properties": [
         {
+          "description": "String-valued property that can be re-assigned",
+          "mutable": true,
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-198"
+              "value": "n3-226"
             },
             "propertyPath": {
               "curie": ":mutableStringProperty",
@@ -1446,7 +3349,7 @@
               "value": "http://example.com/mutableStringProperty"
             }
           },
-          "mutable": true,
+          "order": 0,
           "path": "http://example.com/mutableStringProperty",
           "type": {
             "itemType": {
@@ -1458,13 +3361,15 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
+          "description": "List-valued property that can't be reassigned but whose value can be mutated",
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-199"
+              "value": "n3-227"
             },
             "propertyPath": {
               "curie": ":mutableListProperty",
@@ -1473,6 +3378,7 @@
               "value": "http://example.com/mutableListProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/mutableListProperty",
           "type": {
             "itemType": {
@@ -1488,13 +3394,16 @@
               "mutable": true
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
+          "description": "Set-valued property that can't be reassigned but whose value can be mutated",
+          "mutable": true,
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-200"
+              "value": "n3-228"
             },
             "propertyPath": {
               "curie": ":mutableSetProperty",
@@ -1503,7 +3412,7 @@
               "value": "http://example.com/mutableSetProperty"
             }
           },
-          "mutable": true,
+          "order": 0,
           "path": "http://example.com/mutableSetProperty",
           "type": {
             "itemType": {
@@ -1515,7 +3424,8 @@
               "kind": "LiteralType"
             },
             "kind": "SetType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1534,7 +3444,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-205"
+              "value": "n3-233"
             },
             "propertyPath": {
               "curie": ":nonClassProperty",
@@ -1543,6 +3453,7 @@
               "value": "http://example.com/nonClassProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/nonClassProperty",
           "type": {
             "datatype": {
@@ -1551,7 +3462,8 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1570,7 +3482,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-212"
+              "value": "n3-238"
             },
             "propertyPath": {
               "curie": ":orderedPropertyC",
@@ -1579,6 +3491,7 @@
               "value": "http://example.com/orderedPropertyC"
             }
           },
+          "order": 1,
           "path": "http://example.com/orderedPropertyC",
           "type": {
             "datatype": {
@@ -1587,13 +3500,14 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-211"
+              "value": "n3-240"
             },
             "propertyPath": {
               "curie": ":orderedPropertyB",
@@ -1602,6 +3516,7 @@
               "value": "http://example.com/orderedPropertyB"
             }
           },
+          "order": 2,
           "path": "http://example.com/orderedPropertyB",
           "type": {
             "datatype": {
@@ -1610,13 +3525,14 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-210"
+              "value": "n3-239"
             },
             "propertyPath": {
               "curie": ":orderedPropertyA",
@@ -1625,6 +3541,7 @@
               "value": "http://example.com/orderedPropertyA"
             }
           },
+          "order": 3,
           "path": "http://example.com/orderedPropertyA",
           "type": {
             "datatype": {
@@ -1633,7 +3550,8 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1649,10 +3567,11 @@
       },
       "properties": [
         {
+          "comment": "Required: maxCount=minCount=1",
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-213"
+              "value": "n3-241"
             },
             "propertyPath": {
               "curie": ":requiredStringProperty",
@@ -1661,6 +3580,7 @@
               "value": "http://example.com/requiredStringProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/requiredStringProperty",
           "type": {
             "datatype": {
@@ -1669,13 +3589,15 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         },
         {
+          "comment": "Option: maxCount=1 minCount=0",
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-214"
+              "value": "n3-242"
             },
             "propertyPath": {
               "curie": ":optionalStringProperty",
@@ -1684,6 +3606,7 @@
               "value": "http://example.com/optionalStringProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/optionalStringProperty",
           "type": {
             "itemType": {
@@ -1695,13 +3618,15 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
+          "comment": "Set: minCount implicitly=0, no maxCount or maxCount > 1",
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-215"
+              "value": "n3-243"
             },
             "propertyPath": {
               "curie": ":emptyStringSetProperty",
@@ -1710,6 +3635,7 @@
               "value": "http://example.com/emptyStringSetProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/emptyStringSetProperty",
           "type": {
             "itemType": {
@@ -1721,13 +3647,15 @@
               "kind": "LiteralType"
             },
             "kind": "SetType"
-          }
+          },
+          "visibility": "public"
         },
         {
+          "comment": "Set: minCount implicitly=1, no maxCount or maxCount > 1",
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-216"
+              "value": "n3-244"
             },
             "propertyPath": {
               "curie": ":nonEmptyStringSetProperty",
@@ -1736,6 +3664,7 @@
               "value": "http://example.com/nonEmptyStringSetProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/nonEmptyStringSetProperty",
           "type": {
             "itemType": {
@@ -1747,7 +3676,8 @@
               "kind": "LiteralType"
             },
             "kind": "SetType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1766,7 +3696,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-217"
+              "value": "n3-245"
             },
             "propertyPath": {
               "curie": ":protectedProperty",
@@ -1775,6 +3705,7 @@
               "value": "http://example.com/protectedProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/protectedProperty",
           "type": {
             "datatype": {
@@ -1783,13 +3714,14 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "protected"
         },
         {
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-218"
+              "value": "n3-246"
             },
             "propertyPath": {
               "curie": ":privateProperty",
@@ -1798,6 +3730,7 @@
               "value": "http://example.com/privateProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/privateProperty",
           "type": {
             "datatype": {
@@ -1806,13 +3739,14 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "private"
         },
         {
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-219"
+              "value": "n3-247"
             },
             "propertyPath": {
               "curie": ":publicProperty",
@@ -1821,6 +3755,7 @@
               "value": "http://example.com/publicProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/publicProperty",
           "type": {
             "datatype": {
@@ -1829,7 +3764,8 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1848,7 +3784,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-220"
+              "value": "n3-248"
             },
             "propertyPath": {
               "curie": ":sha256IriProperty",
@@ -1857,6 +3793,7 @@
               "value": "http://example.com/sha256IriProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/sha256IriProperty",
           "type": {
             "datatype": {
@@ -1865,7 +3802,160 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":StubClassUnionMember1",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "StubClassUnionMember1",
+          "value": "http://example.com/StubClassUnionMember1"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-256"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":StubClassUnionMember2",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "StubClassUnionMember2",
+          "value": "http://example.com/StubClassUnionMember2"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-257"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":StubInterfaceUnionMember1",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "StubInterfaceUnionMember1",
+          "value": "http://example.com/StubInterfaceUnionMember1"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-261"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":StubInterfaceUnionMember2",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "StubInterfaceUnionMember2",
+          "value": "http://example.com/StubInterfaceUnionMember2"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-262"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -1884,7 +3974,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-225"
+              "value": "n3-263"
             },
             "propertyPath": {
               "curie": ":booleanTermProperty",
@@ -1893,6 +3983,7 @@
               "value": "http://example.com/booleanTermProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/booleanTermProperty",
           "type": {
             "itemType": {
@@ -1904,13 +3995,14 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-226"
+              "value": "n3-264"
             },
             "propertyPath": {
               "curie": ":dateTermProperty",
@@ -1919,6 +4011,7 @@
               "value": "http://example.com/dateTermProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/dateTermProperty",
           "type": {
             "itemType": {
@@ -1930,13 +4023,14 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-227"
+              "value": "n3-265"
             },
             "propertyPath": {
               "curie": ":dateTimeTermProperty",
@@ -1945,6 +4039,7 @@
               "value": "http://example.com/dateTimeTermProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/dateTimeTermProperty",
           "type": {
             "itemType": {
@@ -1956,13 +4051,14 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-228"
+              "value": "n3-266"
             },
             "propertyPath": {
               "curie": ":iriTermProperty",
@@ -1971,6 +4067,7 @@
               "value": "http://example.com/iriTermProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/iriTermProperty",
           "type": {
             "itemType": {
@@ -1981,13 +4078,14 @@
               ]
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-229"
+              "value": "n3-267"
             },
             "propertyPath": {
               "curie": ":literalTermProperty",
@@ -1996,6 +4094,7 @@
               "value": "http://example.com/literalTermProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/literalTermProperty",
           "type": {
             "itemType": {
@@ -2003,13 +4102,14 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-230"
+              "value": "n3-268"
             },
             "propertyPath": {
               "curie": ":numberTermProperty",
@@ -2018,6 +4118,7 @@
               "value": "http://example.com/numberTermProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/numberTermProperty",
           "type": {
             "itemType": {
@@ -2029,13 +4130,14 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-231"
+              "value": "n3-269"
             },
             "propertyPath": {
               "curie": ":stringTermProperty",
@@ -2044,6 +4146,7 @@
               "value": "http://example.com/stringTermProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/stringTermProperty",
           "type": {
             "itemType": {
@@ -2055,13 +4158,14 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-232"
+              "value": "n3-270"
             },
             "propertyPath": {
               "curie": ":termProperty",
@@ -2070,13 +4174,15 @@
               "value": "http://example.com/termProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/termProperty",
           "type": {
             "itemType": {
               "kind": "TermType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -2095,7 +4201,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-233"
+              "value": "n3-271"
             },
             "propertyPath": {
               "curie": ":unrelatedTypesProperty",
@@ -2104,6 +4210,7 @@
               "value": "http://example.com/unrelatedTypesProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/unrelatedTypesProperty",
           "type": {
             "itemType": {
@@ -2136,13 +4243,14 @@
               ]
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-238"
+              "value": "n3-276"
             },
             "propertyPath": {
               "curie": ":narrowLiteralsProperty",
@@ -2151,6 +4259,7 @@
               "value": "http://example.com/narrowLiteralsProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/narrowLiteralsProperty",
           "type": {
             "itemType": {
@@ -2175,13 +4284,14 @@
               ]
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-243"
+              "value": "n3-281"
             },
             "propertyPath": {
               "curie": ":widenedLiteralsProperty",
@@ -2190,6 +4300,7 @@
               "value": "http://example.com/widenedLiteralsProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/widenedLiteralsProperty",
           "type": {
             "itemType": {
@@ -2197,13 +4308,14 @@
               "kind": "LiteralType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         },
         {
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-248"
+              "value": "n3-286"
             },
             "propertyPath": {
               "curie": ":widenedTermsProperty",
@@ -2212,13 +4324,15 @@
               "value": "http://example.com/widenedTermsProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/widenedTermsProperty",
           "type": {
             "itemType": {
               "kind": "TermType"
             },
             "kind": "OptionType"
-          }
+          },
+          "visibility": "public"
         }
       ]
     },
@@ -2237,7 +4351,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-253"
+              "value": "n3-291"
             },
             "propertyPath": {
               "curie": ":uuidV4IriProperty",
@@ -2246,6 +4360,7 @@
               "value": "http://example.com/uuidV4IriProperty"
             }
           },
+          "order": 0,
           "path": "http://example.com/uuidV4IriProperty",
           "type": {
             "datatype": {
@@ -2254,9 +4369,68 @@
             },
             "hasValue": [],
             "kind": "LiteralType"
-          }
+          },
+          "visibility": "public"
         }
       ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":UuidV4IriInterface",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "UuidV4IriInterface",
+          "value": "http://example.com/UuidV4IriInterface"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-292"
+            },
+            "propertyPath": {
+              "curie": ":uuidV4IriProperty",
+              "uniqueLocalPart": "uuidV4IriProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/uuidV4IriProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/uuidV4IriProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "termType": "BlankNode",
+          "value": "n3-293"
+        }
+      },
+      "properties": []
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "termType": "BlankNode",
+          "value": "n3-296"
+        }
+      },
+      "properties": []
     }
   ]
 }

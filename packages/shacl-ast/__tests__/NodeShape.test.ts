@@ -1,13 +1,10 @@
 import { schema } from "@tpluscode/rdf-ns-builders";
 import { describe, it } from "vitest";
-import { RdfjsShapesGraph, defaultFactory } from "../src/index.js";
+import {} from "../src/index.js";
 import { testData } from "./testData.js";
 
 describe("NodeShape", () => {
-  const shapesGraph = new RdfjsShapesGraph({
-    dataset: testData.shapesGraph,
-    factory: defaultFactory,
-  });
+  const shapesGraph = testData.schema.shapesGraph;
 
   it("constraints: should get closed true", ({ expect }) => {
     expect(

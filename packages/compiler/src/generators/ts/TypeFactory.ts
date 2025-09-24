@@ -557,6 +557,19 @@ export class TypeFactory {
           resolvedType,
           stubType,
         });
+      } else if (
+        resolvedType instanceof ObjectType ||
+        resolvedType instanceof ObjectUnionType
+      ) {
+        invariant(
+          stubType instanceof ObjectType || stubType instanceof ObjectUnionType,
+          `lazy property ${name} on ${objectType.name} has ${(stubType as any).kind} stubs`,
+        );
+
+        lazyType = new ObjectType.LazyShaclProperty.RequiredObjectType({
+          resolvedType: resolvedType,
+          stubType: stubType,
+        });
       } else if (resolvedType instanceof SetType) {
         invariant(
           resolvedType.itemType instanceof ObjectType ||
@@ -573,20 +586,9 @@ export class TypeFactory {
           stubType,
         });
       } else {
-        invariant(
-          resolvedType instanceof ObjectType ||
-            resolvedType instanceof ObjectUnionType,
+        throw new Error(
           `lazy property ${name} on ${objectType.name} has ${(resolvedType as any).kind}`,
         );
-        invariant(
-          stubType instanceof ObjectType || stubType instanceof ObjectUnionType,
-          `lazy property ${name} on ${objectType.name} has ${(stubType as any).kind} stubs`,
-        );
-
-        lazyType = new ObjectType.LazyShaclProperty.RequiredObjectType({
-          resolvedType,
-          stubType,
-        });
       }
 
       property = new ObjectType.LazyShaclProperty({

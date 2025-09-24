@@ -1,19 +1,18 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-
 import type { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export class SetType<ItemTypeT extends Type = Type> extends Type {
-  private readonly _mutable: boolean;
-  private readonly minCount: number;
-
+export class SetType<ItemTypeT extends Type> extends Type {
   override readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty> =
     Maybe.empty();
   readonly itemType: ItemTypeT;
+  private readonly _mutable: boolean;
+  private readonly minCount: number;
+
   readonly kind = "SetType";
   readonly typeof = "object";
 
@@ -115,17 +114,24 @@ export class SetType<ItemTypeT extends Type = Type> extends Type {
       : `${expression}.map(item => (${itemFromJsonExpression}))`;
   }
 
-  override fromRdfExpression({
-    variables,
-  }: Parameters<Type["fromRdfExpression"]>[0]): string {
-    const itemFromRdfExpression = this.itemType.fromRdfExpression({
-      variables: { ...variables, resourceValues: "item.toValues()" },
-    });
-    const arrayFromRdfExpression = `purify.Either.sequence(${variables.resourceValues}.map(item => ${itemFromRdfExpression}))`;
-    if (this._mutable || this.minCount === 0) {
-      return arrayFromRdfExpression;
+  override fromRdfExpression(
+    parameters: Parameters<Type["fromRdfExpression"]>[0],
+  ): string {
+    const { variables } = parameters;
+    const chain = [this.itemType.fromRdfExpression(parameters)];
+    if (this.minCount === 0 || this._mutable) {
+      chain.push(
+        `map(values => values.toArray()${this._mutable ? ".concat()" : ""})`,
+      );
+    } else {
+      chain.push(
+        `chain(values => purify.NonEmptyList.fromArray(values.toArray()).toEither(new Error(\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} is an empty set\`)))`,
+      );
     }
-    return `${arrayFromRdfExpression}.chain(array => purify.NonEmptyList.fromArray(array).toEither(new Error(\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} is an empty set\`)))`;
+    chain.push(
+      `map(valuesArray => rdfjsResource.Resource.Values.fromValue({ object: valuesArray , predicate: ${variables.predicate}, subject: ${variables.resource} }))`,
+    );
+    return chain.join(".");
   }
 
   override graphqlResolveExpression({

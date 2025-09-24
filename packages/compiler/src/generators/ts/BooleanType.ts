@@ -48,10 +48,10 @@ export class BooleanType extends PrimitiveType<boolean> {
     return `${variables.zod}.boolean()`;
   }
 
-  override propertyFromRdfResourceValueExpression({
+  override fromRdfResourceValueExpression({
     variables,
   }: Parameters<
-    PrimitiveType<boolean>["propertyFromRdfResourceValueExpression"]
+    PrimitiveType<boolean>["fromRdfResourceValueExpression"]
   >[0]): string {
     let expression = `${variables.resourceValue}.toBoolean()`;
     if (this.primitiveIn.length === 1) {

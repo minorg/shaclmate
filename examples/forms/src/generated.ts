@@ -483,12 +483,16 @@ export namespace NestedNodeShape {
     const $identifier: NestedNodeShape.$Identifier = $resource.identifier;
     const $type = "NestedNodeShape" as const;
     const _requiredStringPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.requiredStringProperty["identifier"], {
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.requiredStringProperty["identifier"], {
           unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_requiredStringPropertyEither.isLeft()) {
       return _requiredStringPropertyEither;
     }
@@ -995,38 +999,43 @@ export namespace FormNodeShape {
     const _emptyStringSetPropertyEither: purify.Either<
       Error,
       readonly string[]
-    > = purify.Either.sequence(
-      $resource
-        .values($properties.emptyStringSetProperty["identifier"], {
-          unique: true,
-        })
-        .map((item) =>
-          item
-            .toValues()
-            .head()
-            .chain((value) => value.toString()),
-        ),
-    );
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.emptyStringSetProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .map((values) => values.toArray());
     if (_emptyStringSetPropertyEither.isLeft()) {
       return _emptyStringSetPropertyEither;
     }
 
     const emptyStringSetProperty = _emptyStringSetPropertyEither.unsafeCoerce();
     const _nestedObjectPropertyEither: purify.Either<Error, NestedNodeShape> =
-      $resource
-        .values($properties.nestedObjectProperty["identifier"], {
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.nestedObjectProperty["identifier"], {
           unique: true,
-        })
-        .head()
-        .chain((value) => value.toResource())
-        .chain((resource) =>
-          NestedNodeShape.$fromRdf(resource, {
-            ...$context,
-            ignoreRdfType: true,
-            languageIn: $languageIn,
-            objectSet: $objectSet,
-          }),
-        );
+        }),
+      )
+        .chain((values) =>
+          values.chainMap((value) =>
+            value.toResource().chain((resource) =>
+              NestedNodeShape.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
+          ),
+        )
+        .chain((values) => values.head());
     if (_nestedObjectPropertyEither.isLeft()) {
       return _nestedObjectPropertyEither;
     }
@@ -1035,24 +1044,22 @@ export namespace FormNodeShape {
     const _nonEmptyStringSetPropertyEither: purify.Either<
       Error,
       purify.NonEmptyList<string>
-    > = purify.Either.sequence(
-      $resource
-        .values($properties.nonEmptyStringSetProperty["identifier"], {
-          unique: true,
-        })
-        .map((item) =>
-          item
-            .toValues()
-            .head()
-            .chain((value) => value.toString()),
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.nonEmptyStringSetProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .chain((values) =>
+        purify.NonEmptyList.fromArray(values.toArray()).toEither(
+          new Error(
+            `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} is an empty set`,
+          ),
         ),
-    ).chain((array) =>
-      purify.NonEmptyList.fromArray(array).toEither(
-        new Error(
-          `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} is an empty set`,
-        ),
-      ),
-    );
+      );
     if (_nonEmptyStringSetPropertyEither.isLeft()) {
       return _nonEmptyStringSetPropertyEither;
     }
@@ -1062,30 +1069,32 @@ export namespace FormNodeShape {
     const _optionalStringPropertyEither: purify.Either<
       Error,
       purify.Maybe<string>
-    > = $resource
-      .values($properties.optionalStringProperty["identifier"], {
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.optionalStringProperty["identifier"], {
         unique: true,
-      })
-      .head()
-      .chain((value) => value.toString())
-      .map((value) => purify.Maybe.of(value))
-      .chainLeft((error) =>
-        error instanceof rdfjsResource.Resource.MissingValueError
-          ? purify.Right(purify.Maybe.empty())
-          : purify.Left(error),
-      );
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .map((values) => values.head().toMaybe());
     if (_optionalStringPropertyEither.isLeft()) {
       return _optionalStringPropertyEither;
     }
 
     const optionalStringProperty = _optionalStringPropertyEither.unsafeCoerce();
     const _requiredIntegerPropertyEither: purify.Either<Error, number> =
-      $resource
-        .values($properties.requiredIntegerProperty["identifier"], {
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.requiredIntegerProperty["identifier"], {
           unique: true,
-        })
-        .head()
-        .chain((value) => value.toNumber());
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toNumber()))
+        .chain((values) => values.head());
     if (_requiredIntegerPropertyEither.isLeft()) {
       return _requiredIntegerPropertyEither;
     }
@@ -1093,12 +1102,16 @@ export namespace FormNodeShape {
     const requiredIntegerProperty =
       _requiredIntegerPropertyEither.unsafeCoerce();
     const _requiredStringPropertyEither: purify.Either<Error, string> =
-      $resource
-        .values($properties.requiredStringProperty["identifier"], {
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.requiredStringProperty["identifier"], {
           unique: true,
-        })
-        .head()
-        .chain((value) => value.toString());
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
     if (_requiredStringPropertyEither.isLeft()) {
       return _requiredStringPropertyEither;
     }

@@ -2,18 +2,11 @@ import { fail } from "node:assert";
 import type { NamedNode } from "@rdfjs/types";
 import { dash, rdf, schema } from "@tpluscode/rdf-ns-builders";
 import { describe, expect, it } from "vitest";
-import {
-  type PredicatePath,
-  RdfjsShapesGraph,
-  defaultFactory,
-} from "../src/index.js";
+import type { PredicatePath } from "../src/index.js";
 import { testData } from "./testData.js";
 
 describe("PropertyShape", () => {
-  const shapesGraph = new RdfjsShapesGraph({
-    dataset: testData.shapesGraph,
-    factory: defaultFactory,
-  });
+  const shapesGraph = testData.schema.shapesGraph;
 
   // it("should convert to a string", ({ expect }) => {
   //   expect(
