@@ -50,14 +50,14 @@ export type PropertyPath =
   | ZeroOrOnePath;
 
 export namespace PropertyPath {
-  export function $fromRdf({
-    resource,
-  }: {
-    [_index: string]: any;
-    ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
-    resource: Resource;
-  }): Either<Error, PropertyPath> {
+  export function $fromRdf(
+    resource: Resource,
+    _?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      languageIn?: readonly string[];
+    },
+  ): Either<Error, PropertyPath> {
     // Predicate path
     // sh:path ex:parent
     if (resource.identifier.termType === "NamedNode") {
@@ -80,9 +80,7 @@ export namespace PropertyPath {
               ),
             );
           }
-          const member = PropertyPath.$fromRdf({
-            resource: memberResource.unsafeCoerce(),
-          });
+          const member = PropertyPath.$fromRdf(memberResource.unsafeCoerce());
           if (member.isLeft()) {
             return member;
           }
@@ -126,22 +124,18 @@ export namespace PropertyPath {
       // Inverse path
       // sh:path: [ sh:inversePath ex:parent ]
       if (quad.predicate.equals(sh.inversePath)) {
-        return PropertyPath.$fromRdf({ resource: objectResource }).map(
-          (path) => ({
-            kind: "InversePath",
-            path,
-          }),
-        );
+        return PropertyPath.$fromRdf(objectResource).map((path) => ({
+          kind: "InversePath",
+          path,
+        }));
       }
 
       // One or more path
       if (quad.predicate.equals(sh.oneOrMorePath)) {
-        return PropertyPath.$fromRdf({ resource: objectResource }).map(
-          (path) => ({
-            kind: "OneOrMorePath",
-            path,
-          }),
-        );
+        return PropertyPath.$fromRdf(objectResource).map((path) => ({
+          kind: "OneOrMorePath",
+          path,
+        }));
       }
 
       // Sequence path
@@ -155,21 +149,17 @@ export namespace PropertyPath {
 
       // Zero or more path
       if (quad.predicate.equals(sh.zeroOrMorePath)) {
-        return PropertyPath.$fromRdf({ resource: objectResource }).map(
-          (path) => ({
-            kind: "ZeroOrMorePath",
-            path,
-          }),
-        );
+        return PropertyPath.$fromRdf(objectResource).map((path) => ({
+          kind: "ZeroOrMorePath",
+          path,
+        }));
       }
 
       if (quad.predicate.equals(sh.zeroOrOnePath)) {
-        return PropertyPath.$fromRdf({ resource: objectResource }).map(
-          (path) => ({
-            kind: "ZeroOrOnePath",
-            path,
-          }),
-        );
+        return PropertyPath.$fromRdf(objectResource).map((path) => ({
+          kind: "ZeroOrOnePath",
+          path,
+        }));
       }
     }
 
