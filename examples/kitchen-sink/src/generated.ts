@@ -38579,6 +38579,1626 @@ export namespace $ObjectSet {
       };
 }
 
+export abstract class $ForwardingObjectSet implements $ObjectSet {
+  protected abstract get $delegate(): $ObjectSet;
+
+  baseInterfaceWithoutProperties(
+    identifier: BaseInterfaceWithoutPropertiesStatic.$Identifier,
+  ): Promise<purify.Either<Error, BaseInterfaceWithoutProperties>> {
+    return this.$delegate.baseInterfaceWithoutProperties(identifier);
+  }
+
+  baseInterfaceWithoutPropertiesIdentifiers(
+    query?: $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Identifier>,
+  ): Promise<
+    purify.Either<
+      Error,
+      readonly BaseInterfaceWithoutPropertiesStatic.$Identifier[]
+    >
+  > {
+    return this.$delegate.baseInterfaceWithoutPropertiesIdentifiers(query);
+  }
+
+  baseInterfaceWithoutPropertieses(
+    query?: $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly BaseInterfaceWithoutProperties[]>> {
+    return this.$delegate.baseInterfaceWithoutPropertieses(query);
+  }
+
+  baseInterfaceWithoutPropertiesesCount(
+    query?: Pick<
+      $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.baseInterfaceWithoutPropertiesesCount(query);
+  }
+
+  baseInterfaceWithProperties(
+    identifier: BaseInterfaceWithPropertiesStatic.$Identifier,
+  ): Promise<purify.Either<Error, BaseInterfaceWithProperties>> {
+    return this.$delegate.baseInterfaceWithProperties(identifier);
+  }
+
+  baseInterfaceWithPropertiesIdentifiers(
+    query?: $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Identifier>,
+  ): Promise<
+    purify.Either<
+      Error,
+      readonly BaseInterfaceWithPropertiesStatic.$Identifier[]
+    >
+  > {
+    return this.$delegate.baseInterfaceWithPropertiesIdentifiers(query);
+  }
+
+  baseInterfaceWithPropertieses(
+    query?: $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly BaseInterfaceWithProperties[]>> {
+    return this.$delegate.baseInterfaceWithPropertieses(query);
+  }
+
+  baseInterfaceWithPropertiesesCount(
+    query?: Pick<
+      $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.baseInterfaceWithPropertiesesCount(query);
+  }
+
+  blankClass(
+    identifier: BlankClass.$Identifier,
+  ): Promise<purify.Either<Error, BlankClass>> {
+    return this.$delegate.blankClass(identifier);
+  }
+
+  blankClassIdentifiers(
+    query?: $ObjectSet.Query<BlankClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly BlankClass.$Identifier[]>> {
+    return this.$delegate.blankClassIdentifiers(query);
+  }
+
+  blankClasses(
+    query?: $ObjectSet.Query<BlankClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly BlankClass[]>> {
+    return this.$delegate.blankClasses(query);
+  }
+
+  blankClassesCount(
+    query?: Pick<$ObjectSet.Query<BlankClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.blankClassesCount(query);
+  }
+
+  blankInterface(
+    identifier: BlankInterface.$Identifier,
+  ): Promise<purify.Either<Error, BlankInterface>> {
+    return this.$delegate.blankInterface(identifier);
+  }
+
+  blankInterfaceIdentifiers(
+    query?: $ObjectSet.Query<BlankInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly BlankInterface.$Identifier[]>> {
+    return this.$delegate.blankInterfaceIdentifiers(query);
+  }
+
+  blankInterfaces(
+    query?: $ObjectSet.Query<BlankInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly BlankInterface[]>> {
+    return this.$delegate.blankInterfaces(query);
+  }
+
+  blankInterfacesCount(
+    query?: Pick<$ObjectSet.Query<BlankInterface.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.blankInterfacesCount(query);
+  }
+
+  classUnionMember1(
+    identifier: ClassUnionMember1.$Identifier,
+  ): Promise<purify.Either<Error, ClassUnionMember1>> {
+    return this.$delegate.classUnionMember1(identifier);
+  }
+
+  classUnionMember1Identifiers(
+    query?: $ObjectSet.Query<ClassUnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ClassUnionMember1.$Identifier[]>> {
+    return this.$delegate.classUnionMember1Identifiers(query);
+  }
+
+  classUnionMember1s(
+    query?: $ObjectSet.Query<ClassUnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ClassUnionMember1[]>> {
+    return this.$delegate.classUnionMember1s(query);
+  }
+
+  classUnionMember1sCount(
+    query?: Pick<$ObjectSet.Query<ClassUnionMember1.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.classUnionMember1sCount(query);
+  }
+
+  classUnionMember2(
+    identifier: ClassUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, ClassUnionMember2>> {
+    return this.$delegate.classUnionMember2(identifier);
+  }
+
+  classUnionMember2Identifiers(
+    query?: $ObjectSet.Query<ClassUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ClassUnionMember2.$Identifier[]>> {
+    return this.$delegate.classUnionMember2Identifiers(query);
+  }
+
+  classUnionMember2s(
+    query?: $ObjectSet.Query<ClassUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ClassUnionMember2[]>> {
+    return this.$delegate.classUnionMember2s(query);
+  }
+
+  classUnionMember2sCount(
+    query?: Pick<$ObjectSet.Query<ClassUnionMember2.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.classUnionMember2sCount(query);
+  }
+
+  concreteChildClass(
+    identifier: ConcreteChildClass.$Identifier,
+  ): Promise<purify.Either<Error, ConcreteChildClass>> {
+    return this.$delegate.concreteChildClass(identifier);
+  }
+
+  concreteChildClassIdentifiers(
+    query?: $ObjectSet.Query<ConcreteChildClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ConcreteChildClass.$Identifier[]>> {
+    return this.$delegate.concreteChildClassIdentifiers(query);
+  }
+
+  concreteChildClasses(
+    query?: $ObjectSet.Query<ConcreteChildClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ConcreteChildClass[]>> {
+    return this.$delegate.concreteChildClasses(query);
+  }
+
+  concreteChildClassesCount(
+    query?: Pick<$ObjectSet.Query<ConcreteChildClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.concreteChildClassesCount(query);
+  }
+
+  concreteChildInterface(
+    identifier: ConcreteChildInterface.$Identifier,
+  ): Promise<purify.Either<Error, ConcreteChildInterface>> {
+    return this.$delegate.concreteChildInterface(identifier);
+  }
+
+  concreteChildInterfaceIdentifiers(
+    query?: $ObjectSet.Query<ConcreteChildInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly ConcreteChildInterface.$Identifier[]>
+  > {
+    return this.$delegate.concreteChildInterfaceIdentifiers(query);
+  }
+
+  concreteChildInterfaces(
+    query?: $ObjectSet.Query<ConcreteChildInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ConcreteChildInterface[]>> {
+    return this.$delegate.concreteChildInterfaces(query);
+  }
+
+  concreteChildInterfacesCount(
+    query?: Pick<$ObjectSet.Query<ConcreteChildInterface.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.concreteChildInterfacesCount(query);
+  }
+
+  concreteParentClass(
+    identifier: ConcreteParentClassStatic.$Identifier,
+  ): Promise<purify.Either<Error, ConcreteParentClass>> {
+    return this.$delegate.concreteParentClass(identifier);
+  }
+
+  concreteParentClassIdentifiers(
+    query?: $ObjectSet.Query<ConcreteParentClassStatic.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly ConcreteParentClassStatic.$Identifier[]>
+  > {
+    return this.$delegate.concreteParentClassIdentifiers(query);
+  }
+
+  concreteParentClasses(
+    query?: $ObjectSet.Query<ConcreteParentClassStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ConcreteParentClass[]>> {
+    return this.$delegate.concreteParentClasses(query);
+  }
+
+  concreteParentClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<ConcreteParentClassStatic.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.concreteParentClassesCount(query);
+  }
+
+  concreteParentInterface(
+    identifier: ConcreteParentInterfaceStatic.$Identifier,
+  ): Promise<purify.Either<Error, ConcreteParentInterface>> {
+    return this.$delegate.concreteParentInterface(identifier);
+  }
+
+  concreteParentInterfaceIdentifiers(
+    query?: $ObjectSet.Query<ConcreteParentInterfaceStatic.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly ConcreteParentInterfaceStatic.$Identifier[]>
+  > {
+    return this.$delegate.concreteParentInterfaceIdentifiers(query);
+  }
+
+  concreteParentInterfaces(
+    query?: $ObjectSet.Query<ConcreteParentInterfaceStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ConcreteParentInterface[]>> {
+    return this.$delegate.concreteParentInterfaces(query);
+  }
+
+  concreteParentInterfacesCount(
+    query?: Pick<
+      $ObjectSet.Query<ConcreteParentInterfaceStatic.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.concreteParentInterfacesCount(query);
+  }
+
+  defaultValuePropertiesClass(
+    identifier: DefaultValuePropertiesClass.$Identifier,
+  ): Promise<purify.Either<Error, DefaultValuePropertiesClass>> {
+    return this.$delegate.defaultValuePropertiesClass(identifier);
+  }
+
+  defaultValuePropertiesClassIdentifiers(
+    query?: $ObjectSet.Query<DefaultValuePropertiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly DefaultValuePropertiesClass.$Identifier[]>
+  > {
+    return this.$delegate.defaultValuePropertiesClassIdentifiers(query);
+  }
+
+  defaultValuePropertiesClasses(
+    query?: $ObjectSet.Query<DefaultValuePropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly DefaultValuePropertiesClass[]>> {
+    return this.$delegate.defaultValuePropertiesClasses(query);
+  }
+
+  defaultValuePropertiesClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<DefaultValuePropertiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.defaultValuePropertiesClassesCount(query);
+  }
+
+  directRecursiveClass(
+    identifier: DirectRecursiveClass.$Identifier,
+  ): Promise<purify.Either<Error, DirectRecursiveClass>> {
+    return this.$delegate.directRecursiveClass(identifier);
+  }
+
+  directRecursiveClassIdentifiers(
+    query?: $ObjectSet.Query<DirectRecursiveClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly DirectRecursiveClass.$Identifier[]>
+  > {
+    return this.$delegate.directRecursiveClassIdentifiers(query);
+  }
+
+  directRecursiveClasses(
+    query?: $ObjectSet.Query<DirectRecursiveClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly DirectRecursiveClass[]>> {
+    return this.$delegate.directRecursiveClasses(query);
+  }
+
+  directRecursiveClassesCount(
+    query?: Pick<$ObjectSet.Query<DirectRecursiveClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.directRecursiveClassesCount(query);
+  }
+
+  explicitFromToRdfTypesClass(
+    identifier: ExplicitFromToRdfTypesClass.$Identifier,
+  ): Promise<purify.Either<Error, ExplicitFromToRdfTypesClass>> {
+    return this.$delegate.explicitFromToRdfTypesClass(identifier);
+  }
+
+  explicitFromToRdfTypesClassIdentifiers(
+    query?: $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly ExplicitFromToRdfTypesClass.$Identifier[]>
+  > {
+    return this.$delegate.explicitFromToRdfTypesClassIdentifiers(query);
+  }
+
+  explicitFromToRdfTypesClasses(
+    query?: $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ExplicitFromToRdfTypesClass[]>> {
+    return this.$delegate.explicitFromToRdfTypesClasses(query);
+  }
+
+  explicitFromToRdfTypesClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.explicitFromToRdfTypesClassesCount(query);
+  }
+
+  explicitRdfTypeClass(
+    identifier: ExplicitRdfTypeClass.$Identifier,
+  ): Promise<purify.Either<Error, ExplicitRdfTypeClass>> {
+    return this.$delegate.explicitRdfTypeClass(identifier);
+  }
+
+  explicitRdfTypeClassIdentifiers(
+    query?: $ObjectSet.Query<ExplicitRdfTypeClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly ExplicitRdfTypeClass.$Identifier[]>
+  > {
+    return this.$delegate.explicitRdfTypeClassIdentifiers(query);
+  }
+
+  explicitRdfTypeClasses(
+    query?: $ObjectSet.Query<ExplicitRdfTypeClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ExplicitRdfTypeClass[]>> {
+    return this.$delegate.explicitRdfTypeClasses(query);
+  }
+
+  explicitRdfTypeClassesCount(
+    query?: Pick<$ObjectSet.Query<ExplicitRdfTypeClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.explicitRdfTypeClassesCount(query);
+  }
+
+  externClassPropertyClass(
+    identifier: ExternClassPropertyClass.$Identifier,
+  ): Promise<purify.Either<Error, ExternClassPropertyClass>> {
+    return this.$delegate.externClassPropertyClass(identifier);
+  }
+
+  externClassPropertyClassIdentifiers(
+    query?: $ObjectSet.Query<ExternClassPropertyClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly ExternClassPropertyClass.$Identifier[]>
+  > {
+    return this.$delegate.externClassPropertyClassIdentifiers(query);
+  }
+
+  externClassPropertyClasses(
+    query?: $ObjectSet.Query<ExternClassPropertyClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ExternClassPropertyClass[]>> {
+    return this.$delegate.externClassPropertyClasses(query);
+  }
+
+  externClassPropertyClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<ExternClassPropertyClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.externClassPropertyClassesCount(query);
+  }
+
+  hasValuePropertiesClass(
+    identifier: HasValuePropertiesClass.$Identifier,
+  ): Promise<purify.Either<Error, HasValuePropertiesClass>> {
+    return this.$delegate.hasValuePropertiesClass(identifier);
+  }
+
+  hasValuePropertiesClassIdentifiers(
+    query?: $ObjectSet.Query<HasValuePropertiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly HasValuePropertiesClass.$Identifier[]>
+  > {
+    return this.$delegate.hasValuePropertiesClassIdentifiers(query);
+  }
+
+  hasValuePropertiesClasses(
+    query?: $ObjectSet.Query<HasValuePropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly HasValuePropertiesClass[]>> {
+    return this.$delegate.hasValuePropertiesClasses(query);
+  }
+
+  hasValuePropertiesClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<HasValuePropertiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.hasValuePropertiesClassesCount(query);
+  }
+
+  indirectRecursiveClass(
+    identifier: IndirectRecursiveClass.$Identifier,
+  ): Promise<purify.Either<Error, IndirectRecursiveClass>> {
+    return this.$delegate.indirectRecursiveClass(identifier);
+  }
+
+  indirectRecursiveClassIdentifiers(
+    query?: $ObjectSet.Query<IndirectRecursiveClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IndirectRecursiveClass.$Identifier[]>
+  > {
+    return this.$delegate.indirectRecursiveClassIdentifiers(query);
+  }
+
+  indirectRecursiveClasses(
+    query?: $ObjectSet.Query<IndirectRecursiveClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IndirectRecursiveClass[]>> {
+    return this.$delegate.indirectRecursiveClasses(query);
+  }
+
+  indirectRecursiveClassesCount(
+    query?: Pick<$ObjectSet.Query<IndirectRecursiveClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.indirectRecursiveClassesCount(query);
+  }
+
+  indirectRecursiveHelperClass(
+    identifier: IndirectRecursiveHelperClass.$Identifier,
+  ): Promise<purify.Either<Error, IndirectRecursiveHelperClass>> {
+    return this.$delegate.indirectRecursiveHelperClass(identifier);
+  }
+
+  indirectRecursiveHelperClassIdentifiers(
+    query?: $ObjectSet.Query<IndirectRecursiveHelperClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IndirectRecursiveHelperClass.$Identifier[]>
+  > {
+    return this.$delegate.indirectRecursiveHelperClassIdentifiers(query);
+  }
+
+  indirectRecursiveHelperClasses(
+    query?: $ObjectSet.Query<IndirectRecursiveHelperClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IndirectRecursiveHelperClass[]>> {
+    return this.$delegate.indirectRecursiveHelperClasses(query);
+  }
+
+  indirectRecursiveHelperClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<IndirectRecursiveHelperClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.indirectRecursiveHelperClassesCount(query);
+  }
+
+  inIdentifierClass(
+    identifier: InIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, InIdentifierClass>> {
+    return this.$delegate.inIdentifierClass(identifier);
+  }
+
+  inIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<InIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly InIdentifierClass.$Identifier[]>> {
+    return this.$delegate.inIdentifierClassIdentifiers(query);
+  }
+
+  inIdentifierClasses(
+    query?: $ObjectSet.Query<InIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly InIdentifierClass[]>> {
+    return this.$delegate.inIdentifierClasses(query);
+  }
+
+  inIdentifierClassesCount(
+    query?: Pick<$ObjectSet.Query<InIdentifierClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.inIdentifierClassesCount(query);
+  }
+
+  inPropertiesClass(
+    identifier: InPropertiesClass.$Identifier,
+  ): Promise<purify.Either<Error, InPropertiesClass>> {
+    return this.$delegate.inPropertiesClass(identifier);
+  }
+
+  inPropertiesClassIdentifiers(
+    query?: $ObjectSet.Query<InPropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly InPropertiesClass.$Identifier[]>> {
+    return this.$delegate.inPropertiesClassIdentifiers(query);
+  }
+
+  inPropertiesClasses(
+    query?: $ObjectSet.Query<InPropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly InPropertiesClass[]>> {
+    return this.$delegate.inPropertiesClasses(query);
+  }
+
+  inPropertiesClassesCount(
+    query?: Pick<$ObjectSet.Query<InPropertiesClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.inPropertiesClassesCount(query);
+  }
+
+  interface(
+    identifier: Interface.$Identifier,
+  ): Promise<purify.Either<Error, Interface>> {
+    return this.$delegate.interface(identifier);
+  }
+
+  interfaceIdentifiers(
+    query?: $ObjectSet.Query<Interface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Interface.$Identifier[]>> {
+    return this.$delegate.interfaceIdentifiers(query);
+  }
+
+  interfaces(
+    query?: $ObjectSet.Query<Interface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Interface[]>> {
+    return this.$delegate.interfaces(query);
+  }
+
+  interfacesCount(
+    query?: Pick<$ObjectSet.Query<Interface.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.interfacesCount(query);
+  }
+
+  interfaceUnionMember1(
+    identifier: InterfaceUnionMember1.$Identifier,
+  ): Promise<purify.Either<Error, InterfaceUnionMember1>> {
+    return this.$delegate.interfaceUnionMember1(identifier);
+  }
+
+  interfaceUnionMember1Identifiers(
+    query?: $ObjectSet.Query<InterfaceUnionMember1.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly InterfaceUnionMember1.$Identifier[]>
+  > {
+    return this.$delegate.interfaceUnionMember1Identifiers(query);
+  }
+
+  interfaceUnionMember1s(
+    query?: $ObjectSet.Query<InterfaceUnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly InterfaceUnionMember1[]>> {
+    return this.$delegate.interfaceUnionMember1s(query);
+  }
+
+  interfaceUnionMember1sCount(
+    query?: Pick<$ObjectSet.Query<InterfaceUnionMember1.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.interfaceUnionMember1sCount(query);
+  }
+
+  interfaceUnionMember2a(
+    identifier: InterfaceUnionMember2a.$Identifier,
+  ): Promise<purify.Either<Error, InterfaceUnionMember2a>> {
+    return this.$delegate.interfaceUnionMember2a(identifier);
+  }
+
+  interfaceUnionMember2aIdentifiers(
+    query?: $ObjectSet.Query<InterfaceUnionMember2a.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly InterfaceUnionMember2a.$Identifier[]>
+  > {
+    return this.$delegate.interfaceUnionMember2aIdentifiers(query);
+  }
+
+  interfaceUnionMember2as(
+    query?: $ObjectSet.Query<InterfaceUnionMember2a.$Identifier>,
+  ): Promise<purify.Either<Error, readonly InterfaceUnionMember2a[]>> {
+    return this.$delegate.interfaceUnionMember2as(query);
+  }
+
+  interfaceUnionMember2asCount(
+    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2a.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.interfaceUnionMember2asCount(query);
+  }
+
+  interfaceUnionMember2b(
+    identifier: InterfaceUnionMember2b.$Identifier,
+  ): Promise<purify.Either<Error, InterfaceUnionMember2b>> {
+    return this.$delegate.interfaceUnionMember2b(identifier);
+  }
+
+  interfaceUnionMember2bIdentifiers(
+    query?: $ObjectSet.Query<InterfaceUnionMember2b.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly InterfaceUnionMember2b.$Identifier[]>
+  > {
+    return this.$delegate.interfaceUnionMember2bIdentifiers(query);
+  }
+
+  interfaceUnionMember2bs(
+    query?: $ObjectSet.Query<InterfaceUnionMember2b.$Identifier>,
+  ): Promise<purify.Either<Error, readonly InterfaceUnionMember2b[]>> {
+    return this.$delegate.interfaceUnionMember2bs(query);
+  }
+
+  interfaceUnionMember2bsCount(
+    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2b.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.interfaceUnionMember2bsCount(query);
+  }
+
+  iriClass(
+    identifier: IriClass.$Identifier,
+  ): Promise<purify.Either<Error, IriClass>> {
+    return this.$delegate.iriClass(identifier);
+  }
+
+  iriClassIdentifiers(
+    query?: $ObjectSet.Query<IriClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IriClass.$Identifier[]>> {
+    return this.$delegate.iriClassIdentifiers(query);
+  }
+
+  iriClasses(
+    query?: $ObjectSet.Query<IriClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IriClass[]>> {
+    return this.$delegate.iriClasses(query);
+  }
+
+  iriClassesCount(
+    query?: Pick<$ObjectSet.Query<IriClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.iriClassesCount(query);
+  }
+
+  languageInPropertiesClass(
+    identifier: LanguageInPropertiesClass.$Identifier,
+  ): Promise<purify.Either<Error, LanguageInPropertiesClass>> {
+    return this.$delegate.languageInPropertiesClass(identifier);
+  }
+
+  languageInPropertiesClassIdentifiers(
+    query?: $ObjectSet.Query<LanguageInPropertiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly LanguageInPropertiesClass.$Identifier[]>
+  > {
+    return this.$delegate.languageInPropertiesClassIdentifiers(query);
+  }
+
+  languageInPropertiesClasses(
+    query?: $ObjectSet.Query<LanguageInPropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly LanguageInPropertiesClass[]>> {
+    return this.$delegate.languageInPropertiesClasses(query);
+  }
+
+  languageInPropertiesClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<LanguageInPropertiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.languageInPropertiesClassesCount(query);
+  }
+
+  lazilyResolvedBlankNodeOrIriClass(
+    identifier: LazilyResolvedBlankNodeOrIriClass.$Identifier,
+  ): Promise<purify.Either<Error, LazilyResolvedBlankNodeOrIriClass>> {
+    return this.$delegate.lazilyResolvedBlankNodeOrIriClass(identifier);
+  }
+
+  lazilyResolvedBlankNodeOrIriClassIdentifiers(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriClass.$Identifier>,
+  ): Promise<
+    purify.Either<
+      Error,
+      readonly LazilyResolvedBlankNodeOrIriClass.$Identifier[]
+    >
+  > {
+    return this.$delegate.lazilyResolvedBlankNodeOrIriClassIdentifiers(query);
+  }
+
+  lazilyResolvedBlankNodeOrIriClasses(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly LazilyResolvedBlankNodeOrIriClass[]>
+  > {
+    return this.$delegate.lazilyResolvedBlankNodeOrIriClasses(query);
+  }
+
+  lazilyResolvedBlankNodeOrIriClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.lazilyResolvedBlankNodeOrIriClassesCount(query);
+  }
+
+  lazilyResolvedBlankNodeOrIriInterface(
+    identifier: LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+  ): Promise<purify.Either<Error, LazilyResolvedBlankNodeOrIriInterface>> {
+    return this.$delegate.lazilyResolvedBlankNodeOrIriInterface(identifier);
+  }
+
+  lazilyResolvedBlankNodeOrIriInterfaceIdentifiers(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriInterface.$Identifier>,
+  ): Promise<
+    purify.Either<
+      Error,
+      readonly LazilyResolvedBlankNodeOrIriInterface.$Identifier[]
+    >
+  > {
+    return this.$delegate.lazilyResolvedBlankNodeOrIriInterfaceIdentifiers(
+      query,
+    );
+  }
+
+  lazilyResolvedBlankNodeOrIriInterfaces(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly LazilyResolvedBlankNodeOrIriInterface[]>
+  > {
+    return this.$delegate.lazilyResolvedBlankNodeOrIriInterfaces(query);
+  }
+
+  lazilyResolvedBlankNodeOrIriInterfacesCount(
+    query?: Pick<
+      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriInterface.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.lazilyResolvedBlankNodeOrIriInterfacesCount(query);
+  }
+
+  lazilyResolvedClassUnionMember1(
+    identifier: LazilyResolvedClassUnionMember1.$Identifier,
+  ): Promise<purify.Either<Error, LazilyResolvedClassUnionMember1>> {
+    return this.$delegate.lazilyResolvedClassUnionMember1(identifier);
+  }
+
+  lazilyResolvedClassUnionMember1Identifiers(
+    query?: $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly LazilyResolvedClassUnionMember1.$Identifier[]>
+  > {
+    return this.$delegate.lazilyResolvedClassUnionMember1Identifiers(query);
+  }
+
+  lazilyResolvedClassUnionMember1s(
+    query?: $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly LazilyResolvedClassUnionMember1[]>> {
+    return this.$delegate.lazilyResolvedClassUnionMember1s(query);
+  }
+
+  lazilyResolvedClassUnionMember1sCount(
+    query?: Pick<
+      $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.lazilyResolvedClassUnionMember1sCount(query);
+  }
+
+  lazilyResolvedClassUnionMember2(
+    identifier: LazilyResolvedClassUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, LazilyResolvedClassUnionMember2>> {
+    return this.$delegate.lazilyResolvedClassUnionMember2(identifier);
+  }
+
+  lazilyResolvedClassUnionMember2Identifiers(
+    query?: $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly LazilyResolvedClassUnionMember2.$Identifier[]>
+  > {
+    return this.$delegate.lazilyResolvedClassUnionMember2Identifiers(query);
+  }
+
+  lazilyResolvedClassUnionMember2s(
+    query?: $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly LazilyResolvedClassUnionMember2[]>> {
+    return this.$delegate.lazilyResolvedClassUnionMember2s(query);
+  }
+
+  lazilyResolvedClassUnionMember2sCount(
+    query?: Pick<
+      $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.lazilyResolvedClassUnionMember2sCount(query);
+  }
+
+  lazilyResolvedInterfaceUnionMember1(
+    identifier: LazilyResolvedInterfaceUnionMember1.$Identifier,
+  ): Promise<purify.Either<Error, LazilyResolvedInterfaceUnionMember1>> {
+    return this.$delegate.lazilyResolvedInterfaceUnionMember1(identifier);
+  }
+
+  lazilyResolvedInterfaceUnionMember1Identifiers(
+    query?: $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Identifier>,
+  ): Promise<
+    purify.Either<
+      Error,
+      readonly LazilyResolvedInterfaceUnionMember1.$Identifier[]
+    >
+  > {
+    return this.$delegate.lazilyResolvedInterfaceUnionMember1Identifiers(query);
+  }
+
+  lazilyResolvedInterfaceUnionMember1s(
+    query?: $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly LazilyResolvedInterfaceUnionMember1[]>
+  > {
+    return this.$delegate.lazilyResolvedInterfaceUnionMember1s(query);
+  }
+
+  lazilyResolvedInterfaceUnionMember1sCount(
+    query?: Pick<
+      $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.lazilyResolvedInterfaceUnionMember1sCount(query);
+  }
+
+  lazilyResolvedInterfaceUnionMember2(
+    identifier: LazilyResolvedInterfaceUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, LazilyResolvedInterfaceUnionMember2>> {
+    return this.$delegate.lazilyResolvedInterfaceUnionMember2(identifier);
+  }
+
+  lazilyResolvedInterfaceUnionMember2Identifiers(
+    query?: $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Identifier>,
+  ): Promise<
+    purify.Either<
+      Error,
+      readonly LazilyResolvedInterfaceUnionMember2.$Identifier[]
+    >
+  > {
+    return this.$delegate.lazilyResolvedInterfaceUnionMember2Identifiers(query);
+  }
+
+  lazilyResolvedInterfaceUnionMember2s(
+    query?: $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly LazilyResolvedInterfaceUnionMember2[]>
+  > {
+    return this.$delegate.lazilyResolvedInterfaceUnionMember2s(query);
+  }
+
+  lazilyResolvedInterfaceUnionMember2sCount(
+    query?: Pick<
+      $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.lazilyResolvedInterfaceUnionMember2sCount(query);
+  }
+
+  lazilyResolvedIriClass(
+    identifier: LazilyResolvedIriClass.$Identifier,
+  ): Promise<purify.Either<Error, LazilyResolvedIriClass>> {
+    return this.$delegate.lazilyResolvedIriClass(identifier);
+  }
+
+  lazilyResolvedIriClassIdentifiers(
+    query?: $ObjectSet.Query<LazilyResolvedIriClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly LazilyResolvedIriClass.$Identifier[]>
+  > {
+    return this.$delegate.lazilyResolvedIriClassIdentifiers(query);
+  }
+
+  lazilyResolvedIriClasses(
+    query?: $ObjectSet.Query<LazilyResolvedIriClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly LazilyResolvedIriClass[]>> {
+    return this.$delegate.lazilyResolvedIriClasses(query);
+  }
+
+  lazilyResolvedIriClassesCount(
+    query?: Pick<$ObjectSet.Query<LazilyResolvedIriClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.lazilyResolvedIriClassesCount(query);
+  }
+
+  lazilyResolvedIriInterface(
+    identifier: LazilyResolvedIriInterface.$Identifier,
+  ): Promise<purify.Either<Error, LazilyResolvedIriInterface>> {
+    return this.$delegate.lazilyResolvedIriInterface(identifier);
+  }
+
+  lazilyResolvedIriInterfaceIdentifiers(
+    query?: $ObjectSet.Query<LazilyResolvedIriInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly LazilyResolvedIriInterface.$Identifier[]>
+  > {
+    return this.$delegate.lazilyResolvedIriInterfaceIdentifiers(query);
+  }
+
+  lazilyResolvedIriInterfaces(
+    query?: $ObjectSet.Query<LazilyResolvedIriInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly LazilyResolvedIriInterface[]>> {
+    return this.$delegate.lazilyResolvedIriInterfaces(query);
+  }
+
+  lazilyResolvedIriInterfacesCount(
+    query?: Pick<
+      $ObjectSet.Query<LazilyResolvedIriInterface.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.lazilyResolvedIriInterfacesCount(query);
+  }
+
+  lazyPropertiesClass(
+    identifier: LazyPropertiesClass.$Identifier,
+  ): Promise<purify.Either<Error, LazyPropertiesClass>> {
+    return this.$delegate.lazyPropertiesClass(identifier);
+  }
+
+  lazyPropertiesClassIdentifiers(
+    query?: $ObjectSet.Query<LazyPropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly LazyPropertiesClass.$Identifier[]>> {
+    return this.$delegate.lazyPropertiesClassIdentifiers(query);
+  }
+
+  lazyPropertiesClasses(
+    query?: $ObjectSet.Query<LazyPropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly LazyPropertiesClass[]>> {
+    return this.$delegate.lazyPropertiesClasses(query);
+  }
+
+  lazyPropertiesClassesCount(
+    query?: Pick<$ObjectSet.Query<LazyPropertiesClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.lazyPropertiesClassesCount(query);
+  }
+
+  lazyPropertiesInterface(
+    identifier: LazyPropertiesInterface.$Identifier,
+  ): Promise<purify.Either<Error, LazyPropertiesInterface>> {
+    return this.$delegate.lazyPropertiesInterface(identifier);
+  }
+
+  lazyPropertiesInterfaceIdentifiers(
+    query?: $ObjectSet.Query<LazyPropertiesInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly LazyPropertiesInterface.$Identifier[]>
+  > {
+    return this.$delegate.lazyPropertiesInterfaceIdentifiers(query);
+  }
+
+  lazyPropertiesInterfaces(
+    query?: $ObjectSet.Query<LazyPropertiesInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly LazyPropertiesInterface[]>> {
+    return this.$delegate.lazyPropertiesInterfaces(query);
+  }
+
+  lazyPropertiesInterfacesCount(
+    query?: Pick<
+      $ObjectSet.Query<LazyPropertiesInterface.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.lazyPropertiesInterfacesCount(query);
+  }
+
+  listPropertiesClass(
+    identifier: ListPropertiesClass.$Identifier,
+  ): Promise<purify.Either<Error, ListPropertiesClass>> {
+    return this.$delegate.listPropertiesClass(identifier);
+  }
+
+  listPropertiesClassIdentifiers(
+    query?: $ObjectSet.Query<ListPropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ListPropertiesClass.$Identifier[]>> {
+    return this.$delegate.listPropertiesClassIdentifiers(query);
+  }
+
+  listPropertiesClasses(
+    query?: $ObjectSet.Query<ListPropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ListPropertiesClass[]>> {
+    return this.$delegate.listPropertiesClasses(query);
+  }
+
+  listPropertiesClassesCount(
+    query?: Pick<$ObjectSet.Query<ListPropertiesClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.listPropertiesClassesCount(query);
+  }
+
+  mutablePropertiesClass(
+    identifier: MutablePropertiesClass.$Identifier,
+  ): Promise<purify.Either<Error, MutablePropertiesClass>> {
+    return this.$delegate.mutablePropertiesClass(identifier);
+  }
+
+  mutablePropertiesClassIdentifiers(
+    query?: $ObjectSet.Query<MutablePropertiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly MutablePropertiesClass.$Identifier[]>
+  > {
+    return this.$delegate.mutablePropertiesClassIdentifiers(query);
+  }
+
+  mutablePropertiesClasses(
+    query?: $ObjectSet.Query<MutablePropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly MutablePropertiesClass[]>> {
+    return this.$delegate.mutablePropertiesClasses(query);
+  }
+
+  mutablePropertiesClassesCount(
+    query?: Pick<$ObjectSet.Query<MutablePropertiesClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.mutablePropertiesClassesCount(query);
+  }
+
+  nonClass(
+    identifier: NonClass.$Identifier,
+  ): Promise<purify.Either<Error, NonClass>> {
+    return this.$delegate.nonClass(identifier);
+  }
+
+  nonClassIdentifiers(
+    query?: $ObjectSet.Query<NonClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NonClass.$Identifier[]>> {
+    return this.$delegate.nonClassIdentifiers(query);
+  }
+
+  nonClasses(
+    query?: $ObjectSet.Query<NonClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NonClass[]>> {
+    return this.$delegate.nonClasses(query);
+  }
+
+  nonClassesCount(
+    query?: Pick<$ObjectSet.Query<NonClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.nonClassesCount(query);
+  }
+
+  orderedPropertiesClass(
+    identifier: OrderedPropertiesClass.$Identifier,
+  ): Promise<purify.Either<Error, OrderedPropertiesClass>> {
+    return this.$delegate.orderedPropertiesClass(identifier);
+  }
+
+  orderedPropertiesClassIdentifiers(
+    query?: $ObjectSet.Query<OrderedPropertiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly OrderedPropertiesClass.$Identifier[]>
+  > {
+    return this.$delegate.orderedPropertiesClassIdentifiers(query);
+  }
+
+  orderedPropertiesClasses(
+    query?: $ObjectSet.Query<OrderedPropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly OrderedPropertiesClass[]>> {
+    return this.$delegate.orderedPropertiesClasses(query);
+  }
+
+  orderedPropertiesClassesCount(
+    query?: Pick<$ObjectSet.Query<OrderedPropertiesClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.orderedPropertiesClassesCount(query);
+  }
+
+  propertyCardinalitiesClass(
+    identifier: PropertyCardinalitiesClass.$Identifier,
+  ): Promise<purify.Either<Error, PropertyCardinalitiesClass>> {
+    return this.$delegate.propertyCardinalitiesClass(identifier);
+  }
+
+  propertyCardinalitiesClassIdentifiers(
+    query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PropertyCardinalitiesClass.$Identifier[]>
+  > {
+    return this.$delegate.propertyCardinalitiesClassIdentifiers(query);
+  }
+
+  propertyCardinalitiesClasses(
+    query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly PropertyCardinalitiesClass[]>> {
+    return this.$delegate.propertyCardinalitiesClasses(query);
+  }
+
+  propertyCardinalitiesClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.propertyCardinalitiesClassesCount(query);
+  }
+
+  propertyVisibilitiesClass(
+    identifier: PropertyVisibilitiesClass.$Identifier,
+  ): Promise<purify.Either<Error, PropertyVisibilitiesClass>> {
+    return this.$delegate.propertyVisibilitiesClass(identifier);
+  }
+
+  propertyVisibilitiesClassIdentifiers(
+    query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PropertyVisibilitiesClass.$Identifier[]>
+  > {
+    return this.$delegate.propertyVisibilitiesClassIdentifiers(query);
+  }
+
+  propertyVisibilitiesClasses(
+    query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly PropertyVisibilitiesClass[]>> {
+    return this.$delegate.propertyVisibilitiesClasses(query);
+  }
+
+  propertyVisibilitiesClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.propertyVisibilitiesClassesCount(query);
+  }
+
+  sha256IriClass(
+    identifier: Sha256IriClass.$Identifier,
+  ): Promise<purify.Either<Error, Sha256IriClass>> {
+    return this.$delegate.sha256IriClass(identifier);
+  }
+
+  sha256IriClassIdentifiers(
+    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Sha256IriClass.$Identifier[]>> {
+    return this.$delegate.sha256IriClassIdentifiers(query);
+  }
+
+  sha256IriClasses(
+    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Sha256IriClass[]>> {
+    return this.$delegate.sha256IriClasses(query);
+  }
+
+  sha256IriClassesCount(
+    query?: Pick<$ObjectSet.Query<Sha256IriClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.sha256IriClassesCount(query);
+  }
+
+  stubClass(
+    identifier: StubClass.$Identifier,
+  ): Promise<purify.Either<Error, StubClass>> {
+    return this.$delegate.stubClass(identifier);
+  }
+
+  stubClassIdentifiers(
+    query?: $ObjectSet.Query<StubClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClass.$Identifier[]>> {
+    return this.$delegate.stubClassIdentifiers(query);
+  }
+
+  stubClasses(
+    query?: $ObjectSet.Query<StubClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClass[]>> {
+    return this.$delegate.stubClasses(query);
+  }
+
+  stubClassesCount(
+    query?: Pick<$ObjectSet.Query<StubClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.stubClassesCount(query);
+  }
+
+  stubClassUnionMember1(
+    identifier: StubClassUnionMember1.$Identifier,
+  ): Promise<purify.Either<Error, StubClassUnionMember1>> {
+    return this.$delegate.stubClassUnionMember1(identifier);
+  }
+
+  stubClassUnionMember1Identifiers(
+    query?: $ObjectSet.Query<StubClassUnionMember1.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly StubClassUnionMember1.$Identifier[]>
+  > {
+    return this.$delegate.stubClassUnionMember1Identifiers(query);
+  }
+
+  stubClassUnionMember1s(
+    query?: $ObjectSet.Query<StubClassUnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClassUnionMember1[]>> {
+    return this.$delegate.stubClassUnionMember1s(query);
+  }
+
+  stubClassUnionMember1sCount(
+    query?: Pick<$ObjectSet.Query<StubClassUnionMember1.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.stubClassUnionMember1sCount(query);
+  }
+
+  stubClassUnionMember2(
+    identifier: StubClassUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, StubClassUnionMember2>> {
+    return this.$delegate.stubClassUnionMember2(identifier);
+  }
+
+  stubClassUnionMember2Identifiers(
+    query?: $ObjectSet.Query<StubClassUnionMember2.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly StubClassUnionMember2.$Identifier[]>
+  > {
+    return this.$delegate.stubClassUnionMember2Identifiers(query);
+  }
+
+  stubClassUnionMember2s(
+    query?: $ObjectSet.Query<StubClassUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClassUnionMember2[]>> {
+    return this.$delegate.stubClassUnionMember2s(query);
+  }
+
+  stubClassUnionMember2sCount(
+    query?: Pick<$ObjectSet.Query<StubClassUnionMember2.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.stubClassUnionMember2sCount(query);
+  }
+
+  stubInterface(
+    identifier: StubInterface.$Identifier,
+  ): Promise<purify.Either<Error, StubInterface>> {
+    return this.$delegate.stubInterface(identifier);
+  }
+
+  stubInterfaceIdentifiers(
+    query?: $ObjectSet.Query<StubInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubInterface.$Identifier[]>> {
+    return this.$delegate.stubInterfaceIdentifiers(query);
+  }
+
+  stubInterfaces(
+    query?: $ObjectSet.Query<StubInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubInterface[]>> {
+    return this.$delegate.stubInterfaces(query);
+  }
+
+  stubInterfacesCount(
+    query?: Pick<$ObjectSet.Query<StubInterface.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.stubInterfacesCount(query);
+  }
+
+  stubInterfaceUnionMember1(
+    identifier: StubInterfaceUnionMember1.$Identifier,
+  ): Promise<purify.Either<Error, StubInterfaceUnionMember1>> {
+    return this.$delegate.stubInterfaceUnionMember1(identifier);
+  }
+
+  stubInterfaceUnionMember1Identifiers(
+    query?: $ObjectSet.Query<StubInterfaceUnionMember1.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly StubInterfaceUnionMember1.$Identifier[]>
+  > {
+    return this.$delegate.stubInterfaceUnionMember1Identifiers(query);
+  }
+
+  stubInterfaceUnionMember1s(
+    query?: $ObjectSet.Query<StubInterfaceUnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubInterfaceUnionMember1[]>> {
+    return this.$delegate.stubInterfaceUnionMember1s(query);
+  }
+
+  stubInterfaceUnionMember1sCount(
+    query?: Pick<
+      $ObjectSet.Query<StubInterfaceUnionMember1.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.stubInterfaceUnionMember1sCount(query);
+  }
+
+  stubInterfaceUnionMember2(
+    identifier: StubInterfaceUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, StubInterfaceUnionMember2>> {
+    return this.$delegate.stubInterfaceUnionMember2(identifier);
+  }
+
+  stubInterfaceUnionMember2Identifiers(
+    query?: $ObjectSet.Query<StubInterfaceUnionMember2.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly StubInterfaceUnionMember2.$Identifier[]>
+  > {
+    return this.$delegate.stubInterfaceUnionMember2Identifiers(query);
+  }
+
+  stubInterfaceUnionMember2s(
+    query?: $ObjectSet.Query<StubInterfaceUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubInterfaceUnionMember2[]>> {
+    return this.$delegate.stubInterfaceUnionMember2s(query);
+  }
+
+  stubInterfaceUnionMember2sCount(
+    query?: Pick<
+      $ObjectSet.Query<StubInterfaceUnionMember2.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.stubInterfaceUnionMember2sCount(query);
+  }
+
+  termPropertiesClass(
+    identifier: TermPropertiesClass.$Identifier,
+  ): Promise<purify.Either<Error, TermPropertiesClass>> {
+    return this.$delegate.termPropertiesClass(identifier);
+  }
+
+  termPropertiesClassIdentifiers(
+    query?: $ObjectSet.Query<TermPropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly TermPropertiesClass.$Identifier[]>> {
+    return this.$delegate.termPropertiesClassIdentifiers(query);
+  }
+
+  termPropertiesClasses(
+    query?: $ObjectSet.Query<TermPropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly TermPropertiesClass[]>> {
+    return this.$delegate.termPropertiesClasses(query);
+  }
+
+  termPropertiesClassesCount(
+    query?: Pick<$ObjectSet.Query<TermPropertiesClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.termPropertiesClassesCount(query);
+  }
+
+  unionPropertiesClass(
+    identifier: UnionPropertiesClass.$Identifier,
+  ): Promise<purify.Either<Error, UnionPropertiesClass>> {
+    return this.$delegate.unionPropertiesClass(identifier);
+  }
+
+  unionPropertiesClassIdentifiers(
+    query?: $ObjectSet.Query<UnionPropertiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly UnionPropertiesClass.$Identifier[]>
+  > {
+    return this.$delegate.unionPropertiesClassIdentifiers(query);
+  }
+
+  unionPropertiesClasses(
+    query?: $ObjectSet.Query<UnionPropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UnionPropertiesClass[]>> {
+    return this.$delegate.unionPropertiesClasses(query);
+  }
+
+  unionPropertiesClassesCount(
+    query?: Pick<$ObjectSet.Query<UnionPropertiesClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.unionPropertiesClassesCount(query);
+  }
+
+  uuidV4IriClass(
+    identifier: UuidV4IriClass.$Identifier,
+  ): Promise<purify.Either<Error, UuidV4IriClass>> {
+    return this.$delegate.uuidV4IriClass(identifier);
+  }
+
+  uuidV4IriClassIdentifiers(
+    query?: $ObjectSet.Query<UuidV4IriClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UuidV4IriClass.$Identifier[]>> {
+    return this.$delegate.uuidV4IriClassIdentifiers(query);
+  }
+
+  uuidV4IriClasses(
+    query?: $ObjectSet.Query<UuidV4IriClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UuidV4IriClass[]>> {
+    return this.$delegate.uuidV4IriClasses(query);
+  }
+
+  uuidV4IriClassesCount(
+    query?: Pick<$ObjectSet.Query<UuidV4IriClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.uuidV4IriClassesCount(query);
+  }
+
+  uuidV4IriInterface(
+    identifier: UuidV4IriInterface.$Identifier,
+  ): Promise<purify.Either<Error, UuidV4IriInterface>> {
+    return this.$delegate.uuidV4IriInterface(identifier);
+  }
+
+  uuidV4IriInterfaceIdentifiers(
+    query?: $ObjectSet.Query<UuidV4IriInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UuidV4IriInterface.$Identifier[]>> {
+    return this.$delegate.uuidV4IriInterfaceIdentifiers(query);
+  }
+
+  uuidV4IriInterfaces(
+    query?: $ObjectSet.Query<UuidV4IriInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UuidV4IriInterface[]>> {
+    return this.$delegate.uuidV4IriInterfaces(query);
+  }
+
+  uuidV4IriInterfacesCount(
+    query?: Pick<$ObjectSet.Query<UuidV4IriInterface.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.uuidV4IriInterfacesCount(query);
+  }
+
+  classUnion(
+    identifier: ClassUnion.$Identifier,
+  ): Promise<purify.Either<Error, ClassUnion>> {
+    return this.$delegate.classUnion(identifier);
+  }
+
+  classUnionIdentifiers(
+    query?: $ObjectSet.Query<ClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ClassUnion.$Identifier[]>> {
+    return this.$delegate.classUnionIdentifiers(query);
+  }
+
+  classUnions(
+    query?: $ObjectSet.Query<ClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ClassUnion[]>> {
+    return this.$delegate.classUnions(query);
+  }
+
+  classUnionsCount(
+    query?: Pick<$ObjectSet.Query<ClassUnion.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.classUnionsCount(query);
+  }
+
+  interfaceUnion(
+    identifier: InterfaceUnion.$Identifier,
+  ): Promise<purify.Either<Error, InterfaceUnion>> {
+    return this.$delegate.interfaceUnion(identifier);
+  }
+
+  interfaceUnionIdentifiers(
+    query?: $ObjectSet.Query<InterfaceUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly InterfaceUnion.$Identifier[]>> {
+    return this.$delegate.interfaceUnionIdentifiers(query);
+  }
+
+  interfaceUnions(
+    query?: $ObjectSet.Query<InterfaceUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly InterfaceUnion[]>> {
+    return this.$delegate.interfaceUnions(query);
+  }
+
+  interfaceUnionsCount(
+    query?: Pick<$ObjectSet.Query<InterfaceUnion.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.interfaceUnionsCount(query);
+  }
+
+  interfaceUnionMember2(
+    identifier: InterfaceUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, InterfaceUnionMember2>> {
+    return this.$delegate.interfaceUnionMember2(identifier);
+  }
+
+  interfaceUnionMember2Identifiers(
+    query?: $ObjectSet.Query<InterfaceUnionMember2.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly InterfaceUnionMember2.$Identifier[]>
+  > {
+    return this.$delegate.interfaceUnionMember2Identifiers(query);
+  }
+
+  interfaceUnionMember2s(
+    query?: $ObjectSet.Query<InterfaceUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly InterfaceUnionMember2[]>> {
+    return this.$delegate.interfaceUnionMember2s(query);
+  }
+
+  interfaceUnionMember2sCount(
+    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.interfaceUnionMember2sCount(query);
+  }
+
+  lazilyResolvedClassUnion(
+    identifier: LazilyResolvedClassUnion.$Identifier,
+  ): Promise<purify.Either<Error, LazilyResolvedClassUnion>> {
+    return this.$delegate.lazilyResolvedClassUnion(identifier);
+  }
+
+  lazilyResolvedClassUnionIdentifiers(
+    query?: $ObjectSet.Query<LazilyResolvedClassUnion.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly LazilyResolvedClassUnion.$Identifier[]>
+  > {
+    return this.$delegate.lazilyResolvedClassUnionIdentifiers(query);
+  }
+
+  lazilyResolvedClassUnions(
+    query?: $ObjectSet.Query<LazilyResolvedClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly LazilyResolvedClassUnion[]>> {
+    return this.$delegate.lazilyResolvedClassUnions(query);
+  }
+
+  lazilyResolvedClassUnionsCount(
+    query?: Pick<
+      $ObjectSet.Query<LazilyResolvedClassUnion.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.lazilyResolvedClassUnionsCount(query);
+  }
+
+  lazilyResolvedInterfaceUnion(
+    identifier: LazilyResolvedInterfaceUnion.$Identifier,
+  ): Promise<purify.Either<Error, LazilyResolvedInterfaceUnion>> {
+    return this.$delegate.lazilyResolvedInterfaceUnion(identifier);
+  }
+
+  lazilyResolvedInterfaceUnionIdentifiers(
+    query?: $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly LazilyResolvedInterfaceUnion.$Identifier[]>
+  > {
+    return this.$delegate.lazilyResolvedInterfaceUnionIdentifiers(query);
+  }
+
+  lazilyResolvedInterfaceUnions(
+    query?: $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly LazilyResolvedInterfaceUnion[]>> {
+    return this.$delegate.lazilyResolvedInterfaceUnions(query);
+  }
+
+  lazilyResolvedInterfaceUnionsCount(
+    query?: Pick<
+      $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.lazilyResolvedInterfaceUnionsCount(query);
+  }
+
+  stubClassUnion(
+    identifier: StubClassUnion.$Identifier,
+  ): Promise<purify.Either<Error, StubClassUnion>> {
+    return this.$delegate.stubClassUnion(identifier);
+  }
+
+  stubClassUnionIdentifiers(
+    query?: $ObjectSet.Query<StubClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClassUnion.$Identifier[]>> {
+    return this.$delegate.stubClassUnionIdentifiers(query);
+  }
+
+  stubClassUnions(
+    query?: $ObjectSet.Query<StubClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubClassUnion[]>> {
+    return this.$delegate.stubClassUnions(query);
+  }
+
+  stubClassUnionsCount(
+    query?: Pick<$ObjectSet.Query<StubClassUnion.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.stubClassUnionsCount(query);
+  }
+
+  stubInterfaceUnion(
+    identifier: StubInterfaceUnion.$Identifier,
+  ): Promise<purify.Either<Error, StubInterfaceUnion>> {
+    return this.$delegate.stubInterfaceUnion(identifier);
+  }
+
+  stubInterfaceUnionIdentifiers(
+    query?: $ObjectSet.Query<StubInterfaceUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubInterfaceUnion.$Identifier[]>> {
+    return this.$delegate.stubInterfaceUnionIdentifiers(query);
+  }
+
+  stubInterfaceUnions(
+    query?: $ObjectSet.Query<StubInterfaceUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly StubInterfaceUnion[]>> {
+    return this.$delegate.stubInterfaceUnions(query);
+  }
+
+  stubInterfaceUnionsCount(
+    query?: Pick<$ObjectSet.Query<StubInterfaceUnion.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.stubInterfaceUnionsCount(query);
+  }
+}
+
 export class $RdfjsDatasetObjectSet implements $ObjectSet {
   readonly resourceSet: rdfjsResource.ResourceSet;
 
