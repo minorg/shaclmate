@@ -1,8 +1,5 @@
 import type { Quad } from "@rdfjs/types";
-import {
-  type $ObjectSet,
-  $RdfjsDatasetObjectSet,
-} from "@shaclmate/kitchen-sink-example";
+import type { $ObjectSet } from "@shaclmate/kitchen-sink-example";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import N3 from "n3";
 import { MutableResourceSet } from "rdfjs-resource";
@@ -361,7 +358,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     expect(
       (await objectSet.interfaceUnionsCount()).unsafeCoerce(),
     ).toStrictEqual(
-      objectSet instanceof $RdfjsDatasetObjectSet
+      !(objectSet instanceof kitchenSink.$SparqlObjectSet)
         ? 0
         : testData.interfaceUnions.length,
     );

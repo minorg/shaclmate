@@ -5,6 +5,7 @@ import type {
 } from "ts-morph";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
+import { forwardingObjectSetClassDeclaration } from "./forwardingObjectSetClassDeclaration.js";
 import { objectSetInterfaceDeclaration } from "./objectSetInterfaceDeclaration.js";
 import { rdfjsDatasetObjectSetClassDeclaration } from "./rdfjsDatasetObjectSetClassDeclaration.js";
 import { sparqlObjectSetClassDeclaration } from "./sparqlObjectSetClassDeclaration.js";
@@ -73,6 +74,7 @@ export function objectSetDeclarations({
       objectTypes,
       objectUnionTypes,
     }),
+    forwardingObjectSetClassDeclaration({ objectTypes, objectUnionTypes }),
   ];
 
   if (objectTypesWithRdfFeatureCount > 0) {
