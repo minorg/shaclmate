@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@shaclmate/runtime": "2.0.23",
+    "@shaclmate/runtime": "2.0.24",
     "graphql": "16.11.0",
     "graphql-scalars": "1.24.2",
     "graphql-yoga": "5.14.0",
@@ -39,5 +39,5 @@
     "test:watch": "biome check && vitest watch"
   },
   "type": "module",
-  "version": "2.0.23"
+  "version": "2.0.24"
 }
