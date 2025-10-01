@@ -16,11 +16,11 @@ export function rdfjsTermExpression(
     case "Literal":
       if (rdfjsTerm.datatype.equals(xsd.string)) {
         if (rdfjsTerm.language.length === 0) {
-          return `dataFactory.literal("${rdfjsTerm.value}")`;
+          return `dataFactory.literal(${JSON.stringify(rdfjsTerm.value)})`;
         }
-        return `dataFactory.literal("${rdfjsTerm.value}", "${rdfjsTerm.language}")`;
+        return `dataFactory.literal(${JSON.stringify(rdfjsTerm.value)}, "${rdfjsTerm.language}")`;
       }
-      return `dataFactory.literal("${rdfjsTerm.value}", ${rdfjsTermExpression(rdfjsTerm.datatype)})`;
+      return `dataFactory.literal(${JSON.stringify(rdfjsTerm.value)}, ${rdfjsTermExpression(rdfjsTerm.datatype)})`;
     case "NamedNode": {
       if (rdfjsTerm.value.startsWith(rdf[""].value)) {
         const unqualifiedName = rdfjsTerm.value.substring(rdf[""].value.length);
