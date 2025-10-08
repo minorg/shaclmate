@@ -1,3 +1,4 @@
+import type { Maybe } from "purify-ts";
 import {
   type ClassDeclarationStructure,
   type MethodDeclarationStructure,
@@ -32,13 +33,14 @@ export function rdfjsDatasetObjectSetClassDeclaration({
   };
 
   const fromRdfFunctionType = `(resource: rdfjsResource.Resource, options: { objectSet: ${syntheticNamePrefix}ObjectSet }) => purify.Either<Error, ${typeParameters.ObjectT.name}>`;
+  const objectTypeType = `{ ${syntheticNamePrefix}fromRdf: ${fromRdfFunctionType}; ${syntheticNamePrefix}fromRdfTypes: readonly rdfjs.NamedNode[] }`;
 
   const reusableMethodDeclarations: MethodDeclarationStructure[] = [];
   if (objectTypes.length > 0) {
     const parameters = {
       objectType: {
         name: "objectType",
-        type: `{ ${syntheticNamePrefix}fromRdf: ${fromRdfFunctionType}; ${syntheticNamePrefix}fromRdfType?: rdfjs.NamedNode }`,
+        type: objectTypeType,
       } satisfies OptionalKind<ParameterDeclarationStructure>,
       query: {
         hasQuestionToken: true,
@@ -115,11 +117,18 @@ if (query?.where) {
   return purify.Either.of(objects);
 }
 
-if (!objectType.${syntheticNamePrefix}fromRdfType) {
+if (objectType.${syntheticNamePrefix}fromRdfTypes.length === 0) {
   return purify.Either.of([]);
 }
 
-const resources = [...this.resourceSet.instancesOf(objectType.${syntheticNamePrefix}fromRdfType)];
+const resources: rdfjsResource.Resource[] = [];
+for (const fromRdfType of objectType.${syntheticNamePrefix}fromRdfTypes) {
+  for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+    if (!resources.some(existingResource => existingResource.identifier.equals(resource.identifier))) {
+      resources.push(resource);
+    }
+  }
+}
 // Sort resources by identifier so limit and offset are deterministic
 resources.sort((left, right) => left.identifier.value.localeCompare(right.identifier.value));
 
@@ -163,8 +172,6 @@ return purify.Either.of(objects);
   }
 
   if (objectUnionTypes.length > 0) {
-    const objectTypeType = `{ ${syntheticNamePrefix}fromRdf: ${fromRdfFunctionType}; ${syntheticNamePrefix}fromRdfType?: rdfjs.NamedNode }`;
-
     const parameters = {
       objectTypes: {
         name: "objectTypes",
@@ -255,15 +262,18 @@ if (query?.where) {
 
 const resources: { objectType: ${objectTypeType}, resource: rdfjsResource.Resource }[] = [];
 for (const objectType of objectTypes) {
-  if (!objectType.${syntheticNamePrefix}fromRdfType) {
+  if (objectType.${syntheticNamePrefix}fromRdfTypes.length === 0) {
     continue;
   }
 
-  for (const resource of this.resourceSet.instancesOf(objectType.${syntheticNamePrefix}fromRdfType)) {
-    resources.push({ objectType, resource });
+  for (const fromRdfType of objectType.${syntheticNamePrefix}fromRdfTypes) {
+    for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+      if (!resources.some(({ resource: existingResource }) => existingResource.identifier.equals(resource.identifier))) {
+        resources.push({ objectType, resource });
+      }
+    }
   }
 }
-
 // Sort resources by identifier so limit and offset are deterministic
 resources.sort((left, right) => left.resource.identifier.value.localeCompare(right.resource.identifier.value));
 
@@ -335,18 +345,18 @@ return purify.Either.of(objects);
         const methodSignatures = objectSetMethodSignatures({ objectType });
 
         let runtimeObjectType: string;
+        const runtimeObjectType_ = (objectType: {
+          descendantFromRdfTypeVariables: readonly string[];
+          staticModuleName: string;
+          fromRdfTypeVariable: Maybe<string>;
+        }) =>
+          `{ ${syntheticNamePrefix}fromRdf: ${objectType.staticModuleName}.${syntheticNamePrefix}fromRdf, ${syntheticNamePrefix}fromRdfTypes: [${objectType.fromRdfTypeVariable.toList().concat(objectType.descendantFromRdfTypeVariables).join(", ")}] }`;
         switch (objectType.kind) {
           case "ObjectType":
-            runtimeObjectType = objectType.fromRdfType.isJust()
-              ? `${objectType.staticModuleName}`
-              : `{ ...${objectType.staticModuleName}, ${syntheticNamePrefix}fromRdfType: undefined }`;
+            runtimeObjectType = runtimeObjectType_(objectType);
             break;
           case "ObjectUnionType":
-            runtimeObjectType = `[${objectType.memberTypes.map((memberType) =>
-              memberType.fromRdfType.isJust()
-                ? `${memberType.staticModuleName}`
-                : `{ ...${memberType.staticModuleName}, ${syntheticNamePrefix}fromRdfType: undefined }`,
-            )}]`;
+            runtimeObjectType = `[${objectType.memberTypes.map((memberType) => runtimeObjectType_(memberType)).join(", ")}]`;
             break;
         }
 

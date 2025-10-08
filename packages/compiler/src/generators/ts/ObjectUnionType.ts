@@ -41,6 +41,10 @@ class MemberType {
     return this.delegate.declarationType;
   }
 
+  get descendantFromRdfTypeVariables() {
+    return this.delegate.descendantFromRdfTypeVariables;
+  }
+
   @Memoize()
   get discriminatorPropertyValues(): readonly string[] {
     // A member type's combined discriminator property values are its "own" values plus any descendant values that are
