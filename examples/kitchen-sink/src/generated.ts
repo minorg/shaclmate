@@ -191,7 +191,7 @@ export function $sparqlInstancesOfPattern({
   rdfType,
   subject,
 }: {
-  rdfType: rdfjs.NamedNode;
+  rdfType: rdfjs.NamedNode | rdfjs.Variable;
   subject: sparqljs.Triple["subject"];
 }): sparqljs.Pattern {
   return {
@@ -4974,26 +4974,39 @@ export namespace StubInterfaceUnionMember2 {
       (subject.termType === "Variable"
         ? subject.value
         : "stubInterfaceUnionMember2");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [StubInterfaceUnionMember2.$fromRdfType].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${variablePrefix}FromRdfType`] =
+              identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -5500,26 +5513,39 @@ export namespace StubInterfaceUnionMember1 {
       (subject.termType === "Variable"
         ? subject.value
         : "stubInterfaceUnionMember1");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [StubInterfaceUnionMember1.$fromRdfType].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${variablePrefix}FromRdfType`] =
+              identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -6002,26 +6028,39 @@ export namespace StubClassUnionMember2 {
       (subject.termType === "Variable"
         ? subject.value
         : "stubClassUnionMember2");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [StubClassUnionMember2.$fromRdfType].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${variablePrefix}FromRdfType`] =
+              identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -6505,26 +6544,39 @@ export namespace StubClassUnionMember1 {
       (subject.termType === "Variable"
         ? subject.value
         : "stubClassUnionMember1");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [StubClassUnionMember1.$fromRdfType].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${variablePrefix}FromRdfType`] =
+              identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -18898,26 +18950,41 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       (subject.termType === "Variable"
         ? subject.value
         : "lazilyResolvedInterfaceUnionMember2");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [LazilyResolvedInterfaceUnionMember2.$fromRdfType].map(
+            (identifier) => {
+              const valuePatternRow: sparqljs.ValuePatternRow = {};
+              valuePatternRow[`?${variablePrefix}FromRdfType`] =
+                identifier as rdfjs.NamedNode;
+              return valuePatternRow;
+            },
+          ),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -19431,26 +19498,41 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       (subject.termType === "Variable"
         ? subject.value
         : "lazilyResolvedInterfaceUnionMember1");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [LazilyResolvedInterfaceUnionMember1.$fromRdfType].map(
+            (identifier) => {
+              const valuePatternRow: sparqljs.ValuePatternRow = {};
+              valuePatternRow[`?${variablePrefix}FromRdfType`] =
+                identifier as rdfjs.NamedNode;
+              return valuePatternRow;
+            },
+          ),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -19937,26 +20019,41 @@ export namespace LazilyResolvedClassUnionMember2 {
       (subject.termType === "Variable"
         ? subject.value
         : "lazilyResolvedClassUnionMember2");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [LazilyResolvedClassUnionMember2.$fromRdfType].map(
+            (identifier) => {
+              const valuePatternRow: sparqljs.ValuePatternRow = {};
+              valuePatternRow[`?${variablePrefix}FromRdfType`] =
+                identifier as rdfjs.NamedNode;
+              return valuePatternRow;
+            },
+          ),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -20443,26 +20540,41 @@ export namespace LazilyResolvedClassUnionMember1 {
       (subject.termType === "Variable"
         ? subject.value
         : "lazilyResolvedClassUnionMember1");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [LazilyResolvedClassUnionMember1.$fromRdfType].map(
+            (identifier) => {
+              const valuePatternRow: sparqljs.ValuePatternRow = {};
+              valuePatternRow[`?${variablePrefix}FromRdfType`] =
+                identifier as rdfjs.NamedNode;
+              return valuePatternRow;
+            },
+          ),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -20979,26 +21091,41 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
       (subject.termType === "Variable"
         ? subject.value
         : "lazilyResolvedBlankNodeOrIriInterface");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [LazilyResolvedBlankNodeOrIriInterface.$fromRdfType].map(
+            (identifier) => {
+              const valuePatternRow: sparqljs.ValuePatternRow = {};
+              valuePatternRow[`?${variablePrefix}FromRdfType`] =
+                identifier as rdfjs.NamedNode;
+              return valuePatternRow;
+            },
+          ),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -21489,26 +21616,41 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
       (subject.termType === "Variable"
         ? subject.value
         : "lazilyResolvedBlankNodeOrIriClass");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [LazilyResolvedBlankNodeOrIriClass.$fromRdfType].map(
+            (identifier) => {
+              const valuePatternRow: sparqljs.ValuePatternRow = {};
+              valuePatternRow[`?${variablePrefix}FromRdfType`] =
+                identifier as rdfjs.NamedNode;
+              return valuePatternRow;
+            },
+          ),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -28233,26 +28375,39 @@ export namespace ExplicitRdfTypeClass {
       (subject.termType === "Variable"
         ? subject.value
         : "explicitRdfTypeClass");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [ExplicitRdfTypeClass.$fromRdfType].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${variablePrefix}FromRdfType`] =
+              identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -28750,26 +28905,41 @@ export namespace ExplicitFromToRdfTypesClass {
       (subject.termType === "Variable"
         ? subject.value
         : "explicitFromToRdfTypesClass");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [ExplicitFromToRdfTypesClass.$fromRdfType].map(
+            (identifier) => {
+              const valuePatternRow: sparqljs.ValuePatternRow = {};
+              valuePatternRow[`?${variablePrefix}FromRdfType`] =
+                identifier as rdfjs.NamedNode;
+              return valuePatternRow;
+            },
+          ),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -30779,26 +30949,44 @@ export namespace BaseInterfaceWithPropertiesStatic {
       (subject.termType === "Variable"
         ? subject.value
         : "baseInterfaceWithProperties");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [
+            BaseInterfaceWithPropertiesStatic.$fromRdfType,
+            BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
+            ConcreteParentInterfaceStatic.$fromRdfType,
+            ConcreteChildInterface.$fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${variablePrefix}FromRdfType`] =
+              identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -31264,26 +31452,43 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       }
     }
 
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [
+            BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
+            ConcreteParentInterfaceStatic.$fromRdfType,
+            ConcreteChildInterface.$fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${variablePrefix}FromRdfType`] =
+              identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -31788,26 +31993,42 @@ export namespace ConcreteParentInterfaceStatic {
       }
     }
 
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [
+            ConcreteParentInterfaceStatic.$fromRdfType,
+            ConcreteChildInterface.$fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${variablePrefix}FromRdfType`] =
+              identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -32317,26 +32538,39 @@ export namespace ConcreteChildInterface {
       }
     }
 
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [ConcreteChildInterface.$fromRdfType].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${variablePrefix}FromRdfType`] =
+              identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -33566,26 +33800,42 @@ export namespace ConcreteParentClassStatic {
       }
     }
 
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [
+            ConcreteParentClassStatic.$fromRdfType,
+            ConcreteChildClass.$fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${variablePrefix}FromRdfType`] =
+              identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -34061,26 +34311,39 @@ export namespace ConcreteChildClass {
       }
     }
 
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [ConcreteChildClass.$fromRdfType].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${variablePrefix}FromRdfType`] =
+              identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -34552,26 +34815,39 @@ export namespace ClassUnionMember2 {
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "classUnionMember2");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [ClassUnionMember2.$fromRdfType].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${variablePrefix}FromRdfType`] =
+              identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -35043,26 +35319,39 @@ export namespace ClassUnionMember1 {
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "classUnionMember1");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [ClassUnionMember1.$fromRdfType].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${variablePrefix}FromRdfType`] =
+              identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
