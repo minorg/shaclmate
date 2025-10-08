@@ -193,6 +193,20 @@ export class ObjectType extends DeclaredType {
   }
 
   @Memoize()
+  get descendantFromRdfTypes(): readonly NamedNode[] {
+    return this.descendantObjectTypes.flatMap((descendantObjectType) =>
+      descendantObjectType.fromRdfType.toList(),
+    );
+  }
+
+  @Memoize()
+  get descendantFromRdfTypeVariables(): readonly string[] {
+    return this.descendantObjectTypes.flatMap((descendantObjectType) =>
+      descendantObjectType.fromRdfTypeVariable.toList(),
+    );
+  }
+
+  @Memoize()
   get descendantObjectTypes(): readonly ObjectType[] {
     return this.lazyDescendantObjectTypes();
   }
