@@ -1,7 +1,7 @@
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { harnesses } from "./harnesses.js";
 
-import { rdf } from "@tpluscode/rdf-ns-builders";
+import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 
 import N3, { DataFactory as dataFactory } from "n3";
 import { MutableResourceSet, Resource, ResourceSet } from "rdfjs-resource";
@@ -380,5 +380,106 @@ describe("fromRdf", () => {
       kitchenSink.PropertyCardinalitiesClass.$fromRdf(instanceResource);
     expect(result.isLeft()).toBe(true);
     // expect(result.extract()).toBeInstanceOf(Resource.MistypedValueError);
+  });
+
+  it("accept known child type", ({ expect }) => {
+    const child = new kitchenSink.ConcreteChildClass({
+      abstractBaseClassWithPropertiesProperty: "abcWith",
+      concreteChildClassProperty: "child",
+      concreteParentClassProperty: "parent",
+    });
+    const childResource = child.$toRdf();
+
+    // Deserialize all of the superclasses of the child class
+
+    expect(
+      kitchenSink.ConcreteParentClassStatic.$fromRdf(childResource)
+        .unsafeCoerce()
+        .$equals(child)
+        .unsafeCoerce(),
+    ).toStrictEqual(true);
+
+    expect(
+      kitchenSink.AbstractBaseClassWithPropertiesStatic.$fromRdf(childResource)
+        .unsafeCoerce()
+        .$equals(child)
+        .unsafeCoerce(),
+    ).toStrictEqual(true);
+
+    expect(
+      kitchenSink.AbstractBaseClassWithoutPropertiesStatic.$fromRdf(
+        childResource,
+      )
+        .unsafeCoerce()
+        .$equals(child)
+        .unsafeCoerce(),
+    ).toStrictEqual(true);
+  });
+
+  it("accept unknown child type", ({ expect }) => {
+    const child = new kitchenSink.ConcreteChildClass({
+      abstractBaseClassWithPropertiesProperty: "abcWith",
+      concreteChildClassProperty: "child",
+      concreteParentClassProperty: "parent",
+    });
+    const dataset = new N3.Store();
+    for (const quad of child.$toRdf().dataset) {
+      if (!quad.predicate.equals(rdf.type)) {
+        dataset.add(quad);
+      }
+    }
+    const childResource = new ResourceSet({ dataset }).resource(
+      child.$identifier,
+    );
+    // Deserialization shouldn't work since there's no rdf:type statement
+    expect(
+      kitchenSink.ConcreteChildClass.$fromRdf(childResource).isLeft(),
+    ).toStrictEqual(true);
+    // Add rdf:type <subclass> statement
+    dataset.add(
+      dataFactory.quad(
+        child.$identifier,
+        rdf.type,
+        dataFactory.namedNode("http://example.com/newSubType"),
+      ),
+    );
+    // And a corresponding rdfs:subClassOf statement so the instance-of check owrks
+    dataset.add(
+      dataFactory.quad(
+        dataFactory.namedNode("http://example.com/newSubType"),
+        rdfs.subClassOf,
+        kitchenSink.ConcreteChildClass.$fromRdfType,
+      ),
+    );
+
+    expect(
+      kitchenSink.ConcreteChildClass.$fromRdf(childResource)
+        .unsafeCoerce()
+        .$equals(child)
+        .unsafeCoerce(),
+    ).toStrictEqual(true);
+
+    expect(
+      kitchenSink.ConcreteParentClassStatic.$fromRdf(childResource)
+        .unsafeCoerce()
+        .$equals(child)
+        .unsafeCoerce(),
+    ).toStrictEqual(true);
+
+    expect(
+      kitchenSink.AbstractBaseClassWithPropertiesStatic.$fromRdf(childResource)
+        .unsafeCoerce()
+        .$equals(child)
+        .unsafeCoerce(),
+    ).toStrictEqual(true);
+
+    expect(
+      kitchenSink.AbstractBaseClassWithoutPropertiesStatic.$fromRdf(
+        childResource,
+      )
+        .unsafeCoerce()
+        .$equals(child)
+        .unsafeCoerce(),
+    ).toStrictEqual(true);
   });
 });
