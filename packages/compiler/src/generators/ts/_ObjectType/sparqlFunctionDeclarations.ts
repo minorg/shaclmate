@@ -59,6 +59,10 @@ for (const pattern of ${parentObjectType.staticModuleName}.${syntheticNamePrefix
   }
 
   if (this.fromRdfType.isJust()) {
+    const fromRdfTypeVariables = this.fromRdfTypeVariable
+      .toList()
+      .concat(this.descendantFromRdfTypeVariables);
+
     sparqlConstructTemplateTriplesStatements.push(`\
 if (!parameters?.ignoreRdfType) {
   triples.push(
@@ -71,15 +75,20 @@ if (!parameters?.ignoreRdfType) {
       `\
 if (!parameters?.ignoreRdfType) {
   requiredPatterns.push(
+    ${
+      fromRdfTypeVariables.length > 1
+        ? `\
     {
       type: "values" as const,
-      values: [${this.fromRdfTypeVariable.toList().concat(this.descendantFromRdfTypeVariables).join(", ")}].map((identifier) => {
+      values: [${fromRdfTypeVariables.join(", ")}].map((identifier) => {
         const valuePatternRow: sparqljs.ValuePatternRow = {};
         valuePatternRow[\`?\${${variables.variablePrefix}}FromRdfType\`] = identifier as rdfjs.NamedNode;
         return valuePatternRow;
       }),
     },
-    ${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType: dataFactory.variable!(\`\${${variables.variablePrefix}}FromRdfType\`), subject }),
+    ${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType: dataFactory.variable!(\`\${${variables.variablePrefix}}FromRdfType\`), subject }),`
+        : `${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType: ${fromRdfTypeVariables[0]}, subject }),`
+    }
     {
       triples: [
         {

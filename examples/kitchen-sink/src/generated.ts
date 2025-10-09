@@ -1083,7 +1083,9 @@ export namespace UuidV4IriInterface {
     readonly uuidV4IriProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.NamedNode;
@@ -2276,7 +2278,9 @@ export namespace UnionPropertiesClass {
         };
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -2558,13 +2562,15 @@ export namespace UnionPropertiesClass {
             }),
           ).chain((values) =>
             values.chainMap((value) =>
-              value.toResource().chain((resource) =>
-                NonClass.$fromRdf(resource, {
-                  ...$context,
-                  languageIn: $languageIn,
-                  objectSet: $objectSet,
-                }),
-              ),
+              value
+                .toResource()
+                .chain((resource) =>
+                  NonClass.$fromRdf(resource, {
+                    ...$context,
+                    languageIn: $languageIn,
+                    objectSet: $objectSet,
+                  }),
+                ),
             ),
           ) as purify.Either<
             Error,
@@ -3597,7 +3603,9 @@ export namespace TermPropertiesClass {
         };
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4602,7 +4610,9 @@ export namespace StubInterfaceUnionMember2 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -4977,17 +4987,8 @@ export namespace StubInterfaceUnionMember2 {
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        {
-          type: "values" as const,
-          values: [StubInterfaceUnionMember2.$fromRdfType].map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow[`?${variablePrefix}FromRdfType`] =
-              identifier as rdfjs.NamedNode;
-            return valuePatternRow;
-          }),
-        },
         $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          rdfType: StubInterfaceUnionMember2.$fromRdfType,
           subject,
         }),
         {
@@ -5141,7 +5142,9 @@ export namespace StubInterfaceUnionMember1 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -5516,17 +5519,8 @@ export namespace StubInterfaceUnionMember1 {
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        {
-          type: "values" as const,
-          values: [StubInterfaceUnionMember1.$fromRdfType].map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow[`?${variablePrefix}FromRdfType`] =
-              identifier as rdfjs.NamedNode;
-            return valuePatternRow;
-          }),
-        },
         $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          rdfType: StubInterfaceUnionMember1.$fromRdfType,
           subject,
         }),
         {
@@ -5750,7 +5744,9 @@ export namespace StubClassUnionMember2 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6031,17 +6027,8 @@ export namespace StubClassUnionMember2 {
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        {
-          type: "values" as const,
-          values: [StubClassUnionMember2.$fromRdfType].map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow[`?${variablePrefix}FromRdfType`] =
-              identifier as rdfjs.NamedNode;
-            return valuePatternRow;
-          }),
-        },
         $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          rdfType: StubClassUnionMember2.$fromRdfType,
           subject,
         }),
         {
@@ -6266,7 +6253,9 @@ export namespace StubClassUnionMember1 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -6547,17 +6536,8 @@ export namespace StubClassUnionMember1 {
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        {
-          type: "values" as const,
-          values: [StubClassUnionMember1.$fromRdfType].map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow[`?${variablePrefix}FromRdfType`] =
-              identifier as rdfjs.NamedNode;
-            return valuePatternRow;
-          }),
-        },
         $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          rdfType: StubClassUnionMember1.$fromRdfType,
           subject,
         }),
         {
@@ -7234,7 +7214,9 @@ export namespace PropertyVisibilitiesClass {
     readonly publicProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -7852,7 +7834,9 @@ export namespace PropertyCardinalitiesClass {
     readonly requiredStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -8550,7 +8534,9 @@ export namespace OrderedPropertiesClass {
     readonly orderedPropertyA: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -9596,7 +9582,9 @@ export namespace MutablePropertiesClass {
     readonly mutableStringProperty?: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -10480,7 +10468,9 @@ export namespace ListPropertiesClass {
     readonly stringListProperty?: readonly string[];
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -10644,14 +10634,16 @@ export namespace ListPropertiesClass {
             }),
           ).chain((values) =>
             values.chainMap((value) =>
-              value.toResource().chain((resource) =>
-                NonClass.$fromRdf(resource, {
-                  ...$context,
-                  ignoreRdfType: true,
-                  languageIn: $languageIn,
-                  objectSet: $objectSet,
-                }),
-              ),
+              value
+                .toResource()
+                .chain((resource) =>
+                  NonClass.$fromRdf(resource, {
+                    ...$context,
+                    ignoreRdfType: true,
+                    languageIn: $languageIn,
+                    objectSet: $objectSet,
+                  }),
+                ),
             ),
           ),
         ),
@@ -11243,7 +11235,9 @@ export namespace StubInterface {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -12562,7 +12556,9 @@ export namespace LazyPropertiesInterface {
     readonly setStubInterfaceToResolvedInterfaceProperty?: readonly StubInterface.$Json[];
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -13165,14 +13161,16 @@ export namespace LazyPropertiesInterface {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            $DefaultStub.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              $DefaultStub.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) =>
@@ -13227,14 +13225,16 @@ export namespace LazyPropertiesInterface {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            $DefaultStub.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              $DefaultStub.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) =>
@@ -13289,14 +13289,16 @@ export namespace LazyPropertiesInterface {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            $NamedDefaultStub.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              $NamedDefaultStub.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) =>
@@ -13353,14 +13355,16 @@ export namespace LazyPropertiesInterface {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            StubInterface.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              StubInterface.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) =>
@@ -13419,14 +13423,16 @@ export namespace LazyPropertiesInterface {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            StubInterface.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              StubInterface.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) =>
@@ -13485,14 +13491,16 @@ export namespace LazyPropertiesInterface {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            StubInterfaceUnion.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: false,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              StubInterfaceUnion.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: false,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) =>
@@ -13551,14 +13559,16 @@ export namespace LazyPropertiesInterface {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            $DefaultStub.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              $DefaultStub.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) =>
@@ -13602,14 +13612,16 @@ export namespace LazyPropertiesInterface {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            StubInterface.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              StubInterface.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) =>
@@ -13651,14 +13663,16 @@ export namespace LazyPropertiesInterface {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            $DefaultStub.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              $DefaultStub.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) => values.toArray())
@@ -13712,14 +13726,16 @@ export namespace LazyPropertiesInterface {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            StubInterface.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              StubInterface.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) => values.toArray())
@@ -14628,7 +14644,9 @@ export namespace StubClass {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -15974,7 +15992,9 @@ export namespace LazyPropertiesClass {
     readonly setStubClassToResolvedClassProperty?: readonly StubClass.$Json[];
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -16438,14 +16458,16 @@ export namespace LazyPropertiesClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            $DefaultStub.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              $DefaultStub.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) =>
@@ -16500,14 +16522,16 @@ export namespace LazyPropertiesClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            $DefaultStub.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              $DefaultStub.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) =>
@@ -16562,14 +16586,16 @@ export namespace LazyPropertiesClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            $NamedDefaultStub.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              $NamedDefaultStub.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) =>
@@ -16624,14 +16650,16 @@ export namespace LazyPropertiesClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            StubClass.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              StubClass.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) =>
@@ -16684,14 +16712,16 @@ export namespace LazyPropertiesClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            StubClass.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              StubClass.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) =>
@@ -16746,14 +16776,16 @@ export namespace LazyPropertiesClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            StubClassUnion.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: false,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              StubClassUnion.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: false,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) =>
@@ -16810,14 +16842,16 @@ export namespace LazyPropertiesClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            $DefaultStub.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              $DefaultStub.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) =>
@@ -16859,14 +16893,16 @@ export namespace LazyPropertiesClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            StubClass.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              StubClass.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) =>
@@ -16908,14 +16944,16 @@ export namespace LazyPropertiesClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            $DefaultStub.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              $DefaultStub.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) => values.toArray())
@@ -16970,14 +17008,16 @@ export namespace LazyPropertiesClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            StubClass.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              StubClass.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) => values.toArray())
@@ -17709,7 +17749,9 @@ export namespace LazilyResolvedIriInterface {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.NamedNode;
@@ -18571,7 +18613,9 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -18953,19 +18997,8 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        {
-          type: "values" as const,
-          values: [LazilyResolvedInterfaceUnionMember2.$fromRdfType].map(
-            (identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow[`?${variablePrefix}FromRdfType`] =
-                identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            },
-          ),
-        },
         $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          rdfType: LazilyResolvedInterfaceUnionMember2.$fromRdfType,
           subject,
         }),
         {
@@ -19119,7 +19152,9 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -19501,19 +19536,8 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        {
-          type: "values" as const,
-          values: [LazilyResolvedInterfaceUnionMember1.$fromRdfType].map(
-            (identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow[`?${variablePrefix}FromRdfType`] =
-                identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            },
-          ),
-        },
         $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          rdfType: LazilyResolvedInterfaceUnionMember1.$fromRdfType,
           subject,
         }),
         {
@@ -19737,7 +19761,9 @@ export namespace LazilyResolvedClassUnionMember2 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -20022,19 +20048,8 @@ export namespace LazilyResolvedClassUnionMember2 {
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        {
-          type: "values" as const,
-          values: [LazilyResolvedClassUnionMember2.$fromRdfType].map(
-            (identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow[`?${variablePrefix}FromRdfType`] =
-                identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            },
-          ),
-        },
         $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          rdfType: LazilyResolvedClassUnionMember2.$fromRdfType,
           subject,
         }),
         {
@@ -20258,7 +20273,9 @@ export namespace LazilyResolvedClassUnionMember1 {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -20543,19 +20560,8 @@ export namespace LazilyResolvedClassUnionMember1 {
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        {
-          type: "values" as const,
-          values: [LazilyResolvedClassUnionMember1.$fromRdfType].map(
-            (identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow[`?${variablePrefix}FromRdfType`] =
-                identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            },
-          ),
-        },
         $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          rdfType: LazilyResolvedClassUnionMember1.$fromRdfType,
           subject,
         }),
         {
@@ -20712,7 +20718,9 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -21094,19 +21102,8 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        {
-          type: "values" as const,
-          values: [LazilyResolvedBlankNodeOrIriInterface.$fromRdfType].map(
-            (identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow[`?${variablePrefix}FromRdfType`] =
-                identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            },
-          ),
-        },
         $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          rdfType: LazilyResolvedBlankNodeOrIriInterface.$fromRdfType,
           subject,
         }),
         {
@@ -21332,7 +21329,9 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
     readonly lazilyResolvedStringProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -21619,19 +21618,8 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        {
-          type: "values" as const,
-          values: [LazilyResolvedBlankNodeOrIriClass.$fromRdfType].map(
-            (identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow[`?${variablePrefix}FromRdfType`] =
-                identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            },
-          ),
-        },
         $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          rdfType: LazilyResolvedBlankNodeOrIriClass.$fromRdfType,
           subject,
         }),
         {
@@ -21988,7 +21976,9 @@ export namespace LanguageInPropertiesClass {
     };
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -22901,7 +22891,9 @@ export namespace InterfaceUnionMember2b {
     readonly interfaceUnionMember2bProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -23338,7 +23330,9 @@ export namespace InterfaceUnionMember2a {
     readonly interfaceUnionMember2aProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -23775,7 +23769,9 @@ export namespace InterfaceUnionMember1 {
     readonly interfaceUnionMember1Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -24200,7 +24196,9 @@ export namespace Interface {
     readonly interfaceProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -24668,7 +24666,9 @@ export namespace IndirectRecursiveHelperClass {
     readonly indirectRecursiveProperty?: IndirectRecursiveClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -24807,14 +24807,16 @@ export namespace IndirectRecursiveHelperClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            IndirectRecursiveClass.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              IndirectRecursiveClass.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) =>
@@ -25162,7 +25164,9 @@ export namespace IndirectRecursiveClass {
     readonly indirectRecursiveHelperProperty?: IndirectRecursiveHelperClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -25300,14 +25304,16 @@ export namespace IndirectRecursiveClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            IndirectRecursiveHelperClass.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              IndirectRecursiveHelperClass.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) =>
@@ -25742,7 +25748,9 @@ export namespace InPropertiesClass {
     readonly inStringsProperty?: "text" | "html";
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -25937,21 +25945,23 @@ export namespace InPropertiesClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toBoolean().chain((value) =>
-            value === true
-              ? purify.Either.of<Error, true>(value)
-              : purify.Left<Error, true>(
-                  new rdfjsResource.Resource.MistypedValueError({
-                    actualValue: rdfLiteral.toRdf(value),
-                    expectedValueType: "true",
-                    focusResource: $resource,
-                    predicate:
-                      InPropertiesClass.$properties.inBooleansProperty[
-                        "identifier"
-                      ],
-                  }),
-                ),
-          ),
+          value
+            .toBoolean()
+            .chain((value) =>
+              value === true
+                ? purify.Either.of<Error, true>(value)
+                : purify.Left<Error, true>(
+                    new rdfjsResource.Resource.MistypedValueError({
+                      actualValue: rdfLiteral.toRdf(value),
+                      expectedValueType: "true",
+                      focusResource: $resource,
+                      predicate:
+                        InPropertiesClass.$properties.inBooleansProperty[
+                          "identifier"
+                        ],
+                    }),
+                  ),
+            ),
         ),
       )
       .map((values) =>
@@ -26644,7 +26654,9 @@ export namespace InIdentifierClass {
     readonly inIdentifierProperty?: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.NamedNode<
@@ -27130,7 +27142,9 @@ export namespace HasValuePropertiesClass {
     readonly hasLiteralValueProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -27636,7 +27650,9 @@ export namespace ExternClassPropertyClass {
     readonly externClassProperty?: ExternClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -27770,14 +27786,16 @@ export namespace ExternClassPropertyClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            ExternClass.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              ExternClass.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) =>
@@ -28103,7 +28121,9 @@ export namespace ExplicitRdfTypeClass {
     readonly explicitRdfTypeProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -28378,17 +28398,8 @@ export namespace ExplicitRdfTypeClass {
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        {
-          type: "values" as const,
-          values: [ExplicitRdfTypeClass.$fromRdfType].map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow[`?${variablePrefix}FromRdfType`] =
-              identifier as rdfjs.NamedNode;
-            return valuePatternRow;
-          }),
-        },
         $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          rdfType: ExplicitRdfTypeClass.$fromRdfType,
           subject,
         }),
         {
@@ -28622,7 +28633,9 @@ export namespace ExplicitFromToRdfTypesClass {
     readonly explicitFromToRdfTypesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -28908,19 +28921,8 @@ export namespace ExplicitFromToRdfTypesClass {
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        {
-          type: "values" as const,
-          values: [ExplicitFromToRdfTypesClass.$fromRdfType].map(
-            (identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow[`?${variablePrefix}FromRdfType`] =
-                identifier as rdfjs.NamedNode;
-              return valuePatternRow;
-            },
-          ),
-        },
         $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          rdfType: ExplicitFromToRdfTypesClass.$fromRdfType,
           subject,
         }),
         {
@@ -29152,7 +29154,9 @@ export namespace DirectRecursiveClass {
     readonly directRecursiveProperty?: DirectRecursiveClass.$Json;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -29290,14 +29294,16 @@ export namespace DirectRecursiveClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            DirectRecursiveClass.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              DirectRecursiveClass.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                languageIn: $languageIn,
+                objectSet: $objectSet,
+              }),
+            ),
         ),
       )
       .map((values) =>
@@ -29768,7 +29774,9 @@ export namespace DefaultValuePropertiesClass {
     readonly trueBooleanDefaultValueProperty: boolean;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -30540,7 +30548,9 @@ export namespace BaseInterfaceWithPropertiesStatic {
     readonly baseInterfaceWithPropertiesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -31080,7 +31090,9 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export const $Identifier = BaseInterfaceWithPropertiesStatic.$Identifier;
   export type $Json = BaseInterfaceWithPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -31573,7 +31585,9 @@ export namespace ConcreteParentInterfaceStatic {
     readonly concreteParentInterfaceProperty: string;
   } & BaseInterfaceWithoutPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -32136,7 +32150,9 @@ export namespace ConcreteChildInterface {
     readonly concreteChildInterfaceProperty: string;
   } & ConcreteParentInterfaceStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -32541,17 +32557,8 @@ export namespace ConcreteChildInterface {
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        {
-          type: "values" as const,
-          values: [ConcreteChildInterface.$fromRdfType].map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow[`?${variablePrefix}FromRdfType`] =
-              identifier as rdfjs.NamedNode;
-            return valuePatternRow;
-          }),
-        },
         $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          rdfType: ConcreteChildInterface.$fromRdfType,
           subject,
         }),
         {
@@ -32774,7 +32781,9 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     readonly abstractBaseClassWithPropertiesProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -33375,18 +33384,20 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
   }
 
   override $equals(other: ConcreteParentClass): $EqualsResult {
-    return super.$equals(other).chain(() =>
-      $strictEquals(
-        this.concreteParentClassProperty,
-        other.concreteParentClassProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "concreteParentClassProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .$equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.concreteParentClassProperty,
+          other.concreteParentClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "concreteParentClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override $hash<
@@ -33470,7 +33481,9 @@ export namespace ConcreteParentClassStatic {
     readonly concreteParentClassProperty: string;
   } & AbstractBaseClassWithoutPropertiesStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -33913,18 +33926,20 @@ export class ConcreteChildClass extends ConcreteParentClass {
   }
 
   override $equals(other: ConcreteChildClass): $EqualsResult {
-    return super.$equals(other).chain(() =>
-      $strictEquals(
-        this.concreteChildClassProperty,
-        other.concreteChildClassProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "concreteChildClassProperty",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      })),
-    );
+    return super
+      .$equals(other)
+      .chain(() =>
+        $strictEquals(
+          this.concreteChildClassProperty,
+          other.concreteChildClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "concreteChildClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
   }
 
   override $hash<
@@ -34002,7 +34017,9 @@ export namespace ConcreteChildClass {
     readonly concreteChildClassProperty: string;
   } & ConcreteParentClassStatic.$Json;
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -34314,17 +34331,8 @@ export namespace ConcreteChildClass {
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        {
-          type: "values" as const,
-          values: [ConcreteChildClass.$fromRdfType].map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow[`?${variablePrefix}FromRdfType`] =
-              identifier as rdfjs.NamedNode;
-            return valuePatternRow;
-          }),
-        },
         $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          rdfType: ConcreteChildClass.$fromRdfType,
           subject,
         }),
         {
@@ -34545,7 +34553,9 @@ export namespace ClassUnionMember2 {
     readonly classUnionMember2Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -34818,17 +34828,8 @@ export namespace ClassUnionMember2 {
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        {
-          type: "values" as const,
-          values: [ClassUnionMember2.$fromRdfType].map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow[`?${variablePrefix}FromRdfType`] =
-              identifier as rdfjs.NamedNode;
-            return valuePatternRow;
-          }),
-        },
         $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          rdfType: ClassUnionMember2.$fromRdfType,
           subject,
         }),
         {
@@ -35049,7 +35050,9 @@ export namespace ClassUnionMember1 {
     readonly classUnionMember1Property: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
@@ -35322,17 +35325,8 @@ export namespace ClassUnionMember1 {
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        {
-          type: "values" as const,
-          values: [ClassUnionMember1.$fromRdfType].map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow[`?${variablePrefix}FromRdfType`] =
-              identifier as rdfjs.NamedNode;
-            return valuePatternRow;
-          }),
-        },
         $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          rdfType: ClassUnionMember1.$fromRdfType,
           subject,
         }),
         {
@@ -36128,7 +36122,9 @@ export namespace AbstractBaseClassForExternClassStatic {
     readonly abstractBaseClassForExternClassProperty: string;
   };
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
