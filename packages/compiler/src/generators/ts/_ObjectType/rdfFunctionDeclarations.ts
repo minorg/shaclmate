@@ -95,12 +95,31 @@ function propertiesFromRdfFunctionDeclaration(
     );
   });
 
-  this.fromRdfType.ifJust((rdfType) => {
+  this.fromRdfType.ifJust((fromRdfType) => {
+    const fromRdfTypeVariable = this.fromRdfTypeVariable.unsafeCoerce();
     const predicate = rdfjsTermExpression(rdf.type);
     statements.push(
       `\
-if (!${variables.ignoreRdfType} && !${variables.resource}.isInstanceOf(${syntheticNamePrefix}fromRdfType)) {
-  return ${variables.resource}.value(${predicate}).chain(actualRdfType => actualRdfType.toIri()).chain((actualRdfType) => purify.Left(new Error(\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} has unexpected RDF type (actual: \${actualRdfType.value}, expected: ${rdfType.value})\`)));
+if (!${variables.ignoreRdfType}) {
+  const ${syntheticNamePrefix}rdfTypeCheck: purify.Either<Error, true> = ${variables.resource}.value(${predicate})
+    .chain(actualRdfType => actualRdfType.toIri())
+    .chain((actualRdfType) => {
+      // Check the expected type and its known subtypes
+      switch (actualRdfType.value) {
+        ${[`case "${fromRdfType.value}":`].concat(this.descendantFromRdfTypes.map((descendantFromRdfType) => `case "${descendantFromRdfType.value}":`)).join("\n")}
+          return purify.Either.of(true);
+      }
+
+      // Check arbitrary rdfs:subClassOf's of the expected type
+      if (${variables.resource}.isInstanceOf(${fromRdfTypeVariable})) {
+        return purify.Either.of(true);
+      }
+
+      return purify.Left(new Error(\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} has unexpected RDF type (actual: \${actualRdfType.value}, expected: ${fromRdfType.value})\`));
+    });
+  if (${syntheticNamePrefix}rdfTypeCheck.isLeft()) {
+    return ${syntheticNamePrefix}rdfTypeCheck;
+  }
 }`,
     );
   });

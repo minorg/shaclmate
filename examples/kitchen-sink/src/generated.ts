@@ -191,7 +191,7 @@ export function $sparqlInstancesOfPattern({
   rdfType,
   subject,
 }: {
-  rdfType: rdfjs.NamedNode;
+  rdfType: rdfjs.NamedNode | rdfjs.Variable;
   subject: sparqljs.Triple["subject"];
 }): sparqljs.Pattern {
   return {
@@ -4771,17 +4771,31 @@ export namespace StubInterfaceUnionMember2 {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/StubInterfaceUnionMember2":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(StubInterfaceUnionMember2.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/StubInterfaceUnionMember2)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: StubInterfaceUnionMember2.$Identifier =
@@ -4960,26 +4974,30 @@ export namespace StubInterfaceUnionMember2 {
       (subject.termType === "Variable"
         ? subject.value
         : "stubInterfaceUnionMember2");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        $sparqlInstancesOfPattern({
+          rdfType: StubInterfaceUnionMember2.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -5283,17 +5301,31 @@ export namespace StubInterfaceUnionMember1 {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/StubInterfaceUnionMember1":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(StubInterfaceUnionMember1.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/StubInterfaceUnionMember1)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: StubInterfaceUnionMember1.$Identifier =
@@ -5472,26 +5504,30 @@ export namespace StubInterfaceUnionMember1 {
       (subject.termType === "Variable"
         ? subject.value
         : "stubInterfaceUnionMember1");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        $sparqlInstancesOfPattern({
+          rdfType: StubInterfaceUnionMember1.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -5815,17 +5851,31 @@ export namespace StubClassUnionMember2 {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/StubClassUnionMember2":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(StubClassUnionMember2.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/StubClassUnionMember2)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: StubClassUnionMember2.$Identifier = $resource.identifier;
@@ -5960,26 +6010,30 @@ export namespace StubClassUnionMember2 {
       (subject.termType === "Variable"
         ? subject.value
         : "stubClassUnionMember2");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        $sparqlInstancesOfPattern({
+          rdfType: StubClassUnionMember2.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -6304,17 +6358,31 @@ export namespace StubClassUnionMember1 {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/StubClassUnionMember1":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(StubClassUnionMember1.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/StubClassUnionMember1)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: StubClassUnionMember1.$Identifier = $resource.identifier;
@@ -6449,26 +6517,30 @@ export namespace StubClassUnionMember1 {
       (subject.termType === "Variable"
         ? subject.value
         : "stubClassUnionMember1");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        $sparqlInstancesOfPattern({
+          rdfType: StubClassUnionMember1.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -18635,17 +18707,35 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/LazilyResolvedInterfaceUnionMember2":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if (
+            $resource.isInstanceOf(
+              LazilyResolvedInterfaceUnionMember2.$fromRdfType,
+            )
+          ) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedInterfaceUnionMember2)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: LazilyResolvedInterfaceUnionMember2.$Identifier =
@@ -18824,26 +18914,30 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       (subject.termType === "Variable"
         ? subject.value
         : "lazilyResolvedInterfaceUnionMember2");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        $sparqlInstancesOfPattern({
+          rdfType: LazilyResolvedInterfaceUnionMember2.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -19150,17 +19244,35 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/LazilyResolvedInterfaceUnionMember1":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if (
+            $resource.isInstanceOf(
+              LazilyResolvedInterfaceUnionMember1.$fromRdfType,
+            )
+          ) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedInterfaceUnionMember1)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: LazilyResolvedInterfaceUnionMember1.$Identifier =
@@ -19339,26 +19451,30 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       (subject.termType === "Variable"
         ? subject.value
         : "lazilyResolvedInterfaceUnionMember1");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        $sparqlInstancesOfPattern({
+          rdfType: LazilyResolvedInterfaceUnionMember1.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -19682,17 +19798,33 @@ export namespace LazilyResolvedClassUnionMember2 {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/LazilyResolvedClassUnionMember2":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if (
+            $resource.isInstanceOf(LazilyResolvedClassUnionMember2.$fromRdfType)
+          ) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedClassUnionMember2)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: LazilyResolvedClassUnionMember2.$Identifier =
@@ -19829,26 +19961,30 @@ export namespace LazilyResolvedClassUnionMember2 {
       (subject.termType === "Variable"
         ? subject.value
         : "lazilyResolvedClassUnionMember2");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        $sparqlInstancesOfPattern({
+          rdfType: LazilyResolvedClassUnionMember2.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -20172,17 +20308,33 @@ export namespace LazilyResolvedClassUnionMember1 {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/LazilyResolvedClassUnionMember1":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if (
+            $resource.isInstanceOf(LazilyResolvedClassUnionMember1.$fromRdfType)
+          ) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedClassUnionMember1)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: LazilyResolvedClassUnionMember1.$Identifier =
@@ -20319,26 +20471,30 @@ export namespace LazilyResolvedClassUnionMember1 {
       (subject.termType === "Variable"
         ? subject.value
         : "lazilyResolvedClassUnionMember1");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        $sparqlInstancesOfPattern({
+          rdfType: LazilyResolvedClassUnionMember1.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -20648,17 +20804,35 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/LazilyResolvedBlankNodeOrIriInterface":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if (
+            $resource.isInstanceOf(
+              LazilyResolvedBlankNodeOrIriInterface.$fromRdfType,
+            )
+          ) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedBlankNodeOrIriInterface)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: LazilyResolvedBlankNodeOrIriInterface.$Identifier =
@@ -20837,26 +21011,30 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
       (subject.termType === "Variable"
         ? subject.value
         : "lazilyResolvedBlankNodeOrIriInterface");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        $sparqlInstancesOfPattern({
+          rdfType: LazilyResolvedBlankNodeOrIriInterface.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -21182,17 +21360,35 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/LazilyResolvedBlankNodeOrIriClass":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if (
+            $resource.isInstanceOf(
+              LazilyResolvedBlankNodeOrIriClass.$fromRdfType,
+            )
+          ) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedBlankNodeOrIriClass)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: LazilyResolvedBlankNodeOrIriClass.$Identifier =
@@ -21329,26 +21525,30 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
       (subject.termType === "Variable"
         ? subject.value
         : "lazilyResolvedBlankNodeOrIriClass");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        $sparqlInstancesOfPattern({
+          rdfType: LazilyResolvedBlankNodeOrIriClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -27919,17 +28119,31 @@ export namespace ExplicitRdfTypeClass {
       explicitRdfTypeProperty: string;
     }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/RdfType":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(ExplicitRdfTypeClass.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/RdfType)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: ExplicitRdfTypeClass.$Identifier = $resource.identifier;
@@ -28059,26 +28273,30 @@ export namespace ExplicitRdfTypeClass {
       (subject.termType === "Variable"
         ? subject.value
         : "explicitRdfTypeClass");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        $sparqlInstancesOfPattern({
+          rdfType: ExplicitRdfTypeClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -28412,17 +28630,33 @@ export namespace ExplicitFromToRdfTypesClass {
       explicitFromToRdfTypesProperty: string;
     }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/FromRdfType":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if (
+            $resource.isInstanceOf(ExplicitFromToRdfTypesClass.$fromRdfType)
+          ) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/FromRdfType)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: ExplicitFromToRdfTypesClass.$Identifier =
@@ -28560,26 +28794,30 @@ export namespace ExplicitFromToRdfTypesClass {
       (subject.termType === "Variable"
         ? subject.value
         : "explicitFromToRdfTypesClass");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        $sparqlInstancesOfPattern({
+          rdfType: ExplicitFromToRdfTypesClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -30377,17 +30615,38 @@ export namespace BaseInterfaceWithPropertiesStatic {
       baseInterfaceWithPropertiesProperty: string;
     }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/BaseInterfaceWithProperties":
+            case "http://example.com/BaseInterfaceWithoutProperties":
+            case "http://example.com/ConcreteParentInterface":
+            case "http://example.com/ConcreteChildInterface":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if (
+            $resource.isInstanceOf(
+              BaseInterfaceWithPropertiesStatic.$fromRdfType,
+            )
+          ) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BaseInterfaceWithProperties)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: BaseInterfaceWithPropertiesStatic.$Identifier =
@@ -30568,26 +30827,44 @@ export namespace BaseInterfaceWithPropertiesStatic {
       (subject.termType === "Variable"
         ? subject.value
         : "baseInterfaceWithProperties");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [
+            BaseInterfaceWithPropertiesStatic.$fromRdfType,
+            BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
+            ConcreteParentInterfaceStatic.$fromRdfType,
+            ConcreteChildInterface.$fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${variablePrefix}FromRdfType`] =
+              identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -30867,17 +31144,37 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/BaseInterfaceWithoutProperties":
+            case "http://example.com/ConcreteParentInterface":
+            case "http://example.com/ConcreteChildInterface":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if (
+            $resource.isInstanceOf(
+              BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
+            )
+          ) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BaseInterfaceWithoutProperties)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: BaseInterfaceWithoutPropertiesStatic.$Identifier =
@@ -31033,26 +31330,43 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       }
     }
 
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [
+            BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
+            ConcreteParentInterfaceStatic.$fromRdfType,
+            ConcreteChildInterface.$fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${variablePrefix}FromRdfType`] =
+              identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -31333,17 +31647,34 @@ export namespace ConcreteParentInterfaceStatic {
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/ConcreteParentInterface":
+            case "http://example.com/ConcreteChildInterface":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if (
+            $resource.isInstanceOf(ConcreteParentInterfaceStatic.$fromRdfType)
+          ) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteParentInterface)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: ConcreteParentInterfaceStatic.$Identifier =
@@ -31540,26 +31871,42 @@ export namespace ConcreteParentInterfaceStatic {
       }
     }
 
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [
+            ConcreteParentInterfaceStatic.$fromRdfType,
+            ConcreteChildInterface.$fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${variablePrefix}FromRdfType`] =
+              identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -31845,17 +32192,31 @@ export namespace ConcreteChildInterface {
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/ConcreteChildInterface":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(ConcreteChildInterface.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteChildInterface)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: ConcreteChildInterface.$Identifier =
@@ -32055,26 +32416,30 @@ export namespace ConcreteChildInterface {
       }
     }
 
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        $sparqlInstancesOfPattern({
+          rdfType: ConcreteChildInterface.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -33127,17 +33492,32 @@ export namespace ConcreteParentClassStatic {
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/ConcreteParentClass":
+            case "http://example.com/ConcreteChildClass":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(ConcreteParentClassStatic.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteParentClass)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: ConcreteParentClassStatic.$Identifier =
@@ -33289,26 +33669,42 @@ export namespace ConcreteParentClassStatic {
       }
     }
 
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        {
+          type: "values" as const,
+          values: [
+            ConcreteParentClassStatic.$fromRdfType,
+            ConcreteChildClass.$fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${variablePrefix}FromRdfType`] =
+              identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -33608,17 +34004,31 @@ export namespace ConcreteChildClass {
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/ConcreteChildClass":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(ConcreteChildClass.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteChildClass)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: ConcreteChildClass.$Identifier = $resource.identifier;
@@ -33770,26 +34180,30 @@ export namespace ConcreteChildClass {
       }
     }
 
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        $sparqlInstancesOfPattern({
+          rdfType: ConcreteChildClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -34109,17 +34523,31 @@ export namespace ClassUnionMember2 {
       classUnionMember2Property: string;
     }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/ClassUnionMember2":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(ClassUnionMember2.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassUnionMember2)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: ClassUnionMember2.$Identifier = $resource.identifier;
@@ -34247,26 +34675,30 @@ export namespace ClassUnionMember2 {
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "classUnionMember2");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        $sparqlInstancesOfPattern({
+          rdfType: ClassUnionMember2.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -34586,17 +35018,31 @@ export namespace ClassUnionMember1 {
       classUnionMember1Property: string;
     }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/ClassUnionMember1":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(ClassUnionMember1.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassUnionMember1)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: ClassUnionMember1.$Identifier = $resource.identifier;
@@ -34724,26 +35170,30 @@ export namespace ClassUnionMember1 {
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "classUnionMember1");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
-        $sparqlInstancesOfPattern({ rdfType: $fromRdfType, subject }),
+        $sparqlInstancesOfPattern({
+          rdfType: ClassUnionMember1.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
       );
-      requiredPatterns.push({
-        triples: [
-          {
-            subject,
-            predicate: $RdfVocabularies.rdf.type,
-            object: dataFactory.variable!(`${variablePrefix}RdfType`),
-          },
-        ],
-        type: "bgp" as const,
-      });
       optionalPatterns.push({
         patterns: [
           {
             triples: [
               {
-                subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+                subject: rdfTypeVariable,
                 predicate: {
                   items: [$RdfVocabularies.rdfs.subClassOf],
                   pathType: "+" as const,
@@ -40240,7 +40690,17 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       BaseInterfaceWithoutProperties,
       BaseInterfaceWithoutPropertiesStatic.$Identifier
-    >(BaseInterfaceWithoutPropertiesStatic, query);
+    >(
+      {
+        $fromRdf: BaseInterfaceWithoutPropertiesStatic.$fromRdf,
+        $fromRdfTypes: [
+          BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
+          ConcreteParentInterfaceStatic.$fromRdfType,
+          ConcreteChildInterface.$fromRdfType,
+        ],
+      },
+      query,
+    );
   }
 
   async baseInterfaceWithoutPropertieses(
@@ -40255,7 +40715,17 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       BaseInterfaceWithoutProperties,
       BaseInterfaceWithoutPropertiesStatic.$Identifier
-    >(BaseInterfaceWithoutPropertiesStatic, query);
+    >(
+      {
+        $fromRdf: BaseInterfaceWithoutPropertiesStatic.$fromRdf,
+        $fromRdfTypes: [
+          BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
+          ConcreteParentInterfaceStatic.$fromRdfType,
+          ConcreteChildInterface.$fromRdfType,
+        ],
+      },
+      query,
+    );
   }
 
   async baseInterfaceWithoutPropertiesesCount(
@@ -40276,7 +40746,17 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       BaseInterfaceWithoutProperties,
       BaseInterfaceWithoutPropertiesStatic.$Identifier
-    >(BaseInterfaceWithoutPropertiesStatic, query);
+    >(
+      {
+        $fromRdf: BaseInterfaceWithoutPropertiesStatic.$fromRdf,
+        $fromRdfTypes: [
+          BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
+          ConcreteParentInterfaceStatic.$fromRdfType,
+          ConcreteChildInterface.$fromRdfType,
+        ],
+      },
+      query,
+    );
   }
 
   async baseInterfaceWithProperties(
@@ -40313,7 +40793,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       BaseInterfaceWithProperties,
       BaseInterfaceWithPropertiesStatic.$Identifier
-    >(BaseInterfaceWithPropertiesStatic, query);
+    >(
+      {
+        $fromRdf: BaseInterfaceWithPropertiesStatic.$fromRdf,
+        $fromRdfTypes: [
+          BaseInterfaceWithPropertiesStatic.$fromRdfType,
+          BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
+          ConcreteParentInterfaceStatic.$fromRdfType,
+          ConcreteChildInterface.$fromRdfType,
+        ],
+      },
+      query,
+    );
   }
 
   async baseInterfaceWithPropertieses(
@@ -40328,7 +40819,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       BaseInterfaceWithProperties,
       BaseInterfaceWithPropertiesStatic.$Identifier
-    >(BaseInterfaceWithPropertiesStatic, query);
+    >(
+      {
+        $fromRdf: BaseInterfaceWithPropertiesStatic.$fromRdf,
+        $fromRdfTypes: [
+          BaseInterfaceWithPropertiesStatic.$fromRdfType,
+          BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
+          ConcreteParentInterfaceStatic.$fromRdfType,
+          ConcreteChildInterface.$fromRdfType,
+        ],
+      },
+      query,
+    );
   }
 
   async baseInterfaceWithPropertiesesCount(
@@ -40349,7 +40851,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       BaseInterfaceWithProperties,
       BaseInterfaceWithPropertiesStatic.$Identifier
-    >(BaseInterfaceWithPropertiesStatic, query);
+    >(
+      {
+        $fromRdf: BaseInterfaceWithPropertiesStatic.$fromRdf,
+        $fromRdfTypes: [
+          BaseInterfaceWithPropertiesStatic.$fromRdfType,
+          BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
+          ConcreteParentInterfaceStatic.$fromRdfType,
+          ConcreteChildInterface.$fromRdfType,
+        ],
+      },
+      query,
+    );
   }
 
   async blankClass(
@@ -40376,7 +40889,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<BlankClass.$Identifier>,
   ): purify.Either<Error, readonly BlankClass.$Identifier[]> {
     return this.$objectIdentifiersSync<BlankClass, BlankClass.$Identifier>(
-      { ...BlankClass, $fromRdfType: undefined },
+      { $fromRdf: BlankClass.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -40391,7 +40904,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<BlankClass.$Identifier>,
   ): purify.Either<Error, readonly BlankClass[]> {
     return this.$objectsSync<BlankClass, BlankClass.$Identifier>(
-      { ...BlankClass, $fromRdfType: undefined },
+      { $fromRdf: BlankClass.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -40406,7 +40919,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<BlankClass.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<BlankClass, BlankClass.$Identifier>(
-      { ...BlankClass, $fromRdfType: undefined },
+      { $fromRdf: BlankClass.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -40437,7 +40950,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       BlankInterface,
       BlankInterface.$Identifier
-    >({ ...BlankInterface, $fromRdfType: undefined }, query);
+    >({ $fromRdf: BlankInterface.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async blankInterfaces(
@@ -40450,7 +40963,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<BlankInterface.$Identifier>,
   ): purify.Either<Error, readonly BlankInterface[]> {
     return this.$objectsSync<BlankInterface, BlankInterface.$Identifier>(
-      { ...BlankInterface, $fromRdfType: undefined },
+      { $fromRdf: BlankInterface.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -40465,7 +40978,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<BlankInterface.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<BlankInterface, BlankInterface.$Identifier>(
-      { ...BlankInterface, $fromRdfType: undefined },
+      { $fromRdf: BlankInterface.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -40496,7 +41009,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       ClassUnionMember1,
       ClassUnionMember1.$Identifier
-    >(ClassUnionMember1, query);
+    >(
+      {
+        $fromRdf: ClassUnionMember1.$fromRdf,
+        $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async classUnionMember1s(
@@ -40509,7 +41028,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ClassUnionMember1.$Identifier>,
   ): purify.Either<Error, readonly ClassUnionMember1[]> {
     return this.$objectsSync<ClassUnionMember1, ClassUnionMember1.$Identifier>(
-      ClassUnionMember1,
+      {
+        $fromRdf: ClassUnionMember1.$fromRdf,
+        $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
+      },
       query,
     );
   }
@@ -40526,7 +41048,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       ClassUnionMember1,
       ClassUnionMember1.$Identifier
-    >(ClassUnionMember1, query);
+    >(
+      {
+        $fromRdf: ClassUnionMember1.$fromRdf,
+        $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async classUnionMember2(
@@ -40555,7 +41083,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       ClassUnionMember2,
       ClassUnionMember2.$Identifier
-    >(ClassUnionMember2, query);
+    >(
+      {
+        $fromRdf: ClassUnionMember2.$fromRdf,
+        $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async classUnionMember2s(
@@ -40568,7 +41102,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ClassUnionMember2.$Identifier>,
   ): purify.Either<Error, readonly ClassUnionMember2[]> {
     return this.$objectsSync<ClassUnionMember2, ClassUnionMember2.$Identifier>(
-      ClassUnionMember2,
+      {
+        $fromRdf: ClassUnionMember2.$fromRdf,
+        $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
+      },
       query,
     );
   }
@@ -40585,7 +41122,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       ClassUnionMember2,
       ClassUnionMember2.$Identifier
-    >(ClassUnionMember2, query);
+    >(
+      {
+        $fromRdf: ClassUnionMember2.$fromRdf,
+        $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async concreteChildClass(
@@ -40614,7 +41157,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       ConcreteChildClass,
       ConcreteChildClass.$Identifier
-    >(ConcreteChildClass, query);
+    >(
+      {
+        $fromRdf: ConcreteChildClass.$fromRdf,
+        $fromRdfTypes: [ConcreteChildClass.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async concreteChildClasses(
@@ -40629,7 +41178,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       ConcreteChildClass,
       ConcreteChildClass.$Identifier
-    >(ConcreteChildClass, query);
+    >(
+      {
+        $fromRdf: ConcreteChildClass.$fromRdf,
+        $fromRdfTypes: [ConcreteChildClass.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async concreteChildClassesCount(
@@ -40644,7 +41199,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       ConcreteChildClass,
       ConcreteChildClass.$Identifier
-    >(ConcreteChildClass, query);
+    >(
+      {
+        $fromRdf: ConcreteChildClass.$fromRdf,
+        $fromRdfTypes: [ConcreteChildClass.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async concreteChildInterface(
@@ -40675,7 +41236,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       ConcreteChildInterface,
       ConcreteChildInterface.$Identifier
-    >(ConcreteChildInterface, query);
+    >(
+      {
+        $fromRdf: ConcreteChildInterface.$fromRdf,
+        $fromRdfTypes: [ConcreteChildInterface.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async concreteChildInterfaces(
@@ -40690,7 +41257,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       ConcreteChildInterface,
       ConcreteChildInterface.$Identifier
-    >(ConcreteChildInterface, query);
+    >(
+      {
+        $fromRdf: ConcreteChildInterface.$fromRdf,
+        $fromRdfTypes: [ConcreteChildInterface.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async concreteChildInterfacesCount(
@@ -40705,7 +41278,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       ConcreteChildInterface,
       ConcreteChildInterface.$Identifier
-    >(ConcreteChildInterface, query);
+    >(
+      {
+        $fromRdf: ConcreteChildInterface.$fromRdf,
+        $fromRdfTypes: [ConcreteChildInterface.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async concreteParentClass(
@@ -40736,7 +41315,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       ConcreteParentClass,
       ConcreteParentClassStatic.$Identifier
-    >(ConcreteParentClassStatic, query);
+    >(
+      {
+        $fromRdf: ConcreteParentClassStatic.$fromRdf,
+        $fromRdfTypes: [
+          ConcreteParentClassStatic.$fromRdfType,
+          ConcreteChildClass.$fromRdfType,
+        ],
+      },
+      query,
+    );
   }
 
   async concreteParentClasses(
@@ -40751,7 +41339,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       ConcreteParentClass,
       ConcreteParentClassStatic.$Identifier
-    >(ConcreteParentClassStatic, query);
+    >(
+      {
+        $fromRdf: ConcreteParentClassStatic.$fromRdf,
+        $fromRdfTypes: [
+          ConcreteParentClassStatic.$fromRdfType,
+          ConcreteChildClass.$fromRdfType,
+        ],
+      },
+      query,
+    );
   }
 
   async concreteParentClassesCount(
@@ -40772,7 +41369,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       ConcreteParentClass,
       ConcreteParentClassStatic.$Identifier
-    >(ConcreteParentClassStatic, query);
+    >(
+      {
+        $fromRdf: ConcreteParentClassStatic.$fromRdf,
+        $fromRdfTypes: [
+          ConcreteParentClassStatic.$fromRdfType,
+          ConcreteChildClass.$fromRdfType,
+        ],
+      },
+      query,
+    );
   }
 
   async concreteParentInterface(
@@ -40806,7 +41412,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       ConcreteParentInterface,
       ConcreteParentInterfaceStatic.$Identifier
-    >(ConcreteParentInterfaceStatic, query);
+    >(
+      {
+        $fromRdf: ConcreteParentInterfaceStatic.$fromRdf,
+        $fromRdfTypes: [
+          ConcreteParentInterfaceStatic.$fromRdfType,
+          ConcreteChildInterface.$fromRdfType,
+        ],
+      },
+      query,
+    );
   }
 
   async concreteParentInterfaces(
@@ -40821,7 +41436,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       ConcreteParentInterface,
       ConcreteParentInterfaceStatic.$Identifier
-    >(ConcreteParentInterfaceStatic, query);
+    >(
+      {
+        $fromRdf: ConcreteParentInterfaceStatic.$fromRdf,
+        $fromRdfTypes: [
+          ConcreteParentInterfaceStatic.$fromRdfType,
+          ConcreteChildInterface.$fromRdfType,
+        ],
+      },
+      query,
+    );
   }
 
   async concreteParentInterfacesCount(
@@ -40842,7 +41466,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       ConcreteParentInterface,
       ConcreteParentInterfaceStatic.$Identifier
-    >(ConcreteParentInterfaceStatic, query);
+    >(
+      {
+        $fromRdf: ConcreteParentInterfaceStatic.$fromRdf,
+        $fromRdfTypes: [
+          ConcreteParentInterfaceStatic.$fromRdfType,
+          ConcreteChildInterface.$fromRdfType,
+        ],
+      },
+      query,
+    );
   }
 
   async defaultValuePropertiesClass(
@@ -40873,7 +41506,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       DefaultValuePropertiesClass,
       DefaultValuePropertiesClass.$Identifier
-    >({ ...DefaultValuePropertiesClass, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: DefaultValuePropertiesClass.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async defaultValuePropertiesClasses(
@@ -40888,7 +41524,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       DefaultValuePropertiesClass,
       DefaultValuePropertiesClass.$Identifier
-    >({ ...DefaultValuePropertiesClass, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: DefaultValuePropertiesClass.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async defaultValuePropertiesClassesCount(
@@ -40909,7 +41548,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       DefaultValuePropertiesClass,
       DefaultValuePropertiesClass.$Identifier
-    >({ ...DefaultValuePropertiesClass, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: DefaultValuePropertiesClass.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async directRecursiveClass(
@@ -40940,7 +41582,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       DirectRecursiveClass,
       DirectRecursiveClass.$Identifier
-    >({ ...DirectRecursiveClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: DirectRecursiveClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async directRecursiveClasses(
@@ -40955,7 +41597,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       DirectRecursiveClass,
       DirectRecursiveClass.$Identifier
-    >({ ...DirectRecursiveClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: DirectRecursiveClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async directRecursiveClassesCount(
@@ -40970,7 +41612,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       DirectRecursiveClass,
       DirectRecursiveClass.$Identifier
-    >({ ...DirectRecursiveClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: DirectRecursiveClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async explicitFromToRdfTypesClass(
@@ -41001,7 +41643,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       ExplicitFromToRdfTypesClass,
       ExplicitFromToRdfTypesClass.$Identifier
-    >(ExplicitFromToRdfTypesClass, query);
+    >(
+      {
+        $fromRdf: ExplicitFromToRdfTypesClass.$fromRdf,
+        $fromRdfTypes: [ExplicitFromToRdfTypesClass.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async explicitFromToRdfTypesClasses(
@@ -41016,7 +41664,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       ExplicitFromToRdfTypesClass,
       ExplicitFromToRdfTypesClass.$Identifier
-    >(ExplicitFromToRdfTypesClass, query);
+    >(
+      {
+        $fromRdf: ExplicitFromToRdfTypesClass.$fromRdf,
+        $fromRdfTypes: [ExplicitFromToRdfTypesClass.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async explicitFromToRdfTypesClassesCount(
@@ -41037,7 +41691,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       ExplicitFromToRdfTypesClass,
       ExplicitFromToRdfTypesClass.$Identifier
-    >(ExplicitFromToRdfTypesClass, query);
+    >(
+      {
+        $fromRdf: ExplicitFromToRdfTypesClass.$fromRdf,
+        $fromRdfTypes: [ExplicitFromToRdfTypesClass.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async explicitRdfTypeClass(
@@ -41068,7 +41728,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       ExplicitRdfTypeClass,
       ExplicitRdfTypeClass.$Identifier
-    >(ExplicitRdfTypeClass, query);
+    >(
+      {
+        $fromRdf: ExplicitRdfTypeClass.$fromRdf,
+        $fromRdfTypes: [ExplicitRdfTypeClass.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async explicitRdfTypeClasses(
@@ -41083,7 +41749,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       ExplicitRdfTypeClass,
       ExplicitRdfTypeClass.$Identifier
-    >(ExplicitRdfTypeClass, query);
+    >(
+      {
+        $fromRdf: ExplicitRdfTypeClass.$fromRdf,
+        $fromRdfTypes: [ExplicitRdfTypeClass.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async explicitRdfTypeClassesCount(
@@ -41098,7 +41770,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       ExplicitRdfTypeClass,
       ExplicitRdfTypeClass.$Identifier
-    >(ExplicitRdfTypeClass, query);
+    >(
+      {
+        $fromRdf: ExplicitRdfTypeClass.$fromRdf,
+        $fromRdfTypes: [ExplicitRdfTypeClass.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async externClassPropertyClass(
@@ -41129,7 +41807,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       ExternClassPropertyClass,
       ExternClassPropertyClass.$Identifier
-    >({ ...ExternClassPropertyClass, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: ExternClassPropertyClass.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async externClassPropertyClasses(
@@ -41144,7 +41825,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       ExternClassPropertyClass,
       ExternClassPropertyClass.$Identifier
-    >({ ...ExternClassPropertyClass, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: ExternClassPropertyClass.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async externClassPropertyClassesCount(
@@ -41165,7 +41849,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       ExternClassPropertyClass,
       ExternClassPropertyClass.$Identifier
-    >({ ...ExternClassPropertyClass, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: ExternClassPropertyClass.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async hasValuePropertiesClass(
@@ -41196,7 +41883,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       HasValuePropertiesClass,
       HasValuePropertiesClass.$Identifier
-    >({ ...HasValuePropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: HasValuePropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async hasValuePropertiesClasses(
@@ -41211,7 +41898,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       HasValuePropertiesClass,
       HasValuePropertiesClass.$Identifier
-    >({ ...HasValuePropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: HasValuePropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async hasValuePropertiesClassesCount(
@@ -41232,7 +41919,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       HasValuePropertiesClass,
       HasValuePropertiesClass.$Identifier
-    >({ ...HasValuePropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: HasValuePropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async indirectRecursiveClass(
@@ -41263,7 +41950,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       IndirectRecursiveClass,
       IndirectRecursiveClass.$Identifier
-    >({ ...IndirectRecursiveClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: IndirectRecursiveClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async indirectRecursiveClasses(
@@ -41278,7 +41965,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       IndirectRecursiveClass,
       IndirectRecursiveClass.$Identifier
-    >({ ...IndirectRecursiveClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: IndirectRecursiveClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async indirectRecursiveClassesCount(
@@ -41293,7 +41980,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       IndirectRecursiveClass,
       IndirectRecursiveClass.$Identifier
-    >({ ...IndirectRecursiveClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: IndirectRecursiveClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async indirectRecursiveHelperClass(
@@ -41324,7 +42011,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       IndirectRecursiveHelperClass,
       IndirectRecursiveHelperClass.$Identifier
-    >({ ...IndirectRecursiveHelperClass, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: IndirectRecursiveHelperClass.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async indirectRecursiveHelperClasses(
@@ -41339,7 +42029,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       IndirectRecursiveHelperClass,
       IndirectRecursiveHelperClass.$Identifier
-    >({ ...IndirectRecursiveHelperClass, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: IndirectRecursiveHelperClass.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async indirectRecursiveHelperClassesCount(
@@ -41360,7 +42053,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       IndirectRecursiveHelperClass,
       IndirectRecursiveHelperClass.$Identifier
-    >({ ...IndirectRecursiveHelperClass, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: IndirectRecursiveHelperClass.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async inIdentifierClass(
@@ -41389,7 +42085,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       InIdentifierClass,
       InIdentifierClass.$Identifier
-    >({ ...InIdentifierClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: InIdentifierClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async inIdentifierClasses(
@@ -41402,7 +42098,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<InIdentifierClass.$Identifier>,
   ): purify.Either<Error, readonly InIdentifierClass[]> {
     return this.$objectsSync<InIdentifierClass, InIdentifierClass.$Identifier>(
-      { ...InIdentifierClass, $fromRdfType: undefined },
+      { $fromRdf: InIdentifierClass.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -41419,7 +42115,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       InIdentifierClass,
       InIdentifierClass.$Identifier
-    >({ ...InIdentifierClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: InIdentifierClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async inPropertiesClass(
@@ -41448,7 +42144,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       InPropertiesClass,
       InPropertiesClass.$Identifier
-    >({ ...InPropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: InPropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async inPropertiesClasses(
@@ -41461,7 +42157,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<InPropertiesClass.$Identifier>,
   ): purify.Either<Error, readonly InPropertiesClass[]> {
     return this.$objectsSync<InPropertiesClass, InPropertiesClass.$Identifier>(
-      { ...InPropertiesClass, $fromRdfType: undefined },
+      { $fromRdf: InPropertiesClass.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -41478,7 +42174,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       InPropertiesClass,
       InPropertiesClass.$Identifier
-    >({ ...InPropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: InPropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async interface(
@@ -41505,7 +42201,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Interface.$Identifier>,
   ): purify.Either<Error, readonly Interface.$Identifier[]> {
     return this.$objectIdentifiersSync<Interface, Interface.$Identifier>(
-      { ...Interface, $fromRdfType: undefined },
+      { $fromRdf: Interface.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -41520,7 +42216,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Interface.$Identifier>,
   ): purify.Either<Error, readonly Interface[]> {
     return this.$objectsSync<Interface, Interface.$Identifier>(
-      { ...Interface, $fromRdfType: undefined },
+      { $fromRdf: Interface.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -41535,7 +42231,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<Interface.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<Interface, Interface.$Identifier>(
-      { ...Interface, $fromRdfType: undefined },
+      { $fromRdf: Interface.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -41568,7 +42264,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       InterfaceUnionMember1,
       InterfaceUnionMember1.$Identifier
-    >({ ...InterfaceUnionMember1, $fromRdfType: undefined }, query);
+    >({ $fromRdf: InterfaceUnionMember1.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async interfaceUnionMember1s(
@@ -41583,7 +42279,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       InterfaceUnionMember1,
       InterfaceUnionMember1.$Identifier
-    >({ ...InterfaceUnionMember1, $fromRdfType: undefined }, query);
+    >({ $fromRdf: InterfaceUnionMember1.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async interfaceUnionMember1sCount(
@@ -41598,7 +42294,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       InterfaceUnionMember1,
       InterfaceUnionMember1.$Identifier
-    >({ ...InterfaceUnionMember1, $fromRdfType: undefined }, query);
+    >({ $fromRdf: InterfaceUnionMember1.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async interfaceUnionMember2a(
@@ -41629,7 +42325,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       InterfaceUnionMember2a,
       InterfaceUnionMember2a.$Identifier
-    >({ ...InterfaceUnionMember2a, $fromRdfType: undefined }, query);
+    >({ $fromRdf: InterfaceUnionMember2a.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async interfaceUnionMember2as(
@@ -41644,7 +42340,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       InterfaceUnionMember2a,
       InterfaceUnionMember2a.$Identifier
-    >({ ...InterfaceUnionMember2a, $fromRdfType: undefined }, query);
+    >({ $fromRdf: InterfaceUnionMember2a.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async interfaceUnionMember2asCount(
@@ -41659,7 +42355,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       InterfaceUnionMember2a,
       InterfaceUnionMember2a.$Identifier
-    >({ ...InterfaceUnionMember2a, $fromRdfType: undefined }, query);
+    >({ $fromRdf: InterfaceUnionMember2a.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async interfaceUnionMember2b(
@@ -41690,7 +42386,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       InterfaceUnionMember2b,
       InterfaceUnionMember2b.$Identifier
-    >({ ...InterfaceUnionMember2b, $fromRdfType: undefined }, query);
+    >({ $fromRdf: InterfaceUnionMember2b.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async interfaceUnionMember2bs(
@@ -41705,7 +42401,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       InterfaceUnionMember2b,
       InterfaceUnionMember2b.$Identifier
-    >({ ...InterfaceUnionMember2b, $fromRdfType: undefined }, query);
+    >({ $fromRdf: InterfaceUnionMember2b.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async interfaceUnionMember2bsCount(
@@ -41720,7 +42416,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       InterfaceUnionMember2b,
       InterfaceUnionMember2b.$Identifier
-    >({ ...InterfaceUnionMember2b, $fromRdfType: undefined }, query);
+    >({ $fromRdf: InterfaceUnionMember2b.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async iriClass(
@@ -41747,7 +42443,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<IriClass.$Identifier>,
   ): purify.Either<Error, readonly IriClass.$Identifier[]> {
     return this.$objectIdentifiersSync<IriClass, IriClass.$Identifier>(
-      { ...IriClass, $fromRdfType: undefined },
+      { $fromRdf: IriClass.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -41762,7 +42458,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<IriClass.$Identifier>,
   ): purify.Either<Error, readonly IriClass[]> {
     return this.$objectsSync<IriClass, IriClass.$Identifier>(
-      { ...IriClass, $fromRdfType: undefined },
+      { $fromRdf: IriClass.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -41777,7 +42473,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<IriClass.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<IriClass, IriClass.$Identifier>(
-      { ...IriClass, $fromRdfType: undefined },
+      { $fromRdf: IriClass.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -41810,7 +42506,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       LanguageInPropertiesClass,
       LanguageInPropertiesClass.$Identifier
-    >({ ...LanguageInPropertiesClass, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: LanguageInPropertiesClass.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async languageInPropertiesClasses(
@@ -41825,7 +42524,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       LanguageInPropertiesClass,
       LanguageInPropertiesClass.$Identifier
-    >({ ...LanguageInPropertiesClass, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: LanguageInPropertiesClass.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async languageInPropertiesClassesCount(
@@ -41846,7 +42548,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       LanguageInPropertiesClass,
       LanguageInPropertiesClass.$Identifier
-    >({ ...LanguageInPropertiesClass, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: LanguageInPropertiesClass.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async lazilyResolvedBlankNodeOrIriClass(
@@ -41883,7 +42588,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       LazilyResolvedBlankNodeOrIriClass,
       LazilyResolvedBlankNodeOrIriClass.$Identifier
-    >(LazilyResolvedBlankNodeOrIriClass, query);
+    >(
+      {
+        $fromRdf: LazilyResolvedBlankNodeOrIriClass.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedBlankNodeOrIriClass.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async lazilyResolvedBlankNodeOrIriClasses(
@@ -41900,7 +42611,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       LazilyResolvedBlankNodeOrIriClass,
       LazilyResolvedBlankNodeOrIriClass.$Identifier
-    >(LazilyResolvedBlankNodeOrIriClass, query);
+    >(
+      {
+        $fromRdf: LazilyResolvedBlankNodeOrIriClass.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedBlankNodeOrIriClass.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async lazilyResolvedBlankNodeOrIriClassesCount(
@@ -41921,7 +42638,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       LazilyResolvedBlankNodeOrIriClass,
       LazilyResolvedBlankNodeOrIriClass.$Identifier
-    >(LazilyResolvedBlankNodeOrIriClass, query);
+    >(
+      {
+        $fromRdf: LazilyResolvedBlankNodeOrIriClass.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedBlankNodeOrIriClass.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async lazilyResolvedBlankNodeOrIriInterface(
@@ -41958,7 +42681,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       LazilyResolvedBlankNodeOrIriInterface,
       LazilyResolvedBlankNodeOrIriInterface.$Identifier
-    >(LazilyResolvedBlankNodeOrIriInterface, query);
+    >(
+      {
+        $fromRdf: LazilyResolvedBlankNodeOrIriInterface.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedBlankNodeOrIriInterface.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async lazilyResolvedBlankNodeOrIriInterfaces(
@@ -41975,7 +42704,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       LazilyResolvedBlankNodeOrIriInterface,
       LazilyResolvedBlankNodeOrIriInterface.$Identifier
-    >(LazilyResolvedBlankNodeOrIriInterface, query);
+    >(
+      {
+        $fromRdf: LazilyResolvedBlankNodeOrIriInterface.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedBlankNodeOrIriInterface.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async lazilyResolvedBlankNodeOrIriInterfacesCount(
@@ -41996,7 +42731,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       LazilyResolvedBlankNodeOrIriInterface,
       LazilyResolvedBlankNodeOrIriInterface.$Identifier
-    >(LazilyResolvedBlankNodeOrIriInterface, query);
+    >(
+      {
+        $fromRdf: LazilyResolvedBlankNodeOrIriInterface.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedBlankNodeOrIriInterface.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async lazilyResolvedClassUnionMember1(
@@ -42030,7 +42771,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       LazilyResolvedClassUnionMember1,
       LazilyResolvedClassUnionMember1.$Identifier
-    >(LazilyResolvedClassUnionMember1, query);
+    >(
+      {
+        $fromRdf: LazilyResolvedClassUnionMember1.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedClassUnionMember1.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async lazilyResolvedClassUnionMember1s(
@@ -42045,7 +42792,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       LazilyResolvedClassUnionMember1,
       LazilyResolvedClassUnionMember1.$Identifier
-    >(LazilyResolvedClassUnionMember1, query);
+    >(
+      {
+        $fromRdf: LazilyResolvedClassUnionMember1.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedClassUnionMember1.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async lazilyResolvedClassUnionMember1sCount(
@@ -42066,7 +42819,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       LazilyResolvedClassUnionMember1,
       LazilyResolvedClassUnionMember1.$Identifier
-    >(LazilyResolvedClassUnionMember1, query);
+    >(
+      {
+        $fromRdf: LazilyResolvedClassUnionMember1.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedClassUnionMember1.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async lazilyResolvedClassUnionMember2(
@@ -42100,7 +42859,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       LazilyResolvedClassUnionMember2,
       LazilyResolvedClassUnionMember2.$Identifier
-    >(LazilyResolvedClassUnionMember2, query);
+    >(
+      {
+        $fromRdf: LazilyResolvedClassUnionMember2.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedClassUnionMember2.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async lazilyResolvedClassUnionMember2s(
@@ -42115,7 +42880,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       LazilyResolvedClassUnionMember2,
       LazilyResolvedClassUnionMember2.$Identifier
-    >(LazilyResolvedClassUnionMember2, query);
+    >(
+      {
+        $fromRdf: LazilyResolvedClassUnionMember2.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedClassUnionMember2.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async lazilyResolvedClassUnionMember2sCount(
@@ -42136,7 +42907,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       LazilyResolvedClassUnionMember2,
       LazilyResolvedClassUnionMember2.$Identifier
-    >(LazilyResolvedClassUnionMember2, query);
+    >(
+      {
+        $fromRdf: LazilyResolvedClassUnionMember2.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedClassUnionMember2.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async lazilyResolvedInterfaceUnionMember1(
@@ -42173,7 +42950,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       LazilyResolvedInterfaceUnionMember1,
       LazilyResolvedInterfaceUnionMember1.$Identifier
-    >(LazilyResolvedInterfaceUnionMember1, query);
+    >(
+      {
+        $fromRdf: LazilyResolvedInterfaceUnionMember1.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedInterfaceUnionMember1.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async lazilyResolvedInterfaceUnionMember1s(
@@ -42190,7 +42973,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       LazilyResolvedInterfaceUnionMember1,
       LazilyResolvedInterfaceUnionMember1.$Identifier
-    >(LazilyResolvedInterfaceUnionMember1, query);
+    >(
+      {
+        $fromRdf: LazilyResolvedInterfaceUnionMember1.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedInterfaceUnionMember1.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async lazilyResolvedInterfaceUnionMember1sCount(
@@ -42211,7 +43000,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       LazilyResolvedInterfaceUnionMember1,
       LazilyResolvedInterfaceUnionMember1.$Identifier
-    >(LazilyResolvedInterfaceUnionMember1, query);
+    >(
+      {
+        $fromRdf: LazilyResolvedInterfaceUnionMember1.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedInterfaceUnionMember1.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async lazilyResolvedInterfaceUnionMember2(
@@ -42248,7 +43043,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       LazilyResolvedInterfaceUnionMember2,
       LazilyResolvedInterfaceUnionMember2.$Identifier
-    >(LazilyResolvedInterfaceUnionMember2, query);
+    >(
+      {
+        $fromRdf: LazilyResolvedInterfaceUnionMember2.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedInterfaceUnionMember2.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async lazilyResolvedInterfaceUnionMember2s(
@@ -42265,7 +43066,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       LazilyResolvedInterfaceUnionMember2,
       LazilyResolvedInterfaceUnionMember2.$Identifier
-    >(LazilyResolvedInterfaceUnionMember2, query);
+    >(
+      {
+        $fromRdf: LazilyResolvedInterfaceUnionMember2.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedInterfaceUnionMember2.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async lazilyResolvedInterfaceUnionMember2sCount(
@@ -42286,7 +43093,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       LazilyResolvedInterfaceUnionMember2,
       LazilyResolvedInterfaceUnionMember2.$Identifier
-    >(LazilyResolvedInterfaceUnionMember2, query);
+    >(
+      {
+        $fromRdf: LazilyResolvedInterfaceUnionMember2.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedInterfaceUnionMember2.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async lazilyResolvedIriClass(
@@ -42317,7 +43130,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       LazilyResolvedIriClass,
       LazilyResolvedIriClass.$Identifier
-    >({ ...LazilyResolvedIriClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: LazilyResolvedIriClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async lazilyResolvedIriClasses(
@@ -42332,7 +43145,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       LazilyResolvedIriClass,
       LazilyResolvedIriClass.$Identifier
-    >({ ...LazilyResolvedIriClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: LazilyResolvedIriClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async lazilyResolvedIriClassesCount(
@@ -42347,7 +43160,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       LazilyResolvedIriClass,
       LazilyResolvedIriClass.$Identifier
-    >({ ...LazilyResolvedIriClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: LazilyResolvedIriClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async lazilyResolvedIriInterface(
@@ -42378,7 +43191,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       LazilyResolvedIriInterface,
       LazilyResolvedIriInterface.$Identifier
-    >({ ...LazilyResolvedIriInterface, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: LazilyResolvedIriInterface.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async lazilyResolvedIriInterfaces(
@@ -42393,7 +43209,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       LazilyResolvedIriInterface,
       LazilyResolvedIriInterface.$Identifier
-    >({ ...LazilyResolvedIriInterface, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: LazilyResolvedIriInterface.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async lazilyResolvedIriInterfacesCount(
@@ -42414,7 +43233,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       LazilyResolvedIriInterface,
       LazilyResolvedIriInterface.$Identifier
-    >({ ...LazilyResolvedIriInterface, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: LazilyResolvedIriInterface.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async lazyPropertiesClass(
@@ -42443,7 +43265,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       LazyPropertiesClass,
       LazyPropertiesClass.$Identifier
-    >({ ...LazyPropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: LazyPropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async lazyPropertiesClasses(
@@ -42458,7 +43280,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       LazyPropertiesClass,
       LazyPropertiesClass.$Identifier
-    >({ ...LazyPropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: LazyPropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async lazyPropertiesClassesCount(
@@ -42473,7 +43295,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       LazyPropertiesClass,
       LazyPropertiesClass.$Identifier
-    >({ ...LazyPropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: LazyPropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async lazyPropertiesInterface(
@@ -42504,7 +43326,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       LazyPropertiesInterface,
       LazyPropertiesInterface.$Identifier
-    >({ ...LazyPropertiesInterface, $fromRdfType: undefined }, query);
+    >({ $fromRdf: LazyPropertiesInterface.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async lazyPropertiesInterfaces(
@@ -42519,7 +43341,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       LazyPropertiesInterface,
       LazyPropertiesInterface.$Identifier
-    >({ ...LazyPropertiesInterface, $fromRdfType: undefined }, query);
+    >({ $fromRdf: LazyPropertiesInterface.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async lazyPropertiesInterfacesCount(
@@ -42540,7 +43362,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       LazyPropertiesInterface,
       LazyPropertiesInterface.$Identifier
-    >({ ...LazyPropertiesInterface, $fromRdfType: undefined }, query);
+    >({ $fromRdf: LazyPropertiesInterface.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async listPropertiesClass(
@@ -42569,7 +43391,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       ListPropertiesClass,
       ListPropertiesClass.$Identifier
-    >({ ...ListPropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: ListPropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async listPropertiesClasses(
@@ -42584,7 +43406,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       ListPropertiesClass,
       ListPropertiesClass.$Identifier
-    >({ ...ListPropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: ListPropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async listPropertiesClassesCount(
@@ -42599,7 +43421,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       ListPropertiesClass,
       ListPropertiesClass.$Identifier
-    >({ ...ListPropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: ListPropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async mutablePropertiesClass(
@@ -42630,7 +43452,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       MutablePropertiesClass,
       MutablePropertiesClass.$Identifier
-    >({ ...MutablePropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: MutablePropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async mutablePropertiesClasses(
@@ -42645,7 +43467,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       MutablePropertiesClass,
       MutablePropertiesClass.$Identifier
-    >({ ...MutablePropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: MutablePropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async mutablePropertiesClassesCount(
@@ -42660,7 +43482,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       MutablePropertiesClass,
       MutablePropertiesClass.$Identifier
-    >({ ...MutablePropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: MutablePropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async nonClass(
@@ -42687,7 +43509,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<NonClass.$Identifier>,
   ): purify.Either<Error, readonly NonClass.$Identifier[]> {
     return this.$objectIdentifiersSync<NonClass, NonClass.$Identifier>(
-      { ...NonClass, $fromRdfType: undefined },
+      { $fromRdf: NonClass.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -42702,7 +43524,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<NonClass.$Identifier>,
   ): purify.Either<Error, readonly NonClass[]> {
     return this.$objectsSync<NonClass, NonClass.$Identifier>(
-      { ...NonClass, $fromRdfType: undefined },
+      { $fromRdf: NonClass.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -42717,7 +43539,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<NonClass.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<NonClass, NonClass.$Identifier>(
-      { ...NonClass, $fromRdfType: undefined },
+      { $fromRdf: NonClass.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -42750,7 +43572,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       OrderedPropertiesClass,
       OrderedPropertiesClass.$Identifier
-    >({ ...OrderedPropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: OrderedPropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async orderedPropertiesClasses(
@@ -42765,7 +43587,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       OrderedPropertiesClass,
       OrderedPropertiesClass.$Identifier
-    >({ ...OrderedPropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: OrderedPropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async orderedPropertiesClassesCount(
@@ -42780,7 +43602,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       OrderedPropertiesClass,
       OrderedPropertiesClass.$Identifier
-    >({ ...OrderedPropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: OrderedPropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async propertyCardinalitiesClass(
@@ -42811,7 +43633,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       PropertyCardinalitiesClass,
       PropertyCardinalitiesClass.$Identifier
-    >({ ...PropertyCardinalitiesClass, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: PropertyCardinalitiesClass.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async propertyCardinalitiesClasses(
@@ -42826,7 +43651,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       PropertyCardinalitiesClass,
       PropertyCardinalitiesClass.$Identifier
-    >({ ...PropertyCardinalitiesClass, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: PropertyCardinalitiesClass.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async propertyCardinalitiesClassesCount(
@@ -42847,7 +43675,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       PropertyCardinalitiesClass,
       PropertyCardinalitiesClass.$Identifier
-    >({ ...PropertyCardinalitiesClass, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: PropertyCardinalitiesClass.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async propertyVisibilitiesClass(
@@ -42878,7 +43709,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       PropertyVisibilitiesClass,
       PropertyVisibilitiesClass.$Identifier
-    >({ ...PropertyVisibilitiesClass, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: PropertyVisibilitiesClass.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async propertyVisibilitiesClasses(
@@ -42893,7 +43727,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       PropertyVisibilitiesClass,
       PropertyVisibilitiesClass.$Identifier
-    >({ ...PropertyVisibilitiesClass, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: PropertyVisibilitiesClass.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async propertyVisibilitiesClassesCount(
@@ -42914,7 +43751,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       PropertyVisibilitiesClass,
       PropertyVisibilitiesClass.$Identifier
-    >({ ...PropertyVisibilitiesClass, $fromRdfType: undefined }, query);
+    >(
+      { $fromRdf: PropertyVisibilitiesClass.$fromRdf, $fromRdfTypes: [] },
+      query,
+    );
   }
 
   async sha256IriClass(
@@ -42943,7 +43783,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       Sha256IriClass,
       Sha256IriClass.$Identifier
-    >({ ...Sha256IriClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: Sha256IriClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async sha256IriClasses(
@@ -42956,7 +43796,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
   ): purify.Either<Error, readonly Sha256IriClass[]> {
     return this.$objectsSync<Sha256IriClass, Sha256IriClass.$Identifier>(
-      { ...Sha256IriClass, $fromRdfType: undefined },
+      { $fromRdf: Sha256IriClass.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -42971,7 +43811,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<Sha256IriClass.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<Sha256IriClass, Sha256IriClass.$Identifier>(
-      { ...Sha256IriClass, $fromRdfType: undefined },
+      { $fromRdf: Sha256IriClass.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -43000,7 +43840,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<StubClass.$Identifier>,
   ): purify.Either<Error, readonly StubClass.$Identifier[]> {
     return this.$objectIdentifiersSync<StubClass, StubClass.$Identifier>(
-      { ...StubClass, $fromRdfType: undefined },
+      { $fromRdf: StubClass.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -43015,7 +43855,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<StubClass.$Identifier>,
   ): purify.Either<Error, readonly StubClass[]> {
     return this.$objectsSync<StubClass, StubClass.$Identifier>(
-      { ...StubClass, $fromRdfType: undefined },
+      { $fromRdf: StubClass.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -43030,7 +43870,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<StubClass.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<StubClass, StubClass.$Identifier>(
-      { ...StubClass, $fromRdfType: undefined },
+      { $fromRdf: StubClass.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -43063,7 +43903,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       StubClassUnionMember1,
       StubClassUnionMember1.$Identifier
-    >(StubClassUnionMember1, query);
+    >(
+      {
+        $fromRdf: StubClassUnionMember1.$fromRdf,
+        $fromRdfTypes: [StubClassUnionMember1.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async stubClassUnionMember1s(
@@ -43078,7 +43924,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       StubClassUnionMember1,
       StubClassUnionMember1.$Identifier
-    >(StubClassUnionMember1, query);
+    >(
+      {
+        $fromRdf: StubClassUnionMember1.$fromRdf,
+        $fromRdfTypes: [StubClassUnionMember1.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async stubClassUnionMember1sCount(
@@ -43093,7 +43945,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       StubClassUnionMember1,
       StubClassUnionMember1.$Identifier
-    >(StubClassUnionMember1, query);
+    >(
+      {
+        $fromRdf: StubClassUnionMember1.$fromRdf,
+        $fromRdfTypes: [StubClassUnionMember1.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async stubClassUnionMember2(
@@ -43124,7 +43982,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       StubClassUnionMember2,
       StubClassUnionMember2.$Identifier
-    >(StubClassUnionMember2, query);
+    >(
+      {
+        $fromRdf: StubClassUnionMember2.$fromRdf,
+        $fromRdfTypes: [StubClassUnionMember2.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async stubClassUnionMember2s(
@@ -43139,7 +44003,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       StubClassUnionMember2,
       StubClassUnionMember2.$Identifier
-    >(StubClassUnionMember2, query);
+    >(
+      {
+        $fromRdf: StubClassUnionMember2.$fromRdf,
+        $fromRdfTypes: [StubClassUnionMember2.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async stubClassUnionMember2sCount(
@@ -43154,7 +44024,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       StubClassUnionMember2,
       StubClassUnionMember2.$Identifier
-    >(StubClassUnionMember2, query);
+    >(
+      {
+        $fromRdf: StubClassUnionMember2.$fromRdf,
+        $fromRdfTypes: [StubClassUnionMember2.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async stubInterface(
@@ -43183,7 +44059,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       StubInterface,
       StubInterface.$Identifier
-    >({ ...StubInterface, $fromRdfType: undefined }, query);
+    >({ $fromRdf: StubInterface.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async stubInterfaces(
@@ -43196,7 +44072,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<StubInterface.$Identifier>,
   ): purify.Either<Error, readonly StubInterface[]> {
     return this.$objectsSync<StubInterface, StubInterface.$Identifier>(
-      { ...StubInterface, $fromRdfType: undefined },
+      { $fromRdf: StubInterface.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -43211,7 +44087,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<StubInterface.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<StubInterface, StubInterface.$Identifier>(
-      { ...StubInterface, $fromRdfType: undefined },
+      { $fromRdf: StubInterface.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -43244,7 +44120,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       StubInterfaceUnionMember1,
       StubInterfaceUnionMember1.$Identifier
-    >(StubInterfaceUnionMember1, query);
+    >(
+      {
+        $fromRdf: StubInterfaceUnionMember1.$fromRdf,
+        $fromRdfTypes: [StubInterfaceUnionMember1.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async stubInterfaceUnionMember1s(
@@ -43259,7 +44141,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       StubInterfaceUnionMember1,
       StubInterfaceUnionMember1.$Identifier
-    >(StubInterfaceUnionMember1, query);
+    >(
+      {
+        $fromRdf: StubInterfaceUnionMember1.$fromRdf,
+        $fromRdfTypes: [StubInterfaceUnionMember1.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async stubInterfaceUnionMember1sCount(
@@ -43280,7 +44168,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       StubInterfaceUnionMember1,
       StubInterfaceUnionMember1.$Identifier
-    >(StubInterfaceUnionMember1, query);
+    >(
+      {
+        $fromRdf: StubInterfaceUnionMember1.$fromRdf,
+        $fromRdfTypes: [StubInterfaceUnionMember1.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async stubInterfaceUnionMember2(
@@ -43311,7 +44205,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       StubInterfaceUnionMember2,
       StubInterfaceUnionMember2.$Identifier
-    >(StubInterfaceUnionMember2, query);
+    >(
+      {
+        $fromRdf: StubInterfaceUnionMember2.$fromRdf,
+        $fromRdfTypes: [StubInterfaceUnionMember2.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async stubInterfaceUnionMember2s(
@@ -43326,7 +44226,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       StubInterfaceUnionMember2,
       StubInterfaceUnionMember2.$Identifier
-    >(StubInterfaceUnionMember2, query);
+    >(
+      {
+        $fromRdf: StubInterfaceUnionMember2.$fromRdf,
+        $fromRdfTypes: [StubInterfaceUnionMember2.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async stubInterfaceUnionMember2sCount(
@@ -43347,7 +44253,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       StubInterfaceUnionMember2,
       StubInterfaceUnionMember2.$Identifier
-    >(StubInterfaceUnionMember2, query);
+    >(
+      {
+        $fromRdf: StubInterfaceUnionMember2.$fromRdf,
+        $fromRdfTypes: [StubInterfaceUnionMember2.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async termPropertiesClass(
@@ -43376,7 +44288,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       TermPropertiesClass,
       TermPropertiesClass.$Identifier
-    >({ ...TermPropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: TermPropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async termPropertiesClasses(
@@ -43391,7 +44303,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       TermPropertiesClass,
       TermPropertiesClass.$Identifier
-    >({ ...TermPropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: TermPropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async termPropertiesClassesCount(
@@ -43406,7 +44318,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       TermPropertiesClass,
       TermPropertiesClass.$Identifier
-    >({ ...TermPropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: TermPropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async unionPropertiesClass(
@@ -43437,7 +44349,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       UnionPropertiesClass,
       UnionPropertiesClass.$Identifier
-    >({ ...UnionPropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: UnionPropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async unionPropertiesClasses(
@@ -43452,7 +44364,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       UnionPropertiesClass,
       UnionPropertiesClass.$Identifier
-    >({ ...UnionPropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: UnionPropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async unionPropertiesClassesCount(
@@ -43467,7 +44379,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       UnionPropertiesClass,
       UnionPropertiesClass.$Identifier
-    >({ ...UnionPropertiesClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: UnionPropertiesClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async uuidV4IriClass(
@@ -43496,7 +44408,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       UuidV4IriClass,
       UuidV4IriClass.$Identifier
-    >({ ...UuidV4IriClass, $fromRdfType: undefined }, query);
+    >({ $fromRdf: UuidV4IriClass.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async uuidV4IriClasses(
@@ -43509,7 +44421,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<UuidV4IriClass.$Identifier>,
   ): purify.Either<Error, readonly UuidV4IriClass[]> {
     return this.$objectsSync<UuidV4IriClass, UuidV4IriClass.$Identifier>(
-      { ...UuidV4IriClass, $fromRdfType: undefined },
+      { $fromRdf: UuidV4IriClass.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -43524,7 +44436,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<UuidV4IriClass.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<UuidV4IriClass, UuidV4IriClass.$Identifier>(
-      { ...UuidV4IriClass, $fromRdfType: undefined },
+      { $fromRdf: UuidV4IriClass.$fromRdf, $fromRdfTypes: [] },
       query,
     );
   }
@@ -43555,7 +44467,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       UuidV4IriInterface,
       UuidV4IriInterface.$Identifier
-    >({ ...UuidV4IriInterface, $fromRdfType: undefined }, query);
+    >({ $fromRdf: UuidV4IriInterface.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async uuidV4IriInterfaces(
@@ -43570,7 +44482,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       UuidV4IriInterface,
       UuidV4IriInterface.$Identifier
-    >({ ...UuidV4IriInterface, $fromRdfType: undefined }, query);
+    >({ $fromRdf: UuidV4IriInterface.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async uuidV4IriInterfacesCount(
@@ -43585,7 +44497,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       UuidV4IriInterface,
       UuidV4IriInterface.$Identifier
-    >({ ...UuidV4IriInterface, $fromRdfType: undefined }, query);
+    >({ $fromRdf: UuidV4IriInterface.$fromRdf, $fromRdfTypes: [] }, query);
   }
 
   async classUnion(
@@ -43612,7 +44524,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ClassUnion.$Identifier>,
   ): purify.Either<Error, readonly ClassUnion.$Identifier[]> {
     return this.$objectUnionIdentifiersSync<ClassUnion, ClassUnion.$Identifier>(
-      [ClassUnionMember1, ClassUnionMember2],
+      [
+        {
+          $fromRdf: ClassUnionMember1.$fromRdf,
+          $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: ClassUnionMember2.$fromRdf,
+          $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -43627,7 +44548,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ClassUnion.$Identifier>,
   ): purify.Either<Error, readonly ClassUnion[]> {
     return this.$objectUnionsSync<ClassUnion, ClassUnion.$Identifier>(
-      [ClassUnionMember1, ClassUnionMember2],
+      [
+        {
+          $fromRdf: ClassUnionMember1.$fromRdf,
+          $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: ClassUnionMember2.$fromRdf,
+          $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -43642,7 +44572,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<ClassUnion.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectUnionsCountSync<ClassUnion, ClassUnion.$Identifier>(
-      [ClassUnionMember1, ClassUnionMember2],
+      [
+        {
+          $fromRdf: ClassUnionMember1.$fromRdf,
+          $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: ClassUnionMember2.$fromRdf,
+          $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -43675,9 +44614,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       InterfaceUnion.$Identifier
     >(
       [
-        { ...InterfaceUnionMember1, $fromRdfType: undefined },
-        { ...InterfaceUnionMember2a, $fromRdfType: undefined },
-        { ...InterfaceUnionMember2b, $fromRdfType: undefined },
+        { $fromRdf: InterfaceUnionMember1.$fromRdf, $fromRdfTypes: [] },
+        { $fromRdf: InterfaceUnionMember2a.$fromRdf, $fromRdfTypes: [] },
+        { $fromRdf: InterfaceUnionMember2b.$fromRdf, $fromRdfTypes: [] },
       ],
       query,
     );
@@ -43694,9 +44633,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, readonly InterfaceUnion[]> {
     return this.$objectUnionsSync<InterfaceUnion, InterfaceUnion.$Identifier>(
       [
-        { ...InterfaceUnionMember1, $fromRdfType: undefined },
-        { ...InterfaceUnionMember2a, $fromRdfType: undefined },
-        { ...InterfaceUnionMember2b, $fromRdfType: undefined },
+        { $fromRdf: InterfaceUnionMember1.$fromRdf, $fromRdfTypes: [] },
+        { $fromRdf: InterfaceUnionMember2a.$fromRdf, $fromRdfTypes: [] },
+        { $fromRdf: InterfaceUnionMember2b.$fromRdf, $fromRdfTypes: [] },
       ],
       query,
     );
@@ -43716,9 +44655,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       InterfaceUnion.$Identifier
     >(
       [
-        { ...InterfaceUnionMember1, $fromRdfType: undefined },
-        { ...InterfaceUnionMember2a, $fromRdfType: undefined },
-        { ...InterfaceUnionMember2b, $fromRdfType: undefined },
+        { $fromRdf: InterfaceUnionMember1.$fromRdf, $fromRdfTypes: [] },
+        { $fromRdf: InterfaceUnionMember2a.$fromRdf, $fromRdfTypes: [] },
+        { $fromRdf: InterfaceUnionMember2b.$fromRdf, $fromRdfTypes: [] },
       ],
       query,
     );
@@ -43754,8 +44693,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       InterfaceUnionMember2.$Identifier
     >(
       [
-        { ...InterfaceUnionMember2a, $fromRdfType: undefined },
-        { ...InterfaceUnionMember2b, $fromRdfType: undefined },
+        { $fromRdf: InterfaceUnionMember2a.$fromRdf, $fromRdfTypes: [] },
+        { $fromRdf: InterfaceUnionMember2b.$fromRdf, $fromRdfTypes: [] },
       ],
       query,
     );
@@ -43775,8 +44714,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       InterfaceUnionMember2.$Identifier
     >(
       [
-        { ...InterfaceUnionMember2a, $fromRdfType: undefined },
-        { ...InterfaceUnionMember2b, $fromRdfType: undefined },
+        { $fromRdf: InterfaceUnionMember2a.$fromRdf, $fromRdfTypes: [] },
+        { $fromRdf: InterfaceUnionMember2b.$fromRdf, $fromRdfTypes: [] },
       ],
       query,
     );
@@ -43796,8 +44735,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       InterfaceUnionMember2.$Identifier
     >(
       [
-        { ...InterfaceUnionMember2a, $fromRdfType: undefined },
-        { ...InterfaceUnionMember2b, $fromRdfType: undefined },
+        { $fromRdf: InterfaceUnionMember2a.$fromRdf, $fromRdfTypes: [] },
+        { $fromRdf: InterfaceUnionMember2b.$fromRdf, $fromRdfTypes: [] },
       ],
       query,
     );
@@ -43832,7 +44771,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedClassUnion,
       LazilyResolvedClassUnion.$Identifier
     >(
-      [LazilyResolvedClassUnionMember1, LazilyResolvedClassUnionMember2],
+      [
+        {
+          $fromRdf: LazilyResolvedClassUnionMember1.$fromRdf,
+          $fromRdfTypes: [LazilyResolvedClassUnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: LazilyResolvedClassUnionMember2.$fromRdf,
+          $fromRdfTypes: [LazilyResolvedClassUnionMember2.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -43850,7 +44798,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedClassUnion,
       LazilyResolvedClassUnion.$Identifier
     >(
-      [LazilyResolvedClassUnionMember1, LazilyResolvedClassUnionMember2],
+      [
+        {
+          $fromRdf: LazilyResolvedClassUnionMember1.$fromRdf,
+          $fromRdfTypes: [LazilyResolvedClassUnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: LazilyResolvedClassUnionMember2.$fromRdf,
+          $fromRdfTypes: [LazilyResolvedClassUnionMember2.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -43874,7 +44831,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedClassUnion,
       LazilyResolvedClassUnion.$Identifier
     >(
-      [LazilyResolvedClassUnionMember1, LazilyResolvedClassUnionMember2],
+      [
+        {
+          $fromRdf: LazilyResolvedClassUnionMember1.$fromRdf,
+          $fromRdfTypes: [LazilyResolvedClassUnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: LazilyResolvedClassUnionMember2.$fromRdf,
+          $fromRdfTypes: [LazilyResolvedClassUnionMember2.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -43909,8 +44875,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedInterfaceUnion.$Identifier
     >(
       [
-        LazilyResolvedInterfaceUnionMember1,
-        LazilyResolvedInterfaceUnionMember2,
+        {
+          $fromRdf: LazilyResolvedInterfaceUnionMember1.$fromRdf,
+          $fromRdfTypes: [LazilyResolvedInterfaceUnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: LazilyResolvedInterfaceUnionMember2.$fromRdf,
+          $fromRdfTypes: [LazilyResolvedInterfaceUnionMember2.$fromRdfType],
+        },
       ],
       query,
     );
@@ -43930,8 +44902,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedInterfaceUnion.$Identifier
     >(
       [
-        LazilyResolvedInterfaceUnionMember1,
-        LazilyResolvedInterfaceUnionMember2,
+        {
+          $fromRdf: LazilyResolvedInterfaceUnionMember1.$fromRdf,
+          $fromRdfTypes: [LazilyResolvedInterfaceUnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: LazilyResolvedInterfaceUnionMember2.$fromRdf,
+          $fromRdfTypes: [LazilyResolvedInterfaceUnionMember2.$fromRdfType],
+        },
       ],
       query,
     );
@@ -43957,8 +44935,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedInterfaceUnion.$Identifier
     >(
       [
-        LazilyResolvedInterfaceUnionMember1,
-        LazilyResolvedInterfaceUnionMember2,
+        {
+          $fromRdf: LazilyResolvedInterfaceUnionMember1.$fromRdf,
+          $fromRdfTypes: [LazilyResolvedInterfaceUnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: LazilyResolvedInterfaceUnionMember2.$fromRdf,
+          $fromRdfTypes: [LazilyResolvedInterfaceUnionMember2.$fromRdfType],
+        },
       ],
       query,
     );
@@ -43990,7 +44974,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectUnionIdentifiersSync<
       StubClassUnion,
       StubClassUnion.$Identifier
-    >([StubClassUnionMember1, StubClassUnionMember2], query);
+    >(
+      [
+        {
+          $fromRdf: StubClassUnionMember1.$fromRdf,
+          $fromRdfTypes: [StubClassUnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: StubClassUnionMember2.$fromRdf,
+          $fromRdfTypes: [StubClassUnionMember2.$fromRdfType],
+        },
+      ],
+      query,
+    );
   }
 
   async stubClassUnions(
@@ -44003,7 +44999,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<StubClassUnion.$Identifier>,
   ): purify.Either<Error, readonly StubClassUnion[]> {
     return this.$objectUnionsSync<StubClassUnion, StubClassUnion.$Identifier>(
-      [StubClassUnionMember1, StubClassUnionMember2],
+      [
+        {
+          $fromRdf: StubClassUnionMember1.$fromRdf,
+          $fromRdfTypes: [StubClassUnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: StubClassUnionMember2.$fromRdf,
+          $fromRdfTypes: [StubClassUnionMember2.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -44020,7 +45025,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectUnionsCountSync<
       StubClassUnion,
       StubClassUnion.$Identifier
-    >([StubClassUnionMember1, StubClassUnionMember2], query);
+    >(
+      [
+        {
+          $fromRdf: StubClassUnionMember1.$fromRdf,
+          $fromRdfTypes: [StubClassUnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: StubClassUnionMember2.$fromRdf,
+          $fromRdfTypes: [StubClassUnionMember2.$fromRdfType],
+        },
+      ],
+      query,
+    );
   }
 
   async stubInterfaceUnion(
@@ -44049,7 +45066,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectUnionIdentifiersSync<
       StubInterfaceUnion,
       StubInterfaceUnion.$Identifier
-    >([StubInterfaceUnionMember1, StubInterfaceUnionMember2], query);
+    >(
+      [
+        {
+          $fromRdf: StubInterfaceUnionMember1.$fromRdf,
+          $fromRdfTypes: [StubInterfaceUnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: StubInterfaceUnionMember2.$fromRdf,
+          $fromRdfTypes: [StubInterfaceUnionMember2.$fromRdfType],
+        },
+      ],
+      query,
+    );
   }
 
   async stubInterfaceUnions(
@@ -44064,7 +45093,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectUnionsSync<
       StubInterfaceUnion,
       StubInterfaceUnion.$Identifier
-    >([StubInterfaceUnionMember1, StubInterfaceUnionMember2], query);
+    >(
+      [
+        {
+          $fromRdf: StubInterfaceUnionMember1.$fromRdf,
+          $fromRdfTypes: [StubInterfaceUnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: StubInterfaceUnionMember2.$fromRdf,
+          $fromRdfTypes: [StubInterfaceUnionMember2.$fromRdfType],
+        },
+      ],
+      query,
+    );
   }
 
   async stubInterfaceUnionsCount(
@@ -44079,7 +45120,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectUnionsCountSync<
       StubInterfaceUnion,
       StubInterfaceUnion.$Identifier
-    >([StubInterfaceUnionMember1, StubInterfaceUnionMember2], query);
+    >(
+      [
+        {
+          $fromRdf: StubInterfaceUnionMember1.$fromRdf,
+          $fromRdfTypes: [StubInterfaceUnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: StubInterfaceUnionMember2.$fromRdf,
+          $fromRdfTypes: [StubInterfaceUnionMember2.$fromRdfType],
+        },
+      ],
+      query,
+    );
   }
 
   protected $objectIdentifiersSync<
@@ -44091,7 +45144,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
-      $fromRdfType?: rdfjs.NamedNode;
+      $fromRdfTypes: readonly rdfjs.NamedNode[];
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, readonly ObjectIdentifierT[]> {
@@ -44109,7 +45162,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
-      $fromRdfType?: rdfjs.NamedNode;
+      $fromRdfTypes: readonly rdfjs.NamedNode[];
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, readonly ObjectT[]> {
@@ -44175,13 +45228,22 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       return purify.Either.of(objects);
     }
 
-    if (!objectType.$fromRdfType) {
+    if (objectType.$fromRdfTypes.length === 0) {
       return purify.Either.of([]);
     }
 
-    const resources = [
-      ...this.resourceSet.instancesOf(objectType.$fromRdfType),
-    ];
+    const resources: rdfjsResource.Resource[] = [];
+    for (const fromRdfType of objectType.$fromRdfTypes) {
+      for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+        if (
+          !resources.some((existingResource) =>
+            existingResource.identifier.equals(resource.identifier),
+          )
+        ) {
+          resources.push(resource);
+        }
+      }
+    }
     // Sort resources by identifier so limit and offset are deterministic
     resources.sort((left, right) =>
       left.identifier.value.localeCompare(right.identifier.value),
@@ -44213,7 +45275,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
-      $fromRdfType?: rdfjs.NamedNode;
+      $fromRdfTypes: readonly rdfjs.NamedNode[];
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, number> {
@@ -44231,7 +45293,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
-      $fromRdfType?: rdfjs.NamedNode;
+      $fromRdfTypes: readonly rdfjs.NamedNode[];
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, readonly ObjectIdentifierT[]> {
@@ -44250,7 +45312,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
-      $fromRdfType?: rdfjs.NamedNode;
+      $fromRdfTypes: readonly rdfjs.NamedNode[];
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, readonly ObjectT[]> {
@@ -44331,22 +45393,27 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           resource: rdfjsResource.Resource,
           options: { objectSet: $ObjectSet },
         ) => purify.Either<Error, ObjectT>;
-        $fromRdfType?: rdfjs.NamedNode;
+        $fromRdfTypes: readonly rdfjs.NamedNode[];
       };
       resource: rdfjsResource.Resource;
     }[] = [];
     for (const objectType of objectTypes) {
-      if (!objectType.$fromRdfType) {
+      if (objectType.$fromRdfTypes.length === 0) {
         continue;
       }
 
-      for (const resource of this.resourceSet.instancesOf(
-        objectType.$fromRdfType,
-      )) {
-        resources.push({ objectType, resource });
+      for (const fromRdfType of objectType.$fromRdfTypes) {
+        for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+          if (
+            !resources.some(({ resource: existingResource }) =>
+              existingResource.identifier.equals(resource.identifier),
+            )
+          ) {
+            resources.push({ objectType, resource });
+          }
+        }
       }
     }
-
     // Sort resources by identifier so limit and offset are deterministic
     resources.sort((left, right) =>
       left.resource.identifier.value.localeCompare(
@@ -44380,7 +45447,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
-      $fromRdfType?: rdfjs.NamedNode;
+      $fromRdfTypes: readonly rdfjs.NamedNode[];
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, number> {

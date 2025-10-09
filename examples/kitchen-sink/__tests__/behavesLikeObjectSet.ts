@@ -251,6 +251,21 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     }
   });
 
+  it("objects (known subclasses)", async ({ expect }) => {
+    const parentClasses = (
+      await objectSet.concreteParentClasses()
+    ).unsafeCoerce();
+    expect(parentClasses).toHaveLength(testData.concreteChildClasses.length);
+    for (const childClass of testData.concreteChildClasses) {
+      // parentClass may be an instance of the parent class rather than the child class, depending on the implementation
+      expect(
+        parentClasses.some((parentClass) =>
+          parentClass.$equals(childClass).isRight(),
+        ),
+      );
+    }
+  });
+
   it("objectsCount", async ({ expect }) => {
     expect(
       (await objectSet.concreteChildClassesCount()).unsafeCoerce(),

@@ -59,6 +59,10 @@ for (const pattern of ${parentObjectType.staticModuleName}.${syntheticNamePrefix
   }
 
   if (this.fromRdfType.isJust()) {
+    const fromRdfTypeVariables = this.fromRdfTypeVariable
+      .toList()
+      .concat(this.descendantFromRdfTypeVariables);
+
     sparqlConstructTemplateTriplesStatements.push(`\
 if (!parameters?.ignoreRdfType) {
   triples.push(
@@ -66,25 +70,42 @@ if (!parameters?.ignoreRdfType) {
     { subject: ${rdfTypeVariable}, predicate: ${rdfjsTermExpression(rdfs.subClassOf)}, object: ${rdfClassVariable} }
   );
 }`);
-    sparqlWherePatternsStatements.push(`\
+    sparqlWherePatternsStatements.push(
+      `const rdfTypeVariable = ${rdfTypeVariable};`,
+      `\
 if (!parameters?.ignoreRdfType) {
-  requiredPatterns.push(${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType: ${syntheticNamePrefix}fromRdfType, subject }));
-  requiredPatterns.push({
-    triples: [
-      {
-        subject,
-        predicate: ${rdfjsTermExpression(rdf.type)},
-        object: ${rdfTypeVariable}
-      }
-    ],
-    type: "bgp" as const
-  });
+  requiredPatterns.push(
+    ${
+      fromRdfTypeVariables.length > 1
+        ? `\
+    {
+      type: "values" as const,
+      values: [${fromRdfTypeVariables.join(", ")}].map((identifier) => {
+        const valuePatternRow: sparqljs.ValuePatternRow = {};
+        valuePatternRow[\`?\${${variables.variablePrefix}}FromRdfType\`] = identifier as rdfjs.NamedNode;
+        return valuePatternRow;
+      }),
+    },
+    ${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType: dataFactory.variable!(\`\${${variables.variablePrefix}}FromRdfType\`), subject }),`
+        : `${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType: ${fromRdfTypeVariables[0]}, subject }),`
+    }
+    {
+      triples: [
+        {
+          subject,
+          predicate: ${rdfjsTermExpression(rdf.type)},
+          object: rdfTypeVariable
+        }
+      ],
+      type: "bgp" as const
+    }
+  );
   optionalPatterns.push({
     patterns: [
       {
         triples: [
           {
-            subject: ${rdfTypeVariable},
+            subject: rdfTypeVariable,
             predicate: {
               items: [${rdfjsTermExpression(rdfs.subClassOf)}],
               pathType: "+" as const,
@@ -98,7 +119,8 @@ if (!parameters?.ignoreRdfType) {
     ],
     type: "optional" as const
   });
-}`);
+}`,
+    );
     nop = false;
   }
 
