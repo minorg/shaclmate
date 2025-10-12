@@ -33,7 +33,7 @@ Note that the `@shaclmate/runtime` package does not include any code itself, onl
 
 ## Features
 
-* Generated code works in browsers and Node.js
+* Browser-, Node.js-, and React Native-compatible generated TypeScript
 * TypeScript class or interface generation
 * TypeScript [union type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#union-types) generation from `sh:xone`
 * TypeScript [literal type](https://www.typescriptlang.org/docs/handbook/literal-types.html) generation from `sh:in`
@@ -43,6 +43,7 @@ Note that the `@shaclmate/runtime` package does not include any code itself, onl
 * Deep equals function/method generation
 * Deep hash function/method generation
 * Instance identifier minting by deep hashing or UUID generation
+* Surrogate objects with lazy, asynchronous resolution
 * [Zod schema](https://zod.dev/) generation. Zod schemas can be converted to [JSON schemas](https://json-schema.org/) using [zod-to-json-schema](https://github.com/StefanTerdell/zod-to-json-schema).
 * [JSON Forms](https://jsonforms.io/) schema generation
 * GraphQL schema+resolver generation (for [GraphQL.js](https://www.graphql-js.org)-compatible servers)
@@ -169,7 +170,7 @@ Unsupported.
 
 ### [Shape-based constraint components](https://www.w3.org/TR/shacl/#core-components-shape)
 
-`sh:node` resolves a node shape as expected. Recursive node shapes are not supported in JSON (de)serialization but are supported by other features like RDF deserialization.
+`sh:node` resolves a node shape as expected. Direct and indirect recursion on node shapes are supported.
 
 Qualified value shapes are unsupported.
 
