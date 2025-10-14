@@ -1,6 +1,5 @@
 import { dash } from "@tpluscode/rdf-ns-builders";
 import { describe, it } from "vitest";
-import {} from "../src/index.js";
 import { testData } from "./testData.js";
 
 describe("PropertyGroup", () => {
