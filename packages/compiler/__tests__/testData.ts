@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import {} from "@shaclmate/shacl-ast";
 import { Parser, Store } from "n3";
 import { ShapesGraph } from "../src/input/ShapesGraph.js";
 

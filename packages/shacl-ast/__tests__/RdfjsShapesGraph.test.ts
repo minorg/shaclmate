@@ -1,5 +1,4 @@
 import { describe, it } from "vitest";
-import {} from "../src/index.js";
 import { testData } from "./testData.js";
 
 describe("RdfjsShapesGraph", () => {
