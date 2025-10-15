@@ -380,7 +380,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:languageIn ("en"
             "fr"
         ) ;
-        sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :languageInLiteralProperty
     ], [
@@ -389,7 +388,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:languageIn ("en"
             "fr"
         ) ;
-        sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :languageInStringProperty
     ] .
@@ -737,17 +735,17 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:minCount 1 ;
         sh:path :requiredStringProperty
     ], [
-        rdfs:comment "Option: maxCount=1 minCount=0" ;
+        rdfs:comment "Option: maxCount=1, minCount=0" ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
         sh:path :optionalStringProperty
     ], [
-        rdfs:comment "Set: minCount implicitly=0, no maxCount or maxCount > 1" ;
+        rdfs:comment "Set: minCount implicitly=0, no maxCount" ;
         sh:datatype xsd:string ;
         sh:path :emptyStringSetProperty
     ], [
-        rdfs:comment "Set: minCount implicitly=1, no maxCount or maxCount > 1" ;
+        rdfs:comment "Set: minCount=1, no maxCount" ;
         sh:datatype xsd:string ;
         sh:minCount 1 ;
         sh:path :nonEmptyStringSetProperty

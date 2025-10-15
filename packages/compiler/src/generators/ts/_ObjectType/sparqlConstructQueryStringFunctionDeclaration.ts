@@ -12,7 +12,7 @@ export function sparqlConstructQueryStringFunctionDeclaration(this: {
       {
         hasQuestionToken: true,
         name: "parameters",
-        type: '{ ignoreRdfType?: boolean; languageIn?: readonly string[]; subject?: sparqljs.Triple["subject"]; variablePrefix?: string; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> & sparqljs.GeneratorOptions',
+        type: '{ ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"]; variablePrefix?: string; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> & sparqljs.GeneratorOptions',
       },
     ],
     returnType: "string",

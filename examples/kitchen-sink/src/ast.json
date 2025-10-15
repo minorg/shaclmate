@@ -1254,8 +1254,11 @@
           "order": 0,
           "path": "http://example.com/languageInLiteralProperty",
           "type": {
-            "hasValue": [],
-            "kind": "LiteralType"
+            "itemType": {
+              "hasValue": [],
+              "kind": "LiteralType"
+            },
+            "kind": "SetType"
           },
           "visibility": "public"
         },
@@ -1276,12 +1279,15 @@
           "order": 0,
           "path": "http://example.com/languageInStringProperty",
           "type": {
-            "datatype": {
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
+            "itemType": {
+              "datatype": {
+                "termType": "NamedNode",
+                "value": "http://www.w3.org/2001/XMLSchema#string"
+              },
+              "hasValue": [],
+              "kind": "LiteralType"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "kind": "SetType"
           },
           "visibility": "public"
         }
@@ -3598,7 +3604,7 @@
           "visibility": "public"
         },
         {
-          "comment": "Option: maxCount=1 minCount=0",
+          "comment": "Option: maxCount=1, minCount=0",
           "name": {
             "identifier": {
               "termType": "BlankNode",
@@ -3627,7 +3633,7 @@
           "visibility": "public"
         },
         {
-          "comment": "Set: minCount implicitly=0, no maxCount or maxCount > 1",
+          "comment": "Set: minCount implicitly=0, no maxCount",
           "name": {
             "identifier": {
               "termType": "BlankNode",
@@ -3656,7 +3662,7 @@
           "visibility": "public"
         },
         {
-          "comment": "Set: minCount implicitly=1, no maxCount or maxCount > 1",
+          "comment": "Set: minCount=1, no maxCount",
           "name": {
             "identifier": {
               "termType": "BlankNode",

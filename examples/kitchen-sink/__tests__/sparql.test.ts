@@ -97,50 +97,47 @@ describe("sparql", () => {
     });
   }
 
-  it("languageIn unspecified", ({ expect }) => {
+  it("preferredLanguages: unspecified", ({ expect }) => {
     const actualDataset = queryLanguageInDataset(
       kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString(),
     );
     expect(actualDataset.size).toStrictEqual(6); // The sh:languageIn will exclude the lang="" and lang="ar"
   });
 
-  it("languageIn: []", ({ expect }) => {
+  it("preferredLanguages: []", ({ expect }) => {
     const actualDataset = queryLanguageInDataset(
       kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString({
-        languageIn: [],
+        preferredLanguages: [],
       }),
     );
     expect(actualDataset.size).toStrictEqual(6); // Same as not specifying languageIn
   });
 
-  it("languageIn: ['en']", ({ expect }) => {
+  it("preferredLanguages: ['en']", ({ expect }) => {
     const actualDataset = queryLanguageInDataset(
       kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString({
-        languageIn: ["en"],
+        preferredLanguages: ["en"],
       }),
     );
-    expect(actualDataset.size).toStrictEqual(2);
+    expect(actualDataset.size).toStrictEqual(1);
     for (const quad of actualDataset.match()) {
       expect((quad.object as oxigraph.Literal).value).toStrictEqual("envalue");
     }
   });
 
-  it("languageIn: ['']", ({ expect }) => {
+  it("preferredLanguages: ['']", ({ expect }) => {
     const actualDataset = queryLanguageInDataset(
       kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString({
-        languageIn: [""],
+        preferredLanguages: [""],
       }),
     );
-    expect(actualDataset.size).toStrictEqual(2);
-    for (const quad of actualDataset.match()) {
-      expect((quad.object as oxigraph.Literal).value).toStrictEqual("value");
-    }
+    expect(actualDataset.size).toStrictEqual(0);
   });
 
-  it("languageIn: ['', 'en']", ({ expect }) => {
+  it("preferredlanguages: ['', 'en']", ({ expect }) => {
     const actualDataset = queryLanguageInDataset(
       kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString({
-        languageIn: ["", "en"],
+        preferredLanguages: ["", "en"],
       }),
     );
     expect(actualDataset.size).toStrictEqual(4);

@@ -383,7 +383,7 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
         {
           hasQuestionToken: true,
           name: "options",
-          type: `{ [_index: string]: any; ignoreRdfType?: boolean; languageIn?: readonly string[]; objectSet?: ${syntheticNamePrefix}ObjectSet }`,
+          type: `{ [_index: string]: any; ignoreRdfType?: boolean; objectSet?: ${syntheticNamePrefix}ObjectSet; preferredLanguages?: readonly string[] }`,
         },
       ],
       returnType: `purify.Either<Error, ${this.name}>`,
@@ -562,7 +562,7 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
           {
             hasQuestionToken: true,
             name: "parameters",
-            type: '{ ignoreRdfType?: boolean; languageIn?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }',
+            type: '{ ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }',
           },
         ],
         returnType: "readonly sparqljs.Pattern[]",

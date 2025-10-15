@@ -86,6 +86,7 @@ export class DateTimeType extends PrimitiveType<Date> {
     return {
       ...super.fromRdfExpressionChain({ variables }),
       languageIn: undefined,
+      preferredLanguages: undefined,
       valueTo: `chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
     };
   }

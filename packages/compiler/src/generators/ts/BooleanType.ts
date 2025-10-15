@@ -63,6 +63,7 @@ export class BooleanType extends PrimitiveType<boolean> {
     return {
       ...super.fromRdfExpressionChain({ variables }),
       languageIn: undefined,
+      preferredLanguages: undefined,
       valueTo: `chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
     };
   }

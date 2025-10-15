@@ -37,58 +37,42 @@ export class LiteralType extends TermType<Literal, Literal> {
 
   protected override fromRdfExpressionChain({
     variables,
-  }: Parameters<Type["fromRdfExpression"]>[0]): {
-    defaultValue?: string;
-    hasValues?: string;
-    languageIn?: string;
-    valueTo: string;
-  } {
+  }: Parameters<TermType<Literal>["fromRdfExpressionChain"]>[0]): ReturnType<
+    TermType<Literal>["fromRdfExpressionChain"]
+  > {
     return {
       ...super.fromRdfExpressionChain({ variables }),
       languageIn:
         this.languageIn.length > 0
           ? `chain(values => values.chainMap(value => value.toLiteral().chain(literalValue => { switch (literalValue.language) { ${this.languageIn.map((languageIn) => `case "${languageIn}":`).join(" ")} return purify.Either.of(value); default: return purify.Left(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: "literalValue", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })))`
           : undefined,
+      preferredLanguages: `chain(values => {
+        if (!${variables.preferredLanguages} || ${variables.preferredLanguages}.length === 0) {
+          return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(values);
+        }
+
+        const literalValuesEither = values.chainMap(value => value.toLiteral());
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues: rdfjsResource.Resource.Values<rdfjs.Literal> | undefined;
+        for (const preferredLanguage of ${variables.preferredLanguages}) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(value => value.language === preferredLanguage);
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(...literalValues.filter(value => value.language === preferredLanguage).toArray());
+          }
+        }
+
+        return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(filteredLiteralValues!.map(literalValue => new rdfjsResource.Resource.Value({ object: literalValue, predicate: ${variables.predicate}, subject: ${variables.resource} })));
+      })`,
       valueTo: "chain(values => values.chainMap(value => value.toLiteral()))",
     };
   }
-
-  //   const literalValuesEither = values.chainMap(value => value.toLiteral());
-  //   if (literalValuesEither.isLeft()) {
-  //     return literalValuesEither;
-  //   }
-  //   const literalValues = literalValuesEither.unsafeCoerce();
-
-  //   const nonUniqueLanguageIn = ${variables.languageIn} ?? ${JSON.stringify(this.languageIn)};
-  //   if (nonUniqueLanguageIn.length === 0) {
-  //     return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(literalValues);
-  //   }
-
-  //   let uniqueLanguageIn: string[];
-  //   if (nonUniqueLanguageIn.length === 1) {
-  //     uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-  //   } else {
-  //     uniqueLanguageIn = [];
-  //     for (const languageIn of nonUniqueLanguageIn) {
-  //       if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-  //         uniqueLanguageIn.push(languageIn);
-  //       }
-  //     }
-  //   }
-
-  //   // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-  //   // Within a languageIn the literals may be in any order.
-  //   let filteredLiteralValues: rdfjsResource.Resource.Values<rdfjs.Literal> | undefined;
-  //   for (const languageIn of uniqueLanguageIn) {
-  //     if (!filteredLiteralValues) {
-  //       filteredLiteralValues = literalValues.filter(value => value.language === languageIn);
-  //     } else {
-  //       filteredLiteralValues = filteredLiteralValues.concat(...literalValues.filter(value => value.language === languageIn).toArray());
-  //     }
-  //   }
-
-  //   return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(filteredLiteralValues!);
-  // })`
 
   override hashStatements({
     depth,
