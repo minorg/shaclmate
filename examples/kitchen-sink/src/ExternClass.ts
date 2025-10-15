@@ -81,8 +81,8 @@ export namespace ExternClass {
     resource: rdfjsResource.Resource,
     options?: {
       extra?: number;
-      languageIn?: readonly string[];
       ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
       objectSet?: $ObjectSet;
     },
   ): Either<Error, ExternClass> {

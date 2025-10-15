@@ -210,11 +210,11 @@ export const harnesses = {
   languageInPropertiesClass: new ClassHarness(
     new kitchenSink.LanguageInPropertiesClass({
       $identifier,
-      languageInPropertiesLanguageInProperty: dataFactory.literal(
-        "frvalue",
-        "fr",
-      ),
-      languageInPropertiesLiteralProperty: dataFactory.literal("envalue", "en"),
+      languageInLiteralProperty: NonEmptyList([
+        dataFactory.literal("frvalue", "fr"),
+        dataFactory.literal("envalue", "en"),
+      ]),
+      languageInStringProperty: NonEmptyList(["frvalue", "envalue"]),
     }),
     kitchenSink.LanguageInPropertiesClass,
   ),

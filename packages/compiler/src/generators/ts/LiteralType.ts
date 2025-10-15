@@ -1,9 +1,11 @@
 import type { Literal } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
-import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
+import { objectInitializer } from "./objectInitializer.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class LiteralType extends TermType<Literal, Literal> {
   private readonly languageIn: readonly string[];
@@ -37,52 +39,40 @@ export class LiteralType extends TermType<Literal, Literal> {
 
   protected override fromRdfExpressionChain({
     variables,
-  }: Parameters<Type["fromRdfExpression"]>[0]): {
-    defaultValue?: string;
-    hasValues?: string;
-    languageIn?: string;
-    valueTo?: string;
-  } {
+  }: Parameters<TermType<Literal>["fromRdfExpressionChain"]>[0]): ReturnType<
+    TermType<Literal>["fromRdfExpressionChain"]
+  > {
     return {
       ...super.fromRdfExpressionChain({ variables }),
-      languageIn: `chain(values => {
-      const literalValuesEither = values.chainMap(value => value.toLiteral());
-      if (literalValuesEither.isLeft()) {
-        return literalValuesEither;
-      }
-      const literalValues = literalValuesEither.unsafeCoerce();
+      languageIn:
+        this.languageIn.length > 0
+          ? `chain(values => values.chainMap(value => value.toLiteral().chain(literalValue => { switch (literalValue.language) { ${this.languageIn.map((languageIn) => `case "${languageIn}":`).join(" ")} return purify.Either.of(value); default: return purify.Left(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: "literalValue", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })))`
+          : undefined,
+      preferredLanguages: `chain(values => {
+        if (!${variables.preferredLanguages} || ${variables.preferredLanguages}.length === 0) {
+          return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(values);
+        }
 
-      const nonUniqueLanguageIn = ${variables.languageIn} ?? ${JSON.stringify(this.languageIn)};
-      if (nonUniqueLanguageIn.length === 0) {
-        return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(literalValues);
-      }
+        const literalValuesEither = values.chainMap(value => value.toLiteral());
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
 
-      let uniqueLanguageIn: string[];
-      if (nonUniqueLanguageIn.length === 1) {
-        uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-      } else {
-        uniqueLanguageIn = [];
-        for (const languageIn of nonUniqueLanguageIn) {
-          if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-            uniqueLanguageIn.push(languageIn);
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues: rdfjsResource.Resource.Values<rdfjs.Literal> | undefined;
+        for (const preferredLanguage of ${variables.preferredLanguages}) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(value => value.language === preferredLanguage);
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(...literalValues.filter(value => value.language === preferredLanguage).toArray());
           }
         }
-      }
 
-      // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-      // Within a languageIn the literals may be in any order.
-      let filteredLiteralValues: rdfjsResource.Resource.Values<rdfjs.Literal> | undefined;
-      for (const languageIn of uniqueLanguageIn) {
-        if (!filteredLiteralValues) {
-          filteredLiteralValues = literalValues.filter(value => value.language === languageIn);
-        } else {
-          filteredLiteralValues = filteredLiteralValues.concat(...literalValues.filter(value => value.language === languageIn).toArray());
-        }
-      }
-
-      return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(filteredLiteralValues!);
-    })`,
-      valueTo: undefined,
+        return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(filteredLiteralValues!.map(literalValue => new rdfjsResource.Resource.Value({ object: literalValue, predicate: ${variables.predicate}, subject: ${variables.resource} })));
+      })`,
+      valueTo: "chain(values => values.chainMap(value => value.toLiteral()))",
     };
   }
 
@@ -106,31 +96,46 @@ export class LiteralType extends TermType<Literal, Literal> {
     return `${variables.zod}.object({ "@language": ${variables.zod}.string().optional(), "@type": ${variables.zod}.string().optional(), "@value": ${variables.zod}.string() })`;
   }
 
+  override snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): readonly string[] {
+    let snippetDeclarations = super.snippetDeclarations(parameters);
+    const { features } = parameters;
+    if (features.has("sparql") && this.languageIn.length > 0) {
+      snippetDeclarations = snippetDeclarations.concat(
+        SnippetDeclarations.arrayIntersection,
+      );
+    }
+    return snippetDeclarations;
+  }
+
   override sparqlWherePatterns(
     parameters: Parameters<Type["sparqlWherePatterns"]>[0] & {
-      ignoreLanguageIn?: boolean;
+      ignoreLiteralLanguage?: boolean;
     },
   ): readonly string[] {
-    const { context, ignoreLanguageIn, variables } = parameters;
+    const { context, ignoreLiteralLanguage, variables } = parameters;
 
     const superPatterns = super.sparqlWherePatterns(parameters);
-    if (ignoreLanguageIn || context === "subject") {
+    if (ignoreLiteralLanguage || context === "subject") {
       return superPatterns;
     }
 
-    invariant(this.name.indexOf("rdfjs.Literal") !== -1, this.name);
-
     return superPatterns.concat(
-      `...[(${variables.languageIn} && ${variables.languageIn}.length > 0) ? ${variables.languageIn} : ${JSON.stringify(this.languageIn)}]
-        .filter(languagesIn => languagesIn.length > 0)
-        .map(languagesIn =>
-          languagesIn.map(languageIn => 
+      `...[${
+        this.languageIn.length > 0
+          ? `[...${syntheticNamePrefix}arrayIntersection(${JSON.stringify(this.languageIn)}, ${variables.preferredLanguages} ?? [])]`
+          : `(${variables.preferredLanguages} ?? [])`
+      }]
+        .filter(languages => languages.length > 0)
+        .map(languages =>
+          languages.map(language => 
             ({
               type: "operation" as const,
               operator: "=",
               args: [
                 { type: "operation" as const, operator: "lang", args: [${variables.object}] },
-                dataFactory.literal(languageIn)
+                dataFactory.literal(language)
               ]
             })
           )
@@ -138,15 +143,16 @@ export class LiteralType extends TermType<Literal, Literal> {
         .map(langEqualsExpressions => 
           ({
             type: "filter" as const,
-            expression:
-              langEqualsExpressions.length === 1
-                ? langEqualsExpressions[0]
-                :
-                  {
-                    type: "operation" as const,
-                    operator: "||",
-                    args: langEqualsExpressions
-                  },
+            expression: langEqualsExpressions.reduce((reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression]
+              };
+            }, null as sparqljs.Expression | null) as sparqljs.Expression
           })
         )`,
     );

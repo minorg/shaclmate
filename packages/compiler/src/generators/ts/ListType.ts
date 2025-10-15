@@ -272,7 +272,7 @@ export class ListType extends Type {
               allowIgnoreRdfType: true,
               context: "subject",
               variables: {
-                languageIn: parameters.variables.languageIn,
+                preferredLanguages: parameters.variables.preferredLanguages,
                 subject: item0Variable,
                 variablePrefix: variablePrefix("Item0"),
               },
@@ -317,7 +317,7 @@ export class ListType extends Type {
               allowIgnoreRdfType: true,
               context: "subject",
               variables: {
-                languageIn: parameters.variables.languageIn,
+                preferredLanguages: parameters.variables.preferredLanguages,
                 subject: itemNVariable,
                 variablePrefix: variablePrefix("ItemN"),
               },

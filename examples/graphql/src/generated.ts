@@ -192,14 +192,14 @@ export namespace $DefaultStub {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, $DefaultStub> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -210,8 +210,8 @@ export namespace $DefaultStub {
       .$propertiesFromRdf({
         ...context,
         ignoreRdfType,
-        languageIn,
         objectSet,
+        preferredLanguages,
         resource,
       })
       .map((properties) => new $DefaultStub(properties));
@@ -219,16 +219,16 @@ export namespace $DefaultStub {
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }> {
     const $identifier: $DefaultStub.$Identifier = $resource.identifier;
@@ -362,14 +362,14 @@ export namespace UnionMember2 {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, UnionMember2> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -379,24 +379,24 @@ export namespace UnionMember2 {
     return UnionMember2.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new UnionMember2(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -405,17 +405,31 @@ export namespace UnionMember2 {
       optionalStringProperty: purify.Maybe<string>;
     }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/UnionMember2":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(UnionMember2.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember2)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: UnionMember2.$Identifier = $resource.identifier;
@@ -430,6 +444,56 @@ export namespace UnionMember2 {
         unique: true,
       }),
     )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  UnionMember2.$properties.optionalStringProperty["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
       .chain((values) => values.chainMap((value) => value.toString()))
       .map((values) =>
         values.length > 0
@@ -583,14 +647,14 @@ export namespace UnionMember1 {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, UnionMember1> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -600,24 +664,24 @@ export namespace UnionMember1 {
     return UnionMember1.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new UnionMember1(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -626,17 +690,31 @@ export namespace UnionMember1 {
       optionalNumberProperty: purify.Maybe<number>;
     }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/UnionMember1":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(UnionMember1.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember1)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: UnionMember1.$Identifier = $resource.identifier;
@@ -849,14 +927,14 @@ export namespace Nested {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, Nested> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -866,24 +944,24 @@ export namespace Nested {
     return Nested.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new Nested(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -894,17 +972,31 @@ export namespace Nested {
       requiredStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/Nested":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(Nested.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Nested)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: Nested.$Identifier = $resource.identifier;
@@ -947,6 +1039,56 @@ export namespace Nested {
         unique: true,
       }),
     )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  UnionMember2.$properties.optionalStringProperty["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
       .chain((values) => values.chainMap((value) => value.toString()))
       .map((values) =>
         values.length > 0
@@ -973,6 +1115,56 @@ export namespace Nested {
           unique: true,
         }),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    Nested.$properties.requiredStringProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_requiredStringPropertyEither.isLeft()) {
@@ -1127,14 +1319,14 @@ export namespace ParentStatic {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, Parent> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -1151,8 +1343,8 @@ export namespace ParentStatic {
       ParentStatic.$propertiesFromRdf({
         ...context,
         ignoreRdfType,
-        languageIn,
         objectSet,
+        preferredLanguages,
         resource,
       }).map((properties) => new Parent(properties)),
     );
@@ -1160,32 +1352,47 @@ export namespace ParentStatic {
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
     { $identifier: rdfjs.NamedNode; parentStringProperty: purify.Maybe<string> }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/Parent":
+            case "http://example.com/Child":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(ParentStatic.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Parent)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     if ($resource.identifier.termType !== "NamedNode") {
@@ -1211,6 +1418,56 @@ export namespace ParentStatic {
         unique: true,
       }),
     )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  ParentStatic.$properties.parentStringProperty["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
       .chain((values) => values.chainMap((value) => value.toString()))
       .map((values) =>
         values.length > 0
@@ -1561,14 +1818,14 @@ export namespace Child {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, Child> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -1578,24 +1835,24 @@ export namespace Child {
     return Child.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new Child(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -1620,8 +1877,8 @@ export namespace Child {
     const $super0Either = ParentStatic.$propertiesFromRdf({
       ...$context,
       ignoreRdfType: true,
-      languageIn: $languageIn,
       objectSet: $objectSet,
+      preferredLanguages: $preferredLanguages,
       resource: $resource,
     });
     if ($super0Either.isLeft()) {
@@ -1629,17 +1886,31 @@ export namespace Child {
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/Child":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(Child.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Child)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     if ($resource.identifier.termType !== "NamedNode") {
@@ -1665,6 +1936,55 @@ export namespace Child {
         unique: true,
       }),
     )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate: Child.$properties.childStringProperty["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
       .chain((values) => values.chainMap((value) => value.toString()))
       .map((values) =>
         values.length > 0
@@ -1698,8 +2018,8 @@ export namespace Child {
             $DefaultStub.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -1747,8 +2067,8 @@ export namespace Child {
             $DefaultStub.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -1798,8 +2118,8 @@ export namespace Child {
             Nested.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -1830,6 +2150,56 @@ export namespace Child {
         unique: true,
       }),
     )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  UnionMember2.$properties.optionalStringProperty["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
       .chain((values) => values.chainMap((value) => value.toString()))
       .map((values) =>
         values.length > 0
@@ -1856,6 +2226,56 @@ export namespace Child {
           unique: true,
         }),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    Nested.$properties.requiredStringProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_requiredStringPropertyEither.isLeft()) {
@@ -1920,8 +2340,8 @@ export namespace Union {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, Union> {
     return (
@@ -2071,6 +2491,150 @@ export namespace $ObjectSet {
       };
 }
 
+export abstract class $ForwardingObjectSet implements $ObjectSet {
+  protected abstract get $delegate(): $ObjectSet;
+
+  child(identifier: Child.$Identifier): Promise<purify.Either<Error, Child>> {
+    return this.$delegate.child(identifier);
+  }
+
+  childIdentifiers(
+    query?: $ObjectSet.Query<Child.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Child.$Identifier[]>> {
+    return this.$delegate.childIdentifiers(query);
+  }
+
+  children(
+    query?: $ObjectSet.Query<Child.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Child[]>> {
+    return this.$delegate.children(query);
+  }
+
+  childrenCount(
+    query?: Pick<$ObjectSet.Query<Child.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.childrenCount(query);
+  }
+
+  nested(
+    identifier: Nested.$Identifier,
+  ): Promise<purify.Either<Error, Nested>> {
+    return this.$delegate.nested(identifier);
+  }
+
+  nestedIdentifiers(
+    query?: $ObjectSet.Query<Nested.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Nested.$Identifier[]>> {
+    return this.$delegate.nestedIdentifiers(query);
+  }
+
+  nesteds(
+    query?: $ObjectSet.Query<Nested.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Nested[]>> {
+    return this.$delegate.nesteds(query);
+  }
+
+  nestedsCount(
+    query?: Pick<$ObjectSet.Query<Nested.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.nestedsCount(query);
+  }
+
+  parent(
+    identifier: ParentStatic.$Identifier,
+  ): Promise<purify.Either<Error, Parent>> {
+    return this.$delegate.parent(identifier);
+  }
+
+  parentIdentifiers(
+    query?: $ObjectSet.Query<ParentStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ParentStatic.$Identifier[]>> {
+    return this.$delegate.parentIdentifiers(query);
+  }
+
+  parents(
+    query?: $ObjectSet.Query<ParentStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Parent[]>> {
+    return this.$delegate.parents(query);
+  }
+
+  parentsCount(
+    query?: Pick<$ObjectSet.Query<ParentStatic.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.parentsCount(query);
+  }
+
+  unionMember1(
+    identifier: UnionMember1.$Identifier,
+  ): Promise<purify.Either<Error, UnionMember1>> {
+    return this.$delegate.unionMember1(identifier);
+  }
+
+  unionMember1Identifiers(
+    query?: $ObjectSet.Query<UnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UnionMember1.$Identifier[]>> {
+    return this.$delegate.unionMember1Identifiers(query);
+  }
+
+  unionMember1s(
+    query?: $ObjectSet.Query<UnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UnionMember1[]>> {
+    return this.$delegate.unionMember1s(query);
+  }
+
+  unionMember1sCount(
+    query?: Pick<$ObjectSet.Query<UnionMember1.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.unionMember1sCount(query);
+  }
+
+  unionMember2(
+    identifier: UnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, UnionMember2>> {
+    return this.$delegate.unionMember2(identifier);
+  }
+
+  unionMember2Identifiers(
+    query?: $ObjectSet.Query<UnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UnionMember2.$Identifier[]>> {
+    return this.$delegate.unionMember2Identifiers(query);
+  }
+
+  unionMember2s(
+    query?: $ObjectSet.Query<UnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UnionMember2[]>> {
+    return this.$delegate.unionMember2s(query);
+  }
+
+  unionMember2sCount(
+    query?: Pick<$ObjectSet.Query<UnionMember2.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.unionMember2sCount(query);
+  }
+
+  union(identifier: Union.$Identifier): Promise<purify.Either<Error, Union>> {
+    return this.$delegate.union(identifier);
+  }
+
+  unionIdentifiers(
+    query?: $ObjectSet.Query<Union.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Union.$Identifier[]>> {
+    return this.$delegate.unionIdentifiers(query);
+  }
+
+  unions(
+    query?: $ObjectSet.Query<Union.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Union[]>> {
+    return this.$delegate.unions(query);
+  }
+
+  unionsCount(
+    query?: Pick<$ObjectSet.Query<Union.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.unionsCount(query);
+  }
+}
+
 export class $RdfjsDatasetObjectSet implements $ObjectSet {
   readonly resourceSet: rdfjsResource.ResourceSet;
 
@@ -2099,7 +2663,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   childIdentifiersSync(
     query?: $ObjectSet.Query<Child.$Identifier>,
   ): purify.Either<Error, readonly Child.$Identifier[]> {
-    return this.$objectIdentifiersSync<Child, Child.$Identifier>(Child, query);
+    return this.$objectIdentifiersSync<Child, Child.$Identifier>(
+      { $fromRdf: Child.$fromRdf, $fromRdfTypes: [Child.$fromRdfType] },
+      query,
+    );
   }
 
   async children(
@@ -2111,7 +2678,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   childrenSync(
     query?: $ObjectSet.Query<Child.$Identifier>,
   ): purify.Either<Error, readonly Child[]> {
-    return this.$objectsSync<Child, Child.$Identifier>(Child, query);
+    return this.$objectsSync<Child, Child.$Identifier>(
+      { $fromRdf: Child.$fromRdf, $fromRdfTypes: [Child.$fromRdfType] },
+      query,
+    );
   }
 
   async childrenCount(
@@ -2123,7 +2693,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   childrenCountSync(
     query?: Pick<$ObjectSet.Query<Child.$Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Child, Child.$Identifier>(Child, query);
+    return this.$objectsCountSync<Child, Child.$Identifier>(
+      { $fromRdf: Child.$fromRdf, $fromRdfTypes: [Child.$fromRdfType] },
+      query,
+    );
   }
 
   async nested(
@@ -2148,7 +2721,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Nested.$Identifier>,
   ): purify.Either<Error, readonly Nested.$Identifier[]> {
     return this.$objectIdentifiersSync<Nested, Nested.$Identifier>(
-      Nested,
+      { $fromRdf: Nested.$fromRdf, $fromRdfTypes: [Nested.$fromRdfType] },
       query,
     );
   }
@@ -2162,7 +2735,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   nestedsSync(
     query?: $ObjectSet.Query<Nested.$Identifier>,
   ): purify.Either<Error, readonly Nested[]> {
-    return this.$objectsSync<Nested, Nested.$Identifier>(Nested, query);
+    return this.$objectsSync<Nested, Nested.$Identifier>(
+      { $fromRdf: Nested.$fromRdf, $fromRdfTypes: [Nested.$fromRdfType] },
+      query,
+    );
   }
 
   async nestedsCount(
@@ -2174,7 +2750,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   nestedsCountSync(
     query?: Pick<$ObjectSet.Query<Nested.$Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Nested, Nested.$Identifier>(Nested, query);
+    return this.$objectsCountSync<Nested, Nested.$Identifier>(
+      { $fromRdf: Nested.$fromRdf, $fromRdfTypes: [Nested.$fromRdfType] },
+      query,
+    );
   }
 
   async parent(
@@ -2201,7 +2780,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ParentStatic.$Identifier>,
   ): purify.Either<Error, readonly ParentStatic.$Identifier[]> {
     return this.$objectIdentifiersSync<Parent, ParentStatic.$Identifier>(
-      ParentStatic,
+      {
+        $fromRdf: ParentStatic.$fromRdf,
+        $fromRdfTypes: [ParentStatic.$fromRdfType, Child.$fromRdfType],
+      },
       query,
     );
   }
@@ -2216,7 +2798,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ParentStatic.$Identifier>,
   ): purify.Either<Error, readonly Parent[]> {
     return this.$objectsSync<Parent, ParentStatic.$Identifier>(
-      ParentStatic,
+      {
+        $fromRdf: ParentStatic.$fromRdf,
+        $fromRdfTypes: [ParentStatic.$fromRdfType, Child.$fromRdfType],
+      },
       query,
     );
   }
@@ -2231,7 +2816,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<ParentStatic.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<Parent, ParentStatic.$Identifier>(
-      ParentStatic,
+      {
+        $fromRdf: ParentStatic.$fromRdf,
+        $fromRdfTypes: [ParentStatic.$fromRdfType, Child.$fromRdfType],
+      },
       query,
     );
   }
@@ -2260,7 +2848,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<UnionMember1.$Identifier>,
   ): purify.Either<Error, readonly UnionMember1.$Identifier[]> {
     return this.$objectIdentifiersSync<UnionMember1, UnionMember1.$Identifier>(
-      UnionMember1,
+      {
+        $fromRdf: UnionMember1.$fromRdf,
+        $fromRdfTypes: [UnionMember1.$fromRdfType],
+      },
       query,
     );
   }
@@ -2275,7 +2866,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<UnionMember1.$Identifier>,
   ): purify.Either<Error, readonly UnionMember1[]> {
     return this.$objectsSync<UnionMember1, UnionMember1.$Identifier>(
-      UnionMember1,
+      {
+        $fromRdf: UnionMember1.$fromRdf,
+        $fromRdfTypes: [UnionMember1.$fromRdfType],
+      },
       query,
     );
   }
@@ -2290,7 +2884,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<UnionMember1.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<UnionMember1, UnionMember1.$Identifier>(
-      UnionMember1,
+      {
+        $fromRdf: UnionMember1.$fromRdf,
+        $fromRdfTypes: [UnionMember1.$fromRdfType],
+      },
       query,
     );
   }
@@ -2319,7 +2916,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<UnionMember2.$Identifier>,
   ): purify.Either<Error, readonly UnionMember2.$Identifier[]> {
     return this.$objectIdentifiersSync<UnionMember2, UnionMember2.$Identifier>(
-      UnionMember2,
+      {
+        $fromRdf: UnionMember2.$fromRdf,
+        $fromRdfTypes: [UnionMember2.$fromRdfType],
+      },
       query,
     );
   }
@@ -2334,7 +2934,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<UnionMember2.$Identifier>,
   ): purify.Either<Error, readonly UnionMember2[]> {
     return this.$objectsSync<UnionMember2, UnionMember2.$Identifier>(
-      UnionMember2,
+      {
+        $fromRdf: UnionMember2.$fromRdf,
+        $fromRdfTypes: [UnionMember2.$fromRdfType],
+      },
       query,
     );
   }
@@ -2349,7 +2952,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<UnionMember2.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<UnionMember2, UnionMember2.$Identifier>(
-      UnionMember2,
+      {
+        $fromRdf: UnionMember2.$fromRdf,
+        $fromRdfTypes: [UnionMember2.$fromRdfType],
+      },
       query,
     );
   }
@@ -2376,7 +2982,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Union.$Identifier>,
   ): purify.Either<Error, readonly Union.$Identifier[]> {
     return this.$objectUnionIdentifiersSync<Union, Union.$Identifier>(
-      [UnionMember1, UnionMember2],
+      [
+        {
+          $fromRdf: UnionMember1.$fromRdf,
+          $fromRdfTypes: [UnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: UnionMember2.$fromRdf,
+          $fromRdfTypes: [UnionMember2.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -2391,7 +3006,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Union.$Identifier>,
   ): purify.Either<Error, readonly Union[]> {
     return this.$objectUnionsSync<Union, Union.$Identifier>(
-      [UnionMember1, UnionMember2],
+      [
+        {
+          $fromRdf: UnionMember1.$fromRdf,
+          $fromRdfTypes: [UnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: UnionMember2.$fromRdf,
+          $fromRdfTypes: [UnionMember2.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -2406,7 +3030,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<Union.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectUnionsCountSync<Union, Union.$Identifier>(
-      [UnionMember1, UnionMember2],
+      [
+        {
+          $fromRdf: UnionMember1.$fromRdf,
+          $fromRdfTypes: [UnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: UnionMember2.$fromRdf,
+          $fromRdfTypes: [UnionMember2.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -2420,7 +3053,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
-      $fromRdfType?: rdfjs.NamedNode;
+      $fromRdfTypes: readonly rdfjs.NamedNode[];
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, readonly ObjectIdentifierT[]> {
@@ -2438,7 +3071,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
-      $fromRdfType?: rdfjs.NamedNode;
+      $fromRdfTypes: readonly rdfjs.NamedNode[];
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, readonly ObjectT[]> {
@@ -2504,13 +3137,22 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       return purify.Either.of(objects);
     }
 
-    if (!objectType.$fromRdfType) {
+    if (objectType.$fromRdfTypes.length === 0) {
       return purify.Either.of([]);
     }
 
-    const resources = [
-      ...this.resourceSet.instancesOf(objectType.$fromRdfType),
-    ];
+    const resources: rdfjsResource.Resource[] = [];
+    for (const fromRdfType of objectType.$fromRdfTypes) {
+      for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+        if (
+          !resources.some((existingResource) =>
+            existingResource.identifier.equals(resource.identifier),
+          )
+        ) {
+          resources.push(resource);
+        }
+      }
+    }
     // Sort resources by identifier so limit and offset are deterministic
     resources.sort((left, right) =>
       left.identifier.value.localeCompare(right.identifier.value),
@@ -2542,7 +3184,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
-      $fromRdfType?: rdfjs.NamedNode;
+      $fromRdfTypes: readonly rdfjs.NamedNode[];
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, number> {
@@ -2560,7 +3202,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
-      $fromRdfType?: rdfjs.NamedNode;
+      $fromRdfTypes: readonly rdfjs.NamedNode[];
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, readonly ObjectIdentifierT[]> {
@@ -2579,7 +3221,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
-      $fromRdfType?: rdfjs.NamedNode;
+      $fromRdfTypes: readonly rdfjs.NamedNode[];
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, readonly ObjectT[]> {
@@ -2660,22 +3302,27 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           resource: rdfjsResource.Resource,
           options: { objectSet: $ObjectSet },
         ) => purify.Either<Error, ObjectT>;
-        $fromRdfType?: rdfjs.NamedNode;
+        $fromRdfTypes: readonly rdfjs.NamedNode[];
       };
       resource: rdfjsResource.Resource;
     }[] = [];
     for (const objectType of objectTypes) {
-      if (!objectType.$fromRdfType) {
+      if (objectType.$fromRdfTypes.length === 0) {
         continue;
       }
 
-      for (const resource of this.resourceSet.instancesOf(
-        objectType.$fromRdfType,
-      )) {
-        resources.push({ objectType, resource });
+      for (const fromRdfType of objectType.$fromRdfTypes) {
+        for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+          if (
+            !resources.some(({ resource: existingResource }) =>
+              existingResource.identifier.equals(resource.identifier),
+            )
+          ) {
+            resources.push({ objectType, resource });
+          }
+        }
       }
     }
-
     // Sort resources by identifier so limit and offset are deterministic
     resources.sort((left, right) =>
       left.resource.identifier.value.localeCompare(
@@ -2709,7 +3356,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
-      $fromRdfType?: rdfjs.NamedNode;
+      $fromRdfTypes: readonly rdfjs.NamedNode[];
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, number> {

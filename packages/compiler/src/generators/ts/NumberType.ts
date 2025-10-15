@@ -1,6 +1,7 @@
 import { Memoize } from "typescript-memoize";
 
 import { PrimitiveType } from "./PrimitiveType.js";
+import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
@@ -48,17 +49,23 @@ export abstract class NumberType extends PrimitiveType<number> {
     }
   }
 
-  protected override fromRdfResourceValueExpression({
+  protected override fromRdfExpressionChain({
     variables,
-  }: Parameters<
-    PrimitiveType<number>["fromRdfResourceValueExpression"]
-  >[0]): string {
-    let expression = `${variables.resourceValue}.toNumber()`;
+  }: Parameters<TermType["fromRdfExpressionChain"]>[0]): ReturnType<
+    TermType["fromRdfExpressionChain"]
+  > {
+    let fromRdfResourceValueExpression = "value.toNumber()";
     if (this.primitiveIn.length > 0) {
       const eitherTypeParameters = `<Error, ${this.name}>`;
-      expression = `${expression}.chain(value => { switch (value) { ${this.primitiveIn.map((value) => `case ${value}:`).join(" ")} return purify.Either.of${eitherTypeParameters}(value); default: return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: "rdfLiteral.toRdf(value)", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })`;
+      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(value => { switch (value) { ${this.primitiveIn.map((value) => `case ${value}:`).join(" ")} return purify.Either.of${eitherTypeParameters}(value); default: return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: "rdfLiteral.toRdf(value)", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })`;
     }
-    return expression;
+
+    return {
+      ...super.fromRdfExpressionChain({ variables }),
+      languageIn: undefined,
+      preferredLanguages: undefined,
+      valueTo: `chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
+    };
   }
 
   override toRdfExpression({

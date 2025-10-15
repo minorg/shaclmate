@@ -41,29 +41,6 @@ export abstract class PrimitiveType<
     return variables.value;
   }
 
-  protected override fromRdfExpressionChain({
-    variables,
-  }: Parameters<Type["fromRdfExpression"]>[0]): {
-    defaultValue?: string;
-    hasValues?: string;
-    languageIn?: string;
-    valueTo?: string;
-  } {
-    return {
-      ...super.fromRdfExpressionChain({ variables }),
-      languageIn: undefined,
-      valueTo: `chain(values => values.chainMap(value => ${this.fromRdfResourceValueExpression(
-        {
-          variables: {
-            predicate: variables.predicate,
-            resource: variables.resource,
-            resourceValue: "value",
-          },
-        },
-      )}))`,
-    };
-  }
-
   override graphqlResolveExpression({
     variables,
   }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
@@ -87,9 +64,12 @@ export abstract class PrimitiveType<
   }
 
   override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+    parameters: Parameters<LiteralType["sparqlWherePatterns"]>[0],
   ): readonly string[] {
-    return super.sparqlWherePatterns({ ...parameters, ignoreLanguageIn: true });
+    return super.sparqlWherePatterns({
+      ...parameters,
+      ignoreLiteralLanguage: parameters.ignoreLiteralLanguage ?? true,
+    });
   }
 
   override toJsonExpression({
@@ -97,15 +77,4 @@ export abstract class PrimitiveType<
   }: Parameters<Type["toJsonExpression"]>[0]): string {
     return variables.value;
   }
-
-  /**
-   * Convert an rdfjsResource.Resource.Value to a value of this type.
-   * @param variables
-   * @protected
-   */
-  protected abstract fromRdfResourceValueExpression({
-    variables,
-  }: {
-    variables: { predicate: string; resource: string; resourceValue: string };
-  }): string;
 }

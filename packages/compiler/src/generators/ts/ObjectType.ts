@@ -358,7 +358,7 @@ export class ObjectType extends DeclaredType {
   override fromRdfExpression({
     variables,
   }: Parameters<DeclaredType["fromRdfExpression"]>[0]): string {
-    return `${variables.resourceValues}.chain(values => values.chainMap(value => value.toResource().chain(resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { ...${variables.context}, ${variables.ignoreRdfType ? "ignoreRdfType: true, " : ""}languageIn: ${variables.languageIn}, objectSet: ${variables.objectSet} }))))`;
+    return `${variables.resourceValues}.chain(values => values.chainMap(value => value.toResource().chain(resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { ...${variables.context}, ${variables.ignoreRdfType ? "ignoreRdfType: true, " : ""}objectSet: ${variables.objectSet}, preferredLanguages: ${variables.preferredLanguages} }))))`;
   }
 
   override graphqlResolveExpression({
@@ -472,7 +472,7 @@ export class ObjectType extends DeclaredType {
           `...${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
             {
               ignoreRdfType: parameters.allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
-              languageIn: parameters.variables.languageIn,
+              preferredLanguages: parameters.variables.preferredLanguages,
               subject: parameters.variables.subject,
               variablePrefix: parameters.variables.variablePrefix,
             },

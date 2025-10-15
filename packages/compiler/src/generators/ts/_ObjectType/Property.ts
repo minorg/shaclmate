@@ -159,8 +159,8 @@ export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
   abstract fromRdfStatements(parameters: {
     variables: {
       context: string;
-      languageIn: string;
       objectSet: string;
+      preferredLanguages: string;
       resource: string;
     };
   }): readonly string[];
@@ -210,7 +210,11 @@ export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
    * An array of SPARQL.js where patterns for this property as strings (so they can incorporate runtime calls).
    */
   abstract sparqlWherePatterns(parameters: {
-    variables: { languageIn: string; subject: string; variablePrefix: string };
+    variables: {
+      preferredLanguages: string;
+      subject: string;
+      variablePrefix: string;
+    };
   }): readonly string[];
 
   /**

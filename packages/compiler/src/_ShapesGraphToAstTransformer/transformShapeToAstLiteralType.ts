@@ -49,7 +49,7 @@ export function transformShapeToAstLiteralType(
         hasValues: literalHasValues,
         in_: literalIn,
         kind: "LiteralType",
-        languageIn: shape.constraints.languageIn,
+        languageIn: [...new Set(shape.constraints.languageIn)],
         maxExclusive: shape.constraints.maxExclusive,
         maxInclusive: shape.constraints.maxInclusive,
         minExclusive: shape.constraints.minExclusive,

@@ -40,17 +40,20 @@ export class StringType extends PrimitiveType<string> {
     return this.typeof;
   }
 
-  protected override fromRdfResourceValueExpression({
+  protected override fromRdfExpressionChain({
     variables,
   }: Parameters<
-    PrimitiveType<string>["fromRdfResourceValueExpression"]
-  >[0]): string {
-    let expression = `${variables.resourceValue}.toString()`;
-    if (this.primitiveIn.length > 0) {
-      const eitherTypeParameters = `<Error, ${this.name}>`;
-      expression = `${expression}.chain(value => { switch (value) { ${this.primitiveIn.map((value) => `case "${value}":`).join(" ")} return purify.Either.of${eitherTypeParameters}(value); default: return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: "rdfLiteral.toRdf(value)", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })`;
-    }
-    return expression;
+    PrimitiveType<string>["fromRdfExpressionChain"]
+  >[0]): ReturnType<PrimitiveType<string>["fromRdfExpressionChain"]> {
+    const inChain =
+      this.primitiveIn.length > 0
+        ? `.chain(string_ => { switch (string_) { ${this.primitiveIn.map((value) => `case "${value}":`).join(" ")} return purify.Either.of<Error, ${this.name}>(string_); default: return purify.Left<Error, ${this.name}>(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: "value.toTerm()", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })`
+        : "";
+
+    return {
+      ...super.fromRdfExpressionChain({ variables }),
+      valueTo: `chain(values => values.chainMap(value => value.toString()${inChain}))`,
+    };
   }
 
   override hashStatements({
@@ -70,6 +73,15 @@ export class StringType extends PrimitiveType<string> {
       default:
         return `${variables.zod}.enum(${JSON.stringify(this.primitiveIn)})`;
     }
+  }
+
+  override sparqlWherePatterns(
+    parameters: Parameters<PrimitiveType<string>["sparqlWherePatterns"]>[0],
+  ): readonly string[] {
+    return super.sparqlWherePatterns({
+      ...parameters,
+      ignoreLiteralLanguage: false,
+    });
   }
 
   override toRdfExpression({

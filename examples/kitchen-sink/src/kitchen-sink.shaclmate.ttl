@@ -376,18 +376,21 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Shape that uses the StringList in a property." ;
     sh:property [
+        rdfs:comment "literal property for testing languageIn" ;
         sh:languageIn ("en"
             "fr"
         ) ;
-        sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :languageInPropertiesLanguageInProperty
+        sh:path :languageInLiteralProperty
     ], [
-        rdfs:comment "literal property for testing runtime languageIn" ;
-        sh:maxCount 1 ;
+        rdfs:comment "string property for testing languageIn; must have '' as an acceptable languageIn since that's how it will be serialized to RDF" ;
+        sh:datatype xsd:string ;
+        sh:languageIn (""
+            "en"
+            "fr"
+        ) ;
         sh:minCount 1 ;
-        sh:nodeKind sh:Literal ;
-        sh:path :languageInPropertiesLiteralProperty
+        sh:path :languageInStringProperty
     ] .
 
 :LazilyResolvedBlankNodeOrIriClass
@@ -550,16 +553,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:property [
         shaclmate:lazy true ;
         sh:maxCount 1 ;
-        sh:minCount 0 ;
-        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
-        sh:path :optionalLazyToResolvedInterfaceProperty
-    ], [
-        shaclmate:lazy true ;
-        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
-        sh:path :setLazyToResolvedInterfaceProperty
-    ], [
-        shaclmate:lazy true ;
-        sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:node :LazilyResolvedBlankNodeOrIriInterface ;
         sh:path :requiredLazyToResolvedInterfaceProperty
@@ -599,6 +592,16 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:node :LazilyResolvedInterfaceUnion ;
         sh:path :optionalStubInterfaceUnionToResolvedInterfaceUnionProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:minCount 0 ;
+        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
+        sh:path :optionalLazyToResolvedInterfaceProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
+        sh:path :setLazyToResolvedInterfaceProperty
     ] .
 
 :ListPropertiesClass
@@ -733,17 +736,17 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:minCount 1 ;
         sh:path :requiredStringProperty
     ], [
-        rdfs:comment "Option: maxCount=1 minCount=0" ;
+        rdfs:comment "Option: maxCount=1, minCount=0" ;
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
         sh:path :optionalStringProperty
     ], [
-        rdfs:comment "Set: minCount implicitly=0, no maxCount or maxCount > 1" ;
+        rdfs:comment "Set: minCount implicitly=0, no maxCount" ;
         sh:datatype xsd:string ;
         sh:path :emptyStringSetProperty
     ], [
-        rdfs:comment "Set: minCount implicitly=1, no maxCount or maxCount > 1" ;
+        rdfs:comment "Set: minCount=1, no maxCount" ;
         sh:datatype xsd:string ;
         sh:minCount 1 ;
         sh:path :nonEmptyStringSetProperty

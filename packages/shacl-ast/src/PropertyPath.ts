@@ -55,7 +55,7 @@ export namespace PropertyPath {
     _?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
     },
   ): Either<Error, PropertyPath> {
     // Predicate path

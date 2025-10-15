@@ -20,7 +20,7 @@ export function sparqlFunctionDeclarations(
   }
 
   const variables = {
-    languageIn: "parameters?.languageIn",
+    preferredLanguages: "parameters?.preferredLanguages",
     subject: "subject",
     variablePrefix: "variablePrefix",
   };
@@ -183,7 +183,7 @@ for (const pattern of propertyPatterns) {
         {
           hasQuestionToken: true,
           name: `${nop ? "_" : ""}parameters`,
-          type: '{ ignoreRdfType?: boolean; languageIn?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }',
+          type: '{ ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }',
         },
       ],
       returnType: "readonly sparqljs.Pattern[]",

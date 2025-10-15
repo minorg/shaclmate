@@ -163,12 +163,9 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
 
   protected override fromRdfExpressionChain({
     variables,
-  }: Parameters<Type["fromRdfExpression"]>[0]): {
-    defaultValue?: string;
-    hasValues?: string;
-    languageIn?: string;
-    valueTo?: string;
-  } {
+  }: Parameters<TermType["fromRdfExpressionChain"]>[0]): ReturnType<
+    TermType["fromRdfExpressionChain"]
+  > {
     let valueToExpression: string;
     if (this.nodeKinds.size === 2) {
       valueToExpression = "value.toIdentifier()";
@@ -183,7 +180,7 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
     }
 
     return {
-      ...super.fromRdfExpressionChain,
+      ...super.fromRdfExpressionChain({ variables }),
       valueTo: `chain(values => values.chainMap(value => ${valueToExpression}))`,
     };
   }

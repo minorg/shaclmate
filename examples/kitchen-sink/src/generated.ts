@@ -396,6 +396,35 @@ export class $LazyObjectSet<
     );
   }
 }
+export function $arrayIntersection<T>(
+  left: readonly T[],
+  right: readonly T[],
+): readonly T[] {
+  if (left.length === 0) {
+    return right;
+  }
+  if (right.length === 0) {
+    return left;
+  }
+
+  const intersection = new Set<T>();
+  if (left.length <= right.length) {
+    const rightSet = new Set(right);
+    for (const leftElement of left) {
+      if (rightSet.has(leftElement)) {
+        intersection.add(leftElement);
+      }
+    }
+  } else {
+    const leftSet = new Set(left);
+    for (const rightElement of right) {
+      if (leftSet.has(rightElement)) {
+        intersection.add(rightElement);
+      }
+    }
+  }
+  return [...intersection];
+}
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 export class $NamedDefaultStub {
   readonly $identifier: $NamedDefaultStub.$Identifier;
@@ -575,14 +604,14 @@ export namespace $NamedDefaultStub {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, $NamedDefaultStub> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -593,8 +622,8 @@ export namespace $NamedDefaultStub {
       .$propertiesFromRdf({
         ...context,
         ignoreRdfType,
-        languageIn,
         objectSet,
+        preferredLanguages,
         resource,
       })
       .map((properties) => new $NamedDefaultStub(properties));
@@ -602,16 +631,16 @@ export namespace $NamedDefaultStub {
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.NamedNode }> {
     if ($resource.identifier.termType !== "NamedNode") {
@@ -634,12 +663,12 @@ export namespace $NamedDefaultStub {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -656,7 +685,7 @@ export namespace $NamedDefaultStub {
       where: (queryParameters.where ?? []).concat(
         $NamedDefaultStub.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -666,7 +695,7 @@ export namespace $NamedDefaultStub {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -687,7 +716,7 @@ export namespace $NamedDefaultStub {
 
   export function $sparqlWherePatterns(_parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -878,14 +907,14 @@ export namespace $DefaultStub {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, $DefaultStub> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -896,8 +925,8 @@ export namespace $DefaultStub {
       .$propertiesFromRdf({
         ...context,
         ignoreRdfType,
-        languageIn,
         objectSet,
+        preferredLanguages,
         resource,
       })
       .map((properties) => new $DefaultStub(properties));
@@ -905,16 +934,16 @@ export namespace $DefaultStub {
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }> {
     const $identifier: $DefaultStub.$Identifier = $resource.identifier;
@@ -926,12 +955,12 @@ export namespace $DefaultStub {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -948,7 +977,7 @@ export namespace $DefaultStub {
       where: (queryParameters.where ?? []).concat(
         $DefaultStub.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -958,7 +987,7 @@ export namespace $DefaultStub {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -979,7 +1008,7 @@ export namespace $DefaultStub {
 
   export function $sparqlWherePatterns(_parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -1188,14 +1217,14 @@ export namespace UuidV4IriInterface {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, UuidV4IriInterface> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -1205,24 +1234,24 @@ export namespace UuidV4IriInterface {
     return UuidV4IriInterface.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     });
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -1254,6 +1283,58 @@ export namespace UuidV4IriInterface {
           unique: true,
         }),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    UuidV4IriInterface.$properties.uuidV4IriProperty[
+                      "identifier"
+                    ],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_uuidV4IriPropertyEither.isLeft()) {
@@ -1299,12 +1380,12 @@ export namespace UuidV4IriInterface {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -1321,7 +1402,7 @@ export namespace UuidV4IriInterface {
       where: (queryParameters.where ?? []).concat(
         UuidV4IriInterface.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -1331,7 +1412,7 @@ export namespace UuidV4IriInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -1363,7 +1444,7 @@ export namespace UuidV4IriInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -1386,6 +1467,40 @@ export namespace UuidV4IriInterface {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(`${variablePrefix}UuidV4IriProperty`),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -1642,14 +1757,14 @@ export namespace UuidV4IriClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, UuidV4IriClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -1659,24 +1774,24 @@ export namespace UuidV4IriClass {
     return UuidV4IriClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new UuidV4IriClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -1703,6 +1818,56 @@ export namespace UuidV4IriClass {
           unique: true,
         }),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    UuidV4IriClass.$properties.uuidV4IriProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_uuidV4IriPropertyEither.isLeft()) {
@@ -1722,12 +1887,12 @@ export namespace UuidV4IriClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -1744,7 +1909,7 @@ export namespace UuidV4IriClass {
       where: (queryParameters.where ?? []).concat(
         UuidV4IriClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -1754,7 +1919,7 @@ export namespace UuidV4IriClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -1786,7 +1951,7 @@ export namespace UuidV4IriClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -1809,6 +1974,40 @@ export namespace UuidV4IriClass {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(`${variablePrefix}UuidV4IriProperty`),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -2431,14 +2630,14 @@ export namespace UnionPropertiesClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, UnionPropertiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -2448,24 +2647,24 @@ export namespace UnionPropertiesClass {
     return UnionPropertiesClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new UnionPropertiesClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -2502,9 +2701,62 @@ export namespace UnionPropertiesClass {
             $resource.values($properties.narrowLiteralsProperty["identifier"], {
               unique: true,
             }),
-          ).chain((values) =>
-            values.chainMap((value) => value.toString()),
-          ) as purify.Either<
+          )
+            .chain((values) => {
+              if (!$preferredLanguages || $preferredLanguages.length === 0) {
+                return purify.Either.of<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+                >(values);
+              }
+
+              const literalValuesEither = values.chainMap((value) =>
+                value.toLiteral(),
+              );
+              if (literalValuesEither.isLeft()) {
+                return literalValuesEither;
+              }
+              const literalValues = literalValuesEither.unsafeCoerce();
+
+              // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+              // Within a preferredLanguage the literals may be in any order.
+              let filteredLiteralValues:
+                | rdfjsResource.Resource.Values<rdfjs.Literal>
+                | undefined;
+              for (const preferredLanguage of $preferredLanguages) {
+                if (!filteredLiteralValues) {
+                  filteredLiteralValues = literalValues.filter(
+                    (value) => value.language === preferredLanguage,
+                  );
+                } else {
+                  filteredLiteralValues = filteredLiteralValues.concat(
+                    ...literalValues
+                      .filter((value) => value.language === preferredLanguage)
+                      .toArray(),
+                  );
+                }
+              }
+
+              return purify.Either.of<
+                Error,
+                rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+              >(
+                filteredLiteralValues!.map(
+                  (literalValue) =>
+                    new rdfjsResource.Resource.Value({
+                      object: literalValue,
+                      predicate:
+                        UnionPropertiesClass.$properties.narrowLiteralsProperty[
+                          "identifier"
+                        ],
+                      subject: $resource,
+                    }),
+                ),
+              );
+            })
+            .chain((values) =>
+              values.chainMap((value) => value.toString()),
+            ) as purify.Either<
             Error,
             rdfjsResource.Resource.Values<number | string>
           >,
@@ -2561,8 +2813,8 @@ export namespace UnionPropertiesClass {
               value.toResource().chain((resource) =>
                 NonClass.$fromRdf(resource, {
                   ...$context,
-                  languageIn: $languageIn,
                   objectSet: $objectSet,
+                  preferredLanguages: $preferredLanguages,
                 }),
               ),
             ),
@@ -2603,6 +2855,13 @@ export namespace UnionPropertiesClass {
       }),
     )
       .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
         const literalValuesEither = values.chainMap((value) =>
           value.toLiteral(),
         );
@@ -2611,40 +2870,20 @@ export namespace UnionPropertiesClass {
         }
         const literalValues = literalValuesEither.unsafeCoerce();
 
-        const nonUniqueLanguageIn = $languageIn ?? [];
-        if (nonUniqueLanguageIn.length === 0) {
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjs.Literal>
-          >(literalValues);
-        }
-
-        let uniqueLanguageIn: string[];
-        if (nonUniqueLanguageIn.length === 1) {
-          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-        } else {
-          uniqueLanguageIn = [];
-          for (const languageIn of nonUniqueLanguageIn) {
-            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-              uniqueLanguageIn.push(languageIn);
-            }
-          }
-        }
-
-        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-        // Within a languageIn the literals may be in any order.
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const languageIn of uniqueLanguageIn) {
+        for (const preferredLanguage of $preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
-              (value) => value.language === languageIn,
+              (value) => value.language === preferredLanguage,
             );
           } else {
             filteredLiteralValues = filteredLiteralValues.concat(
               ...literalValues
-                .filter((value) => value.language === languageIn)
+                .filter((value) => value.language === preferredLanguage)
                 .toArray(),
             );
           }
@@ -2652,9 +2891,22 @@ export namespace UnionPropertiesClass {
 
         return purify.Either.of<
           Error,
-          rdfjsResource.Resource.Values<rdfjs.Literal>
-        >(filteredLiteralValues!);
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  UnionPropertiesClass.$properties.widenedLiteralsProperty[
+                    "identifier"
+                  ],
+                subject: $resource,
+              }),
+          ),
+        );
       })
+      .chain((values) => values.chainMap((value) => value.toLiteral()))
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
@@ -2770,12 +3022,12 @@ export namespace UnionPropertiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -2792,7 +3044,7 @@ export namespace UnionPropertiesClass {
       where: (queryParameters.where ?? []).concat(
         UnionPropertiesClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -2802,7 +3054,7 @@ export namespace UnionPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -2863,7 +3115,7 @@ export namespace UnionPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -2916,6 +3168,42 @@ export namespace UnionPropertiesClass {
                     ],
                     type: "bgp",
                   },
+                  ...[parameters?.preferredLanguages ?? []]
+                    .filter((languages) => languages.length > 0)
+                    .map((languages) =>
+                      languages.map((language) => ({
+                        type: "operation" as const,
+                        operator: "=",
+                        args: [
+                          {
+                            type: "operation" as const,
+                            operator: "lang",
+                            args: [
+                              dataFactory.variable!(
+                                `${variablePrefix}NarrowLiteralsProperty`,
+                              ),
+                            ],
+                          },
+                          dataFactory.literal(language),
+                        ],
+                      })),
+                    )
+                    .map((langEqualsExpressions) => ({
+                      type: "filter" as const,
+                      expression: langEqualsExpressions.reduce(
+                        (reducedExpression, langEqualsExpression) => {
+                          if (reducedExpression === null) {
+                            return langEqualsExpression;
+                          }
+                          return {
+                            type: "operation" as const,
+                            operator: "||",
+                            args: [reducedExpression, langEqualsExpression],
+                          };
+                        },
+                        null as sparqljs.Expression | null,
+                      ) as sparqljs.Expression,
+                    })),
                 ],
                 type: "group",
               },
@@ -2965,7 +3253,7 @@ export namespace UnionPropertiesClass {
                     type: "bgp",
                   },
                   ...NonClass.$sparqlWherePatterns({
-                    languageIn: parameters?.languageIn,
+                    preferredLanguages: parameters?.preferredLanguages,
                     subject: dataFactory.variable!(
                       `${variablePrefix}UnrelatedTypesProperty`,
                     ),
@@ -2997,14 +3285,10 @@ export namespace UnionPropertiesClass {
             ],
             type: "bgp",
           },
-          ...[
-            parameters?.languageIn && parameters?.languageIn.length > 0
-              ? parameters?.languageIn
-              : [],
-          ]
-            .filter((languagesIn) => languagesIn.length > 0)
-            .map((languagesIn) =>
-              languagesIn.map((languageIn) => ({
+          ...[parameters?.preferredLanguages ?? []]
+            .filter((languages) => languages.length > 0)
+            .map((languages) =>
+              languages.map((language) => ({
                 type: "operation" as const,
                 operator: "=",
                 args: [
@@ -3017,20 +3301,25 @@ export namespace UnionPropertiesClass {
                       ),
                     ],
                   },
-                  dataFactory.literal(languageIn),
+                  dataFactory.literal(language),
                 ],
               })),
             )
             .map((langEqualsExpressions) => ({
               type: "filter" as const,
-              expression:
-                langEqualsExpressions.length === 1
-                  ? langEqualsExpressions[0]
-                  : {
-                      type: "operation" as const,
-                      operator: "||",
-                      args: langEqualsExpressions,
-                    },
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
             })),
         ],
         type: "optional",
@@ -3788,14 +4077,14 @@ export namespace TermPropertiesClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, TermPropertiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -3805,24 +4094,24 @@ export namespace TermPropertiesClass {
     return TermPropertiesClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new TermPropertiesClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -3971,6 +4260,13 @@ export namespace TermPropertiesClass {
       }),
     )
       .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
         const literalValuesEither = values.chainMap((value) =>
           value.toLiteral(),
         );
@@ -3979,40 +4275,20 @@ export namespace TermPropertiesClass {
         }
         const literalValues = literalValuesEither.unsafeCoerce();
 
-        const nonUniqueLanguageIn = $languageIn ?? [];
-        if (nonUniqueLanguageIn.length === 0) {
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjs.Literal>
-          >(literalValues);
-        }
-
-        let uniqueLanguageIn: string[];
-        if (nonUniqueLanguageIn.length === 1) {
-          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-        } else {
-          uniqueLanguageIn = [];
-          for (const languageIn of nonUniqueLanguageIn) {
-            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-              uniqueLanguageIn.push(languageIn);
-            }
-          }
-        }
-
-        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-        // Within a languageIn the literals may be in any order.
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const languageIn of uniqueLanguageIn) {
+        for (const preferredLanguage of $preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
-              (value) => value.language === languageIn,
+              (value) => value.language === preferredLanguage,
             );
           } else {
             filteredLiteralValues = filteredLiteralValues.concat(
               ...literalValues
-                .filter((value) => value.language === languageIn)
+                .filter((value) => value.language === preferredLanguage)
                 .toArray(),
             );
           }
@@ -4020,9 +4296,22 @@ export namespace TermPropertiesClass {
 
         return purify.Either.of<
           Error,
-          rdfjsResource.Resource.Values<rdfjs.Literal>
-        >(filteredLiteralValues!);
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  TermPropertiesClass.$properties.literalTermProperty[
+                    "identifier"
+                  ],
+                subject: $resource,
+              }),
+          ),
+        );
       })
+      .chain((values) => values.chainMap((value) => value.toLiteral()))
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
@@ -4084,6 +4373,58 @@ export namespace TermPropertiesClass {
         unique: true,
       }),
     )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  TermPropertiesClass.$properties.stringTermProperty[
+                    "identifier"
+                  ],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
       .chain((values) => values.chainMap((value) => value.toString()))
       .map((values) =>
         values.length > 0
@@ -4193,12 +4534,12 @@ export namespace TermPropertiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -4215,7 +4556,7 @@ export namespace TermPropertiesClass {
       where: (queryParameters.where ?? []).concat(
         TermPropertiesClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -4225,7 +4566,7 @@ export namespace TermPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -4297,7 +4638,7 @@ export namespace TermPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -4404,14 +4745,10 @@ export namespace TermPropertiesClass {
             ],
             type: "bgp",
           },
-          ...[
-            parameters?.languageIn && parameters?.languageIn.length > 0
-              ? parameters?.languageIn
-              : [],
-          ]
-            .filter((languagesIn) => languagesIn.length > 0)
-            .map((languagesIn) =>
-              languagesIn.map((languageIn) => ({
+          ...[parameters?.preferredLanguages ?? []]
+            .filter((languages) => languages.length > 0)
+            .map((languages) =>
+              languages.map((language) => ({
                 type: "operation" as const,
                 operator: "=",
                 args: [
@@ -4424,20 +4761,25 @@ export namespace TermPropertiesClass {
                       ),
                     ],
                   },
-                  dataFactory.literal(languageIn),
+                  dataFactory.literal(language),
                 ],
               })),
             )
             .map((langEqualsExpressions) => ({
               type: "filter" as const,
-              expression:
-                langEqualsExpressions.length === 1
-                  ? langEqualsExpressions[0]
-                  : {
-                      type: "operation" as const,
-                      operator: "||",
-                      args: langEqualsExpressions,
-                    },
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
             })),
         ],
         type: "optional",
@@ -4479,6 +4821,42 @@ export namespace TermPropertiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.preferredLanguages ?? []]
+            .filter((languages) => languages.length > 0)
+            .map((languages) =>
+              languages.map((language) => ({
+                type: "operation" as const,
+                operator: "=",
+                args: [
+                  {
+                    type: "operation" as const,
+                    operator: "lang",
+                    args: [
+                      dataFactory.variable!(
+                        `${variablePrefix}StringTermProperty`,
+                      ),
+                    ],
+                  },
+                  dataFactory.literal(language),
+                ],
+              })),
+            )
+            .map((langEqualsExpressions) => ({
+              type: "filter" as const,
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
+            })),
         ],
         type: "optional",
       },
@@ -4727,14 +5105,14 @@ export namespace StubInterfaceUnionMember2 {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, StubInterfaceUnionMember2> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -4744,24 +5122,24 @@ export namespace StubInterfaceUnionMember2 {
     return StubInterfaceUnionMember2.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     });
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -4811,6 +5189,57 @@ export namespace StubInterfaceUnionMember2 {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    StubInterfaceUnionMember2.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
@@ -4875,12 +5304,12 @@ export namespace StubInterfaceUnionMember2 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -4897,7 +5326,7 @@ export namespace StubInterfaceUnionMember2 {
       where: (queryParameters.where ?? []).concat(
         StubInterfaceUnionMember2.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -4907,7 +5336,7 @@ export namespace StubInterfaceUnionMember2 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -4961,7 +5390,7 @@ export namespace StubInterfaceUnionMember2 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -5028,6 +5457,42 @@ export namespace StubInterfaceUnionMember2 {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}LazilyResolvedStringProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -5257,14 +5722,14 @@ export namespace StubInterfaceUnionMember1 {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, StubInterfaceUnionMember1> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -5274,24 +5739,24 @@ export namespace StubInterfaceUnionMember1 {
     return StubInterfaceUnionMember1.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     });
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -5341,6 +5806,57 @@ export namespace StubInterfaceUnionMember1 {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    StubInterfaceUnionMember1.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
@@ -5405,12 +5921,12 @@ export namespace StubInterfaceUnionMember1 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -5427,7 +5943,7 @@ export namespace StubInterfaceUnionMember1 {
       where: (queryParameters.where ?? []).concat(
         StubInterfaceUnionMember1.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -5437,7 +5953,7 @@ export namespace StubInterfaceUnionMember1 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -5491,7 +6007,7 @@ export namespace StubInterfaceUnionMember1 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -5558,6 +6074,42 @@ export namespace StubInterfaceUnionMember1 {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}LazilyResolvedStringProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -5808,14 +6360,14 @@ export namespace StubClassUnionMember2 {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, StubClassUnionMember2> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -5825,24 +6377,24 @@ export namespace StubClassUnionMember2 {
     return StubClassUnionMember2.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new StubClassUnionMember2(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -5889,6 +6441,57 @@ export namespace StubClassUnionMember2 {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    StubClassUnionMember2.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
@@ -5911,12 +6514,12 @@ export namespace StubClassUnionMember2 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -5933,7 +6536,7 @@ export namespace StubClassUnionMember2 {
       where: (queryParameters.where ?? []).concat(
         StubClassUnionMember2.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -5943,7 +6546,7 @@ export namespace StubClassUnionMember2 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -5997,7 +6600,7 @@ export namespace StubClassUnionMember2 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -6065,6 +6668,42 @@ export namespace StubClassUnionMember2 {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}LazilyResolvedStringProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -6315,14 +6954,14 @@ export namespace StubClassUnionMember1 {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, StubClassUnionMember1> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -6332,24 +6971,24 @@ export namespace StubClassUnionMember1 {
     return StubClassUnionMember1.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new StubClassUnionMember1(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -6396,6 +7035,57 @@ export namespace StubClassUnionMember1 {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    StubClassUnionMember1.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
@@ -6418,12 +7108,12 @@ export namespace StubClassUnionMember1 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -6440,7 +7130,7 @@ export namespace StubClassUnionMember1 {
       where: (queryParameters.where ?? []).concat(
         StubClassUnionMember1.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -6450,7 +7140,7 @@ export namespace StubClassUnionMember1 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -6504,7 +7194,7 @@ export namespace StubClassUnionMember1 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -6572,6 +7262,42 @@ export namespace StubClassUnionMember1 {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}LazilyResolvedStringProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -6828,14 +7554,14 @@ export namespace Sha256IriClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, Sha256IriClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -6845,24 +7571,24 @@ export namespace Sha256IriClass {
     return Sha256IriClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new Sha256IriClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -6889,6 +7615,56 @@ export namespace Sha256IriClass {
           unique: true,
         }),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    Sha256IriClass.$properties.sha256IriProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_sha256IriPropertyEither.isLeft()) {
@@ -6908,12 +7684,12 @@ export namespace Sha256IriClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -6930,7 +7706,7 @@ export namespace Sha256IriClass {
       where: (queryParameters.where ?? []).concat(
         Sha256IriClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -6940,7 +7716,7 @@ export namespace Sha256IriClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -6972,7 +7748,7 @@ export namespace Sha256IriClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -6995,6 +7771,40 @@ export namespace Sha256IriClass {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(`${variablePrefix}Sha256IriProperty`),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -7286,14 +8096,14 @@ export namespace PropertyVisibilitiesClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, PropertyVisibilitiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -7303,24 +8113,24 @@ export namespace PropertyVisibilitiesClass {
     return PropertyVisibilitiesClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new PropertyVisibilitiesClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -7342,6 +8152,58 @@ export namespace PropertyVisibilitiesClass {
           unique: true,
         }),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    PropertyVisibilitiesClass.$properties.privateProperty[
+                      "identifier"
+                    ],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_privatePropertyEither.isLeft()) {
@@ -7358,6 +8220,58 @@ export namespace PropertyVisibilitiesClass {
           unique: true,
         }),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    PropertyVisibilitiesClass.$properties.protectedProperty[
+                      "identifier"
+                    ],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_protectedPropertyEither.isLeft()) {
@@ -7374,6 +8288,58 @@ export namespace PropertyVisibilitiesClass {
           unique: true,
         }),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    PropertyVisibilitiesClass.$properties.publicProperty[
+                      "identifier"
+                    ],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_publicPropertyEither.isLeft()) {
@@ -7404,12 +8370,12 @@ export namespace PropertyVisibilitiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -7426,7 +8392,7 @@ export namespace PropertyVisibilitiesClass {
       where: (queryParameters.where ?? []).concat(
         PropertyVisibilitiesClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -7436,7 +8402,7 @@ export namespace PropertyVisibilitiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -7483,7 +8449,7 @@ export namespace PropertyVisibilitiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -7510,6 +8476,40 @@ export namespace PropertyVisibilitiesClass {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(`${variablePrefix}PrivateProperty`),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
       {
         triples: [
           {
@@ -7523,6 +8523,40 @@ export namespace PropertyVisibilitiesClass {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(`${variablePrefix}ProtectedProperty`),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
       {
         triples: [
           {
@@ -7536,6 +8570,40 @@ export namespace PropertyVisibilitiesClass {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(`${variablePrefix}PublicProperty`),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -7555,15 +8623,15 @@ export class PropertyCardinalitiesClass {
   private _$identifier?: PropertyCardinalitiesClass.$Identifier;
   readonly $type = "PropertyCardinalitiesClass";
   /**
-   * Set: minCount implicitly=0, no maxCount or maxCount > 1
+   * Set: minCount implicitly=0, no maxCount
    */
   readonly emptyStringSetProperty: readonly string[];
   /**
-   * Set: minCount implicitly=1, no maxCount or maxCount > 1
+   * Set: minCount=1, no maxCount
    */
   readonly nonEmptyStringSetProperty: purify.NonEmptyList<string>;
   /**
-   * Option: maxCount=1 minCount=0
+   * Option: maxCount=1, minCount=0
    */
   readonly optionalStringProperty: purify.Maybe<string>;
   /**
@@ -7914,17 +8982,17 @@ export namespace PropertyCardinalitiesClass {
         .string()
         .array()
         .default(() => [])
-        .describe("Set: minCount implicitly=0, no maxCount or maxCount > 1"),
+        .describe("Set: minCount implicitly=0, no maxCount"),
       nonEmptyStringSetProperty: zod
         .string()
         .array()
         .nonempty()
         .min(1)
-        .describe("Set: minCount implicitly=1, no maxCount or maxCount > 1"),
+        .describe("Set: minCount=1, no maxCount"),
       optionalStringProperty: zod
         .string()
         .optional()
-        .describe("Option: maxCount=1 minCount=0"),
+        .describe("Option: maxCount=1, minCount=0"),
       requiredStringProperty: zod
         .string()
         .describe("Required: maxCount=minCount=1"),
@@ -7936,14 +9004,14 @@ export namespace PropertyCardinalitiesClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, PropertyCardinalitiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -7953,24 +9021,24 @@ export namespace PropertyCardinalitiesClass {
     return PropertyCardinalitiesClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new PropertyCardinalitiesClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -7995,6 +9063,58 @@ export namespace PropertyCardinalitiesClass {
         unique: true,
       }),
     )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
+                    "identifier"
+                  ],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
       .chain((values) => values.chainMap((value) => value.toString()))
       .map((values) => values.toArray())
       .map((valuesArray) =>
@@ -8024,6 +9144,57 @@ export namespace PropertyCardinalitiesClass {
         unique: true,
       }),
     )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  PropertyCardinalitiesClass.$properties
+                    .nonEmptyStringSetProperty["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
       .chain((values) => values.chainMap((value) => value.toString()))
       .chain((values) =>
         purify.NonEmptyList.fromArray(values.toArray()).toEither(
@@ -8060,6 +9231,58 @@ export namespace PropertyCardinalitiesClass {
         unique: true,
       }),
     )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  PropertyCardinalitiesClass.$properties.optionalStringProperty[
+                    "identifier"
+                  ],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
       .chain((values) => values.chainMap((value) => value.toString()))
       .map((values) =>
         values.length > 0
@@ -8088,6 +9311,57 @@ export namespace PropertyCardinalitiesClass {
           unique: true,
         }),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    PropertyCardinalitiesClass.$properties
+                      .requiredStringProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_requiredStringPropertyEither.isLeft()) {
@@ -8130,12 +9404,12 @@ export namespace PropertyCardinalitiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -8152,7 +9426,7 @@ export namespace PropertyCardinalitiesClass {
       where: (queryParameters.where ?? []).concat(
         PropertyCardinalitiesClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -8162,7 +9436,7 @@ export namespace PropertyCardinalitiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -8226,7 +9500,7 @@ export namespace PropertyCardinalitiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -8258,6 +9532,42 @@ export namespace PropertyCardinalitiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.preferredLanguages ?? []]
+            .filter((languages) => languages.length > 0)
+            .map((languages) =>
+              languages.map((language) => ({
+                type: "operation" as const,
+                operator: "=",
+                args: [
+                  {
+                    type: "operation" as const,
+                    operator: "lang",
+                    args: [
+                      dataFactory.variable!(
+                        `${variablePrefix}EmptyStringSetProperty`,
+                      ),
+                    ],
+                  },
+                  dataFactory.literal(language),
+                ],
+              })),
+            )
+            .map((langEqualsExpressions) => ({
+              type: "filter" as const,
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
+            })),
         ],
         type: "optional",
       },
@@ -8276,6 +9586,42 @@ export namespace PropertyCardinalitiesClass {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}NonEmptyStringSetProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
       {
         patterns: [
           {
@@ -8293,6 +9639,42 @@ export namespace PropertyCardinalitiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.preferredLanguages ?? []]
+            .filter((languages) => languages.length > 0)
+            .map((languages) =>
+              languages.map((language) => ({
+                type: "operation" as const,
+                operator: "=",
+                args: [
+                  {
+                    type: "operation" as const,
+                    operator: "lang",
+                    args: [
+                      dataFactory.variable!(
+                        `${variablePrefix}OptionalStringProperty`,
+                      ),
+                    ],
+                  },
+                  dataFactory.literal(language),
+                ],
+              })),
+            )
+            .map((langEqualsExpressions) => ({
+              type: "filter" as const,
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
+            })),
         ],
         type: "optional",
       },
@@ -8311,6 +9693,42 @@ export namespace PropertyCardinalitiesClass {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}RequiredStringProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -8608,14 +10026,14 @@ export namespace OrderedPropertiesClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, OrderedPropertiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -8625,24 +10043,24 @@ export namespace OrderedPropertiesClass {
     return OrderedPropertiesClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new OrderedPropertiesClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -8664,6 +10082,58 @@ export namespace OrderedPropertiesClass {
           unique: true,
         }),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    OrderedPropertiesClass.$properties.orderedPropertyC[
+                      "identifier"
+                    ],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_orderedPropertyCEither.isLeft()) {
@@ -8680,6 +10150,58 @@ export namespace OrderedPropertiesClass {
           unique: true,
         }),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    OrderedPropertiesClass.$properties.orderedPropertyB[
+                      "identifier"
+                    ],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_orderedPropertyBEither.isLeft()) {
@@ -8696,6 +10218,58 @@ export namespace OrderedPropertiesClass {
           unique: true,
         }),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    OrderedPropertiesClass.$properties.orderedPropertyA[
+                      "identifier"
+                    ],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_orderedPropertyAEither.isLeft()) {
@@ -8726,12 +10300,12 @@ export namespace OrderedPropertiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -8748,7 +10322,7 @@ export namespace OrderedPropertiesClass {
       where: (queryParameters.where ?? []).concat(
         OrderedPropertiesClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -8758,7 +10332,7 @@ export namespace OrderedPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -8805,7 +10379,7 @@ export namespace OrderedPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -8830,6 +10404,40 @@ export namespace OrderedPropertiesClass {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(`${variablePrefix}OrderedPropertyC`),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
       {
         triples: [
           {
@@ -8841,6 +10449,40 @@ export namespace OrderedPropertiesClass {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(`${variablePrefix}OrderedPropertyB`),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
       {
         triples: [
           {
@@ -8852,6 +10494,40 @@ export namespace OrderedPropertiesClass {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(`${variablePrefix}OrderedPropertyA`),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -9087,14 +10763,14 @@ export namespace NonClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, NonClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -9104,24 +10780,24 @@ export namespace NonClass {
     return NonClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new NonClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -9137,6 +10813,56 @@ export namespace NonClass {
           unique: true,
         }),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    NonClass.$properties.nonClassProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_nonClassPropertyEither.isLeft()) {
@@ -9156,12 +10882,12 @@ export namespace NonClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -9173,7 +10899,11 @@ export namespace NonClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        NonClass.$sparqlWherePatterns({ ignoreRdfType, languageIn, subject }),
+        NonClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
       ),
     };
   }
@@ -9181,7 +10911,7 @@ export namespace NonClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -9212,7 +10942,7 @@ export namespace NonClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -9233,6 +10963,40 @@ export namespace NonClass {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(`${variablePrefix}NonClassProperty`),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -9673,14 +11437,14 @@ export namespace MutablePropertiesClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, MutablePropertiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -9690,24 +11454,24 @@ export namespace MutablePropertiesClass {
     return MutablePropertiesClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new MutablePropertiesClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -9746,7 +11510,60 @@ export namespace MutablePropertiesClass {
                 ],
               subject: $resource,
             }),
-          ).chain((values) => values.chainMap((value) => value.toString())),
+          )
+            .chain((values) => {
+              if (!$preferredLanguages || $preferredLanguages.length === 0) {
+                return purify.Either.of<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+                >(values);
+              }
+
+              const literalValuesEither = values.chainMap((value) =>
+                value.toLiteral(),
+              );
+              if (literalValuesEither.isLeft()) {
+                return literalValuesEither;
+              }
+              const literalValues = literalValuesEither.unsafeCoerce();
+
+              // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+              // Within a preferredLanguage the literals may be in any order.
+              let filteredLiteralValues:
+                | rdfjsResource.Resource.Values<rdfjs.Literal>
+                | undefined;
+              for (const preferredLanguage of $preferredLanguages) {
+                if (!filteredLiteralValues) {
+                  filteredLiteralValues = literalValues.filter(
+                    (value) => value.language === preferredLanguage,
+                  );
+                } else {
+                  filteredLiteralValues = filteredLiteralValues.concat(
+                    ...literalValues
+                      .filter((value) => value.language === preferredLanguage)
+                      .toArray(),
+                  );
+                }
+              }
+
+              return purify.Either.of<
+                Error,
+                rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+              >(
+                filteredLiteralValues!.map(
+                  (literalValue) =>
+                    new rdfjsResource.Resource.Value({
+                      object: literalValue,
+                      predicate:
+                        MutablePropertiesClass.$properties.mutableListProperty[
+                          "identifier"
+                        ],
+                      subject: $resource,
+                    }),
+                ),
+              );
+            })
+            .chain((values) => values.chainMap((value) => value.toString())),
         ),
       )
       .map((valueLists) =>
@@ -9779,6 +11596,58 @@ export namespace MutablePropertiesClass {
           unique: true,
         }),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    MutablePropertiesClass.$properties.mutableSetProperty[
+                      "identifier"
+                    ],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .map((values) => values.toArray().concat())
         .map((valuesArray) =>
@@ -9808,6 +11677,58 @@ export namespace MutablePropertiesClass {
         unique: true,
       }),
     )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  MutablePropertiesClass.$properties.mutableStringProperty[
+                    "identifier"
+                  ],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
       .chain((values) => values.chainMap((value) => value.toString()))
       .map((values) =>
         values.length > 0
@@ -9856,12 +11777,12 @@ export namespace MutablePropertiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -9878,7 +11799,7 @@ export namespace MutablePropertiesClass {
       where: (queryParameters.where ?? []).concat(
         MutablePropertiesClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -9888,7 +11809,7 @@ export namespace MutablePropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -9967,7 +11888,7 @@ export namespace MutablePropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -10102,6 +12023,42 @@ export namespace MutablePropertiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.preferredLanguages ?? []]
+            .filter((languages) => languages.length > 0)
+            .map((languages) =>
+              languages.map((language) => ({
+                type: "operation" as const,
+                operator: "=",
+                args: [
+                  {
+                    type: "operation" as const,
+                    operator: "lang",
+                    args: [
+                      dataFactory.variable!(
+                        `${variablePrefix}MutableSetProperty`,
+                      ),
+                    ],
+                  },
+                  dataFactory.literal(language),
+                ],
+              })),
+            )
+            .map((langEqualsExpressions) => ({
+              type: "filter" as const,
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
+            })),
         ],
         type: "optional",
       },
@@ -10122,6 +12079,42 @@ export namespace MutablePropertiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.preferredLanguages ?? []]
+            .filter((languages) => languages.length > 0)
+            .map((languages) =>
+              languages.map((language) => ({
+                type: "operation" as const,
+                operator: "=",
+                args: [
+                  {
+                    type: "operation" as const,
+                    operator: "lang",
+                    args: [
+                      dataFactory.variable!(
+                        `${variablePrefix}MutableStringProperty`,
+                      ),
+                    ],
+                  },
+                  dataFactory.literal(language),
+                ],
+              })),
+            )
+            .map((langEqualsExpressions) => ({
+              type: "filter" as const,
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
+            })),
         ],
         type: "optional",
       },
@@ -10535,14 +12528,14 @@ export namespace ListPropertiesClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ListPropertiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -10552,24 +12545,24 @@ export namespace ListPropertiesClass {
     return ListPropertiesClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new ListPropertiesClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -10612,8 +12605,8 @@ export namespace ListPropertiesClass {
                 NonClass.$fromRdf(resource, {
                   ...$context,
                   ignoreRdfType: true,
-                  languageIn: $languageIn,
                   objectSet: $objectSet,
+                  preferredLanguages: $preferredLanguages,
                 }),
               ),
             ),
@@ -10667,7 +12660,60 @@ export namespace ListPropertiesClass {
                 ],
               subject: $resource,
             }),
-          ).chain((values) => values.chainMap((value) => value.toString())),
+          )
+            .chain((values) => {
+              if (!$preferredLanguages || $preferredLanguages.length === 0) {
+                return purify.Either.of<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+                >(values);
+              }
+
+              const literalValuesEither = values.chainMap((value) =>
+                value.toLiteral(),
+              );
+              if (literalValuesEither.isLeft()) {
+                return literalValuesEither;
+              }
+              const literalValues = literalValuesEither.unsafeCoerce();
+
+              // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+              // Within a preferredLanguage the literals may be in any order.
+              let filteredLiteralValues:
+                | rdfjsResource.Resource.Values<rdfjs.Literal>
+                | undefined;
+              for (const preferredLanguage of $preferredLanguages) {
+                if (!filteredLiteralValues) {
+                  filteredLiteralValues = literalValues.filter(
+                    (value) => value.language === preferredLanguage,
+                  );
+                } else {
+                  filteredLiteralValues = filteredLiteralValues.concat(
+                    ...literalValues
+                      .filter((value) => value.language === preferredLanguage)
+                      .toArray(),
+                  );
+                }
+              }
+
+              return purify.Either.of<
+                Error,
+                rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+              >(
+                filteredLiteralValues!.map(
+                  (literalValue) =>
+                    new rdfjsResource.Resource.Value({
+                      object: literalValue,
+                      predicate:
+                        ListPropertiesClass.$properties.stringListProperty[
+                          "identifier"
+                        ],
+                      subject: $resource,
+                    }),
+                ),
+              );
+            })
+            .chain((values) => values.chainMap((value) => value.toString())),
         ),
       )
       .map((valueLists) => valueLists.map((valueList) => valueList.toArray()))
@@ -10714,12 +12760,12 @@ export namespace ListPropertiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -10736,7 +12782,7 @@ export namespace ListPropertiesClass {
       where: (queryParameters.where ?? []).concat(
         ListPropertiesClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -10746,7 +12792,7 @@ export namespace ListPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -10867,7 +12913,7 @@ export namespace ListPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -10915,7 +12961,7 @@ export namespace ListPropertiesClass {
               },
               ...NonClass.$sparqlWherePatterns({
                 ignoreRdfType: true,
-                languageIn: parameters?.languageIn,
+                preferredLanguages: parameters?.preferredLanguages,
                 subject: dataFactory.variable!(
                   `${`${variablePrefix}ObjectListProperty`}Item0`,
                 ),
@@ -10972,7 +13018,7 @@ export namespace ListPropertiesClass {
                   },
                   ...NonClass.$sparqlWherePatterns({
                     ignoreRdfType: true,
-                    languageIn: parameters?.languageIn,
+                    preferredLanguages: parameters?.preferredLanguages,
                     subject: dataFactory.variable!(
                       `${`${variablePrefix}ObjectListProperty`}ItemN`,
                     ),
@@ -11321,14 +13367,14 @@ export namespace StubInterface {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, StubInterface> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -11338,24 +13384,24 @@ export namespace StubInterface {
     return StubInterface.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     });
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -11377,6 +13423,58 @@ export namespace StubInterface {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    StubInterface.$properties.lazilyResolvedStringProperty[
+                      "identifier"
+                    ],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
@@ -11428,12 +13526,12 @@ export namespace StubInterface {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -11450,7 +13548,7 @@ export namespace StubInterface {
       where: (queryParameters.where ?? []).concat(
         StubInterface.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -11460,7 +13558,7 @@ export namespace StubInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -11495,7 +13593,7 @@ export namespace StubInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -11522,6 +13620,42 @@ export namespace StubInterface {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}LazilyResolvedStringProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -13015,14 +15149,14 @@ export namespace LazyPropertiesInterface {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazyPropertiesInterface> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -13032,24 +15166,24 @@ export namespace LazyPropertiesInterface {
     return LazyPropertiesInterface.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     });
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -13133,8 +15267,8 @@ export namespace LazyPropertiesInterface {
             $DefaultStub.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -13195,8 +15329,8 @@ export namespace LazyPropertiesInterface {
             $DefaultStub.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -13257,8 +15391,8 @@ export namespace LazyPropertiesInterface {
             $NamedDefaultStub.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -13321,8 +15455,8 @@ export namespace LazyPropertiesInterface {
             StubInterface.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -13387,8 +15521,8 @@ export namespace LazyPropertiesInterface {
             StubInterface.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -13453,8 +15587,8 @@ export namespace LazyPropertiesInterface {
             StubInterfaceUnion.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: false,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -13519,8 +15653,8 @@ export namespace LazyPropertiesInterface {
             $DefaultStub.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -13570,8 +15704,8 @@ export namespace LazyPropertiesInterface {
             StubInterface.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -13619,8 +15753,8 @@ export namespace LazyPropertiesInterface {
             $DefaultStub.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -13680,8 +15814,8 @@ export namespace LazyPropertiesInterface {
             StubInterface.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -13908,12 +16042,12 @@ export namespace LazyPropertiesInterface {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -13930,7 +16064,7 @@ export namespace LazyPropertiesInterface {
       where: (queryParameters.where ?? []).concat(
         LazyPropertiesInterface.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -13940,7 +16074,7 @@ export namespace LazyPropertiesInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -14151,7 +16285,7 @@ export namespace LazyPropertiesInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -14183,7 +16317,7 @@ export namespace LazyPropertiesInterface {
           },
           ...$DefaultStub.$sparqlWherePatterns({
             ignoreRdfType: true,
-            languageIn: parameters?.languageIn,
+            preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalLazyToResolvedInterfaceProperty`,
             ),
@@ -14210,7 +16344,7 @@ export namespace LazyPropertiesInterface {
           },
           ...$DefaultStub.$sparqlWherePatterns({
             ignoreRdfType: true,
-            languageIn: parameters?.languageIn,
+            preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalLazyToResolvedInterfaceUnionProperty`,
             ),
@@ -14237,7 +16371,7 @@ export namespace LazyPropertiesInterface {
           },
           ...$NamedDefaultStub.$sparqlWherePatterns({
             ignoreRdfType: true,
-            languageIn: parameters?.languageIn,
+            preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalLazyToResolvedIriInterfaceProperty`,
             ),
@@ -14266,7 +16400,7 @@ export namespace LazyPropertiesInterface {
           },
           ...StubInterface.$sparqlWherePatterns({
             ignoreRdfType: true,
-            languageIn: parameters?.languageIn,
+            preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalStubInterfaceToResolvedInterfaceProperty`,
             ),
@@ -14295,7 +16429,7 @@ export namespace LazyPropertiesInterface {
           },
           ...StubInterface.$sparqlWherePatterns({
             ignoreRdfType: true,
-            languageIn: parameters?.languageIn,
+            preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalStubInterfaceToResolvedInterfaceUnionProperty`,
             ),
@@ -14323,7 +16457,7 @@ export namespace LazyPropertiesInterface {
             type: "bgp",
           },
           ...StubInterfaceUnion.$sparqlWherePatterns({
-            languageIn: parameters?.languageIn,
+            preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalStubInterfaceUnionToResolvedInterfaceUnionProperty`,
             ),
@@ -14348,7 +16482,7 @@ export namespace LazyPropertiesInterface {
       },
       ...$DefaultStub.$sparqlWherePatterns({
         ignoreRdfType: true,
-        languageIn: parameters?.languageIn,
+        preferredLanguages: parameters?.preferredLanguages,
         subject: dataFactory.variable!(
           `${variablePrefix}RequiredLazyToResolvedInterfaceProperty`,
         ),
@@ -14370,7 +16504,7 @@ export namespace LazyPropertiesInterface {
       },
       ...StubInterface.$sparqlWherePatterns({
         ignoreRdfType: true,
-        languageIn: parameters?.languageIn,
+        preferredLanguages: parameters?.preferredLanguages,
         subject: dataFactory.variable!(
           `${variablePrefix}RequiredStubInterfaceToResolvedInterfaceProperty`,
         ),
@@ -14394,7 +16528,7 @@ export namespace LazyPropertiesInterface {
           },
           ...$DefaultStub.$sparqlWherePatterns({
             ignoreRdfType: true,
-            languageIn: parameters?.languageIn,
+            preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
               `${variablePrefix}SetLazyToResolvedInterfaceProperty`,
             ),
@@ -14421,7 +16555,7 @@ export namespace LazyPropertiesInterface {
           },
           ...StubInterface.$sparqlWherePatterns({
             ignoreRdfType: true,
-            languageIn: parameters?.languageIn,
+            preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
               `${variablePrefix}SetStubInterfaceToResolvedInterfaceProperty`,
             ),
@@ -14668,14 +16802,14 @@ export namespace StubClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, StubClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -14685,24 +16819,24 @@ export namespace StubClass {
     return StubClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new StubClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -14722,6 +16856,58 @@ export namespace StubClass {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    StubClass.$properties.lazilyResolvedStringProperty[
+                      "identifier"
+                    ],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
@@ -14744,12 +16930,12 @@ export namespace StubClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -14761,7 +16947,11 @@ export namespace StubClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        StubClass.$sparqlWherePatterns({ ignoreRdfType, languageIn, subject }),
+        StubClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
       ),
     };
   }
@@ -14769,7 +16959,7 @@ export namespace StubClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -14803,7 +16993,7 @@ export namespace StubClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -14827,6 +17017,42 @@ export namespace StubClass {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}LazilyResolvedStringProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -16291,14 +18517,14 @@ export namespace LazyPropertiesClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazyPropertiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -16308,24 +18534,24 @@ export namespace LazyPropertiesClass {
     return LazyPropertiesClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new LazyPropertiesClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -16406,8 +18632,8 @@ export namespace LazyPropertiesClass {
             $DefaultStub.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -16468,8 +18694,8 @@ export namespace LazyPropertiesClass {
             $DefaultStub.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -16530,8 +18756,8 @@ export namespace LazyPropertiesClass {
             $NamedDefaultStub.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -16592,8 +18818,8 @@ export namespace LazyPropertiesClass {
             StubClass.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -16652,8 +18878,8 @@ export namespace LazyPropertiesClass {
             StubClass.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -16714,8 +18940,8 @@ export namespace LazyPropertiesClass {
             StubClassUnion.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: false,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -16778,8 +19004,8 @@ export namespace LazyPropertiesClass {
             $DefaultStub.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -16827,8 +19053,8 @@ export namespace LazyPropertiesClass {
             StubClass.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -16876,8 +19102,8 @@ export namespace LazyPropertiesClass {
             $DefaultStub.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -16938,8 +19164,8 @@ export namespace LazyPropertiesClass {
             StubClass.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -17049,12 +19275,12 @@ export namespace LazyPropertiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -17071,7 +19297,7 @@ export namespace LazyPropertiesClass {
       where: (queryParameters.where ?? []).concat(
         LazyPropertiesClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -17081,7 +19307,7 @@ export namespace LazyPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -17292,7 +19518,7 @@ export namespace LazyPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -17322,7 +19548,7 @@ export namespace LazyPropertiesClass {
           },
           ...$DefaultStub.$sparqlWherePatterns({
             ignoreRdfType: true,
-            languageIn: parameters?.languageIn,
+            preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalLazyToResolvedClassProperty`,
             ),
@@ -17349,7 +19575,7 @@ export namespace LazyPropertiesClass {
           },
           ...$DefaultStub.$sparqlWherePatterns({
             ignoreRdfType: true,
-            languageIn: parameters?.languageIn,
+            preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalLazyToResolvedClassUnionProperty`,
             ),
@@ -17376,7 +19602,7 @@ export namespace LazyPropertiesClass {
           },
           ...$NamedDefaultStub.$sparqlWherePatterns({
             ignoreRdfType: true,
-            languageIn: parameters?.languageIn,
+            preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalLazyToResolvedIriClassProperty`,
             ),
@@ -17403,7 +19629,7 @@ export namespace LazyPropertiesClass {
           },
           ...StubClass.$sparqlWherePatterns({
             ignoreRdfType: true,
-            languageIn: parameters?.languageIn,
+            preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalStubClassToResolvedClassProperty`,
             ),
@@ -17432,7 +19658,7 @@ export namespace LazyPropertiesClass {
           },
           ...StubClass.$sparqlWherePatterns({
             ignoreRdfType: true,
-            languageIn: parameters?.languageIn,
+            preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalStubClassToResolvedClassUnionProperty`,
             ),
@@ -17460,7 +19686,7 @@ export namespace LazyPropertiesClass {
             type: "bgp",
           },
           ...StubClassUnion.$sparqlWherePatterns({
-            languageIn: parameters?.languageIn,
+            preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
               `${variablePrefix}OptionalStubClassUnionToResolvedClassUnionProperty`,
             ),
@@ -17485,7 +19711,7 @@ export namespace LazyPropertiesClass {
       },
       ...$DefaultStub.$sparqlWherePatterns({
         ignoreRdfType: true,
-        languageIn: parameters?.languageIn,
+        preferredLanguages: parameters?.preferredLanguages,
         subject: dataFactory.variable!(
           `${variablePrefix}RequiredLazyToResolvedClassProperty`,
         ),
@@ -17507,7 +19733,7 @@ export namespace LazyPropertiesClass {
       },
       ...StubClass.$sparqlWherePatterns({
         ignoreRdfType: true,
-        languageIn: parameters?.languageIn,
+        preferredLanguages: parameters?.preferredLanguages,
         subject: dataFactory.variable!(
           `${variablePrefix}RequiredStubClassToResolvedClassProperty`,
         ),
@@ -17531,7 +19757,7 @@ export namespace LazyPropertiesClass {
           },
           ...$DefaultStub.$sparqlWherePatterns({
             ignoreRdfType: true,
-            languageIn: parameters?.languageIn,
+            preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
               `${variablePrefix}SetLazyToResolvedClassProperty`,
             ),
@@ -17558,7 +19784,7 @@ export namespace LazyPropertiesClass {
           },
           ...StubClass.$sparqlWherePatterns({
             ignoreRdfType: true,
-            languageIn: parameters?.languageIn,
+            preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
               `${variablePrefix}SetStubClassToResolvedClassProperty`,
             ),
@@ -17793,14 +20019,14 @@ export namespace LazilyResolvedIriInterface {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazilyResolvedIriInterface> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -17810,24 +20036,24 @@ export namespace LazilyResolvedIriInterface {
     return LazilyResolvedIriInterface.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     });
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -17861,6 +20087,57 @@ export namespace LazilyResolvedIriInterface {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    LazilyResolvedIriInterface.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
@@ -17915,12 +20192,12 @@ export namespace LazilyResolvedIriInterface {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -17937,7 +20214,7 @@ export namespace LazilyResolvedIriInterface {
       where: (queryParameters.where ?? []).concat(
         LazilyResolvedIriInterface.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -17947,7 +20224,7 @@ export namespace LazilyResolvedIriInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -17987,7 +20264,7 @@ export namespace LazilyResolvedIriInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -18016,6 +20293,42 @@ export namespace LazilyResolvedIriInterface {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}LazilyResolvedStringProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -18246,14 +20559,14 @@ export namespace LazilyResolvedIriClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazilyResolvedIriClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -18263,24 +20576,24 @@ export namespace LazilyResolvedIriClass {
     return LazilyResolvedIriClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new LazilyResolvedIriClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -18309,6 +20622,57 @@ export namespace LazilyResolvedIriClass {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    LazilyResolvedIriClass.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
@@ -18331,12 +20695,12 @@ export namespace LazilyResolvedIriClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -18353,7 +20717,7 @@ export namespace LazilyResolvedIriClass {
       where: (queryParameters.where ?? []).concat(
         LazilyResolvedIriClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -18363,7 +20727,7 @@ export namespace LazilyResolvedIriClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -18402,7 +20766,7 @@ export namespace LazilyResolvedIriClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -18431,6 +20795,42 @@ export namespace LazilyResolvedIriClass {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}LazilyResolvedStringProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -18663,14 +21063,14 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazilyResolvedInterfaceUnionMember2> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -18680,24 +21080,24 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     return LazilyResolvedInterfaceUnionMember2.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     });
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -18751,6 +21151,57 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    LazilyResolvedInterfaceUnionMember2.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
@@ -18814,12 +21265,12 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -18836,7 +21287,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       where: (queryParameters.where ?? []).concat(
         LazilyResolvedInterfaceUnionMember2.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -18846,7 +21297,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -18900,7 +21351,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -18968,6 +21419,42 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}LazilyResolvedStringProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -19200,14 +21687,14 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazilyResolvedInterfaceUnionMember1> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -19217,24 +21704,24 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     return LazilyResolvedInterfaceUnionMember1.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     });
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -19288,6 +21775,57 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    LazilyResolvedInterfaceUnionMember1.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
@@ -19351,12 +21889,12 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -19373,7 +21911,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       where: (queryParameters.where ?? []).concat(
         LazilyResolvedInterfaceUnionMember1.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -19383,7 +21921,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -19437,7 +21975,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -19505,6 +22043,42 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}LazilyResolvedStringProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -19755,14 +22329,14 @@ export namespace LazilyResolvedClassUnionMember2 {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazilyResolvedClassUnionMember2> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -19772,24 +22346,24 @@ export namespace LazilyResolvedClassUnionMember2 {
     return LazilyResolvedClassUnionMember2.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new LazilyResolvedClassUnionMember2(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -19839,6 +22413,57 @@ export namespace LazilyResolvedClassUnionMember2 {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    LazilyResolvedClassUnionMember2.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
@@ -19861,12 +22486,12 @@ export namespace LazilyResolvedClassUnionMember2 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -19883,7 +22508,7 @@ export namespace LazilyResolvedClassUnionMember2 {
       where: (queryParameters.where ?? []).concat(
         LazilyResolvedClassUnionMember2.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -19893,7 +22518,7 @@ export namespace LazilyResolvedClassUnionMember2 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -19947,7 +22572,7 @@ export namespace LazilyResolvedClassUnionMember2 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -20015,6 +22640,42 @@ export namespace LazilyResolvedClassUnionMember2 {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}LazilyResolvedStringProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -20265,14 +22926,14 @@ export namespace LazilyResolvedClassUnionMember1 {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazilyResolvedClassUnionMember1> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -20282,24 +22943,24 @@ export namespace LazilyResolvedClassUnionMember1 {
     return LazilyResolvedClassUnionMember1.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new LazilyResolvedClassUnionMember1(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -20349,6 +23010,57 @@ export namespace LazilyResolvedClassUnionMember1 {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    LazilyResolvedClassUnionMember1.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
@@ -20371,12 +23083,12 @@ export namespace LazilyResolvedClassUnionMember1 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -20393,7 +23105,7 @@ export namespace LazilyResolvedClassUnionMember1 {
       where: (queryParameters.where ?? []).concat(
         LazilyResolvedClassUnionMember1.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -20403,7 +23115,7 @@ export namespace LazilyResolvedClassUnionMember1 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -20457,7 +23169,7 @@ export namespace LazilyResolvedClassUnionMember1 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -20525,6 +23237,42 @@ export namespace LazilyResolvedClassUnionMember1 {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}LazilyResolvedStringProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -20760,14 +23508,14 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazilyResolvedBlankNodeOrIriInterface> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -20777,24 +23525,24 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
     return LazilyResolvedBlankNodeOrIriInterface.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     });
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -20848,6 +23596,57 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    LazilyResolvedBlankNodeOrIriInterface.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
@@ -20911,12 +23710,12 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -20933,7 +23732,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
       where: (queryParameters.where ?? []).concat(
         LazilyResolvedBlankNodeOrIriInterface.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -20943,7 +23742,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -20997,7 +23796,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -21065,6 +23864,42 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}LazilyResolvedStringProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -21317,14 +24152,14 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazilyResolvedBlankNodeOrIriClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -21334,24 +24169,24 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
     return LazilyResolvedBlankNodeOrIriClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new LazilyResolvedBlankNodeOrIriClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -21403,6 +24238,57 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    LazilyResolvedBlankNodeOrIriClass.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
@@ -21425,12 +24311,12 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -21447,7 +24333,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
       where: (queryParameters.where ?? []).concat(
         LazilyResolvedBlankNodeOrIriClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -21457,7 +24343,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -21511,7 +24397,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -21579,6 +24465,42 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}LazilyResolvedStringProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -21597,26 +24519,19 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
 export class LanguageInPropertiesClass {
   private _$identifier?: LanguageInPropertiesClass.$Identifier;
   readonly $type = "LanguageInPropertiesClass";
-  readonly languageInPropertiesLanguageInProperty: rdfjs.Literal;
   /**
-   * literal property for testing runtime languageIn
+   * literal property for testing languageIn
    */
-  readonly languageInPropertiesLiteralProperty: rdfjs.Literal;
+  readonly languageInLiteralProperty: purify.NonEmptyList<rdfjs.Literal>;
+  /**
+   * string property for testing languageIn; must have '' as an acceptable languageIn since that's how it will be serialized to RDF
+   */
+  readonly languageInStringProperty: purify.NonEmptyList<string>;
 
   constructor(parameters: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly languageInPropertiesLanguageInProperty:
-      | rdfjs.Literal
-      | Date
-      | boolean
-      | number
-      | string;
-    readonly languageInPropertiesLiteralProperty:
-      | rdfjs.Literal
-      | Date
-      | boolean
-      | number
-      | string;
+    readonly languageInLiteralProperty: purify.NonEmptyList<rdfjs.Literal>;
+    readonly languageInStringProperty: purify.NonEmptyList<string>;
   }) {
     if (typeof parameters.$identifier === "object") {
       this._$identifier = parameters.$identifier;
@@ -21627,79 +24542,8 @@ export class LanguageInPropertiesClass {
       this._$identifier = parameters.$identifier satisfies never;
     }
 
-    if (
-      typeof parameters.languageInPropertiesLanguageInProperty === "boolean"
-    ) {
-      this.languageInPropertiesLanguageInProperty = rdfLiteral.toRdf(
-        parameters.languageInPropertiesLanguageInProperty,
-        { dataFactory },
-      );
-    } else if (
-      typeof parameters.languageInPropertiesLanguageInProperty === "object" &&
-      parameters.languageInPropertiesLanguageInProperty instanceof Date
-    ) {
-      this.languageInPropertiesLanguageInProperty = rdfLiteral.toRdf(
-        parameters.languageInPropertiesLanguageInProperty,
-        { dataFactory },
-      );
-    } else if (
-      typeof parameters.languageInPropertiesLanguageInProperty === "number"
-    ) {
-      this.languageInPropertiesLanguageInProperty = rdfLiteral.toRdf(
-        parameters.languageInPropertiesLanguageInProperty,
-        { dataFactory },
-      );
-    } else if (
-      typeof parameters.languageInPropertiesLanguageInProperty === "string"
-    ) {
-      this.languageInPropertiesLanguageInProperty = dataFactory.literal(
-        parameters.languageInPropertiesLanguageInProperty,
-      );
-    } else if (
-      typeof parameters.languageInPropertiesLanguageInProperty === "object"
-    ) {
-      this.languageInPropertiesLanguageInProperty =
-        parameters.languageInPropertiesLanguageInProperty;
-    } else {
-      this.languageInPropertiesLanguageInProperty =
-        parameters.languageInPropertiesLanguageInProperty satisfies never;
-    }
-
-    if (typeof parameters.languageInPropertiesLiteralProperty === "boolean") {
-      this.languageInPropertiesLiteralProperty = rdfLiteral.toRdf(
-        parameters.languageInPropertiesLiteralProperty,
-        { dataFactory },
-      );
-    } else if (
-      typeof parameters.languageInPropertiesLiteralProperty === "object" &&
-      parameters.languageInPropertiesLiteralProperty instanceof Date
-    ) {
-      this.languageInPropertiesLiteralProperty = rdfLiteral.toRdf(
-        parameters.languageInPropertiesLiteralProperty,
-        { dataFactory },
-      );
-    } else if (
-      typeof parameters.languageInPropertiesLiteralProperty === "number"
-    ) {
-      this.languageInPropertiesLiteralProperty = rdfLiteral.toRdf(
-        parameters.languageInPropertiesLiteralProperty,
-        { dataFactory },
-      );
-    } else if (
-      typeof parameters.languageInPropertiesLiteralProperty === "string"
-    ) {
-      this.languageInPropertiesLiteralProperty = dataFactory.literal(
-        parameters.languageInPropertiesLiteralProperty,
-      );
-    } else if (
-      typeof parameters.languageInPropertiesLiteralProperty === "object"
-    ) {
-      this.languageInPropertiesLiteralProperty =
-        parameters.languageInPropertiesLiteralProperty;
-    } else {
-      this.languageInPropertiesLiteralProperty =
-        parameters.languageInPropertiesLiteralProperty satisfies never;
-    }
+    this.languageInLiteralProperty = parameters.languageInLiteralProperty;
+    this.languageInStringProperty = parameters.languageInStringProperty;
   }
 
   get $identifier(): LanguageInPropertiesClass.$Identifier {
@@ -21730,25 +24574,25 @@ export class LanguageInPropertiesClass {
         ),
       )
       .chain(() =>
-        $booleanEquals(
-          this.languageInPropertiesLanguageInProperty,
-          other.languageInPropertiesLanguageInProperty,
+        ((left, right) => $arrayEquals(left, right, $booleanEquals))(
+          this.languageInLiteralProperty,
+          other.languageInLiteralProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left: this,
           right: other,
-          propertyName: "languageInPropertiesLanguageInProperty",
+          propertyName: "languageInLiteralProperty",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
       )
       .chain(() =>
-        $booleanEquals(
-          this.languageInPropertiesLiteralProperty,
-          other.languageInPropertiesLiteralProperty,
+        ((left, right) => $arrayEquals(left, right, $strictEquals))(
+          this.languageInStringProperty,
+          other.languageInStringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left: this,
           right: other,
-          propertyName: "languageInPropertiesLiteralProperty",
+          propertyName: "languageInStringProperty",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -21771,14 +24615,17 @@ export class LanguageInPropertiesClass {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    _hasher.update(this.languageInPropertiesLanguageInProperty.datatype.value);
-    _hasher.update(this.languageInPropertiesLanguageInProperty.language);
-    _hasher.update(this.languageInPropertiesLanguageInProperty.termType);
-    _hasher.update(this.languageInPropertiesLanguageInProperty.value);
-    _hasher.update(this.languageInPropertiesLiteralProperty.datatype.value);
-    _hasher.update(this.languageInPropertiesLiteralProperty.language);
-    _hasher.update(this.languageInPropertiesLiteralProperty.termType);
-    _hasher.update(this.languageInPropertiesLiteralProperty.value);
+    for (const item0 of this.languageInLiteralProperty) {
+      _hasher.update(item0.datatype.value);
+      _hasher.update(item0.language);
+      _hasher.update(item0.termType);
+      _hasher.update(item0.value);
+    }
+
+    for (const item0 of this.languageInStringProperty) {
+      _hasher.update(item0);
+    }
+
     return _hasher;
   }
 
@@ -21790,30 +24637,19 @@ export class LanguageInPropertiesClass {
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
         $type: this.$type,
-        languageInPropertiesLanguageInProperty: {
-          "@language":
-            this.languageInPropertiesLanguageInProperty.language.length > 0
-              ? this.languageInPropertiesLanguageInProperty.language
-              : undefined,
-          "@type":
-            this.languageInPropertiesLanguageInProperty.datatype.value !==
-            "http://www.w3.org/2001/XMLSchema#string"
-              ? this.languageInPropertiesLanguageInProperty.datatype.value
-              : undefined,
-          "@value": this.languageInPropertiesLanguageInProperty.value,
-        },
-        languageInPropertiesLiteralProperty: {
-          "@language":
-            this.languageInPropertiesLiteralProperty.language.length > 0
-              ? this.languageInPropertiesLiteralProperty.language
-              : undefined,
-          "@type":
-            this.languageInPropertiesLiteralProperty.datatype.value !==
-            "http://www.w3.org/2001/XMLSchema#string"
-              ? this.languageInPropertiesLiteralProperty.datatype.value
-              : undefined,
-          "@value": this.languageInPropertiesLiteralProperty.value,
-        },
+        languageInLiteralProperty: this.languageInLiteralProperty.map(
+          (item) => ({
+            "@language": item.language.length > 0 ? item.language : undefined,
+            "@type":
+              item.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+                ? item.datatype.value
+                : undefined,
+            "@value": item.value,
+          }),
+        ),
+        languageInStringProperty: this.languageInStringProperty.map(
+          (item) => item,
+        ),
       } satisfies LanguageInPropertiesClass.$Json),
     );
   }
@@ -21834,15 +24670,16 @@ export class LanguageInPropertiesClass {
       mutateGraph,
     });
     resource.add(
-      LanguageInPropertiesClass.$properties
-        .languageInPropertiesLanguageInProperty["identifier"],
-      this.languageInPropertiesLanguageInProperty,
-    );
-    resource.add(
-      LanguageInPropertiesClass.$properties.languageInPropertiesLiteralProperty[
+      LanguageInPropertiesClass.$properties.languageInLiteralProperty[
         "identifier"
       ],
-      this.languageInPropertiesLiteralProperty,
+      this.languageInLiteralProperty.map((item) => item),
+    );
+    resource.add(
+      LanguageInPropertiesClass.$properties.languageInStringProperty[
+        "identifier"
+      ],
+      this.languageInStringProperty.map((item) => item),
     );
     return resource;
   }
@@ -21874,24 +24711,20 @@ export namespace LanguageInPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "LanguageInPropertiesClass";
-    readonly languageInPropertiesLanguageInProperty: {
+    readonly languageInLiteralProperty: readonly {
       readonly "@language"?: string;
       readonly "@type"?: string;
       readonly "@value": string;
-    };
-    readonly languageInPropertiesLiteralProperty: {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    };
+    }[];
+    readonly languageInStringProperty: readonly string[];
   };
 
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      languageInPropertiesLanguageInProperty: rdfjs.Literal;
-      languageInPropertiesLiteralProperty: rdfjs.Literal;
+      languageInLiteralProperty: purify.NonEmptyList<rdfjs.Literal>;
+      languageInStringProperty: purify.NonEmptyList<string>;
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -21903,36 +24736,27 @@ export namespace LanguageInPropertiesClass {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    const languageInPropertiesLanguageInProperty = dataFactory.literal(
-      $jsonObject["languageInPropertiesLanguageInProperty"]["@value"],
-      typeof $jsonObject["languageInPropertiesLanguageInProperty"][
-        "@language"
-      ] !== "undefined"
-        ? $jsonObject["languageInPropertiesLanguageInProperty"]["@language"]
-        : typeof $jsonObject["languageInPropertiesLanguageInProperty"][
-              "@type"
-            ] !== "undefined"
-          ? dataFactory.namedNode(
-              $jsonObject["languageInPropertiesLanguageInProperty"]["@type"],
-            )
-          : undefined,
-    );
-    const languageInPropertiesLiteralProperty = dataFactory.literal(
-      $jsonObject["languageInPropertiesLiteralProperty"]["@value"],
-      typeof $jsonObject["languageInPropertiesLiteralProperty"]["@language"] !==
-        "undefined"
-        ? $jsonObject["languageInPropertiesLiteralProperty"]["@language"]
-        : typeof $jsonObject["languageInPropertiesLiteralProperty"]["@type"] !==
-            "undefined"
-          ? dataFactory.namedNode(
-              $jsonObject["languageInPropertiesLiteralProperty"]["@type"],
-            )
-          : undefined,
-    );
+    const languageInLiteralProperty = purify.NonEmptyList.fromArray(
+      $jsonObject["languageInLiteralProperty"],
+    )
+      .unsafeCoerce()
+      .map((item) =>
+        dataFactory.literal(
+          item["@value"],
+          typeof item["@language"] !== "undefined"
+            ? item["@language"]
+            : typeof item["@type"] !== "undefined"
+              ? dataFactory.namedNode(item["@type"])
+              : undefined,
+        ),
+      );
+    const languageInStringProperty = purify.NonEmptyList.fromArray(
+      $jsonObject["languageInStringProperty"],
+    ).unsafeCoerce();
     return purify.Either.of({
       $identifier,
-      languageInPropertiesLanguageInProperty,
-      languageInPropertiesLiteralProperty,
+      languageInLiteralProperty,
+      languageInStringProperty,
     });
   }
 
@@ -21969,11 +24793,11 @@ export namespace LanguageInPropertiesClass {
           type: "Control",
         },
         {
-          scope: `${scopePrefix}/properties/languageInPropertiesLanguageInProperty`,
+          scope: `${scopePrefix}/properties/languageInLiteralProperty`,
           type: "Control",
         },
         {
-          scope: `${scopePrefix}/properties/languageInPropertiesLiteralProperty`,
+          scope: `${scopePrefix}/properties/languageInStringProperty`,
           type: "Control",
         },
       ],
@@ -21986,18 +24810,24 @@ export namespace LanguageInPropertiesClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("LanguageInPropertiesClass"),
-      languageInPropertiesLanguageInProperty: zod.object({
-        "@language": zod.string().optional(),
-        "@type": zod.string().optional(),
-        "@value": zod.string(),
-      }),
-      languageInPropertiesLiteralProperty: zod
+      languageInLiteralProperty: zod
         .object({
           "@language": zod.string().optional(),
           "@type": zod.string().optional(),
           "@value": zod.string(),
         })
-        .describe("literal property for testing runtime languageIn"),
+        .array()
+        .nonempty()
+        .min(1)
+        .describe("literal property for testing languageIn"),
+      languageInStringProperty: zod
+        .string()
+        .array()
+        .nonempty()
+        .min(1)
+        .describe(
+          "string property for testing languageIn; must have '' as an acceptable languageIn since that's how it will be serialized to RDF",
+        ),
     }) satisfies zod.ZodType<$Json>;
   }
 
@@ -22006,14 +24836,14 @@ export namespace LanguageInPropertiesClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LanguageInPropertiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -22023,48 +24853,76 @@ export namespace LanguageInPropertiesClass {
     return LanguageInPropertiesClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new LanguageInPropertiesClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      languageInPropertiesLanguageInProperty: rdfjs.Literal;
-      languageInPropertiesLiteralProperty: rdfjs.Literal;
+      languageInLiteralProperty: purify.NonEmptyList<rdfjs.Literal>;
+      languageInStringProperty: purify.NonEmptyList<string>;
     }
   > {
     const $identifier: LanguageInPropertiesClass.$Identifier =
       $resource.identifier;
-    const _languageInPropertiesLanguageInPropertyEither: purify.Either<
+    const _languageInLiteralPropertyEither: purify.Either<
       Error,
-      rdfjs.Literal
+      purify.NonEmptyList<rdfjs.Literal>
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >(
-      $resource.values(
-        $properties.languageInPropertiesLanguageInProperty["identifier"],
-        { unique: true },
-      ),
+      $resource.values($properties.languageInLiteralProperty["identifier"], {
+        unique: true,
+      }),
     )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toLiteral().chain((literalValue) => {
+            switch (literalValue.language) {
+              case "en":
+              case "fr":
+                return purify.Either.of(value);
+              default:
+                return purify.Left(
+                  new rdfjsResource.Resource.MistypedValueError({
+                    actualValue: literalValue,
+                    expectedValueType: "(rdfjs.Literal)",
+                    focusResource: $resource,
+                    predicate:
+                      LanguageInPropertiesClass.$properties
+                        .languageInLiteralProperty["identifier"],
+                  }),
+                );
+            }
+          }),
+        ),
+      )
       .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
         const literalValuesEither = values.chainMap((value) =>
           value.toLiteral(),
         );
@@ -22073,40 +24931,20 @@ export namespace LanguageInPropertiesClass {
         }
         const literalValues = literalValuesEither.unsafeCoerce();
 
-        const nonUniqueLanguageIn = $languageIn ?? ["en", "fr"];
-        if (nonUniqueLanguageIn.length === 0) {
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjs.Literal>
-          >(literalValues);
-        }
-
-        let uniqueLanguageIn: string[];
-        if (nonUniqueLanguageIn.length === 1) {
-          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-        } else {
-          uniqueLanguageIn = [];
-          for (const languageIn of nonUniqueLanguageIn) {
-            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-              uniqueLanguageIn.push(languageIn);
-            }
-          }
-        }
-
-        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-        // Within a languageIn the literals may be in any order.
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const languageIn of uniqueLanguageIn) {
+        for (const preferredLanguage of $preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
-              (value) => value.language === languageIn,
+              (value) => value.language === preferredLanguage,
             );
           } else {
             filteredLiteralValues = filteredLiteralValues.concat(
               ...literalValues
-                .filter((value) => value.language === languageIn)
+                .filter((value) => value.language === preferredLanguage)
                 .toArray(),
             );
           }
@@ -22114,29 +24952,87 @@ export namespace LanguageInPropertiesClass {
 
         return purify.Either.of<
           Error,
-          rdfjsResource.Resource.Values<rdfjs.Literal>
-        >(filteredLiteralValues!);
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  LanguageInPropertiesClass.$properties
+                    .languageInLiteralProperty["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
       })
+      .chain((values) => values.chainMap((value) => value.toLiteral()))
+      .chain((values) =>
+        purify.NonEmptyList.fromArray(values.toArray()).toEither(
+          new Error(
+            `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} is an empty set`,
+          ),
+        ),
+      )
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            LanguageInPropertiesClass.$properties.languageInLiteralProperty[
+              "identifier"
+            ],
+          subject: $resource,
+        }),
+      )
       .chain((values) => values.head());
-    if (_languageInPropertiesLanguageInPropertyEither.isLeft()) {
-      return _languageInPropertiesLanguageInPropertyEither;
+    if (_languageInLiteralPropertyEither.isLeft()) {
+      return _languageInLiteralPropertyEither;
     }
 
-    const languageInPropertiesLanguageInProperty =
-      _languageInPropertiesLanguageInPropertyEither.unsafeCoerce();
-    const _languageInPropertiesLiteralPropertyEither: purify.Either<
+    const languageInLiteralProperty =
+      _languageInLiteralPropertyEither.unsafeCoerce();
+    const _languageInStringPropertyEither: purify.Either<
       Error,
-      rdfjs.Literal
+      purify.NonEmptyList<string>
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >(
-      $resource.values(
-        $properties.languageInPropertiesLiteralProperty["identifier"],
-        { unique: true },
-      ),
+      $resource.values($properties.languageInStringProperty["identifier"], {
+        unique: true,
+      }),
     )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toLiteral().chain((literalValue) => {
+            switch (literalValue.language) {
+              case "":
+              case "en":
+              case "fr":
+                return purify.Either.of(value);
+              default:
+                return purify.Left(
+                  new rdfjsResource.Resource.MistypedValueError({
+                    actualValue: literalValue,
+                    expectedValueType: "string",
+                    focusResource: $resource,
+                    predicate:
+                      LanguageInPropertiesClass.$properties
+                        .languageInStringProperty["identifier"],
+                  }),
+                );
+            }
+          }),
+        ),
+      )
       .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
         const literalValuesEither = values.chainMap((value) =>
           value.toLiteral(),
         );
@@ -22145,40 +25041,20 @@ export namespace LanguageInPropertiesClass {
         }
         const literalValues = literalValuesEither.unsafeCoerce();
 
-        const nonUniqueLanguageIn = $languageIn ?? [];
-        if (nonUniqueLanguageIn.length === 0) {
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjs.Literal>
-          >(literalValues);
-        }
-
-        let uniqueLanguageIn: string[];
-        if (nonUniqueLanguageIn.length === 1) {
-          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-        } else {
-          uniqueLanguageIn = [];
-          for (const languageIn of nonUniqueLanguageIn) {
-            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-              uniqueLanguageIn.push(languageIn);
-            }
-          }
-        }
-
-        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-        // Within a languageIn the literals may be in any order.
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const languageIn of uniqueLanguageIn) {
+        for (const preferredLanguage of $preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
-              (value) => value.language === languageIn,
+              (value) => value.language === preferredLanguage,
             );
           } else {
             filteredLiteralValues = filteredLiteralValues.concat(
               ...literalValues
-                .filter((value) => value.language === languageIn)
+                .filter((value) => value.language === preferredLanguage)
                 .toArray(),
             );
           }
@@ -22186,32 +25062,61 @@ export namespace LanguageInPropertiesClass {
 
         return purify.Either.of<
           Error,
-          rdfjsResource.Resource.Values<rdfjs.Literal>
-        >(filteredLiteralValues!);
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  LanguageInPropertiesClass.$properties
+                    .languageInStringProperty["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
       })
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .chain((values) =>
+        purify.NonEmptyList.fromArray(values.toArray()).toEither(
+          new Error(
+            `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} is an empty set`,
+          ),
+        ),
+      )
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            LanguageInPropertiesClass.$properties.languageInStringProperty[
+              "identifier"
+            ],
+          subject: $resource,
+        }),
+      )
       .chain((values) => values.head());
-    if (_languageInPropertiesLiteralPropertyEither.isLeft()) {
-      return _languageInPropertiesLiteralPropertyEither;
+    if (_languageInStringPropertyEither.isLeft()) {
+      return _languageInStringPropertyEither;
     }
 
-    const languageInPropertiesLiteralProperty =
-      _languageInPropertiesLiteralPropertyEither.unsafeCoerce();
+    const languageInStringProperty =
+      _languageInStringPropertyEither.unsafeCoerce();
     return purify.Either.of({
       $identifier,
-      languageInPropertiesLanguageInProperty,
-      languageInPropertiesLiteralProperty,
+      languageInLiteralProperty,
+      languageInStringProperty,
     });
   }
 
   export const $properties = {
-    languageInPropertiesLanguageInProperty: {
+    languageInLiteralProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/languageInPropertiesLanguageInProperty",
+        "http://example.com/languageInLiteralProperty",
       ),
     },
-    languageInPropertiesLiteralProperty: {
+    languageInStringProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/languageInPropertiesLiteralProperty",
+        "http://example.com/languageInStringProperty",
       ),
     },
   };
@@ -22219,12 +25124,12 @@ export namespace LanguageInPropertiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -22241,7 +25146,7 @@ export namespace LanguageInPropertiesClass {
       where: (queryParameters.where ?? []).concat(
         LanguageInPropertiesClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -22251,7 +25156,7 @@ export namespace LanguageInPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -22277,20 +25182,22 @@ export namespace LanguageInPropertiesClass {
         : "languageInPropertiesClass");
     triples.push({
       object: dataFactory.variable!(
-        `${variablePrefix}LanguageInPropertiesLanguageInProperty`,
+        `${variablePrefix}LanguageInLiteralProperty`,
       ),
       predicate:
-        LanguageInPropertiesClass.$properties
-          .languageInPropertiesLanguageInProperty["identifier"],
+        LanguageInPropertiesClass.$properties.languageInLiteralProperty[
+          "identifier"
+        ],
       subject,
     });
     triples.push({
       object: dataFactory.variable!(
-        `${variablePrefix}LanguageInPropertiesLiteralProperty`,
+        `${variablePrefix}LanguageInStringProperty`,
       ),
       predicate:
-        LanguageInPropertiesClass.$properties
-          .languageInPropertiesLiteralProperty["identifier"],
+        LanguageInPropertiesClass.$properties.languageInStringProperty[
+          "identifier"
+        ],
       subject,
     });
     return triples;
@@ -22298,7 +25205,7 @@ export namespace LanguageInPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -22316,24 +25223,28 @@ export namespace LanguageInPropertiesClass {
         triples: [
           {
             object: dataFactory.variable!(
-              `${variablePrefix}LanguageInPropertiesLanguageInProperty`,
+              `${variablePrefix}LanguageInLiteralProperty`,
             ),
             predicate:
-              LanguageInPropertiesClass.$properties
-                .languageInPropertiesLanguageInProperty["identifier"],
+              LanguageInPropertiesClass.$properties.languageInLiteralProperty[
+                "identifier"
+              ],
             subject,
           },
         ],
         type: "bgp",
       },
       ...[
-        parameters?.languageIn && parameters?.languageIn.length > 0
-          ? parameters?.languageIn
-          : ["en", "fr"],
+        [
+          ...$arrayIntersection(
+            ["en", "fr"],
+            parameters?.preferredLanguages ?? [],
+          ),
+        ],
       ]
-        .filter((languagesIn) => languagesIn.length > 0)
-        .map((languagesIn) =>
-          languagesIn.map((languageIn) => ({
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
             type: "operation" as const,
             operator: "=",
             args: [
@@ -22342,47 +25253,56 @@ export namespace LanguageInPropertiesClass {
                 operator: "lang",
                 args: [
                   dataFactory.variable!(
-                    `${variablePrefix}LanguageInPropertiesLanguageInProperty`,
+                    `${variablePrefix}LanguageInLiteralProperty`,
                   ),
                 ],
               },
-              dataFactory.literal(languageIn),
+              dataFactory.literal(language),
             ],
           })),
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
       {
         triples: [
           {
             object: dataFactory.variable!(
-              `${variablePrefix}LanguageInPropertiesLiteralProperty`,
+              `${variablePrefix}LanguageInStringProperty`,
             ),
             predicate:
-              LanguageInPropertiesClass.$properties
-                .languageInPropertiesLiteralProperty["identifier"],
+              LanguageInPropertiesClass.$properties.languageInStringProperty[
+                "identifier"
+              ],
             subject,
           },
         ],
         type: "bgp",
       },
       ...[
-        parameters?.languageIn && parameters?.languageIn.length > 0
-          ? parameters?.languageIn
-          : [],
+        [
+          ...$arrayIntersection(
+            ["", "en", "fr"],
+            parameters?.preferredLanguages ?? [],
+          ),
+        ],
       ]
-        .filter((languagesIn) => languagesIn.length > 0)
-        .map((languagesIn) =>
-          languagesIn.map((languageIn) => ({
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
             type: "operation" as const,
             operator: "=",
             args: [
@@ -22391,24 +25311,29 @@ export namespace LanguageInPropertiesClass {
                 operator: "lang",
                 args: [
                   dataFactory.variable!(
-                    `${variablePrefix}LanguageInPropertiesLiteralProperty`,
+                    `${variablePrefix}LanguageInStringProperty`,
                   ),
                 ],
               },
-              dataFactory.literal(languageIn),
+              dataFactory.literal(language),
             ],
           })),
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -22600,14 +25525,14 @@ export namespace IriClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, IriClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -22617,24 +25542,24 @@ export namespace IriClass {
     return IriClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new IriClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.NamedNode }> {
     if ($resource.identifier.termType !== "NamedNode") {
@@ -22657,12 +25582,12 @@ export namespace IriClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -22674,7 +25599,11 @@ export namespace IriClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        IriClass.$sparqlWherePatterns({ ignoreRdfType, languageIn, subject }),
+        IriClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
       ),
     };
   }
@@ -22682,7 +25611,7 @@ export namespace IriClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -22703,7 +25632,7 @@ export namespace IriClass {
 
   export function $sparqlWherePatterns(_parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -22924,14 +25853,14 @@ export namespace InterfaceUnionMember2b {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, InterfaceUnionMember2b> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -22941,24 +25870,24 @@ export namespace InterfaceUnionMember2b {
     return InterfaceUnionMember2b.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     });
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -22981,6 +25910,57 @@ export namespace InterfaceUnionMember2b {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    InterfaceUnionMember2b.$properties
+                      .interfaceUnionMember2bProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_interfaceUnionMember2bPropertyEither.isLeft()) {
@@ -23035,12 +26015,12 @@ export namespace InterfaceUnionMember2b {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -23057,7 +26037,7 @@ export namespace InterfaceUnionMember2b {
       where: (queryParameters.where ?? []).concat(
         InterfaceUnionMember2b.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -23067,7 +26047,7 @@ export namespace InterfaceUnionMember2b {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -23106,7 +26086,7 @@ export namespace InterfaceUnionMember2b {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -23135,6 +26115,42 @@ export namespace InterfaceUnionMember2b {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}InterfaceUnionMember2bProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -23361,14 +26377,14 @@ export namespace InterfaceUnionMember2a {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, InterfaceUnionMember2a> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -23378,24 +26394,24 @@ export namespace InterfaceUnionMember2a {
     return InterfaceUnionMember2a.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     });
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -23418,6 +26434,57 @@ export namespace InterfaceUnionMember2a {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    InterfaceUnionMember2a.$properties
+                      .interfaceUnionMember2aProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_interfaceUnionMember2aPropertyEither.isLeft()) {
@@ -23472,12 +26539,12 @@ export namespace InterfaceUnionMember2a {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -23494,7 +26561,7 @@ export namespace InterfaceUnionMember2a {
       where: (queryParameters.where ?? []).concat(
         InterfaceUnionMember2a.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -23504,7 +26571,7 @@ export namespace InterfaceUnionMember2a {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -23543,7 +26610,7 @@ export namespace InterfaceUnionMember2a {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -23572,6 +26639,42 @@ export namespace InterfaceUnionMember2a {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}InterfaceUnionMember2aProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -23789,14 +26892,14 @@ export namespace InterfaceUnionMember1 {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, InterfaceUnionMember1> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -23806,24 +26909,24 @@ export namespace InterfaceUnionMember1 {
     return InterfaceUnionMember1.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     });
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -23845,6 +26948,57 @@ export namespace InterfaceUnionMember1 {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    InterfaceUnionMember1.$properties
+                      .interfaceUnionMember1Property["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_interfaceUnionMember1PropertyEither.isLeft()) {
@@ -23899,12 +27053,12 @@ export namespace InterfaceUnionMember1 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -23921,7 +27075,7 @@ export namespace InterfaceUnionMember1 {
       where: (queryParameters.where ?? []).concat(
         InterfaceUnionMember1.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -23931,7 +27085,7 @@ export namespace InterfaceUnionMember1 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -23970,7 +27124,7 @@ export namespace InterfaceUnionMember1 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -23999,6 +27153,42 @@ export namespace InterfaceUnionMember1 {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}InterfaceUnionMember1Property`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -24206,14 +27396,14 @@ export namespace Interface {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, Interface> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -24223,24 +27413,24 @@ export namespace Interface {
     return Interface.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     });
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -24261,6 +27451,56 @@ export namespace Interface {
           unique: true,
         }),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    Interface.$properties.interfaceProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_interfacePropertyEither.isLeft()) {
@@ -24305,12 +27545,12 @@ export namespace Interface {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -24322,7 +27562,11 @@ export namespace Interface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        Interface.$sparqlWherePatterns({ ignoreRdfType, languageIn, subject }),
+        Interface.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
       ),
     };
   }
@@ -24330,7 +27574,7 @@ export namespace Interface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -24361,7 +27605,7 @@ export namespace Interface {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -24382,6 +27626,40 @@ export namespace Interface {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(`${variablePrefix}InterfaceProperty`),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -24647,14 +27925,14 @@ export namespace IndirectRecursiveHelperClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, IndirectRecursiveHelperClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -24664,24 +27942,24 @@ export namespace IndirectRecursiveHelperClass {
     return IndirectRecursiveHelperClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new IndirectRecursiveHelperClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -24709,8 +27987,8 @@ export namespace IndirectRecursiveHelperClass {
             IndirectRecursiveClass.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -24749,12 +28027,12 @@ export namespace IndirectRecursiveHelperClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -24771,7 +28049,7 @@ export namespace IndirectRecursiveHelperClass {
       where: (queryParameters.where ?? []).concat(
         IndirectRecursiveHelperClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -24781,7 +28059,7 @@ export namespace IndirectRecursiveHelperClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -24830,7 +28108,7 @@ export namespace IndirectRecursiveHelperClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -24863,7 +28141,7 @@ export namespace IndirectRecursiveHelperClass {
           },
           ...IndirectRecursiveClass.$sparqlWherePatterns({
             ignoreRdfType: true,
-            languageIn: parameters?.languageIn,
+            preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
               `${variablePrefix}IndirectRecursiveProperty`,
             ),
@@ -25139,14 +28417,14 @@ export namespace IndirectRecursiveClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, IndirectRecursiveClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -25156,24 +28434,24 @@ export namespace IndirectRecursiveClass {
     return IndirectRecursiveClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new IndirectRecursiveClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -25202,8 +28480,8 @@ export namespace IndirectRecursiveClass {
             IndirectRecursiveHelperClass.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -25242,12 +28520,12 @@ export namespace IndirectRecursiveClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -25264,7 +28542,7 @@ export namespace IndirectRecursiveClass {
       where: (queryParameters.where ?? []).concat(
         IndirectRecursiveClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -25274,7 +28552,7 @@ export namespace IndirectRecursiveClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -25295,7 +28573,7 @@ export namespace IndirectRecursiveClass {
 
   export function $sparqlWherePatterns(_parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -25769,14 +29047,14 @@ export namespace InPropertiesClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, InPropertiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -25786,24 +29064,24 @@ export namespace InPropertiesClass {
     return InPropertiesClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new InPropertiesClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -26065,17 +29343,67 @@ export namespace InPropertiesClass {
         unique: true,
       }),
     )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  InPropertiesClass.$properties.inStringsProperty["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
       .chain((values) =>
         values.chainMap((value) =>
-          value.toString().chain((value) => {
-            switch (value) {
+          value.toString().chain((string_) => {
+            switch (string_) {
               case "text":
               case "html":
-                return purify.Either.of<Error, "text" | "html">(value);
+                return purify.Either.of<Error, "text" | "html">(string_);
               default:
                 return purify.Left<Error, "text" | "html">(
                   new rdfjsResource.Resource.MistypedValueError({
-                    actualValue: rdfLiteral.toRdf(value),
+                    actualValue: value.toTerm(),
                     expectedValueType: '"text" | "html"',
                     focusResource: $resource,
                     predicate:
@@ -26141,12 +29469,12 @@ export namespace InPropertiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -26163,7 +29491,7 @@ export namespace InPropertiesClass {
       where: (queryParameters.where ?? []).concat(
         InPropertiesClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -26173,7 +29501,7 @@ export namespace InPropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -26226,7 +29554,7 @@ export namespace InPropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -26329,6 +29657,42 @@ export namespace InPropertiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.preferredLanguages ?? []]
+            .filter((languages) => languages.length > 0)
+            .map((languages) =>
+              languages.map((language) => ({
+                type: "operation" as const,
+                operator: "=",
+                args: [
+                  {
+                    type: "operation" as const,
+                    operator: "lang",
+                    args: [
+                      dataFactory.variable!(
+                        `${variablePrefix}InStringsProperty`,
+                      ),
+                    ],
+                  },
+                  dataFactory.literal(language),
+                ],
+              })),
+            )
+            .map((langEqualsExpressions) => ({
+              type: "filter" as const,
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
+            })),
         ],
         type: "optional",
       },
@@ -26623,14 +29987,14 @@ export namespace InIdentifierClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, InIdentifierClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -26640,24 +30004,24 @@ export namespace InIdentifierClass {
     return InIdentifierClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new InIdentifierClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -26704,6 +30068,58 @@ export namespace InIdentifierClass {
         unique: true,
       }),
     )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  InIdentifierClass.$properties.inIdentifierProperty[
+                    "identifier"
+                  ],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
       .chain((values) => values.chainMap((value) => value.toString()))
       .map((values) =>
         values.length > 0
@@ -26737,12 +30153,12 @@ export namespace InIdentifierClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -26759,7 +30175,7 @@ export namespace InIdentifierClass {
       where: (queryParameters.where ?? []).concat(
         InIdentifierClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -26769,7 +30185,7 @@ export namespace InIdentifierClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -26802,7 +30218,7 @@ export namespace InIdentifierClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -26831,6 +30247,42 @@ export namespace InIdentifierClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.preferredLanguages ?? []]
+            .filter((languages) => languages.length > 0)
+            .map((languages) =>
+              languages.map((language) => ({
+                type: "operation" as const,
+                operator: "=",
+                args: [
+                  {
+                    type: "operation" as const,
+                    operator: "lang",
+                    args: [
+                      dataFactory.variable!(
+                        `${variablePrefix}InIdentifierProperty`,
+                      ),
+                    ],
+                  },
+                  dataFactory.literal(language),
+                ],
+              })),
+            )
+            .map((langEqualsExpressions) => ({
+              type: "filter" as const,
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
+            })),
         ],
         type: "optional",
       },
@@ -27116,14 +30568,14 @@ export namespace HasValuePropertiesClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, HasValuePropertiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -27133,24 +30585,24 @@ export namespace HasValuePropertiesClass {
     return HasValuePropertiesClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new HasValuePropertiesClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -27171,6 +30623,24 @@ export namespace HasValuePropertiesClass {
           unique: true,
         }),
       )
+        .chain((values) => {
+          for (const hasValue of [
+            dataFactory.namedNode(
+              "http://example.com/HasValuePropertiesClassIri1",
+            ),
+          ]) {
+            const findResult = values.find((value) =>
+              value.toTerm().equals(hasValue),
+            );
+            if (findResult.isLeft()) {
+              return findResult;
+            }
+          }
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        })
         .chain((values) => values.chainMap((value) => value.toIri()))
         .chain((values) => values.head());
     if (_hasIriValuePropertyEither.isLeft()) {
@@ -27200,6 +30670,58 @@ export namespace HasValuePropertiesClass {
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
           >(values);
+        })
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    HasValuePropertiesClass.$properties.hasLiteralValueProperty[
+                      "identifier"
+                    ],
+                  subject: $resource,
+                }),
+            ),
+          );
         })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
@@ -27232,12 +30754,12 @@ export namespace HasValuePropertiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -27254,7 +30776,7 @@ export namespace HasValuePropertiesClass {
       where: (queryParameters.where ?? []).concat(
         HasValuePropertiesClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -27264,7 +30786,7 @@ export namespace HasValuePropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -27307,7 +30829,7 @@ export namespace HasValuePropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -27351,6 +30873,42 @@ export namespace HasValuePropertiesClass {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}HasLiteralValueProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -27610,14 +31168,14 @@ export namespace ExternClassPropertyClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ExternClassPropertyClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -27627,24 +31185,24 @@ export namespace ExternClassPropertyClass {
     return ExternClassPropertyClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new ExternClassPropertyClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -27672,8 +31230,8 @@ export namespace ExternClassPropertyClass {
             ExternClass.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -27710,12 +31268,12 @@ export namespace ExternClassPropertyClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -27732,7 +31290,7 @@ export namespace ExternClassPropertyClass {
       where: (queryParameters.where ?? []).concat(
         ExternClassPropertyClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -27742,7 +31300,7 @@ export namespace ExternClassPropertyClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -27784,7 +31342,7 @@ export namespace ExternClassPropertyClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -27817,7 +31375,7 @@ export namespace ExternClassPropertyClass {
           },
           ...ExternClass.$sparqlWherePatterns({
             ignoreRdfType: true,
-            languageIn: parameters?.languageIn,
+            preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
               `${variablePrefix}ExternClassProperty`,
             ),
@@ -28076,14 +31634,14 @@ export namespace ExplicitRdfTypeClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ExplicitRdfTypeClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -28093,24 +31651,24 @@ export namespace ExplicitRdfTypeClass {
     return ExplicitRdfTypeClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new ExplicitRdfTypeClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -28156,6 +31714,58 @@ export namespace ExplicitRdfTypeClass {
           unique: true,
         }),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    ExplicitRdfTypeClass.$properties.explicitRdfTypeProperty[
+                      "identifier"
+                    ],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_explicitRdfTypePropertyEither.isLeft()) {
@@ -28178,12 +31788,12 @@ export namespace ExplicitRdfTypeClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -28200,7 +31810,7 @@ export namespace ExplicitRdfTypeClass {
       where: (queryParameters.where ?? []).concat(
         ExplicitRdfTypeClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -28210,7 +31820,7 @@ export namespace ExplicitRdfTypeClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -28260,7 +31870,7 @@ export namespace ExplicitRdfTypeClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -28328,6 +31938,42 @@ export namespace ExplicitRdfTypeClass {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}ExplicitRdfTypeProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -28587,14 +32233,14 @@ export namespace ExplicitFromToRdfTypesClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ExplicitFromToRdfTypesClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -28604,24 +32250,24 @@ export namespace ExplicitFromToRdfTypesClass {
     return ExplicitFromToRdfTypesClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new ExplicitFromToRdfTypesClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -28671,6 +32317,57 @@ export namespace ExplicitFromToRdfTypesClass {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    ExplicitFromToRdfTypesClass.$properties
+                      .explicitFromToRdfTypesProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_explicitFromToRdfTypesPropertyEither.isLeft()) {
@@ -28693,12 +32390,12 @@ export namespace ExplicitFromToRdfTypesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -28715,7 +32412,7 @@ export namespace ExplicitFromToRdfTypesClass {
       where: (queryParameters.where ?? []).concat(
         ExplicitFromToRdfTypesClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -28725,7 +32422,7 @@ export namespace ExplicitFromToRdfTypesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -28780,7 +32477,7 @@ export namespace ExplicitFromToRdfTypesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -28848,6 +32545,42 @@ export namespace ExplicitFromToRdfTypesClass {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}ExplicitFromToRdfTypesProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -29111,14 +32844,14 @@ export namespace DirectRecursiveClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, DirectRecursiveClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -29128,24 +32861,24 @@ export namespace DirectRecursiveClass {
     return DirectRecursiveClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new DirectRecursiveClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -29172,8 +32905,8 @@ export namespace DirectRecursiveClass {
             DirectRecursiveClass.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
-              languageIn: $languageIn,
               objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
             }),
           ),
         ),
@@ -29213,12 +32946,12 @@ export namespace DirectRecursiveClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -29235,7 +32968,7 @@ export namespace DirectRecursiveClass {
       where: (queryParameters.where ?? []).concat(
         DirectRecursiveClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -29245,7 +32978,7 @@ export namespace DirectRecursiveClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -29266,7 +32999,7 @@ export namespace DirectRecursiveClass {
 
   export function $sparqlWherePatterns(_parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -29772,14 +33505,14 @@ export namespace DefaultValuePropertiesClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, DefaultValuePropertiesClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -29789,24 +33522,24 @@ export namespace DefaultValuePropertiesClass {
     return DefaultValuePropertiesClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new DefaultValuePropertiesClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -29967,6 +33700,57 @@ export namespace DefaultValuePropertiesClass {
                 object: dataFactory.literal(""),
               }).toValues(),
         )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    DefaultValuePropertiesClass.$properties
+                      .stringDefaultValueProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_stringDefaultValuePropertyEither.isLeft()) {
@@ -30053,12 +33837,12 @@ export namespace DefaultValuePropertiesClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -30075,7 +33859,7 @@ export namespace DefaultValuePropertiesClass {
       where: (queryParameters.where ?? []).concat(
         DefaultValuePropertiesClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -30085,7 +33869,7 @@ export namespace DefaultValuePropertiesClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -30174,7 +33958,7 @@ export namespace DefaultValuePropertiesClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -30284,6 +34068,42 @@ export namespace DefaultValuePropertiesClass {
         ],
         type: "optional",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}StringDefaultValueProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
       {
         patterns: [
           {
@@ -30559,14 +34379,14 @@ export namespace BaseInterfaceWithPropertiesStatic {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, BaseInterfaceWithProperties> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -30583,8 +34403,8 @@ export namespace BaseInterfaceWithPropertiesStatic {
       BaseInterfaceWithPropertiesStatic.$propertiesFromRdf({
         ...context,
         ignoreRdfType,
-        languageIn,
         objectSet,
+        preferredLanguages,
         resource,
       }),
     );
@@ -30592,16 +34412,16 @@ export namespace BaseInterfaceWithPropertiesStatic {
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -30664,6 +34484,57 @@ export namespace BaseInterfaceWithPropertiesStatic {
         { unique: true },
       ),
     )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  BaseInterfaceWithPropertiesStatic.$properties
+                    .baseInterfaceWithPropertiesProperty["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
       .chain((values) => values.chainMap((value) => value.toString()))
       .chain((values) => values.head());
     if (_baseInterfaceWithPropertiesPropertyEither.isLeft()) {
@@ -30727,12 +34598,12 @@ export namespace BaseInterfaceWithPropertiesStatic {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -30749,7 +34620,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
       where: (queryParameters.where ?? []).concat(
         BaseInterfaceWithPropertiesStatic.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -30759,7 +34630,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -30813,7 +34684,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -30895,6 +34766,42 @@ export namespace BaseInterfaceWithPropertiesStatic {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}BaseInterfaceWithPropertiesProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -31076,14 +34983,14 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, BaseInterfaceWithoutProperties> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -31100,8 +35007,8 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       BaseInterfaceWithoutPropertiesStatic.$propertiesFromRdf({
         ...context,
         ignoreRdfType,
-        languageIn,
         objectSet,
+        preferredLanguages,
         resource,
       }),
     );
@@ -31109,16 +35016,16 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -31135,8 +35042,8 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     const $super0Either = BaseInterfaceWithPropertiesStatic.$propertiesFromRdf({
       ...$context,
       ignoreRdfType: true,
-      languageIn: $languageIn,
       objectSet: $objectSet,
+      preferredLanguages: $preferredLanguages,
       resource: $resource,
     });
     if ($super0Either.isLeft()) {
@@ -31222,12 +35129,12 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -31244,7 +35151,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       where: (queryParameters.where ?? []).concat(
         BaseInterfaceWithoutPropertiesStatic.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -31254,7 +35161,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -31306,7 +35213,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -31580,14 +35487,14 @@ export namespace ConcreteParentInterfaceStatic {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ConcreteParentInterface> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -31604,8 +35511,8 @@ export namespace ConcreteParentInterfaceStatic {
       ConcreteParentInterfaceStatic.$propertiesFromRdf({
         ...context,
         ignoreRdfType,
-        languageIn,
         objectSet,
+        preferredLanguages,
         resource,
       }),
     );
@@ -31613,16 +35520,16 @@ export namespace ConcreteParentInterfaceStatic {
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -31638,8 +35545,8 @@ export namespace ConcreteParentInterfaceStatic {
       BaseInterfaceWithoutPropertiesStatic.$propertiesFromRdf({
         ...$context,
         ignoreRdfType: true,
-        languageIn: $languageIn,
         objectSet: $objectSet,
+        preferredLanguages: $preferredLanguages,
         resource: $resource,
       });
     if ($super0Either.isLeft()) {
@@ -31690,6 +35597,57 @@ export namespace ConcreteParentInterfaceStatic {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    ConcreteParentInterfaceStatic.$properties
+                      .concreteParentInterfaceProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_concreteParentInterfacePropertyEither.isLeft()) {
@@ -31756,12 +35714,12 @@ export namespace ConcreteParentInterfaceStatic {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -31778,7 +35736,7 @@ export namespace ConcreteParentInterfaceStatic {
       where: (queryParameters.where ?? []).concat(
         ConcreteParentInterfaceStatic.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -31788,7 +35746,7 @@ export namespace ConcreteParentInterfaceStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -31848,7 +35806,7 @@ export namespace ConcreteParentInterfaceStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -31937,6 +35895,42 @@ export namespace ConcreteParentInterfaceStatic {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}ConcreteParentInterfaceProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -32134,14 +36128,14 @@ export namespace ConcreteChildInterface {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ConcreteChildInterface> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -32151,24 +36145,24 @@ export namespace ConcreteChildInterface {
     return ConcreteChildInterface.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     });
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -32183,8 +36177,8 @@ export namespace ConcreteChildInterface {
     const $super0Either = ConcreteParentInterfaceStatic.$propertiesFromRdf({
       ...$context,
       ignoreRdfType: true,
-      languageIn: $languageIn,
       objectSet: $objectSet,
+      preferredLanguages: $preferredLanguages,
       resource: $resource,
     });
     if ($super0Either.isLeft()) {
@@ -32232,6 +36226,57 @@ export namespace ConcreteChildInterface {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    ConcreteChildInterface.$properties
+                      .concreteChildInterfaceProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_concreteChildInterfacePropertyEither.isLeft()) {
@@ -32298,12 +36343,12 @@ export namespace ConcreteChildInterface {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -32320,7 +36365,7 @@ export namespace ConcreteChildInterface {
       where: (queryParameters.where ?? []).concat(
         ConcreteChildInterface.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -32330,7 +36375,7 @@ export namespace ConcreteChildInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -32391,7 +36436,7 @@ export namespace ConcreteChildInterface {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -32471,6 +36516,42 @@ export namespace ConcreteChildInterface {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}ConcreteChildInterfaceProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -32722,14 +36803,14 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, AbstractBaseClassWithProperties> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -32745,16 +36826,16 @@ export namespace AbstractBaseClassWithPropertiesStatic {
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -32777,6 +36858,57 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         { unique: true },
       ),
     )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  AbstractBaseClassWithPropertiesStatic.$properties
+                    .abstractBaseClassWithPropertiesProperty["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
       .chain((values) => values.chainMap((value) => value.toString()))
       .chain((values) => values.head());
     if (_abstractBaseClassWithPropertiesPropertyEither.isLeft()) {
@@ -32802,12 +36934,12 @@ export namespace AbstractBaseClassWithPropertiesStatic {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -32824,7 +36956,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       where: (queryParameters.where ?? []).concat(
         AbstractBaseClassWithPropertiesStatic.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -32834,7 +36966,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -32873,7 +37005,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -32902,6 +37034,42 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}AbstractBaseClassWithPropertiesProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -33035,14 +37203,14 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, AbstractBaseClassWithoutProperties> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -33058,16 +37226,16 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -33081,8 +37249,8 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
       AbstractBaseClassWithPropertiesStatic.$propertiesFromRdf({
         ...$context,
         ignoreRdfType: true,
-        languageIn: $languageIn,
         objectSet: $objectSet,
+        preferredLanguages: $preferredLanguages,
         resource: $resource,
       });
     if ($super0Either.isLeft()) {
@@ -33102,12 +37270,12 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -33123,7 +37291,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
       where: (queryParameters.where ?? []).concat(
         AbstractBaseClassWithoutPropertiesStatic.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -33133,7 +37301,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -33172,7 +37340,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -33424,14 +37592,14 @@ export namespace ConcreteParentClassStatic {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ConcreteParentClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -33448,8 +37616,8 @@ export namespace ConcreteParentClassStatic {
       ConcreteParentClassStatic.$propertiesFromRdf({
         ...context,
         ignoreRdfType,
-        languageIn,
         objectSet,
+        preferredLanguages,
         resource,
       }).map((properties) => new ConcreteParentClass(properties)),
     );
@@ -33457,16 +37625,16 @@ export namespace ConcreteParentClassStatic {
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -33483,8 +37651,8 @@ export namespace ConcreteParentClassStatic {
       AbstractBaseClassWithoutPropertiesStatic.$propertiesFromRdf({
         ...$context,
         ignoreRdfType: true,
-        languageIn: $languageIn,
         objectSet: $objectSet,
+        preferredLanguages: $preferredLanguages,
         resource: $resource,
       });
     if ($super0Either.isLeft()) {
@@ -33532,6 +37700,57 @@ export namespace ConcreteParentClassStatic {
           { unique: true },
         ),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    ConcreteParentClassStatic.$properties
+                      .concreteParentClassProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_concreteParentClassPropertyEither.isLeft()) {
@@ -33559,12 +37778,12 @@ export namespace ConcreteParentClassStatic {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -33581,7 +37800,7 @@ export namespace ConcreteParentClassStatic {
       where: (queryParameters.where ?? []).concat(
         ConcreteParentClassStatic.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -33591,7 +37810,7 @@ export namespace ConcreteParentClassStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -33648,7 +37867,7 @@ export namespace ConcreteParentClassStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -33736,6 +37955,42 @@ export namespace ConcreteParentClassStatic {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}ConcreteParentClassProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -33947,14 +38202,14 @@ export namespace ConcreteChildClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ConcreteChildClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -33964,24 +38219,24 @@ export namespace ConcreteChildClass {
     return ConcreteChildClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new ConcreteChildClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -33995,8 +38250,8 @@ export namespace ConcreteChildClass {
     const $super0Either = ConcreteParentClassStatic.$propertiesFromRdf({
       ...$context,
       ignoreRdfType: true,
-      languageIn: $languageIn,
       objectSet: $objectSet,
+      preferredLanguages: $preferredLanguages,
       resource: $resource,
     });
     if ($super0Either.isLeft()) {
@@ -34041,6 +38296,58 @@ export namespace ConcreteChildClass {
           unique: true,
         }),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    ConcreteChildClass.$properties.concreteChildClassProperty[
+                      "identifier"
+                    ],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_concreteChildClassPropertyEither.isLeft()) {
@@ -34068,12 +38375,12 @@ export namespace ConcreteChildClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -34090,7 +38397,7 @@ export namespace ConcreteChildClass {
       where: (queryParameters.where ?? []).concat(
         ConcreteChildClass.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -34100,7 +38407,7 @@ export namespace ConcreteChildClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -34157,7 +38464,7 @@ export namespace ConcreteChildClass {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -34235,6 +38542,42 @@ export namespace ConcreteChildClass {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}ConcreteChildClassProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -34480,14 +38823,14 @@ export namespace ClassUnionMember2 {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ClassUnionMember2> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -34497,24 +38840,24 @@ export namespace ClassUnionMember2 {
     return ClassUnionMember2.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new ClassUnionMember2(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -34560,6 +38903,58 @@ export namespace ClassUnionMember2 {
           unique: true,
         }),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    ClassUnionMember2.$properties.classUnionMember2Property[
+                      "identifier"
+                    ],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_classUnionMember2PropertyEither.isLeft()) {
@@ -34582,12 +38977,12 @@ export namespace ClassUnionMember2 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -34604,7 +38999,7 @@ export namespace ClassUnionMember2 {
       where: (queryParameters.where ?? []).concat(
         ClassUnionMember2.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -34614,7 +39009,7 @@ export namespace ClassUnionMember2 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -34664,7 +39059,7 @@ export namespace ClassUnionMember2 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -34730,6 +39125,42 @@ export namespace ClassUnionMember2 {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}ClassUnionMember2Property`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -34975,14 +39406,14 @@ export namespace ClassUnionMember1 {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ClassUnionMember1> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -34992,24 +39423,24 @@ export namespace ClassUnionMember1 {
     return ClassUnionMember1.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new ClassUnionMember1(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -35055,6 +39486,58 @@ export namespace ClassUnionMember1 {
           unique: true,
         }),
       )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    ClassUnionMember1.$properties.classUnionMember1Property[
+                      "identifier"
+                    ],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_classUnionMember1PropertyEither.isLeft()) {
@@ -35077,12 +39560,12 @@ export namespace ClassUnionMember1 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -35099,7 +39582,7 @@ export namespace ClassUnionMember1 {
       where: (queryParameters.where ?? []).concat(
         ClassUnionMember1.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -35109,7 +39592,7 @@ export namespace ClassUnionMember1 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -35159,7 +39642,7 @@ export namespace ClassUnionMember1 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -35225,6 +39708,42 @@ export namespace ClassUnionMember1 {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}ClassUnionMember1Property`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -35412,14 +39931,14 @@ export namespace BlankInterface {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, BlankInterface> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -35429,24 +39948,24 @@ export namespace BlankInterface {
     return BlankInterface.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     });
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -35483,12 +40002,12 @@ export namespace BlankInterface {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -35505,7 +40024,7 @@ export namespace BlankInterface {
       where: (queryParameters.where ?? []).concat(
         BlankInterface.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -35515,7 +40034,7 @@ export namespace BlankInterface {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -35536,7 +40055,7 @@ export namespace BlankInterface {
 
   export function $sparqlWherePatterns(_parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -35735,14 +40254,14 @@ export namespace BlankClass {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, BlankClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -35752,24 +40271,24 @@ export namespace BlankClass {
     return BlankClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     }).map((properties) => new BlankClass(properties));
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }> {
     const $identifier: BlankClass.$Identifier = $resource.identifier;
@@ -35781,12 +40300,12 @@ export namespace BlankClass {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -35798,7 +40317,11 @@ export namespace BlankClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        BlankClass.$sparqlWherePatterns({ ignoreRdfType, languageIn, subject }),
+        BlankClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
       ),
     };
   }
@@ -35806,7 +40329,7 @@ export namespace BlankClass {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -35827,7 +40350,7 @@ export namespace BlankClass {
 
   export function $sparqlWherePatterns(_parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -36050,14 +40573,14 @@ export namespace AbstractBaseClassForExternClassStatic {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, AbstractBaseClassForExternClass> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -36073,16 +40596,16 @@ export namespace AbstractBaseClassForExternClassStatic {
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -36105,6 +40628,57 @@ export namespace AbstractBaseClassForExternClassStatic {
         { unique: true },
       ),
     )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  AbstractBaseClassForExternClassStatic.$properties
+                    .abstractBaseClassForExternClassProperty["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
       .chain((values) => values.chainMap((value) => value.toString()))
       .chain((values) => values.head());
     if (_abstractBaseClassForExternClassPropertyEither.isLeft()) {
@@ -36130,12 +40704,12 @@ export namespace AbstractBaseClassForExternClassStatic {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -36152,7 +40726,7 @@ export namespace AbstractBaseClassForExternClassStatic {
       where: (queryParameters.where ?? []).concat(
         AbstractBaseClassForExternClassStatic.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -36162,7 +40736,7 @@ export namespace AbstractBaseClassForExternClassStatic {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -36201,7 +40775,7 @@ export namespace AbstractBaseClassForExternClassStatic {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -36230,6 +40804,42 @@ export namespace AbstractBaseClassForExternClassStatic {
         ],
         type: "bgp",
       },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}AbstractBaseClassForExternClassProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
     ];
     for (const pattern of propertyPatterns) {
       if (pattern.type === "optional") {
@@ -36284,8 +40894,8 @@ export namespace ClassUnion {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ClassUnion> {
     return (
@@ -36348,12 +40958,12 @@ export namespace ClassUnion {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -36365,7 +40975,11 @@ export namespace ClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ClassUnion.$sparqlWherePatterns({ ignoreRdfType, languageIn, subject }),
+        ClassUnion.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
       ),
     };
   }
@@ -36373,7 +40987,7 @@ export namespace ClassUnion {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -36411,7 +41025,7 @@ export namespace ClassUnion {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -36545,8 +41159,8 @@ export namespace InterfaceUnion {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, InterfaceUnion> {
     return (
@@ -36623,12 +41237,12 @@ export namespace InterfaceUnion {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -36645,7 +41259,7 @@ export namespace InterfaceUnion {
       where: (queryParameters.where ?? []).concat(
         InterfaceUnion.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -36655,7 +41269,7 @@ export namespace InterfaceUnion {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -36701,7 +41315,7 @@ export namespace InterfaceUnion {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -36839,8 +41453,8 @@ export namespace InterfaceUnionMember2 {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, InterfaceUnionMember2> {
     return (
@@ -36905,12 +41519,12 @@ export namespace InterfaceUnionMember2 {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -36927,7 +41541,7 @@ export namespace InterfaceUnionMember2 {
       where: (queryParameters.where ?? []).concat(
         InterfaceUnionMember2.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -36937,7 +41551,7 @@ export namespace InterfaceUnionMember2 {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -36975,7 +41589,7 @@ export namespace InterfaceUnionMember2 {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -37103,8 +41717,8 @@ export namespace LazilyResolvedClassUnion {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazilyResolvedClassUnion> {
     return (
@@ -37172,12 +41786,12 @@ export namespace LazilyResolvedClassUnion {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -37194,7 +41808,7 @@ export namespace LazilyResolvedClassUnion {
       where: (queryParameters.where ?? []).concat(
         LazilyResolvedClassUnion.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -37204,7 +41818,7 @@ export namespace LazilyResolvedClassUnion {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -37246,7 +41860,7 @@ export namespace LazilyResolvedClassUnion {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -37372,8 +41986,8 @@ export namespace LazilyResolvedInterfaceUnion {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazilyResolvedInterfaceUnion> {
     return (
@@ -37447,12 +42061,12 @@ export namespace LazilyResolvedInterfaceUnion {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -37469,7 +42083,7 @@ export namespace LazilyResolvedInterfaceUnion {
       where: (queryParameters.where ?? []).concat(
         LazilyResolvedInterfaceUnion.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -37479,7 +42093,7 @@ export namespace LazilyResolvedInterfaceUnion {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -37521,7 +42135,7 @@ export namespace LazilyResolvedInterfaceUnion {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -37649,8 +42263,8 @@ export namespace StubClassUnion {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, StubClassUnion> {
     return (
@@ -37713,12 +42327,12 @@ export namespace StubClassUnion {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -37735,7 +42349,7 @@ export namespace StubClassUnion {
       where: (queryParameters.where ?? []).concat(
         StubClassUnion.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -37745,7 +42359,7 @@ export namespace StubClassUnion {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -37783,7 +42397,7 @@ export namespace StubClassUnion {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
@@ -37903,8 +42517,8 @@ export namespace StubInterfaceUnion {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, StubInterfaceUnion> {
     return (
@@ -37969,12 +42583,12 @@ export namespace StubInterfaceUnion {
   export function $sparqlConstructQuery(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
   ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, languageIn, subject, ...queryParameters } =
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
       parameters ?? {};
 
     return {
@@ -37991,7 +42605,7 @@ export namespace StubInterfaceUnion {
       where: (queryParameters.where ?? []).concat(
         StubInterfaceUnion.$sparqlWherePatterns({
           ignoreRdfType,
-          languageIn,
+          preferredLanguages,
           subject,
         }),
       ),
@@ -38001,7 +42615,7 @@ export namespace StubInterfaceUnion {
   export function $sparqlConstructQueryString(
     parameters?: {
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
+      preferredLanguages?: readonly string[];
       subject?: sparqljs.Triple["subject"];
       variablePrefix?: string;
     } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
@@ -38039,7 +42653,7 @@ export namespace StubInterfaceUnion {
 
   export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
-    languageIn?: readonly string[];
+    preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {

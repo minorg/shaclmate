@@ -3,6 +3,7 @@ import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
 import { PrimitiveType } from "./PrimitiveType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
+import type { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
@@ -71,17 +72,23 @@ export class DateTimeType extends PrimitiveType<Date> {
     return `${variables.zod}.string().${this.zodDatatype}()`;
   }
 
-  override fromRdfResourceValueExpression({
+  protected override fromRdfExpressionChain({
     variables,
-  }: Parameters<
-    PrimitiveType<number>["fromRdfResourceValueExpression"]
-  >[0]): string {
-    let expression = `${variables.resourceValue}.toDate()`;
+  }: Parameters<TermType["fromRdfExpressionChain"]>[0]): ReturnType<
+    TermType["fromRdfExpressionChain"]
+  > {
+    let fromRdfResourceValueExpression = "value.toDate()";
     if (this.primitiveIn.length > 0) {
       const eitherTypeParameters = `<Error, ${this.name}>`;
-      expression = `${expression}.chain(value => { ${this.primitiveIn.map((value) => `if (value.getTime() === ${value.getTime()}) { return purify.Either.of${eitherTypeParameters}(value); }`).join(" ")} return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: `rdfLiteral.toRdf(value, ${objectInitializer({ dataFactory: "dataFactory", datatype: rdfjsTermExpression(this.xsdDatatype) })})`, expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); })`;
+      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(value => { ${this.primitiveIn.map((value) => `if (value.getTime() === ${value.getTime()}) { return purify.Either.of${eitherTypeParameters}(value); }`).join(" ")} return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: `rdfLiteral.toRdf(value, ${objectInitializer({ dataFactory: "dataFactory", datatype: rdfjsTermExpression(this.xsdDatatype) })})`, expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); })`;
     }
-    return expression;
+
+    return {
+      ...super.fromRdfExpressionChain({ variables }),
+      languageIn: undefined,
+      preferredLanguages: undefined,
+      valueTo: `chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
+    };
   }
 
   override snippetDeclarations({

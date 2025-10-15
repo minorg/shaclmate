@@ -187,19 +187,31 @@ export class TermType<
       chain.defaultValue,
       chain.hasValues,
       chain.languageIn,
+      chain.preferredLanguages,
       chain.valueTo,
     ]
       .filter((_) => typeof _ !== "undefined")
       .join(".");
   }
 
+  /**
+   * The fromRdfExpression for a term type can be decomposed into multiple sub-expressions with different purposes:
+   *
+   * defaultValues: add the default value to the values sequence if the latter doesn't contain values already
+   * hasValues: test whether the values sequence has sh:hasValue values
+   * languageIn: filter the values sequence to literals with the right sh:languageIn (or runtime languageIn)
+   * valueTo: convert values in the values sequence to the appropriate term type/sub-type (literal, string, etc.)
+   *
+   * Considering the sub-expressions as a record instead of an array allows them to be selectively overridden by subclasses.
+   */
   protected fromRdfExpressionChain({
     variables,
   }: Parameters<Type["fromRdfExpression"]>[0]): {
     defaultValue?: string;
     hasValues?: string;
     languageIn?: string;
-    valueTo?: string;
+    preferredLanguages?: string;
+    valueTo: string;
   } {
     let valueToExpression =
       "purify.Either.of<Error, rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>(value.toTerm())";

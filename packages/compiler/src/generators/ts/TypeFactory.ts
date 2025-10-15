@@ -438,7 +438,8 @@ export class TypeFactory {
             if (
               astType.defaultValue.isNothing() &&
               astType.hasValues.length === 0 &&
-              astType.in_.length === 0
+              astType.in_.length === 0 &&
+              astType.languageIn.length === 0
             ) {
               return this.cachedStringType;
             }
@@ -446,7 +447,7 @@ export class TypeFactory {
             return new StringType({
               defaultValue: astType.defaultValue,
               hasValues: astType.hasValues,
-              languageIn: [],
+              languageIn: astType.languageIn,
               in_: astType.in_,
               primitiveDefaultValue: astType.defaultValue.map(
                 (value) => value.value,
