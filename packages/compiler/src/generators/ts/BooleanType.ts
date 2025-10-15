@@ -1,6 +1,7 @@
 import { Memoize } from "typescript-memoize";
 
 import { PrimitiveType } from "./PrimitiveType.js";
+import type { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
@@ -48,17 +49,22 @@ export class BooleanType extends PrimitiveType<boolean> {
     return `${variables.zod}.boolean()`;
   }
 
-  override fromRdfResourceValueExpression({
+  protected override fromRdfExpressionChain({
     variables,
-  }: Parameters<
-    PrimitiveType<boolean>["fromRdfResourceValueExpression"]
-  >[0]): string {
-    let expression = `${variables.resourceValue}.toBoolean()`;
+  }: Parameters<TermType["fromRdfExpressionChain"]>[0]): ReturnType<
+    TermType["fromRdfExpressionChain"]
+  > {
+    let fromRdfResourceValueExpression = "value.toBoolean()";
     if (this.primitiveIn.length === 1) {
       const eitherTypeParameters = `<Error, ${this.name}>`;
-      expression = `${expression}.chain(value => value === ${this.primitiveIn[0]} ? purify.Either.of${eitherTypeParameters}(value) : purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: "rdfLiteral.toRdf(value)", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})))`;
+      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(value => value === ${this.primitiveIn[0]} ? purify.Either.of${eitherTypeParameters}(value) : purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: "rdfLiteral.toRdf(value)", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})))`;
     }
-    return expression;
+
+    return {
+      ...super.fromRdfExpressionChain({ variables }),
+      languageIn: undefined,
+      valueTo: `chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
+    };
   }
 
   override toRdfExpression({

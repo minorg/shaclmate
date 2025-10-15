@@ -40,17 +40,42 @@ export class StringType extends PrimitiveType<string> {
     return this.typeof;
   }
 
-  protected override fromRdfResourceValueExpression({
+  protected override fromRdfExpressionChain({
     variables,
   }: Parameters<
-    PrimitiveType<string>["fromRdfResourceValueExpression"]
-  >[0]): string {
-    let expression = `${variables.resourceValue}.toString()`;
-    if (this.primitiveIn.length > 0) {
-      const eitherTypeParameters = `<Error, ${this.name}>`;
-      expression = `${expression}.chain(value => { switch (value) { ${this.primitiveIn.map((value) => `case "${value}":`).join(" ")} return purify.Either.of${eitherTypeParameters}(value); default: return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: "rdfLiteral.toRdf(value)", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })`;
+    PrimitiveType<string>["fromRdfExpressionChain"]
+  >[0]): ReturnType<PrimitiveType<string>["fromRdfExpressionChain"]> {
+    const valueToReturn =
+      this.primitiveIn.length > 0
+        ? `switch (string_) { ${this.primitiveIn.map((value) => `case "${value}":`).join(" ")} return purify.Either.of<Error, ${this.name}>(string_); default: return purify.Left<Error, ${this.name}>(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: "literal", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); }`
+        : `return purify.Either.of<Error, ${this.name}>(string_);`;
+
+    return {
+      ...super.fromRdfExpressionChain({ variables }),
+      valueTo: // Here we have rdfjsResource.Resource.Values<rdfjs.Literal> from the languageIn filter, not rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      `\
+chain(literals => literals.chainMap(literal => {
+  let string_: string;
+  try {
+    const primitive = rdfLiteral.fromRdf(literal, true);
+    if (typeof primitive !== "string") {
+      throw new Error("expected string");
     }
-    return expression;
+    string_ = primitive;
+  } catch {
+    return purify.Left<Error, ${this.name}>(
+      new rdfjsResource.Resource.MistypedValueError({
+        actualValue: literal,
+        expectedValueType: "string",
+        focusResource: ${variables.resource},
+        predicate: ${variables.predicate},
+      }),
+    );
+  }
+
+  ${valueToReturn}
+}))`,
+    };
   }
 
   override hashStatements({

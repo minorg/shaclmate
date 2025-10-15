@@ -82,7 +82,7 @@ export class LiteralType extends TermType<Literal, Literal> {
 
       return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(filteredLiteralValues!);
     })`,
-      valueTo: undefined,
+      valueTo: undefined, // languageIn already returns rdfjs.Literal values
     };
   }
 

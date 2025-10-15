@@ -65,9 +65,8 @@ export abstract class Type {
   }): string;
 
   /**
-   * An expression that converts a purify.Either<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>> to
-   * (1) a purify.Either<Error, rdfjsResource.Resource.Values<this type>> if this is an item type (identifier, object, et al.) or
-   * (2) a purify.Either<Error, cardinality type> if this is a cardinality type
+   * An expression that converts a purify.Either<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>> to a
+   * purify.Either<Error, rdfjsResource.Resource.Values<this type>>.
    *
    * Some types need to filter on the set of all objects/values of a (subject, predicate). For example, all sh:hasValue values must be present in the set for any values
    * to be considered valid. Similar

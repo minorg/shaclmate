@@ -1254,7 +1254,85 @@ export namespace UuidV4IriInterface {
           unique: true,
         }),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    UuidV4IriInterface.$properties.uuidV4IriProperty[
+                      "identifier"
+                    ],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_uuidV4IriPropertyEither.isLeft()) {
       return _uuidV4IriPropertyEither;
@@ -1703,7 +1781,83 @@ export namespace UuidV4IriClass {
           unique: true,
         }),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    UuidV4IriClass.$properties.uuidV4IriProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_uuidV4IriPropertyEither.isLeft()) {
       return _uuidV4IriPropertyEither;
@@ -2502,9 +2656,86 @@ export namespace UnionPropertiesClass {
             $resource.values($properties.narrowLiteralsProperty["identifier"], {
               unique: true,
             }),
-          ).chain((values) =>
-            values.chainMap((value) => value.toString()),
-          ) as purify.Either<
+          )
+            .chain((values) => {
+              const literalValuesEither = values.chainMap((value) =>
+                value.toLiteral(),
+              );
+              if (literalValuesEither.isLeft()) {
+                return literalValuesEither;
+              }
+              const literalValues = literalValuesEither.unsafeCoerce();
+
+              const nonUniqueLanguageIn = $languageIn ?? [];
+              if (nonUniqueLanguageIn.length === 0) {
+                return purify.Either.of<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjs.Literal>
+                >(literalValues);
+              }
+
+              let uniqueLanguageIn: string[];
+              if (nonUniqueLanguageIn.length === 1) {
+                uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+              } else {
+                uniqueLanguageIn = [];
+                for (const languageIn of nonUniqueLanguageIn) {
+                  if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                    uniqueLanguageIn.push(languageIn);
+                  }
+                }
+              }
+
+              // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+              // Within a languageIn the literals may be in any order.
+              let filteredLiteralValues:
+                | rdfjsResource.Resource.Values<rdfjs.Literal>
+                | undefined;
+              for (const languageIn of uniqueLanguageIn) {
+                if (!filteredLiteralValues) {
+                  filteredLiteralValues = literalValues.filter(
+                    (value) => value.language === languageIn,
+                  );
+                } else {
+                  filteredLiteralValues = filteredLiteralValues.concat(
+                    ...literalValues
+                      .filter((value) => value.language === languageIn)
+                      .toArray(),
+                  );
+                }
+              }
+
+              return purify.Either.of<
+                Error,
+                rdfjsResource.Resource.Values<rdfjs.Literal>
+              >(filteredLiteralValues!);
+            })
+            .chain((literals) =>
+              literals.chainMap((literal) => {
+                let string_: string;
+                try {
+                  const primitive = rdfLiteral.fromRdf(literal, true);
+                  if (typeof primitive !== "string") {
+                    throw new Error("expected string");
+                  }
+                  string_ = primitive;
+                } catch {
+                  return purify.Left<Error, string>(
+                    new rdfjsResource.Resource.MistypedValueError({
+                      actualValue: literal,
+                      expectedValueType: "string",
+                      focusResource: $resource,
+                      predicate:
+                        UnionPropertiesClass.$properties.narrowLiteralsProperty[
+                          "identifier"
+                        ],
+                    }),
+                  );
+                }
+
+                return purify.Either.of<Error, string>(string_);
+              }),
+            ) as purify.Either<
             Error,
             rdfjsResource.Resource.Values<number | string>
           >,
@@ -4084,7 +4315,85 @@ export namespace TermPropertiesClass {
         unique: true,
       }),
     )
-      .chain((values) => values.chainMap((value) => value.toString()))
+      .chain((values) => {
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        const nonUniqueLanguageIn = $languageIn ?? [];
+        if (nonUniqueLanguageIn.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(literalValues);
+        }
+
+        let uniqueLanguageIn: string[];
+        if (nonUniqueLanguageIn.length === 1) {
+          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+        } else {
+          uniqueLanguageIn = [];
+          for (const languageIn of nonUniqueLanguageIn) {
+            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+              uniqueLanguageIn.push(languageIn);
+            }
+          }
+        }
+
+        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+        // Within a languageIn the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const languageIn of uniqueLanguageIn) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === languageIn,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === languageIn)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjs.Literal>
+        >(filteredLiteralValues!);
+      })
+      .chain((literals) =>
+        literals.chainMap((literal) => {
+          let string_: string;
+          try {
+            const primitive = rdfLiteral.fromRdf(literal, true);
+            if (typeof primitive !== "string") {
+              throw new Error("expected string");
+            }
+            string_ = primitive;
+          } catch {
+            return purify.Left<Error, string>(
+              new rdfjsResource.Resource.MistypedValueError({
+                actualValue: literal,
+                expectedValueType: "string",
+                focusResource: $resource,
+                predicate:
+                  TermPropertiesClass.$properties.stringTermProperty[
+                    "identifier"
+                  ],
+              }),
+            );
+          }
+
+          return purify.Either.of<Error, string>(string_);
+        }),
+      )
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
@@ -4811,7 +5120,84 @@ export namespace StubInterfaceUnionMember2 {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    StubInterfaceUnionMember2.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
@@ -5341,7 +5727,84 @@ export namespace StubInterfaceUnionMember1 {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    StubInterfaceUnionMember1.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
@@ -5889,7 +6352,84 @@ export namespace StubClassUnionMember2 {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    StubClassUnionMember2.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
@@ -6396,7 +6936,84 @@ export namespace StubClassUnionMember1 {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    StubClassUnionMember1.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
@@ -6889,7 +7506,83 @@ export namespace Sha256IriClass {
           unique: true,
         }),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    Sha256IriClass.$properties.sha256IriProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_sha256IriPropertyEither.isLeft()) {
       return _sha256IriPropertyEither;
@@ -7342,7 +8035,85 @@ export namespace PropertyVisibilitiesClass {
           unique: true,
         }),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    PropertyVisibilitiesClass.$properties.privateProperty[
+                      "identifier"
+                    ],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_privatePropertyEither.isLeft()) {
       return _privatePropertyEither;
@@ -7358,7 +8129,85 @@ export namespace PropertyVisibilitiesClass {
           unique: true,
         }),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    PropertyVisibilitiesClass.$properties.protectedProperty[
+                      "identifier"
+                    ],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_protectedPropertyEither.isLeft()) {
       return _protectedPropertyEither;
@@ -7374,7 +8223,85 @@ export namespace PropertyVisibilitiesClass {
           unique: true,
         }),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    PropertyVisibilitiesClass.$properties.publicProperty[
+                      "identifier"
+                    ],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_publicPropertyEither.isLeft()) {
       return _publicPropertyEither;
@@ -7995,7 +8922,85 @@ export namespace PropertyCardinalitiesClass {
         unique: true,
       }),
     )
-      .chain((values) => values.chainMap((value) => value.toString()))
+      .chain((values) => {
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        const nonUniqueLanguageIn = $languageIn ?? [];
+        if (nonUniqueLanguageIn.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(literalValues);
+        }
+
+        let uniqueLanguageIn: string[];
+        if (nonUniqueLanguageIn.length === 1) {
+          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+        } else {
+          uniqueLanguageIn = [];
+          for (const languageIn of nonUniqueLanguageIn) {
+            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+              uniqueLanguageIn.push(languageIn);
+            }
+          }
+        }
+
+        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+        // Within a languageIn the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const languageIn of uniqueLanguageIn) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === languageIn,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === languageIn)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjs.Literal>
+        >(filteredLiteralValues!);
+      })
+      .chain((literals) =>
+        literals.chainMap((literal) => {
+          let string_: string;
+          try {
+            const primitive = rdfLiteral.fromRdf(literal, true);
+            if (typeof primitive !== "string") {
+              throw new Error("expected string");
+            }
+            string_ = primitive;
+          } catch {
+            return purify.Left<Error, string>(
+              new rdfjsResource.Resource.MistypedValueError({
+                actualValue: literal,
+                expectedValueType: "string",
+                focusResource: $resource,
+                predicate:
+                  PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
+                    "identifier"
+                  ],
+              }),
+            );
+          }
+
+          return purify.Either.of<Error, string>(string_);
+        }),
+      )
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
@@ -8024,7 +9029,84 @@ export namespace PropertyCardinalitiesClass {
         unique: true,
       }),
     )
-      .chain((values) => values.chainMap((value) => value.toString()))
+      .chain((values) => {
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        const nonUniqueLanguageIn = $languageIn ?? [];
+        if (nonUniqueLanguageIn.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(literalValues);
+        }
+
+        let uniqueLanguageIn: string[];
+        if (nonUniqueLanguageIn.length === 1) {
+          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+        } else {
+          uniqueLanguageIn = [];
+          for (const languageIn of nonUniqueLanguageIn) {
+            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+              uniqueLanguageIn.push(languageIn);
+            }
+          }
+        }
+
+        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+        // Within a languageIn the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const languageIn of uniqueLanguageIn) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === languageIn,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === languageIn)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjs.Literal>
+        >(filteredLiteralValues!);
+      })
+      .chain((literals) =>
+        literals.chainMap((literal) => {
+          let string_: string;
+          try {
+            const primitive = rdfLiteral.fromRdf(literal, true);
+            if (typeof primitive !== "string") {
+              throw new Error("expected string");
+            }
+            string_ = primitive;
+          } catch {
+            return purify.Left<Error, string>(
+              new rdfjsResource.Resource.MistypedValueError({
+                actualValue: literal,
+                expectedValueType: "string",
+                focusResource: $resource,
+                predicate:
+                  PropertyCardinalitiesClass.$properties
+                    .nonEmptyStringSetProperty["identifier"],
+              }),
+            );
+          }
+
+          return purify.Either.of<Error, string>(string_);
+        }),
+      )
       .chain((values) =>
         purify.NonEmptyList.fromArray(values.toArray()).toEither(
           new Error(
@@ -8060,7 +9142,85 @@ export namespace PropertyCardinalitiesClass {
         unique: true,
       }),
     )
-      .chain((values) => values.chainMap((value) => value.toString()))
+      .chain((values) => {
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        const nonUniqueLanguageIn = $languageIn ?? [];
+        if (nonUniqueLanguageIn.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(literalValues);
+        }
+
+        let uniqueLanguageIn: string[];
+        if (nonUniqueLanguageIn.length === 1) {
+          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+        } else {
+          uniqueLanguageIn = [];
+          for (const languageIn of nonUniqueLanguageIn) {
+            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+              uniqueLanguageIn.push(languageIn);
+            }
+          }
+        }
+
+        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+        // Within a languageIn the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const languageIn of uniqueLanguageIn) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === languageIn,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === languageIn)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjs.Literal>
+        >(filteredLiteralValues!);
+      })
+      .chain((literals) =>
+        literals.chainMap((literal) => {
+          let string_: string;
+          try {
+            const primitive = rdfLiteral.fromRdf(literal, true);
+            if (typeof primitive !== "string") {
+              throw new Error("expected string");
+            }
+            string_ = primitive;
+          } catch {
+            return purify.Left<Error, string>(
+              new rdfjsResource.Resource.MistypedValueError({
+                actualValue: literal,
+                expectedValueType: "string",
+                focusResource: $resource,
+                predicate:
+                  PropertyCardinalitiesClass.$properties.optionalStringProperty[
+                    "identifier"
+                  ],
+              }),
+            );
+          }
+
+          return purify.Either.of<Error, string>(string_);
+        }),
+      )
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
@@ -8088,7 +9248,84 @@ export namespace PropertyCardinalitiesClass {
           unique: true,
         }),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    PropertyCardinalitiesClass.$properties
+                      .requiredStringProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_requiredStringPropertyEither.isLeft()) {
       return _requiredStringPropertyEither;
@@ -8664,7 +9901,85 @@ export namespace OrderedPropertiesClass {
           unique: true,
         }),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    OrderedPropertiesClass.$properties.orderedPropertyC[
+                      "identifier"
+                    ],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_orderedPropertyCEither.isLeft()) {
       return _orderedPropertyCEither;
@@ -8680,7 +9995,85 @@ export namespace OrderedPropertiesClass {
           unique: true,
         }),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    OrderedPropertiesClass.$properties.orderedPropertyB[
+                      "identifier"
+                    ],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_orderedPropertyBEither.isLeft()) {
       return _orderedPropertyBEither;
@@ -8696,7 +10089,85 @@ export namespace OrderedPropertiesClass {
           unique: true,
         }),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    OrderedPropertiesClass.$properties.orderedPropertyA[
+                      "identifier"
+                    ],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_orderedPropertyAEither.isLeft()) {
       return _orderedPropertyAEither;
@@ -9137,7 +10608,83 @@ export namespace NonClass {
           unique: true,
         }),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    NonClass.$properties.nonClassProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_nonClassPropertyEither.isLeft()) {
       return _nonClassPropertyEither;
@@ -9746,7 +11293,86 @@ export namespace MutablePropertiesClass {
                 ],
               subject: $resource,
             }),
-          ).chain((values) => values.chainMap((value) => value.toString())),
+          )
+            .chain((values) => {
+              const literalValuesEither = values.chainMap((value) =>
+                value.toLiteral(),
+              );
+              if (literalValuesEither.isLeft()) {
+                return literalValuesEither;
+              }
+              const literalValues = literalValuesEither.unsafeCoerce();
+
+              const nonUniqueLanguageIn = $languageIn ?? [];
+              if (nonUniqueLanguageIn.length === 0) {
+                return purify.Either.of<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjs.Literal>
+                >(literalValues);
+              }
+
+              let uniqueLanguageIn: string[];
+              if (nonUniqueLanguageIn.length === 1) {
+                uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+              } else {
+                uniqueLanguageIn = [];
+                for (const languageIn of nonUniqueLanguageIn) {
+                  if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                    uniqueLanguageIn.push(languageIn);
+                  }
+                }
+              }
+
+              // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+              // Within a languageIn the literals may be in any order.
+              let filteredLiteralValues:
+                | rdfjsResource.Resource.Values<rdfjs.Literal>
+                | undefined;
+              for (const languageIn of uniqueLanguageIn) {
+                if (!filteredLiteralValues) {
+                  filteredLiteralValues = literalValues.filter(
+                    (value) => value.language === languageIn,
+                  );
+                } else {
+                  filteredLiteralValues = filteredLiteralValues.concat(
+                    ...literalValues
+                      .filter((value) => value.language === languageIn)
+                      .toArray(),
+                  );
+                }
+              }
+
+              return purify.Either.of<
+                Error,
+                rdfjsResource.Resource.Values<rdfjs.Literal>
+              >(filteredLiteralValues!);
+            })
+            .chain((literals) =>
+              literals.chainMap((literal) => {
+                let string_: string;
+                try {
+                  const primitive = rdfLiteral.fromRdf(literal, true);
+                  if (typeof primitive !== "string") {
+                    throw new Error("expected string");
+                  }
+                  string_ = primitive;
+                } catch {
+                  return purify.Left<Error, string>(
+                    new rdfjsResource.Resource.MistypedValueError({
+                      actualValue: literal,
+                      expectedValueType: "string",
+                      focusResource: $resource,
+                      predicate:
+                        MutablePropertiesClass.$properties.mutableListProperty[
+                          "identifier"
+                        ],
+                    }),
+                  );
+                }
+
+                return purify.Either.of<Error, string>(string_);
+              }),
+            ),
         ),
       )
       .map((valueLists) =>
@@ -9779,7 +11405,85 @@ export namespace MutablePropertiesClass {
           unique: true,
         }),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    MutablePropertiesClass.$properties.mutableSetProperty[
+                      "identifier"
+                    ],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .map((values) => values.toArray().concat())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
@@ -9808,7 +11512,85 @@ export namespace MutablePropertiesClass {
         unique: true,
       }),
     )
-      .chain((values) => values.chainMap((value) => value.toString()))
+      .chain((values) => {
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        const nonUniqueLanguageIn = $languageIn ?? [];
+        if (nonUniqueLanguageIn.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(literalValues);
+        }
+
+        let uniqueLanguageIn: string[];
+        if (nonUniqueLanguageIn.length === 1) {
+          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+        } else {
+          uniqueLanguageIn = [];
+          for (const languageIn of nonUniqueLanguageIn) {
+            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+              uniqueLanguageIn.push(languageIn);
+            }
+          }
+        }
+
+        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+        // Within a languageIn the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const languageIn of uniqueLanguageIn) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === languageIn,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === languageIn)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjs.Literal>
+        >(filteredLiteralValues!);
+      })
+      .chain((literals) =>
+        literals.chainMap((literal) => {
+          let string_: string;
+          try {
+            const primitive = rdfLiteral.fromRdf(literal, true);
+            if (typeof primitive !== "string") {
+              throw new Error("expected string");
+            }
+            string_ = primitive;
+          } catch {
+            return purify.Left<Error, string>(
+              new rdfjsResource.Resource.MistypedValueError({
+                actualValue: literal,
+                expectedValueType: "string",
+                focusResource: $resource,
+                predicate:
+                  MutablePropertiesClass.$properties.mutableStringProperty[
+                    "identifier"
+                  ],
+              }),
+            );
+          }
+
+          return purify.Either.of<Error, string>(string_);
+        }),
+      )
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
@@ -10667,7 +12449,86 @@ export namespace ListPropertiesClass {
                 ],
               subject: $resource,
             }),
-          ).chain((values) => values.chainMap((value) => value.toString())),
+          )
+            .chain((values) => {
+              const literalValuesEither = values.chainMap((value) =>
+                value.toLiteral(),
+              );
+              if (literalValuesEither.isLeft()) {
+                return literalValuesEither;
+              }
+              const literalValues = literalValuesEither.unsafeCoerce();
+
+              const nonUniqueLanguageIn = $languageIn ?? [];
+              if (nonUniqueLanguageIn.length === 0) {
+                return purify.Either.of<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjs.Literal>
+                >(literalValues);
+              }
+
+              let uniqueLanguageIn: string[];
+              if (nonUniqueLanguageIn.length === 1) {
+                uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+              } else {
+                uniqueLanguageIn = [];
+                for (const languageIn of nonUniqueLanguageIn) {
+                  if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                    uniqueLanguageIn.push(languageIn);
+                  }
+                }
+              }
+
+              // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+              // Within a languageIn the literals may be in any order.
+              let filteredLiteralValues:
+                | rdfjsResource.Resource.Values<rdfjs.Literal>
+                | undefined;
+              for (const languageIn of uniqueLanguageIn) {
+                if (!filteredLiteralValues) {
+                  filteredLiteralValues = literalValues.filter(
+                    (value) => value.language === languageIn,
+                  );
+                } else {
+                  filteredLiteralValues = filteredLiteralValues.concat(
+                    ...literalValues
+                      .filter((value) => value.language === languageIn)
+                      .toArray(),
+                  );
+                }
+              }
+
+              return purify.Either.of<
+                Error,
+                rdfjsResource.Resource.Values<rdfjs.Literal>
+              >(filteredLiteralValues!);
+            })
+            .chain((literals) =>
+              literals.chainMap((literal) => {
+                let string_: string;
+                try {
+                  const primitive = rdfLiteral.fromRdf(literal, true);
+                  if (typeof primitive !== "string") {
+                    throw new Error("expected string");
+                  }
+                  string_ = primitive;
+                } catch {
+                  return purify.Left<Error, string>(
+                    new rdfjsResource.Resource.MistypedValueError({
+                      actualValue: literal,
+                      expectedValueType: "string",
+                      focusResource: $resource,
+                      predicate:
+                        ListPropertiesClass.$properties.stringListProperty[
+                          "identifier"
+                        ],
+                    }),
+                  );
+                }
+
+                return purify.Either.of<Error, string>(string_);
+              }),
+            ),
         ),
       )
       .map((valueLists) => valueLists.map((valueList) => valueList.toArray()))
@@ -11377,7 +13238,85 @@ export namespace StubInterface {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    StubInterface.$properties.lazilyResolvedStringProperty[
+                      "identifier"
+                    ],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
@@ -14722,7 +16661,85 @@ export namespace StubClass {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    StubClass.$properties.lazilyResolvedStringProperty[
+                      "identifier"
+                    ],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
@@ -17861,7 +19878,84 @@ export namespace LazilyResolvedIriInterface {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    LazilyResolvedIriInterface.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
@@ -18309,7 +20403,84 @@ export namespace LazilyResolvedIriClass {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    LazilyResolvedIriClass.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
@@ -18751,7 +20922,84 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    LazilyResolvedInterfaceUnionMember2.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
@@ -19288,7 +21536,84 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    LazilyResolvedInterfaceUnionMember1.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
@@ -19839,7 +22164,84 @@ export namespace LazilyResolvedClassUnionMember2 {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    LazilyResolvedClassUnionMember2.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
@@ -20349,7 +22751,84 @@ export namespace LazilyResolvedClassUnionMember1 {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    LazilyResolvedClassUnionMember1.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
@@ -20848,7 +23327,84 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    LazilyResolvedBlankNodeOrIriInterface.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
@@ -21403,7 +23959,84 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    LazilyResolvedBlankNodeOrIriClass.$properties
+                      .lazilyResolvedStringProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_lazilyResolvedStringPropertyEither.isLeft()) {
       return _lazilyResolvedStringPropertyEither;
@@ -22981,7 +25614,84 @@ export namespace InterfaceUnionMember2b {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    InterfaceUnionMember2b.$properties
+                      .interfaceUnionMember2bProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_interfaceUnionMember2bPropertyEither.isLeft()) {
       return _interfaceUnionMember2bPropertyEither;
@@ -23418,7 +26128,84 @@ export namespace InterfaceUnionMember2a {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    InterfaceUnionMember2a.$properties
+                      .interfaceUnionMember2aProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_interfaceUnionMember2aPropertyEither.isLeft()) {
       return _interfaceUnionMember2aPropertyEither;
@@ -23845,7 +26632,84 @@ export namespace InterfaceUnionMember1 {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    InterfaceUnionMember1.$properties
+                      .interfaceUnionMember1Property["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_interfaceUnionMember1PropertyEither.isLeft()) {
       return _interfaceUnionMember1PropertyEither;
@@ -24261,7 +27125,83 @@ export namespace Interface {
           unique: true,
         }),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    Interface.$properties.interfaceProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_interfacePropertyEither.isLeft()) {
       return _interfacePropertyEither;
@@ -26065,28 +29005,98 @@ export namespace InPropertiesClass {
         unique: true,
       }),
     )
-      .chain((values) =>
-        values.chainMap((value) =>
-          value.toString().chain((value) => {
-            switch (value) {
-              case "text":
-              case "html":
-                return purify.Either.of<Error, "text" | "html">(value);
-              default:
-                return purify.Left<Error, "text" | "html">(
-                  new rdfjsResource.Resource.MistypedValueError({
-                    actualValue: rdfLiteral.toRdf(value),
-                    expectedValueType: '"text" | "html"',
-                    focusResource: $resource,
-                    predicate:
-                      InPropertiesClass.$properties.inStringsProperty[
-                        "identifier"
-                      ],
-                  }),
-                );
+      .chain((values) => {
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        const nonUniqueLanguageIn = $languageIn ?? [];
+        if (nonUniqueLanguageIn.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(literalValues);
+        }
+
+        let uniqueLanguageIn: string[];
+        if (nonUniqueLanguageIn.length === 1) {
+          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+        } else {
+          uniqueLanguageIn = [];
+          for (const languageIn of nonUniqueLanguageIn) {
+            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+              uniqueLanguageIn.push(languageIn);
             }
-          }),
-        ),
+          }
+        }
+
+        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+        // Within a languageIn the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const languageIn of uniqueLanguageIn) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === languageIn,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === languageIn)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjs.Literal>
+        >(filteredLiteralValues!);
+      })
+      .chain((literals) =>
+        literals.chainMap((literal) => {
+          let string_: string;
+          try {
+            const primitive = rdfLiteral.fromRdf(literal, true);
+            if (typeof primitive !== "string") {
+              throw new Error("expected string");
+            }
+            string_ = primitive;
+          } catch {
+            return purify.Left<Error, "text" | "html">(
+              new rdfjsResource.Resource.MistypedValueError({
+                actualValue: literal,
+                expectedValueType: "string",
+                focusResource: $resource,
+                predicate:
+                  InPropertiesClass.$properties.inStringsProperty["identifier"],
+              }),
+            );
+          }
+
+          switch (string_) {
+            case "text":
+            case "html":
+              return purify.Either.of<Error, "text" | "html">(string_);
+            default:
+              return purify.Left<Error, "text" | "html">(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: '"text" | "html"',
+                  focusResource: $resource,
+                  predicate:
+                    InPropertiesClass.$properties.inStringsProperty[
+                      "identifier"
+                    ],
+                }),
+              );
+          }
+        }),
       )
       .map((values) =>
         values.length > 0
@@ -26704,7 +29714,85 @@ export namespace InIdentifierClass {
         unique: true,
       }),
     )
-      .chain((values) => values.chainMap((value) => value.toString()))
+      .chain((values) => {
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        const nonUniqueLanguageIn = $languageIn ?? [];
+        if (nonUniqueLanguageIn.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(literalValues);
+        }
+
+        let uniqueLanguageIn: string[];
+        if (nonUniqueLanguageIn.length === 1) {
+          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+        } else {
+          uniqueLanguageIn = [];
+          for (const languageIn of nonUniqueLanguageIn) {
+            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+              uniqueLanguageIn.push(languageIn);
+            }
+          }
+        }
+
+        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+        // Within a languageIn the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const languageIn of uniqueLanguageIn) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === languageIn,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === languageIn)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjs.Literal>
+        >(filteredLiteralValues!);
+      })
+      .chain((literals) =>
+        literals.chainMap((literal) => {
+          let string_: string;
+          try {
+            const primitive = rdfLiteral.fromRdf(literal, true);
+            if (typeof primitive !== "string") {
+              throw new Error("expected string");
+            }
+            string_ = primitive;
+          } catch {
+            return purify.Left<Error, string>(
+              new rdfjsResource.Resource.MistypedValueError({
+                actualValue: literal,
+                expectedValueType: "string",
+                focusResource: $resource,
+                predicate:
+                  InIdentifierClass.$properties.inIdentifierProperty[
+                    "identifier"
+                  ],
+              }),
+            );
+          }
+
+          return purify.Either.of<Error, string>(string_);
+        }),
+      )
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
@@ -27171,6 +30259,24 @@ export namespace HasValuePropertiesClass {
           unique: true,
         }),
       )
+        .chain((values) => {
+          for (const hasValue of [
+            dataFactory.namedNode(
+              "http://example.com/HasValuePropertiesClassIri1",
+            ),
+          ]) {
+            const findResult = values.find((value) =>
+              value.toTerm().equals(hasValue),
+            );
+            if (findResult.isLeft()) {
+              return findResult;
+            }
+          }
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        })
         .chain((values) => values.chainMap((value) => value.toIri()))
         .chain((values) => values.head());
     if (_hasIriValuePropertyEither.isLeft()) {
@@ -27201,7 +30307,85 @@ export namespace HasValuePropertiesClass {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
           >(values);
         })
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    HasValuePropertiesClass.$properties.hasLiteralValueProperty[
+                      "identifier"
+                    ],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_hasLiteralValuePropertyEither.isLeft()) {
       return _hasLiteralValuePropertyEither;
@@ -28156,7 +31340,85 @@ export namespace ExplicitRdfTypeClass {
           unique: true,
         }),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    ExplicitRdfTypeClass.$properties.explicitRdfTypeProperty[
+                      "identifier"
+                    ],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_explicitRdfTypePropertyEither.isLeft()) {
       return _explicitRdfTypePropertyEither;
@@ -28671,7 +31933,84 @@ export namespace ExplicitFromToRdfTypesClass {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    ExplicitFromToRdfTypesClass.$properties
+                      .explicitFromToRdfTypesProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_explicitFromToRdfTypesPropertyEither.isLeft()) {
       return _explicitFromToRdfTypesPropertyEither;
@@ -29967,7 +33306,84 @@ export namespace DefaultValuePropertiesClass {
                 object: dataFactory.literal(""),
               }).toValues(),
         )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    DefaultValuePropertiesClass.$properties
+                      .stringDefaultValueProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_stringDefaultValuePropertyEither.isLeft()) {
       return _stringDefaultValuePropertyEither;
@@ -30664,7 +34080,84 @@ export namespace BaseInterfaceWithPropertiesStatic {
         { unique: true },
       ),
     )
-      .chain((values) => values.chainMap((value) => value.toString()))
+      .chain((values) => {
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        const nonUniqueLanguageIn = $languageIn ?? [];
+        if (nonUniqueLanguageIn.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(literalValues);
+        }
+
+        let uniqueLanguageIn: string[];
+        if (nonUniqueLanguageIn.length === 1) {
+          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+        } else {
+          uniqueLanguageIn = [];
+          for (const languageIn of nonUniqueLanguageIn) {
+            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+              uniqueLanguageIn.push(languageIn);
+            }
+          }
+        }
+
+        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+        // Within a languageIn the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const languageIn of uniqueLanguageIn) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === languageIn,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === languageIn)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjs.Literal>
+        >(filteredLiteralValues!);
+      })
+      .chain((literals) =>
+        literals.chainMap((literal) => {
+          let string_: string;
+          try {
+            const primitive = rdfLiteral.fromRdf(literal, true);
+            if (typeof primitive !== "string") {
+              throw new Error("expected string");
+            }
+            string_ = primitive;
+          } catch {
+            return purify.Left<Error, string>(
+              new rdfjsResource.Resource.MistypedValueError({
+                actualValue: literal,
+                expectedValueType: "string",
+                focusResource: $resource,
+                predicate:
+                  BaseInterfaceWithPropertiesStatic.$properties
+                    .baseInterfaceWithPropertiesProperty["identifier"],
+              }),
+            );
+          }
+
+          return purify.Either.of<Error, string>(string_);
+        }),
+      )
       .chain((values) => values.head());
     if (_baseInterfaceWithPropertiesPropertyEither.isLeft()) {
       return _baseInterfaceWithPropertiesPropertyEither;
@@ -31690,7 +35183,84 @@ export namespace ConcreteParentInterfaceStatic {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    ConcreteParentInterfaceStatic.$properties
+                      .concreteParentInterfaceProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_concreteParentInterfacePropertyEither.isLeft()) {
       return _concreteParentInterfacePropertyEither;
@@ -32232,7 +35802,84 @@ export namespace ConcreteChildInterface {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    ConcreteChildInterface.$properties
+                      .concreteChildInterfaceProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_concreteChildInterfacePropertyEither.isLeft()) {
       return _concreteChildInterfacePropertyEither;
@@ -32777,7 +36424,84 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         { unique: true },
       ),
     )
-      .chain((values) => values.chainMap((value) => value.toString()))
+      .chain((values) => {
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        const nonUniqueLanguageIn = $languageIn ?? [];
+        if (nonUniqueLanguageIn.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(literalValues);
+        }
+
+        let uniqueLanguageIn: string[];
+        if (nonUniqueLanguageIn.length === 1) {
+          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+        } else {
+          uniqueLanguageIn = [];
+          for (const languageIn of nonUniqueLanguageIn) {
+            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+              uniqueLanguageIn.push(languageIn);
+            }
+          }
+        }
+
+        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+        // Within a languageIn the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const languageIn of uniqueLanguageIn) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === languageIn,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === languageIn)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjs.Literal>
+        >(filteredLiteralValues!);
+      })
+      .chain((literals) =>
+        literals.chainMap((literal) => {
+          let string_: string;
+          try {
+            const primitive = rdfLiteral.fromRdf(literal, true);
+            if (typeof primitive !== "string") {
+              throw new Error("expected string");
+            }
+            string_ = primitive;
+          } catch {
+            return purify.Left<Error, string>(
+              new rdfjsResource.Resource.MistypedValueError({
+                actualValue: literal,
+                expectedValueType: "string",
+                focusResource: $resource,
+                predicate:
+                  AbstractBaseClassWithPropertiesStatic.$properties
+                    .abstractBaseClassWithPropertiesProperty["identifier"],
+              }),
+            );
+          }
+
+          return purify.Either.of<Error, string>(string_);
+        }),
+      )
       .chain((values) => values.head());
     if (_abstractBaseClassWithPropertiesPropertyEither.isLeft()) {
       return _abstractBaseClassWithPropertiesPropertyEither;
@@ -33532,7 +37256,84 @@ export namespace ConcreteParentClassStatic {
           { unique: true },
         ),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    ConcreteParentClassStatic.$properties
+                      .concreteParentClassProperty["identifier"],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_concreteParentClassPropertyEither.isLeft()) {
       return _concreteParentClassPropertyEither;
@@ -34041,7 +37842,85 @@ export namespace ConcreteChildClass {
           unique: true,
         }),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    ConcreteChildClass.$properties.concreteChildClassProperty[
+                      "identifier"
+                    ],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_concreteChildClassPropertyEither.isLeft()) {
       return _concreteChildClassPropertyEither;
@@ -34560,7 +38439,85 @@ export namespace ClassUnionMember2 {
           unique: true,
         }),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    ClassUnionMember2.$properties.classUnionMember2Property[
+                      "identifier"
+                    ],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_classUnionMember2PropertyEither.isLeft()) {
       return _classUnionMember2PropertyEither;
@@ -35055,7 +39012,85 @@ export namespace ClassUnionMember1 {
           unique: true,
         }),
       )
-        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => {
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          const nonUniqueLanguageIn = $languageIn ?? [];
+          if (nonUniqueLanguageIn.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.Literal>
+            >(literalValues);
+          }
+
+          let uniqueLanguageIn: string[];
+          if (nonUniqueLanguageIn.length === 1) {
+            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+          } else {
+            uniqueLanguageIn = [];
+            for (const languageIn of nonUniqueLanguageIn) {
+              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+                uniqueLanguageIn.push(languageIn);
+              }
+            }
+          }
+
+          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+          // Within a languageIn the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const languageIn of uniqueLanguageIn) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === languageIn,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === languageIn)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(filteredLiteralValues!);
+        })
+        .chain((literals) =>
+          literals.chainMap((literal) => {
+            let string_: string;
+            try {
+              const primitive = rdfLiteral.fromRdf(literal, true);
+              if (typeof primitive !== "string") {
+                throw new Error("expected string");
+              }
+              string_ = primitive;
+            } catch {
+              return purify.Left<Error, string>(
+                new rdfjsResource.Resource.MistypedValueError({
+                  actualValue: literal,
+                  expectedValueType: "string",
+                  focusResource: $resource,
+                  predicate:
+                    ClassUnionMember1.$properties.classUnionMember1Property[
+                      "identifier"
+                    ],
+                }),
+              );
+            }
+
+            return purify.Either.of<Error, string>(string_);
+          }),
+        )
         .chain((values) => values.head());
     if (_classUnionMember1PropertyEither.isLeft()) {
       return _classUnionMember1PropertyEither;
@@ -36105,7 +40140,84 @@ export namespace AbstractBaseClassForExternClassStatic {
         { unique: true },
       ),
     )
-      .chain((values) => values.chainMap((value) => value.toString()))
+      .chain((values) => {
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        const nonUniqueLanguageIn = $languageIn ?? [];
+        if (nonUniqueLanguageIn.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.Literal>
+          >(literalValues);
+        }
+
+        let uniqueLanguageIn: string[];
+        if (nonUniqueLanguageIn.length === 1) {
+          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+        } else {
+          uniqueLanguageIn = [];
+          for (const languageIn of nonUniqueLanguageIn) {
+            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+              uniqueLanguageIn.push(languageIn);
+            }
+          }
+        }
+
+        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+        // Within a languageIn the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const languageIn of uniqueLanguageIn) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === languageIn,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === languageIn)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjs.Literal>
+        >(filteredLiteralValues!);
+      })
+      .chain((literals) =>
+        literals.chainMap((literal) => {
+          let string_: string;
+          try {
+            const primitive = rdfLiteral.fromRdf(literal, true);
+            if (typeof primitive !== "string") {
+              throw new Error("expected string");
+            }
+            string_ = primitive;
+          } catch {
+            return purify.Left<Error, string>(
+              new rdfjsResource.Resource.MistypedValueError({
+                actualValue: literal,
+                expectedValueType: "string",
+                focusResource: $resource,
+                predicate:
+                  AbstractBaseClassForExternClassStatic.$properties
+                    .abstractBaseClassForExternClassProperty["identifier"],
+              }),
+            );
+          }
+
+          return purify.Either.of<Error, string>(string_);
+        }),
+      )
       .chain((values) => values.head());
     if (_abstractBaseClassForExternClassPropertyEither.isLeft()) {
       return _abstractBaseClassForExternClassPropertyEither;
