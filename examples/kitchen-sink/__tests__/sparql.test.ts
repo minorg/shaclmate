@@ -1,4 +1,3 @@
-import { fail } from "node:assert";
 import type { NamedNode, Quad } from "@rdfjs/types";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import N3, { DataFactory as dataFactory } from "n3";
@@ -10,6 +9,7 @@ import { quadsToTurtle } from "./quadsToTurtle.js";
 
 describe("sparql", () => {
   const languageInDataset = new oxigraph.Store();
+  const validLanguageIn = ["en", "fr"];
 
   beforeAll(() => {
     const languageInSubject = oxigraph.blankNode();
@@ -101,7 +101,10 @@ describe("sparql", () => {
     const actualDataset = queryLanguageInDataset(
       kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString(),
     );
-    expect(actualDataset.size).toStrictEqual(6); // The sh:languageIn will exclude the lang="" and lang="ar"
+    expect(actualDataset.size).toStrictEqual(
+      Object.keys(kitchenSink.LanguageInPropertiesClass.$properties).length *
+        validLanguageIn.length,
+    );
   });
 
   it("preferredLanguages: []", ({ expect }) => {
@@ -110,7 +113,10 @@ describe("sparql", () => {
         preferredLanguages: [],
       }),
     );
-    expect(actualDataset.size).toStrictEqual(6); // Same as not specifying languageIn
+    expect(actualDataset.size).toStrictEqual(
+      Object.keys(kitchenSink.LanguageInPropertiesClass.$properties).length *
+        validLanguageIn.length,
+    );
   });
 
   it("preferredLanguages: ['en']", ({ expect }) => {
@@ -119,19 +125,12 @@ describe("sparql", () => {
         preferredLanguages: ["en"],
       }),
     );
-    expect(actualDataset.size).toStrictEqual(1);
+    expect(actualDataset.size).toStrictEqual(
+      Object.keys(kitchenSink.LanguageInPropertiesClass.$properties).length * 1,
+    );
     for (const quad of actualDataset.match()) {
       expect((quad.object as oxigraph.Literal).value).toStrictEqual("envalue");
     }
-  });
-
-  it("preferredLanguages: ['']", ({ expect }) => {
-    const actualDataset = queryLanguageInDataset(
-      kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString({
-        preferredLanguages: [""],
-      }),
-    );
-    expect(actualDataset.size).toStrictEqual(0);
   });
 
   it("preferredlanguages: ['', 'en']", ({ expect }) => {
@@ -140,15 +139,11 @@ describe("sparql", () => {
         preferredLanguages: ["", "en"],
       }),
     );
-    expect(actualDataset.size).toStrictEqual(4);
+    expect(actualDataset.size).toStrictEqual(
+      Object.keys(kitchenSink.LanguageInPropertiesClass.$properties).length * 1,
+    );
     for (const quad of actualDataset.match()) {
-      switch ((quad.object as oxigraph.Literal).value) {
-        case "envalue":
-        case "value":
-          return;
-        default:
-          fail();
-      }
+      expect((quad.object as oxigraph.Literal).value).toStrictEqual("envalue");
     }
   });
 });

@@ -69,6 +69,34 @@ export function ${syntheticNamePrefix}arrayEquals<T>(
 }
 `;
 
+  export const arrayIntersection = `\
+export function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: readonly T[]): readonly T[] {
+  if (left.length === 0) {
+    return right;
+  }
+  if (right.length === 0) {
+    return left;
+  }
+
+  const intersection = new Set<T>();
+  if (left.length <= right.length) {
+    const rightSet = new Set(right);
+    for (const leftElement of left) {
+      if (rightSet.has(leftElement)) {
+        intersection.add(leftElement);
+      }
+    }
+  } else {
+    const leftSet = new Set(left);
+    for (const rightElement of right) {
+      if (leftSet.has(rightElement)) {
+        intersection.add(rightElement);
+      }  
+    }
+  }
+  return intersection;
+}`;
+
   export const booleanEquals = `\
 /**
  * Compare two objects with equals(other: T): boolean methods and return an ${syntheticNamePrefix}EqualsResult.

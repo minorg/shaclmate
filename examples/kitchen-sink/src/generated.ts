@@ -396,6 +396,35 @@ export class $LazyObjectSet<
     );
   }
 }
+export function $arrayIntersection<T>(
+  left: readonly T[],
+  right: readonly T[],
+): readonly T[] {
+  if (left.length === 0) {
+    return right;
+  }
+  if (right.length === 0) {
+    return left;
+  }
+
+  const intersection = new Set<T>();
+  if (left.length <= right.length) {
+    const rightSet = new Set(right);
+    for (const leftElement of left) {
+      if (rightSet.has(leftElement)) {
+        intersection.add(leftElement);
+      }
+    }
+  } else {
+    const leftSet = new Set(left);
+    for (const rightElement of right) {
+      if (leftSet.has(rightElement)) {
+        intersection.add(rightElement);
+      }
+    }
+  }
+  return intersection;
+}
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 export class $NamedDefaultStub {
   readonly $identifier: $NamedDefaultStub.$Identifier;
@@ -24801,6 +24830,28 @@ export namespace LanguageInPropertiesClass {
         unique: true,
       }),
     )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toLiteral().chain((literalValue) => {
+            switch (literalValue.language) {
+              case "en":
+              case "fr":
+                return purify.Either.of(value);
+              default:
+                return purify.Left(
+                  new rdfjsResource.Resource.MistypedValueError({
+                    actualValue: literalValue,
+                    expectedValueType: "string",
+                    focusResource: $resource,
+                    predicate:
+                      LanguageInPropertiesClass.$properties
+                        .languageInStringProperty["identifier"],
+                  }),
+                );
+            }
+          }),
+        ),
+      )
       .chain((values) => {
         if (!$preferredLanguages || $preferredLanguages.length === 0) {
           return purify.Either.of<
@@ -25011,7 +25062,12 @@ export namespace LanguageInPropertiesClass {
         type: "bgp",
       },
       ...[
-        [...new Set(["en", "fr"].concat(parameters?.preferredLanguages ?? []))],
+        [
+          ...$arrayIntersection(
+            ["en", "fr"],
+            parameters?.preferredLanguages ?? [],
+          ),
+        ],
       ]
         .filter((languages) => languages.length > 0)
         .map((languages) =>
@@ -25058,7 +25114,14 @@ export namespace LanguageInPropertiesClass {
         ],
         type: "bgp",
       },
-      ...[parameters?.preferredLanguages ?? []]
+      ...[
+        [
+          ...$arrayIntersection(
+            ["en", "fr"],
+            parameters?.preferredLanguages ?? [],
+          ),
+        ],
+      ]
         .filter((languages) => languages.length > 0)
         .map((languages) =>
           languages.map((language) => ({

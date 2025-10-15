@@ -1,9 +1,11 @@
 import type { Literal } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
+import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class LiteralType extends TermType<Literal, Literal> {
   private readonly languageIn: readonly string[];
@@ -94,6 +96,19 @@ export class LiteralType extends TermType<Literal, Literal> {
     return `${variables.zod}.object({ "@language": ${variables.zod}.string().optional(), "@type": ${variables.zod}.string().optional(), "@value": ${variables.zod}.string() })`;
   }
 
+  override snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): readonly string[] {
+    let snippetDeclarations = super.snippetDeclarations(parameters);
+    const { features } = parameters;
+    if (features.has("sparql") && this.languageIn.length > 0) {
+      snippetDeclarations = snippetDeclarations.concat(
+        SnippetDeclarations.arrayIntersection,
+      );
+    }
+    return snippetDeclarations;
+  }
+
   override sparqlWherePatterns(
     parameters: Parameters<Type["sparqlWherePatterns"]>[0] & {
       ignoreLiteralLanguage?: boolean;
@@ -109,7 +124,7 @@ export class LiteralType extends TermType<Literal, Literal> {
     return superPatterns.concat(
       `...[${
         this.languageIn.length > 0
-          ? `[...new Set(${JSON.stringify(this.languageIn)}.concat(${variables.preferredLanguages} ?? []))]`
+          ? `[...${syntheticNamePrefix}arrayIntersection(${JSON.stringify(this.languageIn)}, ${variables.preferredLanguages} ?? [])]`
           : `(${variables.preferredLanguages} ?? [])`
       }]
         .filter(languages => languages.length > 0)
