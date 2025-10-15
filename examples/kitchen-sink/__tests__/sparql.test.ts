@@ -125,8 +125,8 @@ describe("sparql", () => {
       }),
     );
     expect(actualDataset.size).toStrictEqual(
-      Object.keys(kitchenSink.LanguageInPropertiesClass.$properties).length *
-        validLanguageIn.length,
+      validLanguageInLiteralLanguage.length +
+        validLanguageInStringLanguage.length,
     );
   });
 
@@ -151,10 +151,13 @@ describe("sparql", () => {
       }),
     );
     expect(actualDataset.size).toStrictEqual(
-      Object.keys(kitchenSink.LanguageInPropertiesClass.$properties).length * 1,
+      validLanguageInStringLanguage.length,
     );
     for (const quad of actualDataset.match()) {
-      expect((quad.object as oxigraph.Literal).value).toStrictEqual("envalue");
+      expect((quad.object as oxigraph.Literal).value).toBeOneOf([
+        "envalue",
+        "value",
+      ]);
     }
   });
 });

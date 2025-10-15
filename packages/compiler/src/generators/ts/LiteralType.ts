@@ -143,15 +143,16 @@ export class LiteralType extends TermType<Literal, Literal> {
         .map(langEqualsExpressions => 
           ({
             type: "filter" as const,
-            expression:
-              langEqualsExpressions.length === 1
-                ? langEqualsExpressions[0]
-                :
-                  {
-                    type: "operation" as const,
-                    operator: "||",
-                    args: langEqualsExpressions
-                  },
+            expression: langEqualsExpressions.reduce((reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression]
+              };
+            }, null as sparqljs.Expression | null) as sparqljs.Expression
           })
         )`,
     );

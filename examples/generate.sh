@@ -8,5 +8,5 @@ cd "$(dirname "$0")"
 ./graphql/generate.sh
 ./kitchen-sink/generate.sh
 
-cd ..
+npm run check:write
 npm run check:write

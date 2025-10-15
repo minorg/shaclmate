@@ -1487,14 +1487,19 @@ export namespace UuidV4IriInterface {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -1989,14 +1994,19 @@ export namespace UuidV4IriClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -3180,14 +3190,19 @@ export namespace UnionPropertiesClass {
                     )
                     .map((langEqualsExpressions) => ({
                       type: "filter" as const,
-                      expression:
-                        langEqualsExpressions.length === 1
-                          ? langEqualsExpressions[0]
-                          : {
-                              type: "operation" as const,
-                              operator: "||",
-                              args: langEqualsExpressions,
-                            },
+                      expression: langEqualsExpressions.reduce(
+                        (reducedExpression, langEqualsExpression) => {
+                          if (reducedExpression === null) {
+                            return langEqualsExpression;
+                          }
+                          return {
+                            type: "operation" as const,
+                            operator: "||",
+                            args: [reducedExpression, langEqualsExpression],
+                          };
+                        },
+                        null as sparqljs.Expression | null,
+                      ) as sparqljs.Expression,
                     })),
                 ],
                 type: "group",
@@ -3292,14 +3307,19 @@ export namespace UnionPropertiesClass {
             )
             .map((langEqualsExpressions) => ({
               type: "filter" as const,
-              expression:
-                langEqualsExpressions.length === 1
-                  ? langEqualsExpressions[0]
-                  : {
-                      type: "operation" as const,
-                      operator: "||",
-                      args: langEqualsExpressions,
-                    },
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
             })),
         ],
         type: "optional",
@@ -4747,14 +4767,19 @@ export namespace TermPropertiesClass {
             )
             .map((langEqualsExpressions) => ({
               type: "filter" as const,
-              expression:
-                langEqualsExpressions.length === 1
-                  ? langEqualsExpressions[0]
-                  : {
-                      type: "operation" as const,
-                      operator: "||",
-                      args: langEqualsExpressions,
-                    },
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
             })),
         ],
         type: "optional",
@@ -4818,14 +4843,19 @@ export namespace TermPropertiesClass {
             )
             .map((langEqualsExpressions) => ({
               type: "filter" as const,
-              expression:
-                langEqualsExpressions.length === 1
-                  ? langEqualsExpressions[0]
-                  : {
-                      type: "operation" as const,
-                      operator: "||",
-                      args: langEqualsExpressions,
-                    },
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
             })),
         ],
         type: "optional",
@@ -5449,14 +5479,19 @@ export namespace StubInterfaceUnionMember2 {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -6061,14 +6096,19 @@ export namespace StubInterfaceUnionMember1 {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -6650,14 +6690,19 @@ export namespace StubClassUnionMember2 {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -7239,14 +7284,19 @@ export namespace StubClassUnionMember1 {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -7741,14 +7791,19 @@ export namespace Sha256IriClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -8441,14 +8496,19 @@ export namespace PropertyVisibilitiesClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
       {
         triples: [
@@ -8483,14 +8543,19 @@ export namespace PropertyVisibilitiesClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
       {
         triples: [
@@ -8525,14 +8590,19 @@ export namespace PropertyVisibilitiesClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -9484,14 +9554,19 @@ export namespace PropertyCardinalitiesClass {
             )
             .map((langEqualsExpressions) => ({
               type: "filter" as const,
-              expression:
-                langEqualsExpressions.length === 1
-                  ? langEqualsExpressions[0]
-                  : {
-                      type: "operation" as const,
-                      operator: "||",
-                      args: langEqualsExpressions,
-                    },
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
             })),
         ],
         type: "optional",
@@ -9533,14 +9608,19 @@ export namespace PropertyCardinalitiesClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
       {
         patterns: [
@@ -9581,14 +9661,19 @@ export namespace PropertyCardinalitiesClass {
             )
             .map((langEqualsExpressions) => ({
               type: "filter" as const,
-              expression:
-                langEqualsExpressions.length === 1
-                  ? langEqualsExpressions[0]
-                  : {
-                      type: "operation" as const,
-                      operator: "||",
-                      args: langEqualsExpressions,
-                    },
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
             })),
         ],
         type: "optional",
@@ -9630,14 +9715,19 @@ export namespace PropertyCardinalitiesClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -10334,14 +10424,19 @@ export namespace OrderedPropertiesClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
       {
         triples: [
@@ -10374,14 +10469,19 @@ export namespace OrderedPropertiesClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
       {
         triples: [
@@ -10414,14 +10514,19 @@ export namespace OrderedPropertiesClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -10878,14 +10983,19 @@ export namespace NonClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -11935,14 +12045,19 @@ export namespace MutablePropertiesClass {
             )
             .map((langEqualsExpressions) => ({
               type: "filter" as const,
-              expression:
-                langEqualsExpressions.length === 1
-                  ? langEqualsExpressions[0]
-                  : {
-                      type: "operation" as const,
-                      operator: "||",
-                      args: langEqualsExpressions,
-                    },
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
             })),
         ],
         type: "optional",
@@ -11986,14 +12101,19 @@ export namespace MutablePropertiesClass {
             )
             .map((langEqualsExpressions) => ({
               type: "filter" as const,
-              expression:
-                langEqualsExpressions.length === 1
-                  ? langEqualsExpressions[0]
-                  : {
-                      type: "operation" as const,
-                      operator: "||",
-                      args: langEqualsExpressions,
-                    },
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
             })),
         ],
         type: "optional",
@@ -13522,14 +13642,19 @@ export namespace StubInterface {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -16914,14 +17039,19 @@ export namespace StubClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -20185,14 +20315,19 @@ export namespace LazilyResolvedIriInterface {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -20682,14 +20817,19 @@ export namespace LazilyResolvedIriClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -21301,14 +21441,19 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -21920,14 +22065,19 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -22512,14 +22662,19 @@ export namespace LazilyResolvedClassUnionMember2 {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -23104,14 +23259,19 @@ export namespace LazilyResolvedClassUnionMember1 {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -23726,14 +23886,19 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -24322,14 +24487,19 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -25093,14 +25263,19 @@ export namespace LanguageInPropertiesClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
       {
         triples: [
@@ -25146,14 +25321,19 @@ export namespace LanguageInPropertiesClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -25957,14 +26137,19 @@ export namespace InterfaceUnionMember2b {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -26476,14 +26661,19 @@ export namespace InterfaceUnionMember2a {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -26985,14 +27175,19 @@ export namespace InterfaceUnionMember1 {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -27451,14 +27646,19 @@ export namespace Interface {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -29479,14 +29679,19 @@ export namespace InPropertiesClass {
             )
             .map((langEqualsExpressions) => ({
               type: "filter" as const,
-              expression:
-                langEqualsExpressions.length === 1
-                  ? langEqualsExpressions[0]
-                  : {
-                      type: "operation" as const,
-                      operator: "||",
-                      args: langEqualsExpressions,
-                    },
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
             })),
         ],
         type: "optional",
@@ -30064,14 +30269,19 @@ export namespace InIdentifierClass {
             )
             .map((langEqualsExpressions) => ({
               type: "filter" as const,
-              expression:
-                langEqualsExpressions.length === 1
-                  ? langEqualsExpressions[0]
-                  : {
-                      type: "operation" as const,
-                      operator: "||",
-                      args: langEqualsExpressions,
-                    },
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
             })),
         ],
         type: "optional",
@@ -30685,14 +30895,19 @@ export namespace HasValuePropertiesClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -31745,14 +31960,19 @@ export namespace ExplicitRdfTypeClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -32347,14 +32567,19 @@ export namespace ExplicitFromToRdfTypesClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -33865,14 +34090,19 @@ export namespace DefaultValuePropertiesClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
       {
         patterns: [
@@ -34558,14 +34788,19 @@ export namespace BaseInterfaceWithPropertiesStatic {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -35682,14 +35917,19 @@ export namespace ConcreteParentInterfaceStatic {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -36298,14 +36538,19 @@ export namespace ConcreteChildInterface {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -36811,14 +37056,19 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -37727,14 +37977,19 @@ export namespace ConcreteParentClassStatic {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -38309,14 +38564,19 @@ export namespace ConcreteChildClass {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -38887,14 +39147,19 @@ export namespace ClassUnionMember2 {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -39465,14 +39730,19 @@ export namespace ClassUnionMember1 {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
@@ -40556,14 +40826,19 @@ export namespace AbstractBaseClassForExternClassStatic {
         )
         .map((langEqualsExpressions) => ({
           type: "filter" as const,
-          expression:
-            langEqualsExpressions.length === 1
-              ? langEqualsExpressions[0]
-              : {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: langEqualsExpressions,
-                },
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
         })),
     ];
     for (const pattern of propertyPatterns) {
