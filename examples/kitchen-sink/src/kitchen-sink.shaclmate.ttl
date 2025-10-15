@@ -376,18 +376,22 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Shape that uses the StringList in a property." ;
     sh:property [
+        rdfs:comment "literal property for testing languageIn" ;
         sh:languageIn ("en"
             "fr"
         ) ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :languageInPropertiesLanguageInProperty
+        sh:path :languageInLiteralProperty
     ], [
-        rdfs:comment "literal property for testing runtime languageIn" ;
+        rdfs:comment "string property for testing languageIn" ;
+        sh:datatype xsd:string ;
+        sh:languageIn ("en"
+            "fr"
+        ) ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:nodeKind sh:Literal ;
-        sh:path :languageInPropertiesLiteralProperty
+        sh:path :languageInStringProperty
     ] .
 
 :LazilyResolvedBlankNodeOrIriClass
