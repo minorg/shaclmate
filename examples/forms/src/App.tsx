@@ -44,7 +44,7 @@ const initialData = generated.FormNodeShape.$toJson(
       $identifier: dataFactory.namedNode("http://example.com/nested"),
       requiredStringProperty: "required/nested",
     }),
-    nonEmptyStringSetProperty: NonEmptyList.fromArray(["test"]).unsafeCoerce(),
+    nonEmptyStringSetProperty: NonEmptyList(["test"]),
     requiredIntegerProperty: 1,
     requiredStringProperty: "required/form",
   }),
