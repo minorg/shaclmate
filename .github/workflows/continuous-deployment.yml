@@ -4,6 +4,9 @@ on:
     branches:
       - "main"
   workflow_dispatch:
+permissions:
+  id-token: write
+  contents: read
 jobs:
   build:
     env:
@@ -27,8 +30,6 @@ jobs:
         run: packages/cli/dist/cli.js generate examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl >/dev/null
       - name: Publish
         run: npm publish --access public --workspaces
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Run CLI via npx
         run: npx -y "@shaclmate/cli@latest" generate examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl >/dev/null
         if: always()
