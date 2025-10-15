@@ -10,7 +10,8 @@ import { beforeAll, describe, it } from "vitest";
 describe("fromRdf", () => {
   let invalidLanguageInResource: Resource;
   let validLanguageInResource: Resource;
-  const validLanguageIn = ["en", "fr"];
+  const validLanguageInLiteralLanguage = ["en", "fr"];
+  const validLanguageInStringLanguage = ["", "en", "fr"];
 
   beforeAll(() => {
     const languageInDataset = new N3.Store();
@@ -39,15 +40,26 @@ describe("fromRdf", () => {
           ),
         );
 
-        if (validLanguageIn.includes(language)) {
-          languageInDataset.add(
-            dataFactory.quad(
-              validLanguageInResource.identifier,
-              predicate,
-              languageLiteral,
-            ),
-          );
+        switch (property.identifier.value) {
+          case "http://example.com/languageInLiteralProperty":
+            if (!validLanguageInLiteralLanguage.includes(language)) {
+              continue;
+            }
+            break;
+          case "http://example.com/languageInStringProperty":
+            if (!validLanguageInStringLanguage.includes(language)) {
+              continue;
+            }
+            break;
         }
+
+        languageInDataset.add(
+          dataFactory.quad(
+            validLanguageInResource.identifier,
+            predicate,
+            languageLiteral,
+          ),
+        );
       }
     }
   });
@@ -220,12 +232,12 @@ describe("fromRdf", () => {
       validLanguageInResource,
     ).unsafeCoerce();
     expect(instance.languageInLiteralProperty).toHaveLength(
-      validLanguageIn.length,
+      validLanguageInLiteralLanguage.length,
     );
     expect(instance.languageInStringProperty).toHaveLength(
-      validLanguageIn.length,
+      validLanguageInStringLanguage.length,
     );
-    for (const language of validLanguageIn) {
+    for (const language of validLanguageInLiteralLanguage) {
       expect(
         instance.languageInLiteralProperty.some(
           (literal) => literal.language === language,
@@ -250,10 +262,10 @@ describe("fromRdf", () => {
       },
     ).unsafeCoerce();
     expect(instance.languageInLiteralProperty).toHaveLength(
-      validLanguageIn.length,
+      validLanguageInLiteralLanguage.length,
     );
     expect(instance.languageInStringProperty).toHaveLength(
-      validLanguageIn.length,
+      validLanguageInStringLanguage.length,
     );
   });
 
@@ -274,14 +286,11 @@ describe("fromRdf", () => {
   });
 
   it("preferredLanguages: ['']", ({ expect }) => {
-    const instance = kitchenSink.LanguageInPropertiesClass.$fromRdf(
-      validLanguageInResource,
-      {
+    expect(
+      kitchenSink.LanguageInPropertiesClass.$fromRdf(validLanguageInResource, {
         preferredLanguages: [""],
-      },
-    ).unsafeCoerce();
-    expect(instance.languageInLiteralProperty).toHaveLength(0);
-    expect(instance.languageInStringProperty).toHaveLength(0);
+      }).isLeft(),
+    ).toStrictEqual(true);
   });
 
   it("preferredLanguages: ['', 'en']", ({ expect }) => {
@@ -296,8 +305,9 @@ describe("fromRdf", () => {
     expect(instance.languageInLiteralProperty[0].value).toStrictEqual(
       "envalue",
     );
-    expect(instance.languageInStringProperty).toHaveLength(1);
-    expect(instance.languageInStringProperty[0]).toStrictEqual("envalue");
+    expect(instance.languageInStringProperty).toHaveLength(2);
+    expect(instance.languageInStringProperty[0]).toStrictEqual("value");
+    expect(instance.languageInStringProperty[1]).toStrictEqual("envalue");
   });
 
   it("preferredLanguages: ['en', '']", ({ expect }) => {
@@ -312,8 +322,9 @@ describe("fromRdf", () => {
     expect(instance.languageInLiteralProperty[0].value).toStrictEqual(
       "envalue",
     );
-    expect(instance.languageInStringProperty).toHaveLength(1);
+    expect(instance.languageInStringProperty).toHaveLength(2);
     expect(instance.languageInStringProperty[0]).toStrictEqual("envalue");
+    expect(instance.languageInStringProperty[1]).toStrictEqual("value");
   });
 
   it("preferredLanguages: ['fr', 'en']", ({ expect }) => {

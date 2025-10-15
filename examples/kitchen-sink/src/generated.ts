@@ -24354,7 +24354,7 @@ export class LanguageInPropertiesClass {
    */
   readonly languageInLiteralProperty: purify.NonEmptyList<rdfjs.Literal>;
   /**
-   * string property for testing languageIn
+   * string property for testing languageIn; must have '' as an acceptable languageIn since that's how it will be serialized to RDF
    */
   readonly languageInStringProperty: purify.NonEmptyList<string>;
 
@@ -24655,7 +24655,9 @@ export namespace LanguageInPropertiesClass {
         .array()
         .nonempty()
         .min(1)
-        .describe("string property for testing languageIn"),
+        .describe(
+          "string property for testing languageIn; must have '' as an acceptable languageIn since that's how it will be serialized to RDF",
+        ),
     }) satisfies zod.ZodType<$Json>;
   }
 
@@ -24834,6 +24836,7 @@ export namespace LanguageInPropertiesClass {
         values.chainMap((value) =>
           value.toLiteral().chain((literalValue) => {
             switch (literalValue.language) {
+              case "":
               case "en":
               case "fr":
                 return purify.Either.of(value);
@@ -25117,7 +25120,7 @@ export namespace LanguageInPropertiesClass {
       ...[
         [
           ...$arrayIntersection(
-            ["en", "fr"],
+            ["", "en", "fr"],
             parameters?.preferredLanguages ?? [],
           ),
         ],
