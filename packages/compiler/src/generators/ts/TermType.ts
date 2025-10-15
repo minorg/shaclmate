@@ -187,6 +187,7 @@ export class TermType<
       chain.defaultValue,
       chain.hasValues,
       chain.languageIn,
+      chain.preferredLanguages,
       chain.valueTo,
     ]
       .filter((_) => typeof _ !== "undefined")
@@ -209,6 +210,7 @@ export class TermType<
     defaultValue?: string;
     hasValues?: string;
     languageIn?: string;
+    preferredLanguages?: string;
     valueTo: string;
   } {
     let valueToExpression =

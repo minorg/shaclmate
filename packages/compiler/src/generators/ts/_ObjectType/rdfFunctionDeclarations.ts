@@ -85,7 +85,7 @@ function propertiesFromRdfFunctionDeclaration(
 
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
     statements.push(
-      `const ${syntheticNamePrefix}super${parentObjectTypeI}Either = ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf({ ...${variables.context}, ignoreRdfType: true, languageIn: ${variables.languageIn}, objectSet: ${variables.objectSet}, resource: ${variables.resource} });`,
+      `const ${syntheticNamePrefix}super${parentObjectTypeI}Either = ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf({ ...${variables.context}, ignoreRdfType: true, objectSet: ${variables.objectSet}, preferredLanguages: ${variables.preferredLanguages}, resource: ${variables.resource} });`,
       `if (${syntheticNamePrefix}super${parentObjectTypeI}Either.isLeft()) { return ${syntheticNamePrefix}super${parentObjectTypeI}Either; }`,
       `const ${syntheticNamePrefix}super${parentObjectTypeI} = ${syntheticNamePrefix}super${parentObjectTypeI}Either.unsafeCoerce()`,
     );
@@ -126,7 +126,7 @@ if (!${variables.ignoreRdfType}) {
 
   const propertyFromRdfVariables = {
     context: variables.context,
-    languageIn: variables.languageIn,
+    preferredLanguages: variables.preferredLanguages,
     objectSet: variables.objectSet,
     resource: variables.resource,
   };
@@ -151,7 +151,7 @@ if (!${variables.ignoreRdfType}) {
     name: `${syntheticNamePrefix}propertiesFromRdf`,
     parameters: [
       {
-        name: `{ ignoreRdfType: ${variables.ignoreRdfType}, languageIn: ${variables.languageIn}, objectSet: ${variables.objectSet}, resource: ${variables.resource},\n// @ts-ignore\n...${variables.context} }`,
+        name: `{ ignoreRdfType: ${variables.ignoreRdfType}, objectSet: ${variables.objectSet}, preferredLanguages: ${variables.preferredLanguages}, resource: ${variables.resource},\n// @ts-ignore\n...${variables.context} }`,
         type: `{ [_index: string]: any; ignoreRdfType: boolean; languageIn?: readonly string[]; objectSet: ${syntheticNamePrefix}ObjectSet; resource: rdfjsResource.Resource; }`,
       },
     ],
@@ -197,7 +197,7 @@ function toRdfFunctionDeclaration(
 const variables = {
   context: `${syntheticNamePrefix}context`,
   ignoreRdfType: `${syntheticNamePrefix}ignoreRdfType`,
-  languageIn: `${syntheticNamePrefix}languageIn`,
   objectSet: `${syntheticNamePrefix}objectSet`,
+  preferredLanguages: `${syntheticNamePrefix}preferredLanguages`,
   resource: `${syntheticNamePrefix}resource`,
 };

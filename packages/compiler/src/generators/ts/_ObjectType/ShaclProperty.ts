@@ -257,9 +257,9 @@ export abstract class ShaclProperty<
       allowIgnoreRdfType: true,
       context: "object",
       variables: {
-        languageIn: variables.languageIn,
         object: `dataFactory.variable!(${objectString})`,
         predicate: this.predicate,
+        preferredLanguages: variables.preferredLanguages,
         subject: variables.subject,
         variablePrefix: objectString,
       },

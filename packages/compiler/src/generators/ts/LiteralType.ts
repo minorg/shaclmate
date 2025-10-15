@@ -123,16 +123,20 @@ export class LiteralType extends TermType<Literal, Literal> {
     }
 
     return superPatterns.concat(
-      `...[(${variables.languageIn} && ${variables.languageIn}.length > 0) ? ${variables.languageIn} : ${JSON.stringify(this.languageIn)}]
-        .filter(languagesIn => languagesIn.length > 0)
-        .map(languagesIn =>
-          languagesIn.map(languageIn => 
+      `...[${
+        this.languageIn.length > 0
+          ? `[...new Set(${JSON.stringify(this.languageIn)}.concat(${variables.preferredLanguages} ?? []))]`
+          : `(${variables.preferredLanguages} ?? [])`
+      }]
+        .filter(languages => languages.length > 0)
+        .map(languages =>
+          languages.map(language => 
             ({
               type: "operation" as const,
               operator: "=",
               args: [
                 { type: "operation" as const, operator: "lang", args: [${variables.object}] },
-                dataFactory.literal(languageIn)
+                dataFactory.literal(language)
               ]
             })
           )

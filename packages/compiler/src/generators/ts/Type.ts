@@ -71,15 +71,15 @@ export abstract class Type {
    * Some types need to filter on the set of all objects/values of a (subject, predicate). For example, all sh:hasValue values must be present in the set for any values
    * to be considered valid. Similar
    *
-   * Values may also need to be sorted. For example, applying sh:languageIn should sort the values in the order of the specified languages so that the first value
-   * (if it exists) is always of the first specified language -- a common situation when sh:maxCount is 1.
+   * Values may also need to be sorted. For example, specifying preferredLanguages should sort the values in the order of the specified languages so that the first value
+   * (if it exists) is always of the first preferred language.
    */
   abstract fromRdfExpression(parameters: {
     variables: {
       context: string;
       ignoreRdfType?: boolean;
-      languageIn: string;
       objectSet: string;
+      preferredLanguages: string;
       predicate: string;
       resource: string;
       resourceValues: string;
@@ -218,9 +218,9 @@ export abstract class Type {
         allowIgnoreRdfType: boolean;
         context: "object";
         variables: {
-          languageIn: string;
           object: string;
           predicate: string;
+          preferredLanguages: string;
           subject: string;
           variablePrefix: string;
         };
@@ -229,7 +229,7 @@ export abstract class Type {
         allowIgnoreRdfType: boolean;
         context: "subject";
         variables: {
-          languageIn: string;
+          preferredLanguages: string;
           subject: string;
           variablePrefix: string;
         };
@@ -254,7 +254,7 @@ export abstract class Type {
             allowIgnoreRdfType,
             context: "subject",
             variables: {
-              languageIn: variables.languageIn,
+              preferredLanguages: variables.preferredLanguages,
               subject: variables.object,
               variablePrefix: variables.object.substring(
                 objectPrefix.length,

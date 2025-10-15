@@ -693,7 +693,7 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
     variables,
   }: Parameters<Type["fromRdfExpression"]>[0]): string {
     // Don't ignoreRdfType, we may need it to distinguish the union members
-    return `${variables.resourceValues}.chain(values => values.chainMap(value => value.toResource().chain(resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { ...${variables.context}, ignoreRdfType: false, languageIn: ${variables.languageIn}, objectSet: ${variables.objectSet} }))))`;
+    return `${variables.resourceValues}.chain(values => values.chainMap(value => value.toResource().chain(resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { ...${variables.context}, ignoreRdfType: false, objectSet: ${variables.objectSet}, preferredLanguages: ${variables.preferredLanguages} }))))`;
   }
 
   override graphqlResolveExpression({
@@ -768,7 +768,7 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
         return [
           `...${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
             {
-              languageIn: parameters.variables.languageIn,
+              preferredLanguages: parameters.variables.preferredLanguages,
               subject: parameters.variables.subject,
               variablePrefix: parameters.variables.variablePrefix,
             },
