@@ -209,7 +209,7 @@ export class TermType<
     defaultValue?: string;
     hasValues?: string;
     languageIn?: string;
-    valueTo?: string;
+    valueTo: string;
   } {
     let valueToExpression =
       "purify.Either.of<Error, rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>(value.toTerm())";

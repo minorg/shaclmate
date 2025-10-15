@@ -1,9 +1,9 @@
 import type { Literal } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
-import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
+import { objectInitializer } from "./objectInitializer.js";
 
 export class LiteralType extends TermType<Literal, Literal> {
   private readonly languageIn: readonly string[];
@@ -41,50 +41,54 @@ export class LiteralType extends TermType<Literal, Literal> {
     defaultValue?: string;
     hasValues?: string;
     languageIn?: string;
-    valueTo?: string;
+    valueTo: string;
   } {
     return {
       ...super.fromRdfExpressionChain({ variables }),
-      languageIn: `chain(values => {
-      const literalValuesEither = values.chainMap(value => value.toLiteral());
-      if (literalValuesEither.isLeft()) {
-        return literalValuesEither;
-      }
-      const literalValues = literalValuesEither.unsafeCoerce();
-
-      const nonUniqueLanguageIn = ${variables.languageIn} ?? ${JSON.stringify(this.languageIn)};
-      if (nonUniqueLanguageIn.length === 0) {
-        return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(literalValues);
-      }
-
-      let uniqueLanguageIn: string[];
-      if (nonUniqueLanguageIn.length === 1) {
-        uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-      } else {
-        uniqueLanguageIn = [];
-        for (const languageIn of nonUniqueLanguageIn) {
-          if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-            uniqueLanguageIn.push(languageIn);
-          }
-        }
-      }
-
-      // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-      // Within a languageIn the literals may be in any order.
-      let filteredLiteralValues: rdfjsResource.Resource.Values<rdfjs.Literal> | undefined;
-      for (const languageIn of uniqueLanguageIn) {
-        if (!filteredLiteralValues) {
-          filteredLiteralValues = literalValues.filter(value => value.language === languageIn);
-        } else {
-          filteredLiteralValues = filteredLiteralValues.concat(...literalValues.filter(value => value.language === languageIn).toArray());
-        }
-      }
-
-      return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(filteredLiteralValues!);
-    })`,
-      valueTo: undefined, // languageIn already returns rdfjs.Literal values
+      languageIn:
+        this.languageIn.length > 0
+          ? `chain(values => values.chainMap(value => value.toLiteral().chain(literalValue => { switch (literalValue.language) { ${this.languageIn.map((languageIn) => `case "${languageIn}":`).join(" ")} return purify.Either.of(value); default: return purify.Left(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: "literalValue", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })))`
+          : undefined,
+      valueTo: "chain(values => values.chainMap(value => value.toLiteral()))",
     };
   }
+
+  //   const literalValuesEither = values.chainMap(value => value.toLiteral());
+  //   if (literalValuesEither.isLeft()) {
+  //     return literalValuesEither;
+  //   }
+  //   const literalValues = literalValuesEither.unsafeCoerce();
+
+  //   const nonUniqueLanguageIn = ${variables.languageIn} ?? ${JSON.stringify(this.languageIn)};
+  //   if (nonUniqueLanguageIn.length === 0) {
+  //     return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(literalValues);
+  //   }
+
+  //   let uniqueLanguageIn: string[];
+  //   if (nonUniqueLanguageIn.length === 1) {
+  //     uniqueLanguageIn = [nonUniqueLanguageIn[0]];
+  //   } else {
+  //     uniqueLanguageIn = [];
+  //     for (const languageIn of nonUniqueLanguageIn) {
+  //       if (uniqueLanguageIn.indexOf(languageIn) === -1) {
+  //         uniqueLanguageIn.push(languageIn);
+  //       }
+  //     }
+  //   }
+
+  //   // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
+  //   // Within a languageIn the literals may be in any order.
+  //   let filteredLiteralValues: rdfjsResource.Resource.Values<rdfjs.Literal> | undefined;
+  //   for (const languageIn of uniqueLanguageIn) {
+  //     if (!filteredLiteralValues) {
+  //       filteredLiteralValues = literalValues.filter(value => value.language === languageIn);
+  //     } else {
+  //       filteredLiteralValues = filteredLiteralValues.concat(...literalValues.filter(value => value.language === languageIn).toArray());
+  //     }
+  //   }
+
+  //   return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjs.Literal>>(filteredLiteralValues!);
+  // })`
 
   override hashStatements({
     depth,
@@ -108,17 +112,15 @@ export class LiteralType extends TermType<Literal, Literal> {
 
   override sparqlWherePatterns(
     parameters: Parameters<Type["sparqlWherePatterns"]>[0] & {
-      ignoreLanguageIn?: boolean;
+      ignoreLiteralLanguage?: boolean;
     },
   ): readonly string[] {
-    const { context, ignoreLanguageIn, variables } = parameters;
+    const { context, ignoreLiteralLanguage, variables } = parameters;
 
     const superPatterns = super.sparqlWherePatterns(parameters);
-    if (ignoreLanguageIn || context === "subject") {
+    if (ignoreLiteralLanguage || context === "subject") {
       return superPatterns;
     }
-
-    invariant(this.name.indexOf("rdfjs.Literal") !== -1, this.name);
 
     return superPatterns.concat(
       `...[(${variables.languageIn} && ${variables.languageIn}.length > 0) ? ${variables.languageIn} : ${JSON.stringify(this.languageIn)}]

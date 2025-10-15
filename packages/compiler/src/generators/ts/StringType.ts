@@ -45,36 +45,14 @@ export class StringType extends PrimitiveType<string> {
   }: Parameters<
     PrimitiveType<string>["fromRdfExpressionChain"]
   >[0]): ReturnType<PrimitiveType<string>["fromRdfExpressionChain"]> {
-    const valueToReturn =
+    const inChain =
       this.primitiveIn.length > 0
-        ? `switch (string_) { ${this.primitiveIn.map((value) => `case "${value}":`).join(" ")} return purify.Either.of<Error, ${this.name}>(string_); default: return purify.Left<Error, ${this.name}>(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: "literal", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); }`
-        : `return purify.Either.of<Error, ${this.name}>(string_);`;
+        ? `.chain(string_ => { switch (string_) { ${this.primitiveIn.map((value) => `case "${value}":`).join(" ")} return purify.Either.of<Error, ${this.name}>(string_); default: return purify.Left<Error, ${this.name}>(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: "value.toTerm()", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })`
+        : "";
 
     return {
       ...super.fromRdfExpressionChain({ variables }),
-      valueTo: // Here we have rdfjsResource.Resource.Values<rdfjs.Literal> from the languageIn filter, not rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-      `\
-chain(literals => literals.chainMap(literal => {
-  let string_: string;
-  try {
-    const primitive = rdfLiteral.fromRdf(literal, true);
-    if (typeof primitive !== "string") {
-      throw new Error("expected string");
-    }
-    string_ = primitive;
-  } catch {
-    return purify.Left<Error, ${this.name}>(
-      new rdfjsResource.Resource.MistypedValueError({
-        actualValue: literal,
-        expectedValueType: "string",
-        focusResource: ${variables.resource},
-        predicate: ${variables.predicate},
-      }),
-    );
-  }
-
-  ${valueToReturn}
-}))`,
+      valueTo: `chain(values => values.chainMap(value => value.toString()${inChain}))`,
     };
   }
 
@@ -95,6 +73,15 @@ chain(literals => literals.chainMap(literal => {
       default:
         return `${variables.zod}.enum(${JSON.stringify(this.primitiveIn)})`;
     }
+  }
+
+  override sparqlWherePatterns(
+    parameters: Parameters<PrimitiveType<string>["sparqlWherePatterns"]>[0],
+  ): readonly string[] {
+    return super.sparqlWherePatterns({
+      ...parameters,
+      ignoreLiteralLanguage: false,
+    });
   }
 
   override toRdfExpression({
