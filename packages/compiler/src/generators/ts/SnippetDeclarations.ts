@@ -94,7 +94,7 @@ export function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], r
       }  
     }
   }
-  return intersection;
+  return [...intersection];
 }`;
 
   export const booleanEquals = `\

@@ -423,7 +423,7 @@ export function $arrayIntersection<T>(
       }
     }
   }
-  return intersection;
+  return [...intersection];
 }
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 export class $NamedDefaultStub {

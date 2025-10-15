@@ -12,5 +12,5 @@ format_rdf() {
 format_rdf src/kitchen-sink.shaclmate.ttl
 ../../packages/cli/dist/cli.js show-ast-json src/kitchen-sink.shaclmate.ttl >src/ast.json
 time ../../packages/cli/dist/cli.js generate src/kitchen-sink.shaclmate.ttl >src/generated.ts
-npm run check:write
-npm run check:write
+npm exec biome -- check --write src/generated.ts
+npm exec biome -- check --write src/generated.ts
