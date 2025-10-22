@@ -122,7 +122,7 @@ const packages: readonly Package[] = [
     },
     devDependencies: {
       external: {
-        "@kos-kit/sparql-client": "2.0.115",
+        "@kos-kit/sparql-client": "2.0.116",
         oxigraph: "0.4.11",
       },
       internal: ["kitchen-sink-example", "runtime"],

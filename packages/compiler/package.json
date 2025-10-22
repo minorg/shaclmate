@@ -25,7 +25,7 @@
   "devDependencies": {
     "@shaclmate/kitchen-sink-example": "3.0.3",
     "@shaclmate/runtime": "3.0.3",
-    "@kos-kit/sparql-client": "2.0.115",
+    "@kos-kit/sparql-client": "2.0.116",
     "oxigraph": "0.4.11"
   },
   "files": [
