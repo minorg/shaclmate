@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@shaclmate/runtime": "2.0.24"
+    "@shaclmate/runtime": "3.0.0"
   },
   "devDependencies": {},
   "exports": {
@@ -37,5 +37,5 @@
     "unlink": "npm unlink -g @shaclmate/kitchen-sink"
   },
   "type": "module",
-  "version": "2.0.24"
+  "version": "3.0.0"
 }

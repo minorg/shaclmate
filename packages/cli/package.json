@@ -3,7 +3,7 @@
     "shaclmate": "dist/cli.js"
   },
   "dependencies": {
-    "@shaclmate/compiler": "2.0.24",
+    "@shaclmate/compiler": "3.0.0",
     "@types/n3": "^1.21.1",
     "@types/rdf-validate-shacl": "^0.4.7",
     "cmd-ts": "^0.13.0",
@@ -45,5 +45,5 @@
     "unlink": "npm unlink -g @shaclmate/cli"
   },
   "type": "module",
-  "version": "2.0.24"
+  "version": "3.0.0"
 }
