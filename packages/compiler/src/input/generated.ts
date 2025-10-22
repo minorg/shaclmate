@@ -1,11 +1,10 @@
 import {
-  StoreFactory as _DatasetFactory,
-  DataFactory as dataFactory,
-} from "n3";
-const datasetFactory: rdfjs.DatasetCoreFactory = new _DatasetFactory();
-import type * as rdfjs from "@rdfjs/types";
-import * as purify from "purify-ts";
-import * as rdfjsResource from "rdfjs-resource";
+  dataFactory,
+  datasetFactory,
+  purify,
+  type rdfjs,
+  rdfjsResource,
+} from "@shaclmate/runtime";
 import { PropertyPath } from "./PropertyPath.js";
 export namespace $RdfVocabularies {
   export namespace rdf {
@@ -115,14 +114,14 @@ export namespace BaseShaclCoreShapeStatic {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, BaseShaclCoreShape> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -147,16 +146,16 @@ export namespace BaseShaclCoreShapeStatic {
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -264,6 +263,13 @@ export namespace BaseShaclCoreShapeStatic {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
       >($resource.values($properties.comments["identifier"], { unique: true }))
         .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
           const literalValuesEither = values.chainMap((value) =>
             value.toLiteral(),
           );
@@ -272,40 +278,20 @@ export namespace BaseShaclCoreShapeStatic {
           }
           const literalValues = literalValuesEither.unsafeCoerce();
 
-          const nonUniqueLanguageIn = $languageIn ?? [];
-          if (nonUniqueLanguageIn.length === 0) {
-            return purify.Either.of<
-              Error,
-              rdfjsResource.Resource.Values<rdfjs.Literal>
-            >(literalValues);
-          }
-
-          let uniqueLanguageIn: string[];
-          if (nonUniqueLanguageIn.length === 1) {
-            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-          } else {
-            uniqueLanguageIn = [];
-            for (const languageIn of nonUniqueLanguageIn) {
-              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-                uniqueLanguageIn.push(languageIn);
-              }
-            }
-          }
-
-          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-          // Within a languageIn the literals may be in any order.
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const languageIn of uniqueLanguageIn) {
+          for (const preferredLanguage of $preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
-                (value) => value.language === languageIn,
+                (value) => value.language === preferredLanguage,
               );
             } else {
               filteredLiteralValues = filteredLiteralValues.concat(
                 ...literalValues
-                  .filter((value) => value.language === languageIn)
+                  .filter((value) => value.language === preferredLanguage)
                   .toArray(),
               );
             }
@@ -313,9 +299,20 @@ export namespace BaseShaclCoreShapeStatic {
 
           return purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjs.Literal>
-          >(filteredLiteralValues!);
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    BaseShaclCoreShapeStatic.$properties.comments["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
         })
+        .chain((values) => values.chainMap((value) => value.toLiteral()))
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
@@ -386,6 +383,56 @@ export namespace BaseShaclCoreShapeStatic {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
       >($resource.values($properties.flags["identifier"], { unique: true }))
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    BaseShaclCoreShapeStatic.$properties.flags["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .map((values) => values.toArray())
         .map((valuesArray) =>
@@ -551,6 +598,13 @@ export namespace BaseShaclCoreShapeStatic {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
       >($resource.values($properties.labels["identifier"], { unique: true }))
         .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
           const literalValuesEither = values.chainMap((value) =>
             value.toLiteral(),
           );
@@ -559,40 +613,20 @@ export namespace BaseShaclCoreShapeStatic {
           }
           const literalValues = literalValuesEither.unsafeCoerce();
 
-          const nonUniqueLanguageIn = $languageIn ?? [];
-          if (nonUniqueLanguageIn.length === 0) {
-            return purify.Either.of<
-              Error,
-              rdfjsResource.Resource.Values<rdfjs.Literal>
-            >(literalValues);
-          }
-
-          let uniqueLanguageIn: string[];
-          if (nonUniqueLanguageIn.length === 1) {
-            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-          } else {
-            uniqueLanguageIn = [];
-            for (const languageIn of nonUniqueLanguageIn) {
-              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-                uniqueLanguageIn.push(languageIn);
-              }
-            }
-          }
-
-          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-          // Within a languageIn the literals may be in any order.
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const languageIn of uniqueLanguageIn) {
+          for (const preferredLanguage of $preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
-                (value) => value.language === languageIn,
+                (value) => value.language === preferredLanguage,
               );
             } else {
               filteredLiteralValues = filteredLiteralValues.concat(
                 ...literalValues
-                  .filter((value) => value.language === languageIn)
+                  .filter((value) => value.language === preferredLanguage)
                   .toArray(),
               );
             }
@@ -600,9 +634,20 @@ export namespace BaseShaclCoreShapeStatic {
 
           return purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjs.Literal>
-          >(filteredLiteralValues!);
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    BaseShaclCoreShapeStatic.$properties.labels["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
         })
+        .chain((values) => values.chainMap((value) => value.toLiteral()))
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
@@ -638,7 +683,60 @@ export namespace BaseShaclCoreShapeStatic {
                 BaseShaclCoreShapeStatic.$properties.languageIn["identifier"],
               subject: $resource,
             }),
-          ).chain((values) => values.chainMap((value) => value.toString())),
+          )
+            .chain((values) => {
+              if (!$preferredLanguages || $preferredLanguages.length === 0) {
+                return purify.Either.of<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+                >(values);
+              }
+
+              const literalValuesEither = values.chainMap((value) =>
+                value.toLiteral(),
+              );
+              if (literalValuesEither.isLeft()) {
+                return literalValuesEither;
+              }
+              const literalValues = literalValuesEither.unsafeCoerce();
+
+              // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+              // Within a preferredLanguage the literals may be in any order.
+              let filteredLiteralValues:
+                | rdfjsResource.Resource.Values<rdfjs.Literal>
+                | undefined;
+              for (const preferredLanguage of $preferredLanguages) {
+                if (!filteredLiteralValues) {
+                  filteredLiteralValues = literalValues.filter(
+                    (value) => value.language === preferredLanguage,
+                  );
+                } else {
+                  filteredLiteralValues = filteredLiteralValues.concat(
+                    ...literalValues
+                      .filter((value) => value.language === preferredLanguage)
+                      .toArray(),
+                  );
+                }
+              }
+
+              return purify.Either.of<
+                Error,
+                rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+              >(
+                filteredLiteralValues!.map(
+                  (literalValue) =>
+                    new rdfjsResource.Resource.Value({
+                      object: literalValue,
+                      predicate:
+                        BaseShaclCoreShapeStatic.$properties.languageIn[
+                          "identifier"
+                        ],
+                      subject: $resource,
+                    }),
+                ),
+              );
+            })
+            .chain((values) => values.chainMap((value) => value.toString())),
         ),
       )
       .map((valueLists) => valueLists.map((valueList) => valueList.toArray()))
@@ -696,6 +794,13 @@ export namespace BaseShaclCoreShapeStatic {
       }),
     )
       .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
         const literalValuesEither = values.chainMap((value) =>
           value.toLiteral(),
         );
@@ -704,40 +809,20 @@ export namespace BaseShaclCoreShapeStatic {
         }
         const literalValues = literalValuesEither.unsafeCoerce();
 
-        const nonUniqueLanguageIn = $languageIn ?? [];
-        if (nonUniqueLanguageIn.length === 0) {
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjs.Literal>
-          >(literalValues);
-        }
-
-        let uniqueLanguageIn: string[];
-        if (nonUniqueLanguageIn.length === 1) {
-          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-        } else {
-          uniqueLanguageIn = [];
-          for (const languageIn of nonUniqueLanguageIn) {
-            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-              uniqueLanguageIn.push(languageIn);
-            }
-          }
-        }
-
-        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-        // Within a languageIn the literals may be in any order.
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const languageIn of uniqueLanguageIn) {
+        for (const preferredLanguage of $preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
-              (value) => value.language === languageIn,
+              (value) => value.language === preferredLanguage,
             );
           } else {
             filteredLiteralValues = filteredLiteralValues.concat(
               ...literalValues
-                .filter((value) => value.language === languageIn)
+                .filter((value) => value.language === preferredLanguage)
                 .toArray(),
             );
           }
@@ -745,9 +830,22 @@ export namespace BaseShaclCoreShapeStatic {
 
         return purify.Either.of<
           Error,
-          rdfjsResource.Resource.Values<rdfjs.Literal>
-        >(filteredLiteralValues!);
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  BaseShaclCoreShapeStatic.$properties.maxExclusive[
+                    "identifier"
+                  ],
+                subject: $resource,
+              }),
+          ),
+        );
       })
+      .chain((values) => values.chainMap((value) => value.toLiteral()))
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
@@ -778,6 +876,13 @@ export namespace BaseShaclCoreShapeStatic {
       }),
     )
       .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
         const literalValuesEither = values.chainMap((value) =>
           value.toLiteral(),
         );
@@ -786,40 +891,20 @@ export namespace BaseShaclCoreShapeStatic {
         }
         const literalValues = literalValuesEither.unsafeCoerce();
 
-        const nonUniqueLanguageIn = $languageIn ?? [];
-        if (nonUniqueLanguageIn.length === 0) {
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjs.Literal>
-          >(literalValues);
-        }
-
-        let uniqueLanguageIn: string[];
-        if (nonUniqueLanguageIn.length === 1) {
-          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-        } else {
-          uniqueLanguageIn = [];
-          for (const languageIn of nonUniqueLanguageIn) {
-            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-              uniqueLanguageIn.push(languageIn);
-            }
-          }
-        }
-
-        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-        // Within a languageIn the literals may be in any order.
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const languageIn of uniqueLanguageIn) {
+        for (const preferredLanguage of $preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
-              (value) => value.language === languageIn,
+              (value) => value.language === preferredLanguage,
             );
           } else {
             filteredLiteralValues = filteredLiteralValues.concat(
               ...literalValues
-                .filter((value) => value.language === languageIn)
+                .filter((value) => value.language === preferredLanguage)
                 .toArray(),
             );
           }
@@ -827,9 +912,22 @@ export namespace BaseShaclCoreShapeStatic {
 
         return purify.Either.of<
           Error,
-          rdfjsResource.Resource.Values<rdfjs.Literal>
-        >(filteredLiteralValues!);
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  BaseShaclCoreShapeStatic.$properties.maxInclusive[
+                    "identifier"
+                  ],
+                subject: $resource,
+              }),
+          ),
+        );
       })
+      .chain((values) => values.chainMap((value) => value.toLiteral()))
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
@@ -908,6 +1006,13 @@ export namespace BaseShaclCoreShapeStatic {
       }),
     )
       .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
         const literalValuesEither = values.chainMap((value) =>
           value.toLiteral(),
         );
@@ -916,40 +1021,20 @@ export namespace BaseShaclCoreShapeStatic {
         }
         const literalValues = literalValuesEither.unsafeCoerce();
 
-        const nonUniqueLanguageIn = $languageIn ?? [];
-        if (nonUniqueLanguageIn.length === 0) {
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjs.Literal>
-          >(literalValues);
-        }
-
-        let uniqueLanguageIn: string[];
-        if (nonUniqueLanguageIn.length === 1) {
-          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-        } else {
-          uniqueLanguageIn = [];
-          for (const languageIn of nonUniqueLanguageIn) {
-            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-              uniqueLanguageIn.push(languageIn);
-            }
-          }
-        }
-
-        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-        // Within a languageIn the literals may be in any order.
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const languageIn of uniqueLanguageIn) {
+        for (const preferredLanguage of $preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
-              (value) => value.language === languageIn,
+              (value) => value.language === preferredLanguage,
             );
           } else {
             filteredLiteralValues = filteredLiteralValues.concat(
               ...literalValues
-                .filter((value) => value.language === languageIn)
+                .filter((value) => value.language === preferredLanguage)
                 .toArray(),
             );
           }
@@ -957,9 +1042,22 @@ export namespace BaseShaclCoreShapeStatic {
 
         return purify.Either.of<
           Error,
-          rdfjsResource.Resource.Values<rdfjs.Literal>
-        >(filteredLiteralValues!);
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  BaseShaclCoreShapeStatic.$properties.minExclusive[
+                    "identifier"
+                  ],
+                subject: $resource,
+              }),
+          ),
+        );
       })
+      .chain((values) => values.chainMap((value) => value.toLiteral()))
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
@@ -990,6 +1088,13 @@ export namespace BaseShaclCoreShapeStatic {
       }),
     )
       .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
         const literalValuesEither = values.chainMap((value) =>
           value.toLiteral(),
         );
@@ -998,40 +1103,20 @@ export namespace BaseShaclCoreShapeStatic {
         }
         const literalValues = literalValuesEither.unsafeCoerce();
 
-        const nonUniqueLanguageIn = $languageIn ?? [];
-        if (nonUniqueLanguageIn.length === 0) {
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjs.Literal>
-          >(literalValues);
-        }
-
-        let uniqueLanguageIn: string[];
-        if (nonUniqueLanguageIn.length === 1) {
-          uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-        } else {
-          uniqueLanguageIn = [];
-          for (const languageIn of nonUniqueLanguageIn) {
-            if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-              uniqueLanguageIn.push(languageIn);
-            }
-          }
-        }
-
-        // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-        // Within a languageIn the literals may be in any order.
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const languageIn of uniqueLanguageIn) {
+        for (const preferredLanguage of $preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
-              (value) => value.language === languageIn,
+              (value) => value.language === preferredLanguage,
             );
           } else {
             filteredLiteralValues = filteredLiteralValues.concat(
               ...literalValues
-                .filter((value) => value.language === languageIn)
+                .filter((value) => value.language === preferredLanguage)
                 .toArray(),
             );
           }
@@ -1039,9 +1124,22 @@ export namespace BaseShaclCoreShapeStatic {
 
         return purify.Either.of<
           Error,
-          rdfjsResource.Resource.Values<rdfjs.Literal>
-        >(filteredLiteralValues!);
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  BaseShaclCoreShapeStatic.$properties.minInclusive[
+                    "identifier"
+                  ],
+                subject: $resource,
+              }),
+          ),
+        );
       })
+      .chain((values) => values.chainMap((value) => value.toLiteral()))
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
@@ -1324,6 +1422,56 @@ export namespace BaseShaclCoreShapeStatic {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
       >($resource.values($properties.patterns["identifier"], { unique: true }))
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    BaseShaclCoreShapeStatic.$properties.patterns["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .map((values) => values.toArray())
         .map((valuesArray) =>
@@ -1429,7 +1577,7 @@ export namespace BaseShaclCoreShapeStatic {
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.and["identifier"],
-      _baseShaclCoreShape.and.map((item) =>
+      ..._baseShaclCoreShape.and.flatMap((item) => [
         item.length > 0
           ? item.reduce(
               (
@@ -1452,7 +1600,10 @@ export namespace BaseShaclCoreShapeStatic {
                   currentSubListResource = newSubListResource;
                 }
 
-                currentSubListResource.add($RdfVocabularies.rdf.first, item);
+                currentSubListResource.add(
+                  $RdfVocabularies.rdf.first,
+                  ...[item],
+                );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
@@ -1475,35 +1626,35 @@ export namespace BaseShaclCoreShapeStatic {
               },
             ).listResource.identifier
           : $RdfVocabularies.rdf.nil,
-      ),
+      ]),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.classes["identifier"],
-      _baseShaclCoreShape.classes.map((item) => item),
+      ..._baseShaclCoreShape.classes.flatMap((item) => [item]),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.comments["identifier"],
-      _baseShaclCoreShape.comments.map((item) => item),
+      ..._baseShaclCoreShape.comments.flatMap((item) => [item]),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.datatype["identifier"],
-      _baseShaclCoreShape.datatype,
+      ..._baseShaclCoreShape.datatype.toList(),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.deactivated["identifier"],
-      _baseShaclCoreShape.deactivated,
+      ..._baseShaclCoreShape.deactivated.toList().flat(),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.flags["identifier"],
-      _baseShaclCoreShape.flags.map((item) => item),
+      ..._baseShaclCoreShape.flags.flatMap((item) => [item]),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.hasValues["identifier"],
-      _baseShaclCoreShape.hasValues.map((item) => item),
+      ..._baseShaclCoreShape.hasValues.flatMap((item) => [item]),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.in_["identifier"],
-      _baseShaclCoreShape.in_.map((value) =>
+      ..._baseShaclCoreShape.in_.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
               (
@@ -1526,7 +1677,10 @@ export namespace BaseShaclCoreShapeStatic {
                   currentSubListResource = newSubListResource;
                 }
 
-                currentSubListResource.add($RdfVocabularies.rdf.first, item);
+                currentSubListResource.add(
+                  $RdfVocabularies.rdf.first,
+                  ...[item],
+                );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
@@ -1549,19 +1703,19 @@ export namespace BaseShaclCoreShapeStatic {
               },
             ).listResource.identifier
           : $RdfVocabularies.rdf.nil,
-      ),
+      ]),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.isDefinedBy["identifier"],
-      _baseShaclCoreShape.isDefinedBy,
+      ..._baseShaclCoreShape.isDefinedBy.toList(),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.labels["identifier"],
-      _baseShaclCoreShape.labels.map((item) => item),
+      ..._baseShaclCoreShape.labels.flatMap((item) => [item]),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.languageIn["identifier"],
-      _baseShaclCoreShape.languageIn.map((value) =>
+      ..._baseShaclCoreShape.languageIn.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
               (
@@ -1584,7 +1738,10 @@ export namespace BaseShaclCoreShapeStatic {
                   currentSubListResource = newSubListResource;
                 }
 
-                currentSubListResource.add($RdfVocabularies.rdf.first, item);
+                currentSubListResource.add(
+                  $RdfVocabularies.rdf.first,
+                  ...[item],
+                );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
@@ -1607,55 +1764,55 @@ export namespace BaseShaclCoreShapeStatic {
               },
             ).listResource.identifier
           : $RdfVocabularies.rdf.nil,
-      ),
+      ]),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.maxCount["identifier"],
-      _baseShaclCoreShape.maxCount,
+      ..._baseShaclCoreShape.maxCount.toList(),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.maxExclusive["identifier"],
-      _baseShaclCoreShape.maxExclusive,
+      ..._baseShaclCoreShape.maxExclusive.toList(),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.maxInclusive["identifier"],
-      _baseShaclCoreShape.maxInclusive,
+      ..._baseShaclCoreShape.maxInclusive.toList(),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.maxLength["identifier"],
-      _baseShaclCoreShape.maxLength,
+      ..._baseShaclCoreShape.maxLength.toList(),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.minCount["identifier"],
-      _baseShaclCoreShape.minCount,
+      ..._baseShaclCoreShape.minCount.toList(),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.minExclusive["identifier"],
-      _baseShaclCoreShape.minExclusive,
+      ..._baseShaclCoreShape.minExclusive.toList(),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.minInclusive["identifier"],
-      _baseShaclCoreShape.minInclusive,
+      ..._baseShaclCoreShape.minInclusive.toList(),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.minLength["identifier"],
-      _baseShaclCoreShape.minLength,
+      ..._baseShaclCoreShape.minLength.toList(),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.nodeKind["identifier"],
-      _baseShaclCoreShape.nodeKind,
+      ..._baseShaclCoreShape.nodeKind.toList(),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.nodes["identifier"],
-      _baseShaclCoreShape.nodes.map((item) => item),
+      ..._baseShaclCoreShape.nodes.flatMap((item) => [item]),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.not["identifier"],
-      _baseShaclCoreShape.not.map((item) => item),
+      ..._baseShaclCoreShape.not.flatMap((item) => [item]),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.or["identifier"],
-      _baseShaclCoreShape.or.map((item) =>
+      ..._baseShaclCoreShape.or.flatMap((item) => [
         item.length > 0
           ? item.reduce(
               (
@@ -1678,7 +1835,10 @@ export namespace BaseShaclCoreShapeStatic {
                   currentSubListResource = newSubListResource;
                 }
 
-                currentSubListResource.add($RdfVocabularies.rdf.first, item);
+                currentSubListResource.add(
+                  $RdfVocabularies.rdf.first,
+                  ...[item],
+                );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
@@ -1701,15 +1861,15 @@ export namespace BaseShaclCoreShapeStatic {
               },
             ).listResource.identifier
           : $RdfVocabularies.rdf.nil,
-      ),
+      ]),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.patterns["identifier"],
-      _baseShaclCoreShape.patterns.map((item) => item),
+      ..._baseShaclCoreShape.patterns.flatMap((item) => [item]),
     );
     resource.add(
       BaseShaclCoreShapeStatic.$properties.xone["identifier"],
-      _baseShaclCoreShape.xone.map((item) =>
+      ..._baseShaclCoreShape.xone.flatMap((item) => [
         item.length > 0
           ? item.reduce(
               (
@@ -1732,7 +1892,10 @@ export namespace BaseShaclCoreShapeStatic {
                   currentSubListResource = newSubListResource;
                 }
 
-                currentSubListResource.add($RdfVocabularies.rdf.first, item);
+                currentSubListResource.add(
+                  $RdfVocabularies.rdf.first,
+                  ...[item],
+                );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
@@ -1755,7 +1918,7 @@ export namespace BaseShaclCoreShapeStatic {
               },
             ).listResource.identifier
           : $RdfVocabularies.rdf.nil,
-      ),
+      ]),
     );
     return resource;
   }
@@ -1876,14 +2039,14 @@ export namespace ShaclCorePropertyShapeStatic {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ShaclCorePropertyShape> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -1900,8 +2063,8 @@ export namespace ShaclCorePropertyShapeStatic {
       ShaclCorePropertyShapeStatic.$propertiesFromRdf({
         ...context,
         ignoreRdfType,
-        languageIn,
         objectSet,
+        preferredLanguages,
         resource,
       }),
     );
@@ -1909,16 +2072,16 @@ export namespace ShaclCorePropertyShapeStatic {
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -1937,8 +2100,8 @@ export namespace ShaclCorePropertyShapeStatic {
     const $super0Either = BaseShaclCoreShapeStatic.$propertiesFromRdf({
       ...$context,
       ignoreRdfType: true,
-      languageIn: $languageIn,
       objectSet: $objectSet,
+      preferredLanguages: $preferredLanguages,
       resource: $resource,
     });
     if ($super0Either.isLeft()) {
@@ -1946,17 +2109,33 @@ export namespace ShaclCorePropertyShapeStatic {
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://www.w3.org/ns/shacl#PropertyShape":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if (
+            $resource.isInstanceOf(ShaclCorePropertyShapeStatic.$fromRdfType)
+          ) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#PropertyShape)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: ShaclCorePropertyShapeStatic.$Identifier =
@@ -2031,6 +2210,13 @@ export namespace ShaclCorePropertyShapeStatic {
         }),
       )
         .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
           const literalValuesEither = values.chainMap((value) =>
             value.toLiteral(),
           );
@@ -2039,40 +2225,20 @@ export namespace ShaclCorePropertyShapeStatic {
           }
           const literalValues = literalValuesEither.unsafeCoerce();
 
-          const nonUniqueLanguageIn = $languageIn ?? [];
-          if (nonUniqueLanguageIn.length === 0) {
-            return purify.Either.of<
-              Error,
-              rdfjsResource.Resource.Values<rdfjs.Literal>
-            >(literalValues);
-          }
-
-          let uniqueLanguageIn: string[];
-          if (nonUniqueLanguageIn.length === 1) {
-            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-          } else {
-            uniqueLanguageIn = [];
-            for (const languageIn of nonUniqueLanguageIn) {
-              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-                uniqueLanguageIn.push(languageIn);
-              }
-            }
-          }
-
-          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-          // Within a languageIn the literals may be in any order.
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const languageIn of uniqueLanguageIn) {
+          for (const preferredLanguage of $preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
-                (value) => value.language === languageIn,
+                (value) => value.language === preferredLanguage,
               );
             } else {
               filteredLiteralValues = filteredLiteralValues.concat(
                 ...literalValues
-                  .filter((value) => value.language === languageIn)
+                  .filter((value) => value.language === preferredLanguage)
                   .toArray(),
               );
             }
@@ -2080,9 +2246,22 @@ export namespace ShaclCorePropertyShapeStatic {
 
           return purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjs.Literal>
-          >(filteredLiteralValues!);
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    ShaclCorePropertyShapeStatic.$properties.descriptions[
+                      "identifier"
+                    ],
+                  subject: $resource,
+                }),
+            ),
+          );
         })
+        .chain((values) => values.chainMap((value) => value.toLiteral()))
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
@@ -2129,6 +2308,13 @@ export namespace ShaclCorePropertyShapeStatic {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
       >($resource.values($properties.names["identifier"], { unique: true }))
         .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
           const literalValuesEither = values.chainMap((value) =>
             value.toLiteral(),
           );
@@ -2137,40 +2323,20 @@ export namespace ShaclCorePropertyShapeStatic {
           }
           const literalValues = literalValuesEither.unsafeCoerce();
 
-          const nonUniqueLanguageIn = $languageIn ?? [];
-          if (nonUniqueLanguageIn.length === 0) {
-            return purify.Either.of<
-              Error,
-              rdfjsResource.Resource.Values<rdfjs.Literal>
-            >(literalValues);
-          }
-
-          let uniqueLanguageIn: string[];
-          if (nonUniqueLanguageIn.length === 1) {
-            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-          } else {
-            uniqueLanguageIn = [];
-            for (const languageIn of nonUniqueLanguageIn) {
-              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-                uniqueLanguageIn.push(languageIn);
-              }
-            }
-          }
-
-          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-          // Within a languageIn the literals may be in any order.
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const languageIn of uniqueLanguageIn) {
+          for (const preferredLanguage of $preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
-                (value) => value.language === languageIn,
+                (value) => value.language === preferredLanguage,
               );
             } else {
               filteredLiteralValues = filteredLiteralValues.concat(
                 ...literalValues
-                  .filter((value) => value.language === languageIn)
+                  .filter((value) => value.language === preferredLanguage)
                   .toArray(),
               );
             }
@@ -2178,9 +2344,22 @@ export namespace ShaclCorePropertyShapeStatic {
 
           return purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjs.Literal>
-          >(filteredLiteralValues!);
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    ShaclCorePropertyShapeStatic.$properties.names[
+                      "identifier"
+                    ],
+                  subject: $resource,
+                }),
+            ),
+          );
         })
+        .chain((values) => values.chainMap((value) => value.toLiteral()))
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
@@ -2226,14 +2405,16 @@ export namespace ShaclCorePropertyShapeStatic {
     >($resource.values($properties.path["identifier"], { unique: true }))
       .chain((values) =>
         values.chainMap((value) =>
-          value.toResource().chain((resource) =>
-            PropertyPath.$fromRdf(resource, {
-              ...$context,
-              ignoreRdfType: true,
-              languageIn: $languageIn,
-              objectSet: $objectSet,
-            }),
-          ),
+          value
+            .toResource()
+            .chain((resource) =>
+              PropertyPath.$fromRdf(resource, {
+                ...$context,
+                ignoreRdfType: true,
+                objectSet: $objectSet,
+                preferredLanguages: $preferredLanguages,
+              }),
+            ),
         ),
       )
       .chain((values) => values.head());
@@ -2320,34 +2501,36 @@ export namespace ShaclCorePropertyShapeStatic {
 
     resource.add(
       ShaclCorePropertyShapeStatic.$properties.defaultValue["identifier"],
-      _shaclCorePropertyShape.defaultValue,
+      ..._shaclCorePropertyShape.defaultValue.toList(),
     );
     resource.add(
       ShaclCorePropertyShapeStatic.$properties.descriptions["identifier"],
-      _shaclCorePropertyShape.descriptions.map((item) => item),
+      ..._shaclCorePropertyShape.descriptions.flatMap((item) => [item]),
     );
     resource.add(
       ShaclCorePropertyShapeStatic.$properties.groups["identifier"],
-      _shaclCorePropertyShape.groups.map((item) => item),
+      ..._shaclCorePropertyShape.groups.flatMap((item) => [item]),
     );
     resource.add(
       ShaclCorePropertyShapeStatic.$properties.names["identifier"],
-      _shaclCorePropertyShape.names.map((item) => item),
+      ..._shaclCorePropertyShape.names.flatMap((item) => [item]),
     );
     resource.add(
       ShaclCorePropertyShapeStatic.$properties.order["identifier"],
-      _shaclCorePropertyShape.order,
+      ..._shaclCorePropertyShape.order.toList(),
     );
     resource.add(
       ShaclCorePropertyShapeStatic.$properties.path["identifier"],
-      PropertyPath.$toRdf(_shaclCorePropertyShape.path, {
-        mutateGraph: mutateGraph,
-        resourceSet: resourceSet,
-      }),
+      ...[
+        PropertyPath.$toRdf(_shaclCorePropertyShape.path, {
+          mutateGraph: mutateGraph,
+          resourceSet: resourceSet,
+        }).identifier,
+      ],
     );
     resource.add(
       ShaclCorePropertyShapeStatic.$properties.uniqueLang["identifier"],
-      _shaclCorePropertyShape.uniqueLang,
+      ..._shaclCorePropertyShape.uniqueLang.toList().flat(),
     );
     return resource;
   }
@@ -2412,14 +2595,14 @@ export namespace ShaclmatePropertyShape {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ShaclmatePropertyShape> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -2429,24 +2612,24 @@ export namespace ShaclmatePropertyShape {
     return ShaclmatePropertyShape.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     });
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -2472,8 +2655,8 @@ export namespace ShaclmatePropertyShape {
     const $super0Either = ShaclCorePropertyShapeStatic.$propertiesFromRdf({
       ...$context,
       ignoreRdfType: true,
-      languageIn: $languageIn,
       objectSet: $objectSet,
+      preferredLanguages: $preferredLanguages,
       resource: $resource,
     });
     if ($super0Either.isLeft()) {
@@ -2481,17 +2664,31 @@ export namespace ShaclmatePropertyShape {
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://www.w3.org/ns/shacl#PropertyShape":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(ShaclmatePropertyShape.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#PropertyShape)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: ShaclmatePropertyShape.$Identifier =
@@ -2550,6 +2747,55 @@ export namespace ShaclmatePropertyShape {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.name["identifier"], { unique: true }))
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate: ShaclmateNodeShape.$properties.name["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
       .chain((values) => values.chainMap((value) => value.toString()))
       .map((values) =>
         values.length > 0
@@ -2756,27 +3002,27 @@ export namespace ShaclmatePropertyShape {
 
     resource.add(
       ShaclmatePropertyShape.$properties.lazy["identifier"],
-      _shaclmatePropertyShape.lazy,
+      ..._shaclmatePropertyShape.lazy.toList().flat(),
     );
     resource.add(
       ShaclmateNodeShape.$properties.mutable["identifier"],
-      _shaclmatePropertyShape.mutable,
+      ..._shaclmatePropertyShape.mutable.toList().flat(),
     );
     resource.add(
       ShaclmateNodeShape.$properties.name["identifier"],
-      _shaclmatePropertyShape.name,
+      ..._shaclmatePropertyShape.name.toList(),
     );
     resource.add(
       ShaclmatePropertyShape.$properties.stub["identifier"],
-      _shaclmatePropertyShape.stub,
+      ..._shaclmatePropertyShape.stub.toList(),
     );
     resource.add(
       ShaclmatePropertyShape.$properties.visibility["identifier"],
-      _shaclmatePropertyShape.visibility,
+      ..._shaclmatePropertyShape.visibility.toList(),
     );
     resource.add(
       ShaclmatePropertyShape.$properties.widen["identifier"],
-      _shaclmatePropertyShape.widen,
+      ..._shaclmatePropertyShape.widen.toList().flat(),
     );
     return resource;
   }
@@ -2848,14 +3094,14 @@ export namespace OwlOntologyStatic {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, OwlOntology> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -2872,8 +3118,8 @@ export namespace OwlOntologyStatic {
       OwlOntologyStatic.$propertiesFromRdf({
         ...context,
         ignoreRdfType,
-        languageIn,
         objectSet,
+        preferredLanguages,
         resource,
       }),
     );
@@ -2881,16 +3127,16 @@ export namespace OwlOntologyStatic {
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -2900,17 +3146,31 @@ export namespace OwlOntologyStatic {
       labels: readonly rdfjs.Literal[];
     }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://www.w3.org/2002/07/owl#Ontology":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(OwlOntologyStatic.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/2002/07/owl#Ontology)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: OwlOntologyStatic.$Identifier = $resource.identifier;
@@ -2921,6 +3181,13 @@ export namespace OwlOntologyStatic {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
       >($resource.values($properties.labels["identifier"], { unique: true }))
         .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
           const literalValuesEither = values.chainMap((value) =>
             value.toLiteral(),
           );
@@ -2929,40 +3196,20 @@ export namespace OwlOntologyStatic {
           }
           const literalValues = literalValuesEither.unsafeCoerce();
 
-          const nonUniqueLanguageIn = $languageIn ?? [];
-          if (nonUniqueLanguageIn.length === 0) {
-            return purify.Either.of<
-              Error,
-              rdfjsResource.Resource.Values<rdfjs.Literal>
-            >(literalValues);
-          }
-
-          let uniqueLanguageIn: string[];
-          if (nonUniqueLanguageIn.length === 1) {
-            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-          } else {
-            uniqueLanguageIn = [];
-            for (const languageIn of nonUniqueLanguageIn) {
-              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-                uniqueLanguageIn.push(languageIn);
-              }
-            }
-          }
-
-          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-          // Within a languageIn the literals may be in any order.
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const languageIn of uniqueLanguageIn) {
+          for (const preferredLanguage of $preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
-                (value) => value.language === languageIn,
+                (value) => value.language === preferredLanguage,
               );
             } else {
               filteredLiteralValues = filteredLiteralValues.concat(
                 ...literalValues
-                  .filter((value) => value.language === languageIn)
+                  .filter((value) => value.language === preferredLanguage)
                   .toArray(),
               );
             }
@@ -2970,9 +3217,19 @@ export namespace OwlOntologyStatic {
 
           return purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjs.Literal>
-          >(filteredLiteralValues!);
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate: OwlOntologyStatic.$properties.labels["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
         })
+        .chain((values) => values.chainMap((value) => value.toLiteral()))
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
@@ -3026,7 +3283,7 @@ export namespace OwlOntologyStatic {
 
     resource.add(
       OwlOntologyStatic.$properties.labels["identifier"],
-      _owlOntology.labels.map((item) => item),
+      ..._owlOntology.labels.flatMap((item) => [item]),
     );
     return resource;
   }
@@ -3087,14 +3344,14 @@ export namespace ShaclmateOntology {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ShaclmateOntology> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -3104,24 +3361,24 @@ export namespace ShaclmateOntology {
     return ShaclmateOntology.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     });
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -3164,8 +3421,8 @@ export namespace ShaclmateOntology {
     const $super0Either = OwlOntologyStatic.$propertiesFromRdf({
       ...$context,
       ignoreRdfType: true,
-      languageIn: $languageIn,
       objectSet: $objectSet,
+      preferredLanguages: $preferredLanguages,
       resource: $resource,
     });
     if ($super0Either.isLeft()) {
@@ -3173,17 +3430,31 @@ export namespace ShaclmateOntology {
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://www.w3.org/2002/07/owl#Ontology":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(ShaclmateOntology.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/2002/07/owl#Ontology)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: ShaclmateOntology.$Identifier = $resource.identifier;
@@ -3697,6 +3968,56 @@ export namespace ShaclmateOntology {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
       >($resource.values($properties.tsImports["identifier"], { unique: true }))
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    ShaclmateNodeShape.$properties.tsImports["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .map((values) => values.toArray())
         .map((valuesArray) =>
@@ -3844,19 +4165,19 @@ export namespace ShaclmateOntology {
 
     resource.add(
       ShaclmateNodeShape.$properties.tsFeatureExcludes["identifier"],
-      _shaclmateOntology.tsFeatureExcludes.map((item) => item),
+      ..._shaclmateOntology.tsFeatureExcludes.flatMap((item) => [item]),
     );
     resource.add(
       ShaclmateNodeShape.$properties.tsFeatureIncludes["identifier"],
-      _shaclmateOntology.tsFeatureIncludes.map((item) => item),
+      ..._shaclmateOntology.tsFeatureIncludes.flatMap((item) => [item]),
     );
     resource.add(
       ShaclmateNodeShape.$properties.tsImports["identifier"],
-      _shaclmateOntology.tsImports.map((item) => item),
+      ..._shaclmateOntology.tsImports.flatMap((item) => [item]),
     );
     resource.add(
       ShaclmateNodeShape.$properties.tsObjectDeclarationType["identifier"],
-      _shaclmateOntology.tsObjectDeclarationType,
+      ..._shaclmateOntology.tsObjectDeclarationType.toList(),
     );
     return resource;
   }
@@ -3905,14 +4226,14 @@ export namespace ShaclCoreNodeShapeStatic {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ShaclCoreNodeShape> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -3929,8 +4250,8 @@ export namespace ShaclCoreNodeShapeStatic {
       ShaclCoreNodeShapeStatic.$propertiesFromRdf({
         ...context,
         ignoreRdfType,
-        languageIn,
         objectSet,
+        preferredLanguages,
         resource,
       }),
     );
@@ -3938,16 +4259,16 @@ export namespace ShaclCoreNodeShapeStatic {
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -3962,8 +4283,8 @@ export namespace ShaclCoreNodeShapeStatic {
     const $super0Either = BaseShaclCoreShapeStatic.$propertiesFromRdf({
       ...$context,
       ignoreRdfType: true,
-      languageIn: $languageIn,
       objectSet: $objectSet,
+      preferredLanguages: $preferredLanguages,
       resource: $resource,
     });
     if ($super0Either.isLeft()) {
@@ -3971,17 +4292,31 @@ export namespace ShaclCoreNodeShapeStatic {
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://www.w3.org/ns/shacl#NodeShape":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(ShaclCoreNodeShapeStatic.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#NodeShape)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: ShaclCoreNodeShapeStatic.$Identifier =
@@ -4130,11 +4465,11 @@ export namespace ShaclCoreNodeShapeStatic {
 
     resource.add(
       ShaclCoreNodeShapeStatic.$properties.closed["identifier"],
-      _shaclCoreNodeShape.closed,
+      ..._shaclCoreNodeShape.closed.toList().flat(),
     );
     resource.add(
       ShaclCoreNodeShapeStatic.$properties.ignoredProperties["identifier"],
-      _shaclCoreNodeShape.ignoredProperties.map((value) =>
+      ..._shaclCoreNodeShape.ignoredProperties.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
               (
@@ -4157,7 +4492,10 @@ export namespace ShaclCoreNodeShapeStatic {
                   currentSubListResource = newSubListResource;
                 }
 
-                currentSubListResource.add($RdfVocabularies.rdf.first, item);
+                currentSubListResource.add(
+                  $RdfVocabularies.rdf.first,
+                  ...[item],
+                );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
@@ -4180,11 +4518,11 @@ export namespace ShaclCoreNodeShapeStatic {
               },
             ).listResource.identifier
           : $RdfVocabularies.rdf.nil,
-      ),
+      ]),
     );
     resource.add(
       ShaclCoreNodeShapeStatic.$properties.properties["identifier"],
-      _shaclCoreNodeShape.properties.map((item) => item),
+      ..._shaclCoreNodeShape.properties.flatMap((item) => [item]),
     );
     return resource;
   }
@@ -4267,14 +4605,14 @@ export namespace ShaclmateNodeShape {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ShaclmateNodeShape> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -4284,24 +4622,24 @@ export namespace ShaclmateNodeShape {
     return ShaclmateNodeShape.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     });
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -4359,8 +4697,8 @@ export namespace ShaclmateNodeShape {
     const $super0Either = ShaclCoreNodeShapeStatic.$propertiesFromRdf({
       ...$context,
       ignoreRdfType: true,
-      languageIn: $languageIn,
       objectSet: $objectSet,
+      preferredLanguages: $preferredLanguages,
       resource: $resource,
     });
     if ($super0Either.isLeft()) {
@@ -4368,17 +4706,31 @@ export namespace ShaclmateNodeShape {
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://www.w3.org/ns/shacl#NodeShape":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(ShaclmateNodeShape.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#NodeShape)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: ShaclmateNodeShape.$Identifier = $resource.identifier;
@@ -4613,6 +4965,55 @@ export namespace ShaclmateNodeShape {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >($resource.values($properties.name["identifier"], { unique: true }))
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate: ShaclmateNodeShape.$properties.name["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
       .chain((values) => values.chainMap((value) => value.toString()))
       .map((values) =>
         values.length > 0
@@ -5187,6 +5588,56 @@ export namespace ShaclmateNodeShape {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
       >($resource.values($properties.tsImports["identifier"], { unique: true }))
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    ShaclmateNodeShape.$properties.tsImports["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
         .chain((values) => values.chainMap((value) => value.toString()))
         .map((values) => values.toArray())
         .map((valuesArray) =>
@@ -5341,55 +5792,55 @@ export namespace ShaclmateNodeShape {
 
     resource.add(
       ShaclmateNodeShape.$properties.abstract["identifier"],
-      _shaclmateNodeShape.abstract,
+      ..._shaclmateNodeShape.abstract.toList().flat(),
     );
     resource.add(
       ShaclmateNodeShape.$properties.export_["identifier"],
-      _shaclmateNodeShape.export_,
+      ..._shaclmateNodeShape.export_.toList().flat(),
     );
     resource.add(
       ShaclmateNodeShape.$properties.extern["identifier"],
-      _shaclmateNodeShape.extern,
+      ..._shaclmateNodeShape.extern.toList().flat(),
     );
     resource.add(
       ShaclmateNodeShape.$properties.fromRdfType["identifier"],
-      _shaclmateNodeShape.fromRdfType,
+      ..._shaclmateNodeShape.fromRdfType.toList(),
     );
     resource.add(
       ShaclmateNodeShape.$properties.identifierMintingStrategy["identifier"],
-      _shaclmateNodeShape.identifierMintingStrategy,
+      ..._shaclmateNodeShape.identifierMintingStrategy.toList(),
     );
     resource.add(
       ShaclmateNodeShape.$properties.mutable["identifier"],
-      _shaclmateNodeShape.mutable,
+      ..._shaclmateNodeShape.mutable.toList().flat(),
     );
     resource.add(
       ShaclmateNodeShape.$properties.name["identifier"],
-      _shaclmateNodeShape.name,
+      ..._shaclmateNodeShape.name.toList(),
     );
     resource.add(
       ShaclmateNodeShape.$properties.rdfType["identifier"],
-      _shaclmateNodeShape.rdfType,
+      ..._shaclmateNodeShape.rdfType.toList(),
     );
     resource.add(
       ShaclmateNodeShape.$properties.toRdfTypes["identifier"],
-      _shaclmateNodeShape.toRdfTypes.map((item) => item),
+      ..._shaclmateNodeShape.toRdfTypes.flatMap((item) => [item]),
     );
     resource.add(
       ShaclmateNodeShape.$properties.tsFeatureExcludes["identifier"],
-      _shaclmateNodeShape.tsFeatureExcludes.map((item) => item),
+      ..._shaclmateNodeShape.tsFeatureExcludes.flatMap((item) => [item]),
     );
     resource.add(
       ShaclmateNodeShape.$properties.tsFeatureIncludes["identifier"],
-      _shaclmateNodeShape.tsFeatureIncludes.map((item) => item),
+      ..._shaclmateNodeShape.tsFeatureIncludes.flatMap((item) => [item]),
     );
     resource.add(
       ShaclmateNodeShape.$properties.tsImports["identifier"],
-      _shaclmateNodeShape.tsImports.map((item) => item),
+      ..._shaclmateNodeShape.tsImports.flatMap((item) => [item]),
     );
     resource.add(
       ShaclmateNodeShape.$properties.tsObjectDeclarationType["identifier"],
-      _shaclmateNodeShape.tsObjectDeclarationType,
+      ..._shaclmateNodeShape.tsObjectDeclarationType.toList(),
     );
     return resource;
   }
@@ -5497,14 +5948,14 @@ export namespace ShaclCorePropertyGroup {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ShaclCorePropertyGroup> {
     let {
       ignoreRdfType = false,
-      languageIn,
       objectSet,
+      preferredLanguages,
       ...context
     } = options ?? {};
     if (!objectSet) {
@@ -5514,24 +5965,24 @@ export namespace ShaclCorePropertyGroup {
     return ShaclCorePropertyGroup.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
-      languageIn,
       objectSet,
+      preferredLanguages,
       resource,
     });
   }
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
-    languageIn: $languageIn,
     objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
     resource: $resource,
     // @ts-ignore
     ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
-    languageIn?: readonly string[];
     objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
@@ -5542,17 +5993,31 @@ export namespace ShaclCorePropertyGroup {
       labels: readonly rdfjs.Literal[];
     }
   > {
-    if (!$ignoreRdfType && !$resource.isInstanceOf($fromRdfType)) {
-      return $resource
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) =>
-          purify.Left(
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://www.w3.org/ns/shacl#PropertyGroup":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(ShaclCorePropertyGroup.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
             new Error(
               `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#PropertyGroup)`,
             ),
-          ),
-        );
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
     }
 
     const $identifier: ShaclCorePropertyGroup.$Identifier =
@@ -5564,6 +6029,13 @@ export namespace ShaclCorePropertyGroup {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
       >($resource.values($properties.comments["identifier"], { unique: true }))
         .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
           const literalValuesEither = values.chainMap((value) =>
             value.toLiteral(),
           );
@@ -5572,40 +6044,20 @@ export namespace ShaclCorePropertyGroup {
           }
           const literalValues = literalValuesEither.unsafeCoerce();
 
-          const nonUniqueLanguageIn = $languageIn ?? [];
-          if (nonUniqueLanguageIn.length === 0) {
-            return purify.Either.of<
-              Error,
-              rdfjsResource.Resource.Values<rdfjs.Literal>
-            >(literalValues);
-          }
-
-          let uniqueLanguageIn: string[];
-          if (nonUniqueLanguageIn.length === 1) {
-            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-          } else {
-            uniqueLanguageIn = [];
-            for (const languageIn of nonUniqueLanguageIn) {
-              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-                uniqueLanguageIn.push(languageIn);
-              }
-            }
-          }
-
-          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-          // Within a languageIn the literals may be in any order.
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const languageIn of uniqueLanguageIn) {
+          for (const preferredLanguage of $preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
-                (value) => value.language === languageIn,
+                (value) => value.language === preferredLanguage,
               );
             } else {
               filteredLiteralValues = filteredLiteralValues.concat(
                 ...literalValues
-                  .filter((value) => value.language === languageIn)
+                  .filter((value) => value.language === preferredLanguage)
                   .toArray(),
               );
             }
@@ -5613,9 +6065,20 @@ export namespace ShaclCorePropertyGroup {
 
           return purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjs.Literal>
-          >(filteredLiteralValues!);
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    ShaclCorePropertyGroup.$properties.comments["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
         })
+        .chain((values) => values.chainMap((value) => value.toLiteral()))
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
@@ -5637,6 +6100,13 @@ export namespace ShaclCorePropertyGroup {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
       >($resource.values($properties.labels["identifier"], { unique: true }))
         .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
           const literalValuesEither = values.chainMap((value) =>
             value.toLiteral(),
           );
@@ -5645,40 +6115,20 @@ export namespace ShaclCorePropertyGroup {
           }
           const literalValues = literalValuesEither.unsafeCoerce();
 
-          const nonUniqueLanguageIn = $languageIn ?? [];
-          if (nonUniqueLanguageIn.length === 0) {
-            return purify.Either.of<
-              Error,
-              rdfjsResource.Resource.Values<rdfjs.Literal>
-            >(literalValues);
-          }
-
-          let uniqueLanguageIn: string[];
-          if (nonUniqueLanguageIn.length === 1) {
-            uniqueLanguageIn = [nonUniqueLanguageIn[0]];
-          } else {
-            uniqueLanguageIn = [];
-            for (const languageIn of nonUniqueLanguageIn) {
-              if (uniqueLanguageIn.indexOf(languageIn) === -1) {
-                uniqueLanguageIn.push(languageIn);
-              }
-            }
-          }
-
-          // Return all literals for the first languageIn, then all literals for the second languageIn, etc.
-          // Within a languageIn the literals may be in any order.
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const languageIn of uniqueLanguageIn) {
+          for (const preferredLanguage of $preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
-                (value) => value.language === languageIn,
+                (value) => value.language === preferredLanguage,
               );
             } else {
               filteredLiteralValues = filteredLiteralValues.concat(
                 ...literalValues
-                  .filter((value) => value.language === languageIn)
+                  .filter((value) => value.language === preferredLanguage)
                   .toArray(),
               );
             }
@@ -5686,9 +6136,20 @@ export namespace ShaclCorePropertyGroup {
 
           return purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjs.Literal>
-          >(filteredLiteralValues!);
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    ShaclCorePropertyGroup.$properties.labels["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
         })
+        .chain((values) => values.chainMap((value) => value.toLiteral()))
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
@@ -5737,11 +6198,11 @@ export namespace ShaclCorePropertyGroup {
 
     resource.add(
       ShaclCorePropertyGroup.$properties.comments["identifier"],
-      _shaclCorePropertyGroup.comments.map((item) => item),
+      ..._shaclCorePropertyGroup.comments.flatMap((item) => [item]),
     );
     resource.add(
       ShaclCorePropertyGroup.$properties.labels["identifier"],
-      _shaclCorePropertyGroup.labels.map((item) => item),
+      ..._shaclCorePropertyGroup.labels.flatMap((item) => [item]),
     );
     return resource;
   }
@@ -5767,8 +6228,8 @@ export namespace ShaclCoreShape {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ShaclCoreShape> {
     return (
@@ -5834,8 +6295,8 @@ export namespace ShaclmateShape {
     options?: {
       [_index: string]: any;
       ignoreRdfType?: boolean;
-      languageIn?: readonly string[];
       objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ShaclmateShape> {
     return (
@@ -6039,6 +6500,240 @@ export namespace $ObjectSet {
       };
 }
 
+export abstract class $ForwardingObjectSet implements $ObjectSet {
+  protected abstract get $delegate(): $ObjectSet;
+
+  owlOntology(
+    identifier: OwlOntologyStatic.$Identifier,
+  ): Promise<purify.Either<Error, OwlOntology>> {
+    return this.$delegate.owlOntology(identifier);
+  }
+
+  owlOntologyIdentifiers(
+    query?: $ObjectSet.Query<OwlOntologyStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly OwlOntologyStatic.$Identifier[]>> {
+    return this.$delegate.owlOntologyIdentifiers(query);
+  }
+
+  owlOntologies(
+    query?: $ObjectSet.Query<OwlOntologyStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly OwlOntology[]>> {
+    return this.$delegate.owlOntologies(query);
+  }
+
+  owlOntologiesCount(
+    query?: Pick<$ObjectSet.Query<OwlOntologyStatic.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.owlOntologiesCount(query);
+  }
+
+  shaclCoreNodeShape(
+    identifier: ShaclCoreNodeShapeStatic.$Identifier,
+  ): Promise<purify.Either<Error, ShaclCoreNodeShape>> {
+    return this.$delegate.shaclCoreNodeShape(identifier);
+  }
+
+  shaclCoreNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<ShaclCoreNodeShapeStatic.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly ShaclCoreNodeShapeStatic.$Identifier[]>
+  > {
+    return this.$delegate.shaclCoreNodeShapeIdentifiers(query);
+  }
+
+  shaclCoreNodeShapes(
+    query?: $ObjectSet.Query<ShaclCoreNodeShapeStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ShaclCoreNodeShape[]>> {
+    return this.$delegate.shaclCoreNodeShapes(query);
+  }
+
+  shaclCoreNodeShapesCount(
+    query?: Pick<
+      $ObjectSet.Query<ShaclCoreNodeShapeStatic.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.shaclCoreNodeShapesCount(query);
+  }
+
+  shaclCorePropertyGroup(
+    identifier: ShaclCorePropertyGroup.$Identifier,
+  ): Promise<purify.Either<Error, ShaclCorePropertyGroup>> {
+    return this.$delegate.shaclCorePropertyGroup(identifier);
+  }
+
+  shaclCorePropertyGroupIdentifiers(
+    query?: $ObjectSet.Query<ShaclCorePropertyGroup.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly ShaclCorePropertyGroup.$Identifier[]>
+  > {
+    return this.$delegate.shaclCorePropertyGroupIdentifiers(query);
+  }
+
+  shaclCorePropertyGroups(
+    query?: $ObjectSet.Query<ShaclCorePropertyGroup.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ShaclCorePropertyGroup[]>> {
+    return this.$delegate.shaclCorePropertyGroups(query);
+  }
+
+  shaclCorePropertyGroupsCount(
+    query?: Pick<$ObjectSet.Query<ShaclCorePropertyGroup.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.shaclCorePropertyGroupsCount(query);
+  }
+
+  shaclCorePropertyShape(
+    identifier: ShaclCorePropertyShapeStatic.$Identifier,
+  ): Promise<purify.Either<Error, ShaclCorePropertyShape>> {
+    return this.$delegate.shaclCorePropertyShape(identifier);
+  }
+
+  shaclCorePropertyShapeIdentifiers(
+    query?: $ObjectSet.Query<ShaclCorePropertyShapeStatic.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly ShaclCorePropertyShapeStatic.$Identifier[]>
+  > {
+    return this.$delegate.shaclCorePropertyShapeIdentifiers(query);
+  }
+
+  shaclCorePropertyShapes(
+    query?: $ObjectSet.Query<ShaclCorePropertyShapeStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ShaclCorePropertyShape[]>> {
+    return this.$delegate.shaclCorePropertyShapes(query);
+  }
+
+  shaclCorePropertyShapesCount(
+    query?: Pick<
+      $ObjectSet.Query<ShaclCorePropertyShapeStatic.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.shaclCorePropertyShapesCount(query);
+  }
+
+  shaclmateNodeShape(
+    identifier: ShaclmateNodeShape.$Identifier,
+  ): Promise<purify.Either<Error, ShaclmateNodeShape>> {
+    return this.$delegate.shaclmateNodeShape(identifier);
+  }
+
+  shaclmateNodeShapeIdentifiers(
+    query?: $ObjectSet.Query<ShaclmateNodeShape.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ShaclmateNodeShape.$Identifier[]>> {
+    return this.$delegate.shaclmateNodeShapeIdentifiers(query);
+  }
+
+  shaclmateNodeShapes(
+    query?: $ObjectSet.Query<ShaclmateNodeShape.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ShaclmateNodeShape[]>> {
+    return this.$delegate.shaclmateNodeShapes(query);
+  }
+
+  shaclmateNodeShapesCount(
+    query?: Pick<$ObjectSet.Query<ShaclmateNodeShape.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.shaclmateNodeShapesCount(query);
+  }
+
+  shaclmateOntology(
+    identifier: ShaclmateOntology.$Identifier,
+  ): Promise<purify.Either<Error, ShaclmateOntology>> {
+    return this.$delegate.shaclmateOntology(identifier);
+  }
+
+  shaclmateOntologyIdentifiers(
+    query?: $ObjectSet.Query<ShaclmateOntology.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ShaclmateOntology.$Identifier[]>> {
+    return this.$delegate.shaclmateOntologyIdentifiers(query);
+  }
+
+  shaclmateOntologies(
+    query?: $ObjectSet.Query<ShaclmateOntology.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ShaclmateOntology[]>> {
+    return this.$delegate.shaclmateOntologies(query);
+  }
+
+  shaclmateOntologiesCount(
+    query?: Pick<$ObjectSet.Query<ShaclmateOntology.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.shaclmateOntologiesCount(query);
+  }
+
+  shaclmatePropertyShape(
+    identifier: ShaclmatePropertyShape.$Identifier,
+  ): Promise<purify.Either<Error, ShaclmatePropertyShape>> {
+    return this.$delegate.shaclmatePropertyShape(identifier);
+  }
+
+  shaclmatePropertyShapeIdentifiers(
+    query?: $ObjectSet.Query<ShaclmatePropertyShape.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly ShaclmatePropertyShape.$Identifier[]>
+  > {
+    return this.$delegate.shaclmatePropertyShapeIdentifiers(query);
+  }
+
+  shaclmatePropertyShapes(
+    query?: $ObjectSet.Query<ShaclmatePropertyShape.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ShaclmatePropertyShape[]>> {
+    return this.$delegate.shaclmatePropertyShapes(query);
+  }
+
+  shaclmatePropertyShapesCount(
+    query?: Pick<$ObjectSet.Query<ShaclmatePropertyShape.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.shaclmatePropertyShapesCount(query);
+  }
+
+  shaclCoreShape(
+    identifier: ShaclCoreShape.$Identifier,
+  ): Promise<purify.Either<Error, ShaclCoreShape>> {
+    return this.$delegate.shaclCoreShape(identifier);
+  }
+
+  shaclCoreShapeIdentifiers(
+    query?: $ObjectSet.Query<ShaclCoreShape.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ShaclCoreShape.$Identifier[]>> {
+    return this.$delegate.shaclCoreShapeIdentifiers(query);
+  }
+
+  shaclCoreShapes(
+    query?: $ObjectSet.Query<ShaclCoreShape.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ShaclCoreShape[]>> {
+    return this.$delegate.shaclCoreShapes(query);
+  }
+
+  shaclCoreShapesCount(
+    query?: Pick<$ObjectSet.Query<ShaclCoreShape.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.shaclCoreShapesCount(query);
+  }
+
+  shaclmateShape(
+    identifier: ShaclmateShape.$Identifier,
+  ): Promise<purify.Either<Error, ShaclmateShape>> {
+    return this.$delegate.shaclmateShape(identifier);
+  }
+
+  shaclmateShapeIdentifiers(
+    query?: $ObjectSet.Query<ShaclmateShape.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ShaclmateShape.$Identifier[]>> {
+    return this.$delegate.shaclmateShapeIdentifiers(query);
+  }
+
+  shaclmateShapes(
+    query?: $ObjectSet.Query<ShaclmateShape.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ShaclmateShape[]>> {
+    return this.$delegate.shaclmateShapes(query);
+  }
+
+  shaclmateShapesCount(
+    query?: Pick<$ObjectSet.Query<ShaclmateShape.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.shaclmateShapesCount(query);
+  }
+}
+
 export class $RdfjsDatasetObjectSet implements $ObjectSet {
   readonly resourceSet: rdfjsResource.ResourceSet;
 
@@ -6072,7 +6767,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       OwlOntology,
       OwlOntologyStatic.$Identifier
-    >(OwlOntologyStatic, query);
+    >(
+      {
+        $fromRdf: OwlOntologyStatic.$fromRdf,
+        $fromRdfTypes: [
+          OwlOntologyStatic.$fromRdfType,
+          ShaclmateOntology.$fromRdfType,
+        ],
+      },
+      query,
+    );
   }
 
   async owlOntologies(
@@ -6085,7 +6789,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<OwlOntologyStatic.$Identifier>,
   ): purify.Either<Error, readonly OwlOntology[]> {
     return this.$objectsSync<OwlOntology, OwlOntologyStatic.$Identifier>(
-      OwlOntologyStatic,
+      {
+        $fromRdf: OwlOntologyStatic.$fromRdf,
+        $fromRdfTypes: [
+          OwlOntologyStatic.$fromRdfType,
+          ShaclmateOntology.$fromRdfType,
+        ],
+      },
       query,
     );
   }
@@ -6100,7 +6810,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<OwlOntologyStatic.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<OwlOntology, OwlOntologyStatic.$Identifier>(
-      OwlOntologyStatic,
+      {
+        $fromRdf: OwlOntologyStatic.$fromRdf,
+        $fromRdfTypes: [
+          OwlOntologyStatic.$fromRdfType,
+          ShaclmateOntology.$fromRdfType,
+        ],
+      },
       query,
     );
   }
@@ -6133,7 +6849,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       ShaclCoreNodeShape,
       ShaclCoreNodeShapeStatic.$Identifier
-    >(ShaclCoreNodeShapeStatic, query);
+    >(
+      {
+        $fromRdf: ShaclCoreNodeShapeStatic.$fromRdf,
+        $fromRdfTypes: [
+          ShaclCoreNodeShapeStatic.$fromRdfType,
+          ShaclmateNodeShape.$fromRdfType,
+        ],
+      },
+      query,
+    );
   }
 
   async shaclCoreNodeShapes(
@@ -6148,7 +6873,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       ShaclCoreNodeShape,
       ShaclCoreNodeShapeStatic.$Identifier
-    >(ShaclCoreNodeShapeStatic, query);
+    >(
+      {
+        $fromRdf: ShaclCoreNodeShapeStatic.$fromRdf,
+        $fromRdfTypes: [
+          ShaclCoreNodeShapeStatic.$fromRdfType,
+          ShaclmateNodeShape.$fromRdfType,
+        ],
+      },
+      query,
+    );
   }
 
   async shaclCoreNodeShapesCount(
@@ -6169,7 +6903,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       ShaclCoreNodeShape,
       ShaclCoreNodeShapeStatic.$Identifier
-    >(ShaclCoreNodeShapeStatic, query);
+    >(
+      {
+        $fromRdf: ShaclCoreNodeShapeStatic.$fromRdf,
+        $fromRdfTypes: [
+          ShaclCoreNodeShapeStatic.$fromRdfType,
+          ShaclmateNodeShape.$fromRdfType,
+        ],
+      },
+      query,
+    );
   }
 
   async shaclCorePropertyGroup(
@@ -6200,7 +6943,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       ShaclCorePropertyGroup,
       ShaclCorePropertyGroup.$Identifier
-    >(ShaclCorePropertyGroup, query);
+    >(
+      {
+        $fromRdf: ShaclCorePropertyGroup.$fromRdf,
+        $fromRdfTypes: [ShaclCorePropertyGroup.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async shaclCorePropertyGroups(
@@ -6215,7 +6964,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       ShaclCorePropertyGroup,
       ShaclCorePropertyGroup.$Identifier
-    >(ShaclCorePropertyGroup, query);
+    >(
+      {
+        $fromRdf: ShaclCorePropertyGroup.$fromRdf,
+        $fromRdfTypes: [ShaclCorePropertyGroup.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async shaclCorePropertyGroupsCount(
@@ -6230,7 +6985,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       ShaclCorePropertyGroup,
       ShaclCorePropertyGroup.$Identifier
-    >(ShaclCorePropertyGroup, query);
+    >(
+      {
+        $fromRdf: ShaclCorePropertyGroup.$fromRdf,
+        $fromRdfTypes: [ShaclCorePropertyGroup.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async shaclCorePropertyShape(
@@ -6261,7 +7022,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       ShaclCorePropertyShape,
       ShaclCorePropertyShapeStatic.$Identifier
-    >(ShaclCorePropertyShapeStatic, query);
+    >(
+      {
+        $fromRdf: ShaclCorePropertyShapeStatic.$fromRdf,
+        $fromRdfTypes: [
+          ShaclCorePropertyShapeStatic.$fromRdfType,
+          ShaclmatePropertyShape.$fromRdfType,
+        ],
+      },
+      query,
+    );
   }
 
   async shaclCorePropertyShapes(
@@ -6276,7 +7046,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       ShaclCorePropertyShape,
       ShaclCorePropertyShapeStatic.$Identifier
-    >(ShaclCorePropertyShapeStatic, query);
+    >(
+      {
+        $fromRdf: ShaclCorePropertyShapeStatic.$fromRdf,
+        $fromRdfTypes: [
+          ShaclCorePropertyShapeStatic.$fromRdfType,
+          ShaclmatePropertyShape.$fromRdfType,
+        ],
+      },
+      query,
+    );
   }
 
   async shaclCorePropertyShapesCount(
@@ -6297,7 +7076,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       ShaclCorePropertyShape,
       ShaclCorePropertyShapeStatic.$Identifier
-    >(ShaclCorePropertyShapeStatic, query);
+    >(
+      {
+        $fromRdf: ShaclCorePropertyShapeStatic.$fromRdf,
+        $fromRdfTypes: [
+          ShaclCorePropertyShapeStatic.$fromRdfType,
+          ShaclmatePropertyShape.$fromRdfType,
+        ],
+      },
+      query,
+    );
   }
 
   async shaclmateNodeShape(
@@ -6326,7 +7114,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       ShaclmateNodeShape,
       ShaclmateNodeShape.$Identifier
-    >(ShaclmateNodeShape, query);
+    >(
+      {
+        $fromRdf: ShaclmateNodeShape.$fromRdf,
+        $fromRdfTypes: [ShaclmateNodeShape.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async shaclmateNodeShapes(
@@ -6341,7 +7135,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       ShaclmateNodeShape,
       ShaclmateNodeShape.$Identifier
-    >(ShaclmateNodeShape, query);
+    >(
+      {
+        $fromRdf: ShaclmateNodeShape.$fromRdf,
+        $fromRdfTypes: [ShaclmateNodeShape.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async shaclmateNodeShapesCount(
@@ -6356,7 +7156,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       ShaclmateNodeShape,
       ShaclmateNodeShape.$Identifier
-    >(ShaclmateNodeShape, query);
+    >(
+      {
+        $fromRdf: ShaclmateNodeShape.$fromRdf,
+        $fromRdfTypes: [ShaclmateNodeShape.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async shaclmateOntology(
@@ -6385,7 +7191,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       ShaclmateOntology,
       ShaclmateOntology.$Identifier
-    >(ShaclmateOntology, query);
+    >(
+      {
+        $fromRdf: ShaclmateOntology.$fromRdf,
+        $fromRdfTypes: [ShaclmateOntology.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async shaclmateOntologies(
@@ -6398,7 +7210,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ShaclmateOntology.$Identifier>,
   ): purify.Either<Error, readonly ShaclmateOntology[]> {
     return this.$objectsSync<ShaclmateOntology, ShaclmateOntology.$Identifier>(
-      ShaclmateOntology,
+      {
+        $fromRdf: ShaclmateOntology.$fromRdf,
+        $fromRdfTypes: [ShaclmateOntology.$fromRdfType],
+      },
       query,
     );
   }
@@ -6415,7 +7230,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       ShaclmateOntology,
       ShaclmateOntology.$Identifier
-    >(ShaclmateOntology, query);
+    >(
+      {
+        $fromRdf: ShaclmateOntology.$fromRdf,
+        $fromRdfTypes: [ShaclmateOntology.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async shaclmatePropertyShape(
@@ -6446,7 +7267,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectIdentifiersSync<
       ShaclmatePropertyShape,
       ShaclmatePropertyShape.$Identifier
-    >(ShaclmatePropertyShape, query);
+    >(
+      {
+        $fromRdf: ShaclmatePropertyShape.$fromRdf,
+        $fromRdfTypes: [ShaclmatePropertyShape.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async shaclmatePropertyShapes(
@@ -6461,7 +7288,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsSync<
       ShaclmatePropertyShape,
       ShaclmatePropertyShape.$Identifier
-    >(ShaclmatePropertyShape, query);
+    >(
+      {
+        $fromRdf: ShaclmatePropertyShape.$fromRdf,
+        $fromRdfTypes: [ShaclmatePropertyShape.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async shaclmatePropertyShapesCount(
@@ -6476,7 +7309,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectsCountSync<
       ShaclmatePropertyShape,
       ShaclmatePropertyShape.$Identifier
-    >(ShaclmatePropertyShape, query);
+    >(
+      {
+        $fromRdf: ShaclmatePropertyShape.$fromRdf,
+        $fromRdfTypes: [ShaclmatePropertyShape.$fromRdfType],
+      },
+      query,
+    );
   }
 
   async shaclCoreShape(
@@ -6505,7 +7344,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectUnionIdentifiersSync<
       ShaclCoreShape,
       ShaclCoreShape.$Identifier
-    >([ShaclCoreNodeShapeStatic, ShaclCorePropertyShapeStatic], query);
+    >(
+      [
+        {
+          $fromRdf: ShaclCoreNodeShapeStatic.$fromRdf,
+          $fromRdfTypes: [
+            ShaclCoreNodeShapeStatic.$fromRdfType,
+            ShaclmateNodeShape.$fromRdfType,
+          ],
+        },
+        {
+          $fromRdf: ShaclCorePropertyShapeStatic.$fromRdf,
+          $fromRdfTypes: [
+            ShaclCorePropertyShapeStatic.$fromRdfType,
+            ShaclmatePropertyShape.$fromRdfType,
+          ],
+        },
+      ],
+      query,
+    );
   }
 
   async shaclCoreShapes(
@@ -6518,7 +7375,22 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ShaclCoreShape.$Identifier>,
   ): purify.Either<Error, readonly ShaclCoreShape[]> {
     return this.$objectUnionsSync<ShaclCoreShape, ShaclCoreShape.$Identifier>(
-      [ShaclCoreNodeShapeStatic, ShaclCorePropertyShapeStatic],
+      [
+        {
+          $fromRdf: ShaclCoreNodeShapeStatic.$fromRdf,
+          $fromRdfTypes: [
+            ShaclCoreNodeShapeStatic.$fromRdfType,
+            ShaclmateNodeShape.$fromRdfType,
+          ],
+        },
+        {
+          $fromRdf: ShaclCorePropertyShapeStatic.$fromRdf,
+          $fromRdfTypes: [
+            ShaclCorePropertyShapeStatic.$fromRdfType,
+            ShaclmatePropertyShape.$fromRdfType,
+          ],
+        },
+      ],
       query,
     );
   }
@@ -6535,7 +7407,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectUnionsCountSync<
       ShaclCoreShape,
       ShaclCoreShape.$Identifier
-    >([ShaclCoreNodeShapeStatic, ShaclCorePropertyShapeStatic], query);
+    >(
+      [
+        {
+          $fromRdf: ShaclCoreNodeShapeStatic.$fromRdf,
+          $fromRdfTypes: [
+            ShaclCoreNodeShapeStatic.$fromRdfType,
+            ShaclmateNodeShape.$fromRdfType,
+          ],
+        },
+        {
+          $fromRdf: ShaclCorePropertyShapeStatic.$fromRdf,
+          $fromRdfTypes: [
+            ShaclCorePropertyShapeStatic.$fromRdfType,
+            ShaclmatePropertyShape.$fromRdfType,
+          ],
+        },
+      ],
+      query,
+    );
   }
 
   async shaclmateShape(
@@ -6564,7 +7454,22 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectUnionIdentifiersSync<
       ShaclmateShape,
       ShaclmateShape.$Identifier
-    >([ShaclmateNodeShape, ShaclCorePropertyShapeStatic], query);
+    >(
+      [
+        {
+          $fromRdf: ShaclmateNodeShape.$fromRdf,
+          $fromRdfTypes: [ShaclmateNodeShape.$fromRdfType],
+        },
+        {
+          $fromRdf: ShaclCorePropertyShapeStatic.$fromRdf,
+          $fromRdfTypes: [
+            ShaclCorePropertyShapeStatic.$fromRdfType,
+            ShaclmatePropertyShape.$fromRdfType,
+          ],
+        },
+      ],
+      query,
+    );
   }
 
   async shaclmateShapes(
@@ -6577,7 +7482,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ShaclmateShape.$Identifier>,
   ): purify.Either<Error, readonly ShaclmateShape[]> {
     return this.$objectUnionsSync<ShaclmateShape, ShaclmateShape.$Identifier>(
-      [ShaclmateNodeShape, ShaclCorePropertyShapeStatic],
+      [
+        {
+          $fromRdf: ShaclmateNodeShape.$fromRdf,
+          $fromRdfTypes: [ShaclmateNodeShape.$fromRdfType],
+        },
+        {
+          $fromRdf: ShaclCorePropertyShapeStatic.$fromRdf,
+          $fromRdfTypes: [
+            ShaclCorePropertyShapeStatic.$fromRdfType,
+            ShaclmatePropertyShape.$fromRdfType,
+          ],
+        },
+      ],
       query,
     );
   }
@@ -6594,7 +7511,22 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.$objectUnionsCountSync<
       ShaclmateShape,
       ShaclmateShape.$Identifier
-    >([ShaclmateNodeShape, ShaclCorePropertyShapeStatic], query);
+    >(
+      [
+        {
+          $fromRdf: ShaclmateNodeShape.$fromRdf,
+          $fromRdfTypes: [ShaclmateNodeShape.$fromRdfType],
+        },
+        {
+          $fromRdf: ShaclCorePropertyShapeStatic.$fromRdf,
+          $fromRdfTypes: [
+            ShaclCorePropertyShapeStatic.$fromRdfType,
+            ShaclmatePropertyShape.$fromRdfType,
+          ],
+        },
+      ],
+      query,
+    );
   }
 
   protected $objectIdentifiersSync<
@@ -6606,7 +7538,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
-      $fromRdfType?: rdfjs.NamedNode;
+      $fromRdfTypes: readonly rdfjs.NamedNode[];
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, readonly ObjectIdentifierT[]> {
@@ -6624,7 +7556,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
-      $fromRdfType?: rdfjs.NamedNode;
+      $fromRdfTypes: readonly rdfjs.NamedNode[];
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, readonly ObjectT[]> {
@@ -6690,13 +7622,22 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       return purify.Either.of(objects);
     }
 
-    if (!objectType.$fromRdfType) {
+    if (objectType.$fromRdfTypes.length === 0) {
       return purify.Either.of([]);
     }
 
-    const resources = [
-      ...this.resourceSet.instancesOf(objectType.$fromRdfType),
-    ];
+    const resources: rdfjsResource.Resource[] = [];
+    for (const fromRdfType of objectType.$fromRdfTypes) {
+      for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+        if (
+          !resources.some((existingResource) =>
+            existingResource.identifier.equals(resource.identifier),
+          )
+        ) {
+          resources.push(resource);
+        }
+      }
+    }
     // Sort resources by identifier so limit and offset are deterministic
     resources.sort((left, right) =>
       left.identifier.value.localeCompare(right.identifier.value),
@@ -6728,7 +7669,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
-      $fromRdfType?: rdfjs.NamedNode;
+      $fromRdfTypes: readonly rdfjs.NamedNode[];
     },
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, number> {
@@ -6746,7 +7687,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
-      $fromRdfType?: rdfjs.NamedNode;
+      $fromRdfTypes: readonly rdfjs.NamedNode[];
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, readonly ObjectIdentifierT[]> {
@@ -6765,7 +7706,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
-      $fromRdfType?: rdfjs.NamedNode;
+      $fromRdfTypes: readonly rdfjs.NamedNode[];
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, readonly ObjectT[]> {
@@ -6846,22 +7787,27 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           resource: rdfjsResource.Resource,
           options: { objectSet: $ObjectSet },
         ) => purify.Either<Error, ObjectT>;
-        $fromRdfType?: rdfjs.NamedNode;
+        $fromRdfTypes: readonly rdfjs.NamedNode[];
       };
       resource: rdfjsResource.Resource;
     }[] = [];
     for (const objectType of objectTypes) {
-      if (!objectType.$fromRdfType) {
+      if (objectType.$fromRdfTypes.length === 0) {
         continue;
       }
 
-      for (const resource of this.resourceSet.instancesOf(
-        objectType.$fromRdfType,
-      )) {
-        resources.push({ objectType, resource });
+      for (const fromRdfType of objectType.$fromRdfTypes) {
+        for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+          if (
+            !resources.some(({ resource: existingResource }) =>
+              existingResource.identifier.equals(resource.identifier),
+            )
+          ) {
+            resources.push({ objectType, resource });
+          }
+        }
       }
     }
-
     // Sort resources by identifier so limit and offset are deterministic
     resources.sort((left, right) =>
       left.resource.identifier.value.localeCompare(
@@ -6895,7 +7841,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
-      $fromRdfType?: rdfjs.NamedNode;
+      $fromRdfTypes: readonly rdfjs.NamedNode[];
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, number> {

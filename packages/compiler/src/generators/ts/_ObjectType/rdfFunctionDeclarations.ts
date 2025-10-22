@@ -98,6 +98,12 @@ function propertiesFromRdfFunctionDeclaration(
   this.fromRdfType.ifJust((fromRdfType) => {
     const fromRdfTypeVariable = this.fromRdfTypeVariable.unsafeCoerce();
     const predicate = rdfjsTermExpression(rdf.type);
+    // Check the expected type and its known subtypes
+    const cases = new Set<string>();
+    cases.add(fromRdfType.value);
+    for (const descendantFromRdfType of this.descendantFromRdfTypes) {
+      cases.add(descendantFromRdfType.value);
+    }
     statements.push(
       `\
 if (!${variables.ignoreRdfType}) {
@@ -106,7 +112,7 @@ if (!${variables.ignoreRdfType}) {
     .chain((actualRdfType) => {
       // Check the expected type and its known subtypes
       switch (actualRdfType.value) {
-        ${[`case "${fromRdfType.value}":`].concat(this.descendantFromRdfTypes.map((descendantFromRdfType) => `case "${descendantFromRdfType.value}":`)).join("\n")}
+        ${[...cases].map((fromRdfType) => `case "${fromRdfType}":`).join("\n")}
           return purify.Either.of(true);
       }
 
