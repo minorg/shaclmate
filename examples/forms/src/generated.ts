@@ -571,7 +571,7 @@ export namespace NestedNodeShape {
     });
     resource.add(
       NestedNodeShape.$properties.requiredStringProperty["identifier"],
-      _nestedNodeShape.requiredStringProperty,
+      ...[_nestedNodeShape.requiredStringProperty],
     );
     return resource;
   }
@@ -1435,30 +1435,32 @@ export namespace FormNodeShape {
     });
     resource.add(
       FormNodeShape.$properties.emptyStringSetProperty["identifier"],
-      _formNodeShape.emptyStringSetProperty.map((item) => item),
+      ..._formNodeShape.emptyStringSetProperty.flatMap((item) => [item]),
     );
     resource.add(
       FormNodeShape.$properties.nestedObjectProperty["identifier"],
-      NestedNodeShape.$toRdf(_formNodeShape.nestedObjectProperty, {
-        mutateGraph: mutateGraph,
-        resourceSet: resourceSet,
-      }),
+      ...[
+        NestedNodeShape.$toRdf(_formNodeShape.nestedObjectProperty, {
+          mutateGraph: mutateGraph,
+          resourceSet: resourceSet,
+        }).identifier,
+      ],
     );
     resource.add(
       FormNodeShape.$properties.nonEmptyStringSetProperty["identifier"],
-      _formNodeShape.nonEmptyStringSetProperty.map((item) => item),
+      ..._formNodeShape.nonEmptyStringSetProperty.flatMap((item) => [item]),
     );
     resource.add(
       FormNodeShape.$properties.optionalStringProperty["identifier"],
-      _formNodeShape.optionalStringProperty,
+      ..._formNodeShape.optionalStringProperty.toList(),
     );
     resource.add(
       FormNodeShape.$properties.requiredIntegerProperty["identifier"],
-      _formNodeShape.requiredIntegerProperty,
+      ...[_formNodeShape.requiredIntegerProperty],
     );
     resource.add(
       FormNodeShape.$properties.requiredStringProperty["identifier"],
-      _formNodeShape.requiredStringProperty,
+      ...[_formNodeShape.requiredStringProperty],
     );
     return resource;
   }
