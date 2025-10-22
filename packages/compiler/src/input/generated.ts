@@ -2405,16 +2405,14 @@ export namespace ShaclCorePropertyShapeStatic {
     >($resource.values($properties.path["identifier"], { unique: true }))
       .chain((values) =>
         values.chainMap((value) =>
-          value
-            .toResource()
-            .chain((resource) =>
-              PropertyPath.$fromRdf(resource, {
-                ...$context,
-                ignoreRdfType: true,
-                objectSet: $objectSet,
-                preferredLanguages: $preferredLanguages,
-              }),
-            ),
+          value.toResource().chain((resource) =>
+            PropertyPath.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: true,
+              objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
+            }),
+          ),
         ),
       )
       .chain((values) => values.head());
