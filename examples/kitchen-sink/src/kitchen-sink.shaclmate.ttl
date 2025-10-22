@@ -551,6 +551,11 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Node shape that has lazy properties." ;
     sh:property [
+        shaclmate:stub :StubInterfaceUnion ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedInterfaceUnion ;
+        sh:path :optionalStubInterfaceUnionToResolvedInterfaceUnionProperty
+    ], [
         shaclmate:lazy true ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
@@ -597,11 +602,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:node :LazilyResolvedInterfaceUnion ;
         sh:path :optionalStubInterfaceToResolvedInterfaceUnionProperty
-    ], [
-        shaclmate:stub :StubInterfaceUnion ;
-        sh:maxCount 1 ;
-        sh:node :LazilyResolvedInterfaceUnion ;
-        sh:path :optionalStubInterfaceUnionToResolvedInterfaceUnionProperty
     ] .
 
 :ListPropertiesClass

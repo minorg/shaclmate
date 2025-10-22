@@ -1,18 +1,26 @@
 {
   "dependencies": {
-    "@shaclmate/runtime": "3.0.3",
     "@rdfjs/term-map": "^2.0.2",
     "@rdfjs/term-set": "^2.0.3",
     "@rdfjs/types": "^1.1.0",
     "@tpluscode/rdf-ns-builders": "^4.3.0",
+    "@types/n3": "^1.26.0",
     "@types/rdfjs__term-map": "^2.0.10",
     "@types/rdfjs__term-set": "^2.0.9",
+    "n3": "^1.26.0",
     "purify-ts": "^2.1.0",
     "rdfjs-resource": "1.0.24"
   },
   "devDependencies": {
-    "@types/n3": "^1.26.0",
-    "n3": "^1.26.0"
+    "@biomejs/biome": "1.9.4",
+    "@tsconfig/node18": "^18.2.4",
+    "@tsconfig/strictest": "^2.0.5",
+    "@types/node": "^22",
+    "depcheck": "^1.4.7",
+    "rimraf": "^6.0.1",
+    "typescript": "5.8.2",
+    "vitest": "^3.2.4",
+    "@vitest/coverage-v8": "^3.2.4"
   },
   "files": [
     "dist/*.d.ts",
@@ -33,6 +41,7 @@
     "check:write": "biome check --write",
     "check:write:unsafe": "biome check --write --unsafe",
     "clean": "rimraf dist",
+    "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
     "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
     "link-dependencies": "npm link rdfjs-resource",

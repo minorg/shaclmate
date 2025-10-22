@@ -8,74 +8,71 @@ export type Import = ImportDeclarationStructure | string;
 export namespace Import {
   export const DATA_FACTORY: Import = {
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "@shaclmate/runtime",
-    namedImports: ["dataFactory"],
+    moduleSpecifier: "n3",
+    namedImports: [{ alias: "dataFactory", name: "DataFactory" }],
   };
 
-  export const DATASET_FACTORY: Import = {
-    kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "@shaclmate/runtime",
-    namedImports: ["datasetFactory"],
-  };
+  export const DATASET_FACTORY: Import =
+    "import { StoreFactory as _DatasetFactory } from 'n3'; const datasetFactory = new _DatasetFactory();";
 
   export const GRAPHQL: Import = {
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "@shaclmate/runtime",
-    namedImports: ["graphql"],
+    moduleSpecifier: "graphql",
+    namespaceImport: "graphql",
   };
 
   export const GRAPHQL_SCALARS: Import = {
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "@shaclmate/runtime",
-    namedImports: ["graphqlScalars"],
+    moduleSpecifier: "graphql-scalars",
+    namespaceImport: "graphqlScalars",
   };
 
   export const PURIFY: Import = {
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "@shaclmate/runtime",
-    namedImports: ["purify"],
+    moduleSpecifier: "purify-ts",
+    namespaceImport: "purify",
   };
 
   export const RDF_LITERAL: Import = {
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "@shaclmate/runtime",
-    namedImports: ["rdfLiteral"],
+    moduleSpecifier: "rdf-literal",
+    namespaceImport: "rdfLiteral",
   };
 
   export const RDFJS_RESOURCE: Import = {
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "@shaclmate/runtime",
-    namedImports: ["rdfjsResource"],
+    moduleSpecifier: "rdfjs-resource",
+    namespaceImport: "rdfjsResource",
   };
 
   export const RDFJS_TYPES: Import = {
     isTypeOnly: true,
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "@shaclmate/runtime",
-    namedImports: ["rdfjs"],
+    moduleSpecifier: "@rdfjs/types",
+    namespaceImport: "rdfjs",
   };
 
   export const SHA256: Import = {
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "@shaclmate/runtime",
+    moduleSpecifier: "js-sha256",
     namedImports: ["sha256"],
   };
 
   export const SPARQLJS: Import = {
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "@shaclmate/runtime",
-    namedImports: ["sparqljs"],
+    moduleSpecifier: "sparqljs",
+    namespaceImport: "sparqljs",
   };
 
   export const UUID: Import = {
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "@shaclmate/runtime",
-    namedImports: ["uuid"],
+    moduleSpecifier: "uuid",
+    namespaceImport: "uuid",
   };
 
   export const ZOD: Import = {
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "@shaclmate/runtime",
-    namedImports: ["zod"],
+    moduleSpecifier: "zod",
+    namedImports: [{ alias: "zod", name: "z" }],
   };
 }

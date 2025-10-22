@@ -1,15 +1,14 @@
-import {
-  dataFactory,
-  datasetFactory,
-  purify,
-  rdfLiteral,
-  type rdfjs,
-  rdfjsResource,
-  sha256,
-  sparqljs,
-  uuid,
-  zod,
-} from "@shaclmate/runtime";
+import { StoreFactory as _DatasetFactory } from "n3";
+const datasetFactory = new _DatasetFactory();
+import type * as rdfjs from "@rdfjs/types";
+import { sha256 } from "js-sha256";
+import { DataFactory as dataFactory } from "n3";
+import * as purify from "purify-ts";
+import * as rdfLiteral from "rdf-literal";
+import * as rdfjsResource from "rdfjs-resource";
+import * as sparqljs from "sparqljs";
+import * as uuid from "uuid";
+import { z as zod } from "zod";
 import { ExternClass } from "./ExternClass.js";
 export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
 

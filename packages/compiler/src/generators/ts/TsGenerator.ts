@@ -1,4 +1,3 @@
-import { invariant } from "ts-invariant";
 import {
   type ImportDeclarationStructure,
   Project,
@@ -62,46 +61,19 @@ export class TsGenerator implements Generator {
     }
     // Deduplicate and add imports
     const stringImports = new Set<string>();
-    const structureImports: ImportDeclarationStructure[] = [];
+    const structureImportsByModuleSpecifier: Record<
+      string,
+      ImportDeclarationStructure
+    > = {};
     for (const import_ of imports) {
       if (typeof import_ === "string") {
         stringImports.add(import_);
-        continue;
-      }
-
-      const importWithSameModuleSpecifier = structureImports.find(
-        (structureImport) =>
-          structureImport.moduleSpecifier === import_.moduleSpecifier,
-      );
-
-      if (!importWithSameModuleSpecifier) {
-        structureImports.push(import_);
-        continue;
-      }
-
-      // Merge named imports
-      invariant(!import_.namespaceImport);
-      invariant(
-        Array.isArray(import_.namedImports) &&
-          import_.namedImports.every((value) => typeof value === "string"),
-      );
-      invariant(!importWithSameModuleSpecifier.namespaceImport);
-      invariant(
-        Array.isArray(importWithSameModuleSpecifier.namedImports) &&
-          importWithSameModuleSpecifier.namedImports.every(
-            (value) => typeof value === "string",
-          ),
-      );
-      for (const newNamedImport of import_.namedImports) {
-        if (
-          !importWithSameModuleSpecifier.namedImports.includes(newNamedImport)
-        ) {
-          importWithSameModuleSpecifier.namedImports.push(newNamedImport);
-        }
+      } else {
+        structureImportsByModuleSpecifier[import_.moduleSpecifier] = import_;
       }
     }
     sourceFile.addStatements([...stringImports]);
-    sourceFile.addStatements(structureImports);
+    sourceFile.addStatements(Object.values(structureImportsByModuleSpecifier));
 
     // Deduplicate and add snippet declarations
     const addedSnippetDeclarations = new Set<string>();

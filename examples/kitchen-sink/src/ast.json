@@ -2442,6 +2442,159 @@
               "value": "n3-217"
             },
             "propertyPath": {
+              "curie": ":optionalStubInterfaceUnionToResolvedInterfaceUnionProperty",
+              "uniqueLocalPart": "optionalStubInterfaceUnionToResolvedInterfaceUnionProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/optionalStubInterfaceUnionToResolvedInterfaceUnionProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/optionalStubInterfaceUnionToResolvedInterfaceUnionProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectUnionType",
+              "name": {
+                "identifier": {
+                  "curie": ":StubInterfaceUnion",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "StubInterfaceUnion",
+                  "value": "http://example.com/StubInterfaceUnion"
+                }
+              },
+              "types": [
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/StubInterfaceUnionMember1"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":StubInterfaceUnionMember1",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "StubInterfaceUnionMember1",
+                      "value": "http://example.com/StubInterfaceUnionMember1"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/StubInterfaceUnionMember1"
+                    }
+                  ]
+                },
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/StubInterfaceUnionMember2"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":StubInterfaceUnionMember2",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "StubInterfaceUnionMember2",
+                      "value": "http://example.com/StubInterfaceUnionMember2"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/StubInterfaceUnionMember2"
+                    }
+                  ]
+                }
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "type": {
+            "itemType": {
+              "kind": "ObjectUnionType",
+              "name": {
+                "identifier": {
+                  "curie": ":LazilyResolvedInterfaceUnion",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "LazilyResolvedInterfaceUnion",
+                  "value": "http://example.com/LazilyResolvedInterfaceUnion"
+                }
+              },
+              "types": [
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":LazilyResolvedInterfaceUnionMember1",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "LazilyResolvedInterfaceUnionMember1",
+                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
+                    }
+                  ]
+                },
+                {
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
+                  },
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":LazilyResolvedInterfaceUnionMember2",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "LazilyResolvedInterfaceUnionMember2",
+                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
+                    }
+                  ]
+                }
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-218"
+            },
+            "propertyPath": {
               "curie": ":optionalLazyToResolvedInterfaceProperty",
               "uniqueLocalPart": "optionalLazyToResolvedInterfaceProperty",
               "termType": "NamedNode",
@@ -2501,7 +2654,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-218"
+              "value": "n3-219"
             },
             "propertyPath": {
               "curie": ":setLazyToResolvedInterfaceProperty",
@@ -2563,7 +2716,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-219"
+              "value": "n3-220"
             },
             "propertyPath": {
               "curie": ":requiredLazyToResolvedInterfaceProperty",
@@ -2619,7 +2772,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-220"
+              "value": "n3-221"
             },
             "propertyPath": {
               "curie": ":optionalLazyToResolvedIriInterfaceProperty",
@@ -2668,7 +2821,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-221"
+              "value": "n3-222"
             },
             "propertyPath": {
               "curie": ":optionalLazyToResolvedInterfaceUnionProperty",
@@ -2769,7 +2922,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-222"
+              "value": "n3-223"
             },
             "propertyPath": {
               "curie": ":optionalStubInterfaceToResolvedInterfaceProperty",
@@ -2834,7 +2987,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-223"
+              "value": "n3-224"
             },
             "propertyPath": {
               "curie": ":setStubInterfaceToResolvedInterfaceProperty",
@@ -2899,7 +3052,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-224"
+              "value": "n3-225"
             },
             "propertyPath": {
               "curie": ":requiredStubInterfaceToResolvedInterfaceProperty",
@@ -2958,7 +3111,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-225"
+              "value": "n3-226"
             },
             "propertyPath": {
               "curie": ":optionalStubInterfaceToResolvedInterfaceUnionProperty",
@@ -2985,159 +3138,6 @@
                 "NamedNode"
               ],
               "identifierMintingStrategy": "blankNode"
-            },
-            "kind": "OptionType"
-          },
-          "type": {
-            "itemType": {
-              "kind": "ObjectUnionType",
-              "name": {
-                "identifier": {
-                  "curie": ":LazilyResolvedInterfaceUnion",
-                  "termType": "NamedNode",
-                  "uniqueLocalPart": "LazilyResolvedInterfaceUnion",
-                  "value": "http://example.com/LazilyResolvedInterfaceUnion"
-                }
-              },
-              "types": [
-                {
-                  "fromRdfType": {
-                    "termType": "NamedNode",
-                    "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
-                  },
-                  "kind": "ObjectType",
-                  "name": {
-                    "identifier": {
-                      "curie": ":LazilyResolvedInterfaceUnionMember1",
-                      "termType": "NamedNode",
-                      "uniqueLocalPart": "LazilyResolvedInterfaceUnionMember1",
-                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
-                    }
-                  },
-                  "identifierNodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ],
-                  "identifierMintingStrategy": "blankNode",
-                  "toRdfTypes": [
-                    {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
-                    }
-                  ]
-                },
-                {
-                  "fromRdfType": {
-                    "termType": "NamedNode",
-                    "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
-                  },
-                  "kind": "ObjectType",
-                  "name": {
-                    "identifier": {
-                      "curie": ":LazilyResolvedInterfaceUnionMember2",
-                      "termType": "NamedNode",
-                      "uniqueLocalPart": "LazilyResolvedInterfaceUnionMember2",
-                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
-                    }
-                  },
-                  "identifierNodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ],
-                  "identifierMintingStrategy": "blankNode",
-                  "toRdfTypes": [
-                    {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
-                    }
-                  ]
-                }
-              ]
-            },
-            "kind": "OptionType"
-          },
-          "visibility": "public"
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-226"
-            },
-            "propertyPath": {
-              "curie": ":optionalStubInterfaceUnionToResolvedInterfaceUnionProperty",
-              "uniqueLocalPart": "optionalStubInterfaceUnionToResolvedInterfaceUnionProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/optionalStubInterfaceUnionToResolvedInterfaceUnionProperty"
-            }
-          },
-          "order": 0,
-          "path": "http://example.com/optionalStubInterfaceUnionToResolvedInterfaceUnionProperty",
-          "stubType": {
-            "itemType": {
-              "kind": "ObjectUnionType",
-              "name": {
-                "identifier": {
-                  "curie": ":StubInterfaceUnion",
-                  "termType": "NamedNode",
-                  "uniqueLocalPart": "StubInterfaceUnion",
-                  "value": "http://example.com/StubInterfaceUnion"
-                }
-              },
-              "types": [
-                {
-                  "fromRdfType": {
-                    "termType": "NamedNode",
-                    "value": "http://example.com/StubInterfaceUnionMember1"
-                  },
-                  "kind": "ObjectType",
-                  "name": {
-                    "identifier": {
-                      "curie": ":StubInterfaceUnionMember1",
-                      "termType": "NamedNode",
-                      "uniqueLocalPart": "StubInterfaceUnionMember1",
-                      "value": "http://example.com/StubInterfaceUnionMember1"
-                    }
-                  },
-                  "identifierNodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ],
-                  "identifierMintingStrategy": "blankNode",
-                  "toRdfTypes": [
-                    {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/StubInterfaceUnionMember1"
-                    }
-                  ]
-                },
-                {
-                  "fromRdfType": {
-                    "termType": "NamedNode",
-                    "value": "http://example.com/StubInterfaceUnionMember2"
-                  },
-                  "kind": "ObjectType",
-                  "name": {
-                    "identifier": {
-                      "curie": ":StubInterfaceUnionMember2",
-                      "termType": "NamedNode",
-                      "uniqueLocalPart": "StubInterfaceUnionMember2",
-                      "value": "http://example.com/StubInterfaceUnionMember2"
-                    }
-                  },
-                  "identifierNodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ],
-                  "identifierMintingStrategy": "blankNode",
-                  "toRdfTypes": [
-                    {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/StubInterfaceUnionMember2"
-                    }
-                  ]
-                }
-              ]
             },
             "kind": "OptionType"
           },

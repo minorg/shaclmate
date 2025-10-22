@@ -1,11 +1,10 @@
-import {
-  dataFactory,
-  datasetFactory,
-  purify,
-  type rdfjs,
-  rdfjsResource,
-  zod,
-} from "@shaclmate/runtime";
+import { StoreFactory as _DatasetFactory } from "n3";
+const datasetFactory = new _DatasetFactory();
+import type * as rdfjs from "@rdfjs/types";
+import { DataFactory as dataFactory } from "n3";
+import * as purify from "purify-ts";
+import * as rdfjsResource from "rdfjs-resource";
+import { z as zod } from "zod";
 export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
 
 export namespace $EqualsResult {

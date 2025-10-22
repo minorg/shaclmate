@@ -1,9 +1,18 @@
 {
   "dependencies": {
-    "@shaclmate/runtime": "3.0.3",
     "graphql-yoga": "5.14.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@tsconfig/node18": "^18.2.4",
+    "@tsconfig/strictest": "^2.0.5",
+    "@types/node": "^22",
+    "depcheck": "^1.4.7",
+    "rimraf": "^6.0.1",
+    "typescript": "5.8.2",
+    "vitest": "^3.2.4",
+    "@vitest/coverage-v8": "^3.2.4"
+  },
   "files": [
     "dist/*.d.ts",
     "dist/*.js"
@@ -18,14 +27,21 @@
     "url": "git+https://github.com/minorg/shaclmate"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
+    "build:noEmit": "tsc --noEmit",
+    "check": "biome check",
+    "check:write": "biome check --write",
+    "check:write:unsafe": "biome check --write --unsafe",
     "clean": "rimraf dist",
+    "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
     "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
-    "start": "NODE_ENV=development tsx src/server.ts",
+    "link-dependencies": "npm link rdfjs-resource",
     "test": "biome check && vitest run",
     "test:coverage": "biome check && vitest run --coverage",
-    "test:watch": "biome check && vitest watch"
+    "test:watch": "biome check && vitest watch",
+    "unlink": "npm unlink -g @shaclmate/graphql",
+    "start": "NODE_ENV=development tsx src/server.ts"
   },
   "type": "module",
   "types": "./dist/index.d.ts",
