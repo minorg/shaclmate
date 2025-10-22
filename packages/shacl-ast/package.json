@@ -13,17 +13,12 @@
     "@types/n3": "^1.21.1",
     "n3": "^1.21.3"
   },
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
-  },
   "files": [
     "dist/*.d.ts",
     "dist/*.js"
   ],
   "license": "Apache-2.0",
+  "main": "./dist/index.js",
   "name": "@shaclmate/shacl-ast",
   "packageManager": "npm@10.9.0",
   "repository": {
@@ -46,5 +41,6 @@
     "unlink": "npm unlink -g @shaclmate/shacl-ast"
   },
   "type": "module",
-  "version": "3.0.0"
+  "types": "./dist/index.d.ts",
+  "version": "3.0.1"
 }

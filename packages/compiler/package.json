@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@shaclmate/shacl-ast": "3.0.0",
+    "@shaclmate/shacl-ast": "3.0.1",
     "@rdfjs/prefix-map": "^0.1.2",
     "@rdfjs/term-map": "^2.0.2",
     "@rdfjs/term-set": "^2.0.3",
@@ -22,16 +22,10 @@
     "typescript-memoize": "^1.1.1"
   },
   "devDependencies": {
-    "@shaclmate/kitchen-sink-example": "3.0.0",
-    "@shaclmate/runtime": "3.0.0",
+    "@shaclmate/kitchen-sink-example": "3.0.1",
+    "@shaclmate/runtime": "3.0.1",
     "@kos-kit/sparql-client": "2.0.115",
     "oxigraph": "0.4.11"
-  },
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
   },
   "files": [
     "dist/*.d.ts",
@@ -54,6 +48,7 @@
     "dist/input/*.js"
   ],
   "license": "Apache-2.0",
+  "main": "./dist/index.js",
   "name": "@shaclmate/compiler",
   "packageManager": "npm@10.9.0",
   "repository": {
@@ -76,5 +71,6 @@
     "unlink": "npm unlink -g @shaclmate/compiler"
   },
   "type": "module",
-  "version": "3.0.0"
+  "types": "./dist/index.d.ts",
+  "version": "3.0.1"
 }

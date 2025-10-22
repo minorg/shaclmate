@@ -5,7 +5,7 @@ import path from "node:path";
 import url from "node:url";
 import { stringify as stringifyYaml } from "yaml";
 
-const VERSION = "3.0.0";
+const VERSION = "3.0.1";
 
 type PackageName =
   | "cli"
@@ -283,17 +283,19 @@ for (const package_ of packages) {
           ...internalDevDependencies,
           ...package_.devDependencies?.external,
         },
-        exports:
-          files.size > 0
-            ? {
-                ".": {
-                  types: "./dist/index.d.ts",
-                  default: "./dist/index.js",
-                },
-              }
-            : undefined,
+        // 20251022: switch back to main + types to enable downstream "node" resolution
+        // exports:
+        //   files.size > 0
+        //     ? {
+        //         ".": {
+        //           types: "./dist/index.d.ts",
+        //           default: "./dist/index.js",
+        //         },
+        //       }
+        //     : undefined,
         files: files.size > 0 ? [...files].sort() : undefined,
         license: "Apache-2.0",
+        main: files.size > 0 ? "./dist/index.js" : undefined,
         name: `@shaclmate/${package_.name}${package_.directory === "examples" ? "-example" : ""}`,
         packageManager: "npm@10.9.0",
         peerDependencies: package_.peerDependencies?.external,
@@ -324,6 +326,7 @@ for (const package_ of packages) {
           unlink: `npm unlink -g @shaclmate/${package_.name}`,
         },
         type: "module",
+        types: files.size > 0 ? "./dist/index.d.ts" : undefined,
         version: VERSION,
       },
       undefined,

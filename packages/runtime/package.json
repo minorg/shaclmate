@@ -16,17 +16,12 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {},
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
-  },
   "files": [
     "dist/*.d.ts",
     "dist/*.js"
   ],
   "license": "Apache-2.0",
+  "main": "./dist/index.js",
   "name": "@shaclmate/runtime",
   "packageManager": "npm@10.9.0",
   "repository": {
@@ -49,5 +44,6 @@
     "unlink": "npm unlink -g @shaclmate/runtime"
   },
   "type": "module",
-  "version": "3.0.0"
+  "types": "./dist/index.d.ts",
+  "version": "3.0.1"
 }

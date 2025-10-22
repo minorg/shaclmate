@@ -3,7 +3,7 @@
     "shaclmate": "dist/cli.js"
   },
   "dependencies": {
-    "@shaclmate/compiler": "3.0.0",
+    "@shaclmate/compiler": "3.0.1",
     "@types/n3": "^1.21.1",
     "@types/rdf-validate-shacl": "^0.4.7",
     "cmd-ts": "^0.13.0",
@@ -12,17 +12,12 @@
     "rdf-validate-shacl": "^0.5.6"
   },
   "devDependencies": {},
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
-  },
   "files": [
     "dist/*.d.ts",
     "dist/*.js"
   ],
   "license": "Apache-2.0",
+  "main": "./dist/index.js",
   "name": "@shaclmate/cli",
   "packageManager": "npm@10.9.0",
   "repository": {
@@ -45,5 +40,6 @@
     "unlink": "npm unlink -g @shaclmate/cli"
   },
   "type": "module",
-  "version": "3.0.0"
+  "types": "./dist/index.d.ts",
+  "version": "3.0.1"
 }

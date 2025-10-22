@@ -1,20 +1,15 @@
 {
   "dependencies": {
-    "@shaclmate/runtime": "3.0.0",
+    "@shaclmate/runtime": "3.0.1",
     "graphql-yoga": "5.14.0"
   },
   "devDependencies": {},
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
-  },
   "files": [
     "dist/*.d.ts",
     "dist/*.js"
   ],
   "license": "Apache-2.0",
+  "main": "./dist/index.js",
   "name": "@shaclmate/graphql-example",
   "packageManager": "npm@10.9.0",
   "private": true,
@@ -33,5 +28,6 @@
     "test:watch": "biome check && vitest watch"
   },
   "type": "module",
-  "version": "3.0.0"
+  "types": "./dist/index.d.ts",
+  "version": "3.0.1"
 }
