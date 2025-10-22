@@ -11,8 +11,8 @@ export function unsupportedObjectSetMethodDeclarations({
     readonly name: string;
   };
 }): readonly MethodDeclarationStructure[] {
-  return Object.entries(objectSetMethodSignatures({ objectType })).map(
-    ([methodName, methodSignature]) => ({
+  return Object.values(objectSetMethodSignatures({ objectType })).map(
+    (methodSignature) => ({
       ...methodSignature,
       kind: StructureKind.Method,
       parameters: methodSignature.parameters
@@ -22,10 +22,9 @@ export function unsupportedObjectSetMethodDeclarations({
           }))
         : methodSignature.parameters,
       isAsync: true,
-      statements:
-        methodName === "objects"
-          ? [`return [purify.Left(new Error("${methodName}: not supported"))];`]
-          : [`return purify.Left(new Error("${methodName}: not supported"));`],
+      statements: [
+        `return purify.Left(new Error("${methodSignature.name}: not supported")) satisfies Awaited<${methodSignature.returnType}>;`,
+      ],
     }),
   );
 }
