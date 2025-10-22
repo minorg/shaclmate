@@ -416,7 +416,7 @@ describe("fromRdf", () => {
     );
     instanceResource.add(
       kitchenSink.ListPropertiesClass.$properties.stringListProperty.identifier,
-      resourceSet.mutableResource(dataFactory.blankNode()),
+      dataFactory.blankNode(),
     );
     const result = kitchenSink.ListPropertiesClass.$fromRdf(instanceResource);
     expect(result.isLeft()).toBe(true);
@@ -434,7 +434,7 @@ describe("fromRdf", () => {
     const listResource = resourceSet.mutableResource(dataFactory.blankNode());
     instanceResource.add(
       kitchenSink.ListPropertiesClass.$properties.stringListProperty.identifier,
-      listResource,
+      listResource.identifier,
     );
     listResource.add(rdf.first, dataFactory.blankNode());
     listResource.add(rdf.rest, rdf.nil);
@@ -454,7 +454,7 @@ describe("fromRdf", () => {
     instanceResource.add(
       kitchenSink.PropertyCardinalitiesClass.$properties.emptyStringSetProperty
         .identifier,
-      resourceSet.mutableResource(dataFactory.blankNode()),
+      dataFactory.blankNode(),
     );
     const result =
       kitchenSink.PropertyCardinalitiesClass.$fromRdf(instanceResource);

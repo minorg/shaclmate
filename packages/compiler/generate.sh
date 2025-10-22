@@ -12,3 +12,4 @@ format_rdf() {
 format_rdf src/input/input.shaclmate.ttl
 ../cli/dist/cli.js generate $PWD/../shacl-ast/src/shacl-ast.shaclmate.ttl $PWD/src/input/input.shaclmate.ttl >src/input/generated.ts
 npm exec biome -- check --write --unsafe $PWD/src/input/generated.ts
+npm exec biome -- check --write --unsafe $PWD/src/input/generated.ts

@@ -116,8 +116,8 @@ export class DateTimeType extends PrimitiveType<Date> {
     return this.primitiveDefaultValue
       .map(
         (defaultValue) =>
-          `${variables.value}.getTime() !== ${defaultValue.getTime()} ? ${valueToRdf} : undefined`,
+          `(${variables.value}.getTime() !== ${defaultValue.getTime()} ? [${valueToRdf}] : [])`,
       )
-      .orDefault(valueToRdf);
+      .orDefault(`[${valueToRdf}]`);
   }
 }

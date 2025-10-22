@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@shaclmate/runtime": "3.0.3",
     "@rdfjs/term-map": "^2.0.2",
     "@rdfjs/term-set": "^2.0.3",
     "@rdfjs/types": "^1.1.0",
@@ -7,7 +8,7 @@
     "@types/rdfjs__term-map": "^2.0.10",
     "@types/rdfjs__term-set": "^2.0.9",
     "purify-ts": "^2.1.0",
-    "rdfjs-resource": "1.0.22"
+    "rdfjs-resource": "1.0.24"
   },
   "devDependencies": {
     "@types/n3": "^1.26.0",
@@ -42,5 +43,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "3.0.2"
+  "version": "3.0.3"
 }

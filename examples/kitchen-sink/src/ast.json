@@ -2442,6 +2442,130 @@
               "value": "n3-217"
             },
             "propertyPath": {
+              "curie": ":optionalLazyToResolvedInterfaceProperty",
+              "uniqueLocalPart": "optionalLazyToResolvedInterfaceProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/optionalLazyToResolvedInterfaceProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/optionalLazyToResolvedInterfaceProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "termType": "BlankNode",
+                  "value": "n3-301"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "type": {
+            "itemType": {
+              "fromRdfType": {
+                "termType": "NamedNode",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+              },
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":LazilyResolvedBlankNodeOrIriInterface",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriInterface",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode",
+              "toRdfTypes": [
+                {
+                  "termType": "NamedNode",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+                }
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-218"
+            },
+            "propertyPath": {
+              "curie": ":setLazyToResolvedInterfaceProperty",
+              "uniqueLocalPart": "setLazyToResolvedInterfaceProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/setLazyToResolvedInterfaceProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/setLazyToResolvedInterfaceProperty",
+          "stubType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "termType": "BlankNode",
+                  "value": "n3-302"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ]
+            },
+            "kind": "SetType"
+          },
+          "type": {
+            "itemType": {
+              "fromRdfType": {
+                "termType": "NamedNode",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+              },
+              "kind": "ObjectType",
+              "name": {
+                "identifier": {
+                  "curie": ":LazilyResolvedBlankNodeOrIriInterface",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriInterface",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+                }
+              },
+              "identifierNodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ],
+              "identifierMintingStrategy": "blankNode",
+              "toRdfTypes": [
+                {
+                  "termType": "NamedNode",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
+                }
+              ]
+            },
+            "kind": "SetType"
+          },
+          "visibility": "public"
+        },
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-219"
+            },
+            "propertyPath": {
               "curie": ":requiredLazyToResolvedInterfaceProperty",
               "uniqueLocalPart": "requiredLazyToResolvedInterfaceProperty",
               "termType": "NamedNode",
@@ -2455,7 +2579,7 @@
             "name": {
               "identifier": {
                 "termType": "BlankNode",
-                "value": "n3-301"
+                "value": "n3-303"
               }
             },
             "identifierNodeKinds": [
@@ -2495,7 +2619,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-218"
+              "value": "n3-220"
             },
             "propertyPath": {
               "curie": ":optionalLazyToResolvedIriInterfaceProperty",
@@ -2512,7 +2636,7 @@
               "name": {
                 "identifier": {
                   "termType": "BlankNode",
-                  "value": "n3-302"
+                  "value": "n3-304"
                 }
               },
               "identifierNodeKinds": [
@@ -2544,7 +2668,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-219"
+              "value": "n3-221"
             },
             "propertyPath": {
               "curie": ":optionalLazyToResolvedInterfaceUnionProperty",
@@ -2561,7 +2685,7 @@
               "name": {
                 "identifier": {
                   "termType": "BlankNode",
-                  "value": "n3-303"
+                  "value": "n3-305"
                 }
               },
               "identifierNodeKinds": [
@@ -2645,7 +2769,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-220"
+              "value": "n3-222"
             },
             "propertyPath": {
               "curie": ":optionalStubInterfaceToResolvedInterfaceProperty",
@@ -2710,7 +2834,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-221"
+              "value": "n3-223"
             },
             "propertyPath": {
               "curie": ":setStubInterfaceToResolvedInterfaceProperty",
@@ -2775,7 +2899,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-222"
+              "value": "n3-224"
             },
             "propertyPath": {
               "curie": ":requiredStubInterfaceToResolvedInterfaceProperty",
@@ -2834,7 +2958,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-223"
+              "value": "n3-225"
             },
             "propertyPath": {
               "curie": ":optionalStubInterfaceToResolvedInterfaceUnionProperty",
@@ -2938,7 +3062,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-224"
+              "value": "n3-226"
             },
             "propertyPath": {
               "curie": ":optionalStubInterfaceUnionToResolvedInterfaceUnionProperty",
@@ -3084,130 +3208,6 @@
               ]
             },
             "kind": "OptionType"
-          },
-          "visibility": "public"
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-225"
-            },
-            "propertyPath": {
-              "curie": ":optionalLazyToResolvedInterfaceProperty",
-              "uniqueLocalPart": "optionalLazyToResolvedInterfaceProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/optionalLazyToResolvedInterfaceProperty"
-            }
-          },
-          "order": 0,
-          "path": "http://example.com/optionalLazyToResolvedInterfaceProperty",
-          "stubType": {
-            "itemType": {
-              "kind": "ObjectType",
-              "name": {
-                "identifier": {
-                  "termType": "BlankNode",
-                  "value": "n3-304"
-                }
-              },
-              "identifierNodeKinds": [
-                "BlankNode",
-                "NamedNode"
-              ]
-            },
-            "kind": "OptionType"
-          },
-          "type": {
-            "itemType": {
-              "fromRdfType": {
-                "termType": "NamedNode",
-                "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
-              },
-              "kind": "ObjectType",
-              "name": {
-                "identifier": {
-                  "curie": ":LazilyResolvedBlankNodeOrIriInterface",
-                  "termType": "NamedNode",
-                  "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriInterface",
-                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
-                }
-              },
-              "identifierNodeKinds": [
-                "BlankNode",
-                "NamedNode"
-              ],
-              "identifierMintingStrategy": "blankNode",
-              "toRdfTypes": [
-                {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
-                }
-              ]
-            },
-            "kind": "OptionType"
-          },
-          "visibility": "public"
-        },
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-226"
-            },
-            "propertyPath": {
-              "curie": ":setLazyToResolvedInterfaceProperty",
-              "uniqueLocalPart": "setLazyToResolvedInterfaceProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/setLazyToResolvedInterfaceProperty"
-            }
-          },
-          "order": 0,
-          "path": "http://example.com/setLazyToResolvedInterfaceProperty",
-          "stubType": {
-            "itemType": {
-              "kind": "ObjectType",
-              "name": {
-                "identifier": {
-                  "termType": "BlankNode",
-                  "value": "n3-305"
-                }
-              },
-              "identifierNodeKinds": [
-                "BlankNode",
-                "NamedNode"
-              ]
-            },
-            "kind": "SetType"
-          },
-          "type": {
-            "itemType": {
-              "fromRdfType": {
-                "termType": "NamedNode",
-                "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
-              },
-              "kind": "ObjectType",
-              "name": {
-                "identifier": {
-                  "curie": ":LazilyResolvedBlankNodeOrIriInterface",
-                  "termType": "NamedNode",
-                  "uniqueLocalPart": "LazilyResolvedBlankNodeOrIriInterface",
-                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
-                }
-              },
-              "identifierNodeKinds": [
-                "BlankNode",
-                "NamedNode"
-              ],
-              "identifierMintingStrategy": "blankNode",
-              "toRdfTypes": [
-                {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriInterface"
-                }
-              ]
-            },
-            "kind": "SetType"
           },
           "visibility": "public"
         }

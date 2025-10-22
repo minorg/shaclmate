@@ -306,7 +306,7 @@ export class UnionMember2 {
 
     resource.add(
       UnionMember2.$properties.optionalStringProperty["identifier"],
-      this.optionalStringProperty,
+      ...this.optionalStringProperty.toList(),
     );
     return resource;
   }
@@ -591,7 +591,7 @@ export class UnionMember1 {
 
     resource.add(
       UnionMember1.$properties.optionalNumberProperty["identifier"],
-      this.optionalNumberProperty,
+      ...this.optionalNumberProperty.toList(),
     );
     return resource;
   }
@@ -851,15 +851,15 @@ export class Nested {
 
     resource.add(
       UnionMember1.$properties.optionalNumberProperty["identifier"],
-      this.optionalNumberProperty,
+      ...this.optionalNumberProperty.toList(),
     );
     resource.add(
       UnionMember2.$properties.optionalStringProperty["identifier"],
-      this.optionalStringProperty,
+      ...this.optionalStringProperty.toList(),
     );
     resource.add(
       Nested.$properties.requiredStringProperty["identifier"],
-      this.requiredStringProperty,
+      ...[this.requiredStringProperty],
     );
     return resource;
   }
@@ -1259,7 +1259,7 @@ export class Parent {
 
     resource.add(
       ParentStatic.$properties.parentStringProperty["identifier"],
-      this.parentStringProperty,
+      ...this.parentStringProperty.toList(),
     );
     return resource;
   }
@@ -1705,33 +1705,40 @@ export class Child extends Parent {
 
     resource.add(
       Child.$properties.childStringProperty["identifier"],
-      this.childStringProperty,
+      ...this.childStringProperty.toList(),
     );
     resource.add(
       Child.$properties.lazyObjectSetProperty["identifier"],
-      this.lazyObjectSetProperty.stubs.map((item) =>
-        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
+      ...this.lazyObjectSetProperty.stubs.flatMap((item) => [
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          .identifier,
+      ]),
     );
     resource.add(
       Child.$properties.optionalLazyObjectProperty["identifier"],
-      this.optionalLazyObjectProperty.stub.map((value) =>
-        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
+      ...this.optionalLazyObjectProperty.stub
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+            .identifier,
+        ]),
     );
     resource.add(
       Child.$properties.optionalObjectProperty["identifier"],
-      this.optionalObjectProperty.map((value) =>
-        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
+      ...this.optionalObjectProperty
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+            .identifier,
+        ]),
     );
     resource.add(
       UnionMember2.$properties.optionalStringProperty["identifier"],
-      this.optionalStringProperty,
+      ...this.optionalStringProperty.toList(),
     );
     resource.add(
       Nested.$properties.requiredStringProperty["identifier"],
-      this.requiredStringProperty,
+      ...[this.requiredStringProperty],
     );
     return resource;
   }

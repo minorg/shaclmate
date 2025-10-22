@@ -185,10 +185,11 @@ export class OptionType<ItemTypeT extends Type> extends Type {
     const itemTypeToRdfExpression = this.itemType.toRdfExpression({
       variables: { ...variables, value: "value" },
     });
-    if (itemTypeToRdfExpression === "value") {
-      return variables.value;
+    let toRdfExpression = `${variables.value}.toList()`;
+    if (itemTypeToRdfExpression !== "[value]") {
+      toRdfExpression = `${toRdfExpression}.flatMap((value) => ${itemTypeToRdfExpression})`;
     }
-    return `${variables.value}.map((value) => ${itemTypeToRdfExpression})`;
+    return toRdfExpression;
   }
 
   override useImports(

@@ -505,12 +505,12 @@ ${this.memberTypes
   }: Parameters<Type["toRdfExpression"]>[0]): string {
     return this.ternaryExpression({
       memberTypeExpression: (memberType) =>
-        memberType.toRdfExpression({
+        `(${memberType.toRdfExpression({
           variables: {
             ...variables,
             value: memberType.payload(variables.value),
           },
-        }),
+        })} as readonly Parameters<rdfjsResource.MutableResource["add"]>[1][])`,
       variables,
     });
   }
@@ -544,12 +544,18 @@ ${this.memberTypes
       if (expression.length === 0) {
         return memberTypeExpression(memberType);
       }
+
+      const memberTypeExpression_ = memberTypeExpression(memberType);
+      if (memberTypeExpression_ === expression) {
+        return expression;
+      }
+
       return `(${memberType.discriminatorValues
         .map(
           (value) =>
             `${this.discriminatorVariable(variables.value)} === "${value}"`,
         )
-        .join(" || ")}) ? ${memberTypeExpression(memberType)} : ${expression}`;
+        .join(" || ")}) ? ${memberTypeExpression_} : ${expression}`;
     }, "");
   }
 }

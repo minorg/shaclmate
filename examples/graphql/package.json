@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@shaclmate/runtime": "3.0.2",
+    "@shaclmate/runtime": "3.0.3",
     "graphql-yoga": "5.14.0"
   },
   "devDependencies": {},
@@ -29,5 +29,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "3.0.2"
+  "version": "3.0.3"
 }

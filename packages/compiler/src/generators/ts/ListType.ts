@@ -399,7 +399,7 @@ export class ListType extends Type {
       }
     }
 
-    return `${variables.value}.length > 0 ? ${variables.value}.reduce(({ currentSubListResource, listResource }, item, itemIndex, list) => {
+    return `[${variables.value}.length > 0 ? ${variables.value}.reduce(({ currentSubListResource, listResource }, item, itemIndex, list) => {
     if (itemIndex === 0) {
       currentSubListResource = listResource;
     } else {
@@ -414,7 +414,7 @@ export class ListType extends Type {
     
     ${this.toRdfTypes.map((rdfType) => `currentSubListResource.add(${rdfjsTermExpression(rdf.type)}, dataFactory.namedNode("${rdfType.value}"))`).join("\n")}
         
-    currentSubListResource.add(${rdfjsTermExpression(rdf.first)}, ${this.itemType.toRdfExpression({ variables: { mutateGraph: variables.mutateGraph, predicate: rdfjsTermExpression(rdf.first), resource: "currentSubListResource", resourceSet: variables.resourceSet, value: "item" } })});
+    currentSubListResource.add(${rdfjsTermExpression(rdf.first)}, ...${this.itemType.toRdfExpression({ variables: { mutateGraph: variables.mutateGraph, predicate: rdfjsTermExpression(rdf.first), resource: "currentSubListResource", resourceSet: variables.resourceSet, value: "item" } })});
 
     if (itemIndex + 1 === list.length) {
       currentSubListResource.add(${rdfjsTermExpression(rdf.rest)}, ${rdfjsTermExpression(rdf.nil)});
@@ -433,7 +433,7 @@ export class ListType extends Type {
     currentSubListResource: ${mutableResourceTypeName} | null;
     listResource: ${mutableResourceTypeName};
   },
-).listResource.identifier : ${rdfjsTermExpression(rdf.nil)}`;
+).listResource.identifier : ${rdfjsTermExpression(rdf.nil)}]`;
   }
 
   override useImports(

@@ -794,9 +794,9 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
     const options = `{ mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} }`;
     switch (this.memberTypes[0].declarationType) {
       case "class":
-        return `${variables.value}.${syntheticNamePrefix}toRdf(${options})`;
+        return `[${variables.value}.${syntheticNamePrefix}toRdf(${options}).identifier]`;
       case "interface":
-        return `${this.staticModuleName}.${syntheticNamePrefix}toRdf(${variables.value}, ${options})`;
+        return `[${this.staticModuleName}.${syntheticNamePrefix}toRdf(${variables.value}, ${options}).identifier]`;
     }
   }
 

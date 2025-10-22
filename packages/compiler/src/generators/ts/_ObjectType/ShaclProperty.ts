@@ -276,7 +276,7 @@ export abstract class ShaclProperty<
     variables,
   }: Parameters<Property<TypeT>["toRdfStatements"]>[0]): readonly string[] {
     return [
-      `${variables.resource}.add(${this.predicate}, ${this.type.toRdfExpression(
+      `${variables.resource}.add(${this.predicate}, ...${this.type.toRdfExpression(
         {
           variables: { ...variables, predicate: this.predicate },
         },
