@@ -144,7 +144,6 @@ export class ObjectType extends DeclaredType {
     }
     if (this.features.has("json")) {
       imports.push(Import.ZOD);
-      imports.push(Import.ZOD_TO_JSON_SCHEMA);
     }
     if (this.features.has("rdf")) {
       imports.push(Import.PURIFY);

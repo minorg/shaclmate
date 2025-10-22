@@ -1,12 +1,11 @@
 import {
-  StoreFactory as _DatasetFactory,
-  DataFactory as dataFactory,
-} from "n3";
-const datasetFactory: rdfjs.DatasetCoreFactory = new _DatasetFactory();
-import type * as rdfjs from "@rdfjs/types";
-import * as graphql from "graphql";
-import * as purify from "purify-ts";
-import * as rdfjsResource from "rdfjs-resource";
+  dataFactory,
+  datasetFactory,
+  graphql,
+  purify,
+  type rdfjs,
+  rdfjsResource,
+} from "@shaclmate/runtime";
 export namespace $RdfVocabularies {
   export namespace rdf {
     export const first = dataFactory.namedNode(

@@ -1,3 +1,4 @@
+import { invariant } from "ts-invariant";
 import {
   type ImportDeclarationStructure,
   Project,
@@ -5,7 +6,7 @@ import {
 } from "ts-morph";
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
-import type { Import } from "./Import.js";
+import { Import } from "./Import.js";
 import { ObjectType } from "./ObjectType.js";
 import { ObjectUnionType } from "./ObjectUnionType.js";
 import { TypeFactory } from "./TypeFactory.js";
@@ -49,44 +50,58 @@ export class TsGenerator implements Generator {
     objectUnionTypes: readonly ObjectUnionType[];
     sourceFile: SourceFile;
   }): void {
-    // sourceFile.addStatements(this.configuration.dataFactoryImport);
-    sourceFile.addStatements([
-      'import { DataFactory as dataFactory, StoreFactory as _DatasetFactory } from "n3";',
-      "const datasetFactory: rdfjs.DatasetCoreFactory = new _DatasetFactory();",
-    ]);
-
     const declaredTypes: (ObjectType | ObjectUnionType)[] = [
       ...objectTypes,
       ...objectUnionTypes,
     ];
 
     // Gather imports
-    const imports: Import[] = [];
+    const imports: Import[] = [Import.DATA_FACTORY, Import.DATASET_FACTORY];
     for (const declaredType of declaredTypes) {
       imports.push(...declaredType.declarationImports);
     }
     // Deduplicate and add imports
-    const addedStringImports = new Set<string>();
-    const addedStructureImports: ImportDeclarationStructure[] = [];
+    const stringImports = new Set<string>();
+    const structureImports: ImportDeclarationStructure[] = [];
     for (const import_ of imports) {
       if (typeof import_ === "string") {
-        if (!addedStringImports.has(import_)) {
-          sourceFile.addStatements([import_]);
-        }
-        addedStringImports.add(import_);
+        stringImports.add(import_);
         continue;
       }
 
-      if (
-        !addedStructureImports.find(
-          (addedStructureImport) =>
-            addedStructureImport.moduleSpecifier === import_.moduleSpecifier,
-        )
-      ) {
-        sourceFile.addStatements([import_]);
-        addedStructureImports.push(import_);
+      const importWithSameModuleSpecifier = structureImports.find(
+        (structureImport) =>
+          structureImport.moduleSpecifier === import_.moduleSpecifier,
+      );
+
+      if (!importWithSameModuleSpecifier) {
+        structureImports.push(import_);
+        continue;
+      }
+
+      // Merge named imports
+      invariant(!import_.namespaceImport);
+      invariant(
+        Array.isArray(import_.namedImports) &&
+          import_.namedImports.every((value) => typeof value === "string"),
+      );
+      invariant(!importWithSameModuleSpecifier.namespaceImport);
+      invariant(
+        Array.isArray(importWithSameModuleSpecifier.namedImports) &&
+          importWithSameModuleSpecifier.namedImports.every(
+            (value) => typeof value === "string",
+          ),
+      );
+      for (const newNamedImport of import_.namedImports) {
+        if (
+          !importWithSameModuleSpecifier.namedImports.includes(newNamedImport)
+        ) {
+          importWithSameModuleSpecifier.namedImports.push(newNamedImport);
+        }
       }
     }
+    sourceFile.addStatements([...stringImports]);
+    sourceFile.addStatements(structureImports);
 
     // Deduplicate and add snippet declarations
     const addedSnippetDeclarations = new Set<string>();

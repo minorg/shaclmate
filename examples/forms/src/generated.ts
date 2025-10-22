@@ -1,13 +1,11 @@
 import {
-  StoreFactory as _DatasetFactory,
-  DataFactory as dataFactory,
-} from "n3";
-const datasetFactory: rdfjs.DatasetCoreFactory = new _DatasetFactory();
-import type * as rdfjs from "@rdfjs/types";
-import * as purify from "purify-ts";
-import * as rdfjsResource from "rdfjs-resource";
-import { z as zod } from "zod";
-import { zodToJsonSchema } from "zod-to-json-schema";
+  dataFactory,
+  datasetFactory,
+  purify,
+  type rdfjs,
+  rdfjsResource,
+  zod,
+} from "@shaclmate/runtime";
 export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
 
 export namespace $EqualsResult {
@@ -354,7 +352,7 @@ export namespace NestedNodeShape {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -860,7 +858,7 @@ export namespace FormNodeShape {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {

@@ -4,6 +4,8 @@
     "@types/n3": "^1.21.1",
     "@types/sparqljs": "3.1.12",
     "@types/uuid": "^9.0.1",
+    "graphql": "16.11.0",
+    "graphql-scalars": "1.24.2",
     "js-sha256": "^0.11.0",
     "n3": "^1.21.3",
     "purify-ts": "^2.1.0",
@@ -11,8 +13,7 @@
     "rdfjs-resource": "1.0.22",
     "sparqljs": "3.7.3",
     "uuid": "^9.0.1",
-    "zod": "3.24.1",
-    "zod-to-json-schema": "3.24.1"
+    "zod": "^4.1.12"
   },
   "devDependencies": {},
   "exports": {
@@ -28,10 +29,6 @@
   "license": "Apache-2.0",
   "name": "@shaclmate/runtime",
   "packageManager": "npm@10.9.0",
-  "peerDependencies": {
-    "graphql": "16.11.0",
-    "graphql-scalars": "1.24.2"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/minorg/shaclmate"
@@ -52,5 +49,5 @@
     "unlink": "npm unlink -g @shaclmate/runtime"
   },
   "type": "module",
-  "version": "2.0.24"
+  "version": "3.0.0"
 }

@@ -1,17 +1,15 @@
 import {
-  StoreFactory as _DatasetFactory,
-  DataFactory as dataFactory,
-} from "n3";
-const datasetFactory: rdfjs.DatasetCoreFactory = new _DatasetFactory();
-import type * as rdfjs from "@rdfjs/types";
-import { sha256 } from "js-sha256";
-import * as purify from "purify-ts";
-import * as rdfLiteral from "rdf-literal";
-import * as rdfjsResource from "rdfjs-resource";
-import * as sparqljs from "sparqljs";
-import * as uuid from "uuid";
-import { z as zod } from "zod";
-import { zodToJsonSchema } from "zod-to-json-schema";
+  dataFactory,
+  datasetFactory,
+  purify,
+  rdfLiteral,
+  type rdfjs,
+  rdfjsResource,
+  sha256,
+  sparqljs,
+  uuid,
+  zod,
+} from "@shaclmate/runtime";
 import { ExternClass } from "./ExternClass.js";
 export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
 
@@ -563,7 +561,7 @@ export namespace $NamedDefaultStub {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -866,7 +864,7 @@ export namespace $DefaultStub {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -1139,7 +1137,7 @@ export namespace UuidV4IriInterface {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -1711,7 +1709,7 @@ export namespace UuidV4IriClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -2546,7 +2544,7 @@ export namespace UnionPropertiesClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -3979,7 +3977,7 @@ export namespace TermPropertiesClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -5014,7 +5012,7 @@ export namespace StubInterfaceUnionMember2 {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -5631,7 +5629,7 @@ export namespace StubInterfaceUnionMember1 {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -6314,7 +6312,7 @@ export namespace StubClassUnionMember2 {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -6908,7 +6906,7 @@ export namespace StubClassUnionMember1 {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -7508,7 +7506,7 @@ export namespace Sha256IriClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -8046,7 +8044,7 @@ export namespace PropertyVisibilitiesClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -8929,7 +8927,7 @@ export namespace PropertyCardinalitiesClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -9970,7 +9968,7 @@ export namespace OrderedPropertiesClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -10717,7 +10715,7 @@ export namespace NonClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -11366,7 +11364,7 @@ export namespace MutablePropertiesClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -12478,7 +12476,7 @@ export namespace ListPropertiesClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -13287,7 +13285,7 @@ export namespace StubInterface {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -14923,7 +14921,7 @@ export namespace LazyPropertiesInterface {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -16756,7 +16754,7 @@ export namespace StubClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -18421,7 +18419,7 @@ export namespace LazyPropertiesClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -19931,7 +19929,7 @@ export namespace LazilyResolvedIriInterface {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -20513,7 +20511,7 @@ export namespace LazilyResolvedIriClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -20969,7 +20967,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -21593,7 +21591,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -22283,7 +22281,7 @@ export namespace LazilyResolvedClassUnionMember2 {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -22880,7 +22878,7 @@ export namespace LazilyResolvedClassUnionMember1 {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -23414,7 +23412,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -24106,7 +24104,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -24769,7 +24767,7 @@ export namespace LanguageInPropertiesClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -25484,7 +25482,7 @@ export namespace IriClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -25762,7 +25760,7 @@ export namespace InterfaceUnionMember2b {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -26286,7 +26284,7 @@ export namespace InterfaceUnionMember2a {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -26810,7 +26808,7 @@ export namespace InterfaceUnionMember1 {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -27317,7 +27315,7 @@ export namespace Interface {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -27875,7 +27873,7 @@ export namespace IndirectRecursiveHelperClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -28371,7 +28369,7 @@ export namespace IndirectRecursiveClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -28977,7 +28975,7 @@ export namespace InPropertiesClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -29938,7 +29936,7 @@ export namespace InIdentifierClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -30517,7 +30515,7 @@ export namespace HasValuePropertiesClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -31123,7 +31121,7 @@ export namespace ExternClassPropertyClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -31588,7 +31586,7 @@ export namespace ExplicitRdfTypeClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -32187,7 +32185,7 @@ export namespace ExplicitFromToRdfTypesClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -32794,7 +32792,7 @@ export namespace DirectRecursiveClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -33434,7 +33432,7 @@ export namespace DefaultValuePropertiesClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -34281,7 +34279,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -34909,7 +34907,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -35409,7 +35407,7 @@ export namespace ConcreteParentInterfaceStatic {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -36052,7 +36050,7 @@ export namespace ConcreteChildInterface {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -36757,7 +36755,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -37175,7 +37173,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -37559,7 +37557,7 @@ export namespace ConcreteParentClassStatic {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -38169,7 +38167,7 @@ export namespace ConcreteChildClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -38777,7 +38775,7 @@ export namespace ClassUnionMember2 {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -39360,7 +39358,7 @@ export namespace ClassUnionMember1 {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -39857,7 +39855,7 @@ export namespace BlankInterface {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -40213,7 +40211,7 @@ export namespace BlankClass {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
@@ -40527,7 +40525,7 @@ export namespace AbstractBaseClassForExternClassStatic {
   }
 
   export function $jsonSchema() {
-    return zodToJsonSchema($jsonZodSchema());
+    return zod.toJSONSchema($jsonZodSchema());
   }
 
   export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {

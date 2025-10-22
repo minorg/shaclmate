@@ -6,70 +6,76 @@ export type Import = ImportDeclarationStructure | string;
  * Singleton values for common imports.
  */
 export namespace Import {
+  export const DATA_FACTORY: Import = {
+    kind: StructureKind.ImportDeclaration,
+    moduleSpecifier: "@shaclmate/runtime",
+    namedImports: ["dataFactory"],
+  };
+
+  export const DATASET_FACTORY: Import = {
+    kind: StructureKind.ImportDeclaration,
+    moduleSpecifier: "@shaclmate/runtime",
+    namedImports: ["datasetFactory"],
+  };
+
   export const GRAPHQL: Import = {
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "graphql",
-    namespaceImport: "graphql",
+    moduleSpecifier: "@shaclmate/runtime",
+    namedImports: ["graphql"],
   };
 
   export const GRAPHQL_SCALARS: Import = {
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "graphql-scalars",
-    namespaceImport: "graphqlScalars",
+    moduleSpecifier: "@shaclmate/runtime",
+    namedImports: ["graphqlScalars"],
   };
 
   export const PURIFY: Import = {
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "purify-ts",
-    namespaceImport: "purify",
+    moduleSpecifier: "@shaclmate/runtime",
+    namedImports: ["purify"],
   };
 
   export const RDF_LITERAL: Import = {
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "rdf-literal",
-    namespaceImport: "rdfLiteral",
+    moduleSpecifier: "@shaclmate/runtime",
+    namedImports: ["rdfLiteral"],
   };
 
   export const RDFJS_RESOURCE: Import = {
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "rdfjs-resource",
-    namespaceImport: "rdfjsResource",
+    moduleSpecifier: "@shaclmate/runtime",
+    namedImports: ["rdfjsResource"],
   };
 
   export const RDFJS_TYPES: Import = {
     isTypeOnly: true,
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "@rdfjs/types",
-    namespaceImport: "rdfjs",
+    moduleSpecifier: "@shaclmate/runtime",
+    namedImports: ["rdfjs"],
   };
 
   export const SHA256: Import = {
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "js-sha256",
+    moduleSpecifier: "@shaclmate/runtime",
     namedImports: ["sha256"],
   };
 
   export const SPARQLJS: Import = {
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "sparqljs",
-    namespaceImport: "sparqljs",
+    moduleSpecifier: "@shaclmate/runtime",
+    namedImports: ["sparqljs"],
   };
 
   export const UUID: Import = {
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "uuid",
-    namespaceImport: "uuid",
+    moduleSpecifier: "@shaclmate/runtime",
+    namedImports: ["uuid"],
   };
 
   export const ZOD: Import = {
     kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "zod",
-    namedImports: [{ alias: "zod", name: "z" }],
-  };
-
-  export const ZOD_TO_JSON_SCHEMA: Import = {
-    kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "zod-to-json-schema",
-    namedImports: [{ name: "zodToJsonSchema" }],
+    moduleSpecifier: "@shaclmate/runtime",
+    namedImports: ["zod"],
   };
 }
