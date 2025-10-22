@@ -26,10 +26,9 @@ The generated code is serialized by [ts-morph](https://ts-morph.com/) with minim
 
 ### Add runtime library
 
-The generated TypeScript code relies on various third-party libraries such as [sparql.js](https://github.com/RubenVerborgh/SPARQL.js/). To include these third-party libraries in your project, add [`@shaclmate/runtime`](https://www.npmjs.com/package/@shaclmate/runtime) to your `package.json` `dependencies`.
-
-Note that the `@shaclmate/runtime` package does not include any code itself, only transitive `dependencies`.
-
+The generated TypeScript code relies on various third-party libraries such as [sparql.js](https://github.com/RubenVerborgh/SPARQL.js/). To include these third-party libraries in your project:
+* add [`@shaclmate/runtime`](https://www.npmjs.com/package/@shaclmate/runtime) to your `package.json` `dependencies`
+* add the `@shaclmate/runtime` `peerDependencies` to your `package.json` `dependencies`
 
 ## Features
 

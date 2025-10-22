@@ -40,15 +40,41 @@ const externalDependencyVersions = {
   "@rdfjs/term-set": { "@rdfjs/term-set": "^2.0.3" },
   "@rdfjs/types": { "@rdfjs/types": "^1.1.0" },
   "@tpluscode/rdf-ns-builders": { "@tpluscode/rdf-ns-builders": "^4.3.0" },
+  "@types/uuid": { "@types/uuid": "^9.0.1" },
   "@types/n3": { "@types/n3": "^1.21.1" },
   "@types/rdfjs__term-map": { "@types/rdfjs__term-map": "^2.0.10" },
   "@types/rdfjs__term-set": { "@types/rdfjs__term-set": "^2.0.9" },
+  "@types/sparqljs": { "@types/sparqljs": "3.1.12" },
   graphql: { graphql: "16.11.0" },
   "graphql-scalars": { "graphql-scalars": "1.24.2" },
+  "js-sha256": { "js-sha256": "^0.11.0" },
   n3: { n3: "^1.21.3" },
   pino: { pino: "^9.1.0" },
   "purify-ts": { "purify-ts": "^2.1.0" },
+  "rdf-literal": { "rdf-literal": "^1.3.2" },
   "rdfjs-resource": { "rdfjs-resource": "1.0.22" },
+  sparqljs: { sparqljs: "3.7.3" },
+  uuid: { uuid: "^9.0.1" },
+  zod: {
+    zod: "^4.1.12",
+  },
+};
+
+const runtimeExternalPeerDependencies = {
+  ...externalDependencyVersions["@rdfjs/types"],
+  ...externalDependencyVersions["@types/n3"],
+  ...externalDependencyVersions["@types/sparqljs"],
+  ...externalDependencyVersions["@types/uuid"],
+  ...externalDependencyVersions.graphql,
+  ...externalDependencyVersions["graphql-scalars"],
+  ...externalDependencyVersions["js-sha256"],
+  ...externalDependencyVersions["n3"],
+  ...externalDependencyVersions["purify-ts"],
+  ...externalDependencyVersions["rdf-literal"],
+  ...externalDependencyVersions["rdfjs-resource"],
+  ...externalDependencyVersions["sparqljs"],
+  ...externalDependencyVersions["uuid"],
+  ...externalDependencyVersions["zod"],
 };
 
 // Packages should be topologically sorted
@@ -56,9 +82,10 @@ const packages: readonly Package[] = [
   // Compiler tests depend on kitchen sink
   {
     dependencies: {
-      internal: ["runtime"],
+      external: runtimeExternalPeerDependencies,
     },
     directory: "examples",
+    linkableDependencies: ["rdfjs-resource"],
     name: "kitchen-sink",
   },
   {
@@ -112,41 +139,19 @@ const packages: readonly Package[] = [
     devDependencies: {
       external: {
         "@kos-kit/sparql-client": "2.0.115",
-        ...externalDependencyVersions["@types/n3"],
         oxigraph: "0.4.11",
-        ...externalDependencyVersions.n3,
-        ...externalDependencyVersions["rdfjs-resource"],
+        ...runtimeExternalPeerDependencies,
       },
-      internal: ["kitchen-sink-example", "runtime"],
+      internal: ["kitchen-sink-example"],
     },
     directory: "packages",
     linkableDependencies: ["@kos-kit/sparql-client", "rdfjs-resource"],
     name: "compiler",
   },
   {
-    dependencies: {
-      external: {
-        ...externalDependencyVersions["@rdfjs/types"],
-        ...externalDependencyVersions["@types/n3"],
-        "@types/sparqljs": "3.1.12",
-        "@types/uuid": "^9.0.1",
-        "js-sha256": "^0.11.0",
-        ...externalDependencyVersions["n3"],
-        ...externalDependencyVersions["purify-ts"],
-        "rdf-literal": "^1.3.2",
-        ...externalDependencyVersions["rdfjs-resource"],
-        sparqljs: "3.7.3",
-        uuid: "^9.0.1",
-        zod: "^4.1.12",
-      },
-    },
     directory: "packages",
-    linkableDependencies: ["rdfjs-resource"],
     peerDependencies: {
-      external: {
-        ...externalDependencyVersions.graphql,
-        ...externalDependencyVersions["graphql-scalars"],
-      },
+      external: runtimeExternalPeerDependencies,
     },
     name: "runtime",
   },
@@ -180,8 +185,8 @@ const packages: readonly Package[] = [
         "@mui/x-date-pickers": "^7.17.0",
         react: "^18",
         "react-dom": "^18",
+        ...runtimeExternalPeerDependencies,
       },
-      internal: ["runtime"],
     },
     devDependencies: {
       external: {
@@ -192,6 +197,7 @@ const packages: readonly Package[] = [
       },
     },
     directory: "examples",
+    linkableDependencies: ["rdfjs-resource"],
     name: "forms",
     scripts: {
       build: "tsc && vite build",
@@ -204,17 +210,8 @@ const packages: readonly Package[] = [
   {
     dependencies: {
       external: {
-        ...externalDependencyVersions.graphql,
-        ...externalDependencyVersions["graphql-scalars"],
         "graphql-yoga": "5.14.0",
-        ...externalDependencyVersions.n3,
-        ...externalDependencyVersions["rdfjs-resource"],
-      },
-      internal: ["runtime"],
-    },
-    devDependencies: {
-      external: {
-        ...externalDependencyVersions["@types/n3"],
+        ...runtimeExternalPeerDependencies,
       },
     },
     directory: "examples",
