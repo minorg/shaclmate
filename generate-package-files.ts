@@ -83,6 +83,7 @@ const packages: readonly Package[] = [
         ...externalDependencyVersions["purify-ts"],
         ...externalDependencyVersions["rdfjs-resource"],
       },
+      internal: ["runtime"],
     },
     devDependencies: {
       external: {
@@ -117,7 +118,7 @@ const packages: readonly Package[] = [
         "ts-morph": "^26.0.0",
         "typescript-memoize": "^1.1.1",
       },
-      internal: ["shacl-ast"],
+      internal: ["runtime", "shacl-ast"],
     },
     devDependencies: {
       external: {
