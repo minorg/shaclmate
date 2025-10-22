@@ -10,8 +10,8 @@
     "rdfjs-resource": "1.0.22"
   },
   "devDependencies": {
-    "@types/n3": "^1.21.1",
-    "n3": "^1.21.3"
+    "@types/n3": "^1.26.0",
+    "n3": "^1.26.0"
   },
   "files": [
     "dist/*.d.ts",
@@ -42,5 +42,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "3.0.1"
+  "version": "3.0.2"
 }

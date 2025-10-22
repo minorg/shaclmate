@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@shaclmate/runtime": "3.0.1",
+    "@shaclmate/runtime": "3.0.2",
     "@jsonforms/core": "3.5.1",
     "@jsonforms/material-renderers": "3.5.1",
     "@jsonforms/react": "3.5.1",
@@ -33,5 +33,5 @@
     "start": "vite dev --port 3000"
   },
   "type": "module",
-  "version": "3.0.1"
+  "version": "3.0.2"
 }

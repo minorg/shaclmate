@@ -5,7 +5,7 @@ import path from "node:path";
 import url from "node:url";
 import { stringify as stringifyYaml } from "yaml";
 
-const VERSION = "3.0.1";
+const VERSION = "3.0.2";
 
 type PackageName =
   | "cli"
@@ -41,14 +41,14 @@ const externalDependencyVersions = {
   "@rdfjs/types": { "@rdfjs/types": "^1.1.0" },
   "@tpluscode/rdf-ns-builders": { "@tpluscode/rdf-ns-builders": "^4.3.0" },
   "@types/uuid": { "@types/uuid": "^9.0.1" },
-  "@types/n3": { "@types/n3": "^1.21.1" },
+  "@types/n3": { "@types/n3": "^1.26.0" },
   "@types/rdfjs__term-map": { "@types/rdfjs__term-map": "^2.0.10" },
   "@types/rdfjs__term-set": { "@types/rdfjs__term-set": "^2.0.9" },
   "@types/sparqljs": { "@types/sparqljs": "3.1.12" },
   graphql: { graphql: "16.11.0" },
   "graphql-scalars": { "graphql-scalars": "1.24.2" },
   "js-sha256": { "js-sha256": "^0.11.0" },
-  n3: { n3: "^1.21.3" },
+  n3: { n3: "^1.26.0" },
   pino: { pino: "^9.1.0" },
   "purify-ts": { "purify-ts": "^2.1.0" },
   "rdf-literal": { "rdf-literal": "^1.3.2" },

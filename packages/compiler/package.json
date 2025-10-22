@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@shaclmate/shacl-ast": "3.0.1",
+    "@shaclmate/shacl-ast": "3.0.2",
     "@rdfjs/prefix-map": "^0.1.2",
     "@rdfjs/term-map": "^2.0.2",
     "@rdfjs/term-set": "^2.0.3",
@@ -22,8 +22,8 @@
     "typescript-memoize": "^1.1.1"
   },
   "devDependencies": {
-    "@shaclmate/kitchen-sink-example": "3.0.1",
-    "@shaclmate/runtime": "3.0.1",
+    "@shaclmate/kitchen-sink-example": "3.0.2",
+    "@shaclmate/runtime": "3.0.2",
     "@kos-kit/sparql-client": "2.0.115",
     "oxigraph": "0.4.11"
   },
@@ -72,5 +72,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "3.0.1"
+  "version": "3.0.2"
 }
