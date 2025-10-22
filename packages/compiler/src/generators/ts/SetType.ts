@@ -227,9 +227,11 @@ export class SetType<ItemTypeT extends Type> extends Type {
   override toRdfExpression({
     variables,
   }: Parameters<Type["toRdfExpression"]>[0]): string {
-    return `${variables.value}.map((item) => ${this.itemType.toRdfExpression({
-      variables: { ...variables, value: "item" },
-    })})`;
+    return `${variables.value}.flatMap((item) => ${this.itemType.toRdfExpression(
+      {
+        variables: { ...variables, value: "item" },
+      },
+    )})`;
   }
 
   override useImports(

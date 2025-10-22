@@ -354,9 +354,9 @@ export class TermType<
     return this.defaultValue
       .map(
         (defaultValue) =>
-          `!${variables.value}.equals(${rdfjsTermExpression(defaultValue)}) ? ${variables.value} : undefined`,
+          `(!${variables.value}.equals(${rdfjsTermExpression(defaultValue)}) ? [${variables.value}] : [])`,
       )
-      .orDefault(variables.value);
+      .orDefault(`[${variables.value}]`);
   }
 
   override useImports(): readonly Import[] {

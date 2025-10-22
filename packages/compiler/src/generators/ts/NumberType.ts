@@ -74,8 +74,8 @@ export abstract class NumberType extends PrimitiveType<number> {
     return this.primitiveDefaultValue
       .map(
         (defaultValue) =>
-          `${variables.value} !== ${defaultValue} ? ${variables.value} : undefined`,
+          `(${variables.value} !== ${defaultValue} ? [${variables.value}] : [])`,
       )
-      .orDefault(variables.value);
+      .orDefault(`[${variables.value}]`);
   }
 }

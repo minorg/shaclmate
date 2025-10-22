@@ -1364,7 +1364,7 @@ export namespace UuidV4IriInterface {
     );
     resource.add(
       UuidV4IriInterface.$properties.uuidV4IriProperty["identifier"],
-      _uuidV4IriInterface.uuidV4IriProperty,
+      ...[_uuidV4IriInterface.uuidV4IriProperty],
     );
     return resource;
   }
@@ -1644,7 +1644,7 @@ export class UuidV4IriClass {
     });
     resource.add(
       UuidV4IriClass.$properties.uuidV4IriProperty["identifier"],
-      this.uuidV4IriProperty,
+      ...[this.uuidV4IriProperty],
     );
     return resource;
   }
@@ -2353,7 +2353,7 @@ export class UnionPropertiesClass {
             : this.$identifier.value,
         $type: this.$type,
         narrowLiteralsProperty: this.narrowLiteralsProperty
-          .map((item) => (typeof item === "string" ? item : item))
+          .map((item) => item)
           .extract(),
         unrelatedTypesProperty: this.unrelatedTypesProperty
           .map((item) => (typeof item === "object" ? item.$toJson() : item))
@@ -2406,25 +2406,37 @@ export class UnionPropertiesClass {
     });
     resource.add(
       UnionPropertiesClass.$properties.narrowLiteralsProperty["identifier"],
-      this.narrowLiteralsProperty.map((value) =>
-        typeof value === "string" ? value : value,
-      ),
+      ...this.narrowLiteralsProperty
+        .toList()
+        .flatMap(
+          (value) =>
+            [value] as readonly Parameters<
+              rdfjsResource.MutableResource["add"]
+            >[1][],
+        ),
     );
     resource.add(
       UnionPropertiesClass.$properties.unrelatedTypesProperty["identifier"],
-      this.unrelatedTypesProperty.map((value) =>
+      ...this.unrelatedTypesProperty.toList().flatMap((value) =>
         typeof value === "object"
-          ? value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
-          : value,
+          ? ([
+              value.$toRdf({
+                mutateGraph: mutateGraph,
+                resourceSet: resourceSet,
+              }).identifier,
+            ] as readonly Parameters<rdfjsResource.MutableResource["add"]>[1][])
+          : ([value] as readonly Parameters<
+              rdfjsResource.MutableResource["add"]
+            >[1][]),
       ),
     );
     resource.add(
       UnionPropertiesClass.$properties.widenedLiteralsProperty["identifier"],
-      this.widenedLiteralsProperty,
+      ...this.widenedLiteralsProperty.toList(),
     );
     resource.add(
       UnionPropertiesClass.$properties.widenedTermsProperty["identifier"],
-      this.widenedTermsProperty,
+      ...this.widenedTermsProperty.toList(),
     );
     return resource;
   }
@@ -2494,7 +2506,7 @@ export namespace UnionPropertiesClass {
       : dataFactory.namedNode($jsonObject["@id"]);
     const narrowLiteralsProperty = purify.Maybe.fromNullable(
       $jsonObject["narrowLiteralsProperty"],
-    ).map((item) => (typeof item === "string" ? item : item));
+    );
     const unrelatedTypesProperty = purify.Maybe.fromNullable(
       $jsonObject["unrelatedTypesProperty"],
     ).map((item) =>
@@ -3793,45 +3805,45 @@ export class TermPropertiesClass {
     });
     resource.add(
       TermPropertiesClass.$properties.booleanTermProperty["identifier"],
-      this.booleanTermProperty,
+      ...this.booleanTermProperty.toList().flat(),
     );
     resource.add(
       TermPropertiesClass.$properties.dateTermProperty["identifier"],
-      this.dateTermProperty.map((value) =>
+      ...this.dateTermProperty.toList().flatMap((value) => [
         rdfLiteral.toRdf(value, {
           dataFactory,
           datatype: $RdfVocabularies.xsd.date,
         }),
-      ),
+      ]),
     );
     resource.add(
       TermPropertiesClass.$properties.dateTimeTermProperty["identifier"],
-      this.dateTimeTermProperty.map((value) =>
+      ...this.dateTimeTermProperty.toList().flatMap((value) => [
         rdfLiteral.toRdf(value, {
           dataFactory,
           datatype: $RdfVocabularies.xsd.dateTime,
         }),
-      ),
+      ]),
     );
     resource.add(
       TermPropertiesClass.$properties.iriTermProperty["identifier"],
-      this.iriTermProperty,
+      ...this.iriTermProperty.toList(),
     );
     resource.add(
       TermPropertiesClass.$properties.literalTermProperty["identifier"],
-      this.literalTermProperty,
+      ...this.literalTermProperty.toList(),
     );
     resource.add(
       TermPropertiesClass.$properties.numberTermProperty["identifier"],
-      this.numberTermProperty,
+      ...this.numberTermProperty.toList(),
     );
     resource.add(
       TermPropertiesClass.$properties.stringTermProperty["identifier"],
-      this.stringTermProperty,
+      ...this.stringTermProperty.toList(),
     );
     resource.add(
       TermPropertiesClass.$properties.termProperty["identifier"],
-      this.termProperty,
+      ...this.termProperty.toList(),
     );
     return resource;
   }
@@ -5286,7 +5298,7 @@ export namespace StubInterfaceUnionMember2 {
       StubInterfaceUnionMember2.$properties.lazilyResolvedStringProperty[
         "identifier"
       ],
-      _stubInterfaceUnionMember2.lazilyResolvedStringProperty,
+      ...[_stubInterfaceUnionMember2.lazilyResolvedStringProperty],
     );
     return resource;
   }
@@ -5903,7 +5915,7 @@ export namespace StubInterfaceUnionMember1 {
       StubInterfaceUnionMember1.$properties.lazilyResolvedStringProperty[
         "identifier"
       ],
-      _stubInterfaceUnionMember1.lazilyResolvedStringProperty,
+      ...[_stubInterfaceUnionMember1.lazilyResolvedStringProperty],
     );
     return resource;
   }
@@ -6244,7 +6256,7 @@ export class StubClassUnionMember2 {
       StubClassUnionMember2.$properties.lazilyResolvedStringProperty[
         "identifier"
       ],
-      this.lazilyResolvedStringProperty,
+      ...[this.lazilyResolvedStringProperty],
     );
     return resource;
   }
@@ -6838,7 +6850,7 @@ export class StubClassUnionMember1 {
       StubClassUnionMember1.$properties.lazilyResolvedStringProperty[
         "identifier"
       ],
-      this.lazilyResolvedStringProperty,
+      ...[this.lazilyResolvedStringProperty],
     );
     return resource;
   }
@@ -7441,7 +7453,7 @@ export class Sha256IriClass {
     });
     resource.add(
       Sha256IriClass.$properties.sha256IriProperty["identifier"],
-      this.sha256IriProperty,
+      ...[this.sha256IriProperty],
     );
     return resource;
   }
@@ -7961,15 +7973,15 @@ export class PropertyVisibilitiesClass {
     });
     resource.add(
       PropertyVisibilitiesClass.$properties.privateProperty["identifier"],
-      this.privateProperty,
+      ...[this.privateProperty],
     );
     resource.add(
       PropertyVisibilitiesClass.$properties.protectedProperty["identifier"],
-      this.protectedProperty,
+      ...[this.protectedProperty],
     );
     resource.add(
       PropertyVisibilitiesClass.$properties.publicProperty["identifier"],
-      this.publicProperty,
+      ...[this.publicProperty],
     );
     return resource;
   }
@@ -8826,25 +8838,25 @@ export class PropertyCardinalitiesClass {
       PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
         "identifier"
       ],
-      this.emptyStringSetProperty.map((item) => item),
+      ...this.emptyStringSetProperty.flatMap((item) => [item]),
     );
     resource.add(
       PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
         "identifier"
       ],
-      this.nonEmptyStringSetProperty.map((item) => item),
+      ...this.nonEmptyStringSetProperty.flatMap((item) => [item]),
     );
     resource.add(
       PropertyCardinalitiesClass.$properties.optionalStringProperty[
         "identifier"
       ],
-      this.optionalStringProperty,
+      ...this.optionalStringProperty.toList(),
     );
     resource.add(
       PropertyCardinalitiesClass.$properties.requiredStringProperty[
         "identifier"
       ],
-      this.requiredStringProperty,
+      ...[this.requiredStringProperty],
     );
     return resource;
   }
@@ -9885,15 +9897,15 @@ export class OrderedPropertiesClass {
     });
     resource.add(
       OrderedPropertiesClass.$properties.orderedPropertyC["identifier"],
-      this.orderedPropertyC,
+      ...[this.orderedPropertyC],
     );
     resource.add(
       OrderedPropertiesClass.$properties.orderedPropertyB["identifier"],
-      this.orderedPropertyB,
+      ...[this.orderedPropertyB],
     );
     resource.add(
       OrderedPropertiesClass.$properties.orderedPropertyA["identifier"],
-      this.orderedPropertyA,
+      ...[this.orderedPropertyA],
     );
     return resource;
   }
@@ -10652,7 +10664,7 @@ export class NonClass {
     });
     resource.add(
       NonClass.$properties.nonClassProperty["identifier"],
-      this.nonClassProperty,
+      ...[this.nonClassProperty],
     );
     return resource;
   }
@@ -11231,7 +11243,7 @@ export class MutablePropertiesClass {
     });
     resource.add(
       MutablePropertiesClass.$properties.mutableListProperty["identifier"],
-      this.mutableListProperty.map((value) =>
+      ...this.mutableListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
               (
@@ -11254,7 +11266,10 @@ export class MutablePropertiesClass {
                   currentSubListResource = newSubListResource;
                 }
 
-                currentSubListResource.add($RdfVocabularies.rdf.first, item);
+                currentSubListResource.add(
+                  $RdfVocabularies.rdf.first,
+                  ...[item],
+                );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
@@ -11277,15 +11292,15 @@ export class MutablePropertiesClass {
               },
             ).listResource.identifier
           : $RdfVocabularies.rdf.nil,
-      ),
+      ]),
     );
     resource.add(
       MutablePropertiesClass.$properties.mutableSetProperty["identifier"],
-      this.mutableSetProperty.map((item) => item),
+      ...this.mutableSetProperty.flatMap((item) => [item]),
     );
     resource.add(
       MutablePropertiesClass.$properties.mutableStringProperty["identifier"],
-      this.mutableStringProperty,
+      ...this.mutableStringProperty.toList(),
     );
     return resource;
   }
@@ -12297,7 +12312,7 @@ export class ListPropertiesClass {
     });
     resource.add(
       ListPropertiesClass.$properties.objectListProperty["identifier"],
-      this.objectListProperty.map((value) =>
+      ...this.objectListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
               (
@@ -12322,10 +12337,12 @@ export class ListPropertiesClass {
 
                 currentSubListResource.add(
                   $RdfVocabularies.rdf.first,
-                  item.$toRdf({
-                    mutateGraph: mutateGraph,
-                    resourceSet: resourceSet,
-                  }),
+                  ...[
+                    item.$toRdf({
+                      mutateGraph: mutateGraph,
+                      resourceSet: resourceSet,
+                    }).identifier,
+                  ],
                 );
 
                 if (itemIndex + 1 === list.length) {
@@ -12349,11 +12366,11 @@ export class ListPropertiesClass {
               },
             ).listResource.identifier
           : $RdfVocabularies.rdf.nil,
-      ),
+      ]),
     );
     resource.add(
       ListPropertiesClass.$properties.stringListProperty["identifier"],
-      this.stringListProperty.map((value) =>
+      ...this.stringListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
               (
@@ -12376,7 +12393,10 @@ export class ListPropertiesClass {
                   currentSubListResource = newSubListResource;
                 }
 
-                currentSubListResource.add($RdfVocabularies.rdf.first, item);
+                currentSubListResource.add(
+                  $RdfVocabularies.rdf.first,
+                  ...[item],
+                );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
@@ -12399,7 +12419,7 @@ export class ListPropertiesClass {
               },
             ).listResource.identifier
           : $RdfVocabularies.rdf.nil,
-      ),
+      ]),
     );
     return resource;
   }
@@ -13508,7 +13528,7 @@ export namespace StubInterface {
     });
     resource.add(
       StubInterface.$properties.lazilyResolvedStringProperty["identifier"],
-      _stubInterface.lazilyResolvedStringProperty,
+      ...[_stubInterface.lazilyResolvedStringProperty],
     );
     return resource;
   }
@@ -15889,96 +15909,112 @@ export namespace LazyPropertiesInterface {
     resource.add(
       LazyPropertiesInterface.$properties
         .optionalLazyToResolvedInterfaceProperty["identifier"],
-      _lazyPropertiesInterface.optionalLazyToResolvedInterfaceProperty.stub.map(
-        (value) =>
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
+      ..._lazyPropertiesInterface.optionalLazyToResolvedInterfaceProperty.stub
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+            .identifier,
+        ]),
     );
     resource.add(
       LazyPropertiesInterface.$properties
         .optionalLazyToResolvedInterfaceUnionProperty["identifier"],
-      _lazyPropertiesInterface.optionalLazyToResolvedInterfaceUnionProperty.stub.map(
-        (value) =>
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
+      ..._lazyPropertiesInterface.optionalLazyToResolvedInterfaceUnionProperty.stub
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+            .identifier,
+        ]),
     );
     resource.add(
       LazyPropertiesInterface.$properties
         .optionalLazyToResolvedIriInterfaceProperty["identifier"],
-      _lazyPropertiesInterface.optionalLazyToResolvedIriInterfaceProperty.stub.map(
-        (value) =>
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
+      ..._lazyPropertiesInterface.optionalLazyToResolvedIriInterfaceProperty.stub
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+            .identifier,
+        ]),
     );
     resource.add(
       LazyPropertiesInterface.$properties
         .optionalStubInterfaceToResolvedInterfaceProperty["identifier"],
-      _lazyPropertiesInterface.optionalStubInterfaceToResolvedInterfaceProperty.stub.map(
-        (value) =>
+      ..._lazyPropertiesInterface.optionalStubInterfaceToResolvedInterfaceProperty.stub
+        .toList()
+        .flatMap((value) => [
           StubInterface.$toRdf(value, {
             mutateGraph: mutateGraph,
             resourceSet: resourceSet,
-          }),
-      ),
+          }).identifier,
+        ]),
     );
     resource.add(
       LazyPropertiesInterface.$properties
         .optionalStubInterfaceToResolvedInterfaceUnionProperty["identifier"],
-      _lazyPropertiesInterface.optionalStubInterfaceToResolvedInterfaceUnionProperty.stub.map(
-        (value) =>
+      ..._lazyPropertiesInterface.optionalStubInterfaceToResolvedInterfaceUnionProperty.stub
+        .toList()
+        .flatMap((value) => [
           StubInterface.$toRdf(value, {
             mutateGraph: mutateGraph,
             resourceSet: resourceSet,
-          }),
-      ),
+          }).identifier,
+        ]),
     );
     resource.add(
       LazyPropertiesInterface.$properties
         .optionalStubInterfaceUnionToResolvedInterfaceUnionProperty[
         "identifier"
       ],
-      _lazyPropertiesInterface.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty.stub.map(
-        (value) =>
+      ..._lazyPropertiesInterface.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty.stub
+        .toList()
+        .flatMap((value) => [
           StubInterfaceUnion.$toRdf(value, {
             mutateGraph: mutateGraph,
             resourceSet: resourceSet,
-          }),
-      ),
+          }).identifier,
+        ]),
     );
     resource.add(
       LazyPropertiesInterface.$properties
         .requiredLazyToResolvedInterfaceProperty["identifier"],
-      _lazyPropertiesInterface.requiredLazyToResolvedInterfaceProperty.stub.$toRdf(
-        { mutateGraph: mutateGraph, resourceSet: resourceSet },
-      ),
+      ...[
+        _lazyPropertiesInterface.requiredLazyToResolvedInterfaceProperty.stub.$toRdf(
+          { mutateGraph: mutateGraph, resourceSet: resourceSet },
+        ).identifier,
+      ],
     );
     resource.add(
       LazyPropertiesInterface.$properties
         .requiredStubInterfaceToResolvedInterfaceProperty["identifier"],
-      StubInterface.$toRdf(
-        _lazyPropertiesInterface
-          .requiredStubInterfaceToResolvedInterfaceProperty.stub,
-        { mutateGraph: mutateGraph, resourceSet: resourceSet },
-      ),
+      ...[
+        StubInterface.$toRdf(
+          _lazyPropertiesInterface
+            .requiredStubInterfaceToResolvedInterfaceProperty.stub,
+          { mutateGraph: mutateGraph, resourceSet: resourceSet },
+        ).identifier,
+      ],
     );
     resource.add(
       LazyPropertiesInterface.$properties.setLazyToResolvedInterfaceProperty[
         "identifier"
       ],
-      _lazyPropertiesInterface.setLazyToResolvedInterfaceProperty.stubs.map(
-        (item) =>
-          item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
+      ..._lazyPropertiesInterface.setLazyToResolvedInterfaceProperty.stubs.flatMap(
+        (item) => [
+          item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+            .identifier,
+        ],
       ),
     );
     resource.add(
       LazyPropertiesInterface.$properties
         .setStubInterfaceToResolvedInterfaceProperty["identifier"],
-      _lazyPropertiesInterface.setStubInterfaceToResolvedInterfaceProperty.stubs.map(
-        (item) =>
+      ..._lazyPropertiesInterface.setStubInterfaceToResolvedInterfaceProperty.stubs.flatMap(
+        (item) => [
           StubInterface.$toRdf(item, {
             mutateGraph: mutateGraph,
             resourceSet: resourceSet,
-          }),
+          }).identifier,
+        ],
       ),
     );
     return resource;
@@ -16689,7 +16725,7 @@ export class StubClass {
     });
     resource.add(
       StubClass.$properties.lazilyResolvedStringProperty["identifier"],
-      this.lazilyResolvedStringProperty,
+      ...[this.lazilyResolvedStringProperty],
     );
     return resource;
   }
@@ -18041,82 +18077,105 @@ export class LazyPropertiesClass {
       LazyPropertiesClass.$properties.optionalLazyToResolvedClassProperty[
         "identifier"
       ],
-      this.optionalLazyToResolvedClassProperty.stub.map((value) =>
-        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
+      ...this.optionalLazyToResolvedClassProperty.stub
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+            .identifier,
+        ]),
     );
     resource.add(
       LazyPropertiesClass.$properties.optionalLazyToResolvedClassUnionProperty[
         "identifier"
       ],
-      this.optionalLazyToResolvedClassUnionProperty.stub.map((value) =>
-        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
+      ...this.optionalLazyToResolvedClassUnionProperty.stub
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+            .identifier,
+        ]),
     );
     resource.add(
       LazyPropertiesClass.$properties.optionalLazyToResolvedIriClassProperty[
         "identifier"
       ],
-      this.optionalLazyToResolvedIriClassProperty.stub.map((value) =>
-        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
+      ...this.optionalLazyToResolvedIriClassProperty.stub
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+            .identifier,
+        ]),
     );
     resource.add(
       LazyPropertiesClass.$properties.optionalStubClassToResolvedClassProperty[
         "identifier"
       ],
-      this.optionalStubClassToResolvedClassProperty.stub.map((value) =>
-        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
+      ...this.optionalStubClassToResolvedClassProperty.stub
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+            .identifier,
+        ]),
     );
     resource.add(
       LazyPropertiesClass.$properties
         .optionalStubClassToResolvedClassUnionProperty["identifier"],
-      this.optionalStubClassToResolvedClassUnionProperty.stub.map((value) =>
-        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
+      ...this.optionalStubClassToResolvedClassUnionProperty.stub
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+            .identifier,
+        ]),
     );
     resource.add(
       LazyPropertiesClass.$properties
         .optionalStubClassUnionToResolvedClassUnionProperty["identifier"],
-      this.optionalStubClassUnionToResolvedClassUnionProperty.stub.map(
-        (value) =>
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
+      ...this.optionalStubClassUnionToResolvedClassUnionProperty.stub
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+            .identifier,
+        ]),
     );
     resource.add(
       LazyPropertiesClass.$properties.requiredLazyToResolvedClassProperty[
         "identifier"
       ],
-      this.requiredLazyToResolvedClassProperty.stub.$toRdf({
-        mutateGraph: mutateGraph,
-        resourceSet: resourceSet,
-      }),
+      ...[
+        this.requiredLazyToResolvedClassProperty.stub.$toRdf({
+          mutateGraph: mutateGraph,
+          resourceSet: resourceSet,
+        }).identifier,
+      ],
     );
     resource.add(
       LazyPropertiesClass.$properties.requiredStubClassToResolvedClassProperty[
         "identifier"
       ],
-      this.requiredStubClassToResolvedClassProperty.stub.$toRdf({
-        mutateGraph: mutateGraph,
-        resourceSet: resourceSet,
-      }),
+      ...[
+        this.requiredStubClassToResolvedClassProperty.stub.$toRdf({
+          mutateGraph: mutateGraph,
+          resourceSet: resourceSet,
+        }).identifier,
+      ],
     );
     resource.add(
       LazyPropertiesClass.$properties.setLazyToResolvedClassProperty[
         "identifier"
       ],
-      this.setLazyToResolvedClassProperty.stubs.map((item) =>
-        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
+      ...this.setLazyToResolvedClassProperty.stubs.flatMap((item) => [
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          .identifier,
+      ]),
     );
     resource.add(
       LazyPropertiesClass.$properties.setStubClassToResolvedClassProperty[
         "identifier"
       ],
-      this.setStubClassToResolvedClassProperty.stubs.map((item) =>
-        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
+      ...this.setStubClassToResolvedClassProperty.stubs.flatMap((item) => [
+        item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          .identifier,
+      ]),
     );
     return resource;
   }
@@ -20174,7 +20233,7 @@ export namespace LazilyResolvedIriInterface {
       LazilyResolvedIriInterface.$properties.lazilyResolvedStringProperty[
         "identifier"
       ],
-      _lazilyResolvedIriInterface.lazilyResolvedStringProperty,
+      ...[_lazilyResolvedIriInterface.lazilyResolvedStringProperty],
     );
     return resource;
   }
@@ -20445,7 +20504,7 @@ export class LazilyResolvedIriClass {
       LazilyResolvedIriClass.$properties.lazilyResolvedStringProperty[
         "identifier"
       ],
-      this.lazilyResolvedStringProperty,
+      ...[this.lazilyResolvedStringProperty],
     );
     return resource;
   }
@@ -21247,7 +21306,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     resource.add(
       LazilyResolvedInterfaceUnionMember2.$properties
         .lazilyResolvedStringProperty["identifier"],
-      _lazilyResolvedInterfaceUnionMember2.lazilyResolvedStringProperty,
+      ...[_lazilyResolvedInterfaceUnionMember2.lazilyResolvedStringProperty],
     );
     return resource;
   }
@@ -21871,7 +21930,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     resource.add(
       LazilyResolvedInterfaceUnionMember1.$properties
         .lazilyResolvedStringProperty["identifier"],
-      _lazilyResolvedInterfaceUnionMember1.lazilyResolvedStringProperty,
+      ...[_lazilyResolvedInterfaceUnionMember1.lazilyResolvedStringProperty],
     );
     return resource;
   }
@@ -22213,7 +22272,7 @@ export class LazilyResolvedClassUnionMember2 {
       LazilyResolvedClassUnionMember2.$properties.lazilyResolvedStringProperty[
         "identifier"
       ],
-      this.lazilyResolvedStringProperty,
+      ...[this.lazilyResolvedStringProperty],
     );
     return resource;
   }
@@ -22810,7 +22869,7 @@ export class LazilyResolvedClassUnionMember1 {
       LazilyResolvedClassUnionMember1.$properties.lazilyResolvedStringProperty[
         "identifier"
       ],
-      this.lazilyResolvedStringProperty,
+      ...[this.lazilyResolvedStringProperty],
     );
     return resource;
   }
@@ -23692,7 +23751,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
     resource.add(
       LazilyResolvedBlankNodeOrIriInterface.$properties
         .lazilyResolvedStringProperty["identifier"],
-      _lazilyResolvedBlankNodeOrIriInterface.lazilyResolvedStringProperty,
+      ...[_lazilyResolvedBlankNodeOrIriInterface.lazilyResolvedStringProperty],
     );
     return resource;
   }
@@ -24036,7 +24095,7 @@ export class LazilyResolvedBlankNodeOrIriClass {
     resource.add(
       LazilyResolvedBlankNodeOrIriClass.$properties
         .lazilyResolvedStringProperty["identifier"],
-      this.lazilyResolvedStringProperty,
+      ...[this.lazilyResolvedStringProperty],
     );
     return resource;
   }
@@ -24671,13 +24730,13 @@ export class LanguageInPropertiesClass {
       LanguageInPropertiesClass.$properties.languageInLiteralProperty[
         "identifier"
       ],
-      this.languageInLiteralProperty.map((item) => item),
+      ...this.languageInLiteralProperty.flatMap((item) => [item]),
     );
     resource.add(
       LanguageInPropertiesClass.$properties.languageInStringProperty[
         "identifier"
       ],
-      this.languageInStringProperty.map((item) => item),
+      ...this.languageInStringProperty.flatMap((item) => [item]),
     );
     return resource;
   }
@@ -25997,7 +26056,7 @@ export namespace InterfaceUnionMember2b {
       InterfaceUnionMember2b.$properties.interfaceUnionMember2bProperty[
         "identifier"
       ],
-      _interfaceUnionMember2b.interfaceUnionMember2bProperty,
+      ...[_interfaceUnionMember2b.interfaceUnionMember2bProperty],
     );
     return resource;
   }
@@ -26521,7 +26580,7 @@ export namespace InterfaceUnionMember2a {
       InterfaceUnionMember2a.$properties.interfaceUnionMember2aProperty[
         "identifier"
       ],
-      _interfaceUnionMember2a.interfaceUnionMember2aProperty,
+      ...[_interfaceUnionMember2a.interfaceUnionMember2aProperty],
     );
     return resource;
   }
@@ -27035,7 +27094,7 @@ export namespace InterfaceUnionMember1 {
       InterfaceUnionMember1.$properties.interfaceUnionMember1Property[
         "identifier"
       ],
-      _interfaceUnionMember1.interfaceUnionMember1Property,
+      ...[_interfaceUnionMember1.interfaceUnionMember1Property],
     );
     return resource;
   }
@@ -27529,7 +27588,7 @@ export namespace Interface {
     });
     resource.add(
       Interface.$properties.interfaceProperty["identifier"],
-      _interface.interfaceProperty,
+      ...[_interface.interfaceProperty],
     );
     return resource;
   }
@@ -27805,9 +27864,12 @@ export class IndirectRecursiveHelperClass {
       IndirectRecursiveHelperClass.$properties.indirectRecursiveProperty[
         "identifier"
       ],
-      this.indirectRecursiveProperty.map((value) =>
-        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
+      ...this.indirectRecursiveProperty
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+            .identifier,
+        ]),
     );
     return resource;
   }
@@ -28299,9 +28361,12 @@ export class IndirectRecursiveClass {
       IndirectRecursiveClass.$properties.indirectRecursiveHelperProperty[
         "identifier"
       ],
-      this.indirectRecursiveHelperProperty.map((value) =>
-        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
+      ...this.indirectRecursiveHelperProperty
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+            .identifier,
+        ]),
     );
     return resource;
   }
@@ -28852,28 +28917,28 @@ export class InPropertiesClass {
     });
     resource.add(
       InPropertiesClass.$properties.inBooleansProperty["identifier"],
-      this.inBooleansProperty,
+      ...this.inBooleansProperty.toList().flat(),
     );
     resource.add(
       InPropertiesClass.$properties.inDateTimesProperty["identifier"],
-      this.inDateTimesProperty.map((value) =>
+      ...this.inDateTimesProperty.toList().flatMap((value) => [
         rdfLiteral.toRdf(value, {
           dataFactory,
           datatype: $RdfVocabularies.xsd.dateTime,
         }),
-      ),
+      ]),
     );
     resource.add(
       InPropertiesClass.$properties.inIrisProperty["identifier"],
-      this.inIrisProperty,
+      ...this.inIrisProperty.toList(),
     );
     resource.add(
       InPropertiesClass.$properties.inNumbersProperty["identifier"],
-      this.inNumbersProperty,
+      ...this.inNumbersProperty.toList(),
     );
     resource.add(
       InPropertiesClass.$properties.inStringsProperty["identifier"],
-      this.inStringsProperty,
+      ...this.inStringsProperty.toList(),
     );
     return resource;
   }
@@ -29831,7 +29896,7 @@ export class InIdentifierClass {
     });
     resource.add(
       InIdentifierClass.$properties.inIdentifierProperty["identifier"],
-      this.inIdentifierProperty,
+      ...this.inIdentifierProperty.toList(),
     );
     return resource;
   }
@@ -30438,11 +30503,11 @@ export class HasValuePropertiesClass {
     });
     resource.add(
       HasValuePropertiesClass.$properties.hasIriValueProperty["identifier"],
-      this.hasIriValueProperty,
+      ...[this.hasIriValueProperty],
     );
     resource.add(
       HasValuePropertiesClass.$properties.hasLiteralValueProperty["identifier"],
-      this.hasLiteralValueProperty,
+      ...[this.hasLiteralValueProperty],
     );
     return resource;
   }
@@ -31053,9 +31118,12 @@ export class ExternClassPropertyClass {
     });
     resource.add(
       ExternClassPropertyClass.$properties.externClassProperty["identifier"],
-      this.externClassProperty.map((value) =>
-        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
+      ...this.externClassProperty
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+            .identifier,
+        ]),
     );
     return resource;
   }
@@ -31519,7 +31587,7 @@ export class ExplicitRdfTypeClass {
 
     resource.add(
       ExplicitRdfTypeClass.$properties.explicitRdfTypeProperty["identifier"],
-      this.explicitRdfTypeProperty,
+      ...[this.explicitRdfTypeProperty],
     );
     return resource;
   }
@@ -32117,7 +32185,7 @@ export class ExplicitFromToRdfTypesClass {
       ExplicitFromToRdfTypesClass.$properties.explicitFromToRdfTypesProperty[
         "identifier"
       ],
-      this.explicitFromToRdfTypesProperty,
+      ...[this.explicitFromToRdfTypesProperty],
     );
     return resource;
   }
@@ -32724,9 +32792,12 @@ export class DirectRecursiveClass {
     });
     resource.add(
       DirectRecursiveClass.$properties.directRecursiveProperty["identifier"],
-      this.directRecursiveProperty.map((value) =>
-        value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet }),
-      ),
+      ...this.directRecursiveProperty
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+            .identifier,
+        ]),
     );
     return resource;
   }
@@ -33293,51 +33364,55 @@ export class DefaultValuePropertiesClass {
       DefaultValuePropertiesClass.$properties.dateDefaultValueProperty[
         "identifier"
       ],
-      this.dateDefaultValueProperty.getTime() !== 1523232000000
-        ? rdfLiteral.toRdf(this.dateDefaultValueProperty, {
-            dataFactory,
-            datatype: $RdfVocabularies.xsd.date,
-          })
-        : undefined,
+      ...(this.dateDefaultValueProperty.getTime() !== 1523232000000
+        ? [
+            rdfLiteral.toRdf(this.dateDefaultValueProperty, {
+              dataFactory,
+              datatype: $RdfVocabularies.xsd.date,
+            }),
+          ]
+        : []),
     );
     resource.add(
       DefaultValuePropertiesClass.$properties.dateTimeDefaultValueProperty[
         "identifier"
       ],
-      this.dateTimeDefaultValueProperty.getTime() !== 1523268000000
-        ? rdfLiteral.toRdf(this.dateTimeDefaultValueProperty, {
-            dataFactory,
-            datatype: $RdfVocabularies.xsd.dateTime,
-          })
-        : undefined,
+      ...(this.dateTimeDefaultValueProperty.getTime() !== 1523268000000
+        ? [
+            rdfLiteral.toRdf(this.dateTimeDefaultValueProperty, {
+              dataFactory,
+              datatype: $RdfVocabularies.xsd.dateTime,
+            }),
+          ]
+        : []),
     );
     resource.add(
       DefaultValuePropertiesClass.$properties.falseBooleanDefaultValueProperty[
         "identifier"
       ],
-      this.falseBooleanDefaultValueProperty ? true : undefined,
+      ...(this.falseBooleanDefaultValueProperty ? [true] : []),
     );
     resource.add(
       DefaultValuePropertiesClass.$properties.numberDefaultValueProperty[
         "identifier"
       ],
-      this.numberDefaultValueProperty !== 0
-        ? this.numberDefaultValueProperty
-        : undefined,
+      ...(this.numberDefaultValueProperty !== 0
+        ? [this.numberDefaultValueProperty]
+        : []),
     );
     resource.add(
       DefaultValuePropertiesClass.$properties.stringDefaultValueProperty[
         "identifier"
       ],
-      this.stringDefaultValueProperty !== ""
-        ? this.stringDefaultValueProperty
-        : undefined,
+      ...(this.stringDefaultValueProperty !== ""
+        ? [this.stringDefaultValueProperty]
+        : []),
     );
     resource.add(
       DefaultValuePropertiesClass.$properties.trueBooleanDefaultValueProperty[
         "identifier"
       ],
-      !this.trueBooleanDefaultValueProperty ? false : undefined,
+      ...(!this.trueBooleanDefaultValueProperty ? [false] : []),
     );
     return resource;
   }
@@ -34580,7 +34655,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
     resource.add(
       BaseInterfaceWithPropertiesStatic.$properties
         .baseInterfaceWithPropertiesProperty["identifier"],
-      _baseInterfaceWithProperties.baseInterfaceWithPropertiesProperty,
+      ...[_baseInterfaceWithProperties.baseInterfaceWithPropertiesProperty],
     );
     return resource;
   }
@@ -35695,7 +35770,7 @@ export namespace ConcreteParentInterfaceStatic {
       ConcreteParentInterfaceStatic.$properties.concreteParentInterfaceProperty[
         "identifier"
       ],
-      _concreteParentInterface.concreteParentInterfaceProperty,
+      ...[_concreteParentInterface.concreteParentInterfaceProperty],
     );
     return resource;
   }
@@ -36324,7 +36399,7 @@ export namespace ConcreteChildInterface {
       ConcreteChildInterface.$properties.concreteChildInterfaceProperty[
         "identifier"
       ],
-      _concreteChildInterface.concreteChildInterfaceProperty,
+      ...[_concreteChildInterface.concreteChildInterfaceProperty],
     );
     return resource;
   }
@@ -36687,7 +36762,7 @@ export abstract class AbstractBaseClassWithProperties {
     resource.add(
       AbstractBaseClassWithPropertiesStatic.$properties
         .abstractBaseClassWithPropertiesProperty["identifier"],
-      this.abstractBaseClassWithPropertiesProperty,
+      ...[this.abstractBaseClassWithPropertiesProperty],
     );
     return resource;
   }
@@ -37483,7 +37558,7 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
       ConcreteParentClassStatic.$properties.concreteParentClassProperty[
         "identifier"
       ],
-      this.concreteParentClassProperty,
+      ...[this.concreteParentClassProperty],
     );
     return resource;
   }
@@ -38104,7 +38179,7 @@ export class ConcreteChildClass extends ConcreteParentClass {
 
     resource.add(
       ConcreteChildClass.$properties.concreteChildClassProperty["identifier"],
-      this.concreteChildClassProperty,
+      ...[this.concreteChildClassProperty],
     );
     return resource;
   }
@@ -38708,7 +38783,7 @@ export class ClassUnionMember2 {
 
     resource.add(
       ClassUnionMember2.$properties.classUnionMember2Property["identifier"],
-      this.classUnionMember2Property,
+      ...[this.classUnionMember2Property],
     );
     return resource;
   }
@@ -39291,7 +39366,7 @@ export class ClassUnionMember1 {
 
     resource.add(
       ClassUnionMember1.$properties.classUnionMember1Property["identifier"],
-      this.classUnionMember1Property,
+      ...[this.classUnionMember1Property],
     );
     return resource;
   }
@@ -40456,7 +40531,7 @@ export abstract class AbstractBaseClassForExternClass {
     resource.add(
       AbstractBaseClassForExternClassStatic.$properties
         .abstractBaseClassForExternClassProperty["identifier"],
-      this.abstractBaseClassForExternClassProperty,
+      ...[this.abstractBaseClassForExternClassProperty],
     );
     return resource;
   }

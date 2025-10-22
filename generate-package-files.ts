@@ -5,7 +5,7 @@ import path from "node:path";
 import url from "node:url";
 import { stringify as stringifyYaml } from "yaml";
 
-const VERSION = "3.0.2";
+const VERSION = "3.0.3";
 
 type PackageName =
   | "cli"
@@ -52,7 +52,7 @@ const externalDependencyVersions = {
   pino: { pino: "^9.1.0" },
   "purify-ts": { "purify-ts": "^2.1.0" },
   "rdf-literal": { "rdf-literal": "^1.3.2" },
-  "rdfjs-resource": { "rdfjs-resource": "1.0.22" },
+  "rdfjs-resource": { "rdfjs-resource": "1.0.24" },
   sparqljs: { sparqljs: "3.7.3" },
   uuid: { uuid: "^9.0.1" },
   zod: {
