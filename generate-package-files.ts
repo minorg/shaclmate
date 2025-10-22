@@ -60,29 +60,12 @@ const externalDependencyVersions = {
   },
 };
 
-const runtimeExternalPeerDependencies = {
-  ...externalDependencyVersions["@rdfjs/types"],
-  ...externalDependencyVersions["@types/n3"],
-  ...externalDependencyVersions["@types/sparqljs"],
-  ...externalDependencyVersions["@types/uuid"],
-  ...externalDependencyVersions.graphql,
-  ...externalDependencyVersions["graphql-scalars"],
-  ...externalDependencyVersions["js-sha256"],
-  ...externalDependencyVersions["n3"],
-  ...externalDependencyVersions["purify-ts"],
-  ...externalDependencyVersions["rdf-literal"],
-  ...externalDependencyVersions["rdfjs-resource"],
-  ...externalDependencyVersions["sparqljs"],
-  ...externalDependencyVersions["uuid"],
-  ...externalDependencyVersions["zod"],
-};
-
 // Packages should be topologically sorted
 const packages: readonly Package[] = [
   // Compiler tests depend on kitchen sink
   {
     dependencies: {
-      external: runtimeExternalPeerDependencies,
+      internal: ["runtime"],
     },
     directory: "examples",
     linkableDependencies: ["rdfjs-resource"],
@@ -140,9 +123,8 @@ const packages: readonly Package[] = [
       external: {
         "@kos-kit/sparql-client": "2.0.115",
         oxigraph: "0.4.11",
-        ...runtimeExternalPeerDependencies,
       },
-      internal: ["kitchen-sink-example"],
+      internal: ["kitchen-sink-example", "runtime"],
     },
     directory: "packages",
     linkableDependencies: ["@kos-kit/sparql-client", "rdfjs-resource"],
@@ -150,8 +132,23 @@ const packages: readonly Package[] = [
   },
   {
     directory: "packages",
-    peerDependencies: {
-      external: runtimeExternalPeerDependencies,
+    dependencies: {
+      external: {
+        ...externalDependencyVersions["@rdfjs/types"],
+        ...externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["@types/sparqljs"],
+        ...externalDependencyVersions["@types/uuid"],
+        ...externalDependencyVersions.graphql,
+        ...externalDependencyVersions["graphql-scalars"],
+        ...externalDependencyVersions["js-sha256"],
+        ...externalDependencyVersions["n3"],
+        ...externalDependencyVersions["purify-ts"],
+        ...externalDependencyVersions["rdf-literal"],
+        ...externalDependencyVersions["rdfjs-resource"],
+        ...externalDependencyVersions["sparqljs"],
+        ...externalDependencyVersions["uuid"],
+        ...externalDependencyVersions["zod"],
+      },
     },
     name: "runtime",
   },
@@ -185,8 +182,8 @@ const packages: readonly Package[] = [
         "@mui/x-date-pickers": "^7.17.0",
         react: "^18",
         "react-dom": "^18",
-        ...runtimeExternalPeerDependencies,
       },
+      internal: ["runtime"],
     },
     devDependencies: {
       external: {
@@ -211,8 +208,8 @@ const packages: readonly Package[] = [
     dependencies: {
       external: {
         "graphql-yoga": "5.14.0",
-        ...runtimeExternalPeerDependencies,
       },
+      internal: ["runtime"],
     },
     directory: "examples",
     name: "graphql",
