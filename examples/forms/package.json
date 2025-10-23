@@ -53,7 +53,8 @@
     "test:coverage": "biome check && vitest run --coverage",
     "test:watch": "biome check && vitest watch",
     "unlink": "npm unlink -g @shaclmate/forms",
-    "start": "vite dev --port 3000"
+    "start": "vite dev --port 3000",
+    "test:coverag": "biome check"
   },
   "type": "module",
   "version": "3.0.4"
