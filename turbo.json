@@ -7,7 +7,6 @@
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
     "build:noEmit": {
-      "dependsOn": ["^build:noEmit"]
     },
     "clean": {
       "cache": false
@@ -27,10 +26,8 @@
       "cache": false
     },
     "test": {
-      "dependsOn": ["^test"]
     },
     "test:coverage": {
-      "dependsOn": ["^test:coverage"]
     },
     "unlink": {
       "cache": false

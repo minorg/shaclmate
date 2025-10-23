@@ -213,6 +213,7 @@ const packages: readonly Package[] = [
     scripts: {
       build: "tsc && vite build",
       start: "vite dev --port 3000",
+      test: "biome check",
     },
   },
   {
