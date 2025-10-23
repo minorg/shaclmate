@@ -1,5 +1,5 @@
-import type { TsFeature } from "enums/TsFeature.js";
 import type { Maybe } from "purify-ts";
+import type { TsFeature } from "../enums/TsFeature.js";
 import type { CompositeType } from "./CompositeType.js";
 import type { Name } from "./Name.js";
 import type { ObjectType } from "./ObjectType.js";

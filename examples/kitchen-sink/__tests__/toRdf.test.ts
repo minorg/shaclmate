@@ -3,7 +3,7 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import N3, { DataFactory as dataFactory } from "n3";
 import { describe, it } from "vitest";
 
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
+import * as kitchenSink from "../src/index.js";
 import { harnesses } from "./harnesses.js";
 
 describe("toRdf", () => {

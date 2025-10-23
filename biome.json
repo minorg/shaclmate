@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
-    "ignore": ["*.js", "*.js.map", "*.d.ts", "*.d.ts.map", "*.json"],
+    "ignore": ["*.css", "*.js", "*.js.map", "*.d.ts", "*.d.ts.map", "*.json"],
     "maxSize": 2097152
   },
   "formatter": {

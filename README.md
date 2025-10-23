@@ -24,9 +24,11 @@ Substituting the path to your SHACL file for the example path.
 
 The generated code is serialized by [ts-morph](https://ts-morph.com/) with minimal indentation and newlines. You will probably want to format it using a tool like [Biome](https://biomejs.dev/) or [prettier](https://prettier.io/).
 
-### Add runtime library
+### Add runtime dependencies
 
-The generated TypeScript code relies on various third-party libraries such as [sparql.js](https://github.com/RubenVerborgh/SPARQL.js/). To include these third-party libraries in your project add [`@shaclmate/runtime`](https://www.npmjs.com/package/@shaclmate/runtime) to your `package.json` `dependencies`.
+The generated TypeScript code relies on various third-party libraries such as [sparql.js](https://github.com/RubenVerborgh/SPARQL.js/). The set of runtime dependencies will depend on the code generated.
+
+See [`examples/kitchen-sink/package.json`](examples/kitchen-sink/package.json) and [`examples/graphql/package.json`](examples/graphql/package.json) for runtime dependency versions.
 
 ## Features
 

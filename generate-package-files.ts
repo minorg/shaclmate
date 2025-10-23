@@ -5,7 +5,7 @@ import path from "node:path";
 import url from "node:url";
 import { stringify as stringifyYaml } from "yaml";
 
-const VERSION = "3.0.3";
+const VERSION = "3.0.4";
 
 type PackageName =
   | "cli"
@@ -13,7 +13,6 @@ type PackageName =
   | "kitchen-sink"
   | "graphql"
   | "forms"
-  | "runtime"
   | "shacl-ast";
 
 interface Package {
@@ -36,15 +35,22 @@ interface Package {
 }
 
 const externalDependencyVersions = {
+  "@biomejs/biome": { "@biomejs/biome": "1.9.4" },
+  "@rdfjs/prefix-map": { "@rdfjs/prefix-map": "^0.1.2" },
   "@rdfjs/term-map": { "@rdfjs/term-map": "^2.0.2" },
   "@rdfjs/term-set": { "@rdfjs/term-set": "^2.0.3" },
   "@rdfjs/types": { "@rdfjs/types": "^1.1.0" },
   "@tpluscode/rdf-ns-builders": { "@tpluscode/rdf-ns-builders": "^4.3.0" },
-  "@types/uuid": { "@types/uuid": "^9.0.1" },
+  "@tsconfig/node18": { "@tsconfig/node18": "^18.2.4" },
+  "@tsconfig/strictest": { "@tsconfig/strictest": "^2.0.5" },
+  "@types/node": { "@types/node": "^22" },
   "@types/n3": { "@types/n3": "^1.26.0" },
+  "@types/rdfjs__prefix-map": { "@types/rdfjs__prefix-map": "^0.1.5" },
   "@types/rdfjs__term-map": { "@types/rdfjs__term-map": "^2.0.10" },
   "@types/rdfjs__term-set": { "@types/rdfjs__term-set": "^2.0.9" },
   "@types/sparqljs": { "@types/sparqljs": "3.1.12" },
+  "@types/uuid": { "@types/uuid": "^9.0.1" },
+  depcheck: { depcheck: "^1.4.7" },
   graphql: { graphql: "16.11.0" },
   "graphql-scalars": { "graphql-scalars": "1.24.2" },
   "js-sha256": { "js-sha256": "^0.11.0" },
@@ -53,11 +59,15 @@ const externalDependencyVersions = {
   "purify-ts": { "purify-ts": "^2.1.0" },
   "rdf-literal": { "rdf-literal": "^1.3.2" },
   "rdfjs-resource": { "rdfjs-resource": "1.0.24" },
+  rimraf: { rimraf: "^6.0.1" },
   sparqljs: { sparqljs: "3.7.3" },
   uuid: { uuid: "^9.0.1" },
+  typescript: { typescript: "5.8.2" },
   zod: {
     zod: "^4.1.12",
   },
+  vitest: { vitest: "^3.2.4" },
+  "@vitest/coverage-v8": { "@vitest/coverage-v8": "^3.2.4" },
 };
 
 // Packages should be topologically sorted
@@ -65,7 +75,25 @@ const packages: readonly Package[] = [
   // Compiler tests depend on kitchen sink
   {
     dependencies: {
-      internal: ["runtime"],
+      external: {
+        ...externalDependencyVersions["@rdfjs/types"],
+        ...externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["@types/sparqljs"],
+        ...externalDependencyVersions["@types/uuid"],
+        ...externalDependencyVersions["js-sha256"],
+        ...externalDependencyVersions["n3"],
+        ...externalDependencyVersions["purify-ts"],
+        ...externalDependencyVersions["rdf-literal"],
+        ...externalDependencyVersions["rdfjs-resource"],
+        ...externalDependencyVersions["sparqljs"],
+        ...externalDependencyVersions["uuid"],
+        ...externalDependencyVersions["zod"],
+      },
+    },
+    devDependencies: {
+      external: {
+        ...externalDependencyVersions["@tpluscode/rdf-ns-builders"],
+      },
     },
     directory: "examples",
     linkableDependencies: ["rdfjs-resource"],
@@ -78,17 +106,12 @@ const packages: readonly Package[] = [
         ...externalDependencyVersions["@rdfjs/term-set"],
         ...externalDependencyVersions["@rdfjs/types"],
         ...externalDependencyVersions["@tpluscode/rdf-ns-builders"],
+        ...externalDependencyVersions["@types/n3"],
         ...externalDependencyVersions["@types/rdfjs__term-map"],
         ...externalDependencyVersions["@types/rdfjs__term-set"],
+        ...externalDependencyVersions["n3"],
         ...externalDependencyVersions["purify-ts"],
         ...externalDependencyVersions["rdfjs-resource"],
-      },
-      internal: ["runtime"],
-    },
-    devDependencies: {
-      external: {
-        ...externalDependencyVersions["@types/n3"],
-        ...externalDependencyVersions["n3"],
       },
     },
     directory: "packages",
@@ -98,60 +121,42 @@ const packages: readonly Package[] = [
   {
     dependencies: {
       external: {
-        "@rdfjs/prefix-map": "^0.1.2",
+        ...externalDependencyVersions["@rdfjs/prefix-map"],
         ...externalDependencyVersions["@rdfjs/term-map"],
         ...externalDependencyVersions["@rdfjs/term-set"],
         ...externalDependencyVersions["@rdfjs/types"],
         "@sindresorhus/base62": "^0.1.0",
         ...externalDependencyVersions["@tpluscode/rdf-ns-builders"],
-        "@types/rdfjs__prefix-map": "^0.1.5",
+        ...externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["@types/rdfjs__prefix-map"],
         ...externalDependencyVersions["@types/rdfjs__term-map"],
         ...externalDependencyVersions["@types/rdfjs__term-set"],
         "@types/toposort": "2.0.7",
         "change-case": "^5.4.4",
+        ...externalDependencyVersions["n3"],
         ...externalDependencyVersions["pino"],
         plur: "^5.1.0",
         ...externalDependencyVersions["purify-ts"],
+        ...externalDependencyVersions["rdf-literal"],
+        ...externalDependencyVersions["rdfjs-resource"],
         "reserved-identifiers": "^1.0.0",
         toposort: "2.0.2",
         "ts-invariant": "^0.10.3",
         "ts-morph": "^26.0.0",
         "typescript-memoize": "^1.1.1",
       },
-      internal: ["runtime", "shacl-ast"],
+      internal: ["shacl-ast"],
     },
     devDependencies: {
       external: {
         "@kos-kit/sparql-client": "2.0.116",
         oxigraph: "0.4.11",
       },
-      internal: ["kitchen-sink-example", "runtime"],
+      internal: ["kitchen-sink-example"],
     },
     directory: "packages",
     linkableDependencies: ["@kos-kit/sparql-client", "rdfjs-resource"],
     name: "compiler",
-  },
-  {
-    directory: "packages",
-    dependencies: {
-      external: {
-        ...externalDependencyVersions["@rdfjs/types"],
-        ...externalDependencyVersions["@types/n3"],
-        ...externalDependencyVersions["@types/sparqljs"],
-        ...externalDependencyVersions["@types/uuid"],
-        ...externalDependencyVersions.graphql,
-        ...externalDependencyVersions["graphql-scalars"],
-        ...externalDependencyVersions["js-sha256"],
-        ...externalDependencyVersions["n3"],
-        ...externalDependencyVersions["purify-ts"],
-        ...externalDependencyVersions["rdf-literal"],
-        ...externalDependencyVersions["rdfjs-resource"],
-        ...externalDependencyVersions["sparqljs"],
-        ...externalDependencyVersions["uuid"],
-        ...externalDependencyVersions["zod"],
-      },
-    },
-    name: "runtime",
   },
   {
     bin: {
@@ -159,7 +164,10 @@ const packages: readonly Package[] = [
     },
     dependencies: {
       external: {
+        ...externalDependencyVersions["@rdfjs/types"],
+        ...externalDependencyVersions["@rdfjs/prefix-map"],
         ...externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["@types/rdfjs__prefix-map"],
         "@types/rdf-validate-shacl": "^0.4.7",
         "cmd-ts": "^0.13.0",
         ...externalDependencyVersions["n3"],
@@ -178,13 +186,18 @@ const packages: readonly Package[] = [
         "@jsonforms/material-renderers": "3.5.1",
         "@jsonforms/react": "3.5.1",
         "@mui/icons-material": "^6.1.0",
-        "@mui/lab": "6.0.0-beta.22",
+        // "@mui/lab": "6.0.0-beta.22",
         "@mui/material": "^6.1.0",
         "@mui/x-date-pickers": "^7.17.0",
         react: "^18",
         "react-dom": "^18",
+        ...externalDependencyVersions["@rdfjs/types"],
+        ...externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["n3"],
+        ...externalDependencyVersions["purify-ts"],
+        ...externalDependencyVersions["rdfjs-resource"],
+        ...externalDependencyVersions["zod"],
       },
-      internal: ["runtime"],
     },
     devDependencies: {
       external: {
@@ -199,30 +212,26 @@ const packages: readonly Package[] = [
     name: "forms",
     scripts: {
       build: "tsc && vite build",
-      clean: "rimraf dist",
-      dev: "tsc -w --preserveWatchOutput",
-      "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
       start: "vite dev --port 3000",
+      test: "biome check",
+      "test:coverage": "biome check",
     },
   },
   {
     dependencies: {
       external: {
+        ...externalDependencyVersions["@rdfjs/types"],
+        ...externalDependencyVersions["graphql"],
         "graphql-yoga": "5.14.0",
+        ...externalDependencyVersions["n3"],
+        ...externalDependencyVersions["purify-ts"],
+        ...externalDependencyVersions["rdfjs-resource"],
       },
-      internal: ["runtime"],
     },
     directory: "examples",
     name: "graphql",
     scripts: {
-      build: "tsc",
-      clean: "rimraf dist",
-      dev: "tsc -w --preserveWatchOutput",
-      "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
       start: "NODE_ENV=development tsx src/server.ts",
-      test: "biome check && vitest run",
-      "test:coverage": "biome check && vitest run --coverage",
-      "test:watch": "biome check && vitest watch",
     },
   },
 ];
@@ -283,6 +292,15 @@ for (const package_ of packages) {
         devDependencies: {
           ...internalDevDependencies,
           ...package_.devDependencies?.external,
+          ...externalDependencyVersions["@biomejs/biome"],
+          ...externalDependencyVersions["@tsconfig/node18"],
+          ...externalDependencyVersions["@tsconfig/strictest"],
+          ...externalDependencyVersions["@types/node"],
+          ...externalDependencyVersions["depcheck"],
+          ...externalDependencyVersions["rimraf"],
+          ...externalDependencyVersions["typescript"],
+          ...externalDependencyVersions["vitest"],
+          ...externalDependencyVersions["@vitest/coverage-v8"],
         },
         // 20251022: switch back to main + types to enable downstream "node" resolution
         // exports:
@@ -305,7 +323,7 @@ for (const package_ of packages) {
           type: "git",
           url: "git+https://github.com/minorg/shaclmate",
         },
-        scripts: package_.scripts ?? {
+        scripts: {
           build: `tsc -b${
             package_.bin
               ? ` && ${Object.values(package_.bin)
@@ -318,6 +336,7 @@ for (const package_ of packages) {
           "check:write": "biome check --write",
           "check:write:unsafe": "biome check --write --unsafe",
           clean: "rimraf dist",
+          depcheck: "depcheck .",
           dev: "tsc -w --preserveWatchOutput",
           "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
           "link-dependencies": "npm link rdfjs-resource",
@@ -325,6 +344,7 @@ for (const package_ of packages) {
           "test:coverage": "biome check && vitest run --coverage",
           "test:watch": "biome check && vitest watch",
           unlink: `npm unlink -g @shaclmate/${package_.name}`,
+          ...package_.scripts,
         },
         type: "module",
         types: files.size > 0 ? "./dist/index.d.ts" : undefined,
@@ -351,16 +371,8 @@ fs.writeFileSync(
   `${JSON.stringify(
     {
       devDependencies: {
-        "@biomejs/biome": "1.9.4",
-        "@tsconfig/node18": "^18.2.4",
-        "@tsconfig/strictest": "^2.0.5",
-        "@types/node": "^22",
-        "@vitest/coverage-v8": "^3.2.4",
-        rimraf: "^6.0.1",
         tsx: "^4.16.2",
         turbo: "^2.5.5",
-        typescript: "5.8.2",
-        vitest: "^3.2.4",
         yaml: "^2.5.0",
       },
       name: "shaclmate",
@@ -378,6 +390,7 @@ fs.writeFileSync(
         "check:write": "biome check --write",
         "check:write:unsafe": "biome check --write --unsafe",
         clean: "turbo run clean",
+        depcheck: "turbo run depcheck",
         dev: "turbo run dev",
         "dev:noEmit": "turbo run dev:noEmit",
         link: "npm link --workspaces",

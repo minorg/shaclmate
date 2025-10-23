@@ -1,21 +1,24 @@
 {
   "dependencies": {
-    "@shaclmate/runtime": "3.0.3",
-    "@shaclmate/shacl-ast": "3.0.3",
+    "@shaclmate/shacl-ast": "3.0.4",
     "@rdfjs/prefix-map": "^0.1.2",
     "@rdfjs/term-map": "^2.0.2",
     "@rdfjs/term-set": "^2.0.3",
     "@rdfjs/types": "^1.1.0",
     "@sindresorhus/base62": "^0.1.0",
     "@tpluscode/rdf-ns-builders": "^4.3.0",
+    "@types/n3": "^1.26.0",
     "@types/rdfjs__prefix-map": "^0.1.5",
     "@types/rdfjs__term-map": "^2.0.10",
     "@types/rdfjs__term-set": "^2.0.9",
     "@types/toposort": "2.0.7",
     "change-case": "^5.4.4",
+    "n3": "^1.26.0",
     "pino": "^9.1.0",
     "plur": "^5.1.0",
     "purify-ts": "^2.1.0",
+    "rdf-literal": "^1.3.2",
+    "rdfjs-resource": "1.0.24",
     "reserved-identifiers": "^1.0.0",
     "toposort": "2.0.2",
     "ts-invariant": "^0.10.3",
@@ -23,10 +26,18 @@
     "typescript-memoize": "^1.1.1"
   },
   "devDependencies": {
-    "@shaclmate/kitchen-sink-example": "3.0.3",
-    "@shaclmate/runtime": "3.0.3",
+    "@shaclmate/kitchen-sink-example": "3.0.4",
     "@kos-kit/sparql-client": "2.0.116",
-    "oxigraph": "0.4.11"
+    "oxigraph": "0.4.11",
+    "@biomejs/biome": "1.9.4",
+    "@tsconfig/node18": "^18.2.4",
+    "@tsconfig/strictest": "^2.0.5",
+    "@types/node": "^22",
+    "depcheck": "^1.4.7",
+    "rimraf": "^6.0.1",
+    "typescript": "5.8.2",
+    "vitest": "^3.2.4",
+    "@vitest/coverage-v8": "^3.2.4"
   },
   "files": [
     "dist/*.d.ts",
@@ -63,6 +74,7 @@
     "check:write": "biome check --write",
     "check:write:unsafe": "biome check --write --unsafe",
     "clean": "rimraf dist",
+    "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
     "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
     "link-dependencies": "npm link rdfjs-resource",
@@ -73,5 +85,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "3.0.3"
+  "version": "3.0.4"
 }
