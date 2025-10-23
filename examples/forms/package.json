@@ -50,11 +50,10 @@
     "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
     "link-dependencies": "npm link rdfjs-resource",
     "test": "biome check",
-    "test:coverage": "biome check && vitest run --coverage",
+    "test:coverage": "biome check",
     "test:watch": "biome check && vitest watch",
     "unlink": "npm unlink -g @shaclmate/forms",
-    "start": "vite dev --port 3000",
-    "test:coverag": "biome check"
+    "start": "vite dev --port 3000"
   },
   "type": "module",
   "version": "3.0.4"
