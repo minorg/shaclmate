@@ -1,9 +1,9 @@
 import type { NamedNode, Quad } from "@rdfjs/types";
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import N3, { DataFactory as dataFactory } from "n3";
 import * as oxigraph from "oxigraph";
 import { MutableResourceSet } from "rdfjs-resource";
 import { beforeAll, describe, it } from "vitest";
+import * as kitchenSink from "../src/index.js";
 import { harnesses } from "./harnesses.js";
 import { quadsToTurtle } from "./quadsToTurtle.js";
 

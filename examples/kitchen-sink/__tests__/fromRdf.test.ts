@@ -1,4 +1,4 @@
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
+import * as kitchenSink from "../src/index.js";
 import { harnesses } from "./harnesses.js";
 
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";

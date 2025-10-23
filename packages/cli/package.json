@@ -4,7 +4,10 @@
   },
   "dependencies": {
     "@shaclmate/compiler": "3.0.3",
+    "@rdfjs/types": "^1.1.0",
+    "@rdfjs/prefix-map": "^0.1.2",
     "@types/n3": "^1.26.0",
+    "@types/rdfjs__prefix-map": "^0.1.5",
     "@types/rdf-validate-shacl": "^0.4.7",
     "cmd-ts": "^0.13.0",
     "n3": "^1.26.0",

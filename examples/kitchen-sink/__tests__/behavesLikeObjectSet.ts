@@ -1,9 +1,9 @@
 import type { Quad } from "@rdfjs/types";
-import type { $ObjectSet } from "@shaclmate/kitchen-sink-example";
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import N3 from "n3";
 import { MutableResourceSet } from "rdfjs-resource";
 import { beforeAll, it } from "vitest";
+import type { $ObjectSet } from "../src/index.js";
+import * as kitchenSink from "../src/index.js";
 
 const testData = {
   classClassUnions: [...new Array(4)].map((_, i) => {

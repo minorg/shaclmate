@@ -1,6 +1,11 @@
 {
   "dependencies": {
-    "graphql-yoga": "5.14.0"
+    "@rdfjs/types": "^1.1.0",
+    "graphql": "16.11.0",
+    "graphql-yoga": "5.14.0",
+    "n3": "^1.26.0",
+    "purify-ts": "^2.1.0",
+    "rdfjs-resource": "1.0.24"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",

@@ -1,7 +1,7 @@
 import { Maybe } from "purify-ts";
 import { describe, it } from "vitest";
 import "./harnesses.js"; // Must be imported before kitchenSink
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
+import * as kitchenSink from "../src/index.js";
 
 describe("mutable", () => {
   it("mutable list", ({ expect }) => {

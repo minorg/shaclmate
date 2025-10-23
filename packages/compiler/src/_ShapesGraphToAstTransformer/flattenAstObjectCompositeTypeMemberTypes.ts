@@ -1,9 +1,9 @@
 import TermSet from "@rdfjs/term-set";
 import type { NamedNode } from "@rdfjs/types";
-import type { TsFeature } from "enums/TsFeature.js";
 import { Either, Left } from "purify-ts";
 import { Resource } from "rdfjs-resource";
 import type * as ast from "../ast/index.js";
+import type { TsFeature } from "../enums/TsFeature.js";
 import type * as input from "../input/index.js";
 
 export function flattenAstObjectCompositeTypeMemberTypes({

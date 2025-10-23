@@ -36,6 +36,7 @@ interface Package {
 
 const externalDependencyVersions = {
   "@biomejs/biome": { "@biomejs/biome": "1.9.4" },
+  "@rdfjs/prefix-map": { "@rdfjs/prefix-map": "^0.1.2" },
   "@rdfjs/term-map": { "@rdfjs/term-map": "^2.0.2" },
   "@rdfjs/term-set": { "@rdfjs/term-set": "^2.0.3" },
   "@rdfjs/types": { "@rdfjs/types": "^1.1.0" },
@@ -44,6 +45,7 @@ const externalDependencyVersions = {
   "@tsconfig/strictest": { "@tsconfig/strictest": "^2.0.5" },
   "@types/node": { "@types/node": "^22" },
   "@types/n3": { "@types/n3": "^1.26.0" },
+  "@types/rdfjs__prefix-map": { "@types/rdfjs__prefix-map": "^0.1.5" },
   "@types/rdfjs__term-map": { "@types/rdfjs__term-map": "^2.0.10" },
   "@types/rdfjs__term-set": { "@types/rdfjs__term-set": "^2.0.9" },
   "@types/sparqljs": { "@types/sparqljs": "3.1.12" },
@@ -88,6 +90,11 @@ const packages: readonly Package[] = [
         ...externalDependencyVersions["zod"],
       },
     },
+    devDependencies: {
+      external: {
+        ...externalDependencyVersions["@tpluscode/rdf-ns-builders"],
+      },
+    },
     directory: "examples",
     linkableDependencies: ["rdfjs-resource"],
     name: "kitchen-sink",
@@ -114,14 +121,14 @@ const packages: readonly Package[] = [
   {
     dependencies: {
       external: {
-        "@rdfjs/prefix-map": "^0.1.2",
+        ...externalDependencyVersions["@rdfjs/prefix-map"],
         ...externalDependencyVersions["@rdfjs/term-map"],
         ...externalDependencyVersions["@rdfjs/term-set"],
         ...externalDependencyVersions["@rdfjs/types"],
         "@sindresorhus/base62": "^0.1.0",
         ...externalDependencyVersions["@tpluscode/rdf-ns-builders"],
-        "@types/rdfjs__prefix-map": "^0.1.5",
         ...externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["@types/rdfjs__prefix-map"],
         ...externalDependencyVersions["@types/rdfjs__term-map"],
         ...externalDependencyVersions["@types/rdfjs__term-set"],
         "@types/toposort": "2.0.7",
@@ -130,6 +137,7 @@ const packages: readonly Package[] = [
         ...externalDependencyVersions["pino"],
         plur: "^5.1.0",
         ...externalDependencyVersions["purify-ts"],
+        ...externalDependencyVersions["rdf-literal"],
         ...externalDependencyVersions["rdfjs-resource"],
         "reserved-identifiers": "^1.0.0",
         toposort: "2.0.2",
@@ -156,7 +164,10 @@ const packages: readonly Package[] = [
     },
     dependencies: {
       external: {
+        ...externalDependencyVersions["@rdfjs/types"],
+        ...externalDependencyVersions["@rdfjs/prefix-map"],
         ...externalDependencyVersions["@types/n3"],
+        ...externalDependencyVersions["@types/rdfjs__prefix-map"],
         "@types/rdf-validate-shacl": "^0.4.7",
         "cmd-ts": "^0.13.0",
         ...externalDependencyVersions["n3"],
@@ -175,7 +186,7 @@ const packages: readonly Package[] = [
         "@jsonforms/material-renderers": "3.5.1",
         "@jsonforms/react": "3.5.1",
         "@mui/icons-material": "^6.1.0",
-        "@mui/lab": "6.0.0-beta.22",
+        // "@mui/lab": "6.0.0-beta.22",
         "@mui/material": "^6.1.0",
         "@mui/x-date-pickers": "^7.17.0",
         react: "^18",
@@ -207,7 +218,12 @@ const packages: readonly Package[] = [
   {
     dependencies: {
       external: {
+        ...externalDependencyVersions["@rdfjs/types"],
+        ...externalDependencyVersions["graphql"],
         "graphql-yoga": "5.14.0",
+        ...externalDependencyVersions["n3"],
+        ...externalDependencyVersions["purify-ts"],
+        ...externalDependencyVersions["rdfjs-resource"],
       },
     },
     directory: "examples",

@@ -1,4 +1,4 @@
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
+import * as kitchenSink from "../src/index.js";
 
 import type {} from "@rdfjs/types";
 

@@ -1,8 +1,8 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import N3 from "n3";
 import { MutableResourceSet } from "rdfjs-resource";
 import { beforeAll, describe, expect, it } from "vitest";
+import * as kitchenSink from "../src/index.js";
 
 async function expectEmptyOptional<
   ObjectIdentifierT extends BlankNode | NamedNode,

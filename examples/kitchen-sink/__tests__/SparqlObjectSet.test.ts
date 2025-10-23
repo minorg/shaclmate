@@ -1,8 +1,8 @@
 import { OxigraphSparqlClient } from "@kos-kit/sparql-client";
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import N3 from "n3";
 import * as oxigraph from "oxigraph";
 import { describe } from "vitest";
+import * as kitchenSink from "../src/index.js";
 import { behavesLikeObjectSet } from "./behavesLikeObjectSet.js";
 
 describe("SparqlObjectSet", () => {
