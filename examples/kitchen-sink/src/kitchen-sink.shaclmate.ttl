@@ -372,6 +372,33 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     rdfs:comment "A node shape that only allows IRI identifiers." ;
     sh:nodeKind sh:IRI .
 
+:IriList
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "A node shape that models an RDF list. Should be transformed into a list data structure when used as a property instead of surfacing the RDF list structure in code." ;
+    rdfs:subClassOf rdf:List ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property :IriList-first, :IriList-rest .
+
+:IriList-first
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:nodeKind sh:IRI ;
+    sh:path rdf:first .
+
+:IriList-rest
+    a sh:PropertyShape ;
+    sh:maxCount 1 ;
+    sh:minCount 1 ;
+    sh:path rdf:rest ;
+    sh:xone ([
+            sh:class :IriList
+        ]
+        [
+            sh:hasValue ( )
+        ]
+    ) .
+
 :LanguageInPropertiesClass
     a sh:NodeShape ;
     rdfs:comment "Shape that uses the StringList in a property." ;
@@ -553,6 +580,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:property [
         shaclmate:lazy true ;
         sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
+        sh:path :requiredLazyToResolvedInterfaceProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
         sh:node :LazilyResolvedIriInterface ;
         sh:path :optionalLazyToResolvedIriInterfaceProperty
     ], [
@@ -596,12 +629,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         shaclmate:lazy true ;
         sh:node :LazilyResolvedBlankNodeOrIriInterface ;
         sh:path :setLazyToResolvedInterfaceProperty
-    ], [
-        shaclmate:lazy true ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
-        sh:path :requiredLazyToResolvedInterfaceProperty
     ] .
 
 :ListPropertiesClass
@@ -611,6 +638,10 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:node :ObjectList ;
         sh:path :objectListProperty
+    ], [
+        sh:maxCount 1 ;
+        sh:node :IriList ;
+        sh:path :iriListProperty
     ], [
         sh:maxCount 1 ;
         sh:node :StringList ;

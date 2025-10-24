@@ -207,6 +207,17 @@ export const harnesses = {
     }),
     kitchenSink.IriClass,
   ),
+  iriListProperty: new ClassHarness(
+    new kitchenSink.ListPropertiesClass({
+      $identifier,
+      iriListProperty: [
+        // The constructor will convert these to NamedNode's
+        "http://example.com/example1",
+        "http://example.com/example2",
+      ],
+    }),
+    kitchenSink.ListPropertiesClass,
+  ),
   languageInPropertiesClass: new ClassHarness(
     new kitchenSink.LanguageInPropertiesClass({
       $identifier,

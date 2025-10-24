@@ -5,6 +5,18 @@ import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
+function isTypeofString(x: string): x is Type["typeof"] {
+  switch (x) {
+    case "boolean":
+    case "object":
+    case "number":
+    case "string":
+      return true;
+    default:
+      return false;
+  }
+}
+
 export abstract class CollectionType<ItemTypeT extends Type> extends Type {
   override readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty> =
     Maybe.empty();
@@ -55,20 +67,14 @@ export abstract class CollectionType<ItemTypeT extends Type> extends Type {
       conversionExpression: (value) => value,
       sourceTypeCheckExpression: (value) =>
         `typeof ${value} === ${this.itemType.typeof}`,
-      sourceTypeName: this.itemType.typeof,
+      sourceTypeName: this.itemType.name,
     };
 
     for (const itemTypeConversion of this.itemType.conversions) {
-      switch (itemTypeConversion.sourceTypeName) {
-        case "boolean":
-        case "object":
-        case "number":
-        case "string": {
-          if (!itemTypeConversionsByTypeof[itemTypeConversion.sourceTypeName]) {
-            itemTypeConversionsByTypeof[itemTypeConversion.sourceTypeName] =
-              itemTypeConversion;
-          }
-          break;
+      if (isTypeofString(itemTypeConversion.sourceTypeName)) {
+        if (!itemTypeConversionsByTypeof[itemTypeConversion.sourceTypeName]) {
+          itemTypeConversionsByTypeof[itemTypeConversion.sourceTypeName] =
+            itemTypeConversion;
         }
       }
     }
@@ -106,9 +112,8 @@ export abstract class CollectionType<ItemTypeT extends Type> extends Type {
                   `${value}${this.mutable ? ".concat()" : ""}`;
             },
             sourceTypeCheckExpression: (value) =>
-              // Check that the value is an array with typeof "object" then discriminate its item typeof's.
-              // See note above re: non-use of Array.isArray.
-              `typeof ${value} === "object" && ${value}.every(item => typeof item === ${itemTypeof})`,
+              // Use the type guard functions to discriminate different array types.
+              `${syntheticNamePrefix}is${itemTypeof[0].toUpperCase()}${itemTypeof.slice(1)}Array(${value})`,
             sourceTypeName: `readonly (${itemTypeofConversion.sourceTypeName})[]`,
           });
         }
@@ -216,9 +221,41 @@ export abstract class CollectionType<ItemTypeT extends Type> extends Type {
     const snippetDeclarations: string[] = this.itemType
       .snippetDeclarations(parameters)
       .concat();
+
     if (parameters.features.has("equals")) {
       snippetDeclarations.push(SnippetDeclarations.arrayEquals);
     }
+
+    // Add type guard functions
+    // Using .every to check array item types doesn't satisfy the readonly part of the array signature for some reason
+    const itemTypeofs = new Set<Type["typeof"]>();
+    itemTypeofs.add(this.itemType.typeof);
+    for (const itemTypeConversion of this.itemType.conversions) {
+      if (isTypeofString(itemTypeConversion.sourceTypeName)) {
+        itemTypeofs.add(itemTypeConversion.sourceTypeName);
+      }
+    }
+    if (itemTypeofs.size > 1) {
+      for (const itemTypeof of itemTypeofs) {
+        switch (itemTypeof) {
+          case "boolean":
+            snippetDeclarations.push(SnippetDeclarations.isBooleanArray);
+            break;
+          case "number":
+            snippetDeclarations.push(SnippetDeclarations.isNumberArray);
+            break;
+          case "object":
+            snippetDeclarations.push(SnippetDeclarations.isObjectArray);
+            break;
+          case "string":
+            snippetDeclarations.push(SnippetDeclarations.isStringArray);
+            break;
+          default:
+            throw new RangeError(itemTypeof);
+        }
+      }
+    }
+
     return snippetDeclarations;
   }
 

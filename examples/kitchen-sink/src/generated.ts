@@ -278,6 +278,12 @@ export function $arrayEquals<T>(
 
   return $EqualsResult.Equal;
 }
+function $isObjectArray(x: unknown): x is readonly object[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "object");
+}
+function $isStringArray(x: unknown): x is readonly string[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "string");
+}
 /**
  * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
@@ -421,6 +427,12 @@ export function $arrayIntersection<T>(
     }
   }
   return [...intersection];
+}
+function $isBooleanArray(x: unknown): x is readonly boolean[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "boolean");
+}
+function $isNumberArray(x: unknown): x is readonly number[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "number");
 }
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 export class $NamedDefaultStub {
@@ -12149,11 +12161,16 @@ export namespace MutablePropertiesClass {
 export class ListPropertiesClass {
   private _$identifier?: ListPropertiesClass.$Identifier;
   readonly $type = "ListPropertiesClass";
+  readonly iriListProperty: purify.Maybe<readonly rdfjs.NamedNode[]>;
   readonly objectListProperty: purify.Maybe<readonly NonClass[]>;
   readonly stringListProperty: purify.Maybe<readonly string[]>;
 
   constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly iriListProperty?:
+      | purify.Maybe<readonly rdfjs.NamedNode[]>
+      | readonly rdfjs.NamedNode[]
+      | readonly string[];
     readonly objectListProperty?:
       | purify.Maybe<readonly NonClass[]>
       | readonly NonClass[];
@@ -12168,6 +12185,20 @@ export class ListPropertiesClass {
     } else if (typeof parameters?.$identifier === "undefined") {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters?.iriListProperty)) {
+      this.iriListProperty = parameters?.iriListProperty;
+    } else if (typeof parameters?.iriListProperty === "undefined") {
+      this.iriListProperty = purify.Maybe.of([]);
+    } else if ($isObjectArray(parameters?.iriListProperty)) {
+      this.iriListProperty = purify.Maybe.of(parameters?.iriListProperty);
+    } else if ($isStringArray(parameters?.iriListProperty)) {
+      this.iriListProperty = purify.Maybe.of(
+        parameters?.iriListProperty.map((item) => dataFactory.namedNode(item)),
+      );
+    } else {
+      this.iriListProperty = parameters?.iriListProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters?.objectListProperty)) {
@@ -12221,6 +12252,20 @@ export class ListPropertiesClass {
       .chain(() =>
         ((left, right) =>
           $maybeEquals(left, right, (left, right) =>
+            $arrayEquals(left, right, $booleanEquals),
+          ))(this.iriListProperty, other.iriListProperty).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "iriListProperty",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, (left, right) =>
             $arrayEquals(left, right, (left, right) => left.$equals(right)),
           ))(this.objectListProperty, other.objectListProperty).mapLeft(
           (propertyValuesUnequal) => ({
@@ -12264,6 +12309,12 @@ export class ListPropertiesClass {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
+    this.iriListProperty.ifJust((value0) => {
+      for (const item1 of value0) {
+        _hasher.update(item1.termType);
+        _hasher.update(item1.value);
+      }
+    });
     this.objectListProperty.ifJust((value0) => {
       for (const item1 of value0) {
         item1.$hash(_hasher);
@@ -12285,6 +12336,9 @@ export class ListPropertiesClass {
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
         $type: this.$type,
+        iriListProperty: this.iriListProperty
+          .map((item) => item.map((item) => ({ "@id": item.value })))
+          .extract(),
         objectListProperty: this.objectListProperty
           .map((item) => item.map((item) => item.$toJson()))
           .extract(),
@@ -12310,6 +12364,59 @@ export class ListPropertiesClass {
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
+    resource.add(
+      ListPropertiesClass.$properties.iriListProperty["identifier"],
+      ...this.iriListProperty.toList().flatMap((value) => [
+        value.length > 0
+          ? value.reduce(
+              (
+                { currentSubListResource, listResource },
+                item,
+                itemIndex,
+                list,
+              ) => {
+                if (itemIndex === 0) {
+                  currentSubListResource = listResource;
+                } else {
+                  const newSubListResource = resourceSet.mutableResource(
+                    dataFactory.blankNode(),
+                    { mutateGraph },
+                  );
+                  currentSubListResource!.add(
+                    $RdfVocabularies.rdf.rest,
+                    newSubListResource.identifier,
+                  );
+                  currentSubListResource = newSubListResource;
+                }
+
+                currentSubListResource.add(
+                  $RdfVocabularies.rdf.first,
+                  ...[item],
+                );
+
+                if (itemIndex + 1 === list.length) {
+                  currentSubListResource.add(
+                    $RdfVocabularies.rdf.rest,
+                    $RdfVocabularies.rdf.nil,
+                  );
+                }
+
+                return { currentSubListResource, listResource };
+              },
+              {
+                currentSubListResource: null,
+                listResource: resourceSet.mutableResource(
+                  dataFactory.blankNode(),
+                  { mutateGraph },
+                ),
+              } as {
+                currentSubListResource: rdfjsResource.MutableResource | null;
+                listResource: rdfjsResource.MutableResource;
+              },
+            ).listResource.identifier
+          : $RdfVocabularies.rdf.nil,
+      ]),
+    );
     resource.add(
       ListPropertiesClass.$properties.objectListProperty["identifier"],
       ...this.objectListProperty.toList().flatMap((value) => [
@@ -12451,6 +12558,7 @@ export namespace ListPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "ListPropertiesClass";
+    readonly iriListProperty?: readonly { readonly "@id": string }[];
     readonly objectListProperty?: readonly NonClass.$Json[];
     readonly stringListProperty?: readonly string[];
   };
@@ -12459,6 +12567,7 @@ export namespace ListPropertiesClass {
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      iriListProperty: purify.Maybe<readonly rdfjs.NamedNode[]>;
       objectListProperty: purify.Maybe<readonly NonClass[]>;
       stringListProperty: purify.Maybe<readonly string[]>;
     }
@@ -12472,6 +12581,9 @@ export namespace ListPropertiesClass {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
+    const iriListProperty = purify.Maybe.fromNullable(
+      $jsonObject["iriListProperty"],
+    ).map((item) => item.map((item) => dataFactory.namedNode(item["@id"])));
     const objectListProperty = purify.Maybe.fromNullable(
       $jsonObject["objectListProperty"],
     ).map((item) =>
@@ -12482,6 +12594,7 @@ export namespace ListPropertiesClass {
     );
     return purify.Either.of({
       $identifier,
+      iriListProperty,
       objectListProperty,
       stringListProperty,
     });
@@ -12519,6 +12632,7 @@ export namespace ListPropertiesClass {
           scope: `${scopePrefix}/properties/$type`,
           type: "Control",
         },
+        { scope: `${scopePrefix}/properties/iriListProperty`, type: "Control" },
         NonClass.$jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/objectListProperty`,
         }),
@@ -12536,6 +12650,11 @@ export namespace ListPropertiesClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("ListPropertiesClass"),
+      iriListProperty: zod
+        .object({ "@id": zod.string().min(1) })
+        .array()
+        .default(() => [])
+        .optional(),
       objectListProperty: NonClass.$jsonZodSchema()
         .array()
         .default(() => [])
@@ -12593,11 +12712,58 @@ export namespace ListPropertiesClass {
     Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      iriListProperty: purify.Maybe<readonly rdfjs.NamedNode[]>;
       objectListProperty: purify.Maybe<readonly NonClass[]>;
       stringListProperty: purify.Maybe<readonly string[]>;
     }
   > {
     const $identifier: ListPropertiesClass.$Identifier = $resource.identifier;
+    const _iriListPropertyEither: purify.Either<
+      Error,
+      purify.Maybe<readonly rdfjs.NamedNode[]>
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.iriListProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toList()))
+      .chain((valueLists) =>
+        valueLists.chainMap((valueList) =>
+          purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            rdfjsResource.Resource.Values.fromArray({
+              objects: valueList,
+              predicate:
+                ListPropertiesClass.$properties.iriListProperty["identifier"],
+              subject: $resource,
+            }),
+          ).chain((values) => values.chainMap((value) => value.toIri())),
+        ),
+      )
+      .map((valueLists) => valueLists.map((valueList) => valueList.toArray()))
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<readonly rdfjs.NamedNode[]>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                ListPropertiesClass.$properties.iriListProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
+    if (_iriListPropertyEither.isLeft()) {
+      return _iriListPropertyEither;
+    }
+
+    const iriListProperty = _iriListPropertyEither.unsafeCoerce();
     const _objectListPropertyEither: purify.Either<
       Error,
       purify.Maybe<readonly NonClass[]>
@@ -12764,12 +12930,16 @@ export namespace ListPropertiesClass {
     const stringListProperty = _stringListPropertyEither.unsafeCoerce();
     return purify.Either.of({
       $identifier,
+      iriListProperty,
       objectListProperty,
       stringListProperty,
     });
   }
 
   export const $properties = {
+    iriListProperty: {
+      identifier: dataFactory.namedNode("http://example.com/iriListProperty"),
+    },
     objectListProperty: {
       identifier: dataFactory.namedNode(
         "http://example.com/objectListProperty",
@@ -12839,6 +13009,43 @@ export namespace ListPropertiesClass {
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "listPropertiesClass");
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}IriListProperty`),
+      predicate: ListPropertiesClass.$properties.iriListProperty["identifier"],
+      subject,
+    });
+    triples.push({
+      subject: dataFactory.variable!(`${variablePrefix}IriListProperty`),
+      predicate: $RdfVocabularies.rdf.first,
+      object: dataFactory.variable!(
+        `${`${variablePrefix}IriListProperty`}Item0`,
+      ),
+    });
+    triples.push({
+      subject: dataFactory.variable!(`${variablePrefix}IriListProperty`),
+      predicate: $RdfVocabularies.rdf.rest,
+      object: dataFactory.variable!(
+        `${`${variablePrefix}IriListProperty`}Rest0`,
+      ),
+    });
+    triples.push({
+      subject: dataFactory.variable!(
+        `${`${variablePrefix}IriListProperty`}RestN`,
+      ),
+      predicate: $RdfVocabularies.rdf.first,
+      object: dataFactory.variable!(
+        `${`${variablePrefix}IriListProperty`}ItemN`,
+      ),
+    });
+    triples.push({
+      subject: dataFactory.variable!(
+        `${`${variablePrefix}IriListProperty`}RestN`,
+      ),
+      predicate: $RdfVocabularies.rdf.rest,
+      object: dataFactory.variable!(
+        `${`${variablePrefix}IriListProperty`}RestNBasic`,
+      ),
+    });
     triples.push({
       object: dataFactory.variable!(`${variablePrefix}ObjectListProperty`),
       predicate:
@@ -12950,6 +13157,108 @@ export namespace ListPropertiesClass {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "listPropertiesClass");
     const propertyPatterns: readonly sparqljs.Pattern[] = [
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}IriListProperty`,
+                ),
+                predicate:
+                  ListPropertiesClass.$properties.iriListProperty["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          {
+            type: "optional",
+            patterns: [
+              {
+                type: "bgp",
+                triples: [
+                  {
+                    subject: dataFactory.variable!(
+                      `${variablePrefix}IriListProperty`,
+                    ),
+                    predicate: $RdfVocabularies.rdf.first,
+                    object: dataFactory.variable!(
+                      `${`${variablePrefix}IriListProperty`}Item0`,
+                    ),
+                  },
+                ],
+              },
+              {
+                type: "bgp",
+                triples: [
+                  {
+                    subject: dataFactory.variable!(
+                      `${variablePrefix}IriListProperty`,
+                    ),
+                    predicate: $RdfVocabularies.rdf.rest,
+                    object: dataFactory.variable!(
+                      `${`${variablePrefix}IriListProperty`}Rest0`,
+                    ),
+                  },
+                ],
+              },
+              {
+                type: "optional",
+                patterns: [
+                  {
+                    type: "bgp",
+                    triples: [
+                      {
+                        subject: dataFactory.variable!(
+                          `${variablePrefix}IriListProperty`,
+                        ),
+                        predicate: {
+                          type: "path",
+                          pathType: "*",
+                          items: [$RdfVocabularies.rdf.rest],
+                        },
+                        object: dataFactory.variable!(
+                          `${`${variablePrefix}IriListProperty`}RestN`,
+                        ),
+                      },
+                    ],
+                  },
+                  {
+                    type: "bgp",
+                    triples: [
+                      {
+                        subject: dataFactory.variable!(
+                          `${`${variablePrefix}IriListProperty`}RestN`,
+                        ),
+                        predicate: $RdfVocabularies.rdf.first,
+                        object: dataFactory.variable!(
+                          `${`${variablePrefix}IriListProperty`}ItemN`,
+                        ),
+                      },
+                    ],
+                  },
+                  {
+                    type: "bgp",
+                    triples: [
+                      {
+                        subject: dataFactory.variable!(
+                          `${`${variablePrefix}IriListProperty`}RestN`,
+                        ),
+                        predicate: $RdfVocabularies.rdf.rest,
+                        object: dataFactory.variable!(
+                          `${`${variablePrefix}IriListProperty`}RestNBasic`,
+                        ),
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        type: "optional",
+      },
       {
         patterns: [
           {

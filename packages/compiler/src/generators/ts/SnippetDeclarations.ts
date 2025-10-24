@@ -199,37 +199,26 @@ export namespace ${syntheticNamePrefix}EqualsResult {
     readonly left: any;
     readonly type: "RightNull";
   };
-}    
-`;
+}`;
 
-  export const maybeEquals = `\
-export function ${syntheticNamePrefix}maybeEquals<T>(
-  leftMaybe: purify.Maybe<T>,
-  rightMaybe: purify.Maybe<T>,
-  valueEquals: (left: T, right: T) => boolean | ${syntheticNamePrefix}EqualsResult,
-): ${syntheticNamePrefix}EqualsResult {
-  if (leftMaybe.isJust()) {
-    if (rightMaybe.isJust()) {
-      return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
-        leftMaybe,
-        rightMaybe,
-        valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
-      );
-    }
-    return purify.Left({
-      left: leftMaybe.unsafeCoerce(),
-      type: "RightNull",
-    });
-  }
+  export const isBooleanArray = `\
+function ${syntheticNamePrefix}isBooleanArray(x: unknown): x is readonly boolean[] {
+  return Array.isArray(x) && x.every(z => typeof z === "boolean");
+}`;
 
-  if (rightMaybe.isJust()) {
-    return purify.Left({
-      right: rightMaybe.unsafeCoerce(),
-      type: "LeftNull",
-    });
-  }
+  export const isNumberArray = `\
+function ${syntheticNamePrefix}isNumberArray(x: unknown): x is readonly number[] {
+  return Array.isArray(x) && x.every(z => typeof z === "number");
+}`;
 
-  return ${syntheticNamePrefix}EqualsResult.Equal;
+  export const isObjectArray = `\
+function ${syntheticNamePrefix}isObjectArray(x: unknown): x is readonly object[] {
+  return Array.isArray(x) && x.every(z => typeof z === "object");
+}`;
+
+  export const isStringArray = `\
+function ${syntheticNamePrefix}isStringArray(x: unknown): x is readonly string[] {
+  return Array.isArray(x) && x.every(z => typeof z === "string");
 }`;
 
   export const LazyObjectSet = `\
@@ -310,6 +299,36 @@ export class ${syntheticNamePrefix}LazyRequiredObject<ObjectIdentifierT extends 
   resolve(): Promise<purify.Either<Error, ResolvedObjectT>> {
     return this.resolver(this.stub.${syntheticNamePrefix}identifier);
   }
+}`;
+
+  export const maybeEquals = `\
+export function ${syntheticNamePrefix}maybeEquals<T>(
+  leftMaybe: purify.Maybe<T>,
+  rightMaybe: purify.Maybe<T>,
+  valueEquals: (left: T, right: T) => boolean | ${syntheticNamePrefix}EqualsResult,
+): ${syntheticNamePrefix}EqualsResult {
+  if (leftMaybe.isJust()) {
+    if (rightMaybe.isJust()) {
+      return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
+        leftMaybe,
+        rightMaybe,
+        valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
+      );
+    }
+    return purify.Left({
+      left: leftMaybe.unsafeCoerce(),
+      type: "RightNull",
+    });
+  }
+
+  if (rightMaybe.isJust()) {
+    return purify.Left({
+      right: rightMaybe.unsafeCoerce(),
+      type: "LeftNull",
+    });
+  }
+
+  return ${syntheticNamePrefix}EqualsResult.Equal;
 }`;
 
   export const RdfVocabularies = `\
