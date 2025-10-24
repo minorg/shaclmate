@@ -551,6 +551,27 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Node shape that has lazy properties." ;
     sh:property [
+        shaclmate:stub :StubInterface ;
+        sh:maxCount 1 ;
+        sh:minCount 0 ;
+        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
+        sh:path :optionalStubInterfaceToResolvedInterfaceProperty
+    ], [
+        shaclmate:stub :StubInterface ;
+        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
+        sh:path :setStubInterfaceToResolvedInterfaceProperty
+    ], [
+        shaclmate:stub :StubInterface ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
+        sh:path :requiredStubInterfaceToResolvedInterfaceProperty
+    ], [
+        shaclmate:stub :StubInterface ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedInterfaceUnion ;
+        sh:path :optionalStubInterfaceToResolvedInterfaceUnionProperty
+    ], [
         shaclmate:stub :StubInterfaceUnion ;
         sh:maxCount 1 ;
         sh:node :LazilyResolvedInterfaceUnion ;
@@ -581,27 +602,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:node :LazilyResolvedInterfaceUnion ;
         sh:path :optionalLazyToResolvedInterfaceUnionProperty
-    ], [
-        shaclmate:stub :StubInterface ;
-        sh:maxCount 1 ;
-        sh:minCount 0 ;
-        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
-        sh:path :optionalStubInterfaceToResolvedInterfaceProperty
-    ], [
-        shaclmate:stub :StubInterface ;
-        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
-        sh:path :setStubInterfaceToResolvedInterfaceProperty
-    ], [
-        shaclmate:stub :StubInterface ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
-        sh:path :requiredStubInterfaceToResolvedInterfaceProperty
-    ], [
-        shaclmate:stub :StubInterface ;
-        sh:maxCount 1 ;
-        sh:node :LazilyResolvedInterfaceUnion ;
-        sh:path :optionalStubInterfaceToResolvedInterfaceUnionProperty
     ] .
 
 :ListPropertiesClass

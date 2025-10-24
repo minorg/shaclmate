@@ -327,6 +327,7 @@ export class TypeFactory {
         return new ListType({
           identifierNodeKind: astType.identifierNodeKind,
           itemType: this.createTypeFromAstType(astType.itemType),
+          minCount: 0,
           mutable: astType.mutable.orDefault(false),
           identifierMintingStrategy: astType.identifierMintingStrategy,
           toRdfTypes: astType.toRdfTypes,

@@ -11041,7 +11041,7 @@ export class MutablePropertiesClass {
   constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly $identifierPrefix?: string;
-    readonly mutableListProperty?: purify.Maybe<string[]> | string[];
+    readonly mutableListProperty?: purify.Maybe<string[]> | readonly string[];
     readonly mutableSetProperty?: readonly string[];
     readonly mutableStringProperty?: purify.Maybe<string> | string;
   }) {
@@ -11057,12 +11057,12 @@ export class MutablePropertiesClass {
     this._$identifierPrefix = parameters?.$identifierPrefix;
     if (purify.Maybe.isMaybe(parameters?.mutableListProperty)) {
       this.mutableListProperty = parameters?.mutableListProperty;
+    } else if (typeof parameters?.mutableListProperty === "undefined") {
+      this.mutableListProperty = purify.Maybe.of([]);
     } else if (typeof parameters?.mutableListProperty === "object") {
       this.mutableListProperty = purify.Maybe.of(
         parameters?.mutableListProperty.concat(),
       );
-    } else if (typeof parameters?.mutableListProperty === "undefined") {
-      this.mutableListProperty = purify.Maybe.empty();
     } else {
       this.mutableListProperty =
         parameters?.mutableListProperty satisfies never;
@@ -11356,7 +11356,7 @@ export namespace MutablePropertiesClass {
       : dataFactory.namedNode($jsonObject["@id"]);
     const mutableListProperty = purify.Maybe.fromNullable(
       $jsonObject["mutableListProperty"],
-    ).map((item) => item.map((item) => item));
+    );
     const mutableSetProperty = $jsonObject["mutableSetProperty"];
     const mutableStringProperty = purify.Maybe.fromNullable(
       $jsonObject["mutableStringProperty"],
@@ -11426,6 +11426,7 @@ export namespace MutablePropertiesClass {
       mutableListProperty: zod
         .string()
         .array()
+        .default(() => [])
         .optional()
         .describe(
           "List-valued property that can't be reassigned but whose value can be mutated",
@@ -12171,20 +12172,20 @@ export class ListPropertiesClass {
 
     if (purify.Maybe.isMaybe(parameters?.objectListProperty)) {
       this.objectListProperty = parameters?.objectListProperty;
+    } else if (typeof parameters?.objectListProperty === "undefined") {
+      this.objectListProperty = purify.Maybe.of([]);
     } else if (typeof parameters?.objectListProperty === "object") {
       this.objectListProperty = purify.Maybe.of(parameters?.objectListProperty);
-    } else if (typeof parameters?.objectListProperty === "undefined") {
-      this.objectListProperty = purify.Maybe.empty();
     } else {
       this.objectListProperty = parameters?.objectListProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters?.stringListProperty)) {
       this.stringListProperty = parameters?.stringListProperty;
+    } else if (typeof parameters?.stringListProperty === "undefined") {
+      this.stringListProperty = purify.Maybe.of([]);
     } else if (typeof parameters?.stringListProperty === "object") {
       this.stringListProperty = purify.Maybe.of(parameters?.stringListProperty);
-    } else if (typeof parameters?.stringListProperty === "undefined") {
-      this.stringListProperty = purify.Maybe.empty();
     } else {
       this.stringListProperty = parameters?.stringListProperty satisfies never;
     }
@@ -12478,7 +12479,7 @@ export namespace ListPropertiesClass {
     );
     const stringListProperty = purify.Maybe.fromNullable(
       $jsonObject["stringListProperty"],
-    ).map((item) => item.map((item) => item));
+    );
     return purify.Either.of({
       $identifier,
       objectListProperty,
@@ -12535,8 +12536,15 @@ export namespace ListPropertiesClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("ListPropertiesClass"),
-      objectListProperty: NonClass.$jsonZodSchema().array().optional(),
-      stringListProperty: zod.string().array().optional(),
+      objectListProperty: NonClass.$jsonZodSchema()
+        .array()
+        .default(() => [])
+        .optional(),
+      stringListProperty: zod
+        .string()
+        .array()
+        .default(() => [])
+        .optional(),
     }) satisfies zod.ZodType<$Json>;
   }
 

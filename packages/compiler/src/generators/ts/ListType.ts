@@ -1,100 +1,47 @@
 import type { NamedNode } from "@rdfjs/types";
 
-import { Maybe } from "purify-ts";
+import type { Maybe } from "purify-ts";
 
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../enums/index.js";
+import { CollectionType } from "./CollectionType.js";
 import { Import } from "./Import.js";
-import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export class ListType extends Type {
-  private readonly _mutable: boolean;
+export class ListType<
+  ItemTypeT extends Type,
+> extends CollectionType<ItemTypeT> {
   private readonly identifierMintingStrategy: IdentifierMintingStrategy;
   private readonly identifierNodeKind: IdentifierNodeKind;
   private readonly toRdfTypes: readonly NamedNode[];
 
-  readonly itemType: Type;
   readonly kind = "ListType";
-  readonly typeof = "object";
 
   constructor({
     identifierNodeKind,
-    itemType,
     identifierMintingStrategy,
-    mutable,
     toRdfTypes,
+    ...superParameters
   }: {
-    identifierNodeKind: ListType["identifierNodeKind"];
-    itemType: Type;
+    identifierNodeKind: ListType<ItemTypeT>["identifierNodeKind"];
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
-    mutable: boolean;
     toRdfTypes: readonly NamedNode[];
-  }) {
-    super();
+  } & ConstructorParameters<typeof CollectionType<ItemTypeT>>[0]) {
+    super(superParameters);
     this.identifierNodeKind = identifierNodeKind;
-    this.itemType = itemType;
     this.identifierMintingStrategy = identifierMintingStrategy.orDefault(
       identifierNodeKind === "BlankNode" ? "blankNode" : "sha256",
     );
-    this._mutable = mutable;
     this.toRdfTypes = toRdfTypes;
-  }
-
-  @Memoize()
-  override get conversions(): readonly Type.Conversion[] {
-    return [
-      {
-        // Defensive copy
-        conversionExpression: (value) =>
-          `${value}${this.mutable ? ".concat()" : ""}`,
-        // Array.isArray doesn't narrow correctly
-        // sourceTypeCheckExpression: (value) => `Array.isArray(${value})`,
-        sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
-        sourceTypeName: this.name,
-      },
-    ];
-  }
-
-  override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
-    return Maybe.empty();
-  }
-
-  @Memoize()
-  override get equalsFunction(): string {
-    return `((left, right) => ${syntheticNamePrefix}arrayEquals(left, right, ${this.itemType.equalsFunction}))`;
-  }
-
-  @Memoize()
-  override get graphqlName(): Type.GraphqlName {
-    return new Type.GraphqlName(
-      `new graphql.GraphQLList(${this.itemType.graphqlName})`,
-    );
   }
 
   @Memoize()
   override get jsonName(): Type.JsonName {
     return new Type.JsonName(`readonly (${this.itemType.jsonName})[]`);
-  }
-
-  override get mutable(): boolean {
-    return this._mutable || this.itemType.mutable;
-  }
-
-  @Memoize()
-  override get name(): string {
-    return `${this._mutable ? "" : "readonly "}${this.itemType.name}[]`;
-  }
-
-  override fromJsonExpression({
-    variables,
-  }: Parameters<Type["fromJsonExpression"]>[0]): string {
-    return `${variables.value}.map(item => (${this.itemType.fromJsonExpression({ variables: { value: "item" } })}))`;
   }
 
   override fromRdfExpression({
@@ -114,45 +61,6 @@ export class ListType extends Type {
       ))`, // Resource.Values<Resource.Value[]> to Resource.Values<item type arrays>
       `map(valueLists => valueLists.map(valueList => valueList.toArray()${this.mutable ? ".concat()" : ""}))`, // Convert inner Resource.Values to arrays
     ].join(".");
-  }
-
-  override graphqlResolveExpression({
-    variables,
-  }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
-    return variables.value;
-  }
-
-  override hashStatements({
-    depth,
-    variables,
-  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
-    return [
-      `for (const item${depth} of ${variables.value}) { ${this.itemType.hashStatements({ depth: depth + 1, variables: { ...variables, value: `item${depth}` } }).join("\n")} }`,
-    ];
-  }
-
-  override jsonUiSchemaElement(
-    parameters: Parameters<Type["jsonUiSchemaElement"]>[0],
-  ): ReturnType<Type["jsonUiSchemaElement"]> {
-    return this.itemType.jsonUiSchemaElement(parameters);
-  }
-
-  override jsonZodSchema(
-    parameters: Parameters<Type["jsonZodSchema"]>[0],
-  ): ReturnType<Type["jsonZodSchema"]> {
-    return `${this.itemType.jsonZodSchema(parameters)}.array()`;
-  }
-
-  override snippetDeclarations(
-    parameters: Parameters<Type["snippetDeclarations"]>[0],
-  ): readonly string[] {
-    const snippetDeclarations: string[] = this.itemType
-      .snippetDeclarations(parameters)
-      .concat();
-    if (parameters.features.has("equals")) {
-      snippetDeclarations.push(SnippetDeclarations.arrayEquals);
-    }
-    return snippetDeclarations;
   }
 
   override sparqlConstructTemplateTriples(
@@ -342,20 +250,6 @@ export class ListType extends Type {
         return [`{ type: "optional", patterns: [${patterns.join(", ")}] }`];
       }
     }
-  }
-
-  override toJsonExpression({
-    variables,
-  }: Parameters<Type["toJsonExpression"]>[0]): string {
-    let expression = variables.value;
-    const itemFromJsonExpression = this.itemType.fromJsonExpression({
-      variables: { value: "item" },
-    });
-    if (itemFromJsonExpression !== "item") {
-      expression = `${expression}.map(item => (${itemFromJsonExpression}))`;
-    }
-
-    return `${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: "item" } })}))`;
   }
 
   override toRdfExpression({
