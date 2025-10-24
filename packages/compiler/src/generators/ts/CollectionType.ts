@@ -28,11 +28,50 @@ export abstract class CollectionType<ItemTypeT extends Type> extends Type {
     this.minCount = minCount;
     invariant(this.minCount >= 0);
     this._mutable = mutable;
+    if (mutable) {
+      invariant(this.minCount === 0);
+    }
   }
 
   @Memoize()
   override get conversions(): readonly Type.Conversion[] {
     const conversions: Type.Conversion[] = [];
+
+    // Try to do some conversions from types itemType can be converted to
+    // For example, if itemType is a NamedNode, it can be converted from a string, so here we'd accept:
+    // readonly NamedNode[] (no conversion)
+    // readonly string[] (map to NamedNodes)
+
+    // We only consider discriminating by (item) typeof. For example, the types above could be discriminated by the branches
+    // array.every(item => typeof item === "object")
+    // array.every(item => typeof item === "string")
+
+    const itemTypeConversionsByTypeof = {} as Record<
+      "boolean" | "object" | "number" | "string",
+      Type.Conversion
+    >;
+
+    itemTypeConversionsByTypeof[this.itemType.typeof] = {
+      conversionExpression: (value) => value,
+      sourceTypeCheckExpression: (value) =>
+        `typeof ${value} === ${this.itemType.typeof}`,
+      sourceTypeName: this.itemType.typeof,
+    };
+
+    for (const itemTypeConversion of this.itemType.conversions) {
+      switch (itemTypeConversion.sourceTypeName) {
+        case "boolean":
+        case "object":
+        case "number":
+        case "string": {
+          if (!itemTypeConversionsByTypeof[itemTypeConversion.sourceTypeName]) {
+            itemTypeConversionsByTypeof[itemTypeConversion.sourceTypeName] =
+              itemTypeConversion;
+          }
+          break;
+        }
+      }
+    }
 
     if (this.minCount === 0) {
       conversions.push({
@@ -40,16 +79,43 @@ export abstract class CollectionType<ItemTypeT extends Type> extends Type {
         sourceTypeCheckExpression: (value) => `typeof ${value} === "undefined"`,
         sourceTypeName: "undefined",
       });
-      conversions.push({
-        // Defensive copy
-        conversionExpression: (value) =>
-          `${value}${this.mutable ? ".concat()" : ""}`,
-        // Array.isArray doesn't narrow correctly
-        // sourceTypeCheckExpression: (value) => `Array.isArray(${value})`,
-        sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
-        sourceTypeName: `readonly (${this.itemType.name})[]`,
-      });
+
+      if (Object.keys(itemTypeConversionsByTypeof).length === 1) {
+        // There were no additional conversions with different item typeof's, so we don't need to check .every or do .map
+        // Just check that the original value is an array with typeof "object". Array.isArray() doesn't narrow types for some reason.
+        conversions.push({
+          conversionExpression: (value) =>
+            // Defensive copy
+            `${value}${this.mutable ? ".concat()" : ""}`,
+          sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
+          sourceTypeName: `readonly (${this.itemType.name})[]`,
+        });
+      } else {
+        // There were additional conversions with different item typeof's.
+        // We do .every (per above) to discriminate array types with different item typeof's and .map to convert the array at runtime.
+        for (const [itemTypeof, itemTypeofConversion] of Object.entries(
+          itemTypeConversionsByTypeof,
+        )) {
+          conversions.push({
+            conversionExpression: (value) => {
+              const itemTypeConversionExpression =
+                itemTypeofConversion.conversionExpression("item");
+              return itemTypeConversionExpression !== "item"
+                ? `${value}.map(item => ${itemTypeConversionExpression})`
+                : // Defensive copy
+                  `${value}${this.mutable ? ".concat()" : ""}`;
+            },
+            sourceTypeCheckExpression: (value) =>
+              // Check that the value is an array with typeof "object" then discriminate its item typeof's.
+              // See note above re: non-use of Array.isArray.
+              `typeof ${value} === "object" && ${value}.every(item => typeof item === ${itemTypeof})`,
+            sourceTypeName: `readonly (${itemTypeofConversion.sourceTypeName})[]`,
+          });
+        }
+      }
     } else {
+      // minCount > 0
+      // Don't try to do any item type conversions here (yet).
       conversions.push({
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) =>
