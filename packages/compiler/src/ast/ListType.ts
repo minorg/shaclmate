@@ -1,5 +1,6 @@
 import type { NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
+import type { CollectionType } from "ast/CollectionType.js";
 import type { Maybe } from "purify-ts";
 import type { IdentifierMintingStrategy } from "../enums/IdentifierMintingStrategy.js";
 import type { Name } from "./Name.js";
@@ -12,7 +13,8 @@ import type { Type } from "./Type.js";
  *
  * Contrast SetType, which is transformed from any SHACL property shape with no maxCount or maxCount greater than 1.
  */
-export interface ListType {
+export interface ListType<ItemTypeT extends Type = Type>
+  extends CollectionType<ItemTypeT> {
   /**
    * Documentation comment from rdfs:comment.
    */
@@ -23,31 +25,23 @@ export interface ListType {
    */
   readonly identifierNodeKind: IdentifierNodeKind;
 
-  /**
-   * List item type.
-   *
-   * Mutable to support cycle-handling logic in the compiler.
-   */
-  itemType: Type;
-
   readonly kind: "ListType";
 
   /**
    * Human-readable label from rdfs:label.
    */
   readonly label: Maybe<string>;
+
   /**
    * Strategy for minting new list and sub-list identifiers.
    */
   readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
-  /**
-   * The list should be mutable in generated code.
-   */
-  readonly mutable: Maybe<boolean>;
+
   /**
    * Name of this type, usually derived from sh:name or shaclmate:name.
    */
   readonly name: Name;
+
   /**
    * rdf:type's that will be added to this object when it's serialized toRdf.
    *
