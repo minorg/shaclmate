@@ -34525,6 +34525,2678 @@ export namespace DefaultValuePropertiesClass {
   }
 }
 /**
+ * Node shape with properties whose types are convertible from other types on construction e.g., string to IRI.
+ */
+export class ConvertibleTypePropertiesClass {
+  private _$identifier?: ConvertibleTypePropertiesClass.$Identifier;
+  readonly $type = "ConvertibleTypePropertiesClass";
+  readonly convertibleIriNonEmptySetProperty: purify.NonEmptyList<rdfjs.NamedNode>;
+  readonly convertibleIriOptionProperty: purify.Maybe<rdfjs.NamedNode>;
+  readonly convertibleIriProperty: rdfjs.NamedNode;
+  readonly convertibleIriSetProperty: readonly rdfjs.NamedNode[];
+  readonly convertibleLiteralNonEmptySetProperty: purify.NonEmptyList<rdfjs.Literal>;
+  readonly convertibleLiteralOptionProperty: purify.Maybe<rdfjs.Literal>;
+  readonly convertibleLiteralProperty: rdfjs.Literal;
+  readonly convertibleLiteralSetProperty: readonly rdfjs.Literal[];
+  readonly convertibleTermNonEmptySetProperty: purify.NonEmptyList<
+    rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+  >;
+  readonly convertibleTermOptionProperty: purify.Maybe<
+    rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+  >;
+  readonly convertibleTermProperty:
+    | rdfjs.BlankNode
+    | rdfjs.NamedNode
+    | rdfjs.Literal;
+  readonly convertibleTermSetProperty: readonly (
+    | rdfjs.BlankNode
+    | rdfjs.NamedNode
+    | rdfjs.Literal
+  )[];
+
+  constructor(parameters: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly convertibleIriNonEmptySetProperty: purify.NonEmptyList<rdfjs.NamedNode>;
+    readonly convertibleIriOptionProperty?:
+      | rdfjs.NamedNode
+      | purify.Maybe<rdfjs.NamedNode>
+      | string;
+    readonly convertibleIriProperty: rdfjs.NamedNode | string;
+    readonly convertibleIriSetProperty?:
+      | readonly rdfjs.NamedNode[]
+      | readonly string[];
+    readonly convertibleLiteralNonEmptySetProperty: purify.NonEmptyList<rdfjs.Literal>;
+    readonly convertibleLiteralOptionProperty?:
+      | rdfjs.Literal
+      | Date
+      | boolean
+      | number
+      | purify.Maybe<rdfjs.Literal>
+      | string;
+    readonly convertibleLiteralProperty:
+      | rdfjs.Literal
+      | Date
+      | boolean
+      | number
+      | string;
+    readonly convertibleLiteralSetProperty?:
+      | readonly rdfjs.Literal[]
+      | readonly boolean[]
+      | readonly number[]
+      | readonly string[];
+    readonly convertibleTermNonEmptySetProperty: purify.NonEmptyList<
+      rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+    >;
+    readonly convertibleTermOptionProperty?:
+      | (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)
+      | Date
+      | boolean
+      | number
+      | purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
+      | string;
+    readonly convertibleTermProperty:
+      | (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)
+      | Date
+      | boolean
+      | number
+      | string;
+    readonly convertibleTermSetProperty?:
+      | readonly (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[]
+      | readonly boolean[]
+      | readonly number[]
+      | readonly string[];
+  }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+
+    this.convertibleIriNonEmptySetProperty =
+      parameters.convertibleIriNonEmptySetProperty;
+    if (purify.Maybe.isMaybe(parameters.convertibleIriOptionProperty)) {
+      this.convertibleIriOptionProperty =
+        parameters.convertibleIriOptionProperty;
+    } else if (typeof parameters.convertibleIriOptionProperty === "object") {
+      this.convertibleIriOptionProperty = purify.Maybe.of(
+        parameters.convertibleIriOptionProperty,
+      );
+    } else if (typeof parameters.convertibleIriOptionProperty === "string") {
+      this.convertibleIriOptionProperty = purify.Maybe.of(
+        dataFactory.namedNode(parameters.convertibleIriOptionProperty),
+      );
+    } else if (typeof parameters.convertibleIriOptionProperty === "undefined") {
+      this.convertibleIriOptionProperty = purify.Maybe.empty();
+    } else {
+      this.convertibleIriOptionProperty =
+        parameters.convertibleIriOptionProperty satisfies never;
+    }
+
+    if (typeof parameters.convertibleIriProperty === "object") {
+      this.convertibleIriProperty = parameters.convertibleIriProperty;
+    } else if (typeof parameters.convertibleIriProperty === "string") {
+      this.convertibleIriProperty = dataFactory.namedNode(
+        parameters.convertibleIriProperty,
+      );
+    } else {
+      this.convertibleIriProperty =
+        parameters.convertibleIriProperty satisfies never;
+    }
+
+    if (typeof parameters.convertibleIriSetProperty === "undefined") {
+      this.convertibleIriSetProperty = [];
+    } else if ($isObjectArray(parameters.convertibleIriSetProperty)) {
+      this.convertibleIriSetProperty = parameters.convertibleIriSetProperty;
+    } else if ($isStringArray(parameters.convertibleIriSetProperty)) {
+      this.convertibleIriSetProperty = parameters.convertibleIriSetProperty.map(
+        (item) => dataFactory.namedNode(item),
+      );
+    } else {
+      this.convertibleIriSetProperty =
+        parameters.convertibleIriSetProperty satisfies never;
+    }
+
+    this.convertibleLiteralNonEmptySetProperty =
+      parameters.convertibleLiteralNonEmptySetProperty;
+    if (purify.Maybe.isMaybe(parameters.convertibleLiteralOptionProperty)) {
+      this.convertibleLiteralOptionProperty =
+        parameters.convertibleLiteralOptionProperty;
+    } else if (
+      typeof parameters.convertibleLiteralOptionProperty === "boolean"
+    ) {
+      this.convertibleLiteralOptionProperty = purify.Maybe.of(
+        rdfLiteral.toRdf(parameters.convertibleLiteralOptionProperty, {
+          dataFactory,
+        }),
+      );
+    } else if (
+      typeof parameters.convertibleLiteralOptionProperty === "object" &&
+      parameters.convertibleLiteralOptionProperty instanceof Date
+    ) {
+      this.convertibleLiteralOptionProperty = purify.Maybe.of(
+        rdfLiteral.toRdf(parameters.convertibleLiteralOptionProperty, {
+          dataFactory,
+        }),
+      );
+    } else if (
+      typeof parameters.convertibleLiteralOptionProperty === "number"
+    ) {
+      this.convertibleLiteralOptionProperty = purify.Maybe.of(
+        rdfLiteral.toRdf(parameters.convertibleLiteralOptionProperty, {
+          dataFactory,
+        }),
+      );
+    } else if (
+      typeof parameters.convertibleLiteralOptionProperty === "string"
+    ) {
+      this.convertibleLiteralOptionProperty = purify.Maybe.of(
+        dataFactory.literal(parameters.convertibleLiteralOptionProperty),
+      );
+    } else if (
+      typeof parameters.convertibleLiteralOptionProperty === "object"
+    ) {
+      this.convertibleLiteralOptionProperty = purify.Maybe.of(
+        parameters.convertibleLiteralOptionProperty,
+      );
+    } else if (
+      typeof parameters.convertibleLiteralOptionProperty === "undefined"
+    ) {
+      this.convertibleLiteralOptionProperty = purify.Maybe.empty();
+    } else {
+      this.convertibleLiteralOptionProperty =
+        parameters.convertibleLiteralOptionProperty satisfies never;
+    }
+
+    if (typeof parameters.convertibleLiteralProperty === "boolean") {
+      this.convertibleLiteralProperty = rdfLiteral.toRdf(
+        parameters.convertibleLiteralProperty,
+        { dataFactory },
+      );
+    } else if (
+      typeof parameters.convertibleLiteralProperty === "object" &&
+      parameters.convertibleLiteralProperty instanceof Date
+    ) {
+      this.convertibleLiteralProperty = rdfLiteral.toRdf(
+        parameters.convertibleLiteralProperty,
+        { dataFactory },
+      );
+    } else if (typeof parameters.convertibleLiteralProperty === "number") {
+      this.convertibleLiteralProperty = rdfLiteral.toRdf(
+        parameters.convertibleLiteralProperty,
+        { dataFactory },
+      );
+    } else if (typeof parameters.convertibleLiteralProperty === "string") {
+      this.convertibleLiteralProperty = dataFactory.literal(
+        parameters.convertibleLiteralProperty,
+      );
+    } else if (typeof parameters.convertibleLiteralProperty === "object") {
+      this.convertibleLiteralProperty = parameters.convertibleLiteralProperty;
+    } else {
+      this.convertibleLiteralProperty =
+        parameters.convertibleLiteralProperty satisfies never;
+    }
+
+    if (typeof parameters.convertibleLiteralSetProperty === "undefined") {
+      this.convertibleLiteralSetProperty = [];
+    } else if ($isObjectArray(parameters.convertibleLiteralSetProperty)) {
+      this.convertibleLiteralSetProperty =
+        parameters.convertibleLiteralSetProperty;
+    } else if ($isBooleanArray(parameters.convertibleLiteralSetProperty)) {
+      this.convertibleLiteralSetProperty =
+        parameters.convertibleLiteralSetProperty.map((item) =>
+          rdfLiteral.toRdf(item, { dataFactory }),
+        );
+    } else if ($isNumberArray(parameters.convertibleLiteralSetProperty)) {
+      this.convertibleLiteralSetProperty =
+        parameters.convertibleLiteralSetProperty.map((item) =>
+          rdfLiteral.toRdf(item, { dataFactory }),
+        );
+    } else if ($isStringArray(parameters.convertibleLiteralSetProperty)) {
+      this.convertibleLiteralSetProperty =
+        parameters.convertibleLiteralSetProperty.map((item) =>
+          dataFactory.literal(item),
+        );
+    } else {
+      this.convertibleLiteralSetProperty =
+        parameters.convertibleLiteralSetProperty satisfies never;
+    }
+
+    this.convertibleTermNonEmptySetProperty =
+      parameters.convertibleTermNonEmptySetProperty;
+    if (purify.Maybe.isMaybe(parameters.convertibleTermOptionProperty)) {
+      this.convertibleTermOptionProperty =
+        parameters.convertibleTermOptionProperty;
+    } else if (typeof parameters.convertibleTermOptionProperty === "boolean") {
+      this.convertibleTermOptionProperty = purify.Maybe.of(
+        rdfLiteral.toRdf(parameters.convertibleTermOptionProperty, {
+          dataFactory,
+        }),
+      );
+    } else if (
+      typeof parameters.convertibleTermOptionProperty === "object" &&
+      parameters.convertibleTermOptionProperty instanceof Date
+    ) {
+      this.convertibleTermOptionProperty = purify.Maybe.of(
+        rdfLiteral.toRdf(parameters.convertibleTermOptionProperty, {
+          dataFactory,
+        }),
+      );
+    } else if (typeof parameters.convertibleTermOptionProperty === "number") {
+      this.convertibleTermOptionProperty = purify.Maybe.of(
+        rdfLiteral.toRdf(parameters.convertibleTermOptionProperty, {
+          dataFactory,
+        }),
+      );
+    } else if (typeof parameters.convertibleTermOptionProperty === "string") {
+      this.convertibleTermOptionProperty = purify.Maybe.of(
+        dataFactory.literal(parameters.convertibleTermOptionProperty),
+      );
+    } else if (typeof parameters.convertibleTermOptionProperty === "object") {
+      this.convertibleTermOptionProperty = purify.Maybe.of(
+        parameters.convertibleTermOptionProperty,
+      );
+    } else if (
+      typeof parameters.convertibleTermOptionProperty === "undefined"
+    ) {
+      this.convertibleTermOptionProperty = purify.Maybe.empty();
+    } else {
+      this.convertibleTermOptionProperty =
+        parameters.convertibleTermOptionProperty satisfies never;
+    }
+
+    if (typeof parameters.convertibleTermProperty === "boolean") {
+      this.convertibleTermProperty = rdfLiteral.toRdf(
+        parameters.convertibleTermProperty,
+        { dataFactory },
+      );
+    } else if (
+      typeof parameters.convertibleTermProperty === "object" &&
+      parameters.convertibleTermProperty instanceof Date
+    ) {
+      this.convertibleTermProperty = rdfLiteral.toRdf(
+        parameters.convertibleTermProperty,
+        { dataFactory },
+      );
+    } else if (typeof parameters.convertibleTermProperty === "number") {
+      this.convertibleTermProperty = rdfLiteral.toRdf(
+        parameters.convertibleTermProperty,
+        { dataFactory },
+      );
+    } else if (typeof parameters.convertibleTermProperty === "string") {
+      this.convertibleTermProperty = dataFactory.literal(
+        parameters.convertibleTermProperty,
+      );
+    } else if (typeof parameters.convertibleTermProperty === "object") {
+      this.convertibleTermProperty = parameters.convertibleTermProperty;
+    } else {
+      this.convertibleTermProperty =
+        parameters.convertibleTermProperty satisfies never;
+    }
+
+    if (typeof parameters.convertibleTermSetProperty === "undefined") {
+      this.convertibleTermSetProperty = [];
+    } else if ($isObjectArray(parameters.convertibleTermSetProperty)) {
+      this.convertibleTermSetProperty = parameters.convertibleTermSetProperty;
+    } else if ($isBooleanArray(parameters.convertibleTermSetProperty)) {
+      this.convertibleTermSetProperty =
+        parameters.convertibleTermSetProperty.map((item) =>
+          rdfLiteral.toRdf(item, { dataFactory }),
+        );
+    } else if ($isNumberArray(parameters.convertibleTermSetProperty)) {
+      this.convertibleTermSetProperty =
+        parameters.convertibleTermSetProperty.map((item) =>
+          rdfLiteral.toRdf(item, { dataFactory }),
+        );
+    } else if ($isStringArray(parameters.convertibleTermSetProperty)) {
+      this.convertibleTermSetProperty =
+        parameters.convertibleTermSetProperty.map((item) =>
+          dataFactory.literal(item),
+        );
+    } else {
+      this.convertibleTermSetProperty =
+        parameters.convertibleTermSetProperty satisfies never;
+    }
+  }
+
+  get $identifier(): ConvertibleTypePropertiesClass.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: ConvertibleTypePropertiesClass): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) => $arrayEquals(left, right, $booleanEquals))(
+          this.convertibleIriNonEmptySetProperty,
+          other.convertibleIriNonEmptySetProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "convertibleIriNonEmptySetProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+          this.convertibleIriOptionProperty,
+          other.convertibleIriOptionProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "convertibleIriOptionProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        $booleanEquals(
+          this.convertibleIriProperty,
+          other.convertibleIriProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "convertibleIriProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $arrayEquals(left, right, $booleanEquals))(
+          this.convertibleIriSetProperty,
+          other.convertibleIriSetProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "convertibleIriSetProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $arrayEquals(left, right, $booleanEquals))(
+          this.convertibleLiteralNonEmptySetProperty,
+          other.convertibleLiteralNonEmptySetProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "convertibleLiteralNonEmptySetProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+          this.convertibleLiteralOptionProperty,
+          other.convertibleLiteralOptionProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "convertibleLiteralOptionProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        $booleanEquals(
+          this.convertibleLiteralProperty,
+          other.convertibleLiteralProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "convertibleLiteralProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $arrayEquals(left, right, $booleanEquals))(
+          this.convertibleLiteralSetProperty,
+          other.convertibleLiteralSetProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "convertibleLiteralSetProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $arrayEquals(left, right, $booleanEquals))(
+          this.convertibleTermNonEmptySetProperty,
+          other.convertibleTermNonEmptySetProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "convertibleTermNonEmptySetProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+          this.convertibleTermOptionProperty,
+          other.convertibleTermOptionProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "convertibleTermOptionProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        $booleanEquals(
+          this.convertibleTermProperty,
+          other.convertibleTermProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "convertibleTermProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $arrayEquals(left, right, $booleanEquals))(
+          this.convertibleTermSetProperty,
+          other.convertibleTermSetProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "convertibleTermSetProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    for (const item0 of this.convertibleIriNonEmptySetProperty) {
+      _hasher.update(item0.termType);
+      _hasher.update(item0.value);
+    }
+
+    this.convertibleIriOptionProperty.ifJust((value0) => {
+      _hasher.update(value0.termType);
+      _hasher.update(value0.value);
+    });
+    _hasher.update(this.convertibleIriProperty.termType);
+    _hasher.update(this.convertibleIriProperty.value);
+    for (const item0 of this.convertibleIriSetProperty) {
+      _hasher.update(item0.termType);
+      _hasher.update(item0.value);
+    }
+
+    for (const item0 of this.convertibleLiteralNonEmptySetProperty) {
+      _hasher.update(item0.datatype.value);
+      _hasher.update(item0.language);
+      _hasher.update(item0.termType);
+      _hasher.update(item0.value);
+    }
+
+    this.convertibleLiteralOptionProperty.ifJust((value0) => {
+      _hasher.update(value0.datatype.value);
+      _hasher.update(value0.language);
+      _hasher.update(value0.termType);
+      _hasher.update(value0.value);
+    });
+    _hasher.update(this.convertibleLiteralProperty.datatype.value);
+    _hasher.update(this.convertibleLiteralProperty.language);
+    _hasher.update(this.convertibleLiteralProperty.termType);
+    _hasher.update(this.convertibleLiteralProperty.value);
+    for (const item0 of this.convertibleLiteralSetProperty) {
+      _hasher.update(item0.datatype.value);
+      _hasher.update(item0.language);
+      _hasher.update(item0.termType);
+      _hasher.update(item0.value);
+    }
+
+    for (const item0 of this.convertibleTermNonEmptySetProperty) {
+      _hasher.update(item0.termType);
+      _hasher.update(item0.value);
+    }
+
+    this.convertibleTermOptionProperty.ifJust((value0) => {
+      _hasher.update(value0.termType);
+      _hasher.update(value0.value);
+    });
+    _hasher.update(this.convertibleTermProperty.termType);
+    _hasher.update(this.convertibleTermProperty.value);
+    for (const item0 of this.convertibleTermSetProperty) {
+      _hasher.update(item0.termType);
+      _hasher.update(item0.value);
+    }
+
+    return _hasher;
+  }
+
+  $toJson(): ConvertibleTypePropertiesClass.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        convertibleIriNonEmptySetProperty:
+          this.convertibleIriNonEmptySetProperty.map((item) => ({
+            "@id": item.value,
+          })),
+        convertibleIriOptionProperty: this.convertibleIriOptionProperty
+          .map((item) => ({ "@id": item.value }))
+          .extract(),
+        convertibleIriProperty: { "@id": this.convertibleIriProperty.value },
+        convertibleIriSetProperty: this.convertibleIriSetProperty.map(
+          (item) => ({ "@id": item.value }),
+        ),
+        convertibleLiteralNonEmptySetProperty:
+          this.convertibleLiteralNonEmptySetProperty.map((item) => ({
+            "@language": item.language.length > 0 ? item.language : undefined,
+            "@type":
+              item.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+                ? item.datatype.value
+                : undefined,
+            "@value": item.value,
+          })),
+        convertibleLiteralOptionProperty: this.convertibleLiteralOptionProperty
+          .map((item) => ({
+            "@language": item.language.length > 0 ? item.language : undefined,
+            "@type":
+              item.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+                ? item.datatype.value
+                : undefined,
+            "@value": item.value,
+          }))
+          .extract(),
+        convertibleLiteralProperty: {
+          "@language":
+            this.convertibleLiteralProperty.language.length > 0
+              ? this.convertibleLiteralProperty.language
+              : undefined,
+          "@type":
+            this.convertibleLiteralProperty.datatype.value !==
+            "http://www.w3.org/2001/XMLSchema#string"
+              ? this.convertibleLiteralProperty.datatype.value
+              : undefined,
+          "@value": this.convertibleLiteralProperty.value,
+        },
+        convertibleLiteralSetProperty: this.convertibleLiteralSetProperty.map(
+          (item) => ({
+            "@language": item.language.length > 0 ? item.language : undefined,
+            "@type":
+              item.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+                ? item.datatype.value
+                : undefined,
+            "@value": item.value,
+          }),
+        ),
+        convertibleTermNonEmptySetProperty:
+          this.convertibleTermNonEmptySetProperty.map((item) =>
+            item.termType === "Literal"
+              ? {
+                  "@language":
+                    item.language.length > 0 ? item.language : undefined,
+                  "@type":
+                    item.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? item.datatype.value
+                      : undefined,
+                  "@value": item.value,
+                  termType: "Literal" as const,
+                }
+              : item.termType === "NamedNode"
+                ? { "@id": item.value, termType: "NamedNode" as const }
+                : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+          ),
+        convertibleTermOptionProperty: this.convertibleTermOptionProperty
+          .map((item) =>
+            item.termType === "Literal"
+              ? {
+                  "@language":
+                    item.language.length > 0 ? item.language : undefined,
+                  "@type":
+                    item.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? item.datatype.value
+                      : undefined,
+                  "@value": item.value,
+                  termType: "Literal" as const,
+                }
+              : item.termType === "NamedNode"
+                ? { "@id": item.value, termType: "NamedNode" as const }
+                : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+          )
+          .extract(),
+        convertibleTermProperty:
+          this.convertibleTermProperty.termType === "Literal"
+            ? {
+                "@language":
+                  this.convertibleTermProperty.language.length > 0
+                    ? this.convertibleTermProperty.language
+                    : undefined,
+                "@type":
+                  this.convertibleTermProperty.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? this.convertibleTermProperty.datatype.value
+                    : undefined,
+                "@value": this.convertibleTermProperty.value,
+                termType: "Literal" as const,
+              }
+            : this.convertibleTermProperty.termType === "NamedNode"
+              ? {
+                  "@id": this.convertibleTermProperty.value,
+                  termType: "NamedNode" as const,
+                }
+              : {
+                  "@id": `_:${this.convertibleTermProperty.value}`,
+                  termType: "BlankNode" as const,
+                },
+        convertibleTermSetProperty: this.convertibleTermSetProperty.map(
+          (item) =>
+            item.termType === "Literal"
+              ? {
+                  "@language":
+                    item.language.length > 0 ? item.language : undefined,
+                  "@type":
+                    item.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? item.datatype.value
+                      : undefined,
+                  "@value": item.value,
+                  termType: "Literal" as const,
+                }
+              : item.termType === "NamedNode"
+                ? { "@id": item.value, termType: "NamedNode" as const }
+                : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+        ),
+      } satisfies ConvertibleTypePropertiesClass.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet?: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
+      mutateGraph,
+    });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/ConvertibleTypePropertiesClass",
+        ),
+      );
+    }
+
+    resource.add(
+      ConvertibleTypePropertiesClass.$properties
+        .convertibleIriNonEmptySetProperty["identifier"],
+      ...this.convertibleIriNonEmptySetProperty.flatMap((item) => [item]),
+    );
+    resource.add(
+      ConvertibleTypePropertiesClass.$properties.convertibleIriOptionProperty[
+        "identifier"
+      ],
+      ...this.convertibleIriOptionProperty.toList(),
+    );
+    resource.add(
+      ConvertibleTypePropertiesClass.$properties.convertibleIriProperty[
+        "identifier"
+      ],
+      ...[this.convertibleIriProperty],
+    );
+    resource.add(
+      ConvertibleTypePropertiesClass.$properties.convertibleIriSetProperty[
+        "identifier"
+      ],
+      ...this.convertibleIriSetProperty.flatMap((item) => [item]),
+    );
+    resource.add(
+      ConvertibleTypePropertiesClass.$properties
+        .convertibleLiteralNonEmptySetProperty["identifier"],
+      ...this.convertibleLiteralNonEmptySetProperty.flatMap((item) => [item]),
+    );
+    resource.add(
+      ConvertibleTypePropertiesClass.$properties
+        .convertibleLiteralOptionProperty["identifier"],
+      ...this.convertibleLiteralOptionProperty.toList(),
+    );
+    resource.add(
+      ConvertibleTypePropertiesClass.$properties.convertibleLiteralProperty[
+        "identifier"
+      ],
+      ...[this.convertibleLiteralProperty],
+    );
+    resource.add(
+      ConvertibleTypePropertiesClass.$properties.convertibleLiteralSetProperty[
+        "identifier"
+      ],
+      ...this.convertibleLiteralSetProperty.flatMap((item) => [item]),
+    );
+    resource.add(
+      ConvertibleTypePropertiesClass.$properties
+        .convertibleTermNonEmptySetProperty["identifier"],
+      ...this.convertibleTermNonEmptySetProperty.flatMap((item) => [item]),
+    );
+    resource.add(
+      ConvertibleTypePropertiesClass.$properties.convertibleTermOptionProperty[
+        "identifier"
+      ],
+      ...this.convertibleTermOptionProperty.toList(),
+    );
+    resource.add(
+      ConvertibleTypePropertiesClass.$properties.convertibleTermProperty[
+        "identifier"
+      ],
+      ...[this.convertibleTermProperty],
+    );
+    resource.add(
+      ConvertibleTypePropertiesClass.$properties.convertibleTermSetProperty[
+        "identifier"
+      ],
+      ...this.convertibleTermSetProperty.flatMap((item) => [item]),
+    );
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace ConvertibleTypePropertiesClass {
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ConvertibleTypePropertiesClass",
+  );
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ConvertibleTypePropertiesClass";
+    readonly convertibleIriNonEmptySetProperty: readonly {
+      readonly "@id": string;
+    }[];
+    readonly convertibleIriOptionProperty?: { readonly "@id": string };
+    readonly convertibleIriProperty: { readonly "@id": string };
+    readonly convertibleIriSetProperty?: readonly { readonly "@id": string }[];
+    readonly convertibleLiteralNonEmptySetProperty: readonly {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    }[];
+    readonly convertibleLiteralOptionProperty?: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+    readonly convertibleLiteralProperty: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+    readonly convertibleLiteralSetProperty?: readonly {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    }[];
+    readonly convertibleTermNonEmptySetProperty: readonly (
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        }
+    )[];
+    readonly convertibleTermOptionProperty?:
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        };
+    readonly convertibleTermProperty:
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        };
+    readonly convertibleTermSetProperty?: readonly (
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly "@type"?: string;
+          readonly "@value": string;
+          readonly termType: "Literal";
+        }
+    )[];
+  };
+
+  export function $propertiesFromJson(_json: unknown): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      convertibleIriNonEmptySetProperty: purify.NonEmptyList<rdfjs.NamedNode>;
+      convertibleIriOptionProperty: purify.Maybe<rdfjs.NamedNode>;
+      convertibleIriProperty: rdfjs.NamedNode;
+      convertibleIriSetProperty: readonly rdfjs.NamedNode[];
+      convertibleLiteralNonEmptySetProperty: purify.NonEmptyList<rdfjs.Literal>;
+      convertibleLiteralOptionProperty: purify.Maybe<rdfjs.Literal>;
+      convertibleLiteralProperty: rdfjs.Literal;
+      convertibleLiteralSetProperty: readonly rdfjs.Literal[];
+      convertibleTermNonEmptySetProperty: purify.NonEmptyList<
+        rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+      >;
+      convertibleTermOptionProperty: purify.Maybe<
+        rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+      >;
+      convertibleTermProperty:
+        | rdfjs.BlankNode
+        | rdfjs.NamedNode
+        | rdfjs.Literal;
+      convertibleTermSetProperty: readonly (
+        | rdfjs.BlankNode
+        | rdfjs.NamedNode
+        | rdfjs.Literal
+      )[];
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const convertibleIriNonEmptySetProperty = purify.NonEmptyList.fromArray(
+      $jsonObject["convertibleIriNonEmptySetProperty"],
+    )
+      .unsafeCoerce()
+      .map((item) => dataFactory.namedNode(item["@id"]));
+    const convertibleIriOptionProperty = purify.Maybe.fromNullable(
+      $jsonObject["convertibleIriOptionProperty"],
+    ).map((item) => dataFactory.namedNode(item["@id"]));
+    const convertibleIriProperty = dataFactory.namedNode(
+      $jsonObject["convertibleIriProperty"]["@id"],
+    );
+    const convertibleIriSetProperty = $jsonObject[
+      "convertibleIriSetProperty"
+    ].map((item) => dataFactory.namedNode(item["@id"]));
+    const convertibleLiteralNonEmptySetProperty = purify.NonEmptyList.fromArray(
+      $jsonObject["convertibleLiteralNonEmptySetProperty"],
+    )
+      .unsafeCoerce()
+      .map((item) =>
+        dataFactory.literal(
+          item["@value"],
+          typeof item["@language"] !== "undefined"
+            ? item["@language"]
+            : typeof item["@type"] !== "undefined"
+              ? dataFactory.namedNode(item["@type"])
+              : undefined,
+        ),
+      );
+    const convertibleLiteralOptionProperty = purify.Maybe.fromNullable(
+      $jsonObject["convertibleLiteralOptionProperty"],
+    ).map((item) =>
+      dataFactory.literal(
+        item["@value"],
+        typeof item["@language"] !== "undefined"
+          ? item["@language"]
+          : typeof item["@type"] !== "undefined"
+            ? dataFactory.namedNode(item["@type"])
+            : undefined,
+      ),
+    );
+    const convertibleLiteralProperty = dataFactory.literal(
+      $jsonObject["convertibleLiteralProperty"]["@value"],
+      typeof $jsonObject["convertibleLiteralProperty"]["@language"] !==
+        "undefined"
+        ? $jsonObject["convertibleLiteralProperty"]["@language"]
+        : typeof $jsonObject["convertibleLiteralProperty"]["@type"] !==
+            "undefined"
+          ? dataFactory.namedNode(
+              $jsonObject["convertibleLiteralProperty"]["@type"],
+            )
+          : undefined,
+    );
+    const convertibleLiteralSetProperty = $jsonObject[
+      "convertibleLiteralSetProperty"
+    ].map((item) =>
+      dataFactory.literal(
+        item["@value"],
+        typeof item["@language"] !== "undefined"
+          ? item["@language"]
+          : typeof item["@type"] !== "undefined"
+            ? dataFactory.namedNode(item["@type"])
+            : undefined,
+      ),
+    );
+    const convertibleTermNonEmptySetProperty = purify.NonEmptyList.fromArray(
+      $jsonObject["convertibleTermNonEmptySetProperty"],
+    )
+      .unsafeCoerce()
+      .map((item) =>
+        item.termType === "Literal"
+          ? dataFactory.literal(
+              item["@value"],
+              typeof item["@language"] !== "undefined"
+                ? item["@language"]
+                : typeof item["@type"] !== "undefined"
+                  ? dataFactory.namedNode(item["@type"])
+                  : undefined,
+            )
+          : item.termType === "NamedNode"
+            ? dataFactory.namedNode(item["@id"])
+            : dataFactory.blankNode(item["@id"].substring(2)),
+      );
+    const convertibleTermOptionProperty = purify.Maybe.fromNullable(
+      $jsonObject["convertibleTermOptionProperty"],
+    ).map((item) =>
+      item.termType === "Literal"
+        ? dataFactory.literal(
+            item["@value"],
+            typeof item["@language"] !== "undefined"
+              ? item["@language"]
+              : typeof item["@type"] !== "undefined"
+                ? dataFactory.namedNode(item["@type"])
+                : undefined,
+          )
+        : item.termType === "NamedNode"
+          ? dataFactory.namedNode(item["@id"])
+          : dataFactory.blankNode(item["@id"].substring(2)),
+    );
+    const convertibleTermProperty =
+      $jsonObject["convertibleTermProperty"].termType === "Literal"
+        ? dataFactory.literal(
+            $jsonObject["convertibleTermProperty"]["@value"],
+            typeof $jsonObject["convertibleTermProperty"]["@language"] !==
+              "undefined"
+              ? $jsonObject["convertibleTermProperty"]["@language"]
+              : typeof $jsonObject["convertibleTermProperty"]["@type"] !==
+                  "undefined"
+                ? dataFactory.namedNode(
+                    $jsonObject["convertibleTermProperty"]["@type"],
+                  )
+                : undefined,
+          )
+        : $jsonObject["convertibleTermProperty"].termType === "NamedNode"
+          ? dataFactory.namedNode($jsonObject["convertibleTermProperty"]["@id"])
+          : dataFactory.blankNode(
+              $jsonObject["convertibleTermProperty"]["@id"].substring(2),
+            );
+    const convertibleTermSetProperty = $jsonObject[
+      "convertibleTermSetProperty"
+    ].map((item) =>
+      item.termType === "Literal"
+        ? dataFactory.literal(
+            item["@value"],
+            typeof item["@language"] !== "undefined"
+              ? item["@language"]
+              : typeof item["@type"] !== "undefined"
+                ? dataFactory.namedNode(item["@type"])
+                : undefined,
+          )
+        : item.termType === "NamedNode"
+          ? dataFactory.namedNode(item["@id"])
+          : dataFactory.blankNode(item["@id"].substring(2)),
+    );
+    return purify.Either.of({
+      $identifier,
+      convertibleIriNonEmptySetProperty,
+      convertibleIriOptionProperty,
+      convertibleIriProperty,
+      convertibleIriSetProperty,
+      convertibleLiteralNonEmptySetProperty,
+      convertibleLiteralOptionProperty,
+      convertibleLiteralProperty,
+      convertibleLiteralSetProperty,
+      convertibleTermNonEmptySetProperty,
+      convertibleTermOptionProperty,
+      convertibleTermProperty,
+      convertibleTermSetProperty,
+    });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, ConvertibleTypePropertiesClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new ConvertibleTypePropertiesClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "ConvertibleTypePropertiesClass" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/convertibleIriNonEmptySetProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/convertibleIriOptionProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/convertibleIriProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/convertibleIriSetProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/convertibleLiteralNonEmptySetProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/convertibleLiteralOptionProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/convertibleLiteralProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/convertibleLiteralSetProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/convertibleTermNonEmptySetProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/convertibleTermOptionProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/convertibleTermProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/convertibleTermSetProperty`,
+          type: "Control",
+        },
+      ],
+      label: "ConvertibleTypePropertiesClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("ConvertibleTypePropertiesClass"),
+      convertibleIriNonEmptySetProperty: zod
+        .object({ "@id": zod.string().min(1) })
+        .array()
+        .nonempty()
+        .min(1),
+      convertibleIriOptionProperty: zod
+        .object({ "@id": zod.string().min(1) })
+        .optional(),
+      convertibleIriProperty: zod.object({ "@id": zod.string().min(1) }),
+      convertibleIriSetProperty: zod
+        .object({ "@id": zod.string().min(1) })
+        .array()
+        .default(() => []),
+      convertibleLiteralNonEmptySetProperty: zod
+        .object({
+          "@language": zod.string().optional(),
+          "@type": zod.string().optional(),
+          "@value": zod.string(),
+        })
+        .array()
+        .nonempty()
+        .min(1),
+      convertibleLiteralOptionProperty: zod
+        .object({
+          "@language": zod.string().optional(),
+          "@type": zod.string().optional(),
+          "@value": zod.string(),
+        })
+        .optional(),
+      convertibleLiteralProperty: zod.object({
+        "@language": zod.string().optional(),
+        "@type": zod.string().optional(),
+        "@value": zod.string(),
+      }),
+      convertibleLiteralSetProperty: zod
+        .object({
+          "@language": zod.string().optional(),
+          "@type": zod.string().optional(),
+          "@value": zod.string(),
+        })
+        .array()
+        .default(() => []),
+      convertibleTermNonEmptySetProperty: zod
+        .discriminatedUnion("termType", [
+          zod.object({
+            "@id": zod.string().min(1),
+            termType: zod.literal("BlankNode"),
+          }),
+          zod.object({
+            "@id": zod.string().min(1),
+            termType: zod.literal("NamedNode"),
+          }),
+          zod.object({
+            "@language": zod.string().optional(),
+            "@type": zod.string().optional(),
+            "@value": zod.string(),
+            termType: zod.literal("Literal"),
+          }),
+        ])
+        .array()
+        .nonempty()
+        .min(1),
+      convertibleTermOptionProperty: zod
+        .discriminatedUnion("termType", [
+          zod.object({
+            "@id": zod.string().min(1),
+            termType: zod.literal("BlankNode"),
+          }),
+          zod.object({
+            "@id": zod.string().min(1),
+            termType: zod.literal("NamedNode"),
+          }),
+          zod.object({
+            "@language": zod.string().optional(),
+            "@type": zod.string().optional(),
+            "@value": zod.string(),
+            termType: zod.literal("Literal"),
+          }),
+        ])
+        .optional(),
+      convertibleTermProperty: zod.discriminatedUnion("termType", [
+        zod.object({
+          "@id": zod.string().min(1),
+          termType: zod.literal("BlankNode"),
+        }),
+        zod.object({
+          "@id": zod.string().min(1),
+          termType: zod.literal("NamedNode"),
+        }),
+        zod.object({
+          "@language": zod.string().optional(),
+          "@type": zod.string().optional(),
+          "@value": zod.string(),
+          termType: zod.literal("Literal"),
+        }),
+      ]),
+      convertibleTermSetProperty: zod
+        .discriminatedUnion("termType", [
+          zod.object({
+            "@id": zod.string().min(1),
+            termType: zod.literal("BlankNode"),
+          }),
+          zod.object({
+            "@id": zod.string().min(1),
+            termType: zod.literal("NamedNode"),
+          }),
+          zod.object({
+            "@language": zod.string().optional(),
+            "@type": zod.string().optional(),
+            "@value": zod.string(),
+            termType: zod.literal("Literal"),
+          }),
+        ])
+        .array()
+        .default(() => []),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, ConvertibleTypePropertiesClass> {
+    let {
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return ConvertibleTypePropertiesClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new ConvertibleTypePropertiesClass(properties));
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      convertibleIriNonEmptySetProperty: purify.NonEmptyList<rdfjs.NamedNode>;
+      convertibleIriOptionProperty: purify.Maybe<rdfjs.NamedNode>;
+      convertibleIriProperty: rdfjs.NamedNode;
+      convertibleIriSetProperty: readonly rdfjs.NamedNode[];
+      convertibleLiteralNonEmptySetProperty: purify.NonEmptyList<rdfjs.Literal>;
+      convertibleLiteralOptionProperty: purify.Maybe<rdfjs.Literal>;
+      convertibleLiteralProperty: rdfjs.Literal;
+      convertibleLiteralSetProperty: readonly rdfjs.Literal[];
+      convertibleTermNonEmptySetProperty: purify.NonEmptyList<
+        rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+      >;
+      convertibleTermOptionProperty: purify.Maybe<
+        rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+      >;
+      convertibleTermProperty:
+        | rdfjs.BlankNode
+        | rdfjs.NamedNode
+        | rdfjs.Literal;
+      convertibleTermSetProperty: readonly (
+        | rdfjs.BlankNode
+        | rdfjs.NamedNode
+        | rdfjs.Literal
+      )[];
+    }
+  > {
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+        .value($RdfVocabularies.rdf.type)
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/ConvertibleTypePropertiesClass":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if (
+            $resource.isInstanceOf(ConvertibleTypePropertiesClass.$fromRdfType)
+          ) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConvertibleTypePropertiesClass)`,
+            ),
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
+    }
+
+    const $identifier: ConvertibleTypePropertiesClass.$Identifier =
+      $resource.identifier;
+    const _convertibleIriNonEmptySetPropertyEither: purify.Either<
+      Error,
+      purify.NonEmptyList<rdfjs.NamedNode>
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.convertibleIriNonEmptySetProperty["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) => values.chainMap((value) => value.toIri()))
+      .chain((values) =>
+        purify.NonEmptyList.fromArray(values.toArray()).toEither(
+          new Error(
+            `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} is an empty set`,
+          ),
+        ),
+      )
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            ConvertibleTypePropertiesClass.$properties
+              .convertibleIriNonEmptySetProperty["identifier"],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
+    if (_convertibleIriNonEmptySetPropertyEither.isLeft()) {
+      return _convertibleIriNonEmptySetPropertyEither;
+    }
+
+    const convertibleIriNonEmptySetProperty =
+      _convertibleIriNonEmptySetPropertyEither.unsafeCoerce();
+    const _convertibleIriOptionPropertyEither: purify.Either<
+      Error,
+      purify.Maybe<rdfjs.NamedNode>
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.convertibleIriOptionProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toIri()))
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.NamedNode>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                ConvertibleTypePropertiesClass.$properties
+                  .convertibleIriOptionProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
+    if (_convertibleIriOptionPropertyEither.isLeft()) {
+      return _convertibleIriOptionPropertyEither;
+    }
+
+    const convertibleIriOptionProperty =
+      _convertibleIriOptionPropertyEither.unsafeCoerce();
+    const _convertibleIriPropertyEither: purify.Either<Error, rdfjs.NamedNode> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.convertibleIriProperty["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => values.chainMap((value) => value.toIri()))
+        .chain((values) => values.head());
+    if (_convertibleIriPropertyEither.isLeft()) {
+      return _convertibleIriPropertyEither;
+    }
+
+    const convertibleIriProperty = _convertibleIriPropertyEither.unsafeCoerce();
+    const _convertibleIriSetPropertyEither: purify.Either<
+      Error,
+      readonly rdfjs.NamedNode[]
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.convertibleIriSetProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => values.chainMap((value) => value.toIri()))
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            ConvertibleTypePropertiesClass.$properties
+              .convertibleIriSetProperty["identifier"],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
+    if (_convertibleIriSetPropertyEither.isLeft()) {
+      return _convertibleIriSetPropertyEither;
+    }
+
+    const convertibleIriSetProperty =
+      _convertibleIriSetPropertyEither.unsafeCoerce();
+    const _convertibleLiteralNonEmptySetPropertyEither: purify.Either<
+      Error,
+      purify.NonEmptyList<rdfjs.Literal>
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.convertibleLiteralNonEmptySetProperty["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  ConvertibleTypePropertiesClass.$properties
+                    .convertibleLiteralNonEmptySetProperty["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
+      .chain((values) => values.chainMap((value) => value.toLiteral()))
+      .chain((values) =>
+        purify.NonEmptyList.fromArray(values.toArray()).toEither(
+          new Error(
+            `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} is an empty set`,
+          ),
+        ),
+      )
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            ConvertibleTypePropertiesClass.$properties
+              .convertibleLiteralNonEmptySetProperty["identifier"],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
+    if (_convertibleLiteralNonEmptySetPropertyEither.isLeft()) {
+      return _convertibleLiteralNonEmptySetPropertyEither;
+    }
+
+    const convertibleLiteralNonEmptySetProperty =
+      _convertibleLiteralNonEmptySetPropertyEither.unsafeCoerce();
+    const _convertibleLiteralOptionPropertyEither: purify.Either<
+      Error,
+      purify.Maybe<rdfjs.Literal>
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.convertibleLiteralOptionProperty["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  ConvertibleTypePropertiesClass.$properties
+                    .convertibleLiteralOptionProperty["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
+      .chain((values) => values.chainMap((value) => value.toLiteral()))
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.Literal>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                ConvertibleTypePropertiesClass.$properties
+                  .convertibleLiteralOptionProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
+    if (_convertibleLiteralOptionPropertyEither.isLeft()) {
+      return _convertibleLiteralOptionPropertyEither;
+    }
+
+    const convertibleLiteralOptionProperty =
+      _convertibleLiteralOptionPropertyEither.unsafeCoerce();
+    const _convertibleLiteralPropertyEither: purify.Either<
+      Error,
+      rdfjs.Literal
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.convertibleLiteralProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  ConvertibleTypePropertiesClass.$properties
+                    .convertibleLiteralProperty["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
+      .chain((values) => values.chainMap((value) => value.toLiteral()))
+      .chain((values) => values.head());
+    if (_convertibleLiteralPropertyEither.isLeft()) {
+      return _convertibleLiteralPropertyEither;
+    }
+
+    const convertibleLiteralProperty =
+      _convertibleLiteralPropertyEither.unsafeCoerce();
+    const _convertibleLiteralSetPropertyEither: purify.Either<
+      Error,
+      readonly rdfjs.Literal[]
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.convertibleLiteralSetProperty["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  ConvertibleTypePropertiesClass.$properties
+                    .convertibleLiteralSetProperty["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
+      .chain((values) => values.chainMap((value) => value.toLiteral()))
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            ConvertibleTypePropertiesClass.$properties
+              .convertibleLiteralSetProperty["identifier"],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
+    if (_convertibleLiteralSetPropertyEither.isLeft()) {
+      return _convertibleLiteralSetPropertyEither;
+    }
+
+    const convertibleLiteralSetProperty =
+      _convertibleLiteralSetPropertyEither.unsafeCoerce();
+    const _convertibleTermNonEmptySetPropertyEither: purify.Either<
+      Error,
+      purify.NonEmptyList<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.convertibleTermNonEmptySetProperty["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          purify.Either.of<
+            Error,
+            rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
+          >(value.toTerm()),
+        ),
+      )
+      .chain((values) =>
+        purify.NonEmptyList.fromArray(values.toArray()).toEither(
+          new Error(
+            `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} is an empty set`,
+          ),
+        ),
+      )
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            ConvertibleTypePropertiesClass.$properties
+              .convertibleTermNonEmptySetProperty["identifier"],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
+    if (_convertibleTermNonEmptySetPropertyEither.isLeft()) {
+      return _convertibleTermNonEmptySetPropertyEither;
+    }
+
+    const convertibleTermNonEmptySetProperty =
+      _convertibleTermNonEmptySetPropertyEither.unsafeCoerce();
+    const _convertibleTermOptionPropertyEither: purify.Either<
+      Error,
+      purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.convertibleTermOptionProperty["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          purify.Either.of<
+            Error,
+            rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
+          >(value.toTerm()),
+        ),
+      )
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                ConvertibleTypePropertiesClass.$properties
+                  .convertibleTermOptionProperty["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
+    if (_convertibleTermOptionPropertyEither.isLeft()) {
+      return _convertibleTermOptionPropertyEither;
+    }
+
+    const convertibleTermOptionProperty =
+      _convertibleTermOptionPropertyEither.unsafeCoerce();
+    const _convertibleTermPropertyEither: purify.Either<
+      Error,
+      rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.convertibleTermProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          purify.Either.of<
+            Error,
+            rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
+          >(value.toTerm()),
+        ),
+      )
+      .chain((values) => values.head());
+    if (_convertibleTermPropertyEither.isLeft()) {
+      return _convertibleTermPropertyEither;
+    }
+
+    const convertibleTermProperty =
+      _convertibleTermPropertyEither.unsafeCoerce();
+    const _convertibleTermSetPropertyEither: purify.Either<
+      Error,
+      readonly (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[]
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.convertibleTermSetProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          purify.Either.of<
+            Error,
+            rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
+          >(value.toTerm()),
+        ),
+      )
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            ConvertibleTypePropertiesClass.$properties
+              .convertibleTermSetProperty["identifier"],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
+    if (_convertibleTermSetPropertyEither.isLeft()) {
+      return _convertibleTermSetPropertyEither;
+    }
+
+    const convertibleTermSetProperty =
+      _convertibleTermSetPropertyEither.unsafeCoerce();
+    return purify.Either.of({
+      $identifier,
+      convertibleIriNonEmptySetProperty,
+      convertibleIriOptionProperty,
+      convertibleIriProperty,
+      convertibleIriSetProperty,
+      convertibleLiteralNonEmptySetProperty,
+      convertibleLiteralOptionProperty,
+      convertibleLiteralProperty,
+      convertibleLiteralSetProperty,
+      convertibleTermNonEmptySetProperty,
+      convertibleTermOptionProperty,
+      convertibleTermProperty,
+      convertibleTermSetProperty,
+    });
+  }
+
+  export const $properties = {
+    convertibleIriNonEmptySetProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/convertibleIriNonEmptySetProperty",
+      ),
+    },
+    convertibleIriOptionProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/convertibleIriOptionProperty",
+      ),
+    },
+    convertibleIriProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/convertibleIriProperty",
+      ),
+    },
+    convertibleIriSetProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/convertibleIriSetProperty",
+      ),
+    },
+    convertibleLiteralNonEmptySetProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/convertibleLiteralNonEmptySetProperty",
+      ),
+    },
+    convertibleLiteralOptionProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/convertibleLiteralOptionProperty",
+      ),
+    },
+    convertibleLiteralProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/convertibleLiteralProperty",
+      ),
+    },
+    convertibleLiteralSetProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/convertibleLiteralSetProperty",
+      ),
+    },
+    convertibleTermNonEmptySetProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/convertibleTermNonEmptySetProperty",
+      ),
+    },
+    convertibleTermOptionProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/convertibleTermOptionProperty",
+      ),
+    },
+    convertibleTermProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/convertibleTermProperty",
+      ),
+    },
+    convertibleTermSetProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/convertibleTermSetProperty",
+      ),
+    },
+  };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ConvertibleTypePropertiesClass.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        ConvertibleTypePropertiesClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ConvertibleTypePropertiesClass.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("convertibleTypePropertiesClass");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "convertibleTypePropertiesClass");
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+        },
+      );
+    }
+
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}ConvertibleIriNonEmptySetProperty`,
+      ),
+      predicate:
+        ConvertibleTypePropertiesClass.$properties
+          .convertibleIriNonEmptySetProperty["identifier"],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}ConvertibleIriOptionProperty`,
+      ),
+      predicate:
+        ConvertibleTypePropertiesClass.$properties.convertibleIriOptionProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}ConvertibleIriProperty`),
+      predicate:
+        ConvertibleTypePropertiesClass.$properties.convertibleIriProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}ConvertibleIriSetProperty`,
+      ),
+      predicate:
+        ConvertibleTypePropertiesClass.$properties.convertibleIriSetProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}ConvertibleLiteralNonEmptySetProperty`,
+      ),
+      predicate:
+        ConvertibleTypePropertiesClass.$properties
+          .convertibleLiteralNonEmptySetProperty["identifier"],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}ConvertibleLiteralOptionProperty`,
+      ),
+      predicate:
+        ConvertibleTypePropertiesClass.$properties
+          .convertibleLiteralOptionProperty["identifier"],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}ConvertibleLiteralProperty`,
+      ),
+      predicate:
+        ConvertibleTypePropertiesClass.$properties.convertibleLiteralProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}ConvertibleLiteralSetProperty`,
+      ),
+      predicate:
+        ConvertibleTypePropertiesClass.$properties
+          .convertibleLiteralSetProperty["identifier"],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}ConvertibleTermNonEmptySetProperty`,
+      ),
+      predicate:
+        ConvertibleTypePropertiesClass.$properties
+          .convertibleTermNonEmptySetProperty["identifier"],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}ConvertibleTermOptionProperty`,
+      ),
+      predicate:
+        ConvertibleTypePropertiesClass.$properties
+          .convertibleTermOptionProperty["identifier"],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}ConvertibleTermProperty`),
+      predicate:
+        ConvertibleTypePropertiesClass.$properties.convertibleTermProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}ConvertibleTermSetProperty`,
+      ),
+      predicate:
+        ConvertibleTypePropertiesClass.$properties.convertibleTermSetProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("convertibleTypePropertiesClass");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "convertibleTypePropertiesClass");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
+    if (!parameters?.ignoreRdfType) {
+      requiredPatterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: ConvertibleTypePropertiesClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+      );
+      optionalPatterns.push({
+        patterns: [
+          {
+            triples: [
+              {
+                subject: rdfTypeVariable,
+                predicate: {
+                  items: [$RdfVocabularies.rdfs.subClassOf],
+                  pathType: "+" as const,
+                  type: "path" as const,
+                },
+                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+              },
+            ],
+            type: "bgp" as const,
+          },
+        ],
+        type: "optional" as const,
+      });
+    }
+
+    const propertyPatterns: readonly sparqljs.Pattern[] = [
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(
+              `${variablePrefix}ConvertibleIriNonEmptySetProperty`,
+            ),
+            predicate:
+              ConvertibleTypePropertiesClass.$properties
+                .convertibleIriNonEmptySetProperty["identifier"],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}ConvertibleIriOptionProperty`,
+                ),
+                predicate:
+                  ConvertibleTypePropertiesClass.$properties
+                    .convertibleIriOptionProperty["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(
+              `${variablePrefix}ConvertibleIriProperty`,
+            ),
+            predicate:
+              ConvertibleTypePropertiesClass.$properties.convertibleIriProperty[
+                "identifier"
+              ],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}ConvertibleIriSetProperty`,
+                ),
+                predicate:
+                  ConvertibleTypePropertiesClass.$properties
+                    .convertibleIriSetProperty["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(
+              `${variablePrefix}ConvertibleLiteralNonEmptySetProperty`,
+            ),
+            predicate:
+              ConvertibleTypePropertiesClass.$properties
+                .convertibleLiteralNonEmptySetProperty["identifier"],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}ConvertibleLiteralNonEmptySetProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}ConvertibleLiteralOptionProperty`,
+                ),
+                predicate:
+                  ConvertibleTypePropertiesClass.$properties
+                    .convertibleLiteralOptionProperty["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...[parameters?.preferredLanguages ?? []]
+            .filter((languages) => languages.length > 0)
+            .map((languages) =>
+              languages.map((language) => ({
+                type: "operation" as const,
+                operator: "=",
+                args: [
+                  {
+                    type: "operation" as const,
+                    operator: "lang",
+                    args: [
+                      dataFactory.variable!(
+                        `${variablePrefix}ConvertibleLiteralOptionProperty`,
+                      ),
+                    ],
+                  },
+                  dataFactory.literal(language),
+                ],
+              })),
+            )
+            .map((langEqualsExpressions) => ({
+              type: "filter" as const,
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
+            })),
+        ],
+        type: "optional",
+      },
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(
+              `${variablePrefix}ConvertibleLiteralProperty`,
+            ),
+            predicate:
+              ConvertibleTypePropertiesClass.$properties
+                .convertibleLiteralProperty["identifier"],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}ConvertibleLiteralProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}ConvertibleLiteralSetProperty`,
+                ),
+                predicate:
+                  ConvertibleTypePropertiesClass.$properties
+                    .convertibleLiteralSetProperty["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...[parameters?.preferredLanguages ?? []]
+            .filter((languages) => languages.length > 0)
+            .map((languages) =>
+              languages.map((language) => ({
+                type: "operation" as const,
+                operator: "=",
+                args: [
+                  {
+                    type: "operation" as const,
+                    operator: "lang",
+                    args: [
+                      dataFactory.variable!(
+                        `${variablePrefix}ConvertibleLiteralSetProperty`,
+                      ),
+                    ],
+                  },
+                  dataFactory.literal(language),
+                ],
+              })),
+            )
+            .map((langEqualsExpressions) => ({
+              type: "filter" as const,
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
+            })),
+        ],
+        type: "optional",
+      },
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(
+              `${variablePrefix}ConvertibleTermNonEmptySetProperty`,
+            ),
+            predicate:
+              ConvertibleTypePropertiesClass.$properties
+                .convertibleTermNonEmptySetProperty["identifier"],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}ConvertibleTermOptionProperty`,
+                ),
+                predicate:
+                  ConvertibleTypePropertiesClass.$properties
+                    .convertibleTermOptionProperty["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(
+              `${variablePrefix}ConvertibleTermProperty`,
+            ),
+            predicate:
+              ConvertibleTypePropertiesClass.$properties
+                .convertibleTermProperty["identifier"],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}ConvertibleTermSetProperty`,
+                ),
+                predicate:
+                  ConvertibleTypePropertiesClass.$properties
+                    .convertibleTermSetProperty["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
+    ];
+    for (const pattern of propertyPatterns) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+/**
  * Base interface for other node shapes.
  */
 export interface BaseInterfaceWithProperties {
@@ -43268,6 +45940,23 @@ export interface $ObjectSet {
       "where"
     >,
   ): Promise<purify.Either<Error, number>>;
+  convertibleTypePropertiesClass(
+    identifier: ConvertibleTypePropertiesClass.$Identifier,
+  ): Promise<purify.Either<Error, ConvertibleTypePropertiesClass>>;
+  convertibleTypePropertiesClassIdentifiers(
+    query?: $ObjectSet.Query<ConvertibleTypePropertiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly ConvertibleTypePropertiesClass.$Identifier[]>
+  >;
+  convertibleTypePropertiesClasses(
+    query?: $ObjectSet.Query<ConvertibleTypePropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ConvertibleTypePropertiesClass[]>>;
+  convertibleTypePropertiesClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<ConvertibleTypePropertiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
   defaultValuePropertiesClass(
     identifier: DefaultValuePropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, DefaultValuePropertiesClass>>;
@@ -44301,6 +46990,35 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.concreteParentInterfacesCount(query);
+  }
+
+  convertibleTypePropertiesClass(
+    identifier: ConvertibleTypePropertiesClass.$Identifier,
+  ): Promise<purify.Either<Error, ConvertibleTypePropertiesClass>> {
+    return this.$delegate.convertibleTypePropertiesClass(identifier);
+  }
+
+  convertibleTypePropertiesClassIdentifiers(
+    query?: $ObjectSet.Query<ConvertibleTypePropertiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly ConvertibleTypePropertiesClass.$Identifier[]>
+  > {
+    return this.$delegate.convertibleTypePropertiesClassIdentifiers(query);
+  }
+
+  convertibleTypePropertiesClasses(
+    query?: $ObjectSet.Query<ConvertibleTypePropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ConvertibleTypePropertiesClass[]>> {
+    return this.$delegate.convertibleTypePropertiesClasses(query);
+  }
+
+  convertibleTypePropertiesClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<ConvertibleTypePropertiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.convertibleTypePropertiesClassesCount(query);
   }
 
   defaultValuePropertiesClass(
@@ -46476,6 +49194,94 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           ConcreteParentInterfaceStatic.$fromRdfType,
           ConcreteChildInterface.$fromRdfType,
         ],
+      },
+      query,
+    );
+  }
+
+  async convertibleTypePropertiesClass(
+    identifier: ConvertibleTypePropertiesClass.$Identifier,
+  ): Promise<purify.Either<Error, ConvertibleTypePropertiesClass>> {
+    return this.convertibleTypePropertiesClassSync(identifier);
+  }
+
+  convertibleTypePropertiesClassSync(
+    identifier: ConvertibleTypePropertiesClass.$Identifier,
+  ): purify.Either<Error, ConvertibleTypePropertiesClass> {
+    return this.convertibleTypePropertiesClassesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async convertibleTypePropertiesClassIdentifiers(
+    query?: $ObjectSet.Query<ConvertibleTypePropertiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly ConvertibleTypePropertiesClass.$Identifier[]>
+  > {
+    return this.convertibleTypePropertiesClassIdentifiersSync(query);
+  }
+
+  convertibleTypePropertiesClassIdentifiersSync(
+    query?: $ObjectSet.Query<ConvertibleTypePropertiesClass.$Identifier>,
+  ): purify.Either<
+    Error,
+    readonly ConvertibleTypePropertiesClass.$Identifier[]
+  > {
+    return this.$objectIdentifiersSync<
+      ConvertibleTypePropertiesClass,
+      ConvertibleTypePropertiesClass.$Identifier
+    >(
+      {
+        $fromRdf: ConvertibleTypePropertiesClass.$fromRdf,
+        $fromRdfTypes: [ConvertibleTypePropertiesClass.$fromRdfType],
+      },
+      query,
+    );
+  }
+
+  async convertibleTypePropertiesClasses(
+    query?: $ObjectSet.Query<ConvertibleTypePropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ConvertibleTypePropertiesClass[]>> {
+    return this.convertibleTypePropertiesClassesSync(query);
+  }
+
+  convertibleTypePropertiesClassesSync(
+    query?: $ObjectSet.Query<ConvertibleTypePropertiesClass.$Identifier>,
+  ): purify.Either<Error, readonly ConvertibleTypePropertiesClass[]> {
+    return this.$objectsSync<
+      ConvertibleTypePropertiesClass,
+      ConvertibleTypePropertiesClass.$Identifier
+    >(
+      {
+        $fromRdf: ConvertibleTypePropertiesClass.$fromRdf,
+        $fromRdfTypes: [ConvertibleTypePropertiesClass.$fromRdfType],
+      },
+      query,
+    );
+  }
+
+  async convertibleTypePropertiesClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<ConvertibleTypePropertiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.convertibleTypePropertiesClassesCountSync(query);
+  }
+
+  convertibleTypePropertiesClassesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<ConvertibleTypePropertiesClass.$Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      ConvertibleTypePropertiesClass,
+      ConvertibleTypePropertiesClass.$Identifier
+    >(
+      {
+        $fromRdf: ConvertibleTypePropertiesClass.$fromRdf,
+        $fromRdfTypes: [ConvertibleTypePropertiesClass.$fromRdfType],
       },
       query,
     );
@@ -50880,6 +53686,48 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<ConcreteParentInterfaceStatic.$Identifier>(
       ConcreteParentInterfaceStatic,
+      query,
+    );
+  }
+
+  async convertibleTypePropertiesClass(
+    identifier: ConvertibleTypePropertiesClass.$Identifier,
+  ): Promise<purify.Either<Error, ConvertibleTypePropertiesClass>> {
+    return (
+      await this.convertibleTypePropertiesClasses({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async convertibleTypePropertiesClassIdentifiers(
+    query?: $SparqlObjectSet.Query<ConvertibleTypePropertiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly ConvertibleTypePropertiesClass.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<ConvertibleTypePropertiesClass.$Identifier>(
+      ConvertibleTypePropertiesClass,
+      query,
+    );
+  }
+
+  async convertibleTypePropertiesClasses(
+    query?: $SparqlObjectSet.Query<ConvertibleTypePropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly ConvertibleTypePropertiesClass[]>> {
+    return this.$objects<
+      ConvertibleTypePropertiesClass,
+      ConvertibleTypePropertiesClass.$Identifier
+    >(ConvertibleTypePropertiesClass, query);
+  }
+
+  async convertibleTypePropertiesClassesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<ConvertibleTypePropertiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<ConvertibleTypePropertiesClass.$Identifier>(
+      ConvertibleTypePropertiesClass,
       query,
     );
   }

@@ -146,6 +146,55 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:path :concreteParentInterfaceProperty
     ] .
 
+:ConvertibleTypePropertiesClass
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Node shape with properties whose types are convertible from other types on construction e.g., string to IRI." ;
+    sh:property [
+        sh:minCount 1 ;
+        sh:nodeKind sh:Literal ;
+        sh:path :convertibleLiteralNonEmptySetProperty
+    ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :convertibleTermProperty
+    ], [
+        sh:maxCount 1 ;
+        sh:path :convertibleTermOptionProperty
+    ], [
+        sh:path :convertibleTermSetProperty
+    ], [
+        sh:minCount 1 ;
+        sh:path :convertibleTermNonEmptySetProperty
+    ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:nodeKind sh:IRI ;
+        sh:path :convertibleIriProperty
+    ], [
+        sh:maxCount 1 ;
+        sh:nodeKind sh:IRI ;
+        sh:path :convertibleIriOptionProperty
+    ], [
+        sh:nodeKind sh:IRI ;
+        sh:path :convertibleIriSetProperty
+    ], [
+        sh:minCount 1 ;
+        sh:nodeKind sh:IRI ;
+        sh:path :convertibleIriNonEmptySetProperty
+    ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:nodeKind sh:Literal ;
+        sh:path :convertibleLiteralProperty
+    ], [
+        sh:maxCount 1 ;
+        sh:nodeKind sh:Literal ;
+        sh:path :convertibleLiteralOptionProperty
+    ], [
+        sh:nodeKind sh:Literal ;
+        sh:path :convertibleLiteralSetProperty
+    ] .
+
 :DefaultValuePropertiesClass
     shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
     a sh:NodeShape ;
