@@ -201,23 +201,23 @@ export namespace ${syntheticNamePrefix}EqualsResult {
   };
 }`;
 
-  export const isBooleanArray = `\
-function ${syntheticNamePrefix}isBooleanArray(x: unknown): x is readonly boolean[] {
+  export const isReadonlyBooleanArray = `\
+function ${syntheticNamePrefix}isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
   return Array.isArray(x) && x.every(z => typeof z === "boolean");
 }`;
 
-  export const isNumberArray = `\
-function ${syntheticNamePrefix}isNumberArray(x: unknown): x is readonly number[] {
+  export const isReadonlyNumberArray = `\
+function ${syntheticNamePrefix}isReadonlyNumberArray(x: unknown): x is readonly number[] {
   return Array.isArray(x) && x.every(z => typeof z === "number");
 }`;
 
-  export const isObjectArray = `\
-function ${syntheticNamePrefix}isObjectArray(x: unknown): x is readonly object[] {
+  export const isReadonlyObjectArray = `\
+function ${syntheticNamePrefix}isReadonlyObjectArray(x: unknown): x is readonly object[] {
   return Array.isArray(x) && x.every(z => typeof z === "object");
 }`;
 
-  export const isStringArray = `\
-function ${syntheticNamePrefix}isStringArray(x: unknown): x is readonly string[] {
+  export const isReadonlyStringArray = `\
+function ${syntheticNamePrefix}isReadonlyStringArray(x: unknown): x is readonly string[] {
   return Array.isArray(x) && x.every(z => typeof z === "string");
 }`;
 

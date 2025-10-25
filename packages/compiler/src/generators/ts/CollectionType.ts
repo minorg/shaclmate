@@ -113,7 +113,7 @@ export abstract class CollectionType<ItemTypeT extends Type> extends Type {
             },
             sourceTypeCheckExpression: (value) =>
               // Use the type guard functions to discriminate different array types.
-              `${syntheticNamePrefix}is${itemTypeof[0].toUpperCase()}${itemTypeof.slice(1)}Array(${value})`,
+              `${syntheticNamePrefix}isReadonly${itemTypeof[0].toUpperCase()}${itemTypeof.slice(1)}Array(${value})`,
             sourceTypeName: `readonly (${itemTypeofConversion.sourceTypeName})[]`,
           });
         }
@@ -239,16 +239,18 @@ export abstract class CollectionType<ItemTypeT extends Type> extends Type {
       for (const itemTypeof of itemTypeofs) {
         switch (itemTypeof) {
           case "boolean":
-            snippetDeclarations.push(SnippetDeclarations.isBooleanArray);
+            snippetDeclarations.push(
+              SnippetDeclarations.isReadonlyBooleanArray,
+            );
             break;
           case "number":
-            snippetDeclarations.push(SnippetDeclarations.isNumberArray);
+            snippetDeclarations.push(SnippetDeclarations.isReadonlyNumberArray);
             break;
           case "object":
-            snippetDeclarations.push(SnippetDeclarations.isObjectArray);
+            snippetDeclarations.push(SnippetDeclarations.isReadonlyObjectArray);
             break;
           case "string":
-            snippetDeclarations.push(SnippetDeclarations.isStringArray);
+            snippetDeclarations.push(SnippetDeclarations.isReadonlyStringArray);
             break;
           default:
             throw new RangeError(itemTypeof);

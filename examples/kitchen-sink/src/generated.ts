@@ -278,10 +278,10 @@ export function $arrayEquals<T>(
 
   return $EqualsResult.Equal;
 }
-function $isObjectArray(x: unknown): x is readonly object[] {
+function $isReadonlyObjectArray(x: unknown): x is readonly object[] {
   return Array.isArray(x) && x.every((z) => typeof z === "object");
 }
-function $isStringArray(x: unknown): x is readonly string[] {
+function $isReadonlyStringArray(x: unknown): x is readonly string[] {
   return Array.isArray(x) && x.every((z) => typeof z === "string");
 }
 /**
@@ -428,10 +428,10 @@ export function $arrayIntersection<T>(
   }
   return [...intersection];
 }
-function $isBooleanArray(x: unknown): x is readonly boolean[] {
+function $isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
   return Array.isArray(x) && x.every((z) => typeof z === "boolean");
 }
-function $isNumberArray(x: unknown): x is readonly number[] {
+function $isReadonlyNumberArray(x: unknown): x is readonly number[] {
   return Array.isArray(x) && x.every((z) => typeof z === "number");
 }
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
@@ -12191,9 +12191,9 @@ export class ListPropertiesClass {
       this.iriListProperty = parameters?.iriListProperty;
     } else if (typeof parameters?.iriListProperty === "undefined") {
       this.iriListProperty = purify.Maybe.of([]);
-    } else if ($isObjectArray(parameters?.iriListProperty)) {
+    } else if ($isReadonlyObjectArray(parameters?.iriListProperty)) {
       this.iriListProperty = purify.Maybe.of(parameters?.iriListProperty);
-    } else if ($isStringArray(parameters?.iriListProperty)) {
+    } else if ($isReadonlyStringArray(parameters?.iriListProperty)) {
       this.iriListProperty = purify.Maybe.of(
         parameters?.iriListProperty.map((item) => dataFactory.namedNode(item)),
       );
@@ -34648,9 +34648,9 @@ export class ConvertibleTypePropertiesClass {
 
     if (typeof parameters.convertibleIriSetProperty === "undefined") {
       this.convertibleIriSetProperty = [];
-    } else if ($isObjectArray(parameters.convertibleIriSetProperty)) {
+    } else if ($isReadonlyObjectArray(parameters.convertibleIriSetProperty)) {
       this.convertibleIriSetProperty = parameters.convertibleIriSetProperty;
-    } else if ($isStringArray(parameters.convertibleIriSetProperty)) {
+    } else if ($isReadonlyStringArray(parameters.convertibleIriSetProperty)) {
       this.convertibleIriSetProperty = parameters.convertibleIriSetProperty.map(
         (item) => dataFactory.namedNode(item),
       );
@@ -34741,20 +34741,28 @@ export class ConvertibleTypePropertiesClass {
 
     if (typeof parameters.convertibleLiteralSetProperty === "undefined") {
       this.convertibleLiteralSetProperty = [];
-    } else if ($isObjectArray(parameters.convertibleLiteralSetProperty)) {
+    } else if (
+      $isReadonlyObjectArray(parameters.convertibleLiteralSetProperty)
+    ) {
       this.convertibleLiteralSetProperty =
         parameters.convertibleLiteralSetProperty;
-    } else if ($isBooleanArray(parameters.convertibleLiteralSetProperty)) {
+    } else if (
+      $isReadonlyBooleanArray(parameters.convertibleLiteralSetProperty)
+    ) {
       this.convertibleLiteralSetProperty =
         parameters.convertibleLiteralSetProperty.map((item) =>
           rdfLiteral.toRdf(item, { dataFactory }),
         );
-    } else if ($isNumberArray(parameters.convertibleLiteralSetProperty)) {
+    } else if (
+      $isReadonlyNumberArray(parameters.convertibleLiteralSetProperty)
+    ) {
       this.convertibleLiteralSetProperty =
         parameters.convertibleLiteralSetProperty.map((item) =>
           rdfLiteral.toRdf(item, { dataFactory }),
         );
-    } else if ($isStringArray(parameters.convertibleLiteralSetProperty)) {
+    } else if (
+      $isReadonlyStringArray(parameters.convertibleLiteralSetProperty)
+    ) {
       this.convertibleLiteralSetProperty =
         parameters.convertibleLiteralSetProperty.map((item) =>
           dataFactory.literal(item),
@@ -34838,19 +34846,19 @@ export class ConvertibleTypePropertiesClass {
 
     if (typeof parameters.convertibleTermSetProperty === "undefined") {
       this.convertibleTermSetProperty = [];
-    } else if ($isObjectArray(parameters.convertibleTermSetProperty)) {
+    } else if ($isReadonlyObjectArray(parameters.convertibleTermSetProperty)) {
       this.convertibleTermSetProperty = parameters.convertibleTermSetProperty;
-    } else if ($isBooleanArray(parameters.convertibleTermSetProperty)) {
+    } else if ($isReadonlyBooleanArray(parameters.convertibleTermSetProperty)) {
       this.convertibleTermSetProperty =
         parameters.convertibleTermSetProperty.map((item) =>
           rdfLiteral.toRdf(item, { dataFactory }),
         );
-    } else if ($isNumberArray(parameters.convertibleTermSetProperty)) {
+    } else if ($isReadonlyNumberArray(parameters.convertibleTermSetProperty)) {
       this.convertibleTermSetProperty =
         parameters.convertibleTermSetProperty.map((item) =>
           rdfLiteral.toRdf(item, { dataFactory }),
         );
-    } else if ($isStringArray(parameters.convertibleTermSetProperty)) {
+    } else if ($isReadonlyStringArray(parameters.convertibleTermSetProperty)) {
       this.convertibleTermSetProperty =
         parameters.convertibleTermSetProperty.map((item) =>
           dataFactory.literal(item),
