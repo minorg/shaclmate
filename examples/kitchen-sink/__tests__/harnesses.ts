@@ -93,7 +93,7 @@ export const harnesses = {
       convertibleLiteralOptionProperty: true,
       convertibleLiteralSetProperty: ["test"],
       convertibleTermOptionProperty: 1,
-      convertibleTermProperty: 2,
+      convertibleTermProperty: new Date(1523268000000),
       convertibleTermNonEmptySetProperty: NonEmptyList([
         dataFactory.blankNode(),
       ]),
