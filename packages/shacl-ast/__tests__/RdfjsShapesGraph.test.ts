@@ -3,8 +3,8 @@ import { testData } from "./testData.js";
 
 describe("RdfjsShapesGraph", () => {
   it("should parse the shapes correctly", ({ expect }) => {
-    expect(testData.kitchenSink.shapesGraph.nodeShapes).toHaveLength(81);
-    expect(testData.kitchenSink.shapesGraph.propertyShapes).toHaveLength(106);
+    expect(testData.kitchenSink.shapesGraph.nodeShapes).toHaveLength(85);
+    expect(testData.kitchenSink.shapesGraph.propertyShapes).toHaveLength(121);
     expect(testData.schema.shapesGraph.nodeShapes).toHaveLength(84);
     expect(testData.schema.shapesGraph.propertyShapes).toHaveLength(70);
   });
