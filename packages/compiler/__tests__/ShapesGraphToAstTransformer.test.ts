@@ -19,8 +19,8 @@ describe("ShapesGraphToAstTransformer", () => {
   });
 
   it("should transform object types", ({ expect }) => {
-    expect(shapesGraph.nodeShapes).toHaveLength(81);
-    expect(ast.objectTypes).toHaveLength(59);
+    expect(shapesGraph.nodeShapes).toHaveLength(85);
+    expect(ast.objectTypes).toHaveLength(60);
   });
 
   it("should transform object intersection types", ({ expect }) => {

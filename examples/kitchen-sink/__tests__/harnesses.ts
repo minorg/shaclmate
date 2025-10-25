@@ -78,6 +78,29 @@ export const harnesses = {
     },
     kitchenSink.ConcreteParentInterfaceStatic,
   ),
+  convertibleTypePropertiesClass: new ClassHarness(
+    new kitchenSink.ConvertibleTypePropertiesClass({
+      convertibleIriNonEmptySetProperty: NonEmptyList([
+        dataFactory.namedNode("http://example.com"),
+      ]),
+      convertibleIriOptionProperty: "http://example.com",
+      convertibleIriProperty: "http://example.com",
+      convertibleIriSetProperty: ["http://example.com"],
+      convertibleLiteralNonEmptySetProperty: NonEmptyList([
+        dataFactory.literal("test"),
+      ]),
+      convertibleLiteralProperty: 1,
+      convertibleLiteralOptionProperty: true,
+      convertibleLiteralSetProperty: ["test"],
+      convertibleTermOptionProperty: 1,
+      convertibleTermProperty: new Date(1523268000000),
+      convertibleTermNonEmptySetProperty: NonEmptyList([
+        dataFactory.blankNode(),
+      ]),
+      convertibleTermSetProperty: [true],
+    }),
+    kitchenSink.ConvertibleTypePropertiesClass,
+  ),
   defaultValuePropertiesClass: new ClassHarness(
     new kitchenSink.DefaultValuePropertiesClass({
       $identifier,
@@ -206,6 +229,17 @@ export const harnesses = {
       $identifier,
     }),
     kitchenSink.IriClass,
+  ),
+  iriListProperty: new ClassHarness(
+    new kitchenSink.ListPropertiesClass({
+      $identifier,
+      iriListProperty: [
+        // The constructor will convert these to NamedNode's
+        "http://example.com/example1",
+        "http://example.com/example2",
+      ],
+    }),
+    kitchenSink.ListPropertiesClass,
   ),
   languageInPropertiesClass: new ClassHarness(
     new kitchenSink.LanguageInPropertiesClass({
