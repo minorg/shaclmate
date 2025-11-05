@@ -54,7 +54,7 @@ export function sparqlObjectSetClassDeclaration({
     where: {
       hasQuestionToken: true,
       name: "where",
-      type: `${syntheticNamePrefix}SparqlObjectSet.Where<${typeParameters.ObjectIdentifierT.name}>`,
+      type: `readonly ${syntheticNamePrefix}SparqlObjectSet.Where<${typeParameters.ObjectIdentifierT.name}>[]`,
     } satisfies OptionalKind<ParameterDeclarationStructure>,
   };
 
@@ -99,7 +99,7 @@ export function sparqlObjectSetClassDeclaration({
               kind: StructureKind.Method,
               isAsync: true,
               statements: [
-                `return (await this.${methodSignatures.objects.name}({ where: { identifiers: [identifier], type: "identifiers" } })).map(objects => objects[0]);`,
+                `return (await this.${methodSignatures.objects.name}({ where: [{ identifiers: [identifier], type: "identifiers" }] })).map(objects => objects[0]);`,
               ],
             },
             {
@@ -355,37 +355,48 @@ const patterns: sparqljs.Pattern[] = [];
 
 if (where) {
   // Assign a separate variable so the compiler catches any missing cases
-  let wherePatterns: readonly sparqljs.Pattern[];
-  switch (where.type) {
-    case "identifiers": {
-      const valuePatternRowKey = \`?\${this.${syntheticNamePrefix}objectVariable.value}\`;
-      wherePatterns = [{
-        type: "values" as const,
-        values: where.identifiers.map((identifier) => {
-          const valuePatternRow: sparqljs.ValuePatternRow = {};
-          valuePatternRow[valuePatternRowKey] = identifier as rdfjs.NamedNode;
-          return valuePatternRow;
-        }),
-      }];
-      break;
-    }
-    case "sparql-patterns": {
-      wherePatterns = where.sparqlPatterns(this.${syntheticNamePrefix}objectVariable);
-      break;
-    }
-    case "triple-objects": {
-      wherePatterns = [{
-        triples: [{
-          subject: where.subject,
-          predicate: where.predicate,
-          object: this.${syntheticNamePrefix}objectVariable
-        }],
-        type: "bgp"
-      }];
-      break;
+  for (const where_ of where) {
+    switch (where_.type) {
+      case "identifiers": {
+        const valuePatternRowKey = \`?\${this.${syntheticNamePrefix}objectVariable.value}\`;
+        patterns.push({
+          type: "values" as const,
+          values: where_.identifiers.map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[valuePatternRowKey] = identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+          });
+        break;
+      }
+      case "identifier-type": {
+        patterns.push({
+          type: "filter" as const,
+          expression: {
+            type: "operation" as const,
+            operator: "isIRI",
+            args: [this.${syntheticNamePrefix}objectVariable],
+          }        
+        });
+        break;
+      }
+      case "sparql-patterns": {
+        patterns.push(...where_.sparqlPatterns(this.${syntheticNamePrefix}objectVariable));
+        break;
+      }
+      case "triple-objects": {
+        patterns.push({
+          triples: [{
+            subject: where_.subject,
+            predicate: where_.predicate,
+            object: this.${syntheticNamePrefix}objectVariable
+          }],
+          type: "bgp"
+        });
+        break;
+      }
     }
   }
-  patterns.push(...wherePatterns);
 }
 
 patterns.push(...objectType.${syntheticNamePrefix}sparqlWherePatterns({ subject: this.${syntheticNamePrefix}objectVariable }));
@@ -431,7 +442,7 @@ return patterns;`,
           isExported: true,
           kind: StructureKind.TypeAlias,
           name: "Query",
-          type: `Omit<${syntheticNamePrefix}ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>, "where"> & { readonly order?: (objectVariable: rdfjs.Variable) => readonly sparqljs.Ordering[]; readonly where?: Where<${typeParameters.ObjectIdentifierT.name}> }`,
+          type: `Omit<${syntheticNamePrefix}ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>, "where"> & { readonly order?: (objectVariable: rdfjs.Variable) => readonly sparqljs.Ordering[]; readonly where?: readonly Where<${typeParameters.ObjectIdentifierT.name}>[] }`,
           typeParameters: [typeParameters.ObjectIdentifierT],
         },
         {
