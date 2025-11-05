@@ -50,7 +50,7 @@ export function objectSetInterfaceDeclaration({
           kind: StructureKind.TypeAlias,
           isExported: true,
           name: "Query",
-          type: `{ readonly limit?: number; readonly offset?: number; readonly where?: Where<${typeParameters.ObjectIdentifierT.name}> }`,
+          type: `{ readonly limit?: number; readonly offset?: number; readonly where?: readonly Where<${typeParameters.ObjectIdentifierT.name}>[] }`,
           typeParameters: [typeParameters.ObjectIdentifierT],
         },
         {
@@ -58,7 +58,8 @@ export function objectSetInterfaceDeclaration({
           isExported: true,
           name: "Where",
           type: [
-            `{ readonly identifiers: readonly ${typeParameters.ObjectIdentifierT.name}[]; readonly type: "identifiers" } `,
+            `{ readonly identifiers: readonly ${typeParameters.ObjectIdentifierT.name}[]; readonly type: "identifiers" }`,
+            `{ readonly identifierType: "NamedNode"; readonly type: "identifier-type"; }`,
             `{ readonly predicate: rdfjs.NamedNode; readonly subject: rdfjs.BlankNode | rdfjs.NamedNode; readonly type: "triple-objects" } `,
           ].join(" | "),
           typeParameters: [typeParameters.ObjectIdentifierT],
