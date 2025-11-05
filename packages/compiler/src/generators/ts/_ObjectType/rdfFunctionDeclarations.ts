@@ -1,6 +1,5 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
-import { invariant } from "ts-invariant";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
@@ -10,50 +9,20 @@ import { toRdfFunctionOrMethodDeclaration } from "./toRdfFunctionOrMethodDeclara
 function fromRdfFunctionDeclaration(
   this: ObjectType,
 ): Maybe<FunctionDeclarationStructure> {
-  const statements: string[] = [];
-
-  statements.push(
-    "let { ignoreRdfType = false, objectSet, preferredLanguages, ...context } = (options ?? {});",
-    `if (!objectSet) { objectSet = new ${syntheticNamePrefix}RdfjsDatasetObjectSet({ dataset: resource.dataset }); }`,
-  );
-
-  let returnExpression: string | undefined;
-  if (this.childObjectTypes.length > 0) {
-    // Can't ignore the RDF type.
-    // Similar to an object union type, alt-chain the fromRdf of the different concrete subclasses together
-    returnExpression = this.childObjectTypes.reduce(
-      (expression, childObjectType) => {
-        const childObjectTypeExpression = `(${childObjectType.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { ...context, ignoreRdfType: false, objectSet }) as purify.Either<Error, ${this.name}>)`;
-        return expression.length > 0
-          ? `${expression}.altLazy(() => ${childObjectTypeExpression})`
-          : childObjectTypeExpression;
-      },
-      "",
-    );
-  }
-
-  if (!this.abstract) {
-    let propertiesFromRdfExpression = `${this.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf({ ...context, ignoreRdfType, objectSet, preferredLanguages, resource })`;
-    if (this.declarationType === "class") {
-      propertiesFromRdfExpression = `${propertiesFromRdfExpression}.map(properties => new ${this.name}(properties))`;
-    }
-
-    if (this.childObjectTypes.length > 0) {
-      invariant(returnExpression);
-      returnExpression = `${returnExpression}.altLazy(() => ${propertiesFromRdfExpression})`;
-    } else {
-      invariant(!returnExpression);
-      returnExpression = propertiesFromRdfExpression;
-    }
-  }
-
-  if (returnExpression) {
-    statements.push(`return ${returnExpression};`);
-  }
-
-  if (statements.length === 0) {
+  if (this.abstract) {
     return Maybe.empty();
   }
+
+  const statements: string[] = [
+    "let { ignoreRdfType = false, objectSet, preferredLanguages, ...context } = (options ?? {});",
+    `if (!objectSet) { objectSet = new ${syntheticNamePrefix}RdfjsDatasetObjectSet({ dataset: resource.dataset }); }`,
+  ];
+
+  let propertiesFromRdfExpression = `${this.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf({ ...context, ignoreRdfType, objectSet, preferredLanguages, resource })`;
+  if (this.declarationType === "class") {
+    propertiesFromRdfExpression = `${propertiesFromRdfExpression}.map(properties => new ${this.name}(properties))`;
+  }
+  statements.push(`return ${propertiesFromRdfExpression};`);
 
   return Maybe.of({
     isExported: true,
@@ -71,7 +40,7 @@ function fromRdfFunctionDeclaration(
       },
     ],
     returnType: `purify.Either<Error, ${this.name}>`,
-    statements: statements,
+    statements,
   });
 }
 

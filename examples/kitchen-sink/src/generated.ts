@@ -37462,21 +37462,13 @@ export namespace BaseInterfaceWithPropertiesStatic {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
-    return (
-      BaseInterfaceWithoutPropertiesStatic.$fromRdf(resource, {
-        ...context,
-        ignoreRdfType: false,
-        objectSet,
-      }) as purify.Either<Error, BaseInterfaceWithProperties>
-    ).altLazy(() =>
-      BaseInterfaceWithPropertiesStatic.$propertiesFromRdf({
-        ...context,
-        ignoreRdfType,
-        objectSet,
-        preferredLanguages,
-        resource,
-      }),
-    );
+    return BaseInterfaceWithPropertiesStatic.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    });
   }
 
   export function $propertiesFromRdf({
@@ -38066,21 +38058,13 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
-    return (
-      ConcreteParentInterfaceStatic.$fromRdf(resource, {
-        ...context,
-        ignoreRdfType: false,
-        objectSet,
-      }) as purify.Either<Error, BaseInterfaceWithoutProperties>
-    ).altLazy(() =>
-      BaseInterfaceWithoutPropertiesStatic.$propertiesFromRdf({
-        ...context,
-        ignoreRdfType,
-        objectSet,
-        preferredLanguages,
-        resource,
-      }),
-    );
+    return BaseInterfaceWithoutPropertiesStatic.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    });
   }
 
   export function $propertiesFromRdf({
@@ -38570,21 +38554,13 @@ export namespace ConcreteParentInterfaceStatic {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
-    return (
-      ConcreteChildInterface.$fromRdf(resource, {
-        ...context,
-        ignoreRdfType: false,
-        objectSet,
-      }) as purify.Either<Error, ConcreteParentInterface>
-    ).altLazy(() =>
-      ConcreteParentInterfaceStatic.$propertiesFromRdf({
-        ...context,
-        ignoreRdfType,
-        objectSet,
-        preferredLanguages,
-        resource,
-      }),
-    );
+    return ConcreteParentInterfaceStatic.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    });
   }
 
   export function $propertiesFromRdf({
@@ -39867,32 +39843,6 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export function $fromRdf(
-    resource: rdfjsResource.Resource,
-    options?: {
-      [_index: string]: any;
-      ignoreRdfType?: boolean;
-      objectSet?: $ObjectSet;
-      preferredLanguages?: readonly string[];
-    },
-  ): purify.Either<Error, AbstractBaseClassWithProperties> {
-    let {
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-      ...context
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
-    }
-
-    return AbstractBaseClassWithoutPropertiesStatic.$fromRdf(resource, {
-      ...context,
-      ignoreRdfType: false,
-      objectSet,
-    }) as purify.Either<Error, AbstractBaseClassWithProperties>;
-  }
-
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
     objectSet: $objectSet,
@@ -40265,32 +40215,6 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
         $type: zod.enum(["ConcreteChildClass", "ConcreteParentClass"]),
       }),
     ) satisfies zod.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: rdfjsResource.Resource,
-    options?: {
-      [_index: string]: any;
-      ignoreRdfType?: boolean;
-      objectSet?: $ObjectSet;
-      preferredLanguages?: readonly string[];
-    },
-  ): purify.Either<Error, AbstractBaseClassWithoutProperties> {
-    let {
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-      ...context
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
-    }
-
-    return ConcreteParentClassStatic.$fromRdf(resource, {
-      ...context,
-      ignoreRdfType: false,
-      objectSet,
-    }) as purify.Either<Error, AbstractBaseClassWithoutProperties>;
   }
 
   export function $propertiesFromRdf({
@@ -40675,21 +40599,13 @@ export namespace ConcreteParentClassStatic {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
-    return (
-      ConcreteChildClass.$fromRdf(resource, {
-        ...context,
-        ignoreRdfType: false,
-        objectSet,
-      }) as purify.Either<Error, ConcreteParentClass>
-    ).altLazy(() =>
-      ConcreteParentClassStatic.$propertiesFromRdf({
-        ...context,
-        ignoreRdfType,
-        objectSet,
-        preferredLanguages,
-        resource,
-      }).map((properties) => new ConcreteParentClass(properties)),
-    );
+    return ConcreteParentClassStatic.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new ConcreteParentClass(properties));
   }
 
   export function $propertiesFromRdf({
@@ -43635,32 +43551,6 @@ export namespace AbstractBaseClassForExternClassStatic {
       $type: zod.literal("ExternClass"),
       abstractBaseClassForExternClassProperty: zod.string(),
     }) satisfies zod.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: rdfjsResource.Resource,
-    options?: {
-      [_index: string]: any;
-      ignoreRdfType?: boolean;
-      objectSet?: $ObjectSet;
-      preferredLanguages?: readonly string[];
-    },
-  ): purify.Either<Error, AbstractBaseClassForExternClass> {
-    let {
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-      ...context
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
-    }
-
-    return ExternClass.$fromRdf(resource, {
-      ...context,
-      ignoreRdfType: false,
-      objectSet,
-    }) as purify.Either<Error, AbstractBaseClassForExternClass>;
   }
 
   export function $propertiesFromRdf({

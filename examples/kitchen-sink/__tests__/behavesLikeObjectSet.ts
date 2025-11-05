@@ -116,7 +116,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     }
   });
 
-  it("object", async ({ expect }) => {
+  it("object (concrete child class)", async ({ expect }) => {
     expect(
       (
         await objectSet.concreteChildClass(
@@ -127,6 +127,21 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
         .$equals(testData.concreteChildClasses[0])
         .unsafeCoerce(),
     ).toBe(true);
+  });
+
+  it("object (concrete parent class)", async ({ expect }) => {
+    const expectedObject = testData.concreteChildClasses[0];
+    const actualObject = (
+      await objectSet.concreteParentClass(expectedObject.$identifier)
+    ).unsafeCoerce();
+    expect(actualObject).toBeInstanceOf(kitchenSink.ConcreteParentClass);
+    expect(actualObject).not.toBeInstanceOf(kitchenSink.ConcreteChildClass);
+    expect(actualObject.abstractBaseClassWithPropertiesProperty).toStrictEqual(
+      expectedObject.abstractBaseClassWithPropertiesProperty,
+    );
+    expect(actualObject.concreteParentClassProperty).toStrictEqual(
+      expectedObject.concreteParentClassProperty,
+    );
   });
 
   it("objectIdentifiers (no options)", async ({ expect }) => {
