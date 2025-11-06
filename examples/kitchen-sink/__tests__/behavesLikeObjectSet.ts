@@ -305,14 +305,27 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
       return;
     }
 
-    expect((await objectSet.blankClasses()).unsafeCoerce()).toHaveLength(4);
-    expect(
-      (
+    {
+      const actualObjects = (await objectSet.blankClasses()).unsafeCoerce();
+      expect(actualObjects).toHaveLength(4);
+      expect(
+        actualObjects.filter(
+          (actualObject) => actualObject.$identifier.termType === "BlankNode",
+        ),
+      ).toHaveLength(2);
+    }
+
+    {
+      const actualObjects = (
         await objectSet.blankClasses({
           where: [{ identifierType: "NamedNode", type: "identifier-type" }],
         })
-      ).unsafeCoerce(),
-    ).toHaveLength(2);
+      ).unsafeCoerce();
+      expect(actualObjects).toHaveLength(2);
+      for (const actualObject of actualObjects) {
+        expect(actualObject.$identifier.termType).toStrictEqual("NamedNode");
+      }
+    }
   });
 
   it("objectsCount", async ({ expect }) => {
