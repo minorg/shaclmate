@@ -196,7 +196,9 @@ if (offset < 0) { offset = 0; }
 
 let identifierType: "NamedNode" | undefined;
 let ignoreFromRdfTypes = false;
-let resourceI = 0;
+
+// First pass: gather all resources that meet the where filters.
+// We don't limit + offset here because the resources aren't sorted and limit + offset should be deterministic.
 const resources: { objectType?: ${objectTypeType}, resource: rdfjsResource.Resource }[] = [];
 
 if (query?.where) {
@@ -207,10 +209,6 @@ if (query?.where) {
   }
 
   for (const where of query.where) {
-    if (resources.length === limit) {
-      break;
-    }
-
     switch (where.type) {
       case "identifiers": {
         ignoreFromRdfTypes = true;
@@ -218,12 +216,7 @@ if (query?.where) {
           if (identifierType && identifier.termType !== identifierType) {
             continue;
           }
-          if (++resourceI >= offset) {
-            resources.push({ resource: this.resourceSet.resource(identifier) });
-            if (resources.length === limit) {
-              break;
-            }
-          }
+          resources.push({ resource: this.resourceSet.resource(identifier) });
         }
         break;
       }
@@ -246,12 +239,7 @@ if (query?.where) {
               return purify.Left(new Error(\`subject=\${where.subject.value} predicate=\${where.predicate.value} pattern matches non-identifier (\${quad.object.termType}) triple\`));
           }
 
-          if (++resourceI >= offset) {
-            resources.push({ resource: this.resourceSet.resource(quad.object) });
-            if (resources.length === limit) {
-              break;
-            }
-          }
+          resources.push({ resource: this.resourceSet.resource(quad.object) });
         }
         break;
       }
@@ -271,32 +259,16 @@ if (!ignoreFromRdfTypes) {
           continue;
         }
 
-        if (++resourceI >= offset) {
-          resources.push({ objectType, resource });
-          if (resources.length === limit) {
-            break;
-          }
-        }
+        resources.push({ objectType, resource });
       }
-
-      if (resources.length === limit) {
-        break;
-      }
-    }
-
-    if (resources.length === limit) {
-      break;
     }
   }
-}
-
-if (resources.length > limit) {
-  throw new Error("resources should never be > limit here");
 }
 
 // Sort resources by identifier so limit and offset are deterministic
 resources.sort((left, right) => left.resource.identifier.value.localeCompare(right.resource.identifier.value));
 
+let objectI = 0;
 const objects: ${typeParameters.ObjectT.name}[] = [];
 for (const { objectType, resource } of resources) {
   if (objectType) {
@@ -304,7 +276,12 @@ for (const { objectType, resource } of resources) {
     if (objectEither.isLeft()) {
       return objectEither;
     }
-    objects.push(objectEither.unsafeCoerce());
+    if (objectI++ >= offset) {
+      objects.push(objectEither.unsafeCoerce());
+      if (objects.length === limit) {
+        return purify.Either.of(objects);
+      }
+    }
     continue;
   }
 

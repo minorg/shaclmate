@@ -43132,6 +43132,7 @@ export class BlankClass {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -43142,6 +43143,13 @@ export class BlankClass {
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode("http://example.com/BlankClass"),
+      );
+    }
+
     return resource;
   }
 
@@ -43151,6 +43159,9 @@ export class BlankClass {
 }
 
 export namespace BlankClass {
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BlankClass",
+  );
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -43276,6 +43287,33 @@ export namespace BlankClass {
     preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }> {
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+        .value($RdfVocabularies.rdf.type)
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/BlankClass":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(BlankClass.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BlankClass)`,
+            ),
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
+    }
+
     const $identifier: BlankClass.$Identifier = $resource.identifier;
     return purify.Either.of({ $identifier });
   }
@@ -43325,21 +43363,86 @@ export namespace BlankClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(_parameters?: {
+  export function $sparqlConstructTemplateTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    return [];
+    const subject = parameters?.subject ?? dataFactory.variable!("blankClass");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "blankClass");
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+        },
+      );
+    }
+
+    return triples;
   }
 
-  export function $sparqlWherePatterns(_parameters?: {
+  export function $sparqlWherePatterns(parameters?: {
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    return [];
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject = parameters?.subject ?? dataFactory.variable!("blankClass");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "blankClass");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
+    if (!parameters?.ignoreRdfType) {
+      requiredPatterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: BlankClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+      );
+      optionalPatterns.push({
+        patterns: [
+          {
+            triples: [
+              {
+                subject: rdfTypeVariable,
+                predicate: {
+                  items: [$RdfVocabularies.rdfs.subClassOf],
+                  pathType: "+" as const,
+                  type: "path" as const,
+                },
+                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+              },
+            ],
+            type: "bgp" as const,
+          },
+        ],
+        type: "optional" as const,
+      });
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
   }
 }
 /**
@@ -48521,7 +48624,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<BlankClass.$Identifier>,
   ): purify.Either<Error, readonly BlankClass.$Identifier[]> {
     return this.$objectIdentifiersSync<BlankClass, BlankClass.$Identifier>(
-      [{ $fromRdf: BlankClass.$fromRdf, $fromRdfTypes: [] }],
+      [
+        {
+          $fromRdf: BlankClass.$fromRdf,
+          $fromRdfTypes: [BlankClass.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -48536,7 +48644,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<BlankClass.$Identifier>,
   ): purify.Either<Error, readonly BlankClass[]> {
     return this.$objectsSync<BlankClass, BlankClass.$Identifier>(
-      [{ $fromRdf: BlankClass.$fromRdf, $fromRdfTypes: [] }],
+      [
+        {
+          $fromRdf: BlankClass.$fromRdf,
+          $fromRdfTypes: [BlankClass.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -48551,7 +48664,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<BlankClass.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<BlankClass, BlankClass.$Identifier>(
-      [{ $fromRdf: BlankClass.$fromRdf, $fromRdfTypes: [] }],
+      [
+        {
+          $fromRdf: BlankClass.$fromRdf,
+          $fromRdfTypes: [BlankClass.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -53079,7 +53197,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
     let identifierType: "NamedNode" | undefined;
     let ignoreFromRdfTypes = false;
-    let resourceI = 0;
+
+    // First pass: gather all resources that meet the where filters.
+    // We don't limit + offset here because the resources aren't sorted and limit + offset should be deterministic.
     const resources: {
       objectType?: {
         $fromRdf: (
@@ -53099,10 +53219,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       }
 
       for (const where of query.where) {
-        if (resources.length === limit) {
-          break;
-        }
-
         switch (where.type) {
           case "identifiers": {
             ignoreFromRdfTypes = true;
@@ -53110,14 +53226,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
               if (identifierType && identifier.termType !== identifierType) {
                 continue;
               }
-              if (++resourceI >= offset) {
-                resources.push({
-                  resource: this.resourceSet.resource(identifier),
-                });
-                if (resources.length === limit) {
-                  break;
-                }
-              }
+              resources.push({
+                resource: this.resourceSet.resource(identifier),
+              });
             }
             break;
           }
@@ -53148,14 +53259,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
                   );
               }
 
-              if (++resourceI >= offset) {
-                resources.push({
-                  resource: this.resourceSet.resource(quad.object),
-                });
-                if (resources.length === limit) {
-                  break;
-                }
-              }
+              resources.push({
+                resource: this.resourceSet.resource(quad.object),
+              });
             }
             break;
           }
@@ -53181,27 +53287,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
               continue;
             }
 
-            if (++resourceI >= offset) {
-              resources.push({ objectType, resource });
-              if (resources.length === limit) {
-                break;
-              }
-            }
+            resources.push({ objectType, resource });
           }
-
-          if (resources.length === limit) {
-            break;
-          }
-        }
-
-        if (resources.length === limit) {
-          break;
         }
       }
-    }
-
-    if (resources.length > limit) {
-      throw new Error("resources should never be > limit here");
     }
 
     // Sort resources by identifier so limit and offset are deterministic
@@ -53211,6 +53300,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ),
     );
 
+    let objectI = 0;
     const objects: ObjectT[] = [];
     for (const { objectType, resource } of resources) {
       if (objectType) {
@@ -53218,7 +53308,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         if (objectEither.isLeft()) {
           return objectEither;
         }
-        objects.push(objectEither.unsafeCoerce());
+        if (objectI++ >= offset) {
+          objects.push(objectEither.unsafeCoerce());
+          if (objects.length === limit) {
+            return purify.Either.of(objects);
+          }
+        }
         continue;
       }
 
