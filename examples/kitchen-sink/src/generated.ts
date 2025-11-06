@@ -37341,12 +37341,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, BaseInterfaceWithProperties> {
-    return (
-      BaseInterfaceWithoutPropertiesStatic.$fromJson(json) as purify.Either<
-        zod.ZodError,
-        BaseInterfaceWithProperties
-      >
-    ).altLazy(() => $propertiesFromJson(json));
+    return $propertiesFromJson(json);
   }
 
   export function $jsonSchema() {
@@ -37961,12 +37956,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, BaseInterfaceWithoutProperties> {
-    return (
-      ConcreteParentInterfaceStatic.$fromJson(json) as purify.Either<
-        zod.ZodError,
-        BaseInterfaceWithoutProperties
-      >
-    ).altLazy(() => $propertiesFromJson(json));
+    return $propertiesFromJson(json);
   }
 
   export function $jsonSchema() {
@@ -38453,12 +38443,7 @@ export namespace ConcreteParentInterfaceStatic {
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ConcreteParentInterface> {
-    return (
-      ConcreteChildInterface.$fromJson(json) as purify.Either<
-        zod.ZodError,
-        ConcreteParentInterface
-      >
-    ).altLazy(() => $propertiesFromJson(json));
+    return $propertiesFromJson(json);
   }
 
   export function $jsonSchema() {
@@ -39793,14 +39778,6 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     });
   }
 
-  export function $fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, AbstractBaseClassWithProperties> {
-    return AbstractBaseClassWithoutPropertiesStatic.$fromJson(
-      json,
-    ) as purify.Either<zod.ZodError, AbstractBaseClassWithProperties>;
-  }
-
   export function $jsonSchema() {
     return zod.toJSONSchema($jsonZodSchema());
   }
@@ -40184,15 +40161,6 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     return purify.Either.of({ ...$super0, $identifier });
   }
 
-  export function $fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, AbstractBaseClassWithoutProperties> {
-    return ConcreteParentClassStatic.$fromJson(json) as purify.Either<
-      zod.ZodError,
-      AbstractBaseClassWithoutProperties
-    >;
-  }
-
   export function $jsonSchema() {
     return zod.toJSONSchema($jsonZodSchema());
   }
@@ -40539,15 +40507,8 @@ export namespace ConcreteParentClassStatic {
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ConcreteParentClass> {
-    return (
-      ConcreteChildClass.$fromJson(json) as purify.Either<
-        zod.ZodError,
-        ConcreteParentClass
-      >
-    ).altLazy(() =>
-      $propertiesFromJson(json).map(
-        (properties) => new ConcreteParentClass(properties),
-      ),
+    return $propertiesFromJson(json).map(
+      (properties) => new ConcreteParentClass(properties),
     );
   }
 
@@ -43603,15 +43564,6 @@ export namespace AbstractBaseClassForExternClassStatic {
       $identifier,
       abstractBaseClassForExternClassProperty,
     });
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, AbstractBaseClassForExternClass> {
-    return ExternClass.$fromJson(json) as purify.Either<
-      zod.ZodError,
-      AbstractBaseClassForExternClass
-    >;
   }
 
   export function $jsonSchema() {

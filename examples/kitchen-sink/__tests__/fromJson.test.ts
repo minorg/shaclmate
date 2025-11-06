@@ -16,22 +16,18 @@ describe("fromJson", () => {
     });
   }
 
-  it("abstract base class fromJson", ({ expect }) => {
-    const fromJsonInstance =
-      kitchenSink.AbstractBaseClassWithPropertiesStatic.$fromJson(
-        harnesses.concreteChildClass.toJson(),
-      ).unsafeCoerce() as any;
-    expect(
-      harnesses.concreteChildClass.equals(fromJsonInstance).extract(),
-    ).toStrictEqual(true);
-  });
-
   it("concrete base class fromJson", ({ expect }) => {
     const fromJsonInstance = kitchenSink.ConcreteParentClassStatic.$fromJson(
       harnesses.concreteChildClass.toJson(),
-    ).unsafeCoerce() as any;
+    ).unsafeCoerce();
+    expect(fromJsonInstance).not.toBeInstanceOf(kitchenSink.ConcreteChildClass);
     expect(
-      harnesses.concreteChildClass.equals(fromJsonInstance).extract(),
-    ).toStrictEqual(true);
+      fromJsonInstance.$identifier.equals(
+        harnesses.concreteChildClass.instance.$identifier,
+      ),
+    );
+    expect(fromJsonInstance.concreteParentClassProperty).toStrictEqual(
+      harnesses.concreteChildClass.instance.concreteParentClassProperty,
+    );
   });
 });

@@ -70,63 +70,27 @@ function fromJsonFunctionDeclarations(
     statements: propertiesFromJsonStatements,
   });
 
-  let fromJsonStatements: string[];
   if (this.abstract) {
-    if (this.childObjectTypes.length > 0) {
-      // Similar to an object union type, alt-chain the fromJson of the different concrete subclasses together
-      fromJsonStatements = [
-        `return ${this.childObjectTypes.reduce(
-          (expression, childObjectType) => {
-            const childObjectTypeExpression = `(${childObjectType.staticModuleName}.${syntheticNamePrefix}fromJson(json) as purify.Either<zod.ZodError, ${this.name}>)`;
-            return expression.length > 0
-              ? `${expression}.altLazy(() => ${childObjectTypeExpression})`
-              : childObjectTypeExpression;
-          },
-          "",
-        )};`,
-      ];
-    } else {
-      fromJsonStatements = [];
-    }
-  } else {
-    let propertiesFromJsonExpression = `${syntheticNamePrefix}propertiesFromJson(json)`;
-    if (this.declarationType === "class") {
-      propertiesFromJsonExpression = `${propertiesFromJsonExpression}.map(properties => new ${this.name}(properties))`;
-    }
-
-    if (this.childObjectTypes.length > 0) {
-      fromJsonStatements = [
-        `return ${this.childObjectTypes.reduce(
-          (expression, childObjectType) => {
-            const childObjectTypeExpression = `(${childObjectType.staticModuleName}.${syntheticNamePrefix}fromJson(json) as purify.Either<zod.ZodError, ${this.name}>)`;
-            return expression.length > 0
-              ? `${expression}.altLazy(() => ${childObjectTypeExpression})`
-              : childObjectTypeExpression;
-          },
-          "",
-        )}.altLazy(() => ${propertiesFromJsonExpression});`,
-      ];
-    } else {
-      fromJsonStatements = [`return ${propertiesFromJsonExpression};`];
-    }
+    return functionDeclarations;
   }
 
-  if (fromJsonStatements.length > 0) {
-    functionDeclarations.push({
-      isExported: true,
-      kind: StructureKind.Function,
-      name: `${syntheticNamePrefix}fromJson`,
-      parameters: [
-        {
-          name: "json",
-          type: "unknown",
-        },
-      ],
-      returnType: `purify.Either<zod.ZodError, ${this.name}>`,
-      statements: fromJsonStatements,
-    });
+  let propertiesFromJsonExpression = `${syntheticNamePrefix}propertiesFromJson(json)`;
+  if (this.declarationType === "class") {
+    propertiesFromJsonExpression = `${propertiesFromJsonExpression}.map(properties => new ${this.name}(properties))`;
   }
-
+  functionDeclarations.push({
+    isExported: true,
+    kind: StructureKind.Function,
+    name: `${syntheticNamePrefix}fromJson`,
+    parameters: [
+      {
+        name: "json",
+        type: "unknown",
+      },
+    ],
+    returnType: `purify.Either<zod.ZodError, ${this.name}>`,
+    statements: [`return ${propertiesFromJsonExpression};`],
+  });
   return functionDeclarations;
 }
 
