@@ -32,289 +32,18 @@ export function rdfjsDatasetObjectSetClassDeclaration({
     } satisfies OptionalKind<TypeParameterDeclarationStructure>,
   };
 
-  const fromRdfFunctionType = `(resource: rdfjsResource.Resource, options: { objectSet: ${syntheticNamePrefix}ObjectSet }) => purify.Either<Error, ${typeParameters.ObjectT.name}>`;
-  const objectTypeType = `{ ${syntheticNamePrefix}fromRdf: ${fromRdfFunctionType}; ${syntheticNamePrefix}fromRdfTypes: readonly rdfjs.NamedNode[] }`;
-
-  const reusableMethodDeclarations: MethodDeclarationStructure[] = [];
-  if (objectTypes.length > 0) {
-    const parameters = {
-      objectType: {
-        name: "objectType",
-        type: objectTypeType,
-      } satisfies OptionalKind<ParameterDeclarationStructure>,
-      query: {
-        hasQuestionToken: true,
-        name: "query",
-        type: `${syntheticNamePrefix}ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>`,
-      } satisfies OptionalKind<ParameterDeclarationStructure>,
-    };
-
-    reusableMethodDeclarations.push(
-      {
-        kind: StructureKind.Method,
-        name: `${syntheticNamePrefix}objectIdentifiersSync`,
-        parameters: [parameters.objectType, parameters.query],
-        returnType: `purify.Either<Error, readonly ${typeParameters.ObjectIdentifierT.name}[]>`,
-        scope: Scope.Protected,
-        statements: [
-          `\
-return this.${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectType.name}, ${parameters.query.name}).map(objects => objects.map(object => object.${syntheticNamePrefix}identifier));`,
-        ],
-        typeParameters: [
-          typeParameters.ObjectT,
-          typeParameters.ObjectIdentifierT,
-        ],
-      },
-      {
-        kind: StructureKind.Method,
-        name: `${syntheticNamePrefix}objectsSync`,
-        parameters: [parameters.objectType, parameters.query],
-        returnType: `purify.Either<Error, readonly ${typeParameters.ObjectT.name}[]>`,
-        scope: Scope.Protected,
-        statements: [
-          `\
-const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
-if (limit <= 0) { return purify.Either.of([]); }
-
-let offset = query?.offset ?? 0;
-if (offset < 0) { offset = 0; }
-
-if (query?.where) {
-  // Assign identifiers in each case block so the compiler will catch missing cases.
-  let identifiers: rdfjsResource.Resource.Identifier[];
-  switch (query.where.type) {
-    case "identifiers": {
-      identifiers = query.where.identifiers.slice(offset, offset + limit);
-      break;
-    }
-    case "triple-objects": {
-      let identifierI = 0;
-      identifiers = [];
-      for (const quad of this.resourceSet.dataset.match(query.where.subject, query.where.predicate, null)) {
-        if (quad.object.termType === "BlankNode" || quad.object.termType === "NamedNode") {
-          if (++identifierI >= offset) {
-            identifiers.push(quad.object);
-            if (identifiers.length === limit) {
-              break;
-            }
-          }
-        } else {
-          return purify.Left(new Error(\`subject=\${query.where.subject.value} predicate=\${query.where.predicate.value} pattern matches non-identifier (\${quad.object.termType}) triple\`));
-        }
-      }
-      break;
-    }
-  }
-
-  const objects: ${typeParameters.ObjectT.name}[] = [];
-  for (const identifier of identifiers) {
-    const either = objectType.${syntheticNamePrefix}fromRdf(this.resourceSet.resource(identifier), { objectSet: this });
-    if (either.isLeft()) {
-      return either;
-    }
-    objects.push(either.unsafeCoerce());
-  }
-  return purify.Either.of(objects);
-}
-
-if (objectType.${syntheticNamePrefix}fromRdfTypes.length === 0) {
-  return purify.Either.of([]);
-}
-
-const resources: rdfjsResource.Resource[] = [];
-for (const fromRdfType of objectType.${syntheticNamePrefix}fromRdfTypes) {
-  for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
-    if (!resources.some(existingResource => existingResource.identifier.equals(resource.identifier))) {
-      resources.push(resource);
-    }
-  }
-}
-// Sort resources by identifier so limit and offset are deterministic
-resources.sort((left, right) => left.identifier.value.localeCompare(right.identifier.value));
-
-const objects: ${typeParameters.ObjectT.name}[] = [];
-let objectI = 0;
-for (const resource of resources) {
-  const either = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
-  if (either.isLeft()) {
-    return either;
-  }
-  if (objectI++ >= offset) {
-     objects.push(either.unsafeCoerce());
-     if (objects.length === limit) {
-      return purify.Either.of(objects);
-     }
-  }
-}
-return purify.Either.of(objects);
-`,
-        ],
-        typeParameters: [
-          typeParameters.ObjectT,
-          typeParameters.ObjectIdentifierT,
-        ],
-      },
-      {
-        kind: StructureKind.Method,
-        name: `${syntheticNamePrefix}objectsCountSync`,
-        parameters: [parameters.objectType, parameters.query],
-        returnType: "purify.Either<Error, number>",
-        scope: Scope.Protected,
-        statements: [
-          `return this.${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectType.name}, ${parameters.query.name}).map(objects => objects.length);`,
-        ],
-        typeParameters: [
-          typeParameters.ObjectT,
-          typeParameters.ObjectIdentifierT,
-        ],
-      },
-    );
-  }
-
-  if (objectUnionTypes.length > 0) {
-    const parameters = {
-      objectTypes: {
-        name: "objectTypes",
-        type: `readonly ${objectTypeType}[]`,
-      } satisfies OptionalKind<ParameterDeclarationStructure>,
-      query: {
-        hasQuestionToken: true,
-        name: "query",
-        type: `${syntheticNamePrefix}ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>`,
-      } satisfies OptionalKind<ParameterDeclarationStructure>,
-    };
-
-    reusableMethodDeclarations.push(
-      {
-        kind: StructureKind.Method,
-        name: `${syntheticNamePrefix}objectUnionIdentifiersSync`,
-        parameters: [parameters.objectTypes, parameters.query],
-        returnType: `purify.Either<Error, readonly ${typeParameters.ObjectIdentifierT.name}[]>`,
-        scope: Scope.Protected,
-        statements: [
-          `return this.${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectTypes.name}, ${parameters.query.name}).map(objects => objects.map(object => object.${syntheticNamePrefix}identifier));`,
-        ],
-        typeParameters: [
-          typeParameters.ObjectT,
-          typeParameters.ObjectIdentifierT,
-        ],
-      },
-      {
-        kind: StructureKind.Method,
-        name: `${syntheticNamePrefix}objectUnionsSync`,
-        parameters: [parameters.objectTypes, parameters.query],
-        returnType: `purify.Either<Error, readonly ${typeParameters.ObjectT.name}[]>`,
-        scope: Scope.Protected,
-        statements: [
-          `\
-const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
-if (limit <= 0) { return purify.Either.of([]); }
-
-let offset = query?.offset ?? 0;
-if (offset < 0) { offset = 0; }
-
-if (query?.where) {
-  // Assign identifiers in each case block so the compiler will catch missing cases.
-  let identifiers: rdfjsResource.Resource.Identifier[];
-  switch (query.where.type) {
-    case "identifiers": {
-      identifiers = query.where.identifiers.slice(offset, offset + limit);
-      break;
-    }
-    case "triple-objects": {
-      let identifierI = 0;
-      identifiers = [];
-      for (const quad of this.resourceSet.dataset.match(query.where.subject, query.where.predicate, null)) {
-        if (quad.object.termType === "BlankNode" || quad.object.termType === "NamedNode") {
-          if (++identifierI >= offset) {
-            identifiers.push(quad.object);
-            if (identifiers.length === limit) {
-              break;
-            }
-          }
-        } else {
-          return purify.Left(new Error(\`subject=\${query.where.subject.value} predicate=\${query.where.predicate.value} pattern matches non-identifier (\${quad.object.termType}) triple\`));
-        }
-      }
-      break;
-    }
-  }
-
-  const objects: ${typeParameters.ObjectT.name}[] = [];
-  for (const identifier of identifiers) {
-    const resource = this.resourceSet.resource(identifier);
-    const lefts: purify.Either<Error, ${typeParameters.ObjectT.name}>[] = [];
-    for (const objectType of objectTypes) {
-      const either = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
-      if (either.isRight()) {
-        objects.push(either.unsafeCoerce());
-        break;
-      }
-      lefts.push(either);
-    }
-    // Doesn't appear to belong to any of the known object types, just assume the first
-    if (lefts.length === objectTypes.length) {
-      return lefts[0] as unknown as purify.Either<Error, readonly ${typeParameters.ObjectT.name}[]>;
-    }
-  }
-  return purify.Either.of(objects);
-}
-
-const resources: { objectType: ${objectTypeType}, resource: rdfjsResource.Resource }[] = [];
-for (const objectType of objectTypes) {
-  if (objectType.${syntheticNamePrefix}fromRdfTypes.length === 0) {
-    continue;
-  }
-
-  for (const fromRdfType of objectType.${syntheticNamePrefix}fromRdfTypes) {
-    for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
-      if (!resources.some(({ resource: existingResource }) => existingResource.identifier.equals(resource.identifier))) {
-        resources.push({ objectType, resource });
-      }
-    }
-  }
-}
-// Sort resources by identifier so limit and offset are deterministic
-resources.sort((left, right) => left.resource.identifier.value.localeCompare(right.resource.identifier.value));
-
-let objectI = 0;
-const objects: ${typeParameters.ObjectT.name}[] = [];
-for (const { objectType, resource } of resources) {
-  const either = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
-  if (either.isLeft()) {
-    return either;
-  }
-  if (objectI++ >= offset) {
-    objects.push(either.unsafeCoerce());
-    if (objects.length === limit) {
-      return purify.Either.of(objects);
-    }
-  }
-}
-return purify.Either.of(objects);
-`,
-        ],
-        typeParameters: [
-          typeParameters.ObjectT,
-          typeParameters.ObjectIdentifierT,
-        ],
-      },
-      {
-        kind: StructureKind.Method,
-        name: `${syntheticNamePrefix}objectUnionsCountSync`,
-        parameters: [parameters.objectTypes, parameters.query],
-        returnType: "purify.Either<Error, number>",
-        statements: [
-          `return this.${syntheticNamePrefix}objectUnionIdentifiersSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${parameters.objectTypes.name}, ${parameters.query.name}).map(objects => objects.length);`,
-        ],
-        typeParameters: [
-          typeParameters.ObjectT,
-          typeParameters.ObjectIdentifierT,
-        ],
-        scope: Scope.Protected,
-      },
-    );
-  }
+  const objectTypeType = `{ ${syntheticNamePrefix}fromRdf: (resource: rdfjsResource.Resource, options: { objectSet: ${syntheticNamePrefix}ObjectSet }) => purify.Either<Error, ${typeParameters.ObjectT.name}>; ${syntheticNamePrefix}fromRdfTypes: readonly rdfjs.NamedNode[] }`;
+  const reusableMethodParameters = {
+    objectTypes: {
+      name: "objectTypes",
+      type: `readonly ${objectTypeType}[]`,
+    } satisfies OptionalKind<ParameterDeclarationStructure>,
+    query: {
+      hasQuestionToken: true,
+      name: "query",
+      type: `${syntheticNamePrefix}ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>`,
+    } satisfies OptionalKind<ParameterDeclarationStructure>,
+  };
 
   return {
     ctors: [
@@ -344,8 +73,8 @@ return purify.Either.of(objects);
 
         const methodSignatures = objectSetMethodSignatures({ objectType });
 
-        let runtimeObjectType: string;
-        const runtimeObjectType_ = (objectType: {
+        let runtimeObjectTypes: string;
+        const runtimeObjectType = (objectType: {
           descendantFromRdfTypeVariables: readonly string[];
           staticModuleName: string;
           fromRdfTypeVariable: Maybe<string>;
@@ -353,10 +82,10 @@ return purify.Either.of(objects);
           `{ ${syntheticNamePrefix}fromRdf: ${objectType.staticModuleName}.${syntheticNamePrefix}fromRdf, ${syntheticNamePrefix}fromRdfTypes: [${objectType.fromRdfTypeVariable.toList().concat(objectType.descendantFromRdfTypeVariables).join(", ")}] }`;
         switch (objectType.kind) {
           case "ObjectType":
-            runtimeObjectType = runtimeObjectType_(objectType);
+            runtimeObjectTypes = `[${runtimeObjectType(objectType)}]`;
             break;
           case "ObjectUnionType":
-            runtimeObjectType = `[${objectType.memberTypes.map((memberType) => runtimeObjectType_(memberType)).join(", ")}]`;
+            runtimeObjectTypes = `[${objectType.memberTypes.map((memberType) => runtimeObjectType(memberType)).join(", ")}]`;
             break;
         }
 
@@ -375,7 +104,7 @@ return purify.Either.of(objects);
             name: `${methodSignatures.object.name}Sync`,
             returnType: `purify.Either<Error, ${objectType.name}>`,
             statements: [
-              `return this.${methodSignatures.objects.name}Sync({ where: { identifiers: [identifier], type: "identifiers" } }).map(objects => objects[0]);`,
+              `return this.${methodSignatures.objects.name}Sync({ where: [{ identifiers: [identifier], type: "identifiers" }] }).map(objects => objects[0]);`,
             ],
           },
           {
@@ -391,7 +120,7 @@ return purify.Either.of(objects);
             kind: StructureKind.Method,
             name: `${methodSignatures.objectIdentifiers.name}Sync`,
             returnType: `purify.Either<Error, readonly ${objectType.identifierTypeAlias}[]>`,
-            statements: `return this.${syntheticNamePrefix}object${objectType.kind === "ObjectUnionType" ? "Union" : ""}IdentifiersSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
+            statements: `return this.${syntheticNamePrefix}objectIdentifiersSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectTypes}, query);`,
           },
           {
             ...methodSignatures.objects,
@@ -407,7 +136,7 @@ return purify.Either.of(objects);
             name: `${methodSignatures.objects.name}Sync`,
             returnType: `purify.Either<Error, readonly ${objectType.name}[]>`,
             statements: [
-              `return this.${syntheticNamePrefix}object${objectType.kind === "ObjectUnionType" ? "Union" : ""}sSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
+              `return this.${syntheticNamePrefix}objectsSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectTypes}, query);`,
             ],
           },
           {
@@ -424,12 +153,179 @@ return purify.Either.of(objects);
             name: `${methodSignatures.objectsCount.name}Sync`,
             returnType: "purify.Either<Error, number>",
             statements: [
-              `return this.${syntheticNamePrefix}object${objectType.kind === "ObjectUnionType" ? "Union" : ""}sCountSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
+              `return this.${syntheticNamePrefix}objectsCountSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectTypes}, query);`,
             ],
           },
         ];
       }) satisfies MethodDeclarationStructure[]
-    ).concat(reusableMethodDeclarations),
+    ).concat(
+      {
+        kind: StructureKind.Method,
+        name: `${syntheticNamePrefix}objectIdentifiersSync`,
+        parameters: [
+          reusableMethodParameters.objectTypes,
+          reusableMethodParameters.query,
+        ],
+        returnType: `purify.Either<Error, readonly ${typeParameters.ObjectIdentifierT.name}[]>`,
+        scope: Scope.Protected,
+        statements: [
+          `\
+return this.${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${reusableMethodParameters.objectTypes.name}, ${reusableMethodParameters.query.name}).map(objects => objects.map(object => object.${syntheticNamePrefix}identifier));`,
+        ],
+        typeParameters: [
+          typeParameters.ObjectT,
+          typeParameters.ObjectIdentifierT,
+        ],
+      },
+      {
+        kind: StructureKind.Method,
+        name: `${syntheticNamePrefix}objectsSync`,
+        parameters: [
+          reusableMethodParameters.objectTypes,
+          reusableMethodParameters.query,
+        ],
+        returnType: `purify.Either<Error, readonly ${typeParameters.ObjectT.name}[]>`,
+        scope: Scope.Protected,
+        statements: [
+          `\
+const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
+if (limit <= 0) { return purify.Either.of([]); }
+
+let offset = query?.offset ?? 0;
+if (offset < 0) { offset = 0; }
+
+let identifierType: "NamedNode" | undefined;
+let ignoreFromRdfTypes = false;
+
+// First pass: gather all resources that meet the where filters.
+// We don't limit + offset here because the resources aren't sorted and limit + offset should be deterministic.
+const resources: { objectType?: ${objectTypeType}, resource: rdfjsResource.Resource }[] = [];
+
+if (query?.where) {
+  for (const where of query.where) {
+    if (where.type === "identifier-type") {
+      identifierType = where.identifierType;
+    }
+  }
+
+  for (const where of query.where) {
+    switch (where.type) {
+      case "identifiers": {
+        ignoreFromRdfTypes = true;
+        for (const identifier of where.identifiers) {
+          if (identifierType && identifier.termType !== identifierType) {
+            continue;
+          }
+          resources.push({ resource: this.resourceSet.resource(identifier) });
+        }
+        break;
+      }
+
+      case "identifier-type":
+        break;
+
+      case "triple-objects": {
+        ignoreFromRdfTypes = true;
+        for (const quad of this.resourceSet.dataset.match(where.subject, where.predicate, null)) {
+          if (identifierType && quad.object.termType !== identifierType) {
+            continue;
+          }
+
+          switch (quad.object.termType) {
+            case "BlankNode":
+            case "NamedNode":
+              break;
+            default:
+              return purify.Left(new Error(\`subject=\${where.subject.value} predicate=\${where.predicate.value} pattern matches non-identifier (\${quad.object.termType}) triple\`));
+          }
+
+          resources.push({ resource: this.resourceSet.resource(quad.object) });
+        }
+        break;
+      }
+    }
+  }
+}
+
+if (!ignoreFromRdfTypes) {
+  for (const objectType of objectTypes) {
+    if (objectType.${syntheticNamePrefix}fromRdfTypes.length === 0) {
+      continue;
+    }
+
+    for (const fromRdfType of objectType.${syntheticNamePrefix}fromRdfTypes) {
+      for (const resource of (identifierType === "NamedNode" ? this.resourceSet.namedInstancesOf(fromRdfType) : this.resourceSet.instancesOf(fromRdfType))) {
+        if (resources.some(({ resource: existingResource }) => existingResource.identifier.equals(resource.identifier))) {
+          continue;
+        }
+
+        resources.push({ objectType, resource });
+      }
+    }
+  }
+}
+
+// Sort resources by identifier so limit and offset are deterministic
+resources.sort((left, right) => left.resource.identifier.value.localeCompare(right.resource.identifier.value));
+
+let objectI = 0;
+const objects: ${typeParameters.ObjectT.name}[] = [];
+for (const { objectType, resource } of resources) {
+  if (objectType) {
+    const objectEither = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
+    if (objectEither.isLeft()) {
+      return objectEither;
+    }
+    if (objectI++ >= offset) {
+      objects.push(objectEither.unsafeCoerce());
+      if (objects.length === limit) {
+        return purify.Either.of(objects);
+      }
+    }
+    continue;
+  }
+
+  // objectType is unknown, try them all
+  const lefts: purify.Either<Error, ${typeParameters.ObjectT.name}>[] = [];
+  for (const tryObjectType of objectTypes) {
+    const objectEither = tryObjectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
+    if (objectEither.isRight()) {
+      objects.push(objectEither.unsafeCoerce());
+      break;
+    }
+    lefts.push(objectEither);
+  }
+  // Doesn't appear to belong to any of the known object types, just assume the first
+  if (lefts.length === objectTypes.length) {
+    return lefts[0] as unknown as purify.Either<Error, readonly ${typeParameters.ObjectT.name}[]>;
+  }
+}
+
+return purify.Either.of(objects);`,
+        ],
+        typeParameters: [
+          typeParameters.ObjectT,
+          typeParameters.ObjectIdentifierT,
+        ],
+      },
+      {
+        kind: StructureKind.Method,
+        name: `${syntheticNamePrefix}objectsCountSync`,
+        parameters: [
+          reusableMethodParameters.objectTypes,
+          reusableMethodParameters.query,
+        ],
+        returnType: "purify.Either<Error, number>",
+        scope: Scope.Protected,
+        statements: [
+          `return this.${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${reusableMethodParameters.objectTypes.name}, ${reusableMethodParameters.query.name}).map(objects => objects.length);`,
+        ],
+        typeParameters: [
+          typeParameters.ObjectT,
+          typeParameters.ObjectIdentifierT,
+        ],
+      },
+    ),
     properties: [
       {
         isReadonly: true,

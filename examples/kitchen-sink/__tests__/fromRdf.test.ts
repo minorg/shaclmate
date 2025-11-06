@@ -75,23 +75,14 @@ describe("fromRdf", () => {
     });
   }
 
-  it("abstract base class fromRdf", ({ expect }) => {
-    const fromRdfInstance =
-      kitchenSink.AbstractBaseClassWithPropertiesStatic.$fromRdf(
-        harnesses.concreteChildClass.toRdf(),
-      ).unsafeCoerce() as any;
-    expect(
-      harnesses.concreteChildClass.equals(fromRdfInstance).extract(),
-    ).toStrictEqual(true);
-  });
-
-  it("concrete base class fromRdf", ({ expect }) => {
+  it("concrete parent class fromRdf", ({ expect }) => {
     const fromRdfInstance = kitchenSink.ConcreteParentClassStatic.$fromRdf(
       harnesses.concreteChildClass.toRdf(),
-    ).unsafeCoerce() as any;
-    expect(
-      harnesses.concreteChildClass.equals(fromRdfInstance).extract(),
-    ).toStrictEqual(true);
+    ).unsafeCoerce();
+    expect(fromRdfInstance).toBeInstanceOf(kitchenSink.ConcreteParentClass);
+    expect(fromRdfInstance.concreteParentClassProperty).toStrictEqual(
+      harnesses.concreteChildClass.instance.concreteParentClassProperty,
+    );
   });
 
   it("explicit fromRdfType ignore default rdf:type", ({ expect }) => {
@@ -463,37 +454,26 @@ describe("fromRdf", () => {
   });
 
   it("accept known child type", ({ expect }) => {
-    const child = new kitchenSink.ConcreteChildClass({
+    const concreteChild = new kitchenSink.ConcreteChildClass({
       abstractBaseClassWithPropertiesProperty: "abcWith",
       concreteChildClassProperty: "child",
       concreteParentClassProperty: "parent",
     });
-    const childResource = child.$toRdf();
+    const childResource = concreteChild.$toRdf();
 
     // Deserialize all of the superclasses of the child class
 
-    expect(
-      kitchenSink.ConcreteParentClassStatic.$fromRdf(childResource)
-        .unsafeCoerce()
-        .$equals(child)
-        .unsafeCoerce(),
-    ).toStrictEqual(true);
-
-    expect(
-      kitchenSink.AbstractBaseClassWithPropertiesStatic.$fromRdf(childResource)
-        .unsafeCoerce()
-        .$equals(child)
-        .unsafeCoerce(),
-    ).toStrictEqual(true);
-
-    expect(
-      kitchenSink.AbstractBaseClassWithoutPropertiesStatic.$fromRdf(
+    const concreteParent =
+      kitchenSink.ConcreteParentClassStatic.$fromRdf(
         childResource,
-      )
-        .unsafeCoerce()
-        .$equals(child)
-        .unsafeCoerce(),
-    ).toStrictEqual(true);
+      ).unsafeCoerce();
+
+    expect(
+      concreteParent.abstractBaseClassWithPropertiesProperty,
+    ).toStrictEqual(concreteChild.abstractBaseClassWithPropertiesProperty);
+    expect(concreteParent.concreteParentClassProperty).toStrictEqual(
+      concreteChild.concreteParentClassProperty,
+    );
   });
 
   it("accept unknown child type", ({ expect }) => {
@@ -523,7 +503,7 @@ describe("fromRdf", () => {
         dataFactory.namedNode("http://example.com/newSubType"),
       ),
     );
-    // And a corresponding rdfs:subClassOf statement so the instance-of check owrks
+    // And a corresponding rdfs:subClassOf statement so the instance-of check works
     dataset.add(
       dataFactory.quad(
         dataFactory.namedNode("http://example.com/newSubType"),
@@ -534,29 +514,6 @@ describe("fromRdf", () => {
 
     expect(
       kitchenSink.ConcreteChildClass.$fromRdf(childResource)
-        .unsafeCoerce()
-        .$equals(child)
-        .unsafeCoerce(),
-    ).toStrictEqual(true);
-
-    expect(
-      kitchenSink.ConcreteParentClassStatic.$fromRdf(childResource)
-        .unsafeCoerce()
-        .$equals(child)
-        .unsafeCoerce(),
-    ).toStrictEqual(true);
-
-    expect(
-      kitchenSink.AbstractBaseClassWithPropertiesStatic.$fromRdf(childResource)
-        .unsafeCoerce()
-        .$equals(child)
-        .unsafeCoerce(),
-    ).toStrictEqual(true);
-
-    expect(
-      kitchenSink.AbstractBaseClassWithoutPropertiesStatic.$fromRdf(
-        childResource,
-      )
         .unsafeCoerce()
         .$equals(child)
         .unsafeCoerce(),
