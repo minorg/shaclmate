@@ -104,7 +104,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             name: `${methodSignatures.object.name}Sync`,
             returnType: `purify.Either<Error, ${objectType.name}>`,
             statements: [
-              `return this.${methodSignatures.objects.name}Sync({ where: [{ identifiers: [identifier], type: "identifiers" }] }).map(objects => objects[0]);`,
+              `return this.${methodSignatures.objects.name}Sync({ where: { identifiers: [identifier], type: "identifiers" } }).map(objects => objects[0]);`,
             ],
           },
           {
@@ -194,74 +194,79 @@ if (limit <= 0) { return purify.Either.of([]); }
 let offset = query?.offset ?? 0;
 if (offset < 0) { offset = 0; }
 
-let identifierType: "NamedNode" | undefined;
-let ignoreFromRdfTypes = false;
-
 // First pass: gather all resources that meet the where filters.
 // We don't limit + offset here because the resources aren't sorted and limit + offset should be deterministic.
 const resources: { objectType?: ${objectTypeType}, resource: rdfjsResource.Resource }[] = [];
-
-if (query?.where) {
-  for (const where of query.where) {
-    if (where.type === "identifier-type") {
-      identifierType = where.identifierType;
+const where = query?.where ?? { "type": "type" };
+switch (where.type) {
+  case "identifiers": {
+    for (const identifier of where.identifiers) {
+      // Don't deduplicate
+      resources.push({ resource: this.resourceSet.resource(identifier) });
     }
+    break;
   }
 
-  for (const where of query.where) {
-    switch (where.type) {
-      case "identifiers": {
-        ignoreFromRdfTypes = true;
-        for (const identifier of where.identifiers) {
-          if (identifierType && identifier.termType !== identifierType) {
-            continue;
-          }
-          resources.push({ resource: this.resourceSet.resource(identifier) });
-        }
-        break;
+  case "triple-objects": {
+    for (const quad of this.resourceSet.dataset.match(where.subject, where.predicate, null)) {
+      if (where.objectTermType && quad.object.termType !== where.objectTermType) {
+        continue;
       }
 
-      case "identifier-type":
-        break;
+      switch (quad.object.termType) {
+        case "BlankNode":
+        case "NamedNode":
+          break;
+        default:
+          return purify.Left(new Error(\`subject=\${where.subject?.value} predicate=\${where.predicate.value} pattern matches non-identifier (\${quad.object.termType}) object\`));
+      }
 
-      case "triple-objects": {
-        ignoreFromRdfTypes = true;
-        for (const quad of this.resourceSet.dataset.match(where.subject, where.predicate, null)) {
-          if (identifierType && quad.object.termType !== identifierType) {
-            continue;
-          }
-
-          switch (quad.object.termType) {
-            case "BlankNode":
-            case "NamedNode":
-              break;
-            default:
-              return purify.Left(new Error(\`subject=\${where.subject.value} predicate=\${where.predicate.value} pattern matches non-identifier (\${quad.object.termType}) triple\`));
-          }
-
-          resources.push({ resource: this.resourceSet.resource(quad.object) });
-        }
-        break;
+      const resource = this.resourceSet.resource(quad.object);
+      if (!resources.some(({ resource: existingResource }) => existingResource.identifier.equals(resource.identifier))) {
+        resources.push({ resource });
       }
     }
+    break;
   }
-}
 
-if (!ignoreFromRdfTypes) {
-  for (const objectType of objectTypes) {
-    if (objectType.${syntheticNamePrefix}fromRdfTypes.length === 0) {
-      continue;
-    }
+  case "triple-subjects": {
+    for (const quad of this.resourceSet.dataset.match(null, where.predicate, where.object)) {
+      if (where.subjectTermType && quad.subject.termType !== where.subjectTermType) {
+        continue;
+      }
 
-    for (const fromRdfType of objectType.${syntheticNamePrefix}fromRdfTypes) {
-      for (const resource of (identifierType === "NamedNode" ? this.resourceSet.namedInstancesOf(fromRdfType) : this.resourceSet.instancesOf(fromRdfType))) {
-        if (resources.some(({ resource: existingResource }) => existingResource.identifier.equals(resource.identifier))) {
-          continue;
-        }
+      switch (quad.subject.termType) {
+        case "BlankNode":
+        case "NamedNode":
+          break;
+        default:
+          return purify.Left(new Error(\`predicate=\${where.predicate.value} object=\${where.object?.value} pattern matches non-identifier (\${quad.subject.termType}) subject\`));
+      }
 
-        resources.push({ objectType, resource });
+      const resource = this.resourceSet.resource(quad.subject);
+      if (!resources.some(({ resource: existingResource }) => existingResource.identifier.equals(resource.identifier))) {
+        resources.push({ resource });
       }
     }
+    break;
+  }
+
+  case "type": {
+    for (const objectType of objectTypes) {
+      if (objectType.${syntheticNamePrefix}fromRdfTypes.length === 0) {
+        continue;
+      }
+
+      for (const fromRdfType of objectType.${syntheticNamePrefix}fromRdfTypes) {
+        for (const resource of (where.identifierType === "NamedNode" ? this.resourceSet.namedInstancesOf(fromRdfType) : this.resourceSet.instancesOf(fromRdfType))) {
+          if (!resources.some(({ resource: existingResource }) => existingResource.identifier.equals(resource.identifier))) {
+            resources.push({ objectType, resource });
+          }
+        }
+      }
+    }
+
+    break;
   }
 }
 
@@ -270,34 +275,30 @@ resources.sort((left, right) => left.resource.identifier.value.localeCompare(rig
 
 let objectI = 0;
 const objects: ${typeParameters.ObjectT.name}[] = [];
-for (const { objectType, resource } of resources) {
+for (let { objectType, resource } of resources) {
+  let objectEither: purify.Either<Error, ${typeParameters.ObjectT.name}>;
   if (objectType) {
-    const objectEither = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
-    if (objectEither.isLeft()) {
-      return objectEither;
-    }
-    if (objectI++ >= offset) {
-      objects.push(objectEither.unsafeCoerce());
-      if (objects.length === limit) {
-        return purify.Either.of(objects);
+    objectEither = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
+  } else {
+    for (const tryObjectType of objectTypes) {
+      objectEither = tryObjectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
+      if (objectEither.isRight()) {
+        objectType = tryObjectType;
+        break;
       }
     }
-    continue;
   }
 
-  // objectType is unknown, try them all
-  const lefts: purify.Either<Error, ${typeParameters.ObjectT.name}>[] = [];
-  for (const tryObjectType of objectTypes) {
-    const objectEither = tryObjectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
-    if (objectEither.isRight()) {
-      objects.push(objectEither.unsafeCoerce());
-      break;
-    }
-    lefts.push(objectEither);
-  }
+  if (objectEither!.isLeft()) {
   // Doesn't appear to belong to any of the known object types, just assume the first
-  if (lefts.length === objectTypes.length) {
-    return lefts[0] as unknown as purify.Either<Error, readonly ${typeParameters.ObjectT.name}[]>;
+    return objectEither as unknown as purify.Either<Error, readonly ${typeParameters.ObjectT.name}[]>;
+  }
+  const object = objectEither!.unsafeCoerce();
+  if (objectI++ >= offset) {
+    objects.push(object);
+    if (objects.length === limit) {
+      return purify.Either.of(objects);
+    }    
   }
 }
 

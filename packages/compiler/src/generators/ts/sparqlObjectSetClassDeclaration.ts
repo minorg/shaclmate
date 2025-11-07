@@ -54,7 +54,7 @@ export function sparqlObjectSetClassDeclaration({
     where: {
       hasQuestionToken: true,
       name: "where",
-      type: `readonly ${syntheticNamePrefix}SparqlObjectSet.Where<${typeParameters.ObjectIdentifierT.name}>[]`,
+      type: `${syntheticNamePrefix}SparqlObjectSet.Where<${typeParameters.ObjectIdentifierT.name}>`,
     } satisfies OptionalKind<ParameterDeclarationStructure>,
   };
 
@@ -99,7 +99,7 @@ export function sparqlObjectSetClassDeclaration({
               kind: StructureKind.Method,
               isAsync: true,
               statements: [
-                `return (await this.${methodSignatures.objects.name}({ where: [{ identifiers: [identifier], type: "identifiers" }] })).map(objects => objects[0]);`,
+                `return (await this.${methodSignatures.objects.name}({ where: { identifiers: [identifier], type: "identifiers" } })).map(objects => objects[0]);`,
               ],
             },
             {
@@ -349,53 +349,91 @@ return purify.EitherAsync(async ({ liftEither }) =>
           scope: Scope.Protected,
           statements: [
             `\
+// Patterns should be most to least specific.
 const patterns: sparqljs.Pattern[] = [];
 
-// Patterns should be most to least specific.
+const where_ = where ?? { "type": "type" };
+switch (where_.type) {
+  case "identifiers": {
+    const valuePatternRowKey = \`?\${this.${syntheticNamePrefix}objectVariable.value}\`;
+    patterns.push({
+      type: "values" as const,
+      values: where_.identifiers.map((identifier) => {
+        const valuePatternRow: sparqljs.ValuePatternRow = {};
+        valuePatternRow[valuePatternRowKey] = identifier as rdfjs.NamedNode;
+        return valuePatternRow;
+      }),
+      });
+    break;
+  }
 
-if (where) {
-  // Assign a separate variable so the compiler catches any missing cases
-  for (const where_ of where) {
-    switch (where_.type) {
-      case "identifiers": {
-        const valuePatternRowKey = \`?\${this.${syntheticNamePrefix}objectVariable.value}\`;
-        patterns.push({
-          type: "values" as const,
-          values: where_.identifiers.map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow[valuePatternRowKey] = identifier as rdfjs.NamedNode;
-            return valuePatternRow;
-          }),
-          });
-        break;
-      }
-      case "identifier-type": {
-        patterns.push({
-          type: "filter" as const,
-          expression: {
-            type: "operation" as const,
-            operator: "isIRI",
-            args: [this.${syntheticNamePrefix}objectVariable],
-          }        
-        });
-        break;
-      }
-      case "sparql-patterns": {
-        patterns.push(...where_.sparqlPatterns(this.${syntheticNamePrefix}objectVariable));
-        break;
-      }
-      case "triple-objects": {
-        patterns.push({
-          triples: [{
-            subject: where_.subject,
-            predicate: where_.predicate,
-            object: this.${syntheticNamePrefix}objectVariable
-          }],
-          type: "bgp"
-        });
-        break;
-      }
+  case "sparql-patterns": {
+    patterns.push(...where_.sparqlPatterns(this.${syntheticNamePrefix}objectVariable));
+    break;
+  }
+
+  case "triple-objects": {
+    patterns.push({
+      triples: [{
+        subject: where_.subject ?? dataFactory.blankNode(),
+        predicate: where_.predicate,
+        object: this.${syntheticNamePrefix}objectVariable
+      }],
+      type: "bgp"
+    });
+
+    if (where_.objectTermType === "NamedNode") {
+      patterns.push({
+        type: "filter" as const,
+        expression: {
+          type: "operation" as const,
+          operator: "isIRI",
+          args: [this.${syntheticNamePrefix}objectVariable],
+        }        
+      });
     }
+
+    break;
+  }
+
+  case "triple-subjects": {
+    patterns.push({
+      triples: [{
+        subject: this.${syntheticNamePrefix}objectVariable,
+        predicate: where_.predicate,
+        object: where_.object ?? dataFactory.blankNode()
+      }],
+      type: "bgp"
+    });
+
+    if (where_.subjectTermType === "NamedNode") {
+      patterns.push({
+        type: "filter" as const,
+        expression: {
+          type: "operation" as const,
+          operator: "isIRI",
+          args: [this.${syntheticNamePrefix}objectVariable],
+        }        
+      });
+    }
+
+    break;
+  }
+
+  case "type": {
+    // The type patterns are always added below.
+
+    if (where_.identifierType === "NamedNode") {
+      patterns.push({
+        type: "filter" as const,
+        expression: {
+          type: "operation" as const,
+          operator: "isIRI",
+          args: [this.${syntheticNamePrefix}objectVariable],
+        }
+      });
+    }
+    break;
   }
 }
 
@@ -442,7 +480,7 @@ return patterns;`,
           isExported: true,
           kind: StructureKind.TypeAlias,
           name: "Query",
-          type: `Omit<${syntheticNamePrefix}ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>, "where"> & { readonly order?: (objectVariable: rdfjs.Variable) => readonly sparqljs.Ordering[]; readonly where?: readonly Where<${typeParameters.ObjectIdentifierT.name}>[] }`,
+          type: `Omit<${syntheticNamePrefix}ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>, "where"> & { readonly order?: (objectVariable: rdfjs.Variable) => readonly sparqljs.Ordering[]; readonly where?: Where<${typeParameters.ObjectIdentifierT.name}> }`,
           typeParameters: [typeParameters.ObjectIdentifierT],
         },
         {
