@@ -9,23 +9,10 @@ import type {
 } from "@rdfjs/types";
 import { owl, sh } from "@tpluscode/rdf-ns-builders";
 import { Either, Maybe } from "purify-ts";
-import { ResourceSet } from "rdfjs-resource";
+import { Resource, ResourceSet } from "rdfjs-resource";
 import { Memoize } from "typescript-memoize";
 import type { Factory } from "./Factory.js";
 import type { OntologyLike } from "./OntologyLike.js";
-
-function datasetHasMatch(
-  dataset: DatasetCore,
-  subject?: Term | null,
-  predicate?: Term | null,
-  object?: Term | null,
-  graph?: Term | null,
-): boolean {
-  for (const _ of dataset.match(subject, predicate, object, graph)) {
-    return true;
-  }
-  return false;
-}
 
 export class ShapesGraph<
   NodeShapeT extends ShapeT,
@@ -72,6 +59,18 @@ export class ShapesGraph<
     Error,
     ShapesGraph<NodeShapeT, OntologyT, PropertyGroupT, PropertyShapeT, ShapeT>
   > {
+    function datasetHasMatch(
+      subject?: Term | null,
+      predicate?: Term | null,
+      object?: Term | null,
+      graph?: Term | null,
+    ): boolean {
+      for (const _ of dataset.match(subject, predicate, object, graph)) {
+        return true;
+      }
+      return false;
+    }
+
     const resourceSet = new ResourceSet({ dataset });
     const shapesGraph = new ShapesGraph<
       NodeShapeT,
@@ -81,91 +80,99 @@ export class ShapesGraph<
       ShapeT
     >();
 
-    function readGraph(): BlankNode | DefaultGraph | NamedNode | null {
-      const graphs = new TermSet();
-      for (const quad of dataset) {
-        graphs.add(quad.graph);
+    return Either.encase(() => {
+      function readGraph(): BlankNode | DefaultGraph | NamedNode | null {
+        const graphs = new TermSet();
+        for (const quad of dataset) {
+          graphs.add(quad.graph);
+        }
+        if (graphs.size !== 1) {
+          return null;
+        }
+        const graph = [...graphs.values()][0];
+        switch (graph.termType) {
+          case "BlankNode":
+          case "DefaultGraph":
+          case "NamedNode":
+            return graph;
+          default:
+            throw new RangeError(
+              `expected NamedNode or default graph, actual ${graph.termType}`,
+            );
+        }
       }
-      if (graphs.size !== 1) {
-        return null;
-      }
-      const graph = [...graphs.values()][0];
-      switch (graph.termType) {
-        case "BlankNode":
-        case "DefaultGraph":
-        case "NamedNode":
-          return graph;
-        default:
-          throw new RangeError(
-            `expected NamedNode or default graph, actual ${graph.termType}`,
+
+      const graph = readGraph();
+
+      // Read ontologies
+      for (const ontologyResource of resourceSet.instancesOf(owl.Ontology, {
+        graph,
+      })) {
+        if (
+          shapesGraph.ontologiesByIdentifier.has(ontologyResource.identifier)
+        ) {
+          continue;
+        }
+        factory
+          .ontologyFromRdf({
+            resource: ontologyResource,
+            shapesGraph,
+          })
+          .ifRight((ontology) =>
+            shapesGraph.ontologiesByIdentifier.set(
+              ontologyResource.identifier,
+              ontology,
+            ),
           );
       }
-    }
 
-    const graph = readGraph();
-
-    // Read ontologies
-    for (const ontologyResource of resourceSet.instancesOf(owl.Ontology, {
-      graph,
-    })) {
-      if (shapesGraph.ontologiesByIdentifier.has(ontologyResource.identifier)) {
-        continue;
-      }
-      factory
-        .ontologyFromRdf({
-          resource: ontologyResource,
-          shapesGraph,
-        })
-        .ifRight((ontology) =>
-          shapesGraph.ontologiesByIdentifier.set(
-            ontologyResource.identifier,
-            ontology,
-          ),
-        );
-    }
-
-    // Read property groups
-    for (const propertyGroupResource of resourceSet.instancesOf(
-      sh.PropertyGroup,
-      { graph },
-    )) {
-      if (propertyGroupResource.identifier.termType !== "NamedNode") {
-        continue;
-      }
-      if (
-        shapesGraph.propertyGroupsByIdentifier.has(
-          propertyGroupResource.identifier,
-        )
-      ) {
-        continue;
-      }
-      factory
-        .propertyGroupFromRdf({
-          resource: propertyGroupResource,
-          shapesGraph,
-        })
-        .ifRight((propertyGroup) =>
-          shapesGraph.propertyGroupsByIdentifier.set(
+      // Read property groups
+      for (const propertyGroupResource of resourceSet.instancesOf(
+        sh.PropertyGroup,
+        { graph },
+      )) {
+        if (propertyGroupResource.identifier.termType !== "NamedNode") {
+          continue;
+        }
+        if (
+          shapesGraph.propertyGroupsByIdentifier.has(
             propertyGroupResource.identifier,
-            propertyGroup,
-          ),
-        );
-    }
+          )
+        ) {
+          continue;
+        }
+        factory
+          .propertyGroupFromRdf({
+            resource: propertyGroupResource,
+            shapesGraph,
+          })
+          .ifRight((propertyGroup) =>
+            shapesGraph.propertyGroupsByIdentifier.set(
+              propertyGroupResource.identifier,
+              propertyGroup,
+            ),
+          );
+      }
 
-    // Read shapes
-    (() => {
+      // Read shapes
       // Collect the shape identifiers in sets
       const shapeNodeSet = new TermSet<BlankNode | NamedNode>();
 
       // Utility function for adding to the shapeNodeSet
-      const addShapeNode = (shapeNode: Term) => {
+      function addShapeNode(
+        shapeNode: Term,
+      ): shapeNode is BlankNode | NamedNode {
         switch (shapeNode.termType) {
           case "BlankNode":
           case "NamedNode":
             shapeNodeSet.add(shapeNode);
-            break;
+            return true;
+          default:
+            throw new RangeError(
+              `unexpected shape node identifier term type: ${shapeNode.termType}`,
+            );
         }
-      };
+      }
 
       // Test each shape condition
       // https://www.w3.org/TR/shacl/#shapes
@@ -236,6 +243,12 @@ export class ShapesGraph<
       for (const predicate of [sh.node, sh.property]) {
         for (const quad of dataset.match(null, predicate, null, graph)) {
           addShapeNode(quad.object);
+
+          if (!datasetHasMatch(quad.object)) {
+            throw new Error(
+              `undefined shape: ${Resource.Identifier.toString(quad.object as Resource.Identifier)}`,
+            );
+          }
         }
       }
 
@@ -247,14 +260,24 @@ export class ShapesGraph<
             case "NamedNode":
               break;
             default:
-              continue;
+              throw new RangeError(
+                `expected list term to be a blank or named node, not ${quad.object.termType}`,
+              );
           }
 
           for (const value of resourceSet
             .resource(quad.object)
             .toList()
-            .orDefault([])) {
-            value.toIdentifier().ifRight(addShapeNode);
+            .unsafeCoerce()) {
+            const identifier = value.toIdentifier().unsafeCoerce();
+
+            addShapeNode(identifier);
+
+            if (!datasetHasMatch(identifier)) {
+              throw new Error(
+                `undefined shape: ${Resource.Identifier.toString(identifier as Resource.Identifier)}`,
+              );
+            }
           }
         }
       }
@@ -286,9 +309,9 @@ export class ShapesGraph<
             );
         }
       }
-    })();
 
-    return Either.of(shapesGraph);
+      return shapesGraph;
+    });
   }
 
   @Memoize()

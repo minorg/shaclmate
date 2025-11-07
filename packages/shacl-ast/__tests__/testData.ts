@@ -1,19 +1,24 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import type { DatasetCore } from "@rdfjs/types";
 import { Parser, Store } from "n3";
-import { RdfjsShapesGraph, defaultFactory } from "../src/index.js";
+import { ShapesGraph, defaultFactory } from "../src/index.js";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
-function parseShapesGraph(filePath: string) {
+function parseDataset(filePath: string): DatasetCore {
   const parser = new Parser({ format: "Turtle" });
   const store = new Store();
   store.addQuads(parser.parse(fs.readFileSync(filePath).toString()));
-  return new RdfjsShapesGraph({
-    factory: defaultFactory,
-    dataset: store,
-  });
+  return store;
+}
+
+function parseShapesGraph(filePath: string) {
+  return ShapesGraph.fromDataset(
+    parseDataset(filePath),
+    defaultFactory,
+  ).unsafeCoerce();
 }
 
 export const testData = {
@@ -37,7 +42,7 @@ export const testData = {
     ),
   },
   undefinedShape: {
-    shapesGraph: parseShapesGraph(
+    dataset: parseDataset(
       path.join(thisDirectoryPath, "data", "undefined-shape.shaclmate.ttl"),
     ),
   },
