@@ -8,6 +8,6 @@ export * from "./OntologyLike.js";
 export * from "./PropertyGroup.js";
 export * from "./PropertyPath.js";
 export * from "./PropertyShape.js";
-export * from "./RdfjsShapesGraph.js";
+export * from "./ShapesGraph.js";
 export * from "./Shape.js";
 export * from "./ShapesGraph.js";
