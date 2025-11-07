@@ -33,7 +33,12 @@ export const testData = {
   },
   schema: {
     shapesGraph: parseShapesGraph(
-      path.join(thisDirectoryPath, "schemashacl.ttl"),
+      path.join(thisDirectoryPath, "data", "schemashacl.ttl"),
+    ),
+  },
+  undefinedShape: {
+    shapesGraph: parseShapesGraph(
+      path.join(thisDirectoryPath, "data", "undefined-shape.shaclmate.ttl"),
     ),
   },
 };

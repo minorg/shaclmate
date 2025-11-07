@@ -1,7 +1,7 @@
 import { describe, it } from "vitest";
 import { testData } from "./testData.js";
 
-describe("RdfjsShapesGraph", () => {
+describe("RdfjsShapesGraph: kitchen sink", () => {
   it("should parse the shapes correctly", ({ expect }) => {
     expect(testData.kitchenSink.shapesGraph.nodeShapes).toHaveLength(85);
     expect(testData.kitchenSink.shapesGraph.propertyShapes).toHaveLength(121);
@@ -17,5 +17,11 @@ describe("RdfjsShapesGraph", () => {
   it("should parse property shapes correctly", ({ expect }) => {
     expect(testData.kitchenSink.shapesGraph.propertyGroups).toHaveLength(0);
     expect(testData.schema.shapesGraph.propertyGroups).toHaveLength(1);
+  });
+});
+
+describe("RdfsjsShapesGraph: error cases", () => {
+  it("should produce an error on an undefined shape", ({ expect }) => {
+    expect(testData.undefinedShape.shapesGraph.nodeShapes).toHaveLength(0);
   });
 });

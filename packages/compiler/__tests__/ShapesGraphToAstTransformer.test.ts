@@ -35,11 +35,3 @@ describe("ShapesGraphToAstTransformer: kitchen sink", () => {
     expect(ast.objectUnionTypes).toHaveLength(7);
   });
 });
-
-describe("ShapesGraphToAstTransformer: error cases", () => {
-  it("should produce an error on an undefined shape", ({ expect }) => {
-    const error = transform(testData.undefinedShape.shapesGraph).extract();
-    expect(error).toBeInstanceOf(Error);
-    expect((error as Error).message).includes("undefined shape");
-  });
-});

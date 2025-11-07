@@ -30,9 +30,4 @@ export const testData = {
       ),
     ),
   },
-  undefinedShape: {
-    shapesGraph: parseShapesGraph(
-      path.join(thisDirectoryPath, "data", "undefined-shape.shaclmate.ttl"),
-    ),
-  },
 };
