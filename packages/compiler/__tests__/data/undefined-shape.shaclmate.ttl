@@ -1,0 +1,10 @@
+@prefix : <http://example.com/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+:DefinedShape
+    a sh:NodeShape ;
+    sh:property [
+        rdfs:comment "Property shape that references an undefined node shape. Should be a compiler error." ;
+        sh:node :UndefinedShape 
+    ] .

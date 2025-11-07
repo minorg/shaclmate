@@ -1,24 +1,28 @@
 import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import N3 from "n3";
+import type { Either } from "purify-ts";
 import { beforeAll, describe, it } from "vitest";
 import { ShapesGraphToAstTransformer } from "../src/ShapesGraphToAstTransformer.js";
 import type { Ast } from "../src/ast/index.js";
+import type { ShapesGraph } from "../src/input/ShapesGraph.js";
 import { testData } from "./testData.js";
 
-describe("ShapesGraphToAstTransformer", () => {
+function transform(shapesGraph: ShapesGraph): Either<Error, Ast> {
+  return new ShapesGraphToAstTransformer({
+    iriPrefixMap: new PrefixMap(undefined, { factory: N3.DataFactory }),
+    shapesGraph,
+  }).transform();
+}
+
+describe("ShapesGraphToAstTransformer: kitchen sink", () => {
   let ast: Ast;
   const shapesGraph = testData.kitchenSink.shapesGraph;
 
   beforeAll(() => {
-    ast = new ShapesGraphToAstTransformer({
-      iriPrefixMap: new PrefixMap(undefined, { factory: N3.DataFactory }),
-      shapesGraph,
-    })
-      .transform()
-      .unsafeCoerce();
+    ast = transform(shapesGraph).unsafeCoerce();
   });
 
-  it("should transform object types", ({ expect }) => {
+  it("should transform kitchen object types", ({ expect }) => {
     expect(shapesGraph.nodeShapes).toHaveLength(85);
     expect(ast.objectTypes).toHaveLength(60);
   });
@@ -30,6 +34,12 @@ describe("ShapesGraphToAstTransformer", () => {
   it("should transform object union types", ({ expect }) => {
     expect(ast.objectUnionTypes).toHaveLength(7);
   });
+});
 
-  testData.kitchenSink.shapesGraph;
+describe("ShapesGraphToAstTransformer: error cases", () => {
+  it("should produce an error on an undefined shape", ({ expect }) => {
+    const error = transform(testData.undefinedShape.shapesGraph).extract();
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).includes("undefined shape");
+  });
 });
