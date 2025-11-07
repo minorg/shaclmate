@@ -213,15 +213,13 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
       expect(
         (
           await objectSet.directRecursiveClassIdentifiers({
-            where: [
-              {
-                subject: directRecursiveClass.$identifier,
-                predicate:
-                  kitchenSink.DirectRecursiveClass.$properties
-                    .directRecursiveProperty.identifier,
-                type: "triple-objects",
-              },
-            ],
+            where: {
+              subject: directRecursiveClass.$identifier,
+              predicate:
+                kitchenSink.DirectRecursiveClass.$properties
+                  .directRecursiveProperty.identifier,
+              type: "triple-objects",
+            },
           })
         )
           .unsafeCoerce()
@@ -234,17 +232,38 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     }
   });
 
+  it("objectIdentifiers (triple-subjects)", async ({ expect }) => {
+    for (const directRecursiveClass of testData.directRecursiveClasses) {
+      expect(
+        (
+          await objectSet.directRecursiveClassIdentifiers({
+            where: {
+              predicate:
+                kitchenSink.DirectRecursiveClass.$properties
+                  .directRecursiveProperty.identifier,
+              object:
+                directRecursiveClass.directRecursiveProperty.unsafeCoerce()
+                  .$identifier,
+              type: "triple-subjects",
+            },
+          })
+        )
+          .unsafeCoerce()
+          .map((identifier) => identifier.value)
+          .sort(),
+      ).toStrictEqual([directRecursiveClass.$identifier.value]);
+    }
+  });
+
   it("objects (all identifiers)", async ({ expect }) => {
     const actualObjects = (
       await objectSet.concreteChildClasses({
-        where: [
-          {
-            identifiers: testData.concreteChildClasses.map(
-              (object) => object.$identifier,
-            ),
-            type: "identifiers",
-          },
-        ],
+        where: {
+          identifiers: testData.concreteChildClasses.map(
+            (object) => object.$identifier,
+          ),
+          type: "identifiers",
+        },
       })
     ).unsafeCoerce();
     expect(actualObjects).toHaveLength(testData.concreteChildClasses.length);
@@ -261,14 +280,12 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     const sliceStart = 2;
     const actualObjects = (
       await objectSet.concreteChildClasses({
-        where: [
-          {
-            identifiers: testData.concreteChildClasses
-              .slice(sliceStart)
-              .map((object) => object.$identifier),
-            type: "identifiers",
-          },
-        ],
+        where: {
+          identifiers: testData.concreteChildClasses
+            .slice(sliceStart)
+            .map((object) => object.$identifier),
+          type: "identifiers",
+        },
       })
     ).unsafeCoerce();
     expect(actualObjects).toHaveLength(
@@ -318,7 +335,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     {
       const actualObjects = (
         await objectSet.blankClasses({
-          where: [{ identifierType: "NamedNode", type: "identifier-type" }],
+          where: { identifierType: "NamedNode", type: "type" },
         })
       ).unsafeCoerce();
       expect(actualObjects).toHaveLength(2);
@@ -383,14 +400,12 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
   it("objectUnions (all identifiers)", async ({ expect }) => {
     const actualObjects = (
       await objectSet.interfaceUnions({
-        where: [
-          {
-            identifiers: testData.interfaceUnions.map(
-              (object) => object.$identifier,
-            ),
-            type: "identifiers",
-          },
-        ],
+        where: {
+          identifiers: testData.interfaceUnions.map(
+            (object) => object.$identifier,
+          ),
+          type: "identifiers",
+        },
       })
     ).unsafeCoerce();
     expect(actualObjects).toHaveLength(testData.concreteChildClasses.length);
@@ -410,14 +425,12 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     const sliceStart = 2;
     const actualObjects = (
       await objectSet.classUnions({
-        where: [
-          {
-            identifiers: testData.classClassUnions
-              .slice(sliceStart)
-              .map((object) => object.$identifier),
-            type: "identifiers",
-          },
-        ],
+        where: {
+          identifiers: testData.classClassUnions
+            .slice(sliceStart)
+            .map((object) => object.$identifier),
+          type: "identifiers",
+        },
       })
     ).unsafeCoerce();
     expect(actualObjects).toHaveLength(

@@ -50,7 +50,7 @@ export function objectSetInterfaceDeclaration({
           kind: StructureKind.TypeAlias,
           isExported: true,
           name: "Query",
-          type: `{ readonly limit?: number; readonly offset?: number; readonly where?: readonly Where<${typeParameters.ObjectIdentifierT.name}>[] }`,
+          type: `{ readonly limit?: number; readonly offset?: number; readonly where?: Where<${typeParameters.ObjectIdentifierT.name}> }`,
           typeParameters: [typeParameters.ObjectIdentifierT],
         },
         {
@@ -59,8 +59,9 @@ export function objectSetInterfaceDeclaration({
           name: "Where",
           type: [
             `{ readonly identifiers: readonly ${typeParameters.ObjectIdentifierT.name}[]; readonly type: "identifiers" }`,
-            `{ readonly identifierType: "NamedNode"; readonly type: "identifier-type"; }`,
-            `{ readonly predicate: rdfjs.NamedNode; readonly subject: rdfjs.BlankNode | rdfjs.NamedNode; readonly type: "triple-objects" } `,
+            `{ readonly objectTermType?: "NamedNode"; readonly predicate: rdfjs.NamedNode; readonly subject?: rdfjs.BlankNode | rdfjs.NamedNode; readonly type: "triple-objects" } `,
+            `{ readonly object?: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode; readonly predicate: rdfjs.NamedNode; readonly subjectTermType?: "NamedNode"; readonly type: "triple-subjects" } `,
+            `{ readonly identifierType?: "NamedNode"; readonly type: "type" } `,
           ].join(" | "),
           typeParameters: [typeParameters.ObjectIdentifierT],
         },
