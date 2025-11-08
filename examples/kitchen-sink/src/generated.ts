@@ -377,6 +377,10 @@ export class $LazyObjectSet<
     this.stubs = stubs;
   }
 
+  get length(): number {
+    return this.stubs.length;
+  }
+
   async resolve(options?: { limit?: number; offset?: number }): Promise<
     purify.Either<Error, readonly ResolvedObjectT[]>
   > {

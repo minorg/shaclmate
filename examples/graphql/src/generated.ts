@@ -72,6 +72,10 @@ export class $LazyObjectSet<
     this.stubs = stubs;
   }
 
+  get length(): number {
+    return this.stubs.length;
+  }
+
   async resolve(options?: { limit?: number; offset?: number }): Promise<
     purify.Either<Error, readonly ResolvedObjectT[]>
   > {
@@ -1331,21 +1335,13 @@ export namespace ParentStatic {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
-    return (
-      Child.$fromRdf(resource, {
-        ...context,
-        ignoreRdfType: false,
-        objectSet,
-      }) as purify.Either<Error, Parent>
-    ).altLazy(() =>
-      ParentStatic.$propertiesFromRdf({
-        ...context,
-        ignoreRdfType,
-        objectSet,
-        preferredLanguages,
-        resource,
-      }).map((properties) => new Parent(properties)),
-    );
+    return ParentStatic.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new Parent(properties));
   }
 
   export function $propertiesFromRdf({
@@ -2490,10 +2486,18 @@ export namespace $ObjectSet {
         readonly type: "identifiers";
       }
     | {
+        readonly objectTermType?: "NamedNode";
         readonly predicate: rdfjs.NamedNode;
-        readonly subject: rdfjs.BlankNode | rdfjs.NamedNode;
+        readonly subject?: rdfjs.BlankNode | rdfjs.NamedNode;
         readonly type: "triple-objects";
-      };
+      }
+    | {
+        readonly object?: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode;
+        readonly predicate: rdfjs.NamedNode;
+        readonly subjectTermType?: "NamedNode";
+        readonly type: "triple-subjects";
+      }
+    | { readonly identifierType?: "NamedNode"; readonly type: "type" };
 }
 
 export abstract class $ForwardingObjectSet implements $ObjectSet {
@@ -2669,7 +2673,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Child.$Identifier>,
   ): purify.Either<Error, readonly Child.$Identifier[]> {
     return this.$objectIdentifiersSync<Child, Child.$Identifier>(
-      { $fromRdf: Child.$fromRdf, $fromRdfTypes: [Child.$fromRdfType] },
+      [{ $fromRdf: Child.$fromRdf, $fromRdfTypes: [Child.$fromRdfType] }],
       query,
     );
   }
@@ -2684,7 +2688,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Child.$Identifier>,
   ): purify.Either<Error, readonly Child[]> {
     return this.$objectsSync<Child, Child.$Identifier>(
-      { $fromRdf: Child.$fromRdf, $fromRdfTypes: [Child.$fromRdfType] },
+      [{ $fromRdf: Child.$fromRdf, $fromRdfTypes: [Child.$fromRdfType] }],
       query,
     );
   }
@@ -2699,7 +2703,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<Child.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<Child, Child.$Identifier>(
-      { $fromRdf: Child.$fromRdf, $fromRdfTypes: [Child.$fromRdfType] },
+      [{ $fromRdf: Child.$fromRdf, $fromRdfTypes: [Child.$fromRdfType] }],
       query,
     );
   }
@@ -2726,7 +2730,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Nested.$Identifier>,
   ): purify.Either<Error, readonly Nested.$Identifier[]> {
     return this.$objectIdentifiersSync<Nested, Nested.$Identifier>(
-      { $fromRdf: Nested.$fromRdf, $fromRdfTypes: [Nested.$fromRdfType] },
+      [{ $fromRdf: Nested.$fromRdf, $fromRdfTypes: [Nested.$fromRdfType] }],
       query,
     );
   }
@@ -2741,7 +2745,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Nested.$Identifier>,
   ): purify.Either<Error, readonly Nested[]> {
     return this.$objectsSync<Nested, Nested.$Identifier>(
-      { $fromRdf: Nested.$fromRdf, $fromRdfTypes: [Nested.$fromRdfType] },
+      [{ $fromRdf: Nested.$fromRdf, $fromRdfTypes: [Nested.$fromRdfType] }],
       query,
     );
   }
@@ -2756,7 +2760,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<Nested.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<Nested, Nested.$Identifier>(
-      { $fromRdf: Nested.$fromRdf, $fromRdfTypes: [Nested.$fromRdfType] },
+      [{ $fromRdf: Nested.$fromRdf, $fromRdfTypes: [Nested.$fromRdfType] }],
       query,
     );
   }
@@ -2785,10 +2789,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ParentStatic.$Identifier>,
   ): purify.Either<Error, readonly ParentStatic.$Identifier[]> {
     return this.$objectIdentifiersSync<Parent, ParentStatic.$Identifier>(
-      {
-        $fromRdf: ParentStatic.$fromRdf,
-        $fromRdfTypes: [ParentStatic.$fromRdfType, Child.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: ParentStatic.$fromRdf,
+          $fromRdfTypes: [ParentStatic.$fromRdfType, Child.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -2803,10 +2809,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ParentStatic.$Identifier>,
   ): purify.Either<Error, readonly Parent[]> {
     return this.$objectsSync<Parent, ParentStatic.$Identifier>(
-      {
-        $fromRdf: ParentStatic.$fromRdf,
-        $fromRdfTypes: [ParentStatic.$fromRdfType, Child.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: ParentStatic.$fromRdf,
+          $fromRdfTypes: [ParentStatic.$fromRdfType, Child.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -2821,10 +2829,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<ParentStatic.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<Parent, ParentStatic.$Identifier>(
-      {
-        $fromRdf: ParentStatic.$fromRdf,
-        $fromRdfTypes: [ParentStatic.$fromRdfType, Child.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: ParentStatic.$fromRdf,
+          $fromRdfTypes: [ParentStatic.$fromRdfType, Child.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -2853,10 +2863,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<UnionMember1.$Identifier>,
   ): purify.Either<Error, readonly UnionMember1.$Identifier[]> {
     return this.$objectIdentifiersSync<UnionMember1, UnionMember1.$Identifier>(
-      {
-        $fromRdf: UnionMember1.$fromRdf,
-        $fromRdfTypes: [UnionMember1.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: UnionMember1.$fromRdf,
+          $fromRdfTypes: [UnionMember1.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -2871,10 +2883,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<UnionMember1.$Identifier>,
   ): purify.Either<Error, readonly UnionMember1[]> {
     return this.$objectsSync<UnionMember1, UnionMember1.$Identifier>(
-      {
-        $fromRdf: UnionMember1.$fromRdf,
-        $fromRdfTypes: [UnionMember1.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: UnionMember1.$fromRdf,
+          $fromRdfTypes: [UnionMember1.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -2889,10 +2903,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<UnionMember1.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<UnionMember1, UnionMember1.$Identifier>(
-      {
-        $fromRdf: UnionMember1.$fromRdf,
-        $fromRdfTypes: [UnionMember1.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: UnionMember1.$fromRdf,
+          $fromRdfTypes: [UnionMember1.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -2921,10 +2937,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<UnionMember2.$Identifier>,
   ): purify.Either<Error, readonly UnionMember2.$Identifier[]> {
     return this.$objectIdentifiersSync<UnionMember2, UnionMember2.$Identifier>(
-      {
-        $fromRdf: UnionMember2.$fromRdf,
-        $fromRdfTypes: [UnionMember2.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: UnionMember2.$fromRdf,
+          $fromRdfTypes: [UnionMember2.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -2939,10 +2957,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<UnionMember2.$Identifier>,
   ): purify.Either<Error, readonly UnionMember2[]> {
     return this.$objectsSync<UnionMember2, UnionMember2.$Identifier>(
-      {
-        $fromRdf: UnionMember2.$fromRdf,
-        $fromRdfTypes: [UnionMember2.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: UnionMember2.$fromRdf,
+          $fromRdfTypes: [UnionMember2.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -2957,10 +2977,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<UnionMember2.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<UnionMember2, UnionMember2.$Identifier>(
-      {
-        $fromRdf: UnionMember2.$fromRdf,
-        $fromRdfTypes: [UnionMember2.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: UnionMember2.$fromRdf,
+          $fromRdfTypes: [UnionMember2.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -2986,7 +3008,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   unionIdentifiersSync(
     query?: $ObjectSet.Query<Union.$Identifier>,
   ): purify.Either<Error, readonly Union.$Identifier[]> {
-    return this.$objectUnionIdentifiersSync<Union, Union.$Identifier>(
+    return this.$objectIdentifiersSync<Union, Union.$Identifier>(
       [
         {
           $fromRdf: UnionMember1.$fromRdf,
@@ -3010,7 +3032,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   unionsSync(
     query?: $ObjectSet.Query<Union.$Identifier>,
   ): purify.Either<Error, readonly Union[]> {
-    return this.$objectUnionsSync<Union, Union.$Identifier>(
+    return this.$objectsSync<Union, Union.$Identifier>(
       [
         {
           $fromRdf: UnionMember1.$fromRdf,
@@ -3034,7 +3056,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   unionsCountSync(
     query?: Pick<$ObjectSet.Query<Union.$Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectUnionsCountSync<Union, Union.$Identifier>(
+    return this.$objectsCountSync<Union, Union.$Identifier>(
       [
         {
           $fromRdf: UnionMember1.$fromRdf,
@@ -3053,174 +3075,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
-    objectType: {
+    objectTypes: readonly {
       $fromRdf: (
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
       $fromRdfTypes: readonly rdfjs.NamedNode[];
-    },
+    }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, readonly ObjectIdentifierT[]> {
-    return this.$objectsSync<ObjectT, ObjectIdentifierT>(objectType, query).map(
-      (objects) => objects.map((object) => object.$identifier),
-    );
+    return this.$objectsSync<ObjectT, ObjectIdentifierT>(
+      objectTypes,
+      query,
+    ).map((objects) => objects.map((object) => object.$identifier));
   }
 
   protected $objectsSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
-    objectType: {
-      $fromRdf: (
-        resource: rdfjsResource.Resource,
-        options: { objectSet: $ObjectSet },
-      ) => purify.Either<Error, ObjectT>;
-      $fromRdfTypes: readonly rdfjs.NamedNode[];
-    },
-    query?: $ObjectSet.Query<ObjectIdentifierT>,
-  ): purify.Either<Error, readonly ObjectT[]> {
-    const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
-    if (limit <= 0) {
-      return purify.Either.of([]);
-    }
-
-    let offset = query?.offset ?? 0;
-    if (offset < 0) {
-      offset = 0;
-    }
-
-    if (query?.where) {
-      // Assign identifiers in each case block so the compiler will catch missing cases.
-      let identifiers: rdfjsResource.Resource.Identifier[];
-      switch (query.where.type) {
-        case "identifiers": {
-          identifiers = query.where.identifiers.slice(offset, offset + limit);
-          break;
-        }
-        case "triple-objects": {
-          let identifierI = 0;
-          identifiers = [];
-          for (const quad of this.resourceSet.dataset.match(
-            query.where.subject,
-            query.where.predicate,
-            null,
-          )) {
-            if (
-              quad.object.termType === "BlankNode" ||
-              quad.object.termType === "NamedNode"
-            ) {
-              if (++identifierI >= offset) {
-                identifiers.push(quad.object);
-                if (identifiers.length === limit) {
-                  break;
-                }
-              }
-            } else {
-              return purify.Left(
-                new Error(
-                  `subject=${query.where.subject.value} predicate=${query.where.predicate.value} pattern matches non-identifier (${quad.object.termType}) triple`,
-                ),
-              );
-            }
-          }
-          break;
-        }
-      }
-
-      const objects: ObjectT[] = [];
-      for (const identifier of identifiers) {
-        const either = objectType.$fromRdf(
-          this.resourceSet.resource(identifier),
-          { objectSet: this },
-        );
-        if (either.isLeft()) {
-          return either;
-        }
-        objects.push(either.unsafeCoerce());
-      }
-      return purify.Either.of(objects);
-    }
-
-    if (objectType.$fromRdfTypes.length === 0) {
-      return purify.Either.of([]);
-    }
-
-    const resources: rdfjsResource.Resource[] = [];
-    for (const fromRdfType of objectType.$fromRdfTypes) {
-      for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
-        if (
-          !resources.some((existingResource) =>
-            existingResource.identifier.equals(resource.identifier),
-          )
-        ) {
-          resources.push(resource);
-        }
-      }
-    }
-    // Sort resources by identifier so limit and offset are deterministic
-    resources.sort((left, right) =>
-      left.identifier.value.localeCompare(right.identifier.value),
-    );
-
-    const objects: ObjectT[] = [];
-    let objectI = 0;
-    for (const resource of resources) {
-      const either = objectType.$fromRdf(resource, { objectSet: this });
-      if (either.isLeft()) {
-        return either;
-      }
-      if (objectI++ >= offset) {
-        objects.push(either.unsafeCoerce());
-        if (objects.length === limit) {
-          return purify.Either.of(objects);
-        }
-      }
-    }
-    return purify.Either.of(objects);
-  }
-
-  protected $objectsCountSync<
-    ObjectT extends { readonly $identifier: ObjectIdentifierT },
-    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  >(
-    objectType: {
-      $fromRdf: (
-        resource: rdfjsResource.Resource,
-        options: { objectSet: $ObjectSet },
-      ) => purify.Either<Error, ObjectT>;
-      $fromRdfTypes: readonly rdfjs.NamedNode[];
-    },
-    query?: $ObjectSet.Query<ObjectIdentifierT>,
-  ): purify.Either<Error, number> {
-    return this.$objectsSync<ObjectT, ObjectIdentifierT>(objectType, query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  protected $objectUnionIdentifiersSync<
-    ObjectT extends { readonly $identifier: ObjectIdentifierT },
-    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  >(
-    objectTypes: readonly {
-      $fromRdf: (
-        resource: rdfjsResource.Resource,
-        options: { objectSet: $ObjectSet },
-      ) => purify.Either<Error, ObjectT>;
-      $fromRdfTypes: readonly rdfjs.NamedNode[];
-    }[],
-    query?: $ObjectSet.Query<ObjectIdentifierT>,
-  ): purify.Either<Error, readonly ObjectIdentifierT[]> {
-    return this.$objectUnionsSync<ObjectT, ObjectIdentifierT>(
-      objectTypes,
-      query,
-    ).map((objects) => objects.map((object) => object.$identifier));
-  }
-
-  protected $objectUnionsSync<
-    ObjectT extends { readonly $identifier: ObjectIdentifierT },
-    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  >(
     objectTypes: readonly {
       $fromRdf: (
         resource: rdfjsResource.Resource,
@@ -3240,69 +3113,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       offset = 0;
     }
 
-    if (query?.where) {
-      // Assign identifiers in each case block so the compiler will catch missing cases.
-      let identifiers: rdfjsResource.Resource.Identifier[];
-      switch (query.where.type) {
-        case "identifiers": {
-          identifiers = query.where.identifiers.slice(offset, offset + limit);
-          break;
-        }
-        case "triple-objects": {
-          let identifierI = 0;
-          identifiers = [];
-          for (const quad of this.resourceSet.dataset.match(
-            query.where.subject,
-            query.where.predicate,
-            null,
-          )) {
-            if (
-              quad.object.termType === "BlankNode" ||
-              quad.object.termType === "NamedNode"
-            ) {
-              if (++identifierI >= offset) {
-                identifiers.push(quad.object);
-                if (identifiers.length === limit) {
-                  break;
-                }
-              }
-            } else {
-              return purify.Left(
-                new Error(
-                  `subject=${query.where.subject.value} predicate=${query.where.predicate.value} pattern matches non-identifier (${quad.object.termType}) triple`,
-                ),
-              );
-            }
-          }
-          break;
-        }
-      }
-
-      const objects: ObjectT[] = [];
-      for (const identifier of identifiers) {
-        const resource = this.resourceSet.resource(identifier);
-        const lefts: purify.Either<Error, ObjectT>[] = [];
-        for (const objectType of objectTypes) {
-          const either = objectType.$fromRdf(resource, { objectSet: this });
-          if (either.isRight()) {
-            objects.push(either.unsafeCoerce());
-            break;
-          }
-          lefts.push(either);
-        }
-        // Doesn't appear to belong to any of the known object types, just assume the first
-        if (lefts.length === objectTypes.length) {
-          return lefts[0] as unknown as purify.Either<
-            Error,
-            readonly ObjectT[]
-          >;
-        }
-      }
-      return purify.Either.of(objects);
-    }
-
+    // First pass: gather all resources that meet the where filters.
+    // We don't limit + offset here because the resources aren't sorted and limit + offset should be deterministic.
     const resources: {
-      objectType: {
+      objectType?: {
         $fromRdf: (
           resource: rdfjsResource.Resource,
           options: { objectSet: $ObjectSet },
@@ -3311,23 +3125,115 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       };
       resource: rdfjsResource.Resource;
     }[] = [];
-    for (const objectType of objectTypes) {
-      if (objectType.$fromRdfTypes.length === 0) {
-        continue;
+    const where = query?.where ?? { type: "type" };
+    switch (where.type) {
+      case "identifiers": {
+        for (const identifier of where.identifiers) {
+          // Don't deduplicate
+          resources.push({ resource: this.resourceSet.resource(identifier) });
+        }
+        break;
       }
 
-      for (const fromRdfType of objectType.$fromRdfTypes) {
-        for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+      case "triple-objects": {
+        for (const quad of this.resourceSet.dataset.match(
+          where.subject,
+          where.predicate,
+          null,
+        )) {
+          if (
+            where.objectTermType &&
+            quad.object.termType !== where.objectTermType
+          ) {
+            continue;
+          }
+
+          switch (quad.object.termType) {
+            case "BlankNode":
+            case "NamedNode":
+              break;
+            default:
+              return purify.Left(
+                new Error(
+                  `subject=${where.subject?.value} predicate=${where.predicate.value} pattern matches non-identifier (${quad.object.termType}) object`,
+                ),
+              );
+          }
+
+          const resource = this.resourceSet.resource(quad.object);
           if (
             !resources.some(({ resource: existingResource }) =>
               existingResource.identifier.equals(resource.identifier),
             )
           ) {
-            resources.push({ objectType, resource });
+            resources.push({ resource });
           }
         }
+        break;
+      }
+
+      case "triple-subjects": {
+        for (const quad of this.resourceSet.dataset.match(
+          null,
+          where.predicate,
+          where.object,
+        )) {
+          if (
+            where.subjectTermType &&
+            quad.subject.termType !== where.subjectTermType
+          ) {
+            continue;
+          }
+
+          switch (quad.subject.termType) {
+            case "BlankNode":
+            case "NamedNode":
+              break;
+            default:
+              return purify.Left(
+                new Error(
+                  `predicate=${where.predicate.value} object=${where.object?.value} pattern matches non-identifier (${quad.subject.termType}) subject`,
+                ),
+              );
+          }
+
+          const resource = this.resourceSet.resource(quad.subject);
+          if (
+            !resources.some(({ resource: existingResource }) =>
+              existingResource.identifier.equals(resource.identifier),
+            )
+          ) {
+            resources.push({ resource });
+          }
+        }
+        break;
+      }
+
+      case "type": {
+        for (const objectType of objectTypes) {
+          if (objectType.$fromRdfTypes.length === 0) {
+            continue;
+          }
+
+          for (const fromRdfType of objectType.$fromRdfTypes) {
+            for (const resource of where.identifierType === "NamedNode"
+              ? this.resourceSet.namedInstancesOf(fromRdfType)
+              : this.resourceSet.instancesOf(fromRdfType)) {
+              if (
+                !resources.some(({ resource: existingResource }) =>
+                  existingResource.identifier.equals(resource.identifier),
+                )
+              ) {
+                resources.push({ objectType, resource });
+              }
+            }
+          }
+        }
+
+        break;
       }
     }
+
     // Sort resources by identifier so limit and offset are deterministic
     resources.sort((left, right) =>
       left.resource.identifier.value.localeCompare(
@@ -3337,22 +3243,40 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
     let objectI = 0;
     const objects: ObjectT[] = [];
-    for (const { objectType, resource } of resources) {
-      const either = objectType.$fromRdf(resource, { objectSet: this });
-      if (either.isLeft()) {
-        return either;
+    for (let { objectType, resource } of resources) {
+      let objectEither: purify.Either<Error, ObjectT>;
+      if (objectType) {
+        objectEither = objectType.$fromRdf(resource, { objectSet: this });
+      } else {
+        for (const tryObjectType of objectTypes) {
+          objectEither = tryObjectType.$fromRdf(resource, { objectSet: this });
+          if (objectEither.isRight()) {
+            objectType = tryObjectType;
+            break;
+          }
+        }
       }
+
+      if (objectEither!.isLeft()) {
+        // Doesn't appear to belong to any of the known object types, just assume the first
+        return objectEither as unknown as purify.Either<
+          Error,
+          readonly ObjectT[]
+        >;
+      }
+      const object = objectEither!.unsafeCoerce();
       if (objectI++ >= offset) {
-        objects.push(either.unsafeCoerce());
+        objects.push(object);
         if (objects.length === limit) {
           return purify.Either.of(objects);
         }
       }
     }
+
     return purify.Either.of(objects);
   }
 
-  protected $objectUnionsCountSync<
+  protected $objectsCountSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
@@ -3365,7 +3289,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, number> {
-    return this.$objectUnionIdentifiersSync<ObjectT, ObjectIdentifierT>(
+    return this.$objectsSync<ObjectT, ObjectIdentifierT>(
       objectTypes,
       query,
     ).map((objects) => objects.length);

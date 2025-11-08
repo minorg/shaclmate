@@ -237,6 +237,10 @@ export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends rdfjs
     this.stubs = stubs;
   }
 
+  get length(): number {
+    return this.stubs.length;
+  }
+
   async resolve(options?: { limit?: number; offset?: number }): Promise<purify.Either<Error, readonly ResolvedObjectT[]>> {
     if (this.stubs.length === 0) {
       return purify.Either.of([]);
