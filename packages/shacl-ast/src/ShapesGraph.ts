@@ -38,8 +38,6 @@ export class ShapesGraph<
     PropertyShapeT
   >();
 
-  protected constructor() {}
-
   static fromDataset<
     NodeShapeT extends ShapeT,
     OntologyT extends OntologyLike,
