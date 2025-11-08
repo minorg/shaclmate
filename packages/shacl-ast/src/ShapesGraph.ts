@@ -273,11 +273,13 @@ export class ShapesGraph<
 
             addShapeNode(identifier);
 
-            if (!datasetHasMatch(identifier)) {
-              throw new Error(
-                `undefined shape: ${Resource.Identifier.toString(identifier as Resource.Identifier)}`,
-              );
-            }
+            // Don't check for undefined shapes here, since you can have constructs like
+            // sh:and ( sh:not [ ... ] [ ... ] )
+            // if (!datasetHasMatch(identifier)) {
+            //   throw new Error(
+            //     `undefined shape: ${Resource.Identifier.toString(identifier as Resource.Identifier)}`,
+            //   );
+            // }
           }
         }
       }
