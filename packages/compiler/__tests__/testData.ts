@@ -10,9 +10,7 @@ function parseShapesGraph(filePath: string) {
   const parser = new Parser({ format: "Turtle" });
   const store = new Store();
   store.addQuads(parser.parse(fs.readFileSync(filePath).toString()));
-  return new ShapesGraph({
-    dataset: store,
-  });
+  return ShapesGraph.fromDataset(store).unsafeCoerce();
 }
 
 export const testData = {

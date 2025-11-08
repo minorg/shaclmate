@@ -1,7 +1,9 @@
 import { describe, it } from "vitest";
+import { ShapesGraph } from "../src/ShapesGraph.js";
+import { defaultFactory } from "../src/defaultFactory.js";
 import { testData } from "./testData.js";
 
-describe("RdfjsShapesGraph", () => {
+describe("ShapesGraph: kitchen sink", () => {
   it("should parse the shapes correctly", ({ expect }) => {
     expect(testData.kitchenSink.shapesGraph.nodeShapes).toHaveLength(85);
     expect(testData.kitchenSink.shapesGraph.propertyShapes).toHaveLength(121);
@@ -17,5 +19,16 @@ describe("RdfjsShapesGraph", () => {
   it("should parse property shapes correctly", ({ expect }) => {
     expect(testData.kitchenSink.shapesGraph.propertyGroups).toHaveLength(0);
     expect(testData.schema.shapesGraph.propertyGroups).toHaveLength(1);
+  });
+});
+
+describe("RdfsjsShapesGraph: error cases", () => {
+  it("should produce an error on an undefined shape", ({ expect }) => {
+    const error = ShapesGraph.fromDataset(
+      testData.undefinedShape.dataset,
+      defaultFactory,
+    ).extract();
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).includes("undefined shape");
   });
 });

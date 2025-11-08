@@ -2,7 +2,7 @@
 import * as fs from "node:fs";
 import type { PrefixMapInit } from "@rdfjs/prefix-map/PrefixMap.js";
 import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
-import { Compiler } from "@shaclmate/compiler";
+import { Compiler, ShapesGraph } from "@shaclmate/compiler";
 import { generators } from "@shaclmate/compiler";
 import {
   command,
@@ -118,8 +118,10 @@ function generate({
     return;
   }
 
-  const output = new Compiler({ generator, iriPrefixMap }).compile(dataset);
-  output
+  ShapesGraph.fromDataset(dataset)
+    .chain((shapesGraph) =>
+      new Compiler({ generator, iriPrefixMap }).compile(shapesGraph),
+    )
     .ifLeft((error) => {
       throw error;
     })
