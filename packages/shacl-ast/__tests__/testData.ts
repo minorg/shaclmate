@@ -14,10 +14,14 @@ function parseDataset(filePath: string): DatasetCore {
   return store;
 }
 
-function parseShapesGraph(filePath: string) {
+function parseShapesGraph(
+  filePath: string,
+  options?: { ignoreUndefinedShapes?: boolean },
+) {
   return ShapesGraph.fromDataset(
     parseDataset(filePath),
     defaultFactory,
+    options,
   ).unsafeCoerce();
 }
 
@@ -39,6 +43,7 @@ export const testData = {
   schema: {
     shapesGraph: parseShapesGraph(
       path.join(thisDirectoryPath, "data", "schemashacl.ttl"),
+      { ignoreUndefinedShapes: true },
     ),
   },
   undefinedShape: {

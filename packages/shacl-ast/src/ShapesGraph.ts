@@ -38,7 +38,7 @@ export class ShapesGraph<
     PropertyShapeT
   >();
 
-  private constructor() {}
+  protected constructor() {}
 
   static fromDataset<
     NodeShapeT extends ShapeT,
@@ -55,6 +55,7 @@ export class ShapesGraph<
       PropertyShapeT,
       ShapeT
     >,
+    options?: { ignoreUndefinedShapes?: boolean },
   ): Either<
     Error,
     ShapesGraph<NodeShapeT, OntologyT, PropertyGroupT, PropertyShapeT, ShapeT>
@@ -71,6 +72,7 @@ export class ShapesGraph<
       return false;
     }
 
+    const ignoreUndefinedShapes = !!options?.ignoreUndefinedShapes;
     const resourceSet = new ResourceSet({ dataset });
     const shapesGraph = new ShapesGraph<
       NodeShapeT,
@@ -244,7 +246,7 @@ export class ShapesGraph<
         for (const quad of dataset.match(null, predicate, null, graph)) {
           addShapeNode(quad.object);
 
-          if (!datasetHasMatch(quad.object)) {
+          if (!ignoreUndefinedShapes && !datasetHasMatch(quad.object)) {
             throw new Error(
               `undefined shape: ${Resource.Identifier.toString(quad.object as Resource.Identifier)}`,
             );
@@ -273,13 +275,11 @@ export class ShapesGraph<
 
             addShapeNode(identifier);
 
-            // Don't check for undefined shapes here, since you can have constructs like
-            // sh:and ( sh:not [ ... ] [ ... ] )
-            // if (!datasetHasMatch(identifier)) {
-            //   throw new Error(
-            //     `undefined shape: ${Resource.Identifier.toString(identifier as Resource.Identifier)}`,
-            //   );
-            // }
+            if (!ignoreUndefinedShapes && !datasetHasMatch(identifier)) {
+              throw new Error(
+                `undefined shape: ${Resource.Identifier.toString(identifier as Resource.Identifier)}`,
+              );
+            }
           }
         }
       }
