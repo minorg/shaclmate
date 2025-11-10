@@ -82,6 +82,7 @@ export namespace LazyShaclProperty {
       >
     >;
 
+    protected readonly partialType: PartialTypeT;
     protected readonly resolvedType: ResolvedTypeT;
     protected readonly runtimeClass: {
       readonly name: string;
@@ -89,7 +90,6 @@ export namespace LazyShaclProperty {
       readonly snippetDeclaration: string;
       readonly partialPropertyName: string;
     };
-    protected readonly partialType: PartialTypeT;
 
     constructor({
       partialType,

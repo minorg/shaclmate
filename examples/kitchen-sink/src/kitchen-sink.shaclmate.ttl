@@ -806,6 +806,79 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :orderedPropertyB
     ] .
 
+:PartialClass
+    a sh:NodeShape ;
+    rdfs:comment "Node shape used as a partial by LazyPropertiesClass" ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
+:PartialClassUnion
+    a sh:NodeShape ;
+    rdfs:comment "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
+    sh:xone (:PartialClassUnionMember1
+        :PartialClassUnionMember2
+    ) .
+
+:PartialClassUnionMember1
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
+:PartialClassUnionMember2
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
+:PartialInterface
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    a sh:NodeShape ;
+    rdfs:comment "Node shape used as a partial by LazyPropertiesInterface" ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
+:PartialInterfaceUnion
+    a sh:NodeShape ;
+    rdfs:comment "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
+    sh:xone (:PartialInterfaceUnionMember1
+        :PartialInterfaceUnionMember2
+    ) .
+
+:PartialInterfaceUnionMember1
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
+:PartialInterfaceUnionMember2
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :lazilyResolvedStringProperty
+    ] .
+
 :PropertyCardinalitiesClass
     a sh:NodeShape ;
     rdfs:comment "Shape that has properties with different cardinalities" ;
@@ -893,79 +966,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             sh:hasValue ( )
         ]
     ) .
-
-:PartialClass
-    a sh:NodeShape ;
-    rdfs:comment "Node shape used as a partial by LazyPropertiesClass" ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :lazilyResolvedStringProperty
-    ] .
-
-:PartialClassUnion
-    a sh:NodeShape ;
-    rdfs:comment "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
-    sh:xone (:PartialClassUnionMember1
-        :PartialClassUnionMember2
-    ) .
-
-:PartialClassUnionMember1
-    a owl:Class, sh:NodeShape ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :lazilyResolvedStringProperty
-    ] .
-
-:PartialClassUnionMember2
-    a owl:Class, sh:NodeShape ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :lazilyResolvedStringProperty
-    ] .
-
-:PartialInterface
-    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a sh:NodeShape ;
-    rdfs:comment "Node shape used as a partial by LazyPropertiesInterface" ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :lazilyResolvedStringProperty
-    ] .
-
-:PartialInterfaceUnion
-    a sh:NodeShape ;
-    rdfs:comment "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
-    sh:xone (:PartialInterfaceUnionMember1
-        :PartialInterfaceUnionMember2
-    ) .
-
-:PartialInterfaceUnionMember1
-    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a owl:Class, sh:NodeShape ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :lazilyResolvedStringProperty
-    ] .
-
-:PartialInterfaceUnionMember2
-    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a owl:Class, sh:NodeShape ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :lazilyResolvedStringProperty
-    ] .
 
 :TermPropertiesClass
     a sh:NodeShape ;

@@ -2701,7 +2701,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-273"
+              "value": "n3-261"
             },
             "propertyPath": {
               "curie": ":lazilyResolvedStringProperty",
@@ -3528,7 +3528,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-278"
+              "value": "n3-266"
             },
             "propertyPath": {
               "curie": ":lazilyResolvedStringProperty",
@@ -3900,6 +3900,158 @@
       "kind": "ObjectType",
       "name": {
         "identifier": {
+          "curie": ":PartialClassUnionMember1",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "PartialClassUnionMember1",
+          "value": "http://example.com/PartialClassUnionMember1"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-264"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":PartialClassUnionMember2",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "PartialClassUnionMember2",
+          "value": "http://example.com/PartialClassUnionMember2"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-265"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":PartialInterfaceUnionMember1",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "PartialInterfaceUnionMember1",
+          "value": "http://example.com/PartialInterfaceUnionMember1"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-269"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":PartialInterfaceUnionMember2",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "PartialInterfaceUnionMember2",
+          "value": "http://example.com/PartialInterfaceUnionMember2"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-270"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
           "curie": ":PropertyCardinalitiesClass",
           "termType": "NamedNode",
           "uniqueLocalPart": "PropertyCardinalitiesClass",
@@ -3912,7 +4064,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-261"
+              "value": "n3-271"
             },
             "propertyPath": {
               "curie": ":requiredStringProperty",
@@ -3938,7 +4090,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-262"
+              "value": "n3-272"
             },
             "propertyPath": {
               "curie": ":optionalStringProperty",
@@ -3967,7 +4119,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-263"
+              "value": "n3-273"
             },
             "propertyPath": {
               "curie": ":emptyStringSetProperty",
@@ -3996,7 +4148,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-264"
+              "value": "n3-274"
             },
             "propertyPath": {
               "curie": ":nonEmptyStringSetProperty",
@@ -4037,7 +4189,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-265"
+              "value": "n3-275"
             },
             "propertyPath": {
               "curie": ":protectedProperty",
@@ -4062,7 +4214,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-266"
+              "value": "n3-276"
             },
             "propertyPath": {
               "curie": ":privateProperty",
@@ -4087,7 +4239,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-267"
+              "value": "n3-277"
             },
             "propertyPath": {
               "curie": ":publicProperty",
@@ -4125,7 +4277,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-268"
+              "value": "n3-278"
             },
             "propertyPath": {
               "curie": ":sha256IriProperty",
@@ -4136,158 +4288,6 @@
           },
           "order": 0,
           "path": "http://example.com/sha256IriProperty",
-          "type": {
-            "datatype": {
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            },
-            "hasValue": [],
-            "kind": "LiteralType"
-          },
-          "visibility": "public"
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
-      "name": {
-        "identifier": {
-          "curie": ":PartialClassUnionMember1",
-          "termType": "NamedNode",
-          "uniqueLocalPart": "PartialClassUnionMember1",
-          "value": "http://example.com/PartialClassUnionMember1"
-        }
-      },
-      "properties": [
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-276"
-            },
-            "propertyPath": {
-              "curie": ":lazilyResolvedStringProperty",
-              "uniqueLocalPart": "lazilyResolvedStringProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/lazilyResolvedStringProperty"
-            }
-          },
-          "order": 0,
-          "path": "http://example.com/lazilyResolvedStringProperty",
-          "type": {
-            "datatype": {
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            },
-            "hasValue": [],
-            "kind": "LiteralType"
-          },
-          "visibility": "public"
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
-      "name": {
-        "identifier": {
-          "curie": ":PartialClassUnionMember2",
-          "termType": "NamedNode",
-          "uniqueLocalPart": "PartialClassUnionMember2",
-          "value": "http://example.com/PartialClassUnionMember2"
-        }
-      },
-      "properties": [
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-277"
-            },
-            "propertyPath": {
-              "curie": ":lazilyResolvedStringProperty",
-              "uniqueLocalPart": "lazilyResolvedStringProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/lazilyResolvedStringProperty"
-            }
-          },
-          "order": 0,
-          "path": "http://example.com/lazilyResolvedStringProperty",
-          "type": {
-            "datatype": {
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            },
-            "hasValue": [],
-            "kind": "LiteralType"
-          },
-          "visibility": "public"
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
-      "name": {
-        "identifier": {
-          "curie": ":PartialInterfaceUnionMember1",
-          "termType": "NamedNode",
-          "uniqueLocalPart": "PartialInterfaceUnionMember1",
-          "value": "http://example.com/PartialInterfaceUnionMember1"
-        }
-      },
-      "properties": [
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-281"
-            },
-            "propertyPath": {
-              "curie": ":lazilyResolvedStringProperty",
-              "uniqueLocalPart": "lazilyResolvedStringProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/lazilyResolvedStringProperty"
-            }
-          },
-          "order": 0,
-          "path": "http://example.com/lazilyResolvedStringProperty",
-          "type": {
-            "datatype": {
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            },
-            "hasValue": [],
-            "kind": "LiteralType"
-          },
-          "visibility": "public"
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
-      "name": {
-        "identifier": {
-          "curie": ":PartialInterfaceUnionMember2",
-          "termType": "NamedNode",
-          "uniqueLocalPart": "PartialInterfaceUnionMember2",
-          "value": "http://example.com/PartialInterfaceUnionMember2"
-        }
-      },
-      "properties": [
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-282"
-            },
-            "propertyPath": {
-              "curie": ":lazilyResolvedStringProperty",
-              "uniqueLocalPart": "lazilyResolvedStringProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/lazilyResolvedStringProperty"
-            }
-          },
-          "order": 0,
-          "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
             "datatype": {
               "termType": "NamedNode",

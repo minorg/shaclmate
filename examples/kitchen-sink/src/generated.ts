@@ -182,38 +182,6 @@ export function $dateEquals(left: Date, right: Date): $EqualsResult {
   );
 }
 /**
- * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
- */
-export function $sparqlInstancesOfPattern({
-  rdfType,
-  subject,
-}: {
-  rdfType: rdfjs.NamedNode | rdfjs.Variable;
-  subject: sparqljs.Triple["subject"];
-}): sparqljs.Pattern {
-  return {
-    triples: [
-      {
-        subject,
-        predicate: {
-          items: [
-            $RdfVocabularies.rdf.type,
-            {
-              items: [$RdfVocabularies.rdfs.subClassOf],
-              pathType: "*",
-              type: "path",
-            },
-          ],
-          pathType: "/",
-          type: "path",
-        },
-        object: rdfType,
-      },
-    ],
-    type: "bgp",
-  };
-}
-/**
  * Compare two arrays element-wise with the provided elementEquals function.
  */
 export function $arrayEquals<T>(
@@ -278,6 +246,38 @@ export function $arrayEquals<T>(
 
   return $EqualsResult.Equal;
 }
+/**
+ * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
+ */
+export function $sparqlInstancesOfPattern({
+  rdfType,
+  subject,
+}: {
+  rdfType: rdfjs.NamedNode | rdfjs.Variable;
+  subject: sparqljs.Triple["subject"];
+}): sparqljs.Pattern {
+  return {
+    triples: [
+      {
+        subject,
+        predicate: {
+          items: [
+            $RdfVocabularies.rdf.type,
+            {
+              items: [$RdfVocabularies.rdfs.subClassOf],
+              pathType: "*",
+              type: "path",
+            },
+          ],
+          pathType: "/",
+          type: "path",
+        },
+        object: rdfType,
+      },
+    ],
+    type: "bgp",
+  };
+}
 function $isReadonlyObjectArray(x: unknown): x is readonly object[] {
   return Array.isArray(x) && x.every((z) => typeof z === "object");
 }
@@ -292,22 +292,22 @@ export class $LazyOptionalObject<
   ResolvedObjectT extends { $identifier: ObjectIdentifierT },
   PartialObjectT extends { $identifier: ObjectIdentifierT },
 > {
+  readonly partial: purify.Maybe<PartialObjectT>;
   private readonly resolver: (
     identifier: ObjectIdentifierT,
   ) => Promise<purify.Either<Error, ResolvedObjectT>>;
-  readonly partial: purify.Maybe<PartialObjectT>;
 
   constructor({
-    resolver,
     partial,
+    resolver,
   }: {
+    partial: purify.Maybe<PartialObjectT>;
     resolver: (
       identifier: ObjectIdentifierT,
     ) => Promise<purify.Either<Error, ResolvedObjectT>>;
-    partial: purify.Maybe<PartialObjectT>;
   }) {
-    this.resolver = resolver;
     this.partial = partial;
+    this.resolver = resolver;
   }
 
   async resolve(): Promise<
@@ -329,22 +329,22 @@ export class $LazyRequiredObject<
   ResolvedObjectT extends { $identifier: ObjectIdentifierT },
   PartialObjectT extends { $identifier: ObjectIdentifierT },
 > {
+  readonly partial: PartialObjectT;
   private readonly resolver: (
     identifier: ObjectIdentifierT,
   ) => Promise<purify.Either<Error, ResolvedObjectT>>;
-  readonly partial: PartialObjectT;
 
   constructor({
-    resolver,
     partial,
+    resolver,
   }: {
+    partial: PartialObjectT;
     resolver: (
       identifier: ObjectIdentifierT,
     ) => Promise<purify.Either<Error, ResolvedObjectT>>;
-    partial: PartialObjectT;
   }) {
-    this.resolver = resolver;
     this.partial = partial;
+    this.resolver = resolver;
   }
 
   resolve(): Promise<purify.Either<Error, ResolvedObjectT>> {
@@ -359,22 +359,22 @@ export class $LazyObjectSet<
   ResolvedObjectT extends { $identifier: ObjectIdentifierT },
   PartialObjectT extends { $identifier: ObjectIdentifierT },
 > {
+  readonly partials: readonly PartialObjectT[];
   private readonly resolver: (
     identifiers: readonly ObjectIdentifierT[],
   ) => Promise<purify.Either<Error, readonly ResolvedObjectT[]>>;
-  readonly partials: readonly PartialObjectT[];
 
   constructor({
-    resolver,
     partials,
+    resolver,
   }: {
+    partials: readonly PartialObjectT[];
     resolver: (
       identifiers: readonly ObjectIdentifierT[],
     ) => Promise<purify.Either<Error, readonly ResolvedObjectT[]>>;
-    partials: readonly PartialObjectT[];
   }) {
-    this.resolver = resolver;
     this.partials = partials;
+    this.resolver = resolver;
   }
 
   get length(): number {
@@ -4915,6 +4915,2437 @@ export namespace TermPropertiesClass {
     return requiredPatterns.concat(optionalPatterns);
   }
 }
+/**
+ * A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied.
+ */
+export class Sha256IriClass {
+  private _$identifier?: Sha256IriClass.$Identifier;
+  protected readonly _$identifierPrefix?: string;
+  readonly $type = "Sha256IriClass";
+  readonly sha256IriProperty: string;
+
+  constructor(parameters: {
+    readonly $identifier?: rdfjs.NamedNode | string;
+    readonly $identifierPrefix?: string;
+    readonly sha256IriProperty: string;
+  }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+
+    this._$identifierPrefix = parameters.$identifierPrefix;
+    this.sha256IriProperty = parameters.sha256IriProperty;
+  }
+
+  get $identifier(): Sha256IriClass.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.namedNode(
+        `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
+      );
+    }
+    return this._$identifier;
+  }
+
+  protected get $identifierPrefix(): string {
+    return typeof this._$identifierPrefix !== "undefined"
+      ? this._$identifierPrefix
+      : `urn:shaclmate:${this.$type}:`;
+  }
+
+  $equals(other: Sha256IriClass): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$identifierPrefix, other.$identifierPrefix).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$identifierPrefix",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(this.sha256IriProperty, other.sha256IriProperty).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "sha256IriProperty",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.sha256IriProperty);
+    return _hasher;
+  }
+
+  $toJson(): Sha256IriClass.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id": this.$identifier.value,
+        $type: this.$type,
+        sha256IriProperty: this.sha256IriProperty,
+      } satisfies Sha256IriClass.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet?: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = resourceSet.mutableNamedResource(this.$identifier, {
+      mutateGraph,
+    });
+    resource.add(
+      Sha256IriClass.$properties.sha256IriProperty["identifier"],
+      ...[this.sha256IriProperty],
+    );
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace Sha256IriClass {
+  export type $Identifier = rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjs.NamedNode> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? purify.Either.of(identifier)
+          : purify.Left(new Error("expected identifier to be NamedNode")),
+      ) as purify.Either<Error, rdfjs.NamedNode>;
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "Sha256IriClass";
+    readonly sha256IriProperty: string;
+  };
+
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { $identifier: rdfjs.NamedNode; sha256IriProperty: string }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
+    const sha256IriProperty = $jsonObject["sha256IriProperty"];
+    return purify.Either.of({ $identifier, sha256IriProperty });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, Sha256IriClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new Sha256IriClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "Sha256IriClass" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/sha256IriProperty`,
+          type: "Control",
+        },
+      ],
+      label: "Sha256IriClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("Sha256IriClass"),
+      sha256IriProperty: zod.string(),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, Sha256IriClass> {
+    let {
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return Sha256IriClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new Sha256IriClass(properties));
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    { $identifier: rdfjs.NamedNode; sha256IriProperty: string }
+  > {
+    if ($resource.identifier.termType !== "NamedNode") {
+      return purify.Left(
+        new rdfjsResource.Resource.MistypedValueError({
+          actualValue: $resource.identifier,
+          expectedValueType: "(rdfjs.NamedNode)",
+          focusResource: $resource,
+          predicate: $RdfVocabularies.rdf.subject,
+        }),
+      );
+    }
+
+    const $identifier: Sha256IriClass.$Identifier = $resource.identifier;
+    const _sha256IriPropertyEither: purify.Either<Error, string> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.sha256IriProperty["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    Sha256IriClass.$properties.sha256IriProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
+    if (_sha256IriPropertyEither.isLeft()) {
+      return _sha256IriPropertyEither;
+    }
+
+    const sha256IriProperty = _sha256IriPropertyEither.unsafeCoerce();
+    return purify.Either.of({ $identifier, sha256IriProperty });
+  }
+
+  export const $properties = {
+    sha256IriProperty: {
+      identifier: dataFactory.namedNode("http://example.com/sha256IriProperty"),
+    },
+  };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        Sha256IriClass.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        Sha256IriClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      Sha256IriClass.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("sha256IriClass");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "sha256IriClass");
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}Sha256IriProperty`),
+      predicate: Sha256IriClass.$properties.sha256IriProperty["identifier"],
+      subject,
+    });
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("sha256IriClass");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "sha256IriClass");
+    const propertyPatterns: readonly sparqljs.Pattern[] = [
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(`${variablePrefix}Sha256IriProperty`),
+            predicate:
+              Sha256IriClass.$properties.sha256IriProperty["identifier"],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(`${variablePrefix}Sha256IriProperty`),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
+    ];
+    for (const pattern of propertyPatterns) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+/**
+ * Shape with properties that have visibility modifiers (private, protected, public)
+ */
+export class PropertyVisibilitiesClass {
+  private _$identifier?: PropertyVisibilitiesClass.$Identifier;
+  readonly $type = "PropertyVisibilitiesClass";
+  private readonly privateProperty: string;
+  protected readonly protectedProperty: string;
+  readonly publicProperty: string;
+
+  constructor(parameters: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly privateProperty: string;
+    readonly protectedProperty: string;
+    readonly publicProperty: string;
+  }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+
+    this.privateProperty = parameters.privateProperty;
+    this.protectedProperty = parameters.protectedProperty;
+    this.publicProperty = parameters.publicProperty;
+  }
+
+  get $identifier(): PropertyVisibilitiesClass.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: PropertyVisibilitiesClass): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(this.privateProperty, other.privateProperty).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "privateProperty",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(this.protectedProperty, other.protectedProperty).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "protectedProperty",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(this.publicProperty, other.publicProperty).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "publicProperty",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.privateProperty);
+    _hasher.update(this.protectedProperty);
+    _hasher.update(this.publicProperty);
+    return _hasher;
+  }
+
+  $toJson(): PropertyVisibilitiesClass.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        privateProperty: this.privateProperty,
+        protectedProperty: this.protectedProperty,
+        publicProperty: this.publicProperty,
+      } satisfies PropertyVisibilitiesClass.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet?: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
+      mutateGraph,
+    });
+    resource.add(
+      PropertyVisibilitiesClass.$properties.privateProperty["identifier"],
+      ...[this.privateProperty],
+    );
+    resource.add(
+      PropertyVisibilitiesClass.$properties.protectedProperty["identifier"],
+      ...[this.protectedProperty],
+    );
+    resource.add(
+      PropertyVisibilitiesClass.$properties.publicProperty["identifier"],
+      ...[this.publicProperty],
+    );
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace PropertyVisibilitiesClass {
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PropertyVisibilitiesClass";
+    readonly privateProperty: string;
+    readonly protectedProperty: string;
+    readonly publicProperty: string;
+  };
+
+  export function $propertiesFromJson(_json: unknown): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      privateProperty: string;
+      protectedProperty: string;
+      publicProperty: string;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const privateProperty = $jsonObject["privateProperty"];
+    const protectedProperty = $jsonObject["protectedProperty"];
+    const publicProperty = $jsonObject["publicProperty"];
+    return purify.Either.of({
+      $identifier,
+      privateProperty,
+      protectedProperty,
+      publicProperty,
+    });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, PropertyVisibilitiesClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new PropertyVisibilitiesClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "PropertyVisibilitiesClass" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/privateProperty`, type: "Control" },
+        {
+          scope: `${scopePrefix}/properties/protectedProperty`,
+          type: "Control",
+        },
+        { scope: `${scopePrefix}/properties/publicProperty`, type: "Control" },
+      ],
+      label: "PropertyVisibilitiesClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("PropertyVisibilitiesClass"),
+      privateProperty: zod.string(),
+      protectedProperty: zod.string(),
+      publicProperty: zod.string(),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, PropertyVisibilitiesClass> {
+    let {
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return PropertyVisibilitiesClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new PropertyVisibilitiesClass(properties));
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      privateProperty: string;
+      protectedProperty: string;
+      publicProperty: string;
+    }
+  > {
+    const $identifier: PropertyVisibilitiesClass.$Identifier =
+      $resource.identifier;
+    const _privatePropertyEither: purify.Either<Error, string> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.privateProperty["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    PropertyVisibilitiesClass.$properties.privateProperty[
+                      "identifier"
+                    ],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
+    if (_privatePropertyEither.isLeft()) {
+      return _privatePropertyEither;
+    }
+
+    const privateProperty = _privatePropertyEither.unsafeCoerce();
+    const _protectedPropertyEither: purify.Either<Error, string> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.protectedProperty["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    PropertyVisibilitiesClass.$properties.protectedProperty[
+                      "identifier"
+                    ],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
+    if (_protectedPropertyEither.isLeft()) {
+      return _protectedPropertyEither;
+    }
+
+    const protectedProperty = _protectedPropertyEither.unsafeCoerce();
+    const _publicPropertyEither: purify.Either<Error, string> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.publicProperty["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    PropertyVisibilitiesClass.$properties.publicProperty[
+                      "identifier"
+                    ],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
+    if (_publicPropertyEither.isLeft()) {
+      return _publicPropertyEither;
+    }
+
+    const publicProperty = _publicPropertyEither.unsafeCoerce();
+    return purify.Either.of({
+      $identifier,
+      privateProperty,
+      protectedProperty,
+      publicProperty,
+    });
+  }
+
+  export const $properties = {
+    privateProperty: {
+      identifier: dataFactory.namedNode("http://example.com/privateProperty"),
+    },
+    protectedProperty: {
+      identifier: dataFactory.namedNode("http://example.com/protectedProperty"),
+    },
+    publicProperty: {
+      identifier: dataFactory.namedNode("http://example.com/publicProperty"),
+    },
+  };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        PropertyVisibilitiesClass.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        PropertyVisibilitiesClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      PropertyVisibilitiesClass.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("propertyVisibilitiesClass");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "propertyVisibilitiesClass");
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}PrivateProperty`),
+      predicate:
+        PropertyVisibilitiesClass.$properties.privateProperty["identifier"],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}ProtectedProperty`),
+      predicate:
+        PropertyVisibilitiesClass.$properties.protectedProperty["identifier"],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}PublicProperty`),
+      predicate:
+        PropertyVisibilitiesClass.$properties.publicProperty["identifier"],
+      subject,
+    });
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("propertyVisibilitiesClass");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "propertyVisibilitiesClass");
+    const propertyPatterns: readonly sparqljs.Pattern[] = [
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(`${variablePrefix}PrivateProperty`),
+            predicate:
+              PropertyVisibilitiesClass.$properties.privateProperty[
+                "identifier"
+              ],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(`${variablePrefix}PrivateProperty`),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(`${variablePrefix}ProtectedProperty`),
+            predicate:
+              PropertyVisibilitiesClass.$properties.protectedProperty[
+                "identifier"
+              ],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(`${variablePrefix}ProtectedProperty`),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(`${variablePrefix}PublicProperty`),
+            predicate:
+              PropertyVisibilitiesClass.$properties.publicProperty[
+                "identifier"
+              ],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(`${variablePrefix}PublicProperty`),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
+    ];
+    for (const pattern of propertyPatterns) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+/**
+ * Shape that has properties with different cardinalities
+ */
+export class PropertyCardinalitiesClass {
+  private _$identifier?: PropertyCardinalitiesClass.$Identifier;
+  readonly $type = "PropertyCardinalitiesClass";
+  /**
+   * Set: minCount implicitly=0, no maxCount
+   */
+  readonly emptyStringSetProperty: readonly string[];
+  /**
+   * Set: minCount=1, no maxCount
+   */
+  readonly nonEmptyStringSetProperty: purify.NonEmptyList<string>;
+  /**
+   * Option: maxCount=1, minCount=0
+   */
+  readonly optionalStringProperty: purify.Maybe<string>;
+  /**
+   * Required: maxCount=minCount=1
+   */
+  readonly requiredStringProperty: string;
+
+  constructor(parameters: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly emptyStringSetProperty?: readonly string[];
+    readonly nonEmptyStringSetProperty: purify.NonEmptyList<string>;
+    readonly optionalStringProperty?: purify.Maybe<string> | string;
+    readonly requiredStringProperty: string;
+  }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+
+    if (typeof parameters.emptyStringSetProperty === "undefined") {
+      this.emptyStringSetProperty = [];
+    } else if (typeof parameters.emptyStringSetProperty === "object") {
+      this.emptyStringSetProperty = parameters.emptyStringSetProperty;
+    } else {
+      this.emptyStringSetProperty =
+        parameters.emptyStringSetProperty satisfies never;
+    }
+
+    this.nonEmptyStringSetProperty = parameters.nonEmptyStringSetProperty;
+    if (purify.Maybe.isMaybe(parameters.optionalStringProperty)) {
+      this.optionalStringProperty = parameters.optionalStringProperty;
+    } else if (typeof parameters.optionalStringProperty === "string") {
+      this.optionalStringProperty = purify.Maybe.of(
+        parameters.optionalStringProperty,
+      );
+    } else if (typeof parameters.optionalStringProperty === "undefined") {
+      this.optionalStringProperty = purify.Maybe.empty();
+    } else {
+      this.optionalStringProperty =
+        parameters.optionalStringProperty satisfies never;
+    }
+
+    this.requiredStringProperty = parameters.requiredStringProperty;
+  }
+
+  get $identifier(): PropertyCardinalitiesClass.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: PropertyCardinalitiesClass): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) => $arrayEquals(left, right, $strictEquals))(
+          this.emptyStringSetProperty,
+          other.emptyStringSetProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "emptyStringSetProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $arrayEquals(left, right, $strictEquals))(
+          this.nonEmptyStringSetProperty,
+          other.nonEmptyStringSetProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "nonEmptyStringSetProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $strictEquals))(
+          this.optionalStringProperty,
+          other.optionalStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "optionalStringProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        $strictEquals(
+          this.requiredStringProperty,
+          other.requiredStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "requiredStringProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    for (const item0 of this.emptyStringSetProperty) {
+      _hasher.update(item0);
+    }
+
+    for (const item0 of this.nonEmptyStringSetProperty) {
+      _hasher.update(item0);
+    }
+
+    this.optionalStringProperty.ifJust((value0) => {
+      _hasher.update(value0);
+    });
+    _hasher.update(this.requiredStringProperty);
+    return _hasher;
+  }
+
+  $toJson(): PropertyCardinalitiesClass.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        emptyStringSetProperty: this.emptyStringSetProperty.map((item) => item),
+        nonEmptyStringSetProperty: this.nonEmptyStringSetProperty.map(
+          (item) => item,
+        ),
+        optionalStringProperty: this.optionalStringProperty
+          .map((item) => item)
+          .extract(),
+        requiredStringProperty: this.requiredStringProperty,
+      } satisfies PropertyCardinalitiesClass.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet?: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
+      mutateGraph,
+    });
+    resource.add(
+      PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
+        "identifier"
+      ],
+      ...this.emptyStringSetProperty.flatMap((item) => [item]),
+    );
+    resource.add(
+      PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
+        "identifier"
+      ],
+      ...this.nonEmptyStringSetProperty.flatMap((item) => [item]),
+    );
+    resource.add(
+      PropertyCardinalitiesClass.$properties.optionalStringProperty[
+        "identifier"
+      ],
+      ...this.optionalStringProperty.toList(),
+    );
+    resource.add(
+      PropertyCardinalitiesClass.$properties.requiredStringProperty[
+        "identifier"
+      ],
+      ...[this.requiredStringProperty],
+    );
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace PropertyCardinalitiesClass {
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "PropertyCardinalitiesClass";
+    readonly emptyStringSetProperty?: readonly string[];
+    readonly nonEmptyStringSetProperty: readonly string[];
+    readonly optionalStringProperty?: string;
+    readonly requiredStringProperty: string;
+  };
+
+  export function $propertiesFromJson(_json: unknown): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      emptyStringSetProperty: readonly string[];
+      nonEmptyStringSetProperty: purify.NonEmptyList<string>;
+      optionalStringProperty: purify.Maybe<string>;
+      requiredStringProperty: string;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const emptyStringSetProperty = $jsonObject["emptyStringSetProperty"];
+    const nonEmptyStringSetProperty = purify.NonEmptyList.fromArray(
+      $jsonObject["nonEmptyStringSetProperty"],
+    ).unsafeCoerce();
+    const optionalStringProperty = purify.Maybe.fromNullable(
+      $jsonObject["optionalStringProperty"],
+    );
+    const requiredStringProperty = $jsonObject["requiredStringProperty"];
+    return purify.Either.of({
+      $identifier,
+      emptyStringSetProperty,
+      nonEmptyStringSetProperty,
+      optionalStringProperty,
+      requiredStringProperty,
+    });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, PropertyCardinalitiesClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new PropertyCardinalitiesClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "PropertyCardinalitiesClass" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/emptyStringSetProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/nonEmptyStringSetProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/optionalStringProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/requiredStringProperty`,
+          type: "Control",
+        },
+      ],
+      label: "PropertyCardinalitiesClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("PropertyCardinalitiesClass"),
+      emptyStringSetProperty: zod
+        .string()
+        .array()
+        .default(() => [])
+        .describe("Set: minCount implicitly=0, no maxCount"),
+      nonEmptyStringSetProperty: zod
+        .string()
+        .array()
+        .nonempty()
+        .min(1)
+        .describe("Set: minCount=1, no maxCount"),
+      optionalStringProperty: zod
+        .string()
+        .optional()
+        .describe("Option: maxCount=1, minCount=0"),
+      requiredStringProperty: zod
+        .string()
+        .describe("Required: maxCount=minCount=1"),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, PropertyCardinalitiesClass> {
+    let {
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return PropertyCardinalitiesClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new PropertyCardinalitiesClass(properties));
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      emptyStringSetProperty: readonly string[];
+      nonEmptyStringSetProperty: purify.NonEmptyList<string>;
+      optionalStringProperty: purify.Maybe<string>;
+      requiredStringProperty: string;
+    }
+  > {
+    const $identifier: PropertyCardinalitiesClass.$Identifier =
+      $resource.identifier;
+    const _emptyStringSetPropertyEither: purify.Either<
+      Error,
+      readonly string[]
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.emptyStringSetProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
+                    "identifier"
+                  ],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
+              "identifier"
+            ],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
+    if (_emptyStringSetPropertyEither.isLeft()) {
+      return _emptyStringSetPropertyEither;
+    }
+
+    const emptyStringSetProperty = _emptyStringSetPropertyEither.unsafeCoerce();
+    const _nonEmptyStringSetPropertyEither: purify.Either<
+      Error,
+      purify.NonEmptyList<string>
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.nonEmptyStringSetProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  PropertyCardinalitiesClass.$properties
+                    .nonEmptyStringSetProperty["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .chain((values) =>
+        purify.NonEmptyList.fromArray(values.toArray()).toEither(
+          new Error(
+            `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} is an empty set`,
+          ),
+        ),
+      )
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          object: valuesArray,
+          predicate:
+            PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
+              "identifier"
+            ],
+          subject: $resource,
+        }),
+      )
+      .chain((values) => values.head());
+    if (_nonEmptyStringSetPropertyEither.isLeft()) {
+      return _nonEmptyStringSetPropertyEither;
+    }
+
+    const nonEmptyStringSetProperty =
+      _nonEmptyStringSetPropertyEither.unsafeCoerce();
+    const _optionalStringPropertyEither: purify.Either<
+      Error,
+      purify.Maybe<string>
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values($properties.optionalStringProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  PropertyCardinalitiesClass.$properties.optionalStringProperty[
+                    "identifier"
+                  ],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
+              object: purify.Maybe.empty(),
+              predicate:
+                PropertyCardinalitiesClass.$properties.optionalStringProperty[
+                  "identifier"
+                ],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
+    if (_optionalStringPropertyEither.isLeft()) {
+      return _optionalStringPropertyEither;
+    }
+
+    const optionalStringProperty = _optionalStringPropertyEither.unsafeCoerce();
+    const _requiredStringPropertyEither: purify.Either<Error, string> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.requiredStringProperty["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    PropertyCardinalitiesClass.$properties
+                      .requiredStringProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
+    if (_requiredStringPropertyEither.isLeft()) {
+      return _requiredStringPropertyEither;
+    }
+
+    const requiredStringProperty = _requiredStringPropertyEither.unsafeCoerce();
+    return purify.Either.of({
+      $identifier,
+      emptyStringSetProperty,
+      nonEmptyStringSetProperty,
+      optionalStringProperty,
+      requiredStringProperty,
+    });
+  }
+
+  export const $properties = {
+    emptyStringSetProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/emptyStringSetProperty",
+      ),
+    },
+    nonEmptyStringSetProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/nonEmptyStringSetProperty",
+      ),
+    },
+    optionalStringProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/optionalStringProperty",
+      ),
+    },
+    requiredStringProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/requiredStringProperty",
+      ),
+    },
+  };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        PropertyCardinalitiesClass.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        PropertyCardinalitiesClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      PropertyCardinalitiesClass.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("propertyCardinalitiesClass");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "propertyCardinalitiesClass");
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}EmptyStringSetProperty`),
+      predicate:
+        PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}NonEmptyStringSetProperty`,
+      ),
+      predicate:
+        PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}OptionalStringProperty`),
+      predicate:
+        PropertyCardinalitiesClass.$properties.optionalStringProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}RequiredStringProperty`),
+      predicate:
+        PropertyCardinalitiesClass.$properties.requiredStringProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("propertyCardinalitiesClass");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "propertyCardinalitiesClass");
+    const propertyPatterns: readonly sparqljs.Pattern[] = [
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}EmptyStringSetProperty`,
+                ),
+                predicate:
+                  PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
+                    "identifier"
+                  ],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...[parameters?.preferredLanguages ?? []]
+            .filter((languages) => languages.length > 0)
+            .map((languages) =>
+              languages.map((language) => ({
+                type: "operation" as const,
+                operator: "=",
+                args: [
+                  {
+                    type: "operation" as const,
+                    operator: "lang",
+                    args: [
+                      dataFactory.variable!(
+                        `${variablePrefix}EmptyStringSetProperty`,
+                      ),
+                    ],
+                  },
+                  dataFactory.literal(language),
+                ],
+              })),
+            )
+            .map((langEqualsExpressions) => ({
+              type: "filter" as const,
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
+            })),
+        ],
+        type: "optional",
+      },
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(
+              `${variablePrefix}NonEmptyStringSetProperty`,
+            ),
+            predicate:
+              PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
+                "identifier"
+              ],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}NonEmptyStringSetProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}OptionalStringProperty`,
+                ),
+                predicate:
+                  PropertyCardinalitiesClass.$properties.optionalStringProperty[
+                    "identifier"
+                  ],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          ...[parameters?.preferredLanguages ?? []]
+            .filter((languages) => languages.length > 0)
+            .map((languages) =>
+              languages.map((language) => ({
+                type: "operation" as const,
+                operator: "=",
+                args: [
+                  {
+                    type: "operation" as const,
+                    operator: "lang",
+                    args: [
+                      dataFactory.variable!(
+                        `${variablePrefix}OptionalStringProperty`,
+                      ),
+                    ],
+                  },
+                  dataFactory.literal(language),
+                ],
+              })),
+            )
+            .map((langEqualsExpressions) => ({
+              type: "filter" as const,
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
+            })),
+        ],
+        type: "optional",
+      },
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(
+              `${variablePrefix}RequiredStringProperty`,
+            ),
+            predicate:
+              PropertyCardinalitiesClass.$properties.requiredStringProperty[
+                "identifier"
+              ],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}RequiredStringProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
+    ];
+    for (const pattern of propertyPatterns) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
 export interface PartialInterfaceUnionMember2 {
   readonly $identifier: PartialInterfaceUnionMember2.$Identifier;
   readonly $type: "PartialInterfaceUnionMember2";
@@ -7312,2437 +9743,6 @@ export namespace PartialClassUnionMember1 {
                 args: [
                   dataFactory.variable!(
                     `${variablePrefix}LazilyResolvedStringProperty`,
-                  ),
-                ],
-              },
-              dataFactory.literal(language),
-            ],
-          })),
-        )
-        .map((langEqualsExpressions) => ({
-          type: "filter" as const,
-          expression: langEqualsExpressions.reduce(
-            (reducedExpression, langEqualsExpression) => {
-              if (reducedExpression === null) {
-                return langEqualsExpression;
-              }
-              return {
-                type: "operation" as const,
-                operator: "||",
-                args: [reducedExpression, langEqualsExpression],
-              };
-            },
-            null as sparqljs.Expression | null,
-          ) as sparqljs.Expression,
-        })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
-  }
-}
-/**
- * A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied.
- */
-export class Sha256IriClass {
-  private _$identifier?: Sha256IriClass.$Identifier;
-  protected readonly _$identifierPrefix?: string;
-  readonly $type = "Sha256IriClass";
-  readonly sha256IriProperty: string;
-
-  constructor(parameters: {
-    readonly $identifier?: rdfjs.NamedNode | string;
-    readonly $identifierPrefix?: string;
-    readonly sha256IriProperty: string;
-  }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
-    } else {
-      this._$identifier = parameters.$identifier satisfies never;
-    }
-
-    this._$identifierPrefix = parameters.$identifierPrefix;
-    this.sha256IriProperty = parameters.sha256IriProperty;
-  }
-
-  get $identifier(): Sha256IriClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
-      this._$identifier = dataFactory.namedNode(
-        `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
-      );
-    }
-    return this._$identifier;
-  }
-
-  protected get $identifierPrefix(): string {
-    return typeof this._$identifierPrefix !== "undefined"
-      ? this._$identifierPrefix
-      : `urn:shaclmate:${this.$type}:`;
-  }
-
-  $equals(other: Sha256IriClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
-      .mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(this.$identifierPrefix, other.$identifierPrefix).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$identifierPrefix",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        $strictEquals(this.sha256IriProperty, other.sha256IriProperty).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "sha256IriProperty",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      );
-  }
-
-  $hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    _hasher.update(this.$identifier.value);
-    _hasher.update(this.$type);
-    this.$hashShaclProperties(_hasher);
-    return _hasher;
-  }
-
-  protected $hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    _hasher.update(this.sha256IriProperty);
-    return _hasher;
-  }
-
-  $toJson(): Sha256IriClass.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id": this.$identifier.value,
-        $type: this.$type,
-        sha256IriProperty: this.sha256IriProperty,
-      } satisfies Sha256IriClass.$Json),
-    );
-  }
-
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet?: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
-    const mutateGraph = options?.mutateGraph;
-    const resourceSet =
-      options?.resourceSet ??
-      new rdfjsResource.MutableResourceSet({
-        dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.mutableNamedResource(this.$identifier, {
-      mutateGraph,
-    });
-    resource.add(
-      Sha256IriClass.$properties.sha256IriProperty["identifier"],
-      ...[this.sha256IriProperty],
-    );
-    return resource;
-  }
-
-  toString(): string {
-    return JSON.stringify(this.$toJson());
-  }
-}
-
-export namespace Sha256IriClass {
-  export type $Identifier = rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjs.NamedNode> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? purify.Either.of(identifier)
-          : purify.Left(new Error("expected identifier to be NamedNode")),
-      ) as purify.Either<Error, rdfjs.NamedNode>;
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
-      toString = rdfjsResource.Resource.Identifier.toString;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "Sha256IriClass";
-    readonly sha256IriProperty: string;
-  };
-
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    { $identifier: rdfjs.NamedNode; sha256IriProperty: string }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return purify.Left($jsonSafeParseResult.error);
-    }
-
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    const sha256IriProperty = $jsonObject["sha256IriProperty"];
-    return purify.Either.of({ $identifier, sha256IriProperty });
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, Sha256IriClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new Sha256IriClass(properties),
-    );
-  }
-
-  export function $jsonSchema() {
-    return zod.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "Sha256IriClass" },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/sha256IriProperty`,
-          type: "Control",
-        },
-      ],
-      label: "Sha256IriClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      $type: zod.literal("Sha256IriClass"),
-      sha256IriProperty: zod.string(),
-    }) satisfies zod.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: rdfjsResource.Resource,
-    options?: {
-      [_index: string]: any;
-      ignoreRdfType?: boolean;
-      objectSet?: $ObjectSet;
-      preferredLanguages?: readonly string[];
-    },
-  ): purify.Either<Error, Sha256IriClass> {
-    let {
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-      ...context
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
-    }
-
-    return Sha256IriClass.$propertiesFromRdf({
-      ...context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new Sha256IriClass(properties));
-  }
-
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-ignore
-    ...$context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType: boolean;
-    objectSet: $ObjectSet;
-    preferredLanguages?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    Error,
-    { $identifier: rdfjs.NamedNode; sha256IriProperty: string }
-  > {
-    if ($resource.identifier.termType !== "NamedNode") {
-      return purify.Left(
-        new rdfjsResource.Resource.MistypedValueError({
-          actualValue: $resource.identifier,
-          expectedValueType: "(rdfjs.NamedNode)",
-          focusResource: $resource,
-          predicate: $RdfVocabularies.rdf.subject,
-        }),
-      );
-    }
-
-    const $identifier: Sha256IriClass.$Identifier = $resource.identifier;
-    const _sha256IriPropertyEither: purify.Either<Error, string> =
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-      >(
-        $resource.values($properties.sha256IriProperty["identifier"], {
-          unique: true,
-        }),
-      )
-        .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
-            return purify.Either.of<
-              Error,
-              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-            >(values);
-          }
-
-          const literalValuesEither = values.chainMap((value) =>
-            value.toLiteral(),
-          );
-          if (literalValuesEither.isLeft()) {
-            return literalValuesEither;
-          }
-          const literalValues = literalValuesEither.unsafeCoerce();
-
-          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-          // Within a preferredLanguage the literals may be in any order.
-          let filteredLiteralValues:
-            | rdfjsResource.Resource.Values<rdfjs.Literal>
-            | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
-            if (!filteredLiteralValues) {
-              filteredLiteralValues = literalValues.filter(
-                (value) => value.language === preferredLanguage,
-              );
-            } else {
-              filteredLiteralValues = filteredLiteralValues.concat(
-                ...literalValues
-                  .filter((value) => value.language === preferredLanguage)
-                  .toArray(),
-              );
-            }
-          }
-
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-          >(
-            filteredLiteralValues!.map(
-              (literalValue) =>
-                new rdfjsResource.Resource.Value({
-                  object: literalValue,
-                  predicate:
-                    Sha256IriClass.$properties.sha256IriProperty["identifier"],
-                  subject: $resource,
-                }),
-            ),
-          );
-        })
-        .chain((values) => values.chainMap((value) => value.toString()))
-        .chain((values) => values.head());
-    if (_sha256IriPropertyEither.isLeft()) {
-      return _sha256IriPropertyEither;
-    }
-
-    const sha256IriProperty = _sha256IriPropertyEither.unsafeCoerce();
-    return purify.Either.of({ $identifier, sha256IriProperty });
-  }
-
-  export const $properties = {
-    sha256IriProperty: {
-      identifier: dataFactory.namedNode("http://example.com/sha256IriProperty"),
-    },
-  };
-
-  export function $sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
-      parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        Sha256IriClass.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        Sha256IriClass.$sparqlWherePatterns({
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      Sha256IriClass.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function $sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("sha256IriClass");
-    const triples: sparqljs.Triple[] = [];
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "sha256IriClass");
-    triples.push({
-      object: dataFactory.variable!(`${variablePrefix}Sha256IriProperty`),
-      predicate: Sha256IriClass.$properties.sha256IriProperty["identifier"],
-      subject,
-    });
-    return triples;
-  }
-
-  export function $sparqlWherePatterns(parameters?: {
-    ignoreRdfType?: boolean;
-    preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("sha256IriClass");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "sha256IriClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
-      {
-        triples: [
-          {
-            object: dataFactory.variable!(`${variablePrefix}Sha256IriProperty`),
-            predicate:
-              Sha256IriClass.$properties.sha256IriProperty["identifier"],
-            subject,
-          },
-        ],
-        type: "bgp",
-      },
-      ...[parameters?.preferredLanguages ?? []]
-        .filter((languages) => languages.length > 0)
-        .map((languages) =>
-          languages.map((language) => ({
-            type: "operation" as const,
-            operator: "=",
-            args: [
-              {
-                type: "operation" as const,
-                operator: "lang",
-                args: [
-                  dataFactory.variable!(`${variablePrefix}Sha256IriProperty`),
-                ],
-              },
-              dataFactory.literal(language),
-            ],
-          })),
-        )
-        .map((langEqualsExpressions) => ({
-          type: "filter" as const,
-          expression: langEqualsExpressions.reduce(
-            (reducedExpression, langEqualsExpression) => {
-              if (reducedExpression === null) {
-                return langEqualsExpression;
-              }
-              return {
-                type: "operation" as const,
-                operator: "||",
-                args: [reducedExpression, langEqualsExpression],
-              };
-            },
-            null as sparqljs.Expression | null,
-          ) as sparqljs.Expression,
-        })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
-  }
-}
-/**
- * Shape with properties that have visibility modifiers (private, protected, public)
- */
-export class PropertyVisibilitiesClass {
-  private _$identifier?: PropertyVisibilitiesClass.$Identifier;
-  readonly $type = "PropertyVisibilitiesClass";
-  private readonly privateProperty: string;
-  protected readonly protectedProperty: string;
-  readonly publicProperty: string;
-
-  constructor(parameters: {
-    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly privateProperty: string;
-    readonly protectedProperty: string;
-    readonly publicProperty: string;
-  }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
-    } else {
-      this._$identifier = parameters.$identifier satisfies never;
-    }
-
-    this.privateProperty = parameters.privateProperty;
-    this.protectedProperty = parameters.protectedProperty;
-    this.publicProperty = parameters.publicProperty;
-  }
-
-  get $identifier(): PropertyVisibilitiesClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
-  $equals(other: PropertyVisibilitiesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
-      .mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        $strictEquals(this.privateProperty, other.privateProperty).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "privateProperty",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        $strictEquals(this.protectedProperty, other.protectedProperty).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "protectedProperty",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        $strictEquals(this.publicProperty, other.publicProperty).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "publicProperty",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      );
-  }
-
-  $hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    _hasher.update(this.$identifier.value);
-    _hasher.update(this.$type);
-    this.$hashShaclProperties(_hasher);
-    return _hasher;
-  }
-
-  protected $hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    _hasher.update(this.privateProperty);
-    _hasher.update(this.protectedProperty);
-    _hasher.update(this.publicProperty);
-    return _hasher;
-  }
-
-  $toJson(): PropertyVisibilitiesClass.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
-        $type: this.$type,
-        privateProperty: this.privateProperty,
-        protectedProperty: this.protectedProperty,
-        publicProperty: this.publicProperty,
-      } satisfies PropertyVisibilitiesClass.$Json),
-    );
-  }
-
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet?: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const mutateGraph = options?.mutateGraph;
-    const resourceSet =
-      options?.resourceSet ??
-      new rdfjsResource.MutableResourceSet({
-        dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.mutableResource(this.$identifier, {
-      mutateGraph,
-    });
-    resource.add(
-      PropertyVisibilitiesClass.$properties.privateProperty["identifier"],
-      ...[this.privateProperty],
-    );
-    resource.add(
-      PropertyVisibilitiesClass.$properties.protectedProperty["identifier"],
-      ...[this.protectedProperty],
-    );
-    resource.add(
-      PropertyVisibilitiesClass.$properties.publicProperty["identifier"],
-      ...[this.publicProperty],
-    );
-    return resource;
-  }
-
-  toString(): string {
-    return JSON.stringify(this.$toJson());
-  }
-}
-
-export namespace PropertyVisibilitiesClass {
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
-      toString = rdfjsResource.Resource.Identifier.toString;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PropertyVisibilitiesClass";
-    readonly privateProperty: string;
-    readonly protectedProperty: string;
-    readonly publicProperty: string;
-  };
-
-  export function $propertiesFromJson(_json: unknown): purify.Either<
-    zod.ZodError,
-    {
-      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      privateProperty: string;
-      protectedProperty: string;
-      publicProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return purify.Left($jsonSafeParseResult.error);
-    }
-
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const privateProperty = $jsonObject["privateProperty"];
-    const protectedProperty = $jsonObject["protectedProperty"];
-    const publicProperty = $jsonObject["publicProperty"];
-    return purify.Either.of({
-      $identifier,
-      privateProperty,
-      protectedProperty,
-      publicProperty,
-    });
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, PropertyVisibilitiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new PropertyVisibilitiesClass(properties),
-    );
-  }
-
-  export function $jsonSchema() {
-    return zod.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "PropertyVisibilitiesClass" },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/privateProperty`, type: "Control" },
-        {
-          scope: `${scopePrefix}/properties/protectedProperty`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/publicProperty`, type: "Control" },
-      ],
-      label: "PropertyVisibilitiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      $type: zod.literal("PropertyVisibilitiesClass"),
-      privateProperty: zod.string(),
-      protectedProperty: zod.string(),
-      publicProperty: zod.string(),
-    }) satisfies zod.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: rdfjsResource.Resource,
-    options?: {
-      [_index: string]: any;
-      ignoreRdfType?: boolean;
-      objectSet?: $ObjectSet;
-      preferredLanguages?: readonly string[];
-    },
-  ): purify.Either<Error, PropertyVisibilitiesClass> {
-    let {
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-      ...context
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
-    }
-
-    return PropertyVisibilitiesClass.$propertiesFromRdf({
-      ...context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new PropertyVisibilitiesClass(properties));
-  }
-
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-ignore
-    ...$context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType: boolean;
-    objectSet: $ObjectSet;
-    preferredLanguages?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    Error,
-    {
-      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      privateProperty: string;
-      protectedProperty: string;
-      publicProperty: string;
-    }
-  > {
-    const $identifier: PropertyVisibilitiesClass.$Identifier =
-      $resource.identifier;
-    const _privatePropertyEither: purify.Either<Error, string> =
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-      >(
-        $resource.values($properties.privateProperty["identifier"], {
-          unique: true,
-        }),
-      )
-        .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
-            return purify.Either.of<
-              Error,
-              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-            >(values);
-          }
-
-          const literalValuesEither = values.chainMap((value) =>
-            value.toLiteral(),
-          );
-          if (literalValuesEither.isLeft()) {
-            return literalValuesEither;
-          }
-          const literalValues = literalValuesEither.unsafeCoerce();
-
-          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-          // Within a preferredLanguage the literals may be in any order.
-          let filteredLiteralValues:
-            | rdfjsResource.Resource.Values<rdfjs.Literal>
-            | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
-            if (!filteredLiteralValues) {
-              filteredLiteralValues = literalValues.filter(
-                (value) => value.language === preferredLanguage,
-              );
-            } else {
-              filteredLiteralValues = filteredLiteralValues.concat(
-                ...literalValues
-                  .filter((value) => value.language === preferredLanguage)
-                  .toArray(),
-              );
-            }
-          }
-
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-          >(
-            filteredLiteralValues!.map(
-              (literalValue) =>
-                new rdfjsResource.Resource.Value({
-                  object: literalValue,
-                  predicate:
-                    PropertyVisibilitiesClass.$properties.privateProperty[
-                      "identifier"
-                    ],
-                  subject: $resource,
-                }),
-            ),
-          );
-        })
-        .chain((values) => values.chainMap((value) => value.toString()))
-        .chain((values) => values.head());
-    if (_privatePropertyEither.isLeft()) {
-      return _privatePropertyEither;
-    }
-
-    const privateProperty = _privatePropertyEither.unsafeCoerce();
-    const _protectedPropertyEither: purify.Either<Error, string> =
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-      >(
-        $resource.values($properties.protectedProperty["identifier"], {
-          unique: true,
-        }),
-      )
-        .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
-            return purify.Either.of<
-              Error,
-              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-            >(values);
-          }
-
-          const literalValuesEither = values.chainMap((value) =>
-            value.toLiteral(),
-          );
-          if (literalValuesEither.isLeft()) {
-            return literalValuesEither;
-          }
-          const literalValues = literalValuesEither.unsafeCoerce();
-
-          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-          // Within a preferredLanguage the literals may be in any order.
-          let filteredLiteralValues:
-            | rdfjsResource.Resource.Values<rdfjs.Literal>
-            | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
-            if (!filteredLiteralValues) {
-              filteredLiteralValues = literalValues.filter(
-                (value) => value.language === preferredLanguage,
-              );
-            } else {
-              filteredLiteralValues = filteredLiteralValues.concat(
-                ...literalValues
-                  .filter((value) => value.language === preferredLanguage)
-                  .toArray(),
-              );
-            }
-          }
-
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-          >(
-            filteredLiteralValues!.map(
-              (literalValue) =>
-                new rdfjsResource.Resource.Value({
-                  object: literalValue,
-                  predicate:
-                    PropertyVisibilitiesClass.$properties.protectedProperty[
-                      "identifier"
-                    ],
-                  subject: $resource,
-                }),
-            ),
-          );
-        })
-        .chain((values) => values.chainMap((value) => value.toString()))
-        .chain((values) => values.head());
-    if (_protectedPropertyEither.isLeft()) {
-      return _protectedPropertyEither;
-    }
-
-    const protectedProperty = _protectedPropertyEither.unsafeCoerce();
-    const _publicPropertyEither: purify.Either<Error, string> =
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-      >(
-        $resource.values($properties.publicProperty["identifier"], {
-          unique: true,
-        }),
-      )
-        .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
-            return purify.Either.of<
-              Error,
-              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-            >(values);
-          }
-
-          const literalValuesEither = values.chainMap((value) =>
-            value.toLiteral(),
-          );
-          if (literalValuesEither.isLeft()) {
-            return literalValuesEither;
-          }
-          const literalValues = literalValuesEither.unsafeCoerce();
-
-          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-          // Within a preferredLanguage the literals may be in any order.
-          let filteredLiteralValues:
-            | rdfjsResource.Resource.Values<rdfjs.Literal>
-            | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
-            if (!filteredLiteralValues) {
-              filteredLiteralValues = literalValues.filter(
-                (value) => value.language === preferredLanguage,
-              );
-            } else {
-              filteredLiteralValues = filteredLiteralValues.concat(
-                ...literalValues
-                  .filter((value) => value.language === preferredLanguage)
-                  .toArray(),
-              );
-            }
-          }
-
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-          >(
-            filteredLiteralValues!.map(
-              (literalValue) =>
-                new rdfjsResource.Resource.Value({
-                  object: literalValue,
-                  predicate:
-                    PropertyVisibilitiesClass.$properties.publicProperty[
-                      "identifier"
-                    ],
-                  subject: $resource,
-                }),
-            ),
-          );
-        })
-        .chain((values) => values.chainMap((value) => value.toString()))
-        .chain((values) => values.head());
-    if (_publicPropertyEither.isLeft()) {
-      return _publicPropertyEither;
-    }
-
-    const publicProperty = _publicPropertyEither.unsafeCoerce();
-    return purify.Either.of({
-      $identifier,
-      privateProperty,
-      protectedProperty,
-      publicProperty,
-    });
-  }
-
-  export const $properties = {
-    privateProperty: {
-      identifier: dataFactory.namedNode("http://example.com/privateProperty"),
-    },
-    protectedProperty: {
-      identifier: dataFactory.namedNode("http://example.com/protectedProperty"),
-    },
-    publicProperty: {
-      identifier: dataFactory.namedNode("http://example.com/publicProperty"),
-    },
-  };
-
-  export function $sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
-      parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        PropertyVisibilitiesClass.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        PropertyVisibilitiesClass.$sparqlWherePatterns({
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      PropertyVisibilitiesClass.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function $sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("propertyVisibilitiesClass");
-    const triples: sparqljs.Triple[] = [];
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "propertyVisibilitiesClass");
-    triples.push({
-      object: dataFactory.variable!(`${variablePrefix}PrivateProperty`),
-      predicate:
-        PropertyVisibilitiesClass.$properties.privateProperty["identifier"],
-      subject,
-    });
-    triples.push({
-      object: dataFactory.variable!(`${variablePrefix}ProtectedProperty`),
-      predicate:
-        PropertyVisibilitiesClass.$properties.protectedProperty["identifier"],
-      subject,
-    });
-    triples.push({
-      object: dataFactory.variable!(`${variablePrefix}PublicProperty`),
-      predicate:
-        PropertyVisibilitiesClass.$properties.publicProperty["identifier"],
-      subject,
-    });
-    return triples;
-  }
-
-  export function $sparqlWherePatterns(parameters?: {
-    ignoreRdfType?: boolean;
-    preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("propertyVisibilitiesClass");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "propertyVisibilitiesClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
-      {
-        triples: [
-          {
-            object: dataFactory.variable!(`${variablePrefix}PrivateProperty`),
-            predicate:
-              PropertyVisibilitiesClass.$properties.privateProperty[
-                "identifier"
-              ],
-            subject,
-          },
-        ],
-        type: "bgp",
-      },
-      ...[parameters?.preferredLanguages ?? []]
-        .filter((languages) => languages.length > 0)
-        .map((languages) =>
-          languages.map((language) => ({
-            type: "operation" as const,
-            operator: "=",
-            args: [
-              {
-                type: "operation" as const,
-                operator: "lang",
-                args: [
-                  dataFactory.variable!(`${variablePrefix}PrivateProperty`),
-                ],
-              },
-              dataFactory.literal(language),
-            ],
-          })),
-        )
-        .map((langEqualsExpressions) => ({
-          type: "filter" as const,
-          expression: langEqualsExpressions.reduce(
-            (reducedExpression, langEqualsExpression) => {
-              if (reducedExpression === null) {
-                return langEqualsExpression;
-              }
-              return {
-                type: "operation" as const,
-                operator: "||",
-                args: [reducedExpression, langEqualsExpression],
-              };
-            },
-            null as sparqljs.Expression | null,
-          ) as sparqljs.Expression,
-        })),
-      {
-        triples: [
-          {
-            object: dataFactory.variable!(`${variablePrefix}ProtectedProperty`),
-            predicate:
-              PropertyVisibilitiesClass.$properties.protectedProperty[
-                "identifier"
-              ],
-            subject,
-          },
-        ],
-        type: "bgp",
-      },
-      ...[parameters?.preferredLanguages ?? []]
-        .filter((languages) => languages.length > 0)
-        .map((languages) =>
-          languages.map((language) => ({
-            type: "operation" as const,
-            operator: "=",
-            args: [
-              {
-                type: "operation" as const,
-                operator: "lang",
-                args: [
-                  dataFactory.variable!(`${variablePrefix}ProtectedProperty`),
-                ],
-              },
-              dataFactory.literal(language),
-            ],
-          })),
-        )
-        .map((langEqualsExpressions) => ({
-          type: "filter" as const,
-          expression: langEqualsExpressions.reduce(
-            (reducedExpression, langEqualsExpression) => {
-              if (reducedExpression === null) {
-                return langEqualsExpression;
-              }
-              return {
-                type: "operation" as const,
-                operator: "||",
-                args: [reducedExpression, langEqualsExpression],
-              };
-            },
-            null as sparqljs.Expression | null,
-          ) as sparqljs.Expression,
-        })),
-      {
-        triples: [
-          {
-            object: dataFactory.variable!(`${variablePrefix}PublicProperty`),
-            predicate:
-              PropertyVisibilitiesClass.$properties.publicProperty[
-                "identifier"
-              ],
-            subject,
-          },
-        ],
-        type: "bgp",
-      },
-      ...[parameters?.preferredLanguages ?? []]
-        .filter((languages) => languages.length > 0)
-        .map((languages) =>
-          languages.map((language) => ({
-            type: "operation" as const,
-            operator: "=",
-            args: [
-              {
-                type: "operation" as const,
-                operator: "lang",
-                args: [
-                  dataFactory.variable!(`${variablePrefix}PublicProperty`),
-                ],
-              },
-              dataFactory.literal(language),
-            ],
-          })),
-        )
-        .map((langEqualsExpressions) => ({
-          type: "filter" as const,
-          expression: langEqualsExpressions.reduce(
-            (reducedExpression, langEqualsExpression) => {
-              if (reducedExpression === null) {
-                return langEqualsExpression;
-              }
-              return {
-                type: "operation" as const,
-                operator: "||",
-                args: [reducedExpression, langEqualsExpression],
-              };
-            },
-            null as sparqljs.Expression | null,
-          ) as sparqljs.Expression,
-        })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
-  }
-}
-/**
- * Shape that has properties with different cardinalities
- */
-export class PropertyCardinalitiesClass {
-  private _$identifier?: PropertyCardinalitiesClass.$Identifier;
-  readonly $type = "PropertyCardinalitiesClass";
-  /**
-   * Set: minCount implicitly=0, no maxCount
-   */
-  readonly emptyStringSetProperty: readonly string[];
-  /**
-   * Set: minCount=1, no maxCount
-   */
-  readonly nonEmptyStringSetProperty: purify.NonEmptyList<string>;
-  /**
-   * Option: maxCount=1, minCount=0
-   */
-  readonly optionalStringProperty: purify.Maybe<string>;
-  /**
-   * Required: maxCount=minCount=1
-   */
-  readonly requiredStringProperty: string;
-
-  constructor(parameters: {
-    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly emptyStringSetProperty?: readonly string[];
-    readonly nonEmptyStringSetProperty: purify.NonEmptyList<string>;
-    readonly optionalStringProperty?: purify.Maybe<string> | string;
-    readonly requiredStringProperty: string;
-  }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
-    } else {
-      this._$identifier = parameters.$identifier satisfies never;
-    }
-
-    if (typeof parameters.emptyStringSetProperty === "undefined") {
-      this.emptyStringSetProperty = [];
-    } else if (typeof parameters.emptyStringSetProperty === "object") {
-      this.emptyStringSetProperty = parameters.emptyStringSetProperty;
-    } else {
-      this.emptyStringSetProperty =
-        parameters.emptyStringSetProperty satisfies never;
-    }
-
-    this.nonEmptyStringSetProperty = parameters.nonEmptyStringSetProperty;
-    if (purify.Maybe.isMaybe(parameters.optionalStringProperty)) {
-      this.optionalStringProperty = parameters.optionalStringProperty;
-    } else if (typeof parameters.optionalStringProperty === "string") {
-      this.optionalStringProperty = purify.Maybe.of(
-        parameters.optionalStringProperty,
-      );
-    } else if (typeof parameters.optionalStringProperty === "undefined") {
-      this.optionalStringProperty = purify.Maybe.empty();
-    } else {
-      this.optionalStringProperty =
-        parameters.optionalStringProperty satisfies never;
-    }
-
-    this.requiredStringProperty = parameters.requiredStringProperty;
-  }
-
-  get $identifier(): PropertyCardinalitiesClass.$Identifier {
-    if (typeof this._$identifier === "undefined") {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
-  $equals(other: PropertyCardinalitiesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
-      .mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        ((left, right) => $arrayEquals(left, right, $strictEquals))(
-          this.emptyStringSetProperty,
-          other.emptyStringSetProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "emptyStringSetProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) => $arrayEquals(left, right, $strictEquals))(
-          this.nonEmptyStringSetProperty,
-          other.nonEmptyStringSetProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "nonEmptyStringSetProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) => $maybeEquals(left, right, $strictEquals))(
-          this.optionalStringProperty,
-          other.optionalStringProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "optionalStringProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        $strictEquals(
-          this.requiredStringProperty,
-          other.requiredStringProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "requiredStringProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
-  }
-
-  $hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    _hasher.update(this.$identifier.value);
-    _hasher.update(this.$type);
-    this.$hashShaclProperties(_hasher);
-    return _hasher;
-  }
-
-  protected $hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    for (const item0 of this.emptyStringSetProperty) {
-      _hasher.update(item0);
-    }
-
-    for (const item0 of this.nonEmptyStringSetProperty) {
-      _hasher.update(item0);
-    }
-
-    this.optionalStringProperty.ifJust((value0) => {
-      _hasher.update(value0);
-    });
-    _hasher.update(this.requiredStringProperty);
-    return _hasher;
-  }
-
-  $toJson(): PropertyCardinalitiesClass.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
-        $type: this.$type,
-        emptyStringSetProperty: this.emptyStringSetProperty.map((item) => item),
-        nonEmptyStringSetProperty: this.nonEmptyStringSetProperty.map(
-          (item) => item,
-        ),
-        optionalStringProperty: this.optionalStringProperty
-          .map((item) => item)
-          .extract(),
-        requiredStringProperty: this.requiredStringProperty,
-      } satisfies PropertyCardinalitiesClass.$Json),
-    );
-  }
-
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet?: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const mutateGraph = options?.mutateGraph;
-    const resourceSet =
-      options?.resourceSet ??
-      new rdfjsResource.MutableResourceSet({
-        dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.mutableResource(this.$identifier, {
-      mutateGraph,
-    });
-    resource.add(
-      PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
-        "identifier"
-      ],
-      ...this.emptyStringSetProperty.flatMap((item) => [item]),
-    );
-    resource.add(
-      PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
-        "identifier"
-      ],
-      ...this.nonEmptyStringSetProperty.flatMap((item) => [item]),
-    );
-    resource.add(
-      PropertyCardinalitiesClass.$properties.optionalStringProperty[
-        "identifier"
-      ],
-      ...this.optionalStringProperty.toList(),
-    );
-    resource.add(
-      PropertyCardinalitiesClass.$properties.requiredStringProperty[
-        "identifier"
-      ],
-      ...[this.requiredStringProperty],
-    );
-    return resource;
-  }
-
-  toString(): string {
-    return JSON.stringify(this.$toJson());
-  }
-}
-
-export namespace PropertyCardinalitiesClass {
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
-      toString = rdfjsResource.Resource.Identifier.toString;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PropertyCardinalitiesClass";
-    readonly emptyStringSetProperty?: readonly string[];
-    readonly nonEmptyStringSetProperty: readonly string[];
-    readonly optionalStringProperty?: string;
-    readonly requiredStringProperty: string;
-  };
-
-  export function $propertiesFromJson(_json: unknown): purify.Either<
-    zod.ZodError,
-    {
-      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      emptyStringSetProperty: readonly string[];
-      nonEmptyStringSetProperty: purify.NonEmptyList<string>;
-      optionalStringProperty: purify.Maybe<string>;
-      requiredStringProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return purify.Left($jsonSafeParseResult.error);
-    }
-
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const emptyStringSetProperty = $jsonObject["emptyStringSetProperty"];
-    const nonEmptyStringSetProperty = purify.NonEmptyList.fromArray(
-      $jsonObject["nonEmptyStringSetProperty"],
-    ).unsafeCoerce();
-    const optionalStringProperty = purify.Maybe.fromNullable(
-      $jsonObject["optionalStringProperty"],
-    );
-    const requiredStringProperty = $jsonObject["requiredStringProperty"];
-    return purify.Either.of({
-      $identifier,
-      emptyStringSetProperty,
-      nonEmptyStringSetProperty,
-      optionalStringProperty,
-      requiredStringProperty,
-    });
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, PropertyCardinalitiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new PropertyCardinalitiesClass(properties),
-    );
-  }
-
-  export function $jsonSchema() {
-    return zod.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "PropertyCardinalitiesClass" },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/emptyStringSetProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/nonEmptyStringSetProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/optionalStringProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/requiredStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "PropertyCardinalitiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      $type: zod.literal("PropertyCardinalitiesClass"),
-      emptyStringSetProperty: zod
-        .string()
-        .array()
-        .default(() => [])
-        .describe("Set: minCount implicitly=0, no maxCount"),
-      nonEmptyStringSetProperty: zod
-        .string()
-        .array()
-        .nonempty()
-        .min(1)
-        .describe("Set: minCount=1, no maxCount"),
-      optionalStringProperty: zod
-        .string()
-        .optional()
-        .describe("Option: maxCount=1, minCount=0"),
-      requiredStringProperty: zod
-        .string()
-        .describe("Required: maxCount=minCount=1"),
-    }) satisfies zod.ZodType<$Json>;
-  }
-
-  export function $fromRdf(
-    resource: rdfjsResource.Resource,
-    options?: {
-      [_index: string]: any;
-      ignoreRdfType?: boolean;
-      objectSet?: $ObjectSet;
-      preferredLanguages?: readonly string[];
-    },
-  ): purify.Either<Error, PropertyCardinalitiesClass> {
-    let {
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-      ...context
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
-    }
-
-    return PropertyCardinalitiesClass.$propertiesFromRdf({
-      ...context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    }).map((properties) => new PropertyCardinalitiesClass(properties));
-  }
-
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-ignore
-    ...$context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType: boolean;
-    objectSet: $ObjectSet;
-    preferredLanguages?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    Error,
-    {
-      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      emptyStringSetProperty: readonly string[];
-      nonEmptyStringSetProperty: purify.NonEmptyList<string>;
-      optionalStringProperty: purify.Maybe<string>;
-      requiredStringProperty: string;
-    }
-  > {
-    const $identifier: PropertyCardinalitiesClass.$Identifier =
-      $resource.identifier;
-    const _emptyStringSetPropertyEither: purify.Either<
-      Error,
-      readonly string[]
-    > = purify.Either.of<
-      Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-    >(
-      $resource.values($properties.emptyStringSetProperty["identifier"], {
-        unique: true,
-      }),
-    )
-      .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-          >(values);
-        }
-
-        const literalValuesEither = values.chainMap((value) =>
-          value.toLiteral(),
-        );
-        if (literalValuesEither.isLeft()) {
-          return literalValuesEither;
-        }
-        const literalValues = literalValuesEither.unsafeCoerce();
-
-        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-        // Within a preferredLanguage the literals may be in any order.
-        let filteredLiteralValues:
-          | rdfjsResource.Resource.Values<rdfjs.Literal>
-          | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
-          if (!filteredLiteralValues) {
-            filteredLiteralValues = literalValues.filter(
-              (value) => value.language === preferredLanguage,
-            );
-          } else {
-            filteredLiteralValues = filteredLiteralValues.concat(
-              ...literalValues
-                .filter((value) => value.language === preferredLanguage)
-                .toArray(),
-            );
-          }
-        }
-
-        return purify.Either.of<
-          Error,
-          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-        >(
-          filteredLiteralValues!.map(
-            (literalValue) =>
-              new rdfjsResource.Resource.Value({
-                object: literalValue,
-                predicate:
-                  PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
-                    "identifier"
-                  ],
-                subject: $resource,
-              }),
-          ),
-        );
-      })
-      .chain((values) => values.chainMap((value) => value.toString()))
-      .map((values) => values.toArray())
-      .map((valuesArray) =>
-        rdfjsResource.Resource.Values.fromValue({
-          object: valuesArray,
-          predicate:
-            PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
-              "identifier"
-            ],
-          subject: $resource,
-        }),
-      )
-      .chain((values) => values.head());
-    if (_emptyStringSetPropertyEither.isLeft()) {
-      return _emptyStringSetPropertyEither;
-    }
-
-    const emptyStringSetProperty = _emptyStringSetPropertyEither.unsafeCoerce();
-    const _nonEmptyStringSetPropertyEither: purify.Either<
-      Error,
-      purify.NonEmptyList<string>
-    > = purify.Either.of<
-      Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-    >(
-      $resource.values($properties.nonEmptyStringSetProperty["identifier"], {
-        unique: true,
-      }),
-    )
-      .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-          >(values);
-        }
-
-        const literalValuesEither = values.chainMap((value) =>
-          value.toLiteral(),
-        );
-        if (literalValuesEither.isLeft()) {
-          return literalValuesEither;
-        }
-        const literalValues = literalValuesEither.unsafeCoerce();
-
-        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-        // Within a preferredLanguage the literals may be in any order.
-        let filteredLiteralValues:
-          | rdfjsResource.Resource.Values<rdfjs.Literal>
-          | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
-          if (!filteredLiteralValues) {
-            filteredLiteralValues = literalValues.filter(
-              (value) => value.language === preferredLanguage,
-            );
-          } else {
-            filteredLiteralValues = filteredLiteralValues.concat(
-              ...literalValues
-                .filter((value) => value.language === preferredLanguage)
-                .toArray(),
-            );
-          }
-        }
-
-        return purify.Either.of<
-          Error,
-          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-        >(
-          filteredLiteralValues!.map(
-            (literalValue) =>
-              new rdfjsResource.Resource.Value({
-                object: literalValue,
-                predicate:
-                  PropertyCardinalitiesClass.$properties
-                    .nonEmptyStringSetProperty["identifier"],
-                subject: $resource,
-              }),
-          ),
-        );
-      })
-      .chain((values) => values.chainMap((value) => value.toString()))
-      .chain((values) =>
-        purify.NonEmptyList.fromArray(values.toArray()).toEither(
-          new Error(
-            `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} is an empty set`,
-          ),
-        ),
-      )
-      .map((valuesArray) =>
-        rdfjsResource.Resource.Values.fromValue({
-          object: valuesArray,
-          predicate:
-            PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
-              "identifier"
-            ],
-          subject: $resource,
-        }),
-      )
-      .chain((values) => values.head());
-    if (_nonEmptyStringSetPropertyEither.isLeft()) {
-      return _nonEmptyStringSetPropertyEither;
-    }
-
-    const nonEmptyStringSetProperty =
-      _nonEmptyStringSetPropertyEither.unsafeCoerce();
-    const _optionalStringPropertyEither: purify.Either<
-      Error,
-      purify.Maybe<string>
-    > = purify.Either.of<
-      Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-    >(
-      $resource.values($properties.optionalStringProperty["identifier"], {
-        unique: true,
-      }),
-    )
-      .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-          >(values);
-        }
-
-        const literalValuesEither = values.chainMap((value) =>
-          value.toLiteral(),
-        );
-        if (literalValuesEither.isLeft()) {
-          return literalValuesEither;
-        }
-        const literalValues = literalValuesEither.unsafeCoerce();
-
-        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-        // Within a preferredLanguage the literals may be in any order.
-        let filteredLiteralValues:
-          | rdfjsResource.Resource.Values<rdfjs.Literal>
-          | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
-          if (!filteredLiteralValues) {
-            filteredLiteralValues = literalValues.filter(
-              (value) => value.language === preferredLanguage,
-            );
-          } else {
-            filteredLiteralValues = filteredLiteralValues.concat(
-              ...literalValues
-                .filter((value) => value.language === preferredLanguage)
-                .toArray(),
-            );
-          }
-        }
-
-        return purify.Either.of<
-          Error,
-          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-        >(
-          filteredLiteralValues!.map(
-            (literalValue) =>
-              new rdfjsResource.Resource.Value({
-                object: literalValue,
-                predicate:
-                  PropertyCardinalitiesClass.$properties.optionalStringProperty[
-                    "identifier"
-                  ],
-                subject: $resource,
-              }),
-          ),
-        );
-      })
-      .chain((values) => values.chainMap((value) => value.toString()))
-      .map((values) =>
-        values.length > 0
-          ? values.map((value) => purify.Maybe.of(value))
-          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
-              object: purify.Maybe.empty(),
-              predicate:
-                PropertyCardinalitiesClass.$properties.optionalStringProperty[
-                  "identifier"
-                ],
-              subject: $resource,
-            }),
-      )
-      .chain((values) => values.head());
-    if (_optionalStringPropertyEither.isLeft()) {
-      return _optionalStringPropertyEither;
-    }
-
-    const optionalStringProperty = _optionalStringPropertyEither.unsafeCoerce();
-    const _requiredStringPropertyEither: purify.Either<Error, string> =
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-      >(
-        $resource.values($properties.requiredStringProperty["identifier"], {
-          unique: true,
-        }),
-      )
-        .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
-            return purify.Either.of<
-              Error,
-              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-            >(values);
-          }
-
-          const literalValuesEither = values.chainMap((value) =>
-            value.toLiteral(),
-          );
-          if (literalValuesEither.isLeft()) {
-            return literalValuesEither;
-          }
-          const literalValues = literalValuesEither.unsafeCoerce();
-
-          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-          // Within a preferredLanguage the literals may be in any order.
-          let filteredLiteralValues:
-            | rdfjsResource.Resource.Values<rdfjs.Literal>
-            | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
-            if (!filteredLiteralValues) {
-              filteredLiteralValues = literalValues.filter(
-                (value) => value.language === preferredLanguage,
-              );
-            } else {
-              filteredLiteralValues = filteredLiteralValues.concat(
-                ...literalValues
-                  .filter((value) => value.language === preferredLanguage)
-                  .toArray(),
-              );
-            }
-          }
-
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-          >(
-            filteredLiteralValues!.map(
-              (literalValue) =>
-                new rdfjsResource.Resource.Value({
-                  object: literalValue,
-                  predicate:
-                    PropertyCardinalitiesClass.$properties
-                      .requiredStringProperty["identifier"],
-                  subject: $resource,
-                }),
-            ),
-          );
-        })
-        .chain((values) => values.chainMap((value) => value.toString()))
-        .chain((values) => values.head());
-    if (_requiredStringPropertyEither.isLeft()) {
-      return _requiredStringPropertyEither;
-    }
-
-    const requiredStringProperty = _requiredStringPropertyEither.unsafeCoerce();
-    return purify.Either.of({
-      $identifier,
-      emptyStringSetProperty,
-      nonEmptyStringSetProperty,
-      optionalStringProperty,
-      requiredStringProperty,
-    });
-  }
-
-  export const $properties = {
-    emptyStringSetProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/emptyStringSetProperty",
-      ),
-    },
-    nonEmptyStringSetProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/nonEmptyStringSetProperty",
-      ),
-    },
-    optionalStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalStringProperty",
-      ),
-    },
-    requiredStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/requiredStringProperty",
-      ),
-    },
-  };
-
-  export function $sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
-      parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        PropertyCardinalitiesClass.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        PropertyCardinalitiesClass.$sparqlWherePatterns({
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      PropertyCardinalitiesClass.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function $sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
-      dataFactory.variable!("propertyCardinalitiesClass");
-    const triples: sparqljs.Triple[] = [];
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "propertyCardinalitiesClass");
-    triples.push({
-      object: dataFactory.variable!(`${variablePrefix}EmptyStringSetProperty`),
-      predicate:
-        PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
-          "identifier"
-        ],
-      subject,
-    });
-    triples.push({
-      object: dataFactory.variable!(
-        `${variablePrefix}NonEmptyStringSetProperty`,
-      ),
-      predicate:
-        PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
-          "identifier"
-        ],
-      subject,
-    });
-    triples.push({
-      object: dataFactory.variable!(`${variablePrefix}OptionalStringProperty`),
-      predicate:
-        PropertyCardinalitiesClass.$properties.optionalStringProperty[
-          "identifier"
-        ],
-      subject,
-    });
-    triples.push({
-      object: dataFactory.variable!(`${variablePrefix}RequiredStringProperty`),
-      predicate:
-        PropertyCardinalitiesClass.$properties.requiredStringProperty[
-          "identifier"
-        ],
-      subject,
-    });
-    return triples;
-  }
-
-  export function $sparqlWherePatterns(parameters?: {
-    ignoreRdfType?: boolean;
-    preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
-    const subject =
-      parameters?.subject ??
-      dataFactory.variable!("propertyCardinalitiesClass");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "propertyCardinalitiesClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}EmptyStringSetProperty`,
-                ),
-                predicate:
-                  PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
-                    "identifier"
-                  ],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...[parameters?.preferredLanguages ?? []]
-            .filter((languages) => languages.length > 0)
-            .map((languages) =>
-              languages.map((language) => ({
-                type: "operation" as const,
-                operator: "=",
-                args: [
-                  {
-                    type: "operation" as const,
-                    operator: "lang",
-                    args: [
-                      dataFactory.variable!(
-                        `${variablePrefix}EmptyStringSetProperty`,
-                      ),
-                    ],
-                  },
-                  dataFactory.literal(language),
-                ],
-              })),
-            )
-            .map((langEqualsExpressions) => ({
-              type: "filter" as const,
-              expression: langEqualsExpressions.reduce(
-                (reducedExpression, langEqualsExpression) => {
-                  if (reducedExpression === null) {
-                    return langEqualsExpression;
-                  }
-                  return {
-                    type: "operation" as const,
-                    operator: "||",
-                    args: [reducedExpression, langEqualsExpression],
-                  };
-                },
-                null as sparqljs.Expression | null,
-              ) as sparqljs.Expression,
-            })),
-        ],
-        type: "optional",
-      },
-      {
-        triples: [
-          {
-            object: dataFactory.variable!(
-              `${variablePrefix}NonEmptyStringSetProperty`,
-            ),
-            predicate:
-              PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
-                "identifier"
-              ],
-            subject,
-          },
-        ],
-        type: "bgp",
-      },
-      ...[parameters?.preferredLanguages ?? []]
-        .filter((languages) => languages.length > 0)
-        .map((languages) =>
-          languages.map((language) => ({
-            type: "operation" as const,
-            operator: "=",
-            args: [
-              {
-                type: "operation" as const,
-                operator: "lang",
-                args: [
-                  dataFactory.variable!(
-                    `${variablePrefix}NonEmptyStringSetProperty`,
-                  ),
-                ],
-              },
-              dataFactory.literal(language),
-            ],
-          })),
-        )
-        .map((langEqualsExpressions) => ({
-          type: "filter" as const,
-          expression: langEqualsExpressions.reduce(
-            (reducedExpression, langEqualsExpression) => {
-              if (reducedExpression === null) {
-                return langEqualsExpression;
-              }
-              return {
-                type: "operation" as const,
-                operator: "||",
-                args: [reducedExpression, langEqualsExpression],
-              };
-            },
-            null as sparqljs.Expression | null,
-          ) as sparqljs.Expression,
-        })),
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}OptionalStringProperty`,
-                ),
-                predicate:
-                  PropertyCardinalitiesClass.$properties.optionalStringProperty[
-                    "identifier"
-                  ],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...[parameters?.preferredLanguages ?? []]
-            .filter((languages) => languages.length > 0)
-            .map((languages) =>
-              languages.map((language) => ({
-                type: "operation" as const,
-                operator: "=",
-                args: [
-                  {
-                    type: "operation" as const,
-                    operator: "lang",
-                    args: [
-                      dataFactory.variable!(
-                        `${variablePrefix}OptionalStringProperty`,
-                      ),
-                    ],
-                  },
-                  dataFactory.literal(language),
-                ],
-              })),
-            )
-            .map((langEqualsExpressions) => ({
-              type: "filter" as const,
-              expression: langEqualsExpressions.reduce(
-                (reducedExpression, langEqualsExpression) => {
-                  if (reducedExpression === null) {
-                    return langEqualsExpression;
-                  }
-                  return {
-                    type: "operation" as const,
-                    operator: "||",
-                    args: [reducedExpression, langEqualsExpression],
-                  };
-                },
-                null as sparqljs.Expression | null,
-              ) as sparqljs.Expression,
-            })),
-        ],
-        type: "optional",
-      },
-      {
-        triples: [
-          {
-            object: dataFactory.variable!(
-              `${variablePrefix}RequiredStringProperty`,
-            ),
-            predicate:
-              PropertyCardinalitiesClass.$properties.requiredStringProperty[
-                "identifier"
-              ],
-            subject,
-          },
-        ],
-        type: "bgp",
-      },
-      ...[parameters?.preferredLanguages ?? []]
-        .filter((languages) => languages.length > 0)
-        .map((languages) =>
-          languages.map((language) => ({
-            type: "operation" as const,
-            operator: "=",
-            args: [
-              {
-                type: "operation" as const,
-                operator: "lang",
-                args: [
-                  dataFactory.variable!(
-                    `${variablePrefix}RequiredStringProperty`,
                   ),
                 ],
               },
@@ -13859,9 +13859,7 @@ export namespace PartialInterface {
       });
     const resource = resourceSet.mutableResource(
       _partialInterface.$identifier,
-      {
-        mutateGraph,
-      },
+      { mutateGraph },
     );
     resource.add(
       PartialInterface.$properties.lazilyResolvedStringProperty["identifier"],
@@ -46476,52 +46474,6 @@ export interface $ObjectSet {
   orderedPropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<OrderedPropertiesClass.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
-  propertyCardinalitiesClass(
-    identifier: PropertyCardinalitiesClass.$Identifier,
-  ): Promise<purify.Either<Error, PropertyCardinalitiesClass>>;
-  propertyCardinalitiesClassIdentifiers(
-    query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly PropertyCardinalitiesClass.$Identifier[]>
-  >;
-  propertyCardinalitiesClasses(
-    query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly PropertyCardinalitiesClass[]>>;
-  propertyCardinalitiesClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
-      "where"
-    >,
-  ): Promise<purify.Either<Error, number>>;
-  propertyVisibilitiesClass(
-    identifier: PropertyVisibilitiesClass.$Identifier,
-  ): Promise<purify.Either<Error, PropertyVisibilitiesClass>>;
-  propertyVisibilitiesClassIdentifiers(
-    query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly PropertyVisibilitiesClass.$Identifier[]>
-  >;
-  propertyVisibilitiesClasses(
-    query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly PropertyVisibilitiesClass[]>>;
-  propertyVisibilitiesClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
-      "where"
-    >,
-  ): Promise<purify.Either<Error, number>>;
-  sha256IriClass(
-    identifier: Sha256IriClass.$Identifier,
-  ): Promise<purify.Either<Error, Sha256IriClass>>;
-  sha256IriClassIdentifiers(
-    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Sha256IriClass.$Identifier[]>>;
-  sha256IriClasses(
-    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Sha256IriClass[]>>;
-  sha256IriClassesCount(
-    query?: Pick<$ObjectSet.Query<Sha256IriClass.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>>;
   partialClass(
     identifier: PartialClass.$Identifier,
   ): Promise<purify.Either<Error, PartialClass>>;
@@ -46613,6 +46565,52 @@ export interface $ObjectSet {
       $ObjectSet.Query<PartialInterfaceUnionMember2.$Identifier>,
       "where"
     >,
+  ): Promise<purify.Either<Error, number>>;
+  propertyCardinalitiesClass(
+    identifier: PropertyCardinalitiesClass.$Identifier,
+  ): Promise<purify.Either<Error, PropertyCardinalitiesClass>>;
+  propertyCardinalitiesClassIdentifiers(
+    query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PropertyCardinalitiesClass.$Identifier[]>
+  >;
+  propertyCardinalitiesClasses(
+    query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly PropertyCardinalitiesClass[]>>;
+  propertyCardinalitiesClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
+  propertyVisibilitiesClass(
+    identifier: PropertyVisibilitiesClass.$Identifier,
+  ): Promise<purify.Either<Error, PropertyVisibilitiesClass>>;
+  propertyVisibilitiesClassIdentifiers(
+    query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PropertyVisibilitiesClass.$Identifier[]>
+  >;
+  propertyVisibilitiesClasses(
+    query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly PropertyVisibilitiesClass[]>>;
+  propertyVisibilitiesClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
+  sha256IriClass(
+    identifier: Sha256IriClass.$Identifier,
+  ): Promise<purify.Either<Error, Sha256IriClass>>;
+  sha256IriClassIdentifiers(
+    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Sha256IriClass.$Identifier[]>>;
+  sha256IriClasses(
+    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Sha256IriClass[]>>;
+  sha256IriClassesCount(
+    query?: Pick<$ObjectSet.Query<Sha256IriClass.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
   termPropertiesClass(
     identifier: TermPropertiesClass.$Identifier,
@@ -47922,88 +47920,6 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     return this.$delegate.orderedPropertiesClassesCount(query);
   }
 
-  propertyCardinalitiesClass(
-    identifier: PropertyCardinalitiesClass.$Identifier,
-  ): Promise<purify.Either<Error, PropertyCardinalitiesClass>> {
-    return this.$delegate.propertyCardinalitiesClass(identifier);
-  }
-
-  propertyCardinalitiesClassIdentifiers(
-    query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly PropertyCardinalitiesClass.$Identifier[]>
-  > {
-    return this.$delegate.propertyCardinalitiesClassIdentifiers(query);
-  }
-
-  propertyCardinalitiesClasses(
-    query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly PropertyCardinalitiesClass[]>> {
-    return this.$delegate.propertyCardinalitiesClasses(query);
-  }
-
-  propertyCardinalitiesClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
-      "where"
-    >,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.propertyCardinalitiesClassesCount(query);
-  }
-
-  propertyVisibilitiesClass(
-    identifier: PropertyVisibilitiesClass.$Identifier,
-  ): Promise<purify.Either<Error, PropertyVisibilitiesClass>> {
-    return this.$delegate.propertyVisibilitiesClass(identifier);
-  }
-
-  propertyVisibilitiesClassIdentifiers(
-    query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly PropertyVisibilitiesClass.$Identifier[]>
-  > {
-    return this.$delegate.propertyVisibilitiesClassIdentifiers(query);
-  }
-
-  propertyVisibilitiesClasses(
-    query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly PropertyVisibilitiesClass[]>> {
-    return this.$delegate.propertyVisibilitiesClasses(query);
-  }
-
-  propertyVisibilitiesClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
-      "where"
-    >,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.propertyVisibilitiesClassesCount(query);
-  }
-
-  sha256IriClass(
-    identifier: Sha256IriClass.$Identifier,
-  ): Promise<purify.Either<Error, Sha256IriClass>> {
-    return this.$delegate.sha256IriClass(identifier);
-  }
-
-  sha256IriClassIdentifiers(
-    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Sha256IriClass.$Identifier[]>> {
-    return this.$delegate.sha256IriClassIdentifiers(query);
-  }
-
-  sha256IriClasses(
-    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Sha256IriClass[]>> {
-    return this.$delegate.sha256IriClasses(query);
-  }
-
-  sha256IriClassesCount(
-    query?: Pick<$ObjectSet.Query<Sha256IriClass.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.sha256IriClassesCount(query);
-  }
-
   partialClass(
     identifier: PartialClass.$Identifier,
   ): Promise<purify.Either<Error, PartialClass>> {
@@ -48166,6 +48082,88 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.partialInterfaceUnionMember2sCount(query);
+  }
+
+  propertyCardinalitiesClass(
+    identifier: PropertyCardinalitiesClass.$Identifier,
+  ): Promise<purify.Either<Error, PropertyCardinalitiesClass>> {
+    return this.$delegate.propertyCardinalitiesClass(identifier);
+  }
+
+  propertyCardinalitiesClassIdentifiers(
+    query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PropertyCardinalitiesClass.$Identifier[]>
+  > {
+    return this.$delegate.propertyCardinalitiesClassIdentifiers(query);
+  }
+
+  propertyCardinalitiesClasses(
+    query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly PropertyCardinalitiesClass[]>> {
+    return this.$delegate.propertyCardinalitiesClasses(query);
+  }
+
+  propertyCardinalitiesClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.propertyCardinalitiesClassesCount(query);
+  }
+
+  propertyVisibilitiesClass(
+    identifier: PropertyVisibilitiesClass.$Identifier,
+  ): Promise<purify.Either<Error, PropertyVisibilitiesClass>> {
+    return this.$delegate.propertyVisibilitiesClass(identifier);
+  }
+
+  propertyVisibilitiesClassIdentifiers(
+    query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PropertyVisibilitiesClass.$Identifier[]>
+  > {
+    return this.$delegate.propertyVisibilitiesClassIdentifiers(query);
+  }
+
+  propertyVisibilitiesClasses(
+    query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly PropertyVisibilitiesClass[]>> {
+    return this.$delegate.propertyVisibilitiesClasses(query);
+  }
+
+  propertyVisibilitiesClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.propertyVisibilitiesClassesCount(query);
+  }
+
+  sha256IriClass(
+    identifier: Sha256IriClass.$Identifier,
+  ): Promise<purify.Either<Error, Sha256IriClass>> {
+    return this.$delegate.sha256IriClass(identifier);
+  }
+
+  sha256IriClassIdentifiers(
+    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Sha256IriClass.$Identifier[]>> {
+    return this.$delegate.sha256IriClassIdentifiers(query);
+  }
+
+  sha256IriClasses(
+    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Sha256IriClass[]>> {
+    return this.$delegate.sha256IriClasses(query);
+  }
+
+  sha256IriClassesCount(
+    query?: Pick<$ObjectSet.Query<Sha256IriClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.sha256IriClassesCount(query);
   }
 
   termPropertiesClass(
@@ -51682,217 +51680,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async propertyCardinalitiesClass(
-    identifier: PropertyCardinalitiesClass.$Identifier,
-  ): Promise<purify.Either<Error, PropertyCardinalitiesClass>> {
-    return this.propertyCardinalitiesClassSync(identifier);
-  }
-
-  propertyCardinalitiesClassSync(
-    identifier: PropertyCardinalitiesClass.$Identifier,
-  ): purify.Either<Error, PropertyCardinalitiesClass> {
-    return this.propertyCardinalitiesClassesSync({
-      where: { identifiers: [identifier], type: "identifiers" },
-    }).map((objects) => objects[0]);
-  }
-
-  async propertyCardinalitiesClassIdentifiers(
-    query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly PropertyCardinalitiesClass.$Identifier[]>
-  > {
-    return this.propertyCardinalitiesClassIdentifiersSync(query);
-  }
-
-  propertyCardinalitiesClassIdentifiersSync(
-    query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
-  ): purify.Either<Error, readonly PropertyCardinalitiesClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      PropertyCardinalitiesClass,
-      PropertyCardinalitiesClass.$Identifier
-    >(
-      [{ $fromRdf: PropertyCardinalitiesClass.$fromRdf, $fromRdfTypes: [] }],
-      query,
-    );
-  }
-
-  async propertyCardinalitiesClasses(
-    query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly PropertyCardinalitiesClass[]>> {
-    return this.propertyCardinalitiesClassesSync(query);
-  }
-
-  propertyCardinalitiesClassesSync(
-    query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
-  ): purify.Either<Error, readonly PropertyCardinalitiesClass[]> {
-    return this.$objectsSync<
-      PropertyCardinalitiesClass,
-      PropertyCardinalitiesClass.$Identifier
-    >(
-      [{ $fromRdf: PropertyCardinalitiesClass.$fromRdf, $fromRdfTypes: [] }],
-      query,
-    );
-  }
-
-  async propertyCardinalitiesClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
-      "where"
-    >,
-  ): Promise<purify.Either<Error, number>> {
-    return this.propertyCardinalitiesClassesCountSync(query);
-  }
-
-  propertyCardinalitiesClassesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
-      "where"
-    >,
-  ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      PropertyCardinalitiesClass,
-      PropertyCardinalitiesClass.$Identifier
-    >(
-      [{ $fromRdf: PropertyCardinalitiesClass.$fromRdf, $fromRdfTypes: [] }],
-      query,
-    );
-  }
-
-  async propertyVisibilitiesClass(
-    identifier: PropertyVisibilitiesClass.$Identifier,
-  ): Promise<purify.Either<Error, PropertyVisibilitiesClass>> {
-    return this.propertyVisibilitiesClassSync(identifier);
-  }
-
-  propertyVisibilitiesClassSync(
-    identifier: PropertyVisibilitiesClass.$Identifier,
-  ): purify.Either<Error, PropertyVisibilitiesClass> {
-    return this.propertyVisibilitiesClassesSync({
-      where: { identifiers: [identifier], type: "identifiers" },
-    }).map((objects) => objects[0]);
-  }
-
-  async propertyVisibilitiesClassIdentifiers(
-    query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly PropertyVisibilitiesClass.$Identifier[]>
-  > {
-    return this.propertyVisibilitiesClassIdentifiersSync(query);
-  }
-
-  propertyVisibilitiesClassIdentifiersSync(
-    query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
-  ): purify.Either<Error, readonly PropertyVisibilitiesClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      PropertyVisibilitiesClass,
-      PropertyVisibilitiesClass.$Identifier
-    >(
-      [{ $fromRdf: PropertyVisibilitiesClass.$fromRdf, $fromRdfTypes: [] }],
-      query,
-    );
-  }
-
-  async propertyVisibilitiesClasses(
-    query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly PropertyVisibilitiesClass[]>> {
-    return this.propertyVisibilitiesClassesSync(query);
-  }
-
-  propertyVisibilitiesClassesSync(
-    query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
-  ): purify.Either<Error, readonly PropertyVisibilitiesClass[]> {
-    return this.$objectsSync<
-      PropertyVisibilitiesClass,
-      PropertyVisibilitiesClass.$Identifier
-    >(
-      [{ $fromRdf: PropertyVisibilitiesClass.$fromRdf, $fromRdfTypes: [] }],
-      query,
-    );
-  }
-
-  async propertyVisibilitiesClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
-      "where"
-    >,
-  ): Promise<purify.Either<Error, number>> {
-    return this.propertyVisibilitiesClassesCountSync(query);
-  }
-
-  propertyVisibilitiesClassesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
-      "where"
-    >,
-  ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      PropertyVisibilitiesClass,
-      PropertyVisibilitiesClass.$Identifier
-    >(
-      [{ $fromRdf: PropertyVisibilitiesClass.$fromRdf, $fromRdfTypes: [] }],
-      query,
-    );
-  }
-
-  async sha256IriClass(
-    identifier: Sha256IriClass.$Identifier,
-  ): Promise<purify.Either<Error, Sha256IriClass>> {
-    return this.sha256IriClassSync(identifier);
-  }
-
-  sha256IriClassSync(
-    identifier: Sha256IriClass.$Identifier,
-  ): purify.Either<Error, Sha256IriClass> {
-    return this.sha256IriClassesSync({
-      where: { identifiers: [identifier], type: "identifiers" },
-    }).map((objects) => objects[0]);
-  }
-
-  async sha256IriClassIdentifiers(
-    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Sha256IriClass.$Identifier[]>> {
-    return this.sha256IriClassIdentifiersSync(query);
-  }
-
-  sha256IriClassIdentifiersSync(
-    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
-  ): purify.Either<Error, readonly Sha256IriClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      Sha256IriClass,
-      Sha256IriClass.$Identifier
-    >([{ $fromRdf: Sha256IriClass.$fromRdf, $fromRdfTypes: [] }], query);
-  }
-
-  async sha256IriClasses(
-    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Sha256IriClass[]>> {
-    return this.sha256IriClassesSync(query);
-  }
-
-  sha256IriClassesSync(
-    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
-  ): purify.Either<Error, readonly Sha256IriClass[]> {
-    return this.$objectsSync<Sha256IriClass, Sha256IriClass.$Identifier>(
-      [{ $fromRdf: Sha256IriClass.$fromRdf, $fromRdfTypes: [] }],
-      query,
-    );
-  }
-
-  async sha256IriClassesCount(
-    query?: Pick<$ObjectSet.Query<Sha256IriClass.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.sha256IriClassesCountSync(query);
-  }
-
-  sha256IriClassesCountSync(
-    query?: Pick<$ObjectSet.Query<Sha256IriClass.$Identifier>, "where">,
-  ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Sha256IriClass, Sha256IriClass.$Identifier>(
-      [{ $fromRdf: Sha256IriClass.$fromRdf, $fromRdfTypes: [] }],
-      query,
-    );
-  }
-
   async partialClass(
     identifier: PartialClass.$Identifier,
   ): Promise<purify.Either<Error, PartialClass>> {
@@ -52371,6 +52158,217 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           $fromRdfTypes: [PartialInterfaceUnionMember2.$fromRdfType],
         },
       ],
+      query,
+    );
+  }
+
+  async propertyCardinalitiesClass(
+    identifier: PropertyCardinalitiesClass.$Identifier,
+  ): Promise<purify.Either<Error, PropertyCardinalitiesClass>> {
+    return this.propertyCardinalitiesClassSync(identifier);
+  }
+
+  propertyCardinalitiesClassSync(
+    identifier: PropertyCardinalitiesClass.$Identifier,
+  ): purify.Either<Error, PropertyCardinalitiesClass> {
+    return this.propertyCardinalitiesClassesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async propertyCardinalitiesClassIdentifiers(
+    query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PropertyCardinalitiesClass.$Identifier[]>
+  > {
+    return this.propertyCardinalitiesClassIdentifiersSync(query);
+  }
+
+  propertyCardinalitiesClassIdentifiersSync(
+    query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
+  ): purify.Either<Error, readonly PropertyCardinalitiesClass.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      PropertyCardinalitiesClass,
+      PropertyCardinalitiesClass.$Identifier
+    >(
+      [{ $fromRdf: PropertyCardinalitiesClass.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async propertyCardinalitiesClasses(
+    query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly PropertyCardinalitiesClass[]>> {
+    return this.propertyCardinalitiesClassesSync(query);
+  }
+
+  propertyCardinalitiesClassesSync(
+    query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
+  ): purify.Either<Error, readonly PropertyCardinalitiesClass[]> {
+    return this.$objectsSync<
+      PropertyCardinalitiesClass,
+      PropertyCardinalitiesClass.$Identifier
+    >(
+      [{ $fromRdf: PropertyCardinalitiesClass.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async propertyCardinalitiesClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.propertyCardinalitiesClassesCountSync(query);
+  }
+
+  propertyCardinalitiesClassesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      PropertyCardinalitiesClass,
+      PropertyCardinalitiesClass.$Identifier
+    >(
+      [{ $fromRdf: PropertyCardinalitiesClass.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async propertyVisibilitiesClass(
+    identifier: PropertyVisibilitiesClass.$Identifier,
+  ): Promise<purify.Either<Error, PropertyVisibilitiesClass>> {
+    return this.propertyVisibilitiesClassSync(identifier);
+  }
+
+  propertyVisibilitiesClassSync(
+    identifier: PropertyVisibilitiesClass.$Identifier,
+  ): purify.Either<Error, PropertyVisibilitiesClass> {
+    return this.propertyVisibilitiesClassesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async propertyVisibilitiesClassIdentifiers(
+    query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PropertyVisibilitiesClass.$Identifier[]>
+  > {
+    return this.propertyVisibilitiesClassIdentifiersSync(query);
+  }
+
+  propertyVisibilitiesClassIdentifiersSync(
+    query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
+  ): purify.Either<Error, readonly PropertyVisibilitiesClass.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      PropertyVisibilitiesClass,
+      PropertyVisibilitiesClass.$Identifier
+    >(
+      [{ $fromRdf: PropertyVisibilitiesClass.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async propertyVisibilitiesClasses(
+    query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly PropertyVisibilitiesClass[]>> {
+    return this.propertyVisibilitiesClassesSync(query);
+  }
+
+  propertyVisibilitiesClassesSync(
+    query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
+  ): purify.Either<Error, readonly PropertyVisibilitiesClass[]> {
+    return this.$objectsSync<
+      PropertyVisibilitiesClass,
+      PropertyVisibilitiesClass.$Identifier
+    >(
+      [{ $fromRdf: PropertyVisibilitiesClass.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async propertyVisibilitiesClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.propertyVisibilitiesClassesCountSync(query);
+  }
+
+  propertyVisibilitiesClassesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      PropertyVisibilitiesClass,
+      PropertyVisibilitiesClass.$Identifier
+    >(
+      [{ $fromRdf: PropertyVisibilitiesClass.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async sha256IriClass(
+    identifier: Sha256IriClass.$Identifier,
+  ): Promise<purify.Either<Error, Sha256IriClass>> {
+    return this.sha256IriClassSync(identifier);
+  }
+
+  sha256IriClassSync(
+    identifier: Sha256IriClass.$Identifier,
+  ): purify.Either<Error, Sha256IriClass> {
+    return this.sha256IriClassesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async sha256IriClassIdentifiers(
+    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Sha256IriClass.$Identifier[]>> {
+    return this.sha256IriClassIdentifiersSync(query);
+  }
+
+  sha256IriClassIdentifiersSync(
+    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
+  ): purify.Either<Error, readonly Sha256IriClass.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      Sha256IriClass,
+      Sha256IriClass.$Identifier
+    >([{ $fromRdf: Sha256IriClass.$fromRdf, $fromRdfTypes: [] }], query);
+  }
+
+  async sha256IriClasses(
+    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Sha256IriClass[]>> {
+    return this.sha256IriClassesSync(query);
+  }
+
+  sha256IriClassesSync(
+    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
+  ): purify.Either<Error, readonly Sha256IriClass[]> {
+    return this.$objectsSync<Sha256IriClass, Sha256IriClass.$Identifier>(
+      [{ $fromRdf: Sha256IriClass.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async sha256IriClassesCount(
+    query?: Pick<$ObjectSet.Query<Sha256IriClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.sha256IriClassesCountSync(query);
+  }
+
+  sha256IriClassesCountSync(
+    query?: Pick<$ObjectSet.Query<Sha256IriClass.$Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<Sha256IriClass, Sha256IriClass.$Identifier>(
+      [{ $fromRdf: Sha256IriClass.$fromRdf, $fromRdfTypes: [] }],
       query,
     );
   }
@@ -55167,127 +55165,6 @@ export class $SparqlObjectSet implements $ObjectSet {
     );
   }
 
-  async propertyCardinalitiesClass(
-    identifier: PropertyCardinalitiesClass.$Identifier,
-  ): Promise<purify.Either<Error, PropertyCardinalitiesClass>> {
-    return (
-      await this.propertyCardinalitiesClasses({
-        where: { identifiers: [identifier], type: "identifiers" },
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async propertyCardinalitiesClassIdentifiers(
-    query?: $SparqlObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly PropertyCardinalitiesClass.$Identifier[]>
-  > {
-    return this.$objectIdentifiers<PropertyCardinalitiesClass.$Identifier>(
-      PropertyCardinalitiesClass,
-      query,
-    );
-  }
-
-  async propertyCardinalitiesClasses(
-    query?: $SparqlObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly PropertyCardinalitiesClass[]>> {
-    return this.$objects<
-      PropertyCardinalitiesClass,
-      PropertyCardinalitiesClass.$Identifier
-    >(PropertyCardinalitiesClass, query);
-  }
-
-  async propertyCardinalitiesClassesCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
-      "where"
-    >,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<PropertyCardinalitiesClass.$Identifier>(
-      PropertyCardinalitiesClass,
-      query,
-    );
-  }
-
-  async propertyVisibilitiesClass(
-    identifier: PropertyVisibilitiesClass.$Identifier,
-  ): Promise<purify.Either<Error, PropertyVisibilitiesClass>> {
-    return (
-      await this.propertyVisibilitiesClasses({
-        where: { identifiers: [identifier], type: "identifiers" },
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async propertyVisibilitiesClassIdentifiers(
-    query?: $SparqlObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly PropertyVisibilitiesClass.$Identifier[]>
-  > {
-    return this.$objectIdentifiers<PropertyVisibilitiesClass.$Identifier>(
-      PropertyVisibilitiesClass,
-      query,
-    );
-  }
-
-  async propertyVisibilitiesClasses(
-    query?: $SparqlObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly PropertyVisibilitiesClass[]>> {
-    return this.$objects<
-      PropertyVisibilitiesClass,
-      PropertyVisibilitiesClass.$Identifier
-    >(PropertyVisibilitiesClass, query);
-  }
-
-  async propertyVisibilitiesClassesCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
-      "where"
-    >,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<PropertyVisibilitiesClass.$Identifier>(
-      PropertyVisibilitiesClass,
-      query,
-    );
-  }
-
-  async sha256IriClass(
-    identifier: Sha256IriClass.$Identifier,
-  ): Promise<purify.Either<Error, Sha256IriClass>> {
-    return (
-      await this.sha256IriClasses({
-        where: { identifiers: [identifier], type: "identifiers" },
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async sha256IriClassIdentifiers(
-    query?: $SparqlObjectSet.Query<Sha256IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Sha256IriClass.$Identifier[]>> {
-    return this.$objectIdentifiers<Sha256IriClass.$Identifier>(
-      Sha256IriClass,
-      query,
-    );
-  }
-
-  async sha256IriClasses(
-    query?: $SparqlObjectSet.Query<Sha256IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Sha256IriClass[]>> {
-    return this.$objects<Sha256IriClass, Sha256IriClass.$Identifier>(
-      Sha256IriClass,
-      query,
-    );
-  }
-
-  async sha256IriClassesCount(
-    query?: Pick<$SparqlObjectSet.Query<Sha256IriClass.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<Sha256IriClass.$Identifier>(
-      Sha256IriClass,
-      query,
-    );
-  }
-
   async partialClass(
     identifier: PartialClass.$Identifier,
   ): Promise<purify.Either<Error, PartialClass>> {
@@ -55523,6 +55400,127 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<PartialInterfaceUnionMember2.$Identifier>(
       PartialInterfaceUnionMember2,
+      query,
+    );
+  }
+
+  async propertyCardinalitiesClass(
+    identifier: PropertyCardinalitiesClass.$Identifier,
+  ): Promise<purify.Either<Error, PropertyCardinalitiesClass>> {
+    return (
+      await this.propertyCardinalitiesClasses({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async propertyCardinalitiesClassIdentifiers(
+    query?: $SparqlObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PropertyCardinalitiesClass.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<PropertyCardinalitiesClass.$Identifier>(
+      PropertyCardinalitiesClass,
+      query,
+    );
+  }
+
+  async propertyCardinalitiesClasses(
+    query?: $SparqlObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly PropertyCardinalitiesClass[]>> {
+    return this.$objects<
+      PropertyCardinalitiesClass,
+      PropertyCardinalitiesClass.$Identifier
+    >(PropertyCardinalitiesClass, query);
+  }
+
+  async propertyCardinalitiesClassesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<PropertyCardinalitiesClass.$Identifier>(
+      PropertyCardinalitiesClass,
+      query,
+    );
+  }
+
+  async propertyVisibilitiesClass(
+    identifier: PropertyVisibilitiesClass.$Identifier,
+  ): Promise<purify.Either<Error, PropertyVisibilitiesClass>> {
+    return (
+      await this.propertyVisibilitiesClasses({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async propertyVisibilitiesClassIdentifiers(
+    query?: $SparqlObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly PropertyVisibilitiesClass.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<PropertyVisibilitiesClass.$Identifier>(
+      PropertyVisibilitiesClass,
+      query,
+    );
+  }
+
+  async propertyVisibilitiesClasses(
+    query?: $SparqlObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly PropertyVisibilitiesClass[]>> {
+    return this.$objects<
+      PropertyVisibilitiesClass,
+      PropertyVisibilitiesClass.$Identifier
+    >(PropertyVisibilitiesClass, query);
+  }
+
+  async propertyVisibilitiesClassesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<PropertyVisibilitiesClass.$Identifier>(
+      PropertyVisibilitiesClass,
+      query,
+    );
+  }
+
+  async sha256IriClass(
+    identifier: Sha256IriClass.$Identifier,
+  ): Promise<purify.Either<Error, Sha256IriClass>> {
+    return (
+      await this.sha256IriClasses({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async sha256IriClassIdentifiers(
+    query?: $SparqlObjectSet.Query<Sha256IriClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Sha256IriClass.$Identifier[]>> {
+    return this.$objectIdentifiers<Sha256IriClass.$Identifier>(
+      Sha256IriClass,
+      query,
+    );
+  }
+
+  async sha256IriClasses(
+    query?: $SparqlObjectSet.Query<Sha256IriClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Sha256IriClass[]>> {
+    return this.$objects<Sha256IriClass, Sha256IriClass.$Identifier>(
+      Sha256IriClass,
+      query,
+    );
+  }
+
+  async sha256IriClassesCount(
+    query?: Pick<$SparqlObjectSet.Query<Sha256IriClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<Sha256IriClass.$Identifier>(
+      Sha256IriClass,
       query,
     );
   }

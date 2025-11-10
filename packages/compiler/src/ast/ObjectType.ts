@@ -187,16 +187,6 @@ export namespace ObjectType {
     readonly order: number;
 
     /**
-     * SHACL property path (https://www.w3.org/TR/shacl/#property-paths)
-     */
-    readonly path: PredicatePath;
-
-    /**
-     * Does the property directly or indirectly reference the ObjectType itself?
-     */
-    readonly recursive?: boolean;
-
-    /**
      * The property will be resolved lazily, with this type serving as a partial before resolution of the actual type (type).
      *
      * This type will mirror type: if type is an OptionType<ObjectType>, this will also be an OptionType<ObjectType>.
@@ -207,6 +197,16 @@ export namespace ObjectType {
       | OptionType<ObjectType | ObjectUnionType>
       | SetType<ObjectType | ObjectUnionType>
     >;
+
+    /**
+     * SHACL property path (https://www.w3.org/TR/shacl/#property-paths)
+     */
+    readonly path: PredicatePath;
+
+    /**
+     * Does the property directly or indirectly reference the ObjectType itself?
+     */
+    readonly recursive?: boolean;
 
     /**
      * Type of this property.
