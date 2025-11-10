@@ -35,14 +35,14 @@ export class PropertyShape extends ShaclCorePropertyShape<
     return this.generatedShaclmatePropertyShape.mutable;
   }
 
-  get shaclmateName(): Maybe<string> {
-    return this.generatedShaclmatePropertyShape.name;
-  }
-
   get partial(): Maybe<NodeShape> {
     return this.generatedShaclmatePropertyShape.partial.chain((identifier) =>
       this.shapesGraph.nodeShapeByIdentifier(identifier),
     );
+  }
+
+  get shaclmateName(): Maybe<string> {
+    return this.generatedShaclmatePropertyShape.name;
   }
 
   get visibility(): PropertyVisibility {
