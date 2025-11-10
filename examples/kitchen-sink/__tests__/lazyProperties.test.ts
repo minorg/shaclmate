@@ -7,15 +7,15 @@ import * as kitchenSink from "../src/index.js";
 async function expectEmptyOptional<
   ObjectIdentifierT extends BlankNode | NamedNode,
   ResolvedObjectT extends { $identifier: ObjectIdentifierT },
-  StubObjectT extends { $identifier: ObjectIdentifierT },
+  PartialObjectT extends { $identifier: ObjectIdentifierT },
 >(
   actual: kitchenSink.$LazyOptionalObject<
     ObjectIdentifierT,
     ResolvedObjectT,
-    StubObjectT
+    PartialObjectT
   >,
 ): Promise<void> {
-  expect(actual.stub.isNothing()).toStrictEqual(true);
+  expect(actual.partial.isNothing()).toStrictEqual(true);
   const resolvedObject = (await actual.resolve()).unsafeCoerce();
   expect(resolvedObject.isNothing()).toStrictEqual(true);
 }
@@ -23,15 +23,15 @@ async function expectEmptyOptional<
 async function expectEmptySet<
   ObjectIdentifierT extends BlankNode | NamedNode,
   ResolvedObjectT extends { $identifier: ObjectIdentifierT },
-  StubObjectT extends { $identifier: ObjectIdentifierT },
+  PartialObjectT extends { $identifier: ObjectIdentifierT },
 >(
   actual: kitchenSink.$LazyObjectSet<
     ObjectIdentifierT,
     ResolvedObjectT,
-    StubObjectT
+    PartialObjectT
   >,
 ): Promise<void> {
-  expect(actual.stubs).toHaveLength(0);
+  expect(actual.partials).toHaveLength(0);
   const resolvedObjects = (await actual.resolve()).unsafeCoerce();
   expect(resolvedObjects).toHaveLength(0);
 }
@@ -39,7 +39,7 @@ async function expectEmptySet<
 async function expectedNonEmptyOptional<
   ObjectIdentifierT extends BlankNode | NamedNode,
   ResolvedObjectT extends { $identifier: ObjectIdentifierT },
-  StubObjectT extends { $identifier: ObjectIdentifierT },
+  PartialObjectT extends { $identifier: ObjectIdentifierT },
 >({
   actual,
   equals,
@@ -48,7 +48,7 @@ async function expectedNonEmptyOptional<
   actual: kitchenSink.$LazyOptionalObject<
     ObjectIdentifierT,
     ResolvedObjectT,
-    StubObjectT
+    PartialObjectT
   >;
   equals: (
     left: ResolvedObjectT,
@@ -57,7 +57,7 @@ async function expectedNonEmptyOptional<
   expected: ResolvedObjectT;
 }): Promise<void> {
   expect(
-    actual.stub.unsafeCoerce().$identifier.equals(expected.$identifier),
+    actual.partial.unsafeCoerce().$identifier.equals(expected.$identifier),
   ).toStrictEqual(true);
 
   const resolvedObject = (await actual.resolve()).unsafeCoerce().unsafeCoerce();
@@ -67,7 +67,7 @@ async function expectedNonEmptyOptional<
 async function expectRequired<
   ObjectIdentifierT extends BlankNode | NamedNode,
   ResolvedObjectT extends { $identifier: ObjectIdentifierT },
-  StubObjectT extends { $identifier: ObjectIdentifierT },
+  PartialObjectT extends { $identifier: ObjectIdentifierT },
 >({
   actual,
   equals,
@@ -76,7 +76,7 @@ async function expectRequired<
   actual: kitchenSink.$LazyRequiredObject<
     ObjectIdentifierT,
     ResolvedObjectT,
-    StubObjectT
+    PartialObjectT
   >;
   equals: (
     left: ResolvedObjectT,
@@ -84,7 +84,7 @@ async function expectRequired<
   ) => kitchenSink.$EqualsResult;
   expected: ResolvedObjectT;
 }): Promise<void> {
-  expect(actual.stub.$identifier.equals(expected.$identifier)).toStrictEqual(
+  expect(actual.partial.$identifier.equals(expected.$identifier)).toStrictEqual(
     true,
   );
 
@@ -95,7 +95,7 @@ async function expectRequired<
 async function expectSet<
   ObjectIdentifierT extends BlankNode | NamedNode,
   ResolvedObjectT extends { $identifier: ObjectIdentifierT },
-  StubObjectT extends { $identifier: ObjectIdentifierT },
+  PartialObjectT extends { $identifier: ObjectIdentifierT },
 >({
   actual,
   equals,
@@ -104,7 +104,7 @@ async function expectSet<
   actual: kitchenSink.$LazyObjectSet<
     ObjectIdentifierT,
     ResolvedObjectT,
-    StubObjectT
+    PartialObjectT
   >;
   equals: (
     left: ResolvedObjectT,
@@ -112,10 +112,10 @@ async function expectSet<
   ) => kitchenSink.$EqualsResult;
   expected: readonly ResolvedObjectT[];
 }): Promise<void> {
-  expect(actual.stubs).toHaveLength(expected.length);
-  actual.stubs.forEach((actualStub, stubI) => {
+  expect(actual.partials).toHaveLength(expected.length);
+  actual.partials.forEach((actualPartial, partialI) => {
     expect(
-      actualStub.$identifier.equals(expected[stubI].$identifier),
+      actualPartial.$identifier.equals(expected[partialI].$identifier),
     ).toStrictEqual(true);
   });
 
@@ -211,7 +211,7 @@ describe("lazyProperties", () => {
       new kitchenSink.LazyPropertiesClass({
         requiredLazyToResolvedClassProperty:
           expectedLazilyResolvedBlankNodeOrIriClassInstance,
-        requiredStubClassToResolvedClassProperty:
+        requiredPartialClassToResolvedClassProperty:
           expectedLazilyResolvedBlankNodeOrIriClassInstance,
       }).$toRdf({ resourceSet }),
     ).unsafeCoerce();
@@ -222,7 +222,7 @@ describe("lazyProperties", () => {
           kitchenSink.LazyPropertiesInterface.$create({
             requiredLazyToResolvedInterfaceProperty:
               expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
-            requiredStubInterfaceToResolvedInterfaceProperty:
+            requiredPartialInterfaceToResolvedInterfaceProperty:
               expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
           }),
           { resourceSet },
@@ -238,20 +238,20 @@ describe("lazyProperties", () => {
             expectedLazilyResolvedClassUnionInstance,
           optionalLazyToResolvedIriClassProperty:
             expectedLazilyResolvedIriClassInstance,
-          optionalStubClassToResolvedClassProperty:
+          optionalPartialClassToResolvedClassProperty:
             expectedLazilyResolvedBlankNodeOrIriClassInstance,
-          optionalStubClassToResolvedClassUnionProperty:
+          optionalPartialClassToResolvedClassUnionProperty:
             expectedLazilyResolvedClassUnionInstance,
-          optionalStubClassUnionToResolvedClassUnionProperty:
+          optionalPartialClassUnionToResolvedClassUnionProperty:
             expectedLazilyResolvedClassUnionInstance,
           requiredLazyToResolvedClassProperty:
             expectedLazilyResolvedBlankNodeOrIriClassInstance,
-          requiredStubClassToResolvedClassProperty:
+          requiredPartialClassToResolvedClassProperty:
             expectedLazilyResolvedBlankNodeOrIriClassInstance,
           setLazyToResolvedClassProperty: [
             expectedLazilyResolvedBlankNodeOrIriClassInstance,
           ],
-          setStubClassToResolvedClassProperty: [
+          setPartialClassToResolvedClassProperty: [
             expectedLazilyResolvedBlankNodeOrIriClassInstance,
           ],
         }).$toRdf({ resourceSet }),
@@ -267,20 +267,20 @@ describe("lazyProperties", () => {
               expectedLazilyResolvedInterfaceUnionInstance,
             optionalLazyToResolvedIriInterfaceProperty:
               expectedLazilyResolvedIriInterfaceInstance,
-            optionalStubInterfaceToResolvedInterfaceProperty:
+            optionalPartialInterfaceToResolvedInterfaceProperty:
               expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
-            optionalStubInterfaceToResolvedInterfaceUnionProperty:
+            optionalPartialInterfaceToResolvedInterfaceUnionProperty:
               expectedLazilyResolvedInterfaceUnionInstance,
-            optionalStubInterfaceUnionToResolvedInterfaceUnionProperty:
+            optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty:
               expectedLazilyResolvedInterfaceUnionInstance,
             requiredLazyToResolvedInterfaceProperty:
               expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
-            requiredStubInterfaceToResolvedInterfaceProperty:
+            requiredPartialInterfaceToResolvedInterfaceProperty:
               expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
             setLazyToResolvedInterfaceProperty: [
               expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
             ],
-            setStubInterfaceToResolvedInterfaceProperty: [
+            setPartialInterfaceToResolvedInterfaceProperty: [
               expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
             ],
           }),
@@ -392,60 +392,60 @@ describe("lazyProperties", () => {
             }
             break;
           }
-          case "optionalStubClassToResolvedClassProperty": {
+          case "optionalPartialClassToResolvedClassProperty": {
             if (empty) {
               await expectEmptyOptional(
-                emptyLazyPropertiesClassInstance.optionalStubClassToResolvedClassProperty,
+                emptyLazyPropertiesClassInstance.optionalPartialClassToResolvedClassProperty,
               );
             } else {
               await expectedNonEmptyOptional({
                 actual:
-                  nonEmptyLazyPropertiesClassInstance.optionalStubClassToResolvedClassProperty,
+                  nonEmptyLazyPropertiesClassInstance.optionalPartialClassToResolvedClassProperty,
                 equals: (left, right) => left.$equals(right),
                 expected: expectedLazilyResolvedBlankNodeOrIriClassInstance,
               });
             }
             break;
           }
-          case "optionalStubClassToResolvedClassUnionProperty": {
+          case "optionalPartialClassToResolvedClassUnionProperty": {
             if (empty) {
               await expectEmptyOptional(
-                emptyLazyPropertiesClassInstance.optionalStubClassToResolvedClassUnionProperty,
+                emptyLazyPropertiesClassInstance.optionalPartialClassToResolvedClassUnionProperty,
               );
             } else {
               await expectedNonEmptyOptional({
                 actual:
-                  nonEmptyLazyPropertiesClassInstance.optionalStubClassToResolvedClassUnionProperty,
+                  nonEmptyLazyPropertiesClassInstance.optionalPartialClassToResolvedClassUnionProperty,
                 equals: kitchenSink.LazilyResolvedClassUnion.$equals,
                 expected: expectedLazilyResolvedClassUnionInstance,
               });
             }
             break;
           }
-          case "optionalStubClassUnionToResolvedClassUnionProperty": {
+          case "optionalPartialClassUnionToResolvedClassUnionProperty": {
             if (empty) {
               await expectEmptyOptional(
-                emptyLazyPropertiesClassInstance.optionalStubClassUnionToResolvedClassUnionProperty,
+                emptyLazyPropertiesClassInstance.optionalPartialClassUnionToResolvedClassUnionProperty,
               );
             } else {
               await expectedNonEmptyOptional({
                 actual:
-                  nonEmptyLazyPropertiesClassInstance.optionalStubClassUnionToResolvedClassUnionProperty,
+                  nonEmptyLazyPropertiesClassInstance.optionalPartialClassUnionToResolvedClassUnionProperty,
                 equals: kitchenSink.LazilyResolvedClassUnion.$equals,
                 expected: expectedLazilyResolvedClassUnionInstance,
               });
             }
             break;
           }
-          case "optionalStubInterfaceToResolvedInterfaceProperty": {
+          case "optionalPartialInterfaceToResolvedInterfaceProperty": {
             if (empty) {
               await expectEmptyOptional(
-                emptyLazyPropertiesInterfaceInstance.optionalStubInterfaceToResolvedInterfaceProperty,
+                emptyLazyPropertiesInterfaceInstance.optionalPartialInterfaceToResolvedInterfaceProperty,
               );
             } else {
               await expectedNonEmptyOptional({
                 actual:
-                  nonEmptyLazyPropertiesInterfaceInstance.optionalStubInterfaceToResolvedInterfaceProperty,
+                  nonEmptyLazyPropertiesInterfaceInstance.optionalPartialInterfaceToResolvedInterfaceProperty,
                 equals:
                   kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$equals,
                 expected: expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
@@ -453,30 +453,30 @@ describe("lazyProperties", () => {
             }
             break;
           }
-          case "optionalStubInterfaceToResolvedInterfaceUnionProperty": {
+          case "optionalPartialInterfaceToResolvedInterfaceUnionProperty": {
             if (empty) {
               await expectEmptyOptional(
-                emptyLazyPropertiesInterfaceInstance.optionalStubInterfaceToResolvedInterfaceUnionProperty,
+                emptyLazyPropertiesInterfaceInstance.optionalPartialInterfaceToResolvedInterfaceUnionProperty,
               );
             } else {
               await expectedNonEmptyOptional({
                 actual:
-                  nonEmptyLazyPropertiesInterfaceInstance.optionalStubInterfaceToResolvedInterfaceUnionProperty,
+                  nonEmptyLazyPropertiesInterfaceInstance.optionalPartialInterfaceToResolvedInterfaceUnionProperty,
                 equals: kitchenSink.LazilyResolvedInterfaceUnion.$equals,
                 expected: expectedLazilyResolvedInterfaceUnionInstance,
               });
             }
             break;
           }
-          case "optionalStubInterfaceUnionToResolvedInterfaceUnionProperty": {
+          case "optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty": {
             if (empty) {
               await expectEmptyOptional(
-                emptyLazyPropertiesInterfaceInstance.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty,
+                emptyLazyPropertiesInterfaceInstance.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
               );
             } else {
               await expectedNonEmptyOptional({
                 actual:
-                  nonEmptyLazyPropertiesInterfaceInstance.optionalStubInterfaceUnionToResolvedInterfaceUnionProperty,
+                  nonEmptyLazyPropertiesInterfaceInstance.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
                 equals: kitchenSink.LazilyResolvedInterfaceUnion.$equals,
                 expected: expectedLazilyResolvedInterfaceUnionInstance,
               });
@@ -508,24 +508,24 @@ describe("lazyProperties", () => {
             }
             break;
           }
-          case "requiredStubClassToResolvedClassProperty": {
+          case "requiredPartialClassToResolvedClassProperty": {
             if (empty) {
             } else {
               await expectRequired({
                 actual:
-                  nonEmptyLazyPropertiesClassInstance.requiredStubClassToResolvedClassProperty,
+                  nonEmptyLazyPropertiesClassInstance.requiredPartialClassToResolvedClassProperty,
                 equals: (left, right) => left.$equals(right),
                 expected: expectedLazilyResolvedBlankNodeOrIriClassInstance,
               });
             }
             break;
           }
-          case "requiredStubInterfaceToResolvedInterfaceProperty": {
+          case "requiredPartialInterfaceToResolvedInterfaceProperty": {
             if (empty) {
             } else {
               await expectRequired({
                 actual:
-                  nonEmptyLazyPropertiesInterfaceInstance.requiredStubInterfaceToResolvedInterfaceProperty,
+                  nonEmptyLazyPropertiesInterfaceInstance.requiredPartialInterfaceToResolvedInterfaceProperty,
                 equals:
                   kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$equals,
                 expected: expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
@@ -548,16 +548,16 @@ describe("lazyProperties", () => {
             }
             break;
           }
-          case "setStubClassToResolvedClassProperty":
+          case "setPartialClassToResolvedClassProperty":
             {
               if (empty) {
                 await expectEmptySet(
-                  emptyLazyPropertiesClassInstance.setStubClassToResolvedClassProperty,
+                  emptyLazyPropertiesClassInstance.setPartialClassToResolvedClassProperty,
                 );
               } else {
                 await expectSet({
                   actual:
-                    nonEmptyLazyPropertiesClassInstance.setStubClassToResolvedClassProperty,
+                    nonEmptyLazyPropertiesClassInstance.setPartialClassToResolvedClassProperty,
                   equals: (left, right) => left.$equals(right),
                   expected: [expectedLazilyResolvedBlankNodeOrIriClassInstance],
                 });
@@ -582,16 +582,16 @@ describe("lazyProperties", () => {
             }
             break;
           }
-          case "setStubInterfaceToResolvedInterfaceProperty":
+          case "setPartialInterfaceToResolvedInterfaceProperty":
             {
               if (empty) {
                 await expectEmptySet(
-                  emptyLazyPropertiesInterfaceInstance.setStubInterfaceToResolvedInterfaceProperty,
+                  emptyLazyPropertiesInterfaceInstance.setPartialInterfaceToResolvedInterfaceProperty,
                 );
               } else {
                 await expectSet({
                   actual:
-                    nonEmptyLazyPropertiesInterfaceInstance.setStubInterfaceToResolvedInterfaceProperty,
+                    nonEmptyLazyPropertiesInterfaceInstance.setPartialInterfaceToResolvedInterfaceProperty,
                   equals:
                     kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$equals,
                   expected: [

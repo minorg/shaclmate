@@ -1922,8 +1922,7 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalLazyToResolvedClassProperty",
-          "stubType": {
+          "partialType": {
             "itemType": {
               "kind": "ObjectType",
               "name": {
@@ -1939,6 +1938,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalLazyToResolvedClassProperty",
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -1984,8 +1984,7 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/setLazyToResolvedClassProperty",
-          "stubType": {
+          "partialType": {
             "itemType": {
               "kind": "ObjectType",
               "name": {
@@ -2001,6 +2000,7 @@
             },
             "kind": "SetType"
           },
+          "path": "http://example.com/setLazyToResolvedClassProperty",
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -2046,8 +2046,7 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/requiredLazyToResolvedClassProperty",
-          "stubType": {
+          "partialType": {
             "kind": "ObjectType",
             "name": {
               "identifier": {
@@ -2060,6 +2059,7 @@
               "NamedNode"
             ]
           },
+          "path": "http://example.com/requiredLazyToResolvedClassProperty",
           "type": {
             "fromRdfType": {
               "termType": "NamedNode",
@@ -2102,8 +2102,7 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalLazyToResolvedIriClassProperty",
-          "stubType": {
+          "partialType": {
             "itemType": {
               "kind": "ObjectType",
               "name": {
@@ -2118,6 +2117,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalLazyToResolvedIriClassProperty",
           "type": {
             "itemType": {
               "kind": "ObjectType",
@@ -2151,8 +2151,7 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalLazyToResolvedClassUnionProperty",
-          "stubType": {
+          "partialType": {
             "itemType": {
               "kind": "ObjectType",
               "name": {
@@ -2168,6 +2167,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalLazyToResolvedClassUnionProperty",
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -2245,23 +2245,22 @@
               "value": "n3-228"
             },
             "propertyPath": {
-              "curie": ":optionalStubClassToResolvedClassProperty",
-              "uniqueLocalPart": "optionalStubClassToResolvedClassProperty",
+              "curie": ":optionalPartialClassToResolvedClassProperty",
+              "uniqueLocalPart": "optionalPartialClassToResolvedClassProperty",
               "termType": "NamedNode",
-              "value": "http://example.com/optionalStubClassToResolvedClassProperty"
+              "value": "http://example.com/optionalPartialClassToResolvedClassProperty"
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalStubClassToResolvedClassProperty",
-          "stubType": {
+          "partialType": {
             "itemType": {
               "kind": "ObjectType",
               "name": {
                 "identifier": {
-                  "curie": ":StubClass",
+                  "curie": ":PartialClass",
                   "termType": "NamedNode",
-                  "uniqueLocalPart": "StubClass",
-                  "value": "http://example.com/StubClass"
+                  "uniqueLocalPart": "PartialClass",
+                  "value": "http://example.com/PartialClass"
                 }
               },
               "identifierNodeKinds": [
@@ -2272,6 +2271,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalPartialClassToResolvedClassProperty",
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -2310,23 +2310,22 @@
               "value": "n3-229"
             },
             "propertyPath": {
-              "curie": ":setStubClassToResolvedClassProperty",
-              "uniqueLocalPart": "setStubClassToResolvedClassProperty",
+              "curie": ":setPartialClassToResolvedClassProperty",
+              "uniqueLocalPart": "setPartialClassToResolvedClassProperty",
               "termType": "NamedNode",
-              "value": "http://example.com/setStubClassToResolvedClassProperty"
+              "value": "http://example.com/setPartialClassToResolvedClassProperty"
             }
           },
           "order": 0,
-          "path": "http://example.com/setStubClassToResolvedClassProperty",
-          "stubType": {
+          "partialType": {
             "itemType": {
               "kind": "ObjectType",
               "name": {
                 "identifier": {
-                  "curie": ":StubClass",
+                  "curie": ":PartialClass",
                   "termType": "NamedNode",
-                  "uniqueLocalPart": "StubClass",
-                  "value": "http://example.com/StubClass"
+                  "uniqueLocalPart": "PartialClass",
+                  "value": "http://example.com/PartialClass"
                 }
               },
               "identifierNodeKinds": [
@@ -2337,6 +2336,7 @@
             },
             "kind": "SetType"
           },
+          "path": "http://example.com/setPartialClassToResolvedClassProperty",
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -2375,22 +2375,21 @@
               "value": "n3-230"
             },
             "propertyPath": {
-              "curie": ":requiredStubClassToResolvedClassProperty",
-              "uniqueLocalPart": "requiredStubClassToResolvedClassProperty",
+              "curie": ":requiredPartialClassToResolvedClassProperty",
+              "uniqueLocalPart": "requiredPartialClassToResolvedClassProperty",
               "termType": "NamedNode",
-              "value": "http://example.com/requiredStubClassToResolvedClassProperty"
+              "value": "http://example.com/requiredPartialClassToResolvedClassProperty"
             }
           },
           "order": 0,
-          "path": "http://example.com/requiredStubClassToResolvedClassProperty",
-          "stubType": {
+          "partialType": {
             "kind": "ObjectType",
             "name": {
               "identifier": {
-                "curie": ":StubClass",
+                "curie": ":PartialClass",
                 "termType": "NamedNode",
-                "uniqueLocalPart": "StubClass",
-                "value": "http://example.com/StubClass"
+                "uniqueLocalPart": "PartialClass",
+                "value": "http://example.com/PartialClass"
               }
             },
             "identifierNodeKinds": [
@@ -2399,6 +2398,7 @@
             ],
             "identifierMintingStrategy": "blankNode"
           },
+          "path": "http://example.com/requiredPartialClassToResolvedClassProperty",
           "type": {
             "fromRdfType": {
               "termType": "NamedNode",
@@ -2434,23 +2434,22 @@
               "value": "n3-231"
             },
             "propertyPath": {
-              "curie": ":optionalStubClassToResolvedClassUnionProperty",
-              "uniqueLocalPart": "optionalStubClassToResolvedClassUnionProperty",
+              "curie": ":optionalPartialClassToResolvedClassUnionProperty",
+              "uniqueLocalPart": "optionalPartialClassToResolvedClassUnionProperty",
               "termType": "NamedNode",
-              "value": "http://example.com/optionalStubClassToResolvedClassUnionProperty"
+              "value": "http://example.com/optionalPartialClassToResolvedClassUnionProperty"
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalStubClassToResolvedClassUnionProperty",
-          "stubType": {
+          "partialType": {
             "itemType": {
               "kind": "ObjectType",
               "name": {
                 "identifier": {
-                  "curie": ":StubClass",
+                  "curie": ":PartialClass",
                   "termType": "NamedNode",
-                  "uniqueLocalPart": "StubClass",
-                  "value": "http://example.com/StubClass"
+                  "uniqueLocalPart": "PartialClass",
+                  "value": "http://example.com/PartialClass"
                 }
               },
               "identifierNodeKinds": [
@@ -2461,6 +2460,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalPartialClassToResolvedClassUnionProperty",
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -2538,38 +2538,37 @@
               "value": "n3-232"
             },
             "propertyPath": {
-              "curie": ":optionalStubClassUnionToResolvedClassUnionProperty",
-              "uniqueLocalPart": "optionalStubClassUnionToResolvedClassUnionProperty",
+              "curie": ":optionalPartialClassUnionToResolvedClassUnionProperty",
+              "uniqueLocalPart": "optionalPartialClassUnionToResolvedClassUnionProperty",
               "termType": "NamedNode",
-              "value": "http://example.com/optionalStubClassUnionToResolvedClassUnionProperty"
+              "value": "http://example.com/optionalPartialClassUnionToResolvedClassUnionProperty"
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalStubClassUnionToResolvedClassUnionProperty",
-          "stubType": {
+          "partialType": {
             "itemType": {
               "kind": "ObjectUnionType",
               "name": {
                 "identifier": {
-                  "curie": ":StubClassUnion",
+                  "curie": ":PartialClassUnion",
                   "termType": "NamedNode",
-                  "uniqueLocalPart": "StubClassUnion",
-                  "value": "http://example.com/StubClassUnion"
+                  "uniqueLocalPart": "PartialClassUnion",
+                  "value": "http://example.com/PartialClassUnion"
                 }
               },
               "types": [
                 {
                   "fromRdfType": {
                     "termType": "NamedNode",
-                    "value": "http://example.com/StubClassUnionMember1"
+                    "value": "http://example.com/PartialClassUnionMember1"
                   },
                   "kind": "ObjectType",
                   "name": {
                     "identifier": {
-                      "curie": ":StubClassUnionMember1",
+                      "curie": ":PartialClassUnionMember1",
                       "termType": "NamedNode",
-                      "uniqueLocalPart": "StubClassUnionMember1",
-                      "value": "http://example.com/StubClassUnionMember1"
+                      "uniqueLocalPart": "PartialClassUnionMember1",
+                      "value": "http://example.com/PartialClassUnionMember1"
                     }
                   },
                   "identifierNodeKinds": [
@@ -2580,22 +2579,22 @@
                   "toRdfTypes": [
                     {
                       "termType": "NamedNode",
-                      "value": "http://example.com/StubClassUnionMember1"
+                      "value": "http://example.com/PartialClassUnionMember1"
                     }
                   ]
                 },
                 {
                   "fromRdfType": {
                     "termType": "NamedNode",
-                    "value": "http://example.com/StubClassUnionMember2"
+                    "value": "http://example.com/PartialClassUnionMember2"
                   },
                   "kind": "ObjectType",
                   "name": {
                     "identifier": {
-                      "curie": ":StubClassUnionMember2",
+                      "curie": ":PartialClassUnionMember2",
                       "termType": "NamedNode",
-                      "uniqueLocalPart": "StubClassUnionMember2",
-                      "value": "http://example.com/StubClassUnionMember2"
+                      "uniqueLocalPart": "PartialClassUnionMember2",
+                      "value": "http://example.com/PartialClassUnionMember2"
                     }
                   },
                   "identifierNodeKinds": [
@@ -2606,7 +2605,7 @@
                   "toRdfTypes": [
                     {
                       "termType": "NamedNode",
-                      "value": "http://example.com/StubClassUnionMember2"
+                      "value": "http://example.com/PartialClassUnionMember2"
                     }
                   ]
                 }
@@ -2614,6 +2613,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalPartialClassUnionToResolvedClassUnionProperty",
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -2690,10 +2690,10 @@
       "kind": "ObjectType",
       "name": {
         "identifier": {
-          "curie": ":StubClass",
+          "curie": ":PartialClass",
           "termType": "NamedNode",
-          "uniqueLocalPart": "StubClass",
-          "value": "http://example.com/StubClass"
+          "uniqueLocalPart": "PartialClass",
+          "value": "http://example.com/PartialClass"
         }
       },
       "properties": [
@@ -2701,7 +2701,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-273"
+              "value": "n3-261"
             },
             "propertyPath": {
               "curie": ":lazilyResolvedStringProperty",
@@ -2749,8 +2749,7 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/requiredLazyToResolvedInterfaceProperty",
-          "stubType": {
+          "partialType": {
             "kind": "ObjectType",
             "name": {
               "identifier": {
@@ -2763,6 +2762,7 @@
               "NamedNode"
             ]
           },
+          "path": "http://example.com/requiredLazyToResolvedInterfaceProperty",
           "type": {
             "fromRdfType": {
               "termType": "NamedNode",
@@ -2805,8 +2805,7 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalLazyToResolvedIriInterfaceProperty",
-          "stubType": {
+          "partialType": {
             "itemType": {
               "kind": "ObjectType",
               "name": {
@@ -2821,6 +2820,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalLazyToResolvedIriInterfaceProperty",
           "type": {
             "itemType": {
               "kind": "ObjectType",
@@ -2854,8 +2854,7 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalLazyToResolvedInterfaceUnionProperty",
-          "stubType": {
+          "partialType": {
             "itemType": {
               "kind": "ObjectType",
               "name": {
@@ -2871,6 +2870,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalLazyToResolvedInterfaceUnionProperty",
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -2948,23 +2948,22 @@
               "value": "n3-236"
             },
             "propertyPath": {
-              "curie": ":optionalStubInterfaceToResolvedInterfaceProperty",
-              "uniqueLocalPart": "optionalStubInterfaceToResolvedInterfaceProperty",
+              "curie": ":optionalPartialInterfaceToResolvedInterfaceProperty",
+              "uniqueLocalPart": "optionalPartialInterfaceToResolvedInterfaceProperty",
               "termType": "NamedNode",
-              "value": "http://example.com/optionalStubInterfaceToResolvedInterfaceProperty"
+              "value": "http://example.com/optionalPartialInterfaceToResolvedInterfaceProperty"
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalStubInterfaceToResolvedInterfaceProperty",
-          "stubType": {
+          "partialType": {
             "itemType": {
               "kind": "ObjectType",
               "name": {
                 "identifier": {
-                  "curie": ":StubInterface",
+                  "curie": ":PartialInterface",
                   "termType": "NamedNode",
-                  "uniqueLocalPart": "StubInterface",
-                  "value": "http://example.com/StubInterface"
+                  "uniqueLocalPart": "PartialInterface",
+                  "value": "http://example.com/PartialInterface"
                 }
               },
               "identifierNodeKinds": [
@@ -2975,6 +2974,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalPartialInterfaceToResolvedInterfaceProperty",
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -3013,23 +3013,22 @@
               "value": "n3-237"
             },
             "propertyPath": {
-              "curie": ":setStubInterfaceToResolvedInterfaceProperty",
-              "uniqueLocalPart": "setStubInterfaceToResolvedInterfaceProperty",
+              "curie": ":setPartialInterfaceToResolvedInterfaceProperty",
+              "uniqueLocalPart": "setPartialInterfaceToResolvedInterfaceProperty",
               "termType": "NamedNode",
-              "value": "http://example.com/setStubInterfaceToResolvedInterfaceProperty"
+              "value": "http://example.com/setPartialInterfaceToResolvedInterfaceProperty"
             }
           },
           "order": 0,
-          "path": "http://example.com/setStubInterfaceToResolvedInterfaceProperty",
-          "stubType": {
+          "partialType": {
             "itemType": {
               "kind": "ObjectType",
               "name": {
                 "identifier": {
-                  "curie": ":StubInterface",
+                  "curie": ":PartialInterface",
                   "termType": "NamedNode",
-                  "uniqueLocalPart": "StubInterface",
-                  "value": "http://example.com/StubInterface"
+                  "uniqueLocalPart": "PartialInterface",
+                  "value": "http://example.com/PartialInterface"
                 }
               },
               "identifierNodeKinds": [
@@ -3040,6 +3039,7 @@
             },
             "kind": "SetType"
           },
+          "path": "http://example.com/setPartialInterfaceToResolvedInterfaceProperty",
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -3078,22 +3078,21 @@
               "value": "n3-238"
             },
             "propertyPath": {
-              "curie": ":requiredStubInterfaceToResolvedInterfaceProperty",
-              "uniqueLocalPart": "requiredStubInterfaceToResolvedInterfaceProperty",
+              "curie": ":requiredPartialInterfaceToResolvedInterfaceProperty",
+              "uniqueLocalPart": "requiredPartialInterfaceToResolvedInterfaceProperty",
               "termType": "NamedNode",
-              "value": "http://example.com/requiredStubInterfaceToResolvedInterfaceProperty"
+              "value": "http://example.com/requiredPartialInterfaceToResolvedInterfaceProperty"
             }
           },
           "order": 0,
-          "path": "http://example.com/requiredStubInterfaceToResolvedInterfaceProperty",
-          "stubType": {
+          "partialType": {
             "kind": "ObjectType",
             "name": {
               "identifier": {
-                "curie": ":StubInterface",
+                "curie": ":PartialInterface",
                 "termType": "NamedNode",
-                "uniqueLocalPart": "StubInterface",
-                "value": "http://example.com/StubInterface"
+                "uniqueLocalPart": "PartialInterface",
+                "value": "http://example.com/PartialInterface"
               }
             },
             "identifierNodeKinds": [
@@ -3102,6 +3101,7 @@
             ],
             "identifierMintingStrategy": "blankNode"
           },
+          "path": "http://example.com/requiredPartialInterfaceToResolvedInterfaceProperty",
           "type": {
             "fromRdfType": {
               "termType": "NamedNode",
@@ -3137,23 +3137,22 @@
               "value": "n3-239"
             },
             "propertyPath": {
-              "curie": ":optionalStubInterfaceToResolvedInterfaceUnionProperty",
-              "uniqueLocalPart": "optionalStubInterfaceToResolvedInterfaceUnionProperty",
+              "curie": ":optionalPartialInterfaceToResolvedInterfaceUnionProperty",
+              "uniqueLocalPart": "optionalPartialInterfaceToResolvedInterfaceUnionProperty",
               "termType": "NamedNode",
-              "value": "http://example.com/optionalStubInterfaceToResolvedInterfaceUnionProperty"
+              "value": "http://example.com/optionalPartialInterfaceToResolvedInterfaceUnionProperty"
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalStubInterfaceToResolvedInterfaceUnionProperty",
-          "stubType": {
+          "partialType": {
             "itemType": {
               "kind": "ObjectType",
               "name": {
                 "identifier": {
-                  "curie": ":StubInterface",
+                  "curie": ":PartialInterface",
                   "termType": "NamedNode",
-                  "uniqueLocalPart": "StubInterface",
-                  "value": "http://example.com/StubInterface"
+                  "uniqueLocalPart": "PartialInterface",
+                  "value": "http://example.com/PartialInterface"
                 }
               },
               "identifierNodeKinds": [
@@ -3164,6 +3163,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalPartialInterfaceToResolvedInterfaceUnionProperty",
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -3241,38 +3241,37 @@
               "value": "n3-240"
             },
             "propertyPath": {
-              "curie": ":optionalStubInterfaceUnionToResolvedInterfaceUnionProperty",
-              "uniqueLocalPart": "optionalStubInterfaceUnionToResolvedInterfaceUnionProperty",
+              "curie": ":optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
+              "uniqueLocalPart": "optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
               "termType": "NamedNode",
-              "value": "http://example.com/optionalStubInterfaceUnionToResolvedInterfaceUnionProperty"
+              "value": "http://example.com/optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty"
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalStubInterfaceUnionToResolvedInterfaceUnionProperty",
-          "stubType": {
+          "partialType": {
             "itemType": {
               "kind": "ObjectUnionType",
               "name": {
                 "identifier": {
-                  "curie": ":StubInterfaceUnion",
+                  "curie": ":PartialInterfaceUnion",
                   "termType": "NamedNode",
-                  "uniqueLocalPart": "StubInterfaceUnion",
-                  "value": "http://example.com/StubInterfaceUnion"
+                  "uniqueLocalPart": "PartialInterfaceUnion",
+                  "value": "http://example.com/PartialInterfaceUnion"
                 }
               },
               "types": [
                 {
                   "fromRdfType": {
                     "termType": "NamedNode",
-                    "value": "http://example.com/StubInterfaceUnionMember1"
+                    "value": "http://example.com/PartialInterfaceUnionMember1"
                   },
                   "kind": "ObjectType",
                   "name": {
                     "identifier": {
-                      "curie": ":StubInterfaceUnionMember1",
+                      "curie": ":PartialInterfaceUnionMember1",
                       "termType": "NamedNode",
-                      "uniqueLocalPart": "StubInterfaceUnionMember1",
-                      "value": "http://example.com/StubInterfaceUnionMember1"
+                      "uniqueLocalPart": "PartialInterfaceUnionMember1",
+                      "value": "http://example.com/PartialInterfaceUnionMember1"
                     }
                   },
                   "identifierNodeKinds": [
@@ -3283,22 +3282,22 @@
                   "toRdfTypes": [
                     {
                       "termType": "NamedNode",
-                      "value": "http://example.com/StubInterfaceUnionMember1"
+                      "value": "http://example.com/PartialInterfaceUnionMember1"
                     }
                   ]
                 },
                 {
                   "fromRdfType": {
                     "termType": "NamedNode",
-                    "value": "http://example.com/StubInterfaceUnionMember2"
+                    "value": "http://example.com/PartialInterfaceUnionMember2"
                   },
                   "kind": "ObjectType",
                   "name": {
                     "identifier": {
-                      "curie": ":StubInterfaceUnionMember2",
+                      "curie": ":PartialInterfaceUnionMember2",
                       "termType": "NamedNode",
-                      "uniqueLocalPart": "StubInterfaceUnionMember2",
-                      "value": "http://example.com/StubInterfaceUnionMember2"
+                      "uniqueLocalPart": "PartialInterfaceUnionMember2",
+                      "value": "http://example.com/PartialInterfaceUnionMember2"
                     }
                   },
                   "identifierNodeKinds": [
@@ -3309,7 +3308,7 @@
                   "toRdfTypes": [
                     {
                       "termType": "NamedNode",
-                      "value": "http://example.com/StubInterfaceUnionMember2"
+                      "value": "http://example.com/PartialInterfaceUnionMember2"
                     }
                   ]
                 }
@@ -3317,6 +3316,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -3401,8 +3401,7 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalLazyToResolvedInterfaceProperty",
-          "stubType": {
+          "partialType": {
             "itemType": {
               "kind": "ObjectType",
               "name": {
@@ -3418,6 +3417,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalLazyToResolvedInterfaceProperty",
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -3463,8 +3463,7 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/setLazyToResolvedInterfaceProperty",
-          "stubType": {
+          "partialType": {
             "itemType": {
               "kind": "ObjectType",
               "name": {
@@ -3480,6 +3479,7 @@
             },
             "kind": "SetType"
           },
+          "path": "http://example.com/setLazyToResolvedInterfaceProperty",
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -3517,10 +3517,10 @@
       "kind": "ObjectType",
       "name": {
         "identifier": {
-          "curie": ":StubInterface",
+          "curie": ":PartialInterface",
           "termType": "NamedNode",
-          "uniqueLocalPart": "StubInterface",
-          "value": "http://example.com/StubInterface"
+          "uniqueLocalPart": "PartialInterface",
+          "value": "http://example.com/PartialInterface"
         }
       },
       "properties": [
@@ -3528,7 +3528,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-278"
+              "value": "n3-266"
             },
             "propertyPath": {
               "curie": ":lazilyResolvedStringProperty",
@@ -3900,6 +3900,158 @@
       "kind": "ObjectType",
       "name": {
         "identifier": {
+          "curie": ":PartialClassUnionMember1",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "PartialClassUnionMember1",
+          "value": "http://example.com/PartialClassUnionMember1"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-264"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":PartialClassUnionMember2",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "PartialClassUnionMember2",
+          "value": "http://example.com/PartialClassUnionMember2"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-265"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":PartialInterfaceUnionMember1",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "PartialInterfaceUnionMember1",
+          "value": "http://example.com/PartialInterfaceUnionMember1"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-269"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":PartialInterfaceUnionMember2",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "PartialInterfaceUnionMember2",
+          "value": "http://example.com/PartialInterfaceUnionMember2"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-270"
+            },
+            "propertyPath": {
+              "curie": ":lazilyResolvedStringProperty",
+              "uniqueLocalPart": "lazilyResolvedStringProperty",
+              "termType": "NamedNode",
+              "value": "http://example.com/lazilyResolvedStringProperty"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/lazilyResolvedStringProperty",
+          "type": {
+            "datatype": {
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            },
+            "hasValue": [],
+            "kind": "LiteralType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
           "curie": ":PropertyCardinalitiesClass",
           "termType": "NamedNode",
           "uniqueLocalPart": "PropertyCardinalitiesClass",
@@ -3912,7 +4064,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-261"
+              "value": "n3-271"
             },
             "propertyPath": {
               "curie": ":requiredStringProperty",
@@ -3938,7 +4090,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-262"
+              "value": "n3-272"
             },
             "propertyPath": {
               "curie": ":optionalStringProperty",
@@ -3967,7 +4119,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-263"
+              "value": "n3-273"
             },
             "propertyPath": {
               "curie": ":emptyStringSetProperty",
@@ -3996,7 +4148,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-264"
+              "value": "n3-274"
             },
             "propertyPath": {
               "curie": ":nonEmptyStringSetProperty",
@@ -4037,7 +4189,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-265"
+              "value": "n3-275"
             },
             "propertyPath": {
               "curie": ":protectedProperty",
@@ -4062,7 +4214,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-266"
+              "value": "n3-276"
             },
             "propertyPath": {
               "curie": ":privateProperty",
@@ -4087,7 +4239,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-267"
+              "value": "n3-277"
             },
             "propertyPath": {
               "curie": ":publicProperty",
@@ -4125,7 +4277,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-268"
+              "value": "n3-278"
             },
             "propertyPath": {
               "curie": ":sha256IriProperty",
@@ -4136,158 +4288,6 @@
           },
           "order": 0,
           "path": "http://example.com/sha256IriProperty",
-          "type": {
-            "datatype": {
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            },
-            "hasValue": [],
-            "kind": "LiteralType"
-          },
-          "visibility": "public"
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
-      "name": {
-        "identifier": {
-          "curie": ":StubClassUnionMember1",
-          "termType": "NamedNode",
-          "uniqueLocalPart": "StubClassUnionMember1",
-          "value": "http://example.com/StubClassUnionMember1"
-        }
-      },
-      "properties": [
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-276"
-            },
-            "propertyPath": {
-              "curie": ":lazilyResolvedStringProperty",
-              "uniqueLocalPart": "lazilyResolvedStringProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/lazilyResolvedStringProperty"
-            }
-          },
-          "order": 0,
-          "path": "http://example.com/lazilyResolvedStringProperty",
-          "type": {
-            "datatype": {
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            },
-            "hasValue": [],
-            "kind": "LiteralType"
-          },
-          "visibility": "public"
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
-      "name": {
-        "identifier": {
-          "curie": ":StubClassUnionMember2",
-          "termType": "NamedNode",
-          "uniqueLocalPart": "StubClassUnionMember2",
-          "value": "http://example.com/StubClassUnionMember2"
-        }
-      },
-      "properties": [
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-277"
-            },
-            "propertyPath": {
-              "curie": ":lazilyResolvedStringProperty",
-              "uniqueLocalPart": "lazilyResolvedStringProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/lazilyResolvedStringProperty"
-            }
-          },
-          "order": 0,
-          "path": "http://example.com/lazilyResolvedStringProperty",
-          "type": {
-            "datatype": {
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            },
-            "hasValue": [],
-            "kind": "LiteralType"
-          },
-          "visibility": "public"
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
-      "name": {
-        "identifier": {
-          "curie": ":StubInterfaceUnionMember1",
-          "termType": "NamedNode",
-          "uniqueLocalPart": "StubInterfaceUnionMember1",
-          "value": "http://example.com/StubInterfaceUnionMember1"
-        }
-      },
-      "properties": [
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-281"
-            },
-            "propertyPath": {
-              "curie": ":lazilyResolvedStringProperty",
-              "uniqueLocalPart": "lazilyResolvedStringProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/lazilyResolvedStringProperty"
-            }
-          },
-          "order": 0,
-          "path": "http://example.com/lazilyResolvedStringProperty",
-          "type": {
-            "datatype": {
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            },
-            "hasValue": [],
-            "kind": "LiteralType"
-          },
-          "visibility": "public"
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
-      "name": {
-        "identifier": {
-          "curie": ":StubInterfaceUnionMember2",
-          "termType": "NamedNode",
-          "uniqueLocalPart": "StubInterfaceUnionMember2",
-          "value": "http://example.com/StubInterfaceUnionMember2"
-        }
-      },
-      "properties": [
-        {
-          "name": {
-            "identifier": {
-              "termType": "BlankNode",
-              "value": "n3-282"
-            },
-            "propertyPath": {
-              "curie": ":lazilyResolvedStringProperty",
-              "uniqueLocalPart": "lazilyResolvedStringProperty",
-              "termType": "NamedNode",
-              "value": "http://example.com/lazilyResolvedStringProperty"
-            }
-          },
-          "order": 0,
-          "path": "http://example.com/lazilyResolvedStringProperty",
           "type": {
             "datatype": {
               "termType": "NamedNode",

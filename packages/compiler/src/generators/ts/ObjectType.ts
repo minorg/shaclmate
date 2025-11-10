@@ -540,24 +540,26 @@ export namespace ObjectType {
   export type LazyShaclProperty<
     LazyTypeT extends _ObjectType.LazyShaclProperty.Type<
       ResolvedTypeT,
-      StubTypeT
+      PartialTypeT
     >,
     ResolvedTypeT extends
       _ObjectType.LazyShaclProperty.Type.ResolvedTypeConstraint,
-    StubTypeT extends _ObjectType.LazyShaclProperty.Type.StubTypeConstraint,
-  > = _ObjectType.LazyShaclProperty<LazyTypeT, ResolvedTypeT, StubTypeT>;
+    PartialTypeT extends
+      _ObjectType.LazyShaclProperty.Type.PartialTypeConstraint,
+  > = _ObjectType.LazyShaclProperty<LazyTypeT, ResolvedTypeT, PartialTypeT>;
   export namespace LazyShaclProperty {
     export type Type<
       ResolvedTypeT extends
         _ObjectType.LazyShaclProperty.Type.ResolvedTypeConstraint,
-      StubTypeT extends _ObjectType.LazyShaclProperty.Type.StubTypeConstraint,
-    > = _ObjectType.LazyShaclProperty.Type<ResolvedTypeT, StubTypeT>;
+      PartialTypeT extends
+        _ObjectType.LazyShaclProperty.Type.PartialTypeConstraint,
+    > = _ObjectType.LazyShaclProperty.Type<ResolvedTypeT, PartialTypeT>;
 
     export namespace Type {
       export type ResolvedTypeConstraint =
         _ObjectType.LazyShaclProperty.Type.ResolvedTypeConstraint;
-      export type StubTypeConstraint =
-        _ObjectType.LazyShaclProperty.Type.StubTypeConstraint;
+      export type PartialTypeConstraint =
+        _ObjectType.LazyShaclProperty.Type.PartialTypeConstraint;
     }
   }
   export type ObjectSetMethodNames = {

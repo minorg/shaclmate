@@ -14,23 +14,23 @@ import { Type as _Type } from "../Type.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { ShaclProperty } from "./ShaclProperty.js";
 
-function stubObjectUnionTypeToResolvedObjectUnionTypeSwitchStatement({
+function partialObjectUnionTypeToResolvedObjectUnionTypeSwitchStatement({
   resolvedObjectUnionType,
-  stubObjectUnionType,
+  partialObjectUnionType,
   variables,
 }: {
   resolvedObjectUnionType: ObjectUnionType;
-  stubObjectUnionType: ObjectUnionType;
+  partialObjectUnionType: ObjectUnionType;
   variables: { value: string };
 }) {
   invariant(
     resolvedObjectUnionType.memberTypes.length ===
-      stubObjectUnionType.memberTypes.length,
+      partialObjectUnionType.memberTypes.length,
   );
 
   const caseBlocks = resolvedObjectUnionType.memberTypes.map(
     (resolvedObjectType, objectTypeI) => {
-      return `${resolvedObjectType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${stubObjectUnionType.memberTypes[objectTypeI].newExpression({ parameters: variables.value })};`;
+      return `${resolvedObjectType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${partialObjectUnionType.memberTypes[objectTypeI].newExpression({ parameters: variables.value })};`;
     },
   );
   caseBlocks.push(
@@ -40,16 +40,16 @@ function stubObjectUnionTypeToResolvedObjectUnionTypeSwitchStatement({
 }
 
 export class LazyShaclProperty<
-  LazyTypeT extends LazyShaclProperty.Type<ResolvedTypeT, StubTypeT>,
+  LazyTypeT extends LazyShaclProperty.Type<ResolvedTypeT, PartialTypeT>,
   ResolvedTypeT extends LazyShaclProperty.Type.ResolvedTypeConstraint,
-  StubTypeT extends LazyShaclProperty.Type.StubTypeConstraint,
+  PartialTypeT extends LazyShaclProperty.Type.PartialTypeConstraint,
 > extends ShaclProperty<LazyTypeT> {
   override readonly mutable = false;
   override readonly recursive = false;
 
   @Memoize()
   override get graphqlField(): ShaclProperty<
-    LazyShaclProperty.Type<StubTypeT, ResolvedTypeT>
+    LazyShaclProperty.Type<PartialTypeT, ResolvedTypeT>
   >["graphqlField"] {
     const args = this.type.graphqlArgs;
     const argsVariable = args.isJust() ? "args" : "_args";
@@ -66,7 +66,7 @@ export class LazyShaclProperty<
 export namespace LazyShaclProperty {
   export abstract class Type<
     ResolvedTypeT extends Type.ResolvedTypeConstraint,
-    StubTypeT extends Type.StubTypeConstraint,
+    PartialTypeT extends Type.PartialTypeConstraint,
   > extends _Type {
     override readonly discriminatorProperty: _Type["discriminatorProperty"] =
       Maybe.empty();
@@ -82,26 +82,26 @@ export namespace LazyShaclProperty {
       >
     >;
 
+    protected readonly partialType: PartialTypeT;
     protected readonly resolvedType: ResolvedTypeT;
     protected readonly runtimeClass: {
       readonly name: string;
+      readonly partialPropertyName: string;
       readonly rawName: string;
       readonly snippetDeclaration: string;
-      readonly stubPropertyName: string;
     };
-    protected readonly stubType: StubTypeT;
 
     constructor({
-      stubType,
+      partialType,
       resolvedType,
       runtimeClass,
     }: {
-      stubType: StubTypeT;
+      partialType: PartialTypeT;
       resolvedType: ResolvedTypeT;
-      runtimeClass: Type<ResolvedTypeT, StubTypeT>["runtimeClass"];
+      runtimeClass: Type<ResolvedTypeT, PartialTypeT>["runtimeClass"];
     }) {
       super();
-      this.stubType = stubType;
+      this.partialType = partialType;
       this.resolvedType = resolvedType;
       this.runtimeClass = runtimeClass;
     }
@@ -119,7 +119,7 @@ export namespace LazyShaclProperty {
 
     @Memoize()
     override get equalsFunction(): string {
-      return `((left, right) => ${this.stubType.equalsFunction}(left.${this.runtimeClass.stubPropertyName}, right.${this.runtimeClass.stubPropertyName}))`;
+      return `((left, right) => ${this.partialType.equalsFunction}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName}))`;
     }
 
     override get graphqlName(): _Type.GraphqlName {
@@ -130,29 +130,29 @@ export namespace LazyShaclProperty {
       depth,
       variables,
     }: Parameters<_Type["hashStatements"]>[0]): readonly string[] {
-      return this.stubType.hashStatements({
+      return this.partialType.hashStatements({
         depth: depth + 1,
         variables: {
           ...variables,
-          value: `${variables.value}.${this.runtimeClass.stubPropertyName}`,
+          value: `${variables.value}.${this.runtimeClass.partialPropertyName}`,
         },
       });
     }
 
     override get jsonName(): _Type.JsonName {
-      return this.stubType.jsonName;
+      return this.partialType.jsonName;
     }
 
     override jsonUiSchemaElement(
       parameters: Parameters<_Type["jsonUiSchemaElement"]>[0],
     ): Maybe<string> {
-      return this.stubType.jsonUiSchemaElement(parameters);
+      return this.partialType.jsonUiSchemaElement(parameters);
     }
 
     override jsonZodSchema(
       parameters: Parameters<_Type["jsonZodSchema"]>[0],
     ): string {
-      return this.stubType.jsonZodSchema(parameters);
+      return this.partialType.jsonZodSchema(parameters);
     }
 
     override get name(): string {
@@ -162,7 +162,7 @@ export namespace LazyShaclProperty {
     override snippetDeclarations(
       parameters: Parameters<_Type["snippetDeclarations"]>[0],
     ): readonly string[] {
-      return this.stubType
+      return this.partialType
         .snippetDeclarations(parameters)
         .concat(this.resolvedType.snippetDeclarations(parameters))
         .concat(this.runtimeClass.snippetDeclaration);
@@ -171,21 +171,21 @@ export namespace LazyShaclProperty {
     override sparqlConstructTemplateTriples(
       parameters: Parameters<_Type["sparqlConstructTemplateTriples"]>[0],
     ): readonly string[] {
-      return this.stubType.sparqlConstructTemplateTriples(parameters);
+      return this.partialType.sparqlConstructTemplateTriples(parameters);
     }
 
     override sparqlWherePatterns(
       parameters: Parameters<_Type["sparqlWherePatterns"]>[0],
     ): readonly string[] {
-      return this.stubType.sparqlWherePatterns(parameters);
+      return this.partialType.sparqlWherePatterns(parameters);
     }
 
     override toJsonExpression({
       variables,
     }: Parameters<_Type["toJsonExpression"]>[0]): string {
-      return this.stubType.toJsonExpression({
+      return this.partialType.toJsonExpression({
         variables: {
-          value: `${variables.value}.${this.runtimeClass.stubPropertyName}`,
+          value: `${variables.value}.${this.runtimeClass.partialPropertyName}`,
         },
       });
     }
@@ -193,10 +193,10 @@ export namespace LazyShaclProperty {
     override toRdfExpression({
       variables,
     }: Parameters<_Type["toRdfExpression"]>[0]): string {
-      return this.stubType.toRdfExpression({
+      return this.partialType.toRdfExpression({
         variables: {
           ...variables,
-          value: `${variables.value}.${this.runtimeClass.stubPropertyName}`,
+          value: `${variables.value}.${this.runtimeClass.partialPropertyName}`,
         },
       });
     }
@@ -214,26 +214,26 @@ export namespace LazyShaclProperty {
       | ObjectUnionType
       | OptionType<ObjectType | ObjectUnionType>
       | SetType<ObjectType | ObjectUnionType>;
-    export type StubTypeConstraint = ResolvedTypeConstraint;
+    export type PartialTypeConstraint = ResolvedTypeConstraint;
   }
 
   export class ObjectSetType<
     ResolvedTypeT extends SetType<ObjectType | ObjectUnionType>,
-    StubTypeT extends SetType<ObjectType | ObjectUnionType>,
-  > extends Type<ResolvedTypeT, StubTypeT> {
+    PartialTypeT extends SetType<ObjectType | ObjectUnionType>,
+  > extends Type<ResolvedTypeT, PartialTypeT> {
     constructor({
       resolvedType,
-      stubType,
-    }: { resolvedType: ResolvedTypeT; stubType: StubTypeT }) {
+      partialType,
+    }: { resolvedType: ResolvedTypeT; partialType: PartialTypeT }) {
       super({
         resolvedType,
         runtimeClass: {
-          name: `${syntheticNamePrefix}LazyObjectSet<${resolvedType.itemType.identifierTypeAlias}, ${resolvedType.itemType.name}, ${stubType.itemType.name}>`,
+          name: `${syntheticNamePrefix}LazyObjectSet<${resolvedType.itemType.identifierTypeAlias}, ${partialType.itemType.name}, ${resolvedType.itemType.name}>`,
+          partialPropertyName: "partials",
           rawName: `${syntheticNamePrefix}LazyObjectSet`,
           snippetDeclaration: SnippetDeclarations.LazyObjectSet,
-          stubPropertyName: "stubs",
         },
-        stubType,
+        partialType,
       });
     }
 
@@ -241,22 +241,22 @@ export namespace LazyShaclProperty {
     override get conversions(): readonly _Type.Conversion[] {
       const conversions = super.conversions.concat();
 
-      if (this.stubType.itemType.kind === "ObjectType") {
+      if (this.partialType.itemType.kind === "ObjectType") {
         conversions.push({
           conversionExpression: (value) =>
-            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}.map(object => ${(this.stubType.itemType as ObjectType).newExpression({ parameters: "object" })}), resolver: async () => purify.Either.of(${value} as readonly ${this.resolvedType.itemType.name}[]) })`,
+            `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => ${(this.partialType.itemType as ObjectType).newExpression({ parameters: "object" })}), resolver: async () => purify.Either.of(${value} as readonly ${this.resolvedType.itemType.name}[]) })`,
           sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
           sourceTypeName: `readonly ${this.resolvedType.itemType.name}[]`,
         });
       } else if (
         this.resolvedType.itemType.kind === "ObjectUnionType" &&
-        this.stubType.itemType.kind === "ObjectUnionType" &&
+        this.partialType.itemType.kind === "ObjectUnionType" &&
         this.resolvedType.itemType.memberTypes.length ===
-          this.stubType.itemType.memberTypes.length
+          this.partialType.itemType.memberTypes.length
       ) {
         conversions.push({
           conversionExpression: (value) =>
-            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}.map(object => { ${stubObjectUnionTypeToResolvedObjectUnionTypeSwitchStatement({ resolvedObjectUnionType: this.resolvedType.itemType as ObjectUnionType, stubObjectUnionType: this.stubType.itemType as ObjectUnionType, variables: { value: "object" } })} }), resolver: async () => purify.Either.of(${value} as readonly ${this.resolvedType.itemType.name}[]) })`,
+            `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => { ${partialObjectUnionTypeToResolvedObjectUnionTypeSwitchStatement({ resolvedObjectUnionType: this.resolvedType.itemType as ObjectUnionType, partialObjectUnionType: this.partialType.itemType as ObjectUnionType, variables: { value: "object" } })} }), resolver: async () => purify.Either.of(${value} as readonly ${this.resolvedType.itemType.name}[]) })`,
           sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
           sourceTypeName: `readonly ${this.resolvedType.itemType.name}[]`,
         });
@@ -264,7 +264,7 @@ export namespace LazyShaclProperty {
 
       conversions.push({
         conversionExpression: () =>
-          `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: [], resolver: async () => { throw new Error("should never be called"); } })`,
+          `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: [], resolver: async () => { throw new Error("should never be called"); } })`,
         sourceTypeCheckExpression: (value) => `typeof ${value} === "undefined"`,
         sourceTypeName: "undefined",
       });
@@ -275,14 +275,14 @@ export namespace LazyShaclProperty {
     override fromJsonExpression(
       parameters: Parameters<_Type["fromJsonExpression"]>[0],
     ): string {
-      return `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${this.stubType.fromJsonExpression(parameters)}, resolver: () => Promise.resolve(purify.Left(new Error("unable to resolve identifiers deserialized from JSON"))) })`;
+      return `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: () => Promise.resolve(purify.Left(new Error("unable to resolve identifiers deserialized from JSON"))) })`;
     }
 
     override fromRdfExpression(
       parameters: Parameters<_Type["fromRdfExpression"]>[0],
     ): string {
       const { variables } = parameters;
-      return `${this.stubType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.stubPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}, resolver: (identifiers) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.objects}({ where: { identifiers, type: "identifiers" } }) })))`;
+      return `${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifiers) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.objects}({ where: { identifiers, type: "identifiers" } }) })))`;
     }
 
     @Memoize()
@@ -309,15 +309,15 @@ export namespace LazyShaclProperty {
       Type.ResolvedTypeConstraint,
       SetType<ObjectType | ObjectUnionType>
     >,
-    StubTypeT extends Exclude<
-      Type.StubTypeConstraint,
+    PartialTypeT extends Exclude<
+      Type.PartialTypeConstraint,
       SetType<ObjectType | ObjectUnionType>
     >,
-  > extends Type<ResolvedTypeT, StubTypeT> {
+  > extends Type<ResolvedTypeT, PartialTypeT> {
     override fromJsonExpression(
       parameters: Parameters<_Type["fromJsonExpression"]>[0],
     ): string {
-      return `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${this.stubType.fromJsonExpression(parameters)}, resolver: (identifier) => Promise.resolve(purify.Left(new Error(\`unable to resolve identifier \${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON\`))) })`;
+      return `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: (identifier) => Promise.resolve(purify.Left(new Error(\`unable to resolve identifier \${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON\`))) })`;
     }
 
     override get graphqlArgs(): Type<
@@ -336,21 +336,21 @@ export namespace LazyShaclProperty {
 
   export class OptionalObjectType<
     ResolvedTypeT extends OptionType<ObjectType | ObjectUnionType>,
-    StubTypeT extends OptionType<ObjectType | ObjectUnionType>,
-  > extends SingleObjectType<ResolvedTypeT, StubTypeT> {
+    PartialTypeT extends OptionType<ObjectType | ObjectUnionType>,
+  > extends SingleObjectType<ResolvedTypeT, PartialTypeT> {
     constructor({
       resolvedType,
-      stubType,
-    }: { resolvedType: ResolvedTypeT; stubType: StubTypeT }) {
+      partialType,
+    }: { resolvedType: ResolvedTypeT; partialType: PartialTypeT }) {
       super({
+        partialType,
         resolvedType,
         runtimeClass: {
-          name: `${syntheticNamePrefix}LazyOptionalObject<${resolvedType.itemType.identifierTypeAlias}, ${resolvedType.itemType.name}, ${stubType.itemType.name}>`,
+          name: `${syntheticNamePrefix}LazyOptionalObject<${resolvedType.itemType.identifierTypeAlias}, ${partialType.itemType.name}, ${resolvedType.itemType.name}>`,
+          partialPropertyName: "partial",
           rawName: `${syntheticNamePrefix}LazyOptionalObject`,
           snippetDeclaration: SnippetDeclarations.LazyOptionalObject,
-          stubPropertyName: "stub",
         },
-        stubType,
       });
     }
 
@@ -358,18 +358,18 @@ export namespace LazyShaclProperty {
     override get conversions(): readonly _Type.Conversion[] {
       const conversions = super.conversions.concat();
 
-      if (this.stubType.itemType.kind === "ObjectType") {
+      if (this.partialType.itemType.kind === "ObjectType") {
         conversions.push(
           {
             conversionExpression: (value) =>
-              `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}.map(object => ${(this.stubType.itemType as ObjectType).newExpression({ parameters: "object" })}), resolver: async () => purify.Either.of((${value} as purify.Maybe<${this.resolvedType.itemType.name}>).unsafeCoerce()) })`,
+              `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => ${(this.partialType.itemType as ObjectType).newExpression({ parameters: "object" })}), resolver: async () => purify.Either.of((${value} as purify.Maybe<${this.resolvedType.itemType.name}>).unsafeCoerce()) })`,
             sourceTypeCheckExpression: (value) =>
               `purify.Maybe.isMaybe(${value})`,
             sourceTypeName: `purify.Maybe<${this.resolvedType.itemType.name}>`,
           },
           {
             conversionExpression: (value) =>
-              `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: purify.Maybe.of(${(this.stubType.itemType as ObjectType).newExpression({ parameters: value })}), resolver: async () => purify.Either.of(${value} as ${this.resolvedType.itemType.name}) })`,
+              `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: purify.Maybe.of(${(this.partialType.itemType as ObjectType).newExpression({ parameters: value })}), resolver: async () => purify.Either.of(${value} as ${this.resolvedType.itemType.name}) })`,
             // Don't check instanceof value since the ObjectUnionType may be an interface
             // Rely on the fact that this will be the last type check on an object
             sourceTypeCheckExpression: (value) =>
@@ -379,23 +379,23 @@ export namespace LazyShaclProperty {
         );
       } else if (
         this.resolvedType.itemType.kind === "ObjectUnionType" &&
-        this.stubType.itemType.kind === "ObjectUnionType" &&
+        this.partialType.itemType.kind === "ObjectUnionType" &&
         this.resolvedType.itemType.memberTypes.length ===
-          this.stubType.itemType.memberTypes.length
+          this.partialType.itemType.memberTypes.length
       ) {
-        const maybeMap = `.map(object => { ${stubObjectUnionTypeToResolvedObjectUnionTypeSwitchStatement({ resolvedObjectUnionType: this.resolvedType.itemType as ObjectUnionType, stubObjectUnionType: this.stubType.itemType as ObjectUnionType, variables: { value: "object" } })} })`;
+        const maybeMap = `.map(object => { ${partialObjectUnionTypeToResolvedObjectUnionTypeSwitchStatement({ resolvedObjectUnionType: this.resolvedType.itemType as ObjectUnionType, partialObjectUnionType: this.partialType.itemType as ObjectUnionType, variables: { value: "object" } })} })`;
 
         conversions.push(
           {
             conversionExpression: (value) =>
-              `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${value}${maybeMap}, resolver: async () => purify.Either.of((${value} as purify.Maybe<${this.resolvedType.itemType.name}>).unsafeCoerce()) })`,
+              `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}${maybeMap}, resolver: async () => purify.Either.of((${value} as purify.Maybe<${this.resolvedType.itemType.name}>).unsafeCoerce()) })`,
             sourceTypeCheckExpression: (value) =>
               `purify.Maybe.isMaybe(${value})`,
             sourceTypeName: `purify.Maybe<${this.resolvedType.itemType.name}>`,
           },
           {
             conversionExpression: (value) =>
-              `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: purify.Maybe.of(${value})${maybeMap}, resolver: async () => purify.Either.of(${value} as ${this.resolvedType.itemType.name}) })`,
+              `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: purify.Maybe.of(${value})${maybeMap}, resolver: async () => purify.Either.of(${value} as ${this.resolvedType.itemType.name}) })`,
             // Don't check instanceof value since the ObjectUnionType may be an interface
             // Rely on the fact that this will be the last type check on an object
             sourceTypeCheckExpression: (value) =>
@@ -407,7 +407,7 @@ export namespace LazyShaclProperty {
 
       conversions.push({
         conversionExpression: () =>
-          `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: purify.Maybe.empty(), resolver: async () => { throw new Error("should never be called"); } })`,
+          `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: purify.Maybe.empty(), resolver: async () => { throw new Error("should never be called"); } })`,
         sourceTypeCheckExpression: (value) => `typeof ${value} === "undefined"`,
         sourceTypeName: "undefined",
       });
@@ -419,7 +419,7 @@ export namespace LazyShaclProperty {
       parameters: Parameters<_Type["fromRdfExpression"]>[0],
     ): string {
       const { variables } = parameters;
-      return `${this.stubType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.stubPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.object}(identifier) })))`;
+      return `${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.object}(identifier) })))`;
     }
 
     override graphqlResolveExpression(
@@ -431,31 +431,31 @@ export namespace LazyShaclProperty {
 
   export class RequiredObjectType<
     ResolvedTypeT extends ObjectType | ObjectUnionType,
-    StubTypeT extends ObjectType | ObjectUnionType,
-  > extends SingleObjectType<ResolvedTypeT, StubTypeT> {
+    PartialTypeT extends ObjectType | ObjectUnionType,
+  > extends SingleObjectType<ResolvedTypeT, PartialTypeT> {
     constructor({
       resolvedType,
-      stubType,
-    }: { resolvedType: ResolvedTypeT; stubType: StubTypeT }) {
+      partialType,
+    }: { resolvedType: ResolvedTypeT; partialType: PartialTypeT }) {
       super({
         resolvedType,
         runtimeClass: {
-          name: `${syntheticNamePrefix}LazyRequiredObject<${resolvedType.identifierTypeAlias}, ${resolvedType.name}, ${stubType.name}>`,
+          name: `${syntheticNamePrefix}LazyRequiredObject<${resolvedType.identifierTypeAlias}, ${partialType.name}, ${resolvedType.name}>`,
+          partialPropertyName: "partial",
           rawName: `${syntheticNamePrefix}LazyRequiredObject`,
           snippetDeclaration: SnippetDeclarations.LazyRequiredObject,
-          stubPropertyName: "stub",
         },
-        stubType,
+        partialType,
       });
     }
 
     override get conversions(): readonly _Type.Conversion[] {
       const conversions = super.conversions.concat();
 
-      if (this.stubType.kind === "ObjectType") {
+      if (this.partialType.kind === "ObjectType") {
         conversions.push({
           conversionExpression: (value) =>
-            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ${(this.stubType as ObjectType).newExpression({ parameters: value })}, resolver: async () => purify.Either.of(${value} as ${this.resolvedType.name}) })`,
+            `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${(this.partialType as ObjectType).newExpression({ parameters: value })}, resolver: async () => purify.Either.of(${value} as ${this.resolvedType.name}) })`,
           // Don't check instanceof value since the ObjectType may be an interface
           // Rely on the fact that this will be the last type check on an object
           sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
@@ -463,13 +463,13 @@ export namespace LazyShaclProperty {
         });
       } else if (
         this.resolvedType.kind === "ObjectUnionType" &&
-        this.stubType.kind === "ObjectUnionType" &&
+        this.partialType.kind === "ObjectUnionType" &&
         this.resolvedType.memberTypes.length ===
-          this.stubType.memberTypes.length
+          this.partialType.memberTypes.length
       ) {
         conversions.push({
           conversionExpression: (value) =>
-            `new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}: ((object: ${this.resolvedType.name}) => { ${stubObjectUnionTypeToResolvedObjectUnionTypeSwitchStatement({ resolvedObjectUnionType: this.resolvedType as ObjectUnionType, stubObjectUnionType: this.stubType as ObjectUnionType, variables: { value: "object" } })} })(${value}), resolver: async () => purify.Either.of(${value} as ${this.resolvedType.name}) })`,
+            `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ((object: ${this.resolvedType.name}) => { ${partialObjectUnionTypeToResolvedObjectUnionTypeSwitchStatement({ resolvedObjectUnionType: this.resolvedType as ObjectUnionType, partialObjectUnionType: this.partialType as ObjectUnionType, variables: { value: "object" } })} })(${value}), resolver: async () => purify.Either.of(${value} as ${this.resolvedType.name}) })`,
           // Don't check instanceof value since the ObjectUnionType may be an interface
           // Rely on the fact that this will be the last type check on an object
           sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
@@ -484,7 +484,7 @@ export namespace LazyShaclProperty {
       parameters: Parameters<_Type["fromRdfExpression"]>[0],
     ): string {
       const { variables } = parameters;
-      return `${this.stubType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.stubPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.stubPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.objectSetMethodNames.object}(identifier) })))`;
+      return `${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.objectSetMethodNames.object}(identifier) })))`;
     }
   }
 }
