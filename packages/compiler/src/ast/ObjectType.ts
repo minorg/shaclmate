@@ -197,11 +197,11 @@ export namespace ObjectType {
     readonly recursive?: boolean;
 
     /**
-     * The property will be resolved lazily, with this type serving as a stub before resolution of the actual type (type).
+     * The property will be resolved lazily, with this type serving as a partial before resolution of the actual type (type).
      *
      * This type will mirror type: if type is an OptionType<ObjectType>, this will also be an OptionType<ObjectType>.
      */
-    readonly stubType: Maybe<
+    readonly partialType: Maybe<
       | ObjectType
       | ObjectUnionType
       | OptionType<ObjectType | ObjectUnionType>

@@ -261,7 +261,7 @@ export const harnesses = {
         new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
           lazilyResolvedStringProperty: "test required empty",
         }),
-      requiredStubClassToResolvedClassProperty:
+      requiredPartialClassToResolvedClassProperty:
         new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
           lazilyResolvedStringProperty: "test required empty",
         }),
@@ -288,38 +288,39 @@ export const harnesses = {
           lazilyResolvedStringProperty:
             "optionalLazyToResolvedIriClassProperty",
         }),
-      optionalStubClassToResolvedClassProperty:
+      optionalPartialClassToResolvedClassProperty:
         new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
           lazilyResolvedStringProperty:
-            "optionalStubClassToResolvedClassProperty",
+            "optionalPartialClassToResolvedClassProperty",
         }),
-      optionalStubClassToResolvedClassUnionProperty:
+      optionalPartialClassToResolvedClassUnionProperty:
         new kitchenSink.LazilyResolvedClassUnionMember1({
           lazilyResolvedStringProperty:
-            "optionalStubClassToResolvedClassUnionProperty",
+            "optionalPartialClassToResolvedClassUnionProperty",
         }),
-      optionalStubClassUnionToResolvedClassUnionProperty:
+      optionalPartialClassUnionToResolvedClassUnionProperty:
         new kitchenSink.LazilyResolvedClassUnionMember1({
           lazilyResolvedStringProperty:
-            "optionalStubClassUnionToResolvedClassUnionProperty",
+            "optionalPartialClassUnionToResolvedClassUnionProperty",
         }),
       requiredLazyToResolvedClassProperty:
         new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
           lazilyResolvedStringProperty: "requiredLazyToResolvedClassProperty",
         }),
-      requiredStubClassToResolvedClassProperty:
+      requiredPartialClassToResolvedClassProperty:
         new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
           lazilyResolvedStringProperty:
-            "requiredStubClassToResolvedClassProperty",
+            "requiredPartialClassToResolvedClassProperty",
         }),
       setLazyToResolvedClassProperty: [
         new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
           lazilyResolvedStringProperty: "setLazyToResolvedClassProperty",
         }),
       ],
-      setStubClassToResolvedClassProperty: [
+      setPartialClassToResolvedClassProperty: [
         new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
-          lazilyResolvedStringProperty: "setStubClassToResolvedClassProperty",
+          lazilyResolvedStringProperty:
+            "setPartialClassToResolvedClassProperty",
         }),
       ],
     }),
@@ -334,7 +335,7 @@ export const harnesses = {
         kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
           lazilyResolvedStringProperty: "test required empty",
         }),
-      requiredStubInterfaceToResolvedInterfaceProperty:
+      requiredPartialInterfaceToResolvedInterfaceProperty:
         kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
           lazilyResolvedStringProperty: "test required empty",
         }),
@@ -362,40 +363,40 @@ export const harnesses = {
           lazilyResolvedStringProperty:
             "optionalLazyToResolvedIriInterfaceProperty",
         }),
-      optionalStubInterfaceToResolvedInterfaceProperty:
+      optionalPartialInterfaceToResolvedInterfaceProperty:
         kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
           lazilyResolvedStringProperty:
-            "optionalStubInterfaceToResolvedInterfaceProperty",
+            "optionalPartialInterfaceToResolvedInterfaceProperty",
         }),
-      optionalStubInterfaceToResolvedInterfaceUnionProperty:
+      optionalPartialInterfaceToResolvedInterfaceUnionProperty:
         kitchenSink.LazilyResolvedInterfaceUnionMember1.$create({
           lazilyResolvedStringProperty:
-            "optionalStubInterfaceToResolvedInterfaceUnionProperty",
+            "optionalPartialInterfaceToResolvedInterfaceUnionProperty",
         }),
-      optionalStubInterfaceUnionToResolvedInterfaceUnionProperty:
+      optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty:
         kitchenSink.LazilyResolvedInterfaceUnionMember1.$create({
           lazilyResolvedStringProperty:
-            "optionalStubInterfaceUnionToResolvedInterfaceUnionProperty",
+            "optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
         }),
       requiredLazyToResolvedInterfaceProperty:
         kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
           lazilyResolvedStringProperty:
             "requiredLazyToResolvedInterfaceProperty",
         }),
-      requiredStubInterfaceToResolvedInterfaceProperty:
+      requiredPartialInterfaceToResolvedInterfaceProperty:
         kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
           lazilyResolvedStringProperty:
-            "requiredStubInterfaceToResolvedInterfaceProperty",
+            "requiredPartialInterfaceToResolvedInterfaceProperty",
         }),
       setLazyToResolvedInterfaceProperty: [
         kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
           lazilyResolvedStringProperty: "setLazyToResolvedInterfaceProperty",
         }),
       ],
-      setStubInterfaceToResolvedInterfaceProperty: [
+      setPartialInterfaceToResolvedInterfaceProperty: [
         kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
           lazilyResolvedStringProperty:
-            "setStubInterfaceToResolvedInterfaceProperty",
+            "setPartialInterfaceToResolvedInterfaceProperty",
         }),
       ],
     }),

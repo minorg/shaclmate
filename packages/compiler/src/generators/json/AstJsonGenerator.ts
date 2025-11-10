@@ -166,7 +166,7 @@ export class AstJsonGenerator implements Generator {
             order: property.order,
             path: property.path.iri.value,
             recursive: property.recursive ? true : undefined,
-            stubType: property.stubType.map(typeToJson).extract(),
+            partialType: property.partialType.map(typeToJson).extract(),
             type: typeToJson(property.type),
             visibility: property.visibility,
           })),

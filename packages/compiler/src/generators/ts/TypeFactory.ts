@@ -532,16 +532,16 @@ export class TypeFactory {
 
     const name = tsName(astObjectTypeProperty.name);
 
-    if (astObjectTypeProperty.stubType.isJust()) {
+    if (astObjectTypeProperty.partialType.isJust()) {
       const resolvedType = this.createTypeFromAstType(
         astObjectTypeProperty.type,
       );
       let lazyType: ObjectType.LazyShaclProperty.Type<
         ObjectType.LazyShaclProperty.Type.ResolvedTypeConstraint,
-        ObjectType.LazyShaclProperty.Type.StubTypeConstraint
+        ObjectType.LazyShaclProperty.Type.PartialTypeConstraint
       >;
-      const stubType = this.createTypeFromAstType(
-        astObjectTypeProperty.stubType.unsafeCoerce(),
+      const partialType = this.createTypeFromAstType(
+        astObjectTypeProperty.partialType.unsafeCoerce(),
       );
 
       if (resolvedType instanceof OptionType) {
@@ -551,26 +551,27 @@ export class TypeFactory {
           `lazy property ${name} on ${objectType.name} has ${resolvedType.kind} ${resolvedType.itemType.kind} items`,
         );
         invariant(
-          stubType instanceof OptionType,
-          `lazy property ${name} on ${objectType.name} has ${(stubType as any).kind} stubs`,
+          partialType instanceof OptionType,
+          `lazy property ${name} on ${objectType.name} has ${(partialType as any).kind} partials`,
         );
 
         lazyType = new ObjectType.LazyShaclProperty.OptionalObjectType({
           resolvedType,
-          stubType,
+          partialType,
         });
       } else if (
         resolvedType instanceof ObjectType ||
         resolvedType instanceof ObjectUnionType
       ) {
         invariant(
-          stubType instanceof ObjectType || stubType instanceof ObjectUnionType,
-          `lazy property ${name} on ${objectType.name} has ${(stubType as any).kind} stubs`,
+          partialType instanceof ObjectType ||
+            partialType instanceof ObjectUnionType,
+          `lazy property ${name} on ${objectType.name} has ${(partialType as any).kind} partials`,
         );
 
         lazyType = new ObjectType.LazyShaclProperty.RequiredObjectType({
           resolvedType: resolvedType,
-          stubType: stubType,
+          partialType: partialType,
         });
       } else if (resolvedType instanceof SetType) {
         invariant(
@@ -579,13 +580,13 @@ export class TypeFactory {
           `lazy property ${name} on ${objectType.name} has ${resolvedType.kind} ${resolvedType.itemType.kind} items`,
         );
         invariant(
-          stubType instanceof SetType,
-          `lazy property ${name} on ${objectType.name} has ${(stubType as any).kind} stubs`,
+          partialType instanceof SetType,
+          `lazy property ${name} on ${objectType.name} has ${(partialType as any).kind} partials`,
         );
 
         lazyType = new ObjectType.LazyShaclProperty.ObjectSetType({
           resolvedType,
-          stubType,
+          partialType,
         });
       } else {
         throw new Error(

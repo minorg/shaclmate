@@ -52,34 +52,34 @@ type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 export class $LazyObjectSet<
   ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   ResolvedObjectT extends { $identifier: ObjectIdentifierT },
-  StubObjectT extends { $identifier: ObjectIdentifierT },
+  PartialObjectT extends { $identifier: ObjectIdentifierT },
 > {
   private readonly resolver: (
     identifiers: readonly ObjectIdentifierT[],
   ) => Promise<purify.Either<Error, readonly ResolvedObjectT[]>>;
-  readonly stubs: readonly StubObjectT[];
+  readonly partials: readonly PartialObjectT[];
 
   constructor({
     resolver,
-    stubs,
+    partials,
   }: {
     resolver: (
       identifiers: readonly ObjectIdentifierT[],
     ) => Promise<purify.Either<Error, readonly ResolvedObjectT[]>>;
-    stubs: readonly StubObjectT[];
+    partials: readonly PartialObjectT[];
   }) {
     this.resolver = resolver;
-    this.stubs = stubs;
+    this.partials = partials;
   }
 
   get length(): number {
-    return this.stubs.length;
+    return this.partials.length;
   }
 
   async resolve(options?: { limit?: number; offset?: number }): Promise<
     purify.Either<Error, readonly ResolvedObjectT[]>
   > {
-    if (this.stubs.length === 0) {
+    if (this.partials.length === 0) {
       return purify.Either.of([]);
     }
 
@@ -94,7 +94,9 @@ export class $LazyObjectSet<
     }
 
     return await this.resolver(
-      this.stubs.slice(offset, offset + limit).map((stub) => stub.$identifier),
+      this.partials
+        .slice(offset, offset + limit)
+        .map((partial) => partial.$identifier),
     );
   }
 }
@@ -104,40 +106,40 @@ export class $LazyObjectSet<
 export class $LazyOptionalObject<
   ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   ResolvedObjectT extends { $identifier: ObjectIdentifierT },
-  StubObjectT extends { $identifier: ObjectIdentifierT },
+  PartialObjectT extends { $identifier: ObjectIdentifierT },
 > {
   private readonly resolver: (
     identifier: ObjectIdentifierT,
   ) => Promise<purify.Either<Error, ResolvedObjectT>>;
-  readonly stub: purify.Maybe<StubObjectT>;
+  readonly partial: purify.Maybe<PartialObjectT>;
 
   constructor({
     resolver,
-    stub,
+    partial,
   }: {
     resolver: (
       identifier: ObjectIdentifierT,
     ) => Promise<purify.Either<Error, ResolvedObjectT>>;
-    stub: purify.Maybe<StubObjectT>;
+    partial: purify.Maybe<PartialObjectT>;
   }) {
     this.resolver = resolver;
-    this.stub = stub;
+    this.partial = partial;
   }
 
   async resolve(): Promise<
     purify.Either<Error, purify.Maybe<ResolvedObjectT>>
   > {
-    if (this.stub.isNothing()) {
+    if (this.partial.isNothing()) {
       return purify.Either.of(purify.Maybe.empty());
     }
-    return (await this.resolver(this.stub.unsafeCoerce().$identifier)).map(
+    return (await this.resolver(this.partial.unsafeCoerce().$identifier)).map(
       purify.Maybe.of,
     );
   }
 }
-export class $DefaultStub {
-  readonly $identifier: $DefaultStub.$Identifier;
-  readonly $type = "$DefaultStub";
+export class $DefaultPartial {
+  readonly $identifier: $DefaultPartial.$Identifier;
+  readonly $type = "$DefaultPartial";
 
   constructor(parameters: {
     readonly $identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
@@ -170,7 +172,7 @@ export class $DefaultStub {
   }
 }
 
-export namespace $DefaultStub {
+export namespace $DefaultPartial {
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -197,7 +199,7 @@ export namespace $DefaultStub {
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
-  ): purify.Either<Error, $DefaultStub> {
+  ): purify.Either<Error, $DefaultPartial> {
     let {
       ignoreRdfType = false,
       objectSet,
@@ -208,7 +210,7 @@ export namespace $DefaultStub {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
-    return $DefaultStub
+    return $DefaultPartial
       .$propertiesFromRdf({
         ...context,
         ignoreRdfType,
@@ -216,7 +218,7 @@ export namespace $DefaultStub {
         preferredLanguages,
         resource,
       })
-      .map((properties) => new $DefaultStub(properties));
+      .map((properties) => new $DefaultPartial(properties));
   }
 
   export function $propertiesFromRdf({
@@ -233,7 +235,7 @@ export namespace $DefaultStub {
     preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }> {
-    const $identifier: $DefaultStub.$Identifier = $resource.identifier;
+    const $identifier: $DefaultPartial.$Identifier = $resource.identifier;
     return purify.Either.of({ $identifier });
   }
 
@@ -1505,7 +1507,7 @@ export class Child extends Parent {
   readonly lazyObjectSetProperty: $LazyObjectSet<
     Nested.$Identifier,
     Nested,
-    $DefaultStub
+    $DefaultPartial
   >;
   /**
    * Optional lazy object property
@@ -1513,7 +1515,7 @@ export class Child extends Parent {
   readonly optionalLazyObjectProperty: $LazyOptionalObject<
     Nested.$Identifier,
     Nested,
-    $DefaultStub
+    $DefaultPartial
   >;
   /**
    * Optional object property
@@ -1533,10 +1535,10 @@ export class Child extends Parent {
       readonly $identifier: rdfjs.NamedNode | string;
       readonly childStringProperty?: purify.Maybe<string> | string;
       readonly lazyObjectSetProperty?:
-        | $LazyObjectSet<Nested.$Identifier, Nested, $DefaultStub>
+        | $LazyObjectSet<Nested.$Identifier, Nested, $DefaultPartial>
         | readonly Nested[];
       readonly optionalLazyObjectProperty?:
-        | $LazyOptionalObject<Nested.$Identifier, Nested, $DefaultStub>
+        | $LazyOptionalObject<Nested.$Identifier, Nested, $DefaultPartial>
         | Nested
         | purify.Maybe<Nested>;
       readonly optionalObjectProperty?: Nested | purify.Maybe<Nested>;
@@ -1566,10 +1568,10 @@ export class Child extends Parent {
       this.lazyObjectSetProperty = new $LazyObjectSet<
         Nested.$Identifier,
         Nested,
-        $DefaultStub
+        $DefaultPartial
       >({
-        stubs: parameters.lazyObjectSetProperty.map(
-          (object) => new $DefaultStub(object),
+        partials: parameters.lazyObjectSetProperty.map(
+          (object) => new $DefaultPartial(object),
         ),
         resolver: async () =>
           purify.Either.of(
@@ -1580,9 +1582,9 @@ export class Child extends Parent {
       this.lazyObjectSetProperty = new $LazyObjectSet<
         Nested.$Identifier,
         Nested,
-        $DefaultStub
+        $DefaultPartial
       >({
-        stubs: [],
+        partials: [],
         resolver: async () => {
           throw new Error("should never be called");
         },
@@ -1601,10 +1603,10 @@ export class Child extends Parent {
       this.optionalLazyObjectProperty = new $LazyOptionalObject<
         Nested.$Identifier,
         Nested,
-        $DefaultStub
+        $DefaultPartial
       >({
-        stub: parameters.optionalLazyObjectProperty.map(
-          (object) => new $DefaultStub(object),
+        partial: parameters.optionalLazyObjectProperty.map(
+          (object) => new $DefaultPartial(object),
         ),
         resolver: async () =>
           purify.Either.of(
@@ -1617,10 +1619,10 @@ export class Child extends Parent {
       this.optionalLazyObjectProperty = new $LazyOptionalObject<
         Nested.$Identifier,
         Nested,
-        $DefaultStub
+        $DefaultPartial
       >({
-        stub: purify.Maybe.of(
-          new $DefaultStub(parameters.optionalLazyObjectProperty),
+        partial: purify.Maybe.of(
+          new $DefaultPartial(parameters.optionalLazyObjectProperty),
         ),
         resolver: async () =>
           purify.Either.of(parameters.optionalLazyObjectProperty as Nested),
@@ -1629,9 +1631,9 @@ export class Child extends Parent {
       this.optionalLazyObjectProperty = new $LazyOptionalObject<
         Nested.$Identifier,
         Nested,
-        $DefaultStub
+        $DefaultPartial
       >({
-        stub: purify.Maybe.empty(),
+        partial: purify.Maybe.empty(),
         resolver: async () => {
           throw new Error("should never be called");
         },
@@ -1704,14 +1706,14 @@ export class Child extends Parent {
     );
     resource.add(
       Child.$properties.lazyObjectSetProperty["identifier"],
-      ...this.lazyObjectSetProperty.stubs.flatMap((item) => [
+      ...this.lazyObjectSetProperty.partials.flatMap((item) => [
         item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
           .identifier,
       ]),
     );
     resource.add(
       Child.$properties.optionalLazyObjectProperty["identifier"],
-      ...this.optionalLazyObjectProperty.stub
+      ...this.optionalLazyObjectProperty.partial
         .toList()
         .flatMap((value) => [
           value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
@@ -1863,12 +1865,12 @@ export namespace Child {
       lazyObjectSetProperty: $LazyObjectSet<
         Nested.$Identifier,
         Nested,
-        $DefaultStub
+        $DefaultPartial
       >;
       optionalLazyObjectProperty: $LazyOptionalObject<
         Nested.$Identifier,
         Nested,
-        $DefaultStub
+        $DefaultPartial
       >;
       optionalObjectProperty: purify.Maybe<Nested>;
       optionalStringProperty: purify.Maybe<string>;
@@ -2004,7 +2006,7 @@ export namespace Child {
     const childStringProperty = _childStringPropertyEither.unsafeCoerce();
     const _lazyObjectSetPropertyEither: purify.Either<
       Error,
-      $LazyObjectSet<Nested.$Identifier, Nested, $DefaultStub>
+      $LazyObjectSet<Nested.$Identifier, Nested, $DefaultPartial>
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
@@ -2016,7 +2018,7 @@ export namespace Child {
       .chain((values) =>
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
-            $DefaultStub.$fromRdf(resource, {
+            $DefaultPartial.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
               objectSet: $objectSet,
@@ -2035,9 +2037,9 @@ export namespace Child {
       )
       .map((values) =>
         values.map(
-          (stubs) =>
-            new $LazyObjectSet<Nested.$Identifier, Nested, $DefaultStub>({
-              stubs,
+          (partials) =>
+            new $LazyObjectSet<Nested.$Identifier, Nested, $DefaultPartial>({
+              partials,
               resolver: (identifiers) =>
                 $objectSet.nesteds({
                   where: { identifiers, type: "identifiers" },
@@ -2053,7 +2055,7 @@ export namespace Child {
     const lazyObjectSetProperty = _lazyObjectSetPropertyEither.unsafeCoerce();
     const _optionalLazyObjectPropertyEither: purify.Either<
       Error,
-      $LazyOptionalObject<Nested.$Identifier, Nested, $DefaultStub>
+      $LazyOptionalObject<Nested.$Identifier, Nested, $DefaultPartial>
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
@@ -2065,7 +2067,7 @@ export namespace Child {
       .chain((values) =>
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
-            $DefaultStub.$fromRdf(resource, {
+            $DefaultPartial.$fromRdf(resource, {
               ...$context,
               ignoreRdfType: true,
               objectSet: $objectSet,
@@ -2077,20 +2079,24 @@ export namespace Child {
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
-          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<$DefaultStub>>(
-              {
-                object: purify.Maybe.empty(),
-                predicate:
-                  Child.$properties.optionalLazyObjectProperty["identifier"],
-                subject: $resource,
-              },
-            ),
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<$DefaultPartial>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                Child.$properties.optionalLazyObjectProperty["identifier"],
+              subject: $resource,
+            }),
       )
       .map((values) =>
         values.map(
-          (stub) =>
-            new $LazyOptionalObject<Nested.$Identifier, Nested, $DefaultStub>({
-              stub,
+          (partial) =>
+            new $LazyOptionalObject<
+              Nested.$Identifier,
+              Nested,
+              $DefaultPartial
+            >({
+              partial,
               resolver: (identifier) => $objectSet.nested(identifier),
             }),
         ),

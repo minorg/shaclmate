@@ -24,7 +24,7 @@ function identifierNodeKinds(
   }
 }
 
-function synthesizeStubAstObjectType({
+function synthesizePartialAstObjectType({
   identifierNodeKinds,
   tsFeatures,
 }: {
@@ -35,10 +35,10 @@ function synthesizeStubAstObjectType({
   switch (identifierNodeKinds.size) {
     case 1:
       invariant(identifierNodeKinds.has("NamedNode"));
-      syntheticName = "NamedDefaultStub";
+      syntheticName = "NamedDefaultPartial";
       break;
     case 2:
-      syntheticName = "DefaultStub";
+      syntheticName = "DefaultPartial";
       break;
     default:
       throw new Error("should never happen");
@@ -161,43 +161,44 @@ export function transformPropertyShapeToAstObjectTypeProperty(
   }
   const type = typeEither.unsafeCoerce();
 
-  let stubType: ast.ObjectType.Property["stubType"] = Maybe.empty();
-  let propertyShapeStubItemType:
+  let partialType: ast.ObjectType.Property["partialType"] = Maybe.empty();
+  let propertyShapePartialItemType:
     | ast.ObjectType
     | ast.ObjectUnionType
     | undefined;
-  if (propertyShape.stub.isJust()) {
-    const propertyShapeStubTypeEither = this.transformNodeShapeToAstType(
-      propertyShape.stub.unsafeCoerce(),
-    ).chain((propertyShapeStubType) => {
-      switch (propertyShapeStubType.kind) {
+  if (propertyShape.partial.isJust()) {
+    const propertyShapePartialTypeEither = this.transformNodeShapeToAstType(
+      propertyShape.partial.unsafeCoerce(),
+    ).chain((propertyShapePartialType) => {
+      switch (propertyShapePartialType.kind) {
         case "ListType":
         case "ObjectIntersectionType":
           return Left(
             new Error(
-              `${propertyShape} stub cannot refer to a ${propertyShapeStubType.kind}`,
+              `${propertyShape} partial cannot refer to a ${propertyShapePartialType.kind}`,
             ),
           );
         case "ObjectType":
         case "ObjectUnionType":
           return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
-            propertyShapeStubType,
+            propertyShapePartialType,
           );
       }
     });
-    if (propertyShapeStubTypeEither.isLeft()) {
-      return propertyShapeStubTypeEither;
+    if (propertyShapePartialTypeEither.isLeft()) {
+      return propertyShapePartialTypeEither;
     }
-    propertyShapeStubItemType = propertyShapeStubTypeEither.unsafeCoerce();
+    propertyShapePartialItemType =
+      propertyShapePartialTypeEither.unsafeCoerce();
   }
 
-  if (propertyShapeStubItemType || propertyShape.lazy.orDefault(false)) {
+  if (propertyShapePartialItemType || propertyShape.lazy.orDefault(false)) {
     switch (type.kind) {
       case "ObjectType":
       case "ObjectUnionType":
-        stubType = Maybe.of(
-          propertyShapeStubItemType ??
-            synthesizeStubAstObjectType({
+        partialType = Maybe.of(
+          propertyShapePartialItemType ??
+            synthesizePartialAstObjectType({
               identifierNodeKinds: identifierNodeKinds(type),
               tsFeatures: type.tsFeatures,
             }),
@@ -217,23 +218,23 @@ export function transformPropertyShapeToAstObjectTypeProperty(
             );
         }
 
-        const stubItemType =
-          propertyShapeStubItemType ??
-          synthesizeStubAstObjectType({
+        const partialItemType =
+          propertyShapePartialItemType ??
+          synthesizePartialAstObjectType({
             identifierNodeKinds: identifierNodeKinds(type.itemType),
             tsFeatures: type.itemType.tsFeatures,
           });
         switch (type.kind) {
           case "OptionType":
-            stubType = Maybe.of({
+            partialType = Maybe.of({
               kind: "OptionType",
-              itemType: stubItemType,
+              itemType: partialItemType,
             });
             break;
           case "SetType":
-            stubType = Maybe.of({
+            partialType = Maybe.of({
               kind: "SetType",
-              itemType: stubItemType,
+              itemType: partialItemType,
               minCount: 0,
               mutable: Maybe.empty(),
             });
@@ -267,7 +268,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     name: this.shapeAstName(propertyShape),
     order: propertyShape.order.orDefault(0),
     path,
-    stubType,
+    partialType,
     type: type,
     visibility: propertyShape.visibility,
   };

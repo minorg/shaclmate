@@ -79,21 +79,23 @@ export class ShapesGraphToAstTransformer {
         case "ObjectType": {
           nodeShapeAstObjectTypes.push(nodeShapeAstType);
           for (const property of nodeShapeAstType.properties) {
-            property.stubType
-              .map((stubType) =>
-                stubType.kind === "ObjectType" ||
-                stubType.kind === "ObjectUnionType"
-                  ? stubType
-                  : stubType.itemType,
+            property.partialType
+              .map((partialType) =>
+                partialType.kind === "ObjectType" ||
+                partialType.kind === "ObjectUnionType"
+                  ? partialType
+                  : partialType.itemType,
               )
-              .filter((stubItemType) => stubItemType.kind === "ObjectType")
-              .filter((stubItemType) => stubItemType.synthetic)
-              .ifJust((stubItemType) => {
-                const stubItemTypeName =
-                  stubItemType.name.syntheticName.unsafeCoerce();
-                if (!syntheticAstObjectTypesByName[stubItemTypeName]) {
-                  syntheticAstObjectTypesByName[stubItemTypeName] =
-                    stubItemType as ast.ObjectType;
+              .filter(
+                (partialItemType) => partialItemType.kind === "ObjectType",
+              )
+              .filter((partialItemType) => partialItemType.synthetic)
+              .ifJust((partialItemType) => {
+                const partialItemTypeName =
+                  partialItemType.name.syntheticName.unsafeCoerce();
+                if (!syntheticAstObjectTypesByName[partialItemTypeName]) {
+                  syntheticAstObjectTypesByName[partialItemTypeName] =
+                    partialItemType as ast.ObjectType;
                 }
               });
           }

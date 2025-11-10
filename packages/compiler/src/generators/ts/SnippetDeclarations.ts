@@ -225,24 +225,24 @@ function ${syntheticNamePrefix}isReadonlyStringArray(x: unknown): x is readonly 
 /**
  * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
-export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, StubObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
+export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
   private readonly resolver: (identifiers: readonly ObjectIdentifierT[]) => Promise<purify.Either<Error, readonly ResolvedObjectT[]>>;
-  readonly stubs: readonly StubObjectT[];
+  readonly partials: readonly PartialObjectT[];
 
-  constructor({ resolver, stubs }: {
+  constructor({ resolver, partials }: {
     resolver: (identifiers: readonly ObjectIdentifierT[]) => Promise<purify.Either<Error, readonly ResolvedObjectT[]>>,
-    stubs: readonly StubObjectT[]
+    partials: readonly PartialObjectT[]
   }) {
     this.resolver = resolver;
-    this.stubs = stubs;
+    this.partials = partials;
   }
 
   get length(): number {
-    return this.stubs.length;
+    return this.partials.length;
   }
 
   async resolve(options?: { limit?: number; offset?: number }): Promise<purify.Either<Error, readonly ResolvedObjectT[]>> {
-    if (this.stubs.length === 0) {
+    if (this.partials.length === 0) {
       return purify.Either.of([]);
     }
 
@@ -256,7 +256,7 @@ export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends rdfjs
       offset = 0;
     }
 
-    return await this.resolver(this.stubs.slice(offset, offset + limit).map(stub => stub.${syntheticNamePrefix}identifier));
+    return await this.resolver(this.partials.slice(offset, offset + limit).map(partial => partial.${syntheticNamePrefix}identifier));
   }
 }`;
 
@@ -264,23 +264,23 @@ export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends rdfjs
 /**
  * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
-export class ${syntheticNamePrefix}LazyOptionalObject<ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, StubObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
+export class ${syntheticNamePrefix}LazyOptionalObject<ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
   private readonly resolver: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ResolvedObjectT>>;
-  readonly stub: purify.Maybe<StubObjectT>;
+  readonly partial: purify.Maybe<PartialObjectT>;
 
-  constructor({ resolver, stub }: {
+  constructor({ resolver, partial }: {
     resolver: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ResolvedObjectT>>,
-    stub: purify.Maybe<StubObjectT>
+    partial: purify.Maybe<PartialObjectT>
   }) {
     this.resolver = resolver;
-    this.stub = stub;
+    this.partial = partial;
   }
 
   async resolve(): Promise<purify.Either<Error, purify.Maybe<ResolvedObjectT>>> {
-    if (this.stub.isNothing()) {
+    if (this.partial.isNothing()) {
       return purify.Either.of(purify.Maybe.empty());
     }
-    return (await this.resolver(this.stub.unsafeCoerce().${syntheticNamePrefix}identifier)).map(purify.Maybe.of);
+    return (await this.resolver(this.partial.unsafeCoerce().${syntheticNamePrefix}identifier)).map(purify.Maybe.of);
   }
 }`;
 
@@ -288,20 +288,20 @@ export class ${syntheticNamePrefix}LazyOptionalObject<ObjectIdentifierT extends 
 /**
  * Type of lazy properties that return a single required object. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
-export class ${syntheticNamePrefix}LazyRequiredObject<ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, StubObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
+export class ${syntheticNamePrefix}LazyRequiredObject<ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
   private readonly resolver: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ResolvedObjectT>>;
-  readonly stub: StubObjectT;
+  readonly partial: PartialObjectT;
 
-  constructor({ resolver, stub }: {
+  constructor({ resolver, partial }: {
     resolver: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ResolvedObjectT>>,
-    stub: StubObjectT
+    partial: PartialObjectT
   }) {
     this.resolver = resolver;
-    this.stub = stub;
+    this.partial = partial;
   }
 
   resolve(): Promise<purify.Either<Error, ResolvedObjectT>> {
-    return this.resolver(this.stub.${syntheticNamePrefix}identifier);
+    return this.resolver(this.partial.${syntheticNamePrefix}identifier);
   }
 }`;
 
