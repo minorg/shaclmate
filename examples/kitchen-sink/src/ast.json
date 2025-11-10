@@ -1922,7 +1922,6 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalLazyToResolvedClassProperty",
           "partialType": {
             "itemType": {
               "kind": "ObjectType",
@@ -1939,6 +1938,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalLazyToResolvedClassProperty",
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -1984,7 +1984,6 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/setLazyToResolvedClassProperty",
           "partialType": {
             "itemType": {
               "kind": "ObjectType",
@@ -2001,6 +2000,7 @@
             },
             "kind": "SetType"
           },
+          "path": "http://example.com/setLazyToResolvedClassProperty",
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -2046,7 +2046,6 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/requiredLazyToResolvedClassProperty",
           "partialType": {
             "kind": "ObjectType",
             "name": {
@@ -2060,6 +2059,7 @@
               "NamedNode"
             ]
           },
+          "path": "http://example.com/requiredLazyToResolvedClassProperty",
           "type": {
             "fromRdfType": {
               "termType": "NamedNode",
@@ -2102,7 +2102,6 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalLazyToResolvedIriClassProperty",
           "partialType": {
             "itemType": {
               "kind": "ObjectType",
@@ -2118,6 +2117,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalLazyToResolvedIriClassProperty",
           "type": {
             "itemType": {
               "kind": "ObjectType",
@@ -2151,7 +2151,6 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalLazyToResolvedClassUnionProperty",
           "partialType": {
             "itemType": {
               "kind": "ObjectType",
@@ -2168,6 +2167,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalLazyToResolvedClassUnionProperty",
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -2252,7 +2252,6 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalPartialClassToResolvedClassProperty",
           "partialType": {
             "itemType": {
               "kind": "ObjectType",
@@ -2272,6 +2271,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalPartialClassToResolvedClassProperty",
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -2317,7 +2317,6 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/setPartialClassToResolvedClassProperty",
           "partialType": {
             "itemType": {
               "kind": "ObjectType",
@@ -2337,6 +2336,7 @@
             },
             "kind": "SetType"
           },
+          "path": "http://example.com/setPartialClassToResolvedClassProperty",
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -2382,7 +2382,6 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/requiredPartialClassToResolvedClassProperty",
           "partialType": {
             "kind": "ObjectType",
             "name": {
@@ -2399,6 +2398,7 @@
             ],
             "identifierMintingStrategy": "blankNode"
           },
+          "path": "http://example.com/requiredPartialClassToResolvedClassProperty",
           "type": {
             "fromRdfType": {
               "termType": "NamedNode",
@@ -2441,7 +2441,6 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalPartialClassToResolvedClassUnionProperty",
           "partialType": {
             "itemType": {
               "kind": "ObjectType",
@@ -2461,6 +2460,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalPartialClassToResolvedClassUnionProperty",
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -2545,7 +2545,6 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalPartialClassUnionToResolvedClassUnionProperty",
           "partialType": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -2614,6 +2613,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalPartialClassUnionToResolvedClassUnionProperty",
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -2749,7 +2749,6 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/requiredLazyToResolvedInterfaceProperty",
           "partialType": {
             "kind": "ObjectType",
             "name": {
@@ -2763,6 +2762,7 @@
               "NamedNode"
             ]
           },
+          "path": "http://example.com/requiredLazyToResolvedInterfaceProperty",
           "type": {
             "fromRdfType": {
               "termType": "NamedNode",
@@ -2805,7 +2805,6 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalLazyToResolvedIriInterfaceProperty",
           "partialType": {
             "itemType": {
               "kind": "ObjectType",
@@ -2821,6 +2820,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalLazyToResolvedIriInterfaceProperty",
           "type": {
             "itemType": {
               "kind": "ObjectType",
@@ -2854,7 +2854,6 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalLazyToResolvedInterfaceUnionProperty",
           "partialType": {
             "itemType": {
               "kind": "ObjectType",
@@ -2871,6 +2870,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalLazyToResolvedInterfaceUnionProperty",
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -2955,7 +2955,6 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalPartialInterfaceToResolvedInterfaceProperty",
           "partialType": {
             "itemType": {
               "kind": "ObjectType",
@@ -2975,6 +2974,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalPartialInterfaceToResolvedInterfaceProperty",
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -3020,7 +3020,6 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/setPartialInterfaceToResolvedInterfaceProperty",
           "partialType": {
             "itemType": {
               "kind": "ObjectType",
@@ -3040,6 +3039,7 @@
             },
             "kind": "SetType"
           },
+          "path": "http://example.com/setPartialInterfaceToResolvedInterfaceProperty",
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -3085,7 +3085,6 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/requiredPartialInterfaceToResolvedInterfaceProperty",
           "partialType": {
             "kind": "ObjectType",
             "name": {
@@ -3102,6 +3101,7 @@
             ],
             "identifierMintingStrategy": "blankNode"
           },
+          "path": "http://example.com/requiredPartialInterfaceToResolvedInterfaceProperty",
           "type": {
             "fromRdfType": {
               "termType": "NamedNode",
@@ -3144,7 +3144,6 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalPartialInterfaceToResolvedInterfaceUnionProperty",
           "partialType": {
             "itemType": {
               "kind": "ObjectType",
@@ -3164,6 +3163,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalPartialInterfaceToResolvedInterfaceUnionProperty",
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -3248,7 +3248,6 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
           "partialType": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -3317,6 +3316,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -3401,7 +3401,6 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/optionalLazyToResolvedInterfaceProperty",
           "partialType": {
             "itemType": {
               "kind": "ObjectType",
@@ -3418,6 +3417,7 @@
             },
             "kind": "OptionType"
           },
+          "path": "http://example.com/optionalLazyToResolvedInterfaceProperty",
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -3463,7 +3463,6 @@
             }
           },
           "order": 0,
-          "path": "http://example.com/setLazyToResolvedInterfaceProperty",
           "partialType": {
             "itemType": {
               "kind": "ObjectType",
@@ -3480,6 +3479,7 @@
             },
             "kind": "SetType"
           },
+          "path": "http://example.com/setLazyToResolvedInterfaceProperty",
           "type": {
             "itemType": {
               "fromRdfType": {

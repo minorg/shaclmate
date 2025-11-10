@@ -51,25 +51,25 @@ type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
  */
 export class $LazyObjectSet<
   ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
   PartialObjectT extends { $identifier: ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
 > {
+  readonly partials: readonly PartialObjectT[];
   private readonly resolver: (
     identifiers: readonly ObjectIdentifierT[],
   ) => Promise<purify.Either<Error, readonly ResolvedObjectT[]>>;
-  readonly partials: readonly PartialObjectT[];
 
   constructor({
-    resolver,
     partials,
+    resolver,
   }: {
+    partials: readonly PartialObjectT[];
     resolver: (
       identifiers: readonly ObjectIdentifierT[],
     ) => Promise<purify.Either<Error, readonly ResolvedObjectT[]>>;
-    partials: readonly PartialObjectT[];
   }) {
-    this.resolver = resolver;
     this.partials = partials;
+    this.resolver = resolver;
   }
 
   get length(): number {
@@ -105,25 +105,25 @@ export class $LazyObjectSet<
  */
 export class $LazyOptionalObject<
   ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
   PartialObjectT extends { $identifier: ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
 > {
+  readonly partial: purify.Maybe<PartialObjectT>;
   private readonly resolver: (
     identifier: ObjectIdentifierT,
   ) => Promise<purify.Either<Error, ResolvedObjectT>>;
-  readonly partial: purify.Maybe<PartialObjectT>;
 
   constructor({
-    resolver,
     partial,
+    resolver,
   }: {
+    partial: purify.Maybe<PartialObjectT>;
     resolver: (
       identifier: ObjectIdentifierT,
     ) => Promise<purify.Either<Error, ResolvedObjectT>>;
-    partial: purify.Maybe<PartialObjectT>;
   }) {
-    this.resolver = resolver;
     this.partial = partial;
+    this.resolver = resolver;
   }
 
   async resolve(): Promise<
@@ -1506,16 +1506,16 @@ export class Child extends Parent {
    */
   readonly lazyObjectSetProperty: $LazyObjectSet<
     Nested.$Identifier,
-    Nested,
-    $DefaultPartial
+    $DefaultPartial,
+    Nested
   >;
   /**
    * Optional lazy object property
    */
   readonly optionalLazyObjectProperty: $LazyOptionalObject<
     Nested.$Identifier,
-    Nested,
-    $DefaultPartial
+    $DefaultPartial,
+    Nested
   >;
   /**
    * Optional object property
@@ -1535,10 +1535,10 @@ export class Child extends Parent {
       readonly $identifier: rdfjs.NamedNode | string;
       readonly childStringProperty?: purify.Maybe<string> | string;
       readonly lazyObjectSetProperty?:
-        | $LazyObjectSet<Nested.$Identifier, Nested, $DefaultPartial>
+        | $LazyObjectSet<Nested.$Identifier, $DefaultPartial, Nested>
         | readonly Nested[];
       readonly optionalLazyObjectProperty?:
-        | $LazyOptionalObject<Nested.$Identifier, Nested, $DefaultPartial>
+        | $LazyOptionalObject<Nested.$Identifier, $DefaultPartial, Nested>
         | Nested
         | purify.Maybe<Nested>;
       readonly optionalObjectProperty?: Nested | purify.Maybe<Nested>;
@@ -1567,8 +1567,8 @@ export class Child extends Parent {
     } else if (typeof parameters.lazyObjectSetProperty === "object") {
       this.lazyObjectSetProperty = new $LazyObjectSet<
         Nested.$Identifier,
-        Nested,
-        $DefaultPartial
+        $DefaultPartial,
+        Nested
       >({
         partials: parameters.lazyObjectSetProperty.map(
           (object) => new $DefaultPartial(object),
@@ -1581,8 +1581,8 @@ export class Child extends Parent {
     } else if (typeof parameters.lazyObjectSetProperty === "undefined") {
       this.lazyObjectSetProperty = new $LazyObjectSet<
         Nested.$Identifier,
-        Nested,
-        $DefaultPartial
+        $DefaultPartial,
+        Nested
       >({
         partials: [],
         resolver: async () => {
@@ -1602,8 +1602,8 @@ export class Child extends Parent {
     } else if (purify.Maybe.isMaybe(parameters.optionalLazyObjectProperty)) {
       this.optionalLazyObjectProperty = new $LazyOptionalObject<
         Nested.$Identifier,
-        Nested,
-        $DefaultPartial
+        $DefaultPartial,
+        Nested
       >({
         partial: parameters.optionalLazyObjectProperty.map(
           (object) => new $DefaultPartial(object),
@@ -1618,8 +1618,8 @@ export class Child extends Parent {
     } else if (typeof parameters.optionalLazyObjectProperty === "object") {
       this.optionalLazyObjectProperty = new $LazyOptionalObject<
         Nested.$Identifier,
-        Nested,
-        $DefaultPartial
+        $DefaultPartial,
+        Nested
       >({
         partial: purify.Maybe.of(
           new $DefaultPartial(parameters.optionalLazyObjectProperty),
@@ -1630,8 +1630,8 @@ export class Child extends Parent {
     } else if (typeof parameters.optionalLazyObjectProperty === "undefined") {
       this.optionalLazyObjectProperty = new $LazyOptionalObject<
         Nested.$Identifier,
-        Nested,
-        $DefaultPartial
+        $DefaultPartial,
+        Nested
       >({
         partial: purify.Maybe.empty(),
         resolver: async () => {
@@ -1864,13 +1864,13 @@ export namespace Child {
       childStringProperty: purify.Maybe<string>;
       lazyObjectSetProperty: $LazyObjectSet<
         Nested.$Identifier,
-        Nested,
-        $DefaultPartial
+        $DefaultPartial,
+        Nested
       >;
       optionalLazyObjectProperty: $LazyOptionalObject<
         Nested.$Identifier,
-        Nested,
-        $DefaultPartial
+        $DefaultPartial,
+        Nested
       >;
       optionalObjectProperty: purify.Maybe<Nested>;
       optionalStringProperty: purify.Maybe<string>;
@@ -2006,7 +2006,7 @@ export namespace Child {
     const childStringProperty = _childStringPropertyEither.unsafeCoerce();
     const _lazyObjectSetPropertyEither: purify.Either<
       Error,
-      $LazyObjectSet<Nested.$Identifier, Nested, $DefaultPartial>
+      $LazyObjectSet<Nested.$Identifier, $DefaultPartial, Nested>
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
@@ -2038,7 +2038,7 @@ export namespace Child {
       .map((values) =>
         values.map(
           (partials) =>
-            new $LazyObjectSet<Nested.$Identifier, Nested, $DefaultPartial>({
+            new $LazyObjectSet<Nested.$Identifier, $DefaultPartial, Nested>({
               partials,
               resolver: (identifiers) =>
                 $objectSet.nesteds({
@@ -2055,7 +2055,7 @@ export namespace Child {
     const lazyObjectSetProperty = _lazyObjectSetPropertyEither.unsafeCoerce();
     const _optionalLazyObjectPropertyEither: purify.Either<
       Error,
-      $LazyOptionalObject<Nested.$Identifier, Nested, $DefaultPartial>
+      $LazyOptionalObject<Nested.$Identifier, $DefaultPartial, Nested>
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
@@ -2093,8 +2093,8 @@ export namespace Child {
           (partial) =>
             new $LazyOptionalObject<
               Nested.$Identifier,
-              Nested,
-              $DefaultPartial
+              $DefaultPartial,
+              Nested
             >({
               partial,
               resolver: (identifier) => $objectSet.nested(identifier),

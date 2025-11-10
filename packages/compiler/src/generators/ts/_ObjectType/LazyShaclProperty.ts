@@ -86,9 +86,9 @@ export namespace LazyShaclProperty {
     protected readonly resolvedType: ResolvedTypeT;
     protected readonly runtimeClass: {
       readonly name: string;
+      readonly partialPropertyName: string;
       readonly rawName: string;
       readonly snippetDeclaration: string;
-      readonly partialPropertyName: string;
     };
 
     constructor({
@@ -228,10 +228,10 @@ export namespace LazyShaclProperty {
       super({
         resolvedType,
         runtimeClass: {
-          name: `${syntheticNamePrefix}LazyObjectSet<${resolvedType.itemType.identifierTypeAlias}, ${resolvedType.itemType.name}, ${partialType.itemType.name}>`,
+          name: `${syntheticNamePrefix}LazyObjectSet<${resolvedType.itemType.identifierTypeAlias}, ${partialType.itemType.name}, ${resolvedType.itemType.name}>`,
+          partialPropertyName: "partials",
           rawName: `${syntheticNamePrefix}LazyObjectSet`,
           snippetDeclaration: SnippetDeclarations.LazyObjectSet,
-          partialPropertyName: "partials",
         },
         partialType,
       });
@@ -343,14 +343,14 @@ export namespace LazyShaclProperty {
       partialType,
     }: { resolvedType: ResolvedTypeT; partialType: PartialTypeT }) {
       super({
+        partialType,
         resolvedType,
         runtimeClass: {
-          name: `${syntheticNamePrefix}LazyOptionalObject<${resolvedType.itemType.identifierTypeAlias}, ${resolvedType.itemType.name}, ${partialType.itemType.name}>`,
+          name: `${syntheticNamePrefix}LazyOptionalObject<${resolvedType.itemType.identifierTypeAlias}, ${partialType.itemType.name}, ${resolvedType.itemType.name}>`,
+          partialPropertyName: "partial",
           rawName: `${syntheticNamePrefix}LazyOptionalObject`,
           snippetDeclaration: SnippetDeclarations.LazyOptionalObject,
-          partialPropertyName: "partial",
         },
-        partialType,
       });
     }
 
@@ -440,10 +440,10 @@ export namespace LazyShaclProperty {
       super({
         resolvedType,
         runtimeClass: {
-          name: `${syntheticNamePrefix}LazyRequiredObject<${resolvedType.identifierTypeAlias}, ${resolvedType.name}, ${partialType.name}>`,
+          name: `${syntheticNamePrefix}LazyRequiredObject<${resolvedType.identifierTypeAlias}, ${partialType.name}, ${resolvedType.name}>`,
+          partialPropertyName: "partial",
           rawName: `${syntheticNamePrefix}LazyRequiredObject`,
           snippetDeclaration: SnippetDeclarations.LazyRequiredObject,
-          partialPropertyName: "partial",
         },
         partialType,
       });

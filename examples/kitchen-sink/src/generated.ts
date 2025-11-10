@@ -289,8 +289,8 @@ function $isReadonlyStringArray(x: unknown): x is readonly string[] {
  */
 export class $LazyOptionalObject<
   ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
   PartialObjectT extends { $identifier: ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
 > {
   readonly partial: purify.Maybe<PartialObjectT>;
   private readonly resolver: (
@@ -326,8 +326,8 @@ export class $LazyOptionalObject<
  */
 export class $LazyRequiredObject<
   ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
   PartialObjectT extends { $identifier: ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
 > {
   readonly partial: PartialObjectT;
   private readonly resolver: (
@@ -356,8 +356,8 @@ export class $LazyRequiredObject<
  */
 export class $LazyObjectSet<
   ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
   PartialObjectT extends { $identifier: ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
 > {
   readonly partials: readonly PartialObjectT[];
   private readonly resolver: (
@@ -14029,53 +14029,53 @@ export interface LazyPropertiesInterface {
   readonly $type: "LazyPropertiesInterface";
   readonly optionalLazyToResolvedInterfaceProperty: $LazyOptionalObject<
     LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-    LazilyResolvedBlankNodeOrIriInterface,
-    $DefaultPartial
+    $DefaultPartial,
+    LazilyResolvedBlankNodeOrIriInterface
   >;
   readonly optionalLazyToResolvedInterfaceUnionProperty: $LazyOptionalObject<
     LazilyResolvedInterfaceUnion.$Identifier,
-    LazilyResolvedInterfaceUnion,
-    $DefaultPartial
+    $DefaultPartial,
+    LazilyResolvedInterfaceUnion
   >;
   readonly optionalLazyToResolvedIriInterfaceProperty: $LazyOptionalObject<
     LazilyResolvedIriInterface.$Identifier,
-    LazilyResolvedIriInterface,
-    $NamedDefaultPartial
+    $NamedDefaultPartial,
+    LazilyResolvedIriInterface
   >;
   readonly optionalPartialInterfaceToResolvedInterfaceProperty: $LazyOptionalObject<
     LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-    LazilyResolvedBlankNodeOrIriInterface,
-    PartialInterface
+    PartialInterface,
+    LazilyResolvedBlankNodeOrIriInterface
   >;
   readonly optionalPartialInterfaceToResolvedInterfaceUnionProperty: $LazyOptionalObject<
     LazilyResolvedInterfaceUnion.$Identifier,
-    LazilyResolvedInterfaceUnion,
-    PartialInterface
+    PartialInterface,
+    LazilyResolvedInterfaceUnion
   >;
   readonly optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty: $LazyOptionalObject<
     LazilyResolvedInterfaceUnion.$Identifier,
-    LazilyResolvedInterfaceUnion,
-    PartialInterfaceUnion
+    PartialInterfaceUnion,
+    LazilyResolvedInterfaceUnion
   >;
   readonly requiredLazyToResolvedInterfaceProperty: $LazyRequiredObject<
     LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-    LazilyResolvedBlankNodeOrIriInterface,
-    $DefaultPartial
+    $DefaultPartial,
+    LazilyResolvedBlankNodeOrIriInterface
   >;
   readonly requiredPartialInterfaceToResolvedInterfaceProperty: $LazyRequiredObject<
     LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-    LazilyResolvedBlankNodeOrIriInterface,
-    PartialInterface
+    PartialInterface,
+    LazilyResolvedBlankNodeOrIriInterface
   >;
   readonly setLazyToResolvedInterfaceProperty: $LazyObjectSet<
     LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-    LazilyResolvedBlankNodeOrIriInterface,
-    $DefaultPartial
+    $DefaultPartial,
+    LazilyResolvedBlankNodeOrIriInterface
   >;
   readonly setPartialInterfaceToResolvedInterfaceProperty: $LazyObjectSet<
     LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-    LazilyResolvedBlankNodeOrIriInterface,
-    PartialInterface
+    PartialInterface,
+    LazilyResolvedBlankNodeOrIriInterface
   >;
 }
 
@@ -14085,77 +14085,77 @@ export namespace LazyPropertiesInterface {
     readonly optionalLazyToResolvedInterfaceProperty?:
       | $LazyOptionalObject<
           LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-          LazilyResolvedBlankNodeOrIriInterface,
-          $DefaultPartial
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriInterface
         >
       | LazilyResolvedBlankNodeOrIriInterface
       | purify.Maybe<LazilyResolvedBlankNodeOrIriInterface>;
     readonly optionalLazyToResolvedInterfaceUnionProperty?:
       | $LazyOptionalObject<
           LazilyResolvedInterfaceUnion.$Identifier,
-          LazilyResolvedInterfaceUnion,
-          $DefaultPartial
+          $DefaultPartial,
+          LazilyResolvedInterfaceUnion
         >
       | LazilyResolvedInterfaceUnion
       | purify.Maybe<LazilyResolvedInterfaceUnion>;
     readonly optionalLazyToResolvedIriInterfaceProperty?:
       | $LazyOptionalObject<
           LazilyResolvedIriInterface.$Identifier,
-          LazilyResolvedIriInterface,
-          $NamedDefaultPartial
+          $NamedDefaultPartial,
+          LazilyResolvedIriInterface
         >
       | LazilyResolvedIriInterface
       | purify.Maybe<LazilyResolvedIriInterface>;
     readonly optionalPartialInterfaceToResolvedInterfaceProperty?:
       | $LazyOptionalObject<
           LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-          LazilyResolvedBlankNodeOrIriInterface,
-          PartialInterface
+          PartialInterface,
+          LazilyResolvedBlankNodeOrIriInterface
         >
       | LazilyResolvedBlankNodeOrIriInterface
       | purify.Maybe<LazilyResolvedBlankNodeOrIriInterface>;
     readonly optionalPartialInterfaceToResolvedInterfaceUnionProperty?:
       | $LazyOptionalObject<
           LazilyResolvedInterfaceUnion.$Identifier,
-          LazilyResolvedInterfaceUnion,
-          PartialInterface
+          PartialInterface,
+          LazilyResolvedInterfaceUnion
         >
       | LazilyResolvedInterfaceUnion
       | purify.Maybe<LazilyResolvedInterfaceUnion>;
     readonly optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty?:
       | $LazyOptionalObject<
           LazilyResolvedInterfaceUnion.$Identifier,
-          LazilyResolvedInterfaceUnion,
-          PartialInterfaceUnion
+          PartialInterfaceUnion,
+          LazilyResolvedInterfaceUnion
         >
       | LazilyResolvedInterfaceUnion
       | purify.Maybe<LazilyResolvedInterfaceUnion>;
     readonly requiredLazyToResolvedInterfaceProperty:
       | $LazyRequiredObject<
           LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-          LazilyResolvedBlankNodeOrIriInterface,
-          $DefaultPartial
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriInterface
         >
       | LazilyResolvedBlankNodeOrIriInterface;
     readonly requiredPartialInterfaceToResolvedInterfaceProperty:
       | $LazyRequiredObject<
           LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-          LazilyResolvedBlankNodeOrIriInterface,
-          PartialInterface
+          PartialInterface,
+          LazilyResolvedBlankNodeOrIriInterface
         >
       | LazilyResolvedBlankNodeOrIriInterface;
     readonly setLazyToResolvedInterfaceProperty?:
       | $LazyObjectSet<
           LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-          LazilyResolvedBlankNodeOrIriInterface,
-          $DefaultPartial
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriInterface
         >
       | readonly LazilyResolvedBlankNodeOrIriInterface[];
     readonly setPartialInterfaceToResolvedInterfaceProperty?:
       | $LazyObjectSet<
           LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-          LazilyResolvedBlankNodeOrIriInterface,
-          PartialInterface
+          PartialInterface,
+          LazilyResolvedBlankNodeOrIriInterface
         >
       | readonly LazilyResolvedBlankNodeOrIriInterface[];
   }): LazyPropertiesInterface {
@@ -14173,8 +14173,8 @@ export namespace LazyPropertiesInterface {
     const $type = "LazyPropertiesInterface" as const;
     let optionalLazyToResolvedInterfaceProperty: $LazyOptionalObject<
       LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-      LazilyResolvedBlankNodeOrIriInterface,
-      $DefaultPartial
+      $DefaultPartial,
+      LazilyResolvedBlankNodeOrIriInterface
     >;
     if (
       typeof parameters.optionalLazyToResolvedInterfaceProperty === "object" &&
@@ -14188,8 +14188,8 @@ export namespace LazyPropertiesInterface {
     ) {
       optionalLazyToResolvedInterfaceProperty = new $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriInterface
       >({
         partial: parameters.optionalLazyToResolvedInterfaceProperty.map(
           (object) => new $DefaultPartial(object),
@@ -14206,8 +14206,8 @@ export namespace LazyPropertiesInterface {
     ) {
       optionalLazyToResolvedInterfaceProperty = new $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriInterface
       >({
         partial: purify.Maybe.of(
           new $DefaultPartial(
@@ -14224,8 +14224,8 @@ export namespace LazyPropertiesInterface {
     ) {
       optionalLazyToResolvedInterfaceProperty = new $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriInterface
       >({
         partial: purify.Maybe.empty(),
         resolver: async () => {
@@ -14239,8 +14239,8 @@ export namespace LazyPropertiesInterface {
 
     let optionalLazyToResolvedInterfaceUnionProperty: $LazyOptionalObject<
       LazilyResolvedInterfaceUnion.$Identifier,
-      LazilyResolvedInterfaceUnion,
-      $DefaultPartial
+      $DefaultPartial,
+      LazilyResolvedInterfaceUnion
     >;
     if (
       typeof parameters.optionalLazyToResolvedInterfaceUnionProperty ===
@@ -14257,8 +14257,8 @@ export namespace LazyPropertiesInterface {
     ) {
       optionalLazyToResolvedInterfaceUnionProperty = new $LazyOptionalObject<
         LazilyResolvedInterfaceUnion.$Identifier,
-        LazilyResolvedInterfaceUnion,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedInterfaceUnion
       >({
         partial: parameters.optionalLazyToResolvedInterfaceUnionProperty.map(
           (object) => new $DefaultPartial(object),
@@ -14276,8 +14276,8 @@ export namespace LazyPropertiesInterface {
     ) {
       optionalLazyToResolvedInterfaceUnionProperty = new $LazyOptionalObject<
         LazilyResolvedInterfaceUnion.$Identifier,
-        LazilyResolvedInterfaceUnion,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedInterfaceUnion
       >({
         partial: purify.Maybe.of(
           new $DefaultPartial(
@@ -14295,8 +14295,8 @@ export namespace LazyPropertiesInterface {
     ) {
       optionalLazyToResolvedInterfaceUnionProperty = new $LazyOptionalObject<
         LazilyResolvedInterfaceUnion.$Identifier,
-        LazilyResolvedInterfaceUnion,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedInterfaceUnion
       >({
         partial: purify.Maybe.empty(),
         resolver: async () => {
@@ -14310,8 +14310,8 @@ export namespace LazyPropertiesInterface {
 
     let optionalLazyToResolvedIriInterfaceProperty: $LazyOptionalObject<
       LazilyResolvedIriInterface.$Identifier,
-      LazilyResolvedIriInterface,
-      $NamedDefaultPartial
+      $NamedDefaultPartial,
+      LazilyResolvedIriInterface
     >;
     if (
       typeof parameters.optionalLazyToResolvedIriInterfaceProperty ===
@@ -14328,8 +14328,8 @@ export namespace LazyPropertiesInterface {
     ) {
       optionalLazyToResolvedIriInterfaceProperty = new $LazyOptionalObject<
         LazilyResolvedIriInterface.$Identifier,
-        LazilyResolvedIriInterface,
-        $NamedDefaultPartial
+        $NamedDefaultPartial,
+        LazilyResolvedIriInterface
       >({
         partial: parameters.optionalLazyToResolvedIriInterfaceProperty.map(
           (object) => new $NamedDefaultPartial(object),
@@ -14346,8 +14346,8 @@ export namespace LazyPropertiesInterface {
     ) {
       optionalLazyToResolvedIriInterfaceProperty = new $LazyOptionalObject<
         LazilyResolvedIriInterface.$Identifier,
-        LazilyResolvedIriInterface,
-        $NamedDefaultPartial
+        $NamedDefaultPartial,
+        LazilyResolvedIriInterface
       >({
         partial: purify.Maybe.of(
           new $NamedDefaultPartial(
@@ -14365,8 +14365,8 @@ export namespace LazyPropertiesInterface {
     ) {
       optionalLazyToResolvedIriInterfaceProperty = new $LazyOptionalObject<
         LazilyResolvedIriInterface.$Identifier,
-        LazilyResolvedIriInterface,
-        $NamedDefaultPartial
+        $NamedDefaultPartial,
+        LazilyResolvedIriInterface
       >({
         partial: purify.Maybe.empty(),
         resolver: async () => {
@@ -14380,8 +14380,8 @@ export namespace LazyPropertiesInterface {
 
     let optionalPartialInterfaceToResolvedInterfaceProperty: $LazyOptionalObject<
       LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-      LazilyResolvedBlankNodeOrIriInterface,
-      PartialInterface
+      PartialInterface,
+      LazilyResolvedBlankNodeOrIriInterface
     >;
     if (
       typeof parameters.optionalPartialInterfaceToResolvedInterfaceProperty ===
@@ -14399,8 +14399,8 @@ export namespace LazyPropertiesInterface {
       optionalPartialInterfaceToResolvedInterfaceProperty =
         new $LazyOptionalObject<
           LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-          LazilyResolvedBlankNodeOrIriInterface,
-          PartialInterface
+          PartialInterface,
+          LazilyResolvedBlankNodeOrIriInterface
         >({
           partial:
             parameters.optionalPartialInterfaceToResolvedInterfaceProperty.map(
@@ -14420,8 +14420,8 @@ export namespace LazyPropertiesInterface {
       optionalPartialInterfaceToResolvedInterfaceProperty =
         new $LazyOptionalObject<
           LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-          LazilyResolvedBlankNodeOrIriInterface,
-          PartialInterface
+          PartialInterface,
+          LazilyResolvedBlankNodeOrIriInterface
         >({
           partial: purify.Maybe.of(
             PartialInterface.$create(
@@ -14440,8 +14440,8 @@ export namespace LazyPropertiesInterface {
       optionalPartialInterfaceToResolvedInterfaceProperty =
         new $LazyOptionalObject<
           LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-          LazilyResolvedBlankNodeOrIriInterface,
-          PartialInterface
+          PartialInterface,
+          LazilyResolvedBlankNodeOrIriInterface
         >({
           partial: purify.Maybe.empty(),
           resolver: async () => {
@@ -14455,8 +14455,8 @@ export namespace LazyPropertiesInterface {
 
     let optionalPartialInterfaceToResolvedInterfaceUnionProperty: $LazyOptionalObject<
       LazilyResolvedInterfaceUnion.$Identifier,
-      LazilyResolvedInterfaceUnion,
-      PartialInterface
+      PartialInterface,
+      LazilyResolvedInterfaceUnion
     >;
     if (
       typeof parameters.optionalPartialInterfaceToResolvedInterfaceUnionProperty ===
@@ -14474,8 +14474,8 @@ export namespace LazyPropertiesInterface {
       optionalPartialInterfaceToResolvedInterfaceUnionProperty =
         new $LazyOptionalObject<
           LazilyResolvedInterfaceUnion.$Identifier,
-          LazilyResolvedInterfaceUnion,
-          PartialInterface
+          PartialInterface,
+          LazilyResolvedInterfaceUnion
         >({
           partial:
             parameters.optionalPartialInterfaceToResolvedInterfaceUnionProperty.map(
@@ -14495,8 +14495,8 @@ export namespace LazyPropertiesInterface {
       optionalPartialInterfaceToResolvedInterfaceUnionProperty =
         new $LazyOptionalObject<
           LazilyResolvedInterfaceUnion.$Identifier,
-          LazilyResolvedInterfaceUnion,
-          PartialInterface
+          PartialInterface,
+          LazilyResolvedInterfaceUnion
         >({
           partial: purify.Maybe.of(
             PartialInterface.$create(
@@ -14515,8 +14515,8 @@ export namespace LazyPropertiesInterface {
       optionalPartialInterfaceToResolvedInterfaceUnionProperty =
         new $LazyOptionalObject<
           LazilyResolvedInterfaceUnion.$Identifier,
-          LazilyResolvedInterfaceUnion,
-          PartialInterface
+          PartialInterface,
+          LazilyResolvedInterfaceUnion
         >({
           partial: purify.Maybe.empty(),
           resolver: async () => {
@@ -14530,8 +14530,8 @@ export namespace LazyPropertiesInterface {
 
     let optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty: $LazyOptionalObject<
       LazilyResolvedInterfaceUnion.$Identifier,
-      LazilyResolvedInterfaceUnion,
-      PartialInterfaceUnion
+      PartialInterfaceUnion,
+      LazilyResolvedInterfaceUnion
     >;
     if (
       typeof parameters.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty ===
@@ -14549,8 +14549,8 @@ export namespace LazyPropertiesInterface {
       optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty =
         new $LazyOptionalObject<
           LazilyResolvedInterfaceUnion.$Identifier,
-          LazilyResolvedInterfaceUnion,
-          PartialInterfaceUnion
+          PartialInterfaceUnion,
+          LazilyResolvedInterfaceUnion
         >({
           partial:
             parameters.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty.map(
@@ -14580,8 +14580,8 @@ export namespace LazyPropertiesInterface {
       optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty =
         new $LazyOptionalObject<
           LazilyResolvedInterfaceUnion.$Identifier,
-          LazilyResolvedInterfaceUnion,
-          PartialInterfaceUnion
+          PartialInterfaceUnion,
+          LazilyResolvedInterfaceUnion
         >({
           partial: purify.Maybe.of(
             parameters.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
@@ -14608,8 +14608,8 @@ export namespace LazyPropertiesInterface {
       optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty =
         new $LazyOptionalObject<
           LazilyResolvedInterfaceUnion.$Identifier,
-          LazilyResolvedInterfaceUnion,
-          PartialInterfaceUnion
+          PartialInterfaceUnion,
+          LazilyResolvedInterfaceUnion
         >({
           partial: purify.Maybe.empty(),
           resolver: async () => {
@@ -14623,8 +14623,8 @@ export namespace LazyPropertiesInterface {
 
     let requiredLazyToResolvedInterfaceProperty: $LazyRequiredObject<
       LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-      LazilyResolvedBlankNodeOrIriInterface,
-      $DefaultPartial
+      $DefaultPartial,
+      LazilyResolvedBlankNodeOrIriInterface
     >;
     if (
       typeof parameters.requiredLazyToResolvedInterfaceProperty === "object" &&
@@ -14638,8 +14638,8 @@ export namespace LazyPropertiesInterface {
     ) {
       requiredLazyToResolvedInterfaceProperty = new $LazyRequiredObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriInterface
       >({
         partial: new $DefaultPartial(
           parameters.requiredLazyToResolvedInterfaceProperty,
@@ -14656,8 +14656,8 @@ export namespace LazyPropertiesInterface {
 
     let requiredPartialInterfaceToResolvedInterfaceProperty: $LazyRequiredObject<
       LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-      LazilyResolvedBlankNodeOrIriInterface,
-      PartialInterface
+      PartialInterface,
+      LazilyResolvedBlankNodeOrIriInterface
     >;
     if (
       typeof parameters.requiredPartialInterfaceToResolvedInterfaceProperty ===
@@ -14674,8 +14674,8 @@ export namespace LazyPropertiesInterface {
       requiredPartialInterfaceToResolvedInterfaceProperty =
         new $LazyRequiredObject<
           LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-          LazilyResolvedBlankNodeOrIriInterface,
-          PartialInterface
+          PartialInterface,
+          LazilyResolvedBlankNodeOrIriInterface
         >({
           partial: PartialInterface.$create(
             parameters.requiredPartialInterfaceToResolvedInterfaceProperty,
@@ -14692,8 +14692,8 @@ export namespace LazyPropertiesInterface {
 
     let setLazyToResolvedInterfaceProperty: $LazyObjectSet<
       LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-      LazilyResolvedBlankNodeOrIriInterface,
-      $DefaultPartial
+      $DefaultPartial,
+      LazilyResolvedBlankNodeOrIriInterface
     >;
     if (
       typeof parameters.setLazyToResolvedInterfaceProperty === "object" &&
@@ -14706,8 +14706,8 @@ export namespace LazyPropertiesInterface {
     ) {
       setLazyToResolvedInterfaceProperty = new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriInterface
       >({
         partials: parameters.setLazyToResolvedInterfaceProperty.map(
           (object) => new $DefaultPartial(object),
@@ -14722,8 +14722,8 @@ export namespace LazyPropertiesInterface {
     ) {
       setLazyToResolvedInterfaceProperty = new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriInterface
       >({
         partials: [],
         resolver: async () => {
@@ -14737,8 +14737,8 @@ export namespace LazyPropertiesInterface {
 
     let setPartialInterfaceToResolvedInterfaceProperty: $LazyObjectSet<
       LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-      LazilyResolvedBlankNodeOrIriInterface,
-      PartialInterface
+      PartialInterface,
+      LazilyResolvedBlankNodeOrIriInterface
     >;
     if (
       typeof parameters.setPartialInterfaceToResolvedInterfaceProperty ===
@@ -14754,8 +14754,8 @@ export namespace LazyPropertiesInterface {
     ) {
       setPartialInterfaceToResolvedInterfaceProperty = new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        PartialInterface
+        PartialInterface,
+        LazilyResolvedBlankNodeOrIriInterface
       >({
         partials: parameters.setPartialInterfaceToResolvedInterfaceProperty.map(
           (object) => PartialInterface.$create(object),
@@ -14771,8 +14771,8 @@ export namespace LazyPropertiesInterface {
     ) {
       setPartialInterfaceToResolvedInterfaceProperty = new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        PartialInterface
+        PartialInterface,
+        LazilyResolvedBlankNodeOrIriInterface
       >({
         partials: [],
         resolver: async () => {
@@ -15031,53 +15031,53 @@ export namespace LazyPropertiesInterface {
       $type: "LazyPropertiesInterface";
       optionalLazyToResolvedInterfaceProperty: $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriInterface
       >;
       optionalLazyToResolvedInterfaceUnionProperty: $LazyOptionalObject<
         LazilyResolvedInterfaceUnion.$Identifier,
-        LazilyResolvedInterfaceUnion,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedInterfaceUnion
       >;
       optionalLazyToResolvedIriInterfaceProperty: $LazyOptionalObject<
         LazilyResolvedIriInterface.$Identifier,
-        LazilyResolvedIriInterface,
-        $NamedDefaultPartial
+        $NamedDefaultPartial,
+        LazilyResolvedIriInterface
       >;
       optionalPartialInterfaceToResolvedInterfaceProperty: $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        PartialInterface
+        PartialInterface,
+        LazilyResolvedBlankNodeOrIriInterface
       >;
       optionalPartialInterfaceToResolvedInterfaceUnionProperty: $LazyOptionalObject<
         LazilyResolvedInterfaceUnion.$Identifier,
-        LazilyResolvedInterfaceUnion,
-        PartialInterface
+        PartialInterface,
+        LazilyResolvedInterfaceUnion
       >;
       optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty: $LazyOptionalObject<
         LazilyResolvedInterfaceUnion.$Identifier,
-        LazilyResolvedInterfaceUnion,
-        PartialInterfaceUnion
+        PartialInterfaceUnion,
+        LazilyResolvedInterfaceUnion
       >;
       requiredLazyToResolvedInterfaceProperty: $LazyRequiredObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriInterface
       >;
       requiredPartialInterfaceToResolvedInterfaceProperty: $LazyRequiredObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        PartialInterface
+        PartialInterface,
+        LazilyResolvedBlankNodeOrIriInterface
       >;
       setLazyToResolvedInterfaceProperty: $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriInterface
       >;
       setPartialInterfaceToResolvedInterfaceProperty: $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        PartialInterface
+        PartialInterface,
+        LazilyResolvedBlankNodeOrIriInterface
       >;
     }
   > {
@@ -15093,8 +15093,8 @@ export namespace LazyPropertiesInterface {
     const $type = "LazyPropertiesInterface" as const;
     const optionalLazyToResolvedInterfaceProperty = new $LazyOptionalObject<
       LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-      LazilyResolvedBlankNodeOrIriInterface,
-      $DefaultPartial
+      $DefaultPartial,
+      LazilyResolvedBlankNodeOrIriInterface
     >({
       partial: purify.Maybe.fromNullable(
         $jsonObject["optionalLazyToResolvedInterfaceProperty"],
@@ -15111,8 +15111,8 @@ export namespace LazyPropertiesInterface {
     const optionalLazyToResolvedInterfaceUnionProperty =
       new $LazyOptionalObject<
         LazilyResolvedInterfaceUnion.$Identifier,
-        LazilyResolvedInterfaceUnion,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedInterfaceUnion
       >({
         partial: purify.Maybe.fromNullable(
           $jsonObject["optionalLazyToResolvedInterfaceUnionProperty"],
@@ -15128,8 +15128,8 @@ export namespace LazyPropertiesInterface {
       });
     const optionalLazyToResolvedIriInterfaceProperty = new $LazyOptionalObject<
       LazilyResolvedIriInterface.$Identifier,
-      LazilyResolvedIriInterface,
-      $NamedDefaultPartial
+      $NamedDefaultPartial,
+      LazilyResolvedIriInterface
     >({
       partial: purify.Maybe.fromNullable(
         $jsonObject["optionalLazyToResolvedIriInterfaceProperty"],
@@ -15146,8 +15146,8 @@ export namespace LazyPropertiesInterface {
     const optionalPartialInterfaceToResolvedInterfaceProperty =
       new $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        PartialInterface
+        PartialInterface,
+        LazilyResolvedBlankNodeOrIriInterface
       >({
         partial: purify.Maybe.fromNullable(
           $jsonObject["optionalPartialInterfaceToResolvedInterfaceProperty"],
@@ -15164,8 +15164,8 @@ export namespace LazyPropertiesInterface {
     const optionalPartialInterfaceToResolvedInterfaceUnionProperty =
       new $LazyOptionalObject<
         LazilyResolvedInterfaceUnion.$Identifier,
-        LazilyResolvedInterfaceUnion,
-        PartialInterface
+        PartialInterface,
+        LazilyResolvedInterfaceUnion
       >({
         partial: purify.Maybe.fromNullable(
           $jsonObject[
@@ -15184,8 +15184,8 @@ export namespace LazyPropertiesInterface {
     const optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty =
       new $LazyOptionalObject<
         LazilyResolvedInterfaceUnion.$Identifier,
-        LazilyResolvedInterfaceUnion,
-        PartialInterfaceUnion
+        PartialInterfaceUnion,
+        LazilyResolvedInterfaceUnion
       >({
         partial: purify.Maybe.fromNullable(
           $jsonObject[
@@ -15203,8 +15203,8 @@ export namespace LazyPropertiesInterface {
       });
     const requiredLazyToResolvedInterfaceProperty = new $LazyRequiredObject<
       LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-      LazilyResolvedBlankNodeOrIriInterface,
-      $DefaultPartial
+      $DefaultPartial,
+      LazilyResolvedBlankNodeOrIriInterface
     >({
       partial: $DefaultPartial
         .$fromJson($jsonObject["requiredLazyToResolvedInterfaceProperty"])
@@ -15221,8 +15221,8 @@ export namespace LazyPropertiesInterface {
     const requiredPartialInterfaceToResolvedInterfaceProperty =
       new $LazyRequiredObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        PartialInterface
+        PartialInterface,
+        LazilyResolvedBlankNodeOrIriInterface
       >({
         partial: PartialInterface.$fromJson(
           $jsonObject["requiredPartialInterfaceToResolvedInterfaceProperty"],
@@ -15238,8 +15238,8 @@ export namespace LazyPropertiesInterface {
       });
     const setLazyToResolvedInterfaceProperty = new $LazyObjectSet<
       LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-      LazilyResolvedBlankNodeOrIriInterface,
-      $DefaultPartial
+      $DefaultPartial,
+      LazilyResolvedBlankNodeOrIriInterface
     >({
       partials: $jsonObject["setLazyToResolvedInterfaceProperty"].map((item) =>
         $DefaultPartial.$fromJson(item).unsafeCoerce(),
@@ -15253,8 +15253,8 @@ export namespace LazyPropertiesInterface {
     });
     const setPartialInterfaceToResolvedInterfaceProperty = new $LazyObjectSet<
       LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-      LazilyResolvedBlankNodeOrIriInterface,
-      PartialInterface
+      PartialInterface,
+      LazilyResolvedBlankNodeOrIriInterface
     >({
       partials: $jsonObject[
         "setPartialInterfaceToResolvedInterfaceProperty"
@@ -15559,53 +15559,53 @@ export namespace LazyPropertiesInterface {
       $type: "LazyPropertiesInterface";
       optionalLazyToResolvedInterfaceProperty: $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriInterface
       >;
       optionalLazyToResolvedInterfaceUnionProperty: $LazyOptionalObject<
         LazilyResolvedInterfaceUnion.$Identifier,
-        LazilyResolvedInterfaceUnion,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedInterfaceUnion
       >;
       optionalLazyToResolvedIriInterfaceProperty: $LazyOptionalObject<
         LazilyResolvedIriInterface.$Identifier,
-        LazilyResolvedIriInterface,
-        $NamedDefaultPartial
+        $NamedDefaultPartial,
+        LazilyResolvedIriInterface
       >;
       optionalPartialInterfaceToResolvedInterfaceProperty: $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        PartialInterface
+        PartialInterface,
+        LazilyResolvedBlankNodeOrIriInterface
       >;
       optionalPartialInterfaceToResolvedInterfaceUnionProperty: $LazyOptionalObject<
         LazilyResolvedInterfaceUnion.$Identifier,
-        LazilyResolvedInterfaceUnion,
-        PartialInterface
+        PartialInterface,
+        LazilyResolvedInterfaceUnion
       >;
       optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty: $LazyOptionalObject<
         LazilyResolvedInterfaceUnion.$Identifier,
-        LazilyResolvedInterfaceUnion,
-        PartialInterfaceUnion
+        PartialInterfaceUnion,
+        LazilyResolvedInterfaceUnion
       >;
       requiredLazyToResolvedInterfaceProperty: $LazyRequiredObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriInterface
       >;
       requiredPartialInterfaceToResolvedInterfaceProperty: $LazyRequiredObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        PartialInterface
+        PartialInterface,
+        LazilyResolvedBlankNodeOrIriInterface
       >;
       setLazyToResolvedInterfaceProperty: $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriInterface
       >;
       setPartialInterfaceToResolvedInterfaceProperty: $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        PartialInterface
+        PartialInterface,
+        LazilyResolvedBlankNodeOrIriInterface
       >;
     }
   > {
@@ -15616,8 +15616,8 @@ export namespace LazyPropertiesInterface {
       Error,
       $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriInterface
       >
     > = purify.Either.of<
       Error,
@@ -15658,8 +15658,8 @@ export namespace LazyPropertiesInterface {
           (partial) =>
             new $LazyOptionalObject<
               LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-              LazilyResolvedBlankNodeOrIriInterface,
-              $DefaultPartial
+              $DefaultPartial,
+              LazilyResolvedBlankNodeOrIriInterface
             >({
               partial,
               resolver: (identifier) =>
@@ -15678,8 +15678,8 @@ export namespace LazyPropertiesInterface {
       Error,
       $LazyOptionalObject<
         LazilyResolvedInterfaceUnion.$Identifier,
-        LazilyResolvedInterfaceUnion,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedInterfaceUnion
       >
     > = purify.Either.of<
       Error,
@@ -15720,8 +15720,8 @@ export namespace LazyPropertiesInterface {
           (partial) =>
             new $LazyOptionalObject<
               LazilyResolvedInterfaceUnion.$Identifier,
-              LazilyResolvedInterfaceUnion,
-              $DefaultPartial
+              $DefaultPartial,
+              LazilyResolvedInterfaceUnion
             >({
               partial,
               resolver: (identifier) =>
@@ -15740,8 +15740,8 @@ export namespace LazyPropertiesInterface {
       Error,
       $LazyOptionalObject<
         LazilyResolvedIriInterface.$Identifier,
-        LazilyResolvedIriInterface,
-        $NamedDefaultPartial
+        $NamedDefaultPartial,
+        LazilyResolvedIriInterface
       >
     > = purify.Either.of<
       Error,
@@ -15782,8 +15782,8 @@ export namespace LazyPropertiesInterface {
           (partial) =>
             new $LazyOptionalObject<
               LazilyResolvedIriInterface.$Identifier,
-              LazilyResolvedIriInterface,
-              $NamedDefaultPartial
+              $NamedDefaultPartial,
+              LazilyResolvedIriInterface
             >({
               partial,
               resolver: (identifier) =>
@@ -15802,8 +15802,8 @@ export namespace LazyPropertiesInterface {
       Error,
       $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        PartialInterface
+        PartialInterface,
+        LazilyResolvedBlankNodeOrIriInterface
       >
     > = purify.Either.of<
       Error,
@@ -15848,8 +15848,8 @@ export namespace LazyPropertiesInterface {
           (partial) =>
             new $LazyOptionalObject<
               LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-              LazilyResolvedBlankNodeOrIriInterface,
-              PartialInterface
+              PartialInterface,
+              LazilyResolvedBlankNodeOrIriInterface
             >({
               partial,
               resolver: (identifier) =>
@@ -15868,8 +15868,8 @@ export namespace LazyPropertiesInterface {
       Error,
       $LazyOptionalObject<
         LazilyResolvedInterfaceUnion.$Identifier,
-        LazilyResolvedInterfaceUnion,
-        PartialInterface
+        PartialInterface,
+        LazilyResolvedInterfaceUnion
       >
     > = purify.Either.of<
       Error,
@@ -15914,8 +15914,8 @@ export namespace LazyPropertiesInterface {
           (partial) =>
             new $LazyOptionalObject<
               LazilyResolvedInterfaceUnion.$Identifier,
-              LazilyResolvedInterfaceUnion,
-              PartialInterface
+              PartialInterface,
+              LazilyResolvedInterfaceUnion
             >({
               partial,
               resolver: (identifier) =>
@@ -15936,8 +15936,8 @@ export namespace LazyPropertiesInterface {
       Error,
       $LazyOptionalObject<
         LazilyResolvedInterfaceUnion.$Identifier,
-        LazilyResolvedInterfaceUnion,
-        PartialInterfaceUnion
+        PartialInterfaceUnion,
+        LazilyResolvedInterfaceUnion
       >
     > = purify.Either.of<
       Error,
@@ -15983,8 +15983,8 @@ export namespace LazyPropertiesInterface {
           (partial) =>
             new $LazyOptionalObject<
               LazilyResolvedInterfaceUnion.$Identifier,
-              LazilyResolvedInterfaceUnion,
-              PartialInterfaceUnion
+              PartialInterfaceUnion,
+              LazilyResolvedInterfaceUnion
             >({
               partial,
               resolver: (identifier) =>
@@ -16005,8 +16005,8 @@ export namespace LazyPropertiesInterface {
       Error,
       $LazyRequiredObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriInterface
       >
     > = purify.Either.of<
       Error,
@@ -16034,8 +16034,8 @@ export namespace LazyPropertiesInterface {
           (partial) =>
             new $LazyRequiredObject<
               LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-              LazilyResolvedBlankNodeOrIriInterface,
-              $DefaultPartial
+              $DefaultPartial,
+              LazilyResolvedBlankNodeOrIriInterface
             >({
               partial,
               resolver: (identifier) =>
@@ -16054,8 +16054,8 @@ export namespace LazyPropertiesInterface {
       Error,
       $LazyRequiredObject<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        PartialInterface
+        PartialInterface,
+        LazilyResolvedBlankNodeOrIriInterface
       >
     > = purify.Either.of<
       Error,
@@ -16085,8 +16085,8 @@ export namespace LazyPropertiesInterface {
           (partial) =>
             new $LazyRequiredObject<
               LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-              LazilyResolvedBlankNodeOrIriInterface,
-              PartialInterface
+              PartialInterface,
+              LazilyResolvedBlankNodeOrIriInterface
             >({
               partial,
               resolver: (identifier) =>
@@ -16105,8 +16105,8 @@ export namespace LazyPropertiesInterface {
       Error,
       $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriInterface
       >
     > = purify.Either.of<
       Error,
@@ -16144,8 +16144,8 @@ export namespace LazyPropertiesInterface {
           (partials) =>
             new $LazyObjectSet<
               LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-              LazilyResolvedBlankNodeOrIriInterface,
-              $DefaultPartial
+              $DefaultPartial,
+              LazilyResolvedBlankNodeOrIriInterface
             >({
               partials,
               resolver: (identifiers) =>
@@ -16166,8 +16166,8 @@ export namespace LazyPropertiesInterface {
       Error,
       $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-        LazilyResolvedBlankNodeOrIriInterface,
-        PartialInterface
+        PartialInterface,
+        LazilyResolvedBlankNodeOrIriInterface
       >
     > = purify.Either.of<
       Error,
@@ -16207,8 +16207,8 @@ export namespace LazyPropertiesInterface {
           (partials) =>
             new $LazyObjectSet<
               LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-              LazilyResolvedBlankNodeOrIriInterface,
-              PartialInterface
+              PartialInterface,
+              LazilyResolvedBlankNodeOrIriInterface
             >({
               partials,
               resolver: (identifiers) =>
@@ -17474,53 +17474,53 @@ export class LazyPropertiesClass {
   readonly $type = "LazyPropertiesClass";
   readonly optionalLazyToResolvedClassProperty: $LazyOptionalObject<
     LazilyResolvedBlankNodeOrIriClass.$Identifier,
-    LazilyResolvedBlankNodeOrIriClass,
-    $DefaultPartial
+    $DefaultPartial,
+    LazilyResolvedBlankNodeOrIriClass
   >;
   readonly optionalLazyToResolvedClassUnionProperty: $LazyOptionalObject<
     LazilyResolvedClassUnion.$Identifier,
-    LazilyResolvedClassUnion,
-    $DefaultPartial
+    $DefaultPartial,
+    LazilyResolvedClassUnion
   >;
   readonly optionalLazyToResolvedIriClassProperty: $LazyOptionalObject<
     LazilyResolvedIriClass.$Identifier,
-    LazilyResolvedIriClass,
-    $NamedDefaultPartial
+    $NamedDefaultPartial,
+    LazilyResolvedIriClass
   >;
   readonly optionalPartialClassToResolvedClassProperty: $LazyOptionalObject<
     LazilyResolvedBlankNodeOrIriClass.$Identifier,
-    LazilyResolvedBlankNodeOrIriClass,
-    PartialClass
+    PartialClass,
+    LazilyResolvedBlankNodeOrIriClass
   >;
   readonly optionalPartialClassToResolvedClassUnionProperty: $LazyOptionalObject<
     LazilyResolvedClassUnion.$Identifier,
-    LazilyResolvedClassUnion,
-    PartialClass
+    PartialClass,
+    LazilyResolvedClassUnion
   >;
   readonly optionalPartialClassUnionToResolvedClassUnionProperty: $LazyOptionalObject<
     LazilyResolvedClassUnion.$Identifier,
-    LazilyResolvedClassUnion,
-    PartialClassUnion
+    PartialClassUnion,
+    LazilyResolvedClassUnion
   >;
   readonly requiredLazyToResolvedClassProperty: $LazyRequiredObject<
     LazilyResolvedBlankNodeOrIriClass.$Identifier,
-    LazilyResolvedBlankNodeOrIriClass,
-    $DefaultPartial
+    $DefaultPartial,
+    LazilyResolvedBlankNodeOrIriClass
   >;
   readonly requiredPartialClassToResolvedClassProperty: $LazyRequiredObject<
     LazilyResolvedBlankNodeOrIriClass.$Identifier,
-    LazilyResolvedBlankNodeOrIriClass,
-    PartialClass
+    PartialClass,
+    LazilyResolvedBlankNodeOrIriClass
   >;
   readonly setLazyToResolvedClassProperty: $LazyObjectSet<
     LazilyResolvedBlankNodeOrIriClass.$Identifier,
-    LazilyResolvedBlankNodeOrIriClass,
-    $DefaultPartial
+    $DefaultPartial,
+    LazilyResolvedBlankNodeOrIriClass
   >;
   readonly setPartialClassToResolvedClassProperty: $LazyObjectSet<
     LazilyResolvedBlankNodeOrIriClass.$Identifier,
-    LazilyResolvedBlankNodeOrIriClass,
-    PartialClass
+    PartialClass,
+    LazilyResolvedBlankNodeOrIriClass
   >;
 
   constructor(parameters: {
@@ -17528,77 +17528,77 @@ export class LazyPropertiesClass {
     readonly optionalLazyToResolvedClassProperty?:
       | $LazyOptionalObject<
           LazilyResolvedBlankNodeOrIriClass.$Identifier,
-          LazilyResolvedBlankNodeOrIriClass,
-          $DefaultPartial
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriClass
         >
       | LazilyResolvedBlankNodeOrIriClass
       | purify.Maybe<LazilyResolvedBlankNodeOrIriClass>;
     readonly optionalLazyToResolvedClassUnionProperty?:
       | $LazyOptionalObject<
           LazilyResolvedClassUnion.$Identifier,
-          LazilyResolvedClassUnion,
-          $DefaultPartial
+          $DefaultPartial,
+          LazilyResolvedClassUnion
         >
       | LazilyResolvedClassUnion
       | purify.Maybe<LazilyResolvedClassUnion>;
     readonly optionalLazyToResolvedIriClassProperty?:
       | $LazyOptionalObject<
           LazilyResolvedIriClass.$Identifier,
-          LazilyResolvedIriClass,
-          $NamedDefaultPartial
+          $NamedDefaultPartial,
+          LazilyResolvedIriClass
         >
       | LazilyResolvedIriClass
       | purify.Maybe<LazilyResolvedIriClass>;
     readonly optionalPartialClassToResolvedClassProperty?:
       | $LazyOptionalObject<
           LazilyResolvedBlankNodeOrIriClass.$Identifier,
-          LazilyResolvedBlankNodeOrIriClass,
-          PartialClass
+          PartialClass,
+          LazilyResolvedBlankNodeOrIriClass
         >
       | LazilyResolvedBlankNodeOrIriClass
       | purify.Maybe<LazilyResolvedBlankNodeOrIriClass>;
     readonly optionalPartialClassToResolvedClassUnionProperty?:
       | $LazyOptionalObject<
           LazilyResolvedClassUnion.$Identifier,
-          LazilyResolvedClassUnion,
-          PartialClass
+          PartialClass,
+          LazilyResolvedClassUnion
         >
       | LazilyResolvedClassUnion
       | purify.Maybe<LazilyResolvedClassUnion>;
     readonly optionalPartialClassUnionToResolvedClassUnionProperty?:
       | $LazyOptionalObject<
           LazilyResolvedClassUnion.$Identifier,
-          LazilyResolvedClassUnion,
-          PartialClassUnion
+          PartialClassUnion,
+          LazilyResolvedClassUnion
         >
       | LazilyResolvedClassUnion
       | purify.Maybe<LazilyResolvedClassUnion>;
     readonly requiredLazyToResolvedClassProperty:
       | $LazyRequiredObject<
           LazilyResolvedBlankNodeOrIriClass.$Identifier,
-          LazilyResolvedBlankNodeOrIriClass,
-          $DefaultPartial
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriClass
         >
       | LazilyResolvedBlankNodeOrIriClass;
     readonly requiredPartialClassToResolvedClassProperty:
       | $LazyRequiredObject<
           LazilyResolvedBlankNodeOrIriClass.$Identifier,
-          LazilyResolvedBlankNodeOrIriClass,
-          PartialClass
+          PartialClass,
+          LazilyResolvedBlankNodeOrIriClass
         >
       | LazilyResolvedBlankNodeOrIriClass;
     readonly setLazyToResolvedClassProperty?:
       | $LazyObjectSet<
           LazilyResolvedBlankNodeOrIriClass.$Identifier,
-          LazilyResolvedBlankNodeOrIriClass,
-          $DefaultPartial
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriClass
         >
       | readonly LazilyResolvedBlankNodeOrIriClass[];
     readonly setPartialClassToResolvedClassProperty?:
       | $LazyObjectSet<
           LazilyResolvedBlankNodeOrIriClass.$Identifier,
-          LazilyResolvedBlankNodeOrIriClass,
-          PartialClass
+          PartialClass,
+          LazilyResolvedBlankNodeOrIriClass
         >
       | readonly LazilyResolvedBlankNodeOrIriClass[];
   }) {
@@ -17623,8 +17623,8 @@ export class LazyPropertiesClass {
     ) {
       this.optionalLazyToResolvedClassProperty = new $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriClass
       >({
         partial: parameters.optionalLazyToResolvedClassProperty.map(
           (object) => new $DefaultPartial(object),
@@ -17641,8 +17641,8 @@ export class LazyPropertiesClass {
     ) {
       this.optionalLazyToResolvedClassProperty = new $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriClass
       >({
         partial: purify.Maybe.of(
           new $DefaultPartial(parameters.optionalLazyToResolvedClassProperty),
@@ -17657,8 +17657,8 @@ export class LazyPropertiesClass {
     ) {
       this.optionalLazyToResolvedClassProperty = new $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriClass
       >({
         partial: purify.Maybe.empty(),
         resolver: async () => {
@@ -17682,8 +17682,8 @@ export class LazyPropertiesClass {
     ) {
       this.optionalLazyToResolvedClassUnionProperty = new $LazyOptionalObject<
         LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedClassUnion
       >({
         partial: parameters.optionalLazyToResolvedClassUnionProperty.map(
           (object) => new $DefaultPartial(object),
@@ -17700,8 +17700,8 @@ export class LazyPropertiesClass {
     ) {
       this.optionalLazyToResolvedClassUnionProperty = new $LazyOptionalObject<
         LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedClassUnion
       >({
         partial: purify.Maybe.of(
           new $DefaultPartial(
@@ -17718,8 +17718,8 @@ export class LazyPropertiesClass {
     ) {
       this.optionalLazyToResolvedClassUnionProperty = new $LazyOptionalObject<
         LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedClassUnion
       >({
         partial: purify.Maybe.empty(),
         resolver: async () => {
@@ -17743,8 +17743,8 @@ export class LazyPropertiesClass {
     ) {
       this.optionalLazyToResolvedIriClassProperty = new $LazyOptionalObject<
         LazilyResolvedIriClass.$Identifier,
-        LazilyResolvedIriClass,
-        $NamedDefaultPartial
+        $NamedDefaultPartial,
+        LazilyResolvedIriClass
       >({
         partial: parameters.optionalLazyToResolvedIriClassProperty.map(
           (object) => new $NamedDefaultPartial(object),
@@ -17761,8 +17761,8 @@ export class LazyPropertiesClass {
     ) {
       this.optionalLazyToResolvedIriClassProperty = new $LazyOptionalObject<
         LazilyResolvedIriClass.$Identifier,
-        LazilyResolvedIriClass,
-        $NamedDefaultPartial
+        $NamedDefaultPartial,
+        LazilyResolvedIriClass
       >({
         partial: purify.Maybe.of(
           new $NamedDefaultPartial(
@@ -17779,8 +17779,8 @@ export class LazyPropertiesClass {
     ) {
       this.optionalLazyToResolvedIriClassProperty = new $LazyOptionalObject<
         LazilyResolvedIriClass.$Identifier,
-        LazilyResolvedIriClass,
-        $NamedDefaultPartial
+        $NamedDefaultPartial,
+        LazilyResolvedIriClass
       >({
         partial: purify.Maybe.empty(),
         resolver: async () => {
@@ -17808,8 +17808,8 @@ export class LazyPropertiesClass {
       this.optionalPartialClassToResolvedClassProperty =
         new $LazyOptionalObject<
           LazilyResolvedBlankNodeOrIriClass.$Identifier,
-          LazilyResolvedBlankNodeOrIriClass,
-          PartialClass
+          PartialClass,
+          LazilyResolvedBlankNodeOrIriClass
         >({
           partial: parameters.optionalPartialClassToResolvedClassProperty.map(
             (object) => new PartialClass(object),
@@ -17827,8 +17827,8 @@ export class LazyPropertiesClass {
       this.optionalPartialClassToResolvedClassProperty =
         new $LazyOptionalObject<
           LazilyResolvedBlankNodeOrIriClass.$Identifier,
-          LazilyResolvedBlankNodeOrIriClass,
-          PartialClass
+          PartialClass,
+          LazilyResolvedBlankNodeOrIriClass
         >({
           partial: purify.Maybe.of(
             new PartialClass(
@@ -17847,8 +17847,8 @@ export class LazyPropertiesClass {
       this.optionalPartialClassToResolvedClassProperty =
         new $LazyOptionalObject<
           LazilyResolvedBlankNodeOrIriClass.$Identifier,
-          LazilyResolvedBlankNodeOrIriClass,
-          PartialClass
+          PartialClass,
+          LazilyResolvedBlankNodeOrIriClass
         >({
           partial: purify.Maybe.empty(),
           resolver: async () => {
@@ -17876,8 +17876,8 @@ export class LazyPropertiesClass {
       this.optionalPartialClassToResolvedClassUnionProperty =
         new $LazyOptionalObject<
           LazilyResolvedClassUnion.$Identifier,
-          LazilyResolvedClassUnion,
-          PartialClass
+          PartialClass,
+          LazilyResolvedClassUnion
         >({
           partial:
             parameters.optionalPartialClassToResolvedClassUnionProperty.map(
@@ -17897,8 +17897,8 @@ export class LazyPropertiesClass {
       this.optionalPartialClassToResolvedClassUnionProperty =
         new $LazyOptionalObject<
           LazilyResolvedClassUnion.$Identifier,
-          LazilyResolvedClassUnion,
-          PartialClass
+          PartialClass,
+          LazilyResolvedClassUnion
         >({
           partial: purify.Maybe.of(
             new PartialClass(
@@ -17917,8 +17917,8 @@ export class LazyPropertiesClass {
       this.optionalPartialClassToResolvedClassUnionProperty =
         new $LazyOptionalObject<
           LazilyResolvedClassUnion.$Identifier,
-          LazilyResolvedClassUnion,
-          PartialClass
+          PartialClass,
+          LazilyResolvedClassUnion
         >({
           partial: purify.Maybe.empty(),
           resolver: async () => {
@@ -17946,8 +17946,8 @@ export class LazyPropertiesClass {
       this.optionalPartialClassUnionToResolvedClassUnionProperty =
         new $LazyOptionalObject<
           LazilyResolvedClassUnion.$Identifier,
-          LazilyResolvedClassUnion,
-          PartialClassUnion
+          PartialClassUnion,
+          LazilyResolvedClassUnion
         >({
           partial:
             parameters.optionalPartialClassUnionToResolvedClassUnionProperty.map(
@@ -17977,8 +17977,8 @@ export class LazyPropertiesClass {
       this.optionalPartialClassUnionToResolvedClassUnionProperty =
         new $LazyOptionalObject<
           LazilyResolvedClassUnion.$Identifier,
-          LazilyResolvedClassUnion,
-          PartialClassUnion
+          PartialClassUnion,
+          LazilyResolvedClassUnion
         >({
           partial: purify.Maybe.of(
             parameters.optionalPartialClassUnionToResolvedClassUnionProperty,
@@ -18005,8 +18005,8 @@ export class LazyPropertiesClass {
       this.optionalPartialClassUnionToResolvedClassUnionProperty =
         new $LazyOptionalObject<
           LazilyResolvedClassUnion.$Identifier,
-          LazilyResolvedClassUnion,
-          PartialClassUnion
+          PartialClassUnion,
+          LazilyResolvedClassUnion
         >({
           partial: purify.Maybe.empty(),
           resolver: async () => {
@@ -18030,8 +18030,8 @@ export class LazyPropertiesClass {
     ) {
       this.requiredLazyToResolvedClassProperty = new $LazyRequiredObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriClass
       >({
         partial: new $DefaultPartial(
           parameters.requiredLazyToResolvedClassProperty,
@@ -18060,8 +18060,8 @@ export class LazyPropertiesClass {
       this.requiredPartialClassToResolvedClassProperty =
         new $LazyRequiredObject<
           LazilyResolvedBlankNodeOrIriClass.$Identifier,
-          LazilyResolvedBlankNodeOrIriClass,
-          PartialClass
+          PartialClass,
+          LazilyResolvedBlankNodeOrIriClass
         >({
           partial: new PartialClass(
             parameters.requiredPartialClassToResolvedClassProperty,
@@ -18085,8 +18085,8 @@ export class LazyPropertiesClass {
     } else if (typeof parameters.setLazyToResolvedClassProperty === "object") {
       this.setLazyToResolvedClassProperty = new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriClass
       >({
         partials: parameters.setLazyToResolvedClassProperty.map(
           (object) => new $DefaultPartial(object),
@@ -18101,8 +18101,8 @@ export class LazyPropertiesClass {
     ) {
       this.setLazyToResolvedClassProperty = new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriClass
       >({
         partials: [],
         resolver: async () => {
@@ -18126,8 +18126,8 @@ export class LazyPropertiesClass {
     ) {
       this.setPartialClassToResolvedClassProperty = new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        PartialClass
+        PartialClass,
+        LazilyResolvedBlankNodeOrIriClass
       >({
         partials: parameters.setPartialClassToResolvedClassProperty.map(
           (object) => new PartialClass(object),
@@ -18142,8 +18142,8 @@ export class LazyPropertiesClass {
     ) {
       this.setPartialClassToResolvedClassProperty = new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        PartialClass
+        PartialClass,
+        LazilyResolvedBlankNodeOrIriClass
       >({
         partials: [],
         resolver: async () => {
@@ -18617,53 +18617,53 @@ export namespace LazyPropertiesClass {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       optionalLazyToResolvedClassProperty: $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriClass
       >;
       optionalLazyToResolvedClassUnionProperty: $LazyOptionalObject<
         LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedClassUnion
       >;
       optionalLazyToResolvedIriClassProperty: $LazyOptionalObject<
         LazilyResolvedIriClass.$Identifier,
-        LazilyResolvedIriClass,
-        $NamedDefaultPartial
+        $NamedDefaultPartial,
+        LazilyResolvedIriClass
       >;
       optionalPartialClassToResolvedClassProperty: $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        PartialClass
+        PartialClass,
+        LazilyResolvedBlankNodeOrIriClass
       >;
       optionalPartialClassToResolvedClassUnionProperty: $LazyOptionalObject<
         LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        PartialClass
+        PartialClass,
+        LazilyResolvedClassUnion
       >;
       optionalPartialClassUnionToResolvedClassUnionProperty: $LazyOptionalObject<
         LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        PartialClassUnion
+        PartialClassUnion,
+        LazilyResolvedClassUnion
       >;
       requiredLazyToResolvedClassProperty: $LazyRequiredObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriClass
       >;
       requiredPartialClassToResolvedClassProperty: $LazyRequiredObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        PartialClass
+        PartialClass,
+        LazilyResolvedBlankNodeOrIriClass
       >;
       setLazyToResolvedClassProperty: $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriClass
       >;
       setPartialClassToResolvedClassProperty: $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        PartialClass
+        PartialClass,
+        LazilyResolvedBlankNodeOrIriClass
       >;
     }
   > {
@@ -18678,8 +18678,8 @@ export namespace LazyPropertiesClass {
       : dataFactory.namedNode($jsonObject["@id"]);
     const optionalLazyToResolvedClassProperty = new $LazyOptionalObject<
       LazilyResolvedBlankNodeOrIriClass.$Identifier,
-      LazilyResolvedBlankNodeOrIriClass,
-      $DefaultPartial
+      $DefaultPartial,
+      LazilyResolvedBlankNodeOrIriClass
     >({
       partial: purify.Maybe.fromNullable(
         $jsonObject["optionalLazyToResolvedClassProperty"],
@@ -18695,8 +18695,8 @@ export namespace LazyPropertiesClass {
     });
     const optionalLazyToResolvedClassUnionProperty = new $LazyOptionalObject<
       LazilyResolvedClassUnion.$Identifier,
-      LazilyResolvedClassUnion,
-      $DefaultPartial
+      $DefaultPartial,
+      LazilyResolvedClassUnion
     >({
       partial: purify.Maybe.fromNullable(
         $jsonObject["optionalLazyToResolvedClassUnionProperty"],
@@ -18712,8 +18712,8 @@ export namespace LazyPropertiesClass {
     });
     const optionalLazyToResolvedIriClassProperty = new $LazyOptionalObject<
       LazilyResolvedIriClass.$Identifier,
-      LazilyResolvedIriClass,
-      $NamedDefaultPartial
+      $NamedDefaultPartial,
+      LazilyResolvedIriClass
     >({
       partial: purify.Maybe.fromNullable(
         $jsonObject["optionalLazyToResolvedIriClassProperty"],
@@ -18729,8 +18729,8 @@ export namespace LazyPropertiesClass {
     });
     const optionalPartialClassToResolvedClassProperty = new $LazyOptionalObject<
       LazilyResolvedBlankNodeOrIriClass.$Identifier,
-      LazilyResolvedBlankNodeOrIriClass,
-      PartialClass
+      PartialClass,
+      LazilyResolvedBlankNodeOrIriClass
     >({
       partial: purify.Maybe.fromNullable(
         $jsonObject["optionalPartialClassToResolvedClassProperty"],
@@ -18747,8 +18747,8 @@ export namespace LazyPropertiesClass {
     const optionalPartialClassToResolvedClassUnionProperty =
       new $LazyOptionalObject<
         LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        PartialClass
+        PartialClass,
+        LazilyResolvedClassUnion
       >({
         partial: purify.Maybe.fromNullable(
           $jsonObject["optionalPartialClassToResolvedClassUnionProperty"],
@@ -18765,8 +18765,8 @@ export namespace LazyPropertiesClass {
     const optionalPartialClassUnionToResolvedClassUnionProperty =
       new $LazyOptionalObject<
         LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        PartialClassUnion
+        PartialClassUnion,
+        LazilyResolvedClassUnion
       >({
         partial: purify.Maybe.fromNullable(
           $jsonObject["optionalPartialClassUnionToResolvedClassUnionProperty"],
@@ -18782,8 +18782,8 @@ export namespace LazyPropertiesClass {
       });
     const requiredLazyToResolvedClassProperty = new $LazyRequiredObject<
       LazilyResolvedBlankNodeOrIriClass.$Identifier,
-      LazilyResolvedBlankNodeOrIriClass,
-      $DefaultPartial
+      $DefaultPartial,
+      LazilyResolvedBlankNodeOrIriClass
     >({
       partial: $DefaultPartial
         .$fromJson($jsonObject["requiredLazyToResolvedClassProperty"])
@@ -18799,8 +18799,8 @@ export namespace LazyPropertiesClass {
     });
     const requiredPartialClassToResolvedClassProperty = new $LazyRequiredObject<
       LazilyResolvedBlankNodeOrIriClass.$Identifier,
-      LazilyResolvedBlankNodeOrIriClass,
-      PartialClass
+      PartialClass,
+      LazilyResolvedBlankNodeOrIriClass
     >({
       partial: PartialClass.$fromJson(
         $jsonObject["requiredPartialClassToResolvedClassProperty"],
@@ -18816,8 +18816,8 @@ export namespace LazyPropertiesClass {
     });
     const setLazyToResolvedClassProperty = new $LazyObjectSet<
       LazilyResolvedBlankNodeOrIriClass.$Identifier,
-      LazilyResolvedBlankNodeOrIriClass,
-      $DefaultPartial
+      $DefaultPartial,
+      LazilyResolvedBlankNodeOrIriClass
     >({
       partials: $jsonObject["setLazyToResolvedClassProperty"].map((item) =>
         $DefaultPartial.$fromJson(item).unsafeCoerce(),
@@ -18831,8 +18831,8 @@ export namespace LazyPropertiesClass {
     });
     const setPartialClassToResolvedClassProperty = new $LazyObjectSet<
       LazilyResolvedBlankNodeOrIriClass.$Identifier,
-      LazilyResolvedBlankNodeOrIriClass,
-      PartialClass
+      PartialClass,
+      LazilyResolvedBlankNodeOrIriClass
     >({
       partials: $jsonObject["setPartialClassToResolvedClassProperty"].map(
         (item) => PartialClass.$fromJson(item).unsafeCoerce(),
@@ -19007,53 +19007,53 @@ export namespace LazyPropertiesClass {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       optionalLazyToResolvedClassProperty: $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriClass
       >;
       optionalLazyToResolvedClassUnionProperty: $LazyOptionalObject<
         LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedClassUnion
       >;
       optionalLazyToResolvedIriClassProperty: $LazyOptionalObject<
         LazilyResolvedIriClass.$Identifier,
-        LazilyResolvedIriClass,
-        $NamedDefaultPartial
+        $NamedDefaultPartial,
+        LazilyResolvedIriClass
       >;
       optionalPartialClassToResolvedClassProperty: $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        PartialClass
+        PartialClass,
+        LazilyResolvedBlankNodeOrIriClass
       >;
       optionalPartialClassToResolvedClassUnionProperty: $LazyOptionalObject<
         LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        PartialClass
+        PartialClass,
+        LazilyResolvedClassUnion
       >;
       optionalPartialClassUnionToResolvedClassUnionProperty: $LazyOptionalObject<
         LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        PartialClassUnion
+        PartialClassUnion,
+        LazilyResolvedClassUnion
       >;
       requiredLazyToResolvedClassProperty: $LazyRequiredObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriClass
       >;
       requiredPartialClassToResolvedClassProperty: $LazyRequiredObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        PartialClass
+        PartialClass,
+        LazilyResolvedBlankNodeOrIriClass
       >;
       setLazyToResolvedClassProperty: $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriClass
       >;
       setPartialClassToResolvedClassProperty: $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        PartialClass
+        PartialClass,
+        LazilyResolvedBlankNodeOrIriClass
       >;
     }
   > {
@@ -19062,8 +19062,8 @@ export namespace LazyPropertiesClass {
       Error,
       $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriClass
       >
     > = purify.Either.of<
       Error,
@@ -19104,8 +19104,8 @@ export namespace LazyPropertiesClass {
           (partial) =>
             new $LazyOptionalObject<
               LazilyResolvedBlankNodeOrIriClass.$Identifier,
-              LazilyResolvedBlankNodeOrIriClass,
-              $DefaultPartial
+              $DefaultPartial,
+              LazilyResolvedBlankNodeOrIriClass
             >({
               partial,
               resolver: (identifier) =>
@@ -19124,8 +19124,8 @@ export namespace LazyPropertiesClass {
       Error,
       $LazyOptionalObject<
         LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedClassUnion
       >
     > = purify.Either.of<
       Error,
@@ -19166,8 +19166,8 @@ export namespace LazyPropertiesClass {
           (partial) =>
             new $LazyOptionalObject<
               LazilyResolvedClassUnion.$Identifier,
-              LazilyResolvedClassUnion,
-              $DefaultPartial
+              $DefaultPartial,
+              LazilyResolvedClassUnion
             >({
               partial,
               resolver: (identifier) =>
@@ -19186,8 +19186,8 @@ export namespace LazyPropertiesClass {
       Error,
       $LazyOptionalObject<
         LazilyResolvedIriClass.$Identifier,
-        LazilyResolvedIriClass,
-        $NamedDefaultPartial
+        $NamedDefaultPartial,
+        LazilyResolvedIriClass
       >
     > = purify.Either.of<
       Error,
@@ -19228,8 +19228,8 @@ export namespace LazyPropertiesClass {
           (partial) =>
             new $LazyOptionalObject<
               LazilyResolvedIriClass.$Identifier,
-              LazilyResolvedIriClass,
-              $NamedDefaultPartial
+              $NamedDefaultPartial,
+              LazilyResolvedIriClass
             >({
               partial,
               resolver: (identifier) =>
@@ -19248,8 +19248,8 @@ export namespace LazyPropertiesClass {
       Error,
       $LazyOptionalObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        PartialClass
+        PartialClass,
+        LazilyResolvedBlankNodeOrIriClass
       >
     > = purify.Either.of<
       Error,
@@ -19290,8 +19290,8 @@ export namespace LazyPropertiesClass {
           (partial) =>
             new $LazyOptionalObject<
               LazilyResolvedBlankNodeOrIriClass.$Identifier,
-              LazilyResolvedBlankNodeOrIriClass,
-              PartialClass
+              PartialClass,
+              LazilyResolvedBlankNodeOrIriClass
             >({
               partial,
               resolver: (identifier) =>
@@ -19310,8 +19310,8 @@ export namespace LazyPropertiesClass {
       Error,
       $LazyOptionalObject<
         LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        PartialClass
+        PartialClass,
+        LazilyResolvedClassUnion
       >
     > = purify.Either.of<
       Error,
@@ -19356,8 +19356,8 @@ export namespace LazyPropertiesClass {
           (partial) =>
             new $LazyOptionalObject<
               LazilyResolvedClassUnion.$Identifier,
-              LazilyResolvedClassUnion,
-              PartialClass
+              PartialClass,
+              LazilyResolvedClassUnion
             >({
               partial,
               resolver: (identifier) =>
@@ -19376,8 +19376,8 @@ export namespace LazyPropertiesClass {
       Error,
       $LazyOptionalObject<
         LazilyResolvedClassUnion.$Identifier,
-        LazilyResolvedClassUnion,
-        PartialClassUnion
+        PartialClassUnion,
+        LazilyResolvedClassUnion
       >
     > = purify.Either.of<
       Error,
@@ -19422,8 +19422,8 @@ export namespace LazyPropertiesClass {
           (partial) =>
             new $LazyOptionalObject<
               LazilyResolvedClassUnion.$Identifier,
-              LazilyResolvedClassUnion,
-              PartialClassUnion
+              PartialClassUnion,
+              LazilyResolvedClassUnion
             >({
               partial,
               resolver: (identifier) =>
@@ -19442,8 +19442,8 @@ export namespace LazyPropertiesClass {
       Error,
       $LazyRequiredObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriClass
       >
     > = purify.Either.of<
       Error,
@@ -19471,8 +19471,8 @@ export namespace LazyPropertiesClass {
           (partial) =>
             new $LazyRequiredObject<
               LazilyResolvedBlankNodeOrIriClass.$Identifier,
-              LazilyResolvedBlankNodeOrIriClass,
-              $DefaultPartial
+              $DefaultPartial,
+              LazilyResolvedBlankNodeOrIriClass
             >({
               partial,
               resolver: (identifier) =>
@@ -19491,8 +19491,8 @@ export namespace LazyPropertiesClass {
       Error,
       $LazyRequiredObject<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        PartialClass
+        PartialClass,
+        LazilyResolvedBlankNodeOrIriClass
       >
     > = purify.Either.of<
       Error,
@@ -19520,8 +19520,8 @@ export namespace LazyPropertiesClass {
           (partial) =>
             new $LazyRequiredObject<
               LazilyResolvedBlankNodeOrIriClass.$Identifier,
-              LazilyResolvedBlankNodeOrIriClass,
-              PartialClass
+              PartialClass,
+              LazilyResolvedBlankNodeOrIriClass
             >({
               partial,
               resolver: (identifier) =>
@@ -19540,8 +19540,8 @@ export namespace LazyPropertiesClass {
       Error,
       $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        $DefaultPartial
+        $DefaultPartial,
+        LazilyResolvedBlankNodeOrIriClass
       >
     > = purify.Either.of<
       Error,
@@ -19580,8 +19580,8 @@ export namespace LazyPropertiesClass {
           (partials) =>
             new $LazyObjectSet<
               LazilyResolvedBlankNodeOrIriClass.$Identifier,
-              LazilyResolvedBlankNodeOrIriClass,
-              $DefaultPartial
+              $DefaultPartial,
+              LazilyResolvedBlankNodeOrIriClass
             >({
               partials,
               resolver: (identifiers) =>
@@ -19602,8 +19602,8 @@ export namespace LazyPropertiesClass {
       Error,
       $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriClass.$Identifier,
-        LazilyResolvedBlankNodeOrIriClass,
-        PartialClass
+        PartialClass,
+        LazilyResolvedBlankNodeOrIriClass
       >
     > = purify.Either.of<
       Error,
@@ -19641,8 +19641,8 @@ export namespace LazyPropertiesClass {
           (partials) =>
             new $LazyObjectSet<
               LazilyResolvedBlankNodeOrIriClass.$Identifier,
-              LazilyResolvedBlankNodeOrIriClass,
-              PartialClass
+              PartialClass,
+              LazilyResolvedBlankNodeOrIriClass
             >({
               partials,
               resolver: (identifiers) =>
