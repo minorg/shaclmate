@@ -1928,7 +1928,7 @@
               "name": {
                 "identifier": {
                   "termType": "BlankNode",
-                  "value": "n3-313"
+                  "value": "n3-317"
                 }
               },
               "identifierNodeKinds": [
@@ -1990,7 +1990,7 @@
               "name": {
                 "identifier": {
                   "termType": "BlankNode",
-                  "value": "n3-314"
+                  "value": "n3-318"
                 }
               },
               "identifierNodeKinds": [
@@ -2051,7 +2051,7 @@
             "name": {
               "identifier": {
                 "termType": "BlankNode",
-                "value": "n3-315"
+                "value": "n3-319"
               }
             },
             "identifierNodeKinds": [
@@ -2108,7 +2108,7 @@
               "name": {
                 "identifier": {
                   "termType": "BlankNode",
-                  "value": "n3-316"
+                  "value": "n3-320"
                 }
               },
               "identifierNodeKinds": [
@@ -2157,7 +2157,7 @@
               "name": {
                 "identifier": {
                   "termType": "BlankNode",
-                  "value": "n3-317"
+                  "value": "n3-321"
                 }
               },
               "identifierNodeKinds": [
@@ -2754,7 +2754,7 @@
             "name": {
               "identifier": {
                 "termType": "BlankNode",
-                "value": "n3-318"
+                "value": "n3-322"
               }
             },
             "identifierNodeKinds": [
@@ -2811,7 +2811,7 @@
               "name": {
                 "identifier": {
                   "termType": "BlankNode",
-                  "value": "n3-319"
+                  "value": "n3-323"
                 }
               },
               "identifierNodeKinds": [
@@ -2860,7 +2860,7 @@
               "name": {
                 "identifier": {
                   "termType": "BlankNode",
-                  "value": "n3-320"
+                  "value": "n3-324"
                 }
               },
               "identifierNodeKinds": [
@@ -3407,7 +3407,7 @@
               "name": {
                 "identifier": {
                   "termType": "BlankNode",
-                  "value": "n3-321"
+                  "value": "n3-325"
                 }
               },
               "identifierNodeKinds": [
@@ -3469,7 +3469,7 @@
               "name": {
                 "identifier": {
                   "termType": "BlankNode",
-                  "value": "n3-322"
+                  "value": "n3-326"
                 }
               },
               "identifierNodeKinds": [
@@ -4266,6 +4266,162 @@
       "kind": "ObjectType",
       "name": {
         "identifier": {
+          "curie": ":RecursiveClassUnionMember1",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "RecursiveClassUnionMember1",
+          "value": "http://example.com/RecursiveClassUnionMember1"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-280"
+            },
+            "propertyPath": {
+              "curie": ":recursiveClassUnionMember1Property",
+              "uniqueLocalPart": "recursiveClassUnionMember1Property",
+              "termType": "NamedNode",
+              "value": "http://example.com/recursiveClassUnionMember1Property"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/recursiveClassUnionMember1Property",
+          "type": {
+            "itemType": {
+              "kind": "ObjectUnionType",
+              "name": {
+                "identifier": {
+                  "curie": ":RecursiveClassUnion",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "RecursiveClassUnion",
+                  "value": "http://example.com/RecursiveClassUnion"
+                }
+              },
+              "types": [
+                {
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":RecursiveClassUnionMember1",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "RecursiveClassUnionMember1",
+                      "value": "http://example.com/RecursiveClassUnionMember1"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode"
+                },
+                {
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":RecursiveClassUnionMember2",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "RecursiveClassUnionMember2",
+                      "value": "http://example.com/RecursiveClassUnionMember2"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode"
+                }
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":RecursiveClassUnionMember2",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "RecursiveClassUnionMember2",
+          "value": "http://example.com/RecursiveClassUnionMember2"
+        }
+      },
+      "properties": [
+        {
+          "name": {
+            "identifier": {
+              "termType": "BlankNode",
+              "value": "n3-281"
+            },
+            "propertyPath": {
+              "curie": ":recursiveClassUnionMember2Property",
+              "uniqueLocalPart": "recursiveClassUnionMember2Property",
+              "termType": "NamedNode",
+              "value": "http://example.com/recursiveClassUnionMember2Property"
+            }
+          },
+          "order": 0,
+          "path": "http://example.com/recursiveClassUnionMember2Property",
+          "type": {
+            "itemType": {
+              "kind": "ObjectUnionType",
+              "name": {
+                "identifier": {
+                  "curie": ":RecursiveClassUnion",
+                  "termType": "NamedNode",
+                  "uniqueLocalPart": "RecursiveClassUnion",
+                  "value": "http://example.com/RecursiveClassUnion"
+                }
+              },
+              "types": [
+                {
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":RecursiveClassUnionMember1",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "RecursiveClassUnionMember1",
+                      "value": "http://example.com/RecursiveClassUnionMember1"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode"
+                },
+                {
+                  "kind": "ObjectType",
+                  "name": {
+                    "identifier": {
+                      "curie": ":RecursiveClassUnionMember2",
+                      "termType": "NamedNode",
+                      "uniqueLocalPart": "RecursiveClassUnionMember2",
+                      "value": "http://example.com/RecursiveClassUnionMember2"
+                    }
+                  },
+                  "identifierNodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ],
+                  "identifierMintingStrategy": "blankNode"
+                }
+              ]
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
           "curie": ":Sha256IriClass",
           "termType": "NamedNode",
           "uniqueLocalPart": "Sha256IriClass",
@@ -4277,7 +4433,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-278"
+              "value": "n3-282"
             },
             "propertyPath": {
               "curie": ":sha256IriProperty",
@@ -4315,7 +4471,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-283"
+              "value": "n3-287"
             },
             "propertyPath": {
               "curie": ":booleanTermProperty",
@@ -4343,7 +4499,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-284"
+              "value": "n3-288"
             },
             "propertyPath": {
               "curie": ":dateTermProperty",
@@ -4371,7 +4527,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-285"
+              "value": "n3-289"
             },
             "propertyPath": {
               "curie": ":dateTimeTermProperty",
@@ -4399,7 +4555,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-286"
+              "value": "n3-290"
             },
             "propertyPath": {
               "curie": ":iriTermProperty",
@@ -4426,7 +4582,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-287"
+              "value": "n3-291"
             },
             "propertyPath": {
               "curie": ":literalTermProperty",
@@ -4450,7 +4606,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-288"
+              "value": "n3-292"
             },
             "propertyPath": {
               "curie": ":numberTermProperty",
@@ -4478,7 +4634,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-289"
+              "value": "n3-293"
             },
             "propertyPath": {
               "curie": ":stringTermProperty",
@@ -4506,7 +4662,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-290"
+              "value": "n3-294"
             },
             "propertyPath": {
               "curie": ":termProperty",
@@ -4542,7 +4698,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-291"
+              "value": "n3-295"
             },
             "propertyPath": {
               "curie": ":unrelatedTypesProperty",
@@ -4591,7 +4747,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-296"
+              "value": "n3-300"
             },
             "propertyPath": {
               "curie": ":narrowLiteralsProperty",
@@ -4632,7 +4788,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-301"
+              "value": "n3-305"
             },
             "propertyPath": {
               "curie": ":widenedLiteralsProperty",
@@ -4656,7 +4812,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-306"
+              "value": "n3-310"
             },
             "propertyPath": {
               "curie": ":widenedTermsProperty",
@@ -4692,7 +4848,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-311"
+              "value": "n3-315"
             },
             "propertyPath": {
               "curie": ":uuidV4IriProperty",
@@ -4730,7 +4886,7 @@
           "name": {
             "identifier": {
               "termType": "BlankNode",
-              "value": "n3-312"
+              "value": "n3-316"
             },
             "propertyPath": {
               "curie": ":uuidV4IriProperty",
@@ -4758,7 +4914,7 @@
       "name": {
         "identifier": {
           "termType": "BlankNode",
-          "value": "n3-313"
+          "value": "n3-317"
         }
       },
       "properties": []
@@ -4768,7 +4924,7 @@
       "name": {
         "identifier": {
           "termType": "BlankNode",
-          "value": "n3-316"
+          "value": "n3-320"
         }
       },
       "properties": []

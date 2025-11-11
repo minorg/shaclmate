@@ -333,7 +333,7 @@ export function transformNodeShapeToAstType(
     rootProperty: ast.ObjectType.Property;
   }): boolean => {
     logger.debug(
-      "isPropertyRecursive: rootObjectType=%s, rootProperty=%s, objectType=%s, property=%s, propertyType=%s",
+      "isPropertyRecursive (start): rootObjectType=%s, rootProperty=%s, objectType=%s, property=%s, propertyType=%s",
       Resource.Identifier.toString(rootObjectType.name.identifier),
       Resource.Identifier.toString(rootProperty.name.identifier),
       Resource.Identifier.toString(objectType.name.identifier),
@@ -380,7 +380,6 @@ export function transformNodeShapeToAstType(
         if (
           propertyType.name.identifier.equals(rootObjectType.name.identifier)
         ) {
-          logger.debug("recursive");
           return true;
         }
 
@@ -396,14 +395,11 @@ export function transformNodeShapeToAstType(
           }
         }
 
-        logger.debug("not recursive");
-
         return false;
       case "IntersectionType":
       case "ObjectIntersectionType":
       case "ObjectUnionType":
       case "UnionType":
-        logger.debug("checking member types");
         for (const memberType of propertyType.memberTypes) {
           if (
             isPropertyRecursive({
@@ -420,7 +416,6 @@ export function transformNodeShapeToAstType(
       case "ListType":
       case "OptionType":
       case "SetType":
-        logger.debug("checking item type");
         return isPropertyRecursive({
           objectType,
           property,
@@ -444,13 +439,27 @@ export function transformNodeShapeToAstType(
       // return property;
     }
     const property = propertyEither.unsafeCoerce();
+    const recursive = isPropertyRecursive({
+      objectType: rootObjectType,
+      property,
+      rootProperty: property,
+    });
+    if (recursive) {
+      logger.debug(
+        "object type %s property %s is recursive",
+        Resource.Identifier.toString(rootObjectType.name.identifier),
+        Resource.Identifier.toString(property.name.identifier),
+      );
+    } else {
+      // logger.debug(
+      //   "object type %s property %s is not recursive",
+      //   Resource.Identifier.toString(rootObjectType.name.identifier),
+      //   Resource.Identifier.toString(property.name.identifier),
+      // );
+    }
     objectType.properties.push({
       ...property,
-      recursive: isPropertyRecursive({
-        objectType: rootObjectType,
-        property,
-        rootProperty: property,
-      }),
+      recursive,
     });
   }
 
