@@ -135,6 +135,7 @@ export class TypeFactory {
       extern: astType.extern,
       features: astType.tsFeatures,
       fromRdfType: astType.fromRdfType,
+      identifierType,
       imports: astType.tsImports,
       label: astType.label,
       lazyAncestorObjectTypes: () =>

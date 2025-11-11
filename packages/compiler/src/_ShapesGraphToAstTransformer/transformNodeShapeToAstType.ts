@@ -1,5 +1,6 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Either, Left, Maybe } from "purify-ts";
+import { Resource } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type * as ast from "../ast/index.js";
@@ -313,29 +314,105 @@ export function transformNodeShapeToAstType(
 
   // Populate properties
   // Check whether a type refers to this ObjectType
-  const isPropertyRecursive = (astType: ast.Type): boolean => {
-    switch (astType.kind) {
+  logger.debug(
+    "checking %s properties for recursion",
+    Resource.Identifier.toString(objectType.name.identifier),
+  );
+
+  const rootObjectType = objectType;
+
+  const isPropertyRecursive = ({
+    objectType,
+    property,
+    propertyType,
+    rootProperty,
+  }: {
+    objectType: ast.ObjectType;
+    property: ast.ObjectType.Property;
+    propertyType?: ast.Type;
+    rootProperty: ast.ObjectType.Property;
+  }): boolean => {
+    logger.debug(
+      "isPropertyRecursive: rootObjectType=%s, rootProperty=%s, objectType=%s, property=%s, propertyType=%s",
+      Resource.Identifier.toString(rootObjectType.name.identifier),
+      Resource.Identifier.toString(rootProperty.name.identifier),
+      Resource.Identifier.toString(objectType.name.identifier),
+      Resource.Identifier.toString(property.name.identifier),
+      propertyType?.kind,
+    );
+
+    if (!propertyType) {
+      const partialType = property.partialType.extract();
+      if (partialType) {
+        if (
+          isPropertyRecursive({
+            objectType,
+            property,
+            propertyType: partialType,
+            rootProperty,
+          })
+        ) {
+          return true;
+        }
+      }
+
+      if (
+        isPropertyRecursive({
+          objectType,
+          property,
+          propertyType: property.type,
+          rootProperty,
+        })
+      ) {
+        return true;
+      }
+
+      return false;
+    }
+
+    switch (propertyType.kind) {
       case "IdentifierType":
       case "LiteralType":
       case "PlaceholderType":
       case "TermType":
         return false;
       case "ObjectType":
-        if (astType.name === objectType.name) {
+        if (
+          propertyType.name.identifier.equals(rootObjectType.name.identifier)
+        ) {
+          logger.debug("recursive");
           return true;
         }
-        for (const property of astType.properties) {
-          if (isPropertyRecursive(property.type)) {
+
+        for (const property of propertyType.properties) {
+          if (
+            isPropertyRecursive({
+              objectType: propertyType,
+              property,
+              rootProperty,
+            })
+          ) {
             return true;
           }
         }
+
+        logger.debug("not recursive");
+
         return false;
       case "IntersectionType":
       case "ObjectIntersectionType":
       case "ObjectUnionType":
       case "UnionType":
-        for (const memberType of astType.memberTypes) {
-          if (isPropertyRecursive(memberType)) {
+        logger.debug("checking member types");
+        for (const memberType of propertyType.memberTypes) {
+          if (
+            isPropertyRecursive({
+              objectType,
+              property,
+              propertyType: memberType,
+              rootProperty,
+            })
+          ) {
             return true;
           }
         }
@@ -343,9 +420,16 @@ export function transformNodeShapeToAstType(
       case "ListType":
       case "OptionType":
       case "SetType":
-        return isPropertyRecursive(astType.itemType);
+        logger.debug("checking item type");
+        return isPropertyRecursive({
+          objectType,
+          property,
+          propertyType: propertyType.itemType,
+          rootProperty,
+        });
     }
   };
+
   for (const propertyShape of nodeShape.constraints.properties) {
     const propertyEither =
       this.transformPropertyShapeToAstObjectTypeProperty(propertyShape);
@@ -362,7 +446,11 @@ export function transformNodeShapeToAstType(
     const property = propertyEither.unsafeCoerce();
     objectType.properties.push({
       ...property,
-      recursive: isPropertyRecursive(property.type),
+      recursive: isPropertyRecursive({
+        objectType: rootObjectType,
+        property,
+        rootProperty: property,
+      }),
     });
   }
 
