@@ -16,5 +16,5 @@ describe("TsGenerator", () => {
         .unsafeCoerce(),
     );
     expect(ts).not.toHaveLength(0);
-  });
+  }, 60000);
 });

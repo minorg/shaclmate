@@ -45,6 +45,10 @@ class MemberType {
     return this.delegate.descendantFromRdfTypeVariables;
   }
 
+  get _discriminatorProperty() {
+    return this.delegate._discriminatorProperty;
+  }
+
   @Memoize()
   get discriminatorPropertyValues(): readonly string[] {
     // A member type's combined discriminator property values are its "own" values plus any descendant values that are
@@ -144,7 +148,6 @@ class MemberType {
  * It also generates SPARQL graph patterns that UNION the member object types.
  */
 export class ObjectUnionType extends DeclaredType {
-  private readonly _discriminatorProperty: Type.DiscriminatorProperty;
   private readonly comment: Maybe<string>;
   private readonly label: Maybe<string>;
 
@@ -172,27 +175,6 @@ export class ObjectUnionType extends DeclaredType {
     this.identifierType = identifierType;
     this.label = label;
     invariant(memberTypes.length > 0);
-    const discriminatorPropertyDescendantValues: string[] = [];
-    const discriminatorPropertyName =
-      memberTypes[0].discriminatorProperty.unsafeCoerce().name;
-    const discriminatorPropertyOwnValues: string[] = [];
-    for (const memberType of memberTypes) {
-      invariant(memberType.declarationType === memberTypes[0].declarationType);
-      invariant(
-        memberType._discriminatorProperty.name === discriminatorPropertyName,
-      );
-      discriminatorPropertyDescendantValues.push(
-        ...memberType._discriminatorProperty.descendantValues,
-      );
-      discriminatorPropertyOwnValues.push(
-        ...memberType._discriminatorProperty.ownValues,
-      );
-    }
-    this._discriminatorProperty = {
-      descendantValues: discriminatorPropertyDescendantValues,
-      name: discriminatorPropertyName,
-      ownValues: discriminatorPropertyOwnValues,
-    };
     this.memberTypes = memberTypes.map(
       (memberType) =>
         new MemberType({ delegate: memberType, universe: memberTypes }),
@@ -249,6 +231,33 @@ export class ObjectUnionType extends DeclaredType {
   @Memoize()
   override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
     return Maybe.of(this._discriminatorProperty);
+  }
+
+  @Memoize()
+  private get _discriminatorProperty(): Type.DiscriminatorProperty {
+    const discriminatorPropertyDescendantValues: string[] = [];
+    const discriminatorPropertyName =
+      this.memberTypes[0]._discriminatorProperty.name;
+    const discriminatorPropertyOwnValues: string[] = [];
+    for (const memberType of this.memberTypes) {
+      invariant(
+        memberType.declarationType === this.memberTypes[0].declarationType,
+      );
+      invariant(
+        memberType._discriminatorProperty.name === discriminatorPropertyName,
+      );
+      discriminatorPropertyDescendantValues.push(
+        ...memberType._discriminatorProperty.descendantValues,
+      );
+      discriminatorPropertyOwnValues.push(
+        ...memberType._discriminatorProperty.ownValues,
+      );
+    }
+    return {
+      descendantValues: discriminatorPropertyDescendantValues,
+      name: discriminatorPropertyName,
+      ownValues: discriminatorPropertyOwnValues,
+    };
   }
 
   @Memoize()

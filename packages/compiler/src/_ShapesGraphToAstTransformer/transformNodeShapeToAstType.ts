@@ -332,14 +332,14 @@ export function transformNodeShapeToAstType(
     propertyType?: ast.Type;
     rootProperty: ast.ObjectType.Property;
   }): boolean => {
-    logger.debug(
-      "isPropertyRecursive (start): rootObjectType=%s, rootProperty=%s, objectType=%s, property=%s, propertyType=%s",
-      Resource.Identifier.toString(rootObjectType.name.identifier),
-      Resource.Identifier.toString(rootProperty.name.identifier),
-      Resource.Identifier.toString(objectType.name.identifier),
-      Resource.Identifier.toString(property.name.identifier),
-      propertyType?.kind,
-    );
+    // logger.debug(
+    //   "isPropertyRecursive (start): rootObjectType=%s, rootProperty=%s, objectType=%s, property=%s, propertyType=%s",
+    //   Resource.Identifier.toString(rootObjectType.name.identifier),
+    //   Resource.Identifier.toString(rootProperty.name.identifier),
+    //   Resource.Identifier.toString(objectType.name.identifier),
+    //   Resource.Identifier.toString(property.name.identifier),
+    //   propertyType?.kind,
+    // );
 
     if (!propertyType) {
       const partialType = property.partialType.extract();
