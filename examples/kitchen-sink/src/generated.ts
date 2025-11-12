@@ -5673,8 +5673,12 @@ export namespace RecursiveClassUnionMember2 {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("RecursiveClassUnionMember2"),
-      recursiveClassUnionMember2Property:
-        RecursiveClassUnion.$jsonZodSchema().optional(),
+      recursiveClassUnionMember2Property: zod
+        .lazy(
+          (): zod.ZodType<RecursiveClassUnion.$Json> =>
+            RecursiveClassUnion.$jsonZodSchema(),
+        )
+        .optional(),
     }) satisfies zod.ZodType<$Json>;
   }
 
@@ -5832,93 +5836,21 @@ export namespace RecursiveClassUnionMember2 {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTemplateTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
-      dataFactory.variable!("recursiveClassUnionMember2");
-    const triples: sparqljs.Triple[] = [];
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "recursiveClassUnionMember2");
-    triples.push({
-      object: dataFactory.variable!(
-        `${variablePrefix}RecursiveClassUnionMember2Property`,
-      ),
-      predicate:
-        RecursiveClassUnionMember2.$properties
-          .recursiveClassUnionMember2Property["identifier"],
-      subject,
-    });
-    triples.push(
-      ...RecursiveClassUnion.$sparqlConstructTemplateTriples({
-        subject: dataFactory.variable!(
-          `${variablePrefix}RecursiveClassUnionMember2Property`,
-        ),
-        variablePrefix: `${variablePrefix}RecursiveClassUnionMember2Property`,
-      }),
-    );
-    return triples;
+    return [];
   }
 
-  export function $sparqlWherePatterns(parameters?: {
+  export function $sparqlWherePatterns(_parameters?: {
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
-    const subject =
-      parameters?.subject ??
-      dataFactory.variable!("recursiveClassUnionMember2");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "recursiveClassUnionMember2");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}RecursiveClassUnionMember2Property`,
-                ),
-                predicate:
-                  RecursiveClassUnionMember2.$properties
-                    .recursiveClassUnionMember2Property["identifier"],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...RecursiveClassUnion.$sparqlWherePatterns({
-            preferredLanguages: parameters?.preferredLanguages,
-            subject: dataFactory.variable!(
-              `${variablePrefix}RecursiveClassUnionMember2Property`,
-            ),
-            variablePrefix: `${variablePrefix}RecursiveClassUnionMember2Property`,
-          }),
-        ],
-        type: "optional",
-      },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+    return [];
   }
 }
 export class RecursiveClassUnionMember1 {
@@ -6172,8 +6104,12 @@ export namespace RecursiveClassUnionMember1 {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("RecursiveClassUnionMember1"),
-      recursiveClassUnionMember1Property:
-        RecursiveClassUnion.$jsonZodSchema().optional(),
+      recursiveClassUnionMember1Property: zod
+        .lazy(
+          (): zod.ZodType<RecursiveClassUnion.$Json> =>
+            RecursiveClassUnion.$jsonZodSchema(),
+        )
+        .optional(),
     }) satisfies zod.ZodType<$Json>;
   }
 
@@ -6331,93 +6267,21 @@ export namespace RecursiveClassUnionMember1 {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTemplateTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
-      dataFactory.variable!("recursiveClassUnionMember1");
-    const triples: sparqljs.Triple[] = [];
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "recursiveClassUnionMember1");
-    triples.push({
-      object: dataFactory.variable!(
-        `${variablePrefix}RecursiveClassUnionMember1Property`,
-      ),
-      predicate:
-        RecursiveClassUnionMember1.$properties
-          .recursiveClassUnionMember1Property["identifier"],
-      subject,
-    });
-    triples.push(
-      ...RecursiveClassUnion.$sparqlConstructTemplateTriples({
-        subject: dataFactory.variable!(
-          `${variablePrefix}RecursiveClassUnionMember1Property`,
-        ),
-        variablePrefix: `${variablePrefix}RecursiveClassUnionMember1Property`,
-      }),
-    );
-    return triples;
+    return [];
   }
 
-  export function $sparqlWherePatterns(parameters?: {
+  export function $sparqlWherePatterns(_parameters?: {
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
-    const subject =
-      parameters?.subject ??
-      dataFactory.variable!("recursiveClassUnionMember1");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "recursiveClassUnionMember1");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}RecursiveClassUnionMember1Property`,
-                ),
-                predicate:
-                  RecursiveClassUnionMember1.$properties
-                    .recursiveClassUnionMember1Property["identifier"],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...RecursiveClassUnion.$sparqlWherePatterns({
-            preferredLanguages: parameters?.preferredLanguages,
-            subject: dataFactory.variable!(
-              `${variablePrefix}RecursiveClassUnionMember1Property`,
-            ),
-            variablePrefix: `${variablePrefix}RecursiveClassUnionMember1Property`,
-          }),
-        ],
-        type: "optional",
-      },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+    return [];
   }
 }
 /**
@@ -29526,96 +29390,21 @@ export namespace IndirectRecursiveHelperClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTemplateTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
-      dataFactory.variable!("indirectRecursiveHelperClass");
-    const triples: sparqljs.Triple[] = [];
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "indirectRecursiveHelperClass");
-    triples.push({
-      object: dataFactory.variable!(
-        `${variablePrefix}IndirectRecursiveProperty`,
-      ),
-      predicate:
-        IndirectRecursiveHelperClass.$properties.indirectRecursiveProperty[
-          "identifier"
-        ],
-      subject,
-    });
-    triples.push(
-      ...IndirectRecursiveClass.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${variablePrefix}IndirectRecursiveProperty`,
-        ),
-        variablePrefix: `${variablePrefix}IndirectRecursiveProperty`,
-      }),
-    );
-    return triples;
+    return [];
   }
 
-  export function $sparqlWherePatterns(parameters?: {
+  export function $sparqlWherePatterns(_parameters?: {
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
-    const subject =
-      parameters?.subject ??
-      dataFactory.variable!("indirectRecursiveHelperClass");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "indirectRecursiveHelperClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}IndirectRecursiveProperty`,
-                ),
-                predicate:
-                  IndirectRecursiveHelperClass.$properties
-                    .indirectRecursiveProperty["identifier"],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...IndirectRecursiveClass.$sparqlWherePatterns({
-            ignoreRdfType: true,
-            preferredLanguages: parameters?.preferredLanguages,
-            subject: dataFactory.variable!(
-              `${variablePrefix}IndirectRecursiveProperty`,
-            ),
-            variablePrefix: `${variablePrefix}IndirectRecursiveProperty`,
-          }),
-        ],
-        type: "optional",
-      },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+    return [];
   }
 }
 export class IndirectRecursiveClass {
@@ -29866,8 +29655,12 @@ export namespace IndirectRecursiveClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("IndirectRecursiveClass"),
-      indirectRecursiveHelperProperty:
-        IndirectRecursiveHelperClass.$jsonZodSchema().optional(),
+      indirectRecursiveHelperProperty: zod
+        .lazy(
+          (): zod.ZodType<IndirectRecursiveHelperClass.$Json> =>
+            IndirectRecursiveHelperClass.$jsonZodSchema(),
+        )
+        .optional(),
     }) satisfies zod.ZodType<$Json>;
   }
 

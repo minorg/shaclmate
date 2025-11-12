@@ -104,6 +104,10 @@ class MemberType {
     return this.delegate.mutable;
   }
 
+  get properties() {
+    return this.delegate.properties;
+  }
+
   get name() {
     return this.delegate.name;
   }
@@ -730,8 +734,22 @@ return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right
     return Maybe.empty();
   }
 
-  override jsonZodSchema(): ReturnType<Type["jsonZodSchema"]> {
-    return `${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
+  override jsonZodSchema({
+    context,
+    variables,
+  }: Parameters<DeclaredType["jsonZodSchema"]>[0]): ReturnType<
+    DeclaredType["jsonZodSchema"]
+  > {
+    const expression = `${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
+    for (const memberType of this.memberTypes) {
+      if (
+        context === "property" &&
+        memberType.properties.some((property) => property.recursive)
+      ) {
+        return `${variables.zod}.lazy((): ${variables.zod}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
+      }
+    }
+    return expression;
   }
 
   override snippetDeclarations(
