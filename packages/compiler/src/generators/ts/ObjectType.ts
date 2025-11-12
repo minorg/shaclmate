@@ -37,6 +37,7 @@ export class ObjectType extends DeclaredType {
   readonly declarationType: TsObjectDeclarationType;
   readonly extern: boolean;
   readonly fromRdfType: Maybe<NamedNode>;
+  readonly identifierType: IdentifierType;
   readonly kind = "ObjectType";
   readonly staticModuleName: string;
   readonly synthetic: boolean;
@@ -48,6 +49,7 @@ export class ObjectType extends DeclaredType {
     declarationType,
     extern,
     fromRdfType,
+    identifierType,
     imports,
     label,
     lazyAncestorObjectTypes,
@@ -66,6 +68,7 @@ export class ObjectType extends DeclaredType {
     extern: boolean;
     fromRdfType: Maybe<NamedNode>;
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
+    identifierType: IdentifierType;
     imports: readonly string[];
     label: Maybe<string>;
     lazyAncestorObjectTypes: () => readonly ObjectType[];
@@ -83,6 +86,7 @@ export class ObjectType extends DeclaredType {
     this.declarationType = declarationType;
     this.extern = extern;
     this.fromRdfType = fromRdfType;
+    this.identifierType = identifierType;
     this.imports = imports;
     this.label = label;
     // Lazily initialize some members in getters to avoid recursive construction
@@ -253,11 +257,6 @@ export class ObjectType extends DeclaredType {
     );
     invariant(identifierProperty);
     return identifierProperty;
-  }
-
-  @Memoize()
-  get identifierType(): IdentifierType {
-    return this.identifierProperty.type;
   }
 
   @Memoize()

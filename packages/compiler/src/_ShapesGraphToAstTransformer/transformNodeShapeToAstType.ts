@@ -312,58 +312,19 @@ export function transformNodeShapeToAstType(
   );
 
   // Populate properties
-  // Check whether a type refers to this ObjectType
-  const isPropertyRecursive = (astType: ast.Type): boolean => {
-    switch (astType.kind) {
-      case "IdentifierType":
-      case "LiteralType":
-      case "PlaceholderType":
-      case "TermType":
-        return false;
-      case "ObjectType":
-        if (astType.name === objectType.name) {
-          return true;
-        }
-        for (const property of astType.properties) {
-          if (isPropertyRecursive(property.type)) {
-            return true;
-          }
-        }
-        return false;
-      case "IntersectionType":
-      case "ObjectIntersectionType":
-      case "ObjectUnionType":
-      case "UnionType":
-        for (const memberType of astType.memberTypes) {
-          if (isPropertyRecursive(memberType)) {
-            return true;
-          }
-        }
-        return false;
-      case "ListType":
-      case "OptionType":
-      case "SetType":
-        return isPropertyRecursive(astType.itemType);
-    }
-  };
   for (const propertyShape of nodeShape.constraints.properties) {
-    const propertyEither =
-      this.transformPropertyShapeToAstObjectTypeProperty(propertyShape);
-    if (propertyEither.isLeft()) {
-      logger.warn(
-        "error transforming %s %s: %s",
-        nodeShape,
-        propertyShape,
-        (propertyEither.extract() as Error).message,
-      );
-      continue;
-      // return property;
-    }
-    const property = propertyEither.unsafeCoerce();
-    objectType.properties.push({
-      ...property,
-      recursive: isPropertyRecursive(property.type),
-    });
+    this.transformPropertyShapeToAstObjectTypeProperty(propertyShape)
+      .ifLeft((error) => {
+        logger.warn(
+          "error transforming %s %s: %s",
+          nodeShape,
+          propertyShape,
+          error.message,
+        );
+      })
+      .ifRight((property) => {
+        objectType.properties.push(property);
+      });
   }
 
   objectType.properties.sort((left, right) => {

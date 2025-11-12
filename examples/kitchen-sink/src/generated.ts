@@ -5422,6 +5422,868 @@ export namespace Sha256IriClass {
     return requiredPatterns.concat(optionalPatterns);
   }
 }
+export class RecursiveClassUnionMember2 {
+  private _$identifier?: RecursiveClassUnionMember2.$Identifier;
+  readonly $type = "RecursiveClassUnionMember2";
+  readonly recursiveClassUnionMember2Property: purify.Maybe<RecursiveClassUnion>;
+
+  constructor(parameters?: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly recursiveClassUnionMember2Property?:
+      | RecursiveClassUnion
+      | purify.Maybe<RecursiveClassUnion>;
+  }) {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters?.$identifier satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters?.recursiveClassUnionMember2Property)) {
+      this.recursiveClassUnionMember2Property =
+        parameters?.recursiveClassUnionMember2Property;
+    } else if (
+      typeof parameters?.recursiveClassUnionMember2Property === "object"
+    ) {
+      this.recursiveClassUnionMember2Property = purify.Maybe.of(
+        parameters?.recursiveClassUnionMember2Property,
+      );
+    } else if (
+      typeof parameters?.recursiveClassUnionMember2Property === "undefined"
+    ) {
+      this.recursiveClassUnionMember2Property = purify.Maybe.empty();
+    } else {
+      this.recursiveClassUnionMember2Property =
+        parameters?.recursiveClassUnionMember2Property satisfies never;
+    }
+  }
+
+  get $identifier(): RecursiveClassUnionMember2.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: RecursiveClassUnionMember2): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, RecursiveClassUnion.$equals))(
+          this.recursiveClassUnionMember2Property,
+          other.recursiveClassUnionMember2Property,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "recursiveClassUnionMember2Property",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.recursiveClassUnionMember2Property.ifJust((value0) => {
+      value0.$hash(_hasher);
+    });
+    return _hasher;
+  }
+
+  $toJson(): RecursiveClassUnionMember2.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        recursiveClassUnionMember2Property:
+          this.recursiveClassUnionMember2Property
+            .map((item) => item.$toJson())
+            .extract(),
+      } satisfies RecursiveClassUnionMember2.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet?: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
+      mutateGraph,
+    });
+    resource.add(
+      RecursiveClassUnionMember2.$properties.recursiveClassUnionMember2Property[
+        "identifier"
+      ],
+      ...this.recursiveClassUnionMember2Property
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+            .identifier,
+        ]),
+    );
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace RecursiveClassUnionMember2 {
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "RecursiveClassUnionMember2";
+    readonly recursiveClassUnionMember2Property?:
+      | RecursiveClassUnionMember1.$Json
+      | RecursiveClassUnionMember2.$Json;
+  };
+
+  export function $propertiesFromJson(_json: unknown): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      recursiveClassUnionMember2Property: purify.Maybe<RecursiveClassUnion>;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const recursiveClassUnionMember2Property = purify.Maybe.fromNullable(
+      $jsonObject["recursiveClassUnionMember2Property"],
+    ).map((item) => RecursiveClassUnion.$fromJson(item).unsafeCoerce());
+    return purify.Either.of({
+      $identifier,
+      recursiveClassUnionMember2Property,
+    });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, RecursiveClassUnionMember2> {
+    return $propertiesFromJson(json).map(
+      (properties) => new RecursiveClassUnionMember2(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "RecursiveClassUnionMember2" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/recursiveClassUnionMember2Property`,
+          type: "Control",
+        },
+      ],
+      label: "RecursiveClassUnionMember2",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("RecursiveClassUnionMember2"),
+      recursiveClassUnionMember2Property: zod
+        .lazy(
+          (): zod.ZodType<RecursiveClassUnion.$Json> =>
+            RecursiveClassUnion.$jsonZodSchema(),
+        )
+        .optional(),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, RecursiveClassUnionMember2> {
+    let {
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return RecursiveClassUnionMember2.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new RecursiveClassUnionMember2(properties));
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      recursiveClassUnionMember2Property: purify.Maybe<RecursiveClassUnion>;
+    }
+  > {
+    const $identifier: RecursiveClassUnionMember2.$Identifier =
+      $resource.identifier;
+    const _recursiveClassUnionMember2PropertyEither: purify.Either<
+      Error,
+      purify.Maybe<RecursiveClassUnion>
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.recursiveClassUnionMember2Property["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            RecursiveClassUnion.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: false,
+              objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
+            }),
+          ),
+        ),
+      )
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<RecursiveClassUnion>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                RecursiveClassUnionMember2.$properties
+                  .recursiveClassUnionMember2Property["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
+    if (_recursiveClassUnionMember2PropertyEither.isLeft()) {
+      return _recursiveClassUnionMember2PropertyEither;
+    }
+
+    const recursiveClassUnionMember2Property =
+      _recursiveClassUnionMember2PropertyEither.unsafeCoerce();
+    return purify.Either.of({
+      $identifier,
+      recursiveClassUnionMember2Property,
+    });
+  }
+
+  export const $properties = {
+    recursiveClassUnionMember2Property: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/recursiveClassUnionMember2Property",
+      ),
+    },
+  };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        RecursiveClassUnionMember2.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        RecursiveClassUnionMember2.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      RecursiveClassUnionMember2.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(_parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    return [];
+  }
+
+  export function $sparqlWherePatterns(_parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    return [];
+  }
+}
+export class RecursiveClassUnionMember1 {
+  private _$identifier?: RecursiveClassUnionMember1.$Identifier;
+  readonly $type = "RecursiveClassUnionMember1";
+  readonly recursiveClassUnionMember1Property: purify.Maybe<RecursiveClassUnion>;
+
+  constructor(parameters?: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly recursiveClassUnionMember1Property?:
+      | RecursiveClassUnion
+      | purify.Maybe<RecursiveClassUnion>;
+  }) {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters?.$identifier satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters?.recursiveClassUnionMember1Property)) {
+      this.recursiveClassUnionMember1Property =
+        parameters?.recursiveClassUnionMember1Property;
+    } else if (
+      typeof parameters?.recursiveClassUnionMember1Property === "object"
+    ) {
+      this.recursiveClassUnionMember1Property = purify.Maybe.of(
+        parameters?.recursiveClassUnionMember1Property,
+      );
+    } else if (
+      typeof parameters?.recursiveClassUnionMember1Property === "undefined"
+    ) {
+      this.recursiveClassUnionMember1Property = purify.Maybe.empty();
+    } else {
+      this.recursiveClassUnionMember1Property =
+        parameters?.recursiveClassUnionMember1Property satisfies never;
+    }
+  }
+
+  get $identifier(): RecursiveClassUnionMember1.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: RecursiveClassUnionMember1): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(left, right, RecursiveClassUnion.$equals))(
+          this.recursiveClassUnionMember1Property,
+          other.recursiveClassUnionMember1Property,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "recursiveClassUnionMember1Property",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.recursiveClassUnionMember1Property.ifJust((value0) => {
+      value0.$hash(_hasher);
+    });
+    return _hasher;
+  }
+
+  $toJson(): RecursiveClassUnionMember1.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        recursiveClassUnionMember1Property:
+          this.recursiveClassUnionMember1Property
+            .map((item) => item.$toJson())
+            .extract(),
+      } satisfies RecursiveClassUnionMember1.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet?: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
+      mutateGraph,
+    });
+    resource.add(
+      RecursiveClassUnionMember1.$properties.recursiveClassUnionMember1Property[
+        "identifier"
+      ],
+      ...this.recursiveClassUnionMember1Property
+        .toList()
+        .flatMap((value) => [
+          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+            .identifier,
+        ]),
+    );
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace RecursiveClassUnionMember1 {
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "RecursiveClassUnionMember1";
+    readonly recursiveClassUnionMember1Property?:
+      | RecursiveClassUnionMember1.$Json
+      | RecursiveClassUnionMember2.$Json;
+  };
+
+  export function $propertiesFromJson(_json: unknown): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      recursiveClassUnionMember1Property: purify.Maybe<RecursiveClassUnion>;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const recursiveClassUnionMember1Property = purify.Maybe.fromNullable(
+      $jsonObject["recursiveClassUnionMember1Property"],
+    ).map((item) => RecursiveClassUnion.$fromJson(item).unsafeCoerce());
+    return purify.Either.of({
+      $identifier,
+      recursiveClassUnionMember1Property,
+    });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, RecursiveClassUnionMember1> {
+    return $propertiesFromJson(json).map(
+      (properties) => new RecursiveClassUnionMember1(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "RecursiveClassUnionMember1" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/recursiveClassUnionMember1Property`,
+          type: "Control",
+        },
+      ],
+      label: "RecursiveClassUnionMember1",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("RecursiveClassUnionMember1"),
+      recursiveClassUnionMember1Property: zod
+        .lazy(
+          (): zod.ZodType<RecursiveClassUnion.$Json> =>
+            RecursiveClassUnion.$jsonZodSchema(),
+        )
+        .optional(),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, RecursiveClassUnionMember1> {
+    let {
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return RecursiveClassUnionMember1.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new RecursiveClassUnionMember1(properties));
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      recursiveClassUnionMember1Property: purify.Maybe<RecursiveClassUnion>;
+    }
+  > {
+    const $identifier: RecursiveClassUnionMember1.$Identifier =
+      $resource.identifier;
+    const _recursiveClassUnionMember1PropertyEither: purify.Either<
+      Error,
+      purify.Maybe<RecursiveClassUnion>
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.recursiveClassUnionMember1Property["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) =>
+        values.chainMap((value) =>
+          value.toResource().chain((resource) =>
+            RecursiveClassUnion.$fromRdf(resource, {
+              ...$context,
+              ignoreRdfType: false,
+              objectSet: $objectSet,
+              preferredLanguages: $preferredLanguages,
+            }),
+          ),
+        ),
+      )
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<RecursiveClassUnion>
+            >({
+              object: purify.Maybe.empty(),
+              predicate:
+                RecursiveClassUnionMember1.$properties
+                  .recursiveClassUnionMember1Property["identifier"],
+              subject: $resource,
+            }),
+      )
+      .chain((values) => values.head());
+    if (_recursiveClassUnionMember1PropertyEither.isLeft()) {
+      return _recursiveClassUnionMember1PropertyEither;
+    }
+
+    const recursiveClassUnionMember1Property =
+      _recursiveClassUnionMember1PropertyEither.unsafeCoerce();
+    return purify.Either.of({
+      $identifier,
+      recursiveClassUnionMember1Property,
+    });
+  }
+
+  export const $properties = {
+    recursiveClassUnionMember1Property: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/recursiveClassUnionMember1Property",
+      ),
+    },
+  };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        RecursiveClassUnionMember1.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        RecursiveClassUnionMember1.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      RecursiveClassUnionMember1.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(_parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    return [];
+  }
+
+  export function $sparqlWherePatterns(_parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    return [];
+  }
+}
 /**
  * Shape with properties that have visibility modifiers (private, protected, public)
  */
@@ -28528,96 +29390,21 @@ export namespace IndirectRecursiveHelperClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTemplateTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
-      dataFactory.variable!("indirectRecursiveHelperClass");
-    const triples: sparqljs.Triple[] = [];
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "indirectRecursiveHelperClass");
-    triples.push({
-      object: dataFactory.variable!(
-        `${variablePrefix}IndirectRecursiveProperty`,
-      ),
-      predicate:
-        IndirectRecursiveHelperClass.$properties.indirectRecursiveProperty[
-          "identifier"
-        ],
-      subject,
-    });
-    triples.push(
-      ...IndirectRecursiveClass.$sparqlConstructTemplateTriples({
-        ignoreRdfType: true,
-        subject: dataFactory.variable!(
-          `${variablePrefix}IndirectRecursiveProperty`,
-        ),
-        variablePrefix: `${variablePrefix}IndirectRecursiveProperty`,
-      }),
-    );
-    return triples;
+    return [];
   }
 
-  export function $sparqlWherePatterns(parameters?: {
+  export function $sparqlWherePatterns(_parameters?: {
     ignoreRdfType?: boolean;
     preferredLanguages?: readonly string[];
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
-    const subject =
-      parameters?.subject ??
-      dataFactory.variable!("indirectRecursiveHelperClass");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "indirectRecursiveHelperClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}IndirectRecursiveProperty`,
-                ),
-                predicate:
-                  IndirectRecursiveHelperClass.$properties
-                    .indirectRecursiveProperty["identifier"],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...IndirectRecursiveClass.$sparqlWherePatterns({
-            ignoreRdfType: true,
-            preferredLanguages: parameters?.preferredLanguages,
-            subject: dataFactory.variable!(
-              `${variablePrefix}IndirectRecursiveProperty`,
-            ),
-            variablePrefix: `${variablePrefix}IndirectRecursiveProperty`,
-          }),
-        ],
-        type: "optional",
-      },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+    return [];
   }
 }
 export class IndirectRecursiveClass {
@@ -28868,8 +29655,12 @@ export namespace IndirectRecursiveClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("IndirectRecursiveClass"),
-      indirectRecursiveHelperProperty:
-        IndirectRecursiveHelperClass.$jsonZodSchema().optional(),
+      indirectRecursiveHelperProperty: zod
+        .lazy(
+          (): zod.ZodType<IndirectRecursiveHelperClass.$Json> =>
+            IndirectRecursiveHelperClass.$jsonZodSchema(),
+        )
+        .optional(),
     }) satisfies zod.ZodType<$Json>;
   }
 
@@ -45844,6 +46635,264 @@ export namespace PartialInterfaceUnion {
     }
   }
 }
+/**
+ * Node shape sh:xone's node shapes that have properties with the union's type
+ */
+export type RecursiveClassUnion =
+  | RecursiveClassUnionMember1
+  | RecursiveClassUnionMember2;
+
+export namespace RecursiveClassUnion {
+  export function $equals(
+    left: RecursiveClassUnion,
+    right: RecursiveClassUnion,
+  ): $EqualsResult {
+    return $strictEquals(left.$type, right.$type).chain(() => {
+      switch (left.$type) {
+        case "RecursiveClassUnionMember1":
+          return left.$equals(right as unknown as RecursiveClassUnionMember1);
+        case "RecursiveClassUnionMember2":
+          return left.$equals(right as unknown as RecursiveClassUnionMember2);
+        default:
+          left satisfies never;
+          throw new Error("unrecognized type");
+      }
+    });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, RecursiveClassUnion> {
+    return (
+      RecursiveClassUnionMember1.$fromJson(json) as purify.Either<
+        zod.ZodError,
+        RecursiveClassUnion
+      >
+    ).altLazy(
+      () =>
+        RecursiveClassUnionMember2.$fromJson(json) as purify.Either<
+          zod.ZodError,
+          RecursiveClassUnion
+        >,
+    );
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, RecursiveClassUnion> {
+    return (
+      RecursiveClassUnionMember1.$fromRdf(resource, {
+        ...options,
+        ignoreRdfType: false,
+      }) as purify.Either<Error, RecursiveClassUnion>
+    ).altLazy(
+      () =>
+        RecursiveClassUnionMember2.$fromRdf(resource, {
+          ...options,
+          ignoreRdfType: false,
+        }) as purify.Either<Error, RecursiveClassUnion>,
+    );
+  }
+
+  export function $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_recursiveClassUnion: RecursiveClassUnion, _hasher: HasherT): HasherT {
+    switch (_recursiveClassUnion.$type) {
+      case "RecursiveClassUnionMember1":
+        return _recursiveClassUnion.$hash(_hasher);
+      case "RecursiveClassUnionMember2":
+        return _recursiveClassUnion.$hash(_hasher);
+      default:
+        _recursiveClassUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+
+  export type $Json =
+    | RecursiveClassUnionMember1.$Json
+    | RecursiveClassUnionMember2.$Json;
+
+  export function $jsonZodSchema() {
+    return zod.discriminatedUnion("$type", [
+      RecursiveClassUnionMember1.$jsonZodSchema(),
+      RecursiveClassUnionMember2.$jsonZodSchema(),
+    ]);
+  }
+
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        RecursiveClassUnion.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        RecursiveClassUnion.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      RecursiveClassUnion.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...RecursiveClassUnionMember1.$sparqlConstructTemplateTriples({
+        subject:
+          parameters?.subject ??
+          dataFactory.variable!(
+            "recursiveClassUnionRecursiveClassUnionMember1",
+          ),
+        variablePrefix: parameters?.variablePrefix
+          ? `${parameters.variablePrefix}RecursiveClassUnionMember1`
+          : "recursiveClassUnionRecursiveClassUnionMember1",
+      }).concat(),
+      ...RecursiveClassUnionMember2.$sparqlConstructTemplateTriples({
+        subject:
+          parameters?.subject ??
+          dataFactory.variable!(
+            "recursiveClassUnionRecursiveClassUnionMember2",
+          ),
+        variablePrefix: parameters?.variablePrefix
+          ? `${parameters.variablePrefix}RecursiveClassUnionMember2`
+          : "recursiveClassUnionRecursiveClassUnionMember2",
+      }).concat(),
+    ];
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    return [
+      {
+        patterns: [
+          {
+            patterns: RecursiveClassUnionMember1.$sparqlWherePatterns({
+              subject:
+                parameters?.subject ??
+                dataFactory.variable!(
+                  "recursiveClassUnionRecursiveClassUnionMember1",
+                ),
+              variablePrefix: parameters?.variablePrefix
+                ? `${parameters.variablePrefix}RecursiveClassUnionMember1`
+                : "recursiveClassUnionRecursiveClassUnionMember1",
+            }).concat(),
+            type: "group",
+          },
+          {
+            patterns: RecursiveClassUnionMember2.$sparqlWherePatterns({
+              subject:
+                parameters?.subject ??
+                dataFactory.variable!(
+                  "recursiveClassUnionRecursiveClassUnionMember2",
+                ),
+              variablePrefix: parameters?.variablePrefix
+                ? `${parameters.variablePrefix}RecursiveClassUnionMember2`
+                : "recursiveClassUnionRecursiveClassUnionMember2",
+            }).concat(),
+            type: "group",
+          },
+        ],
+        type: "union",
+      },
+    ];
+  }
+
+  export function $toJson(
+    _recursiveClassUnion: RecursiveClassUnion,
+  ): RecursiveClassUnionMember1.$Json | RecursiveClassUnionMember2.$Json {
+    switch (_recursiveClassUnion.$type) {
+      case "RecursiveClassUnionMember1":
+        return _recursiveClassUnion.$toJson();
+      case "RecursiveClassUnionMember2":
+        return _recursiveClassUnion.$toJson();
+      default:
+        _recursiveClassUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+
+  export function $toRdf(
+    _recursiveClassUnion: RecursiveClassUnion,
+    _parameters?: {
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    switch (_recursiveClassUnion.$type) {
+      case "RecursiveClassUnionMember1":
+        return _recursiveClassUnion.$toRdf(_parameters);
+      case "RecursiveClassUnionMember2":
+        return _recursiveClassUnion.$toRdf(_parameters);
+      default:
+        _recursiveClassUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+}
 export interface $ObjectSet {
   baseInterfaceWithoutProperties(
     identifier: BaseInterfaceWithoutPropertiesStatic.$Identifier,
@@ -46600,6 +47649,40 @@ export interface $ObjectSet {
       "where"
     >,
   ): Promise<purify.Either<Error, number>>;
+  recursiveClassUnionMember1(
+    identifier: RecursiveClassUnionMember1.$Identifier,
+  ): Promise<purify.Either<Error, RecursiveClassUnionMember1>>;
+  recursiveClassUnionMember1Identifiers(
+    query?: $ObjectSet.Query<RecursiveClassUnionMember1.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly RecursiveClassUnionMember1.$Identifier[]>
+  >;
+  recursiveClassUnionMember1s(
+    query?: $ObjectSet.Query<RecursiveClassUnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly RecursiveClassUnionMember1[]>>;
+  recursiveClassUnionMember1sCount(
+    query?: Pick<
+      $ObjectSet.Query<RecursiveClassUnionMember1.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
+  recursiveClassUnionMember2(
+    identifier: RecursiveClassUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, RecursiveClassUnionMember2>>;
+  recursiveClassUnionMember2Identifiers(
+    query?: $ObjectSet.Query<RecursiveClassUnionMember2.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly RecursiveClassUnionMember2.$Identifier[]>
+  >;
+  recursiveClassUnionMember2s(
+    query?: $ObjectSet.Query<RecursiveClassUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly RecursiveClassUnionMember2[]>>;
+  recursiveClassUnionMember2sCount(
+    query?: Pick<
+      $ObjectSet.Query<RecursiveClassUnionMember2.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
   sha256IriClass(
     identifier: Sha256IriClass.$Identifier,
   ): Promise<purify.Either<Error, Sha256IriClass>>;
@@ -46757,6 +47840,18 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly PartialInterfaceUnion[]>>;
   partialInterfaceUnionsCount(
     query?: Pick<$ObjectSet.Query<PartialInterfaceUnion.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  recursiveClassUnion(
+    identifier: RecursiveClassUnion.$Identifier,
+  ): Promise<purify.Either<Error, RecursiveClassUnion>>;
+  recursiveClassUnionIdentifiers(
+    query?: $ObjectSet.Query<RecursiveClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly RecursiveClassUnion.$Identifier[]>>;
+  recursiveClassUnions(
+    query?: $ObjectSet.Query<RecursiveClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly RecursiveClassUnion[]>>;
+  recursiveClassUnionsCount(
+    query?: Pick<$ObjectSet.Query<RecursiveClassUnion.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
 }
 
@@ -48142,6 +49237,64 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     return this.$delegate.propertyVisibilitiesClassesCount(query);
   }
 
+  recursiveClassUnionMember1(
+    identifier: RecursiveClassUnionMember1.$Identifier,
+  ): Promise<purify.Either<Error, RecursiveClassUnionMember1>> {
+    return this.$delegate.recursiveClassUnionMember1(identifier);
+  }
+
+  recursiveClassUnionMember1Identifiers(
+    query?: $ObjectSet.Query<RecursiveClassUnionMember1.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly RecursiveClassUnionMember1.$Identifier[]>
+  > {
+    return this.$delegate.recursiveClassUnionMember1Identifiers(query);
+  }
+
+  recursiveClassUnionMember1s(
+    query?: $ObjectSet.Query<RecursiveClassUnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly RecursiveClassUnionMember1[]>> {
+    return this.$delegate.recursiveClassUnionMember1s(query);
+  }
+
+  recursiveClassUnionMember1sCount(
+    query?: Pick<
+      $ObjectSet.Query<RecursiveClassUnionMember1.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.recursiveClassUnionMember1sCount(query);
+  }
+
+  recursiveClassUnionMember2(
+    identifier: RecursiveClassUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, RecursiveClassUnionMember2>> {
+    return this.$delegate.recursiveClassUnionMember2(identifier);
+  }
+
+  recursiveClassUnionMember2Identifiers(
+    query?: $ObjectSet.Query<RecursiveClassUnionMember2.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly RecursiveClassUnionMember2.$Identifier[]>
+  > {
+    return this.$delegate.recursiveClassUnionMember2Identifiers(query);
+  }
+
+  recursiveClassUnionMember2s(
+    query?: $ObjectSet.Query<RecursiveClassUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly RecursiveClassUnionMember2[]>> {
+    return this.$delegate.recursiveClassUnionMember2s(query);
+  }
+
+  recursiveClassUnionMember2sCount(
+    query?: Pick<
+      $ObjectSet.Query<RecursiveClassUnionMember2.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.recursiveClassUnionMember2sCount(query);
+  }
+
   sha256IriClass(
     identifier: Sha256IriClass.$Identifier,
   ): Promise<purify.Either<Error, Sha256IriClass>> {
@@ -48444,6 +49597,30 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<PartialInterfaceUnion.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.partialInterfaceUnionsCount(query);
+  }
+
+  recursiveClassUnion(
+    identifier: RecursiveClassUnion.$Identifier,
+  ): Promise<purify.Either<Error, RecursiveClassUnion>> {
+    return this.$delegate.recursiveClassUnion(identifier);
+  }
+
+  recursiveClassUnionIdentifiers(
+    query?: $ObjectSet.Query<RecursiveClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly RecursiveClassUnion.$Identifier[]>> {
+    return this.$delegate.recursiveClassUnionIdentifiers(query);
+  }
+
+  recursiveClassUnions(
+    query?: $ObjectSet.Query<RecursiveClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly RecursiveClassUnion[]>> {
+    return this.$delegate.recursiveClassUnions(query);
+  }
+
+  recursiveClassUnionsCount(
+    query?: Pick<$ObjectSet.Query<RecursiveClassUnion.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.recursiveClassUnionsCount(query);
   }
 }
 
@@ -52314,6 +53491,158 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async recursiveClassUnionMember1(
+    identifier: RecursiveClassUnionMember1.$Identifier,
+  ): Promise<purify.Either<Error, RecursiveClassUnionMember1>> {
+    return this.recursiveClassUnionMember1Sync(identifier);
+  }
+
+  recursiveClassUnionMember1Sync(
+    identifier: RecursiveClassUnionMember1.$Identifier,
+  ): purify.Either<Error, RecursiveClassUnionMember1> {
+    return this.recursiveClassUnionMember1sSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async recursiveClassUnionMember1Identifiers(
+    query?: $ObjectSet.Query<RecursiveClassUnionMember1.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly RecursiveClassUnionMember1.$Identifier[]>
+  > {
+    return this.recursiveClassUnionMember1IdentifiersSync(query);
+  }
+
+  recursiveClassUnionMember1IdentifiersSync(
+    query?: $ObjectSet.Query<RecursiveClassUnionMember1.$Identifier>,
+  ): purify.Either<Error, readonly RecursiveClassUnionMember1.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      RecursiveClassUnionMember1,
+      RecursiveClassUnionMember1.$Identifier
+    >(
+      [{ $fromRdf: RecursiveClassUnionMember1.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async recursiveClassUnionMember1s(
+    query?: $ObjectSet.Query<RecursiveClassUnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly RecursiveClassUnionMember1[]>> {
+    return this.recursiveClassUnionMember1sSync(query);
+  }
+
+  recursiveClassUnionMember1sSync(
+    query?: $ObjectSet.Query<RecursiveClassUnionMember1.$Identifier>,
+  ): purify.Either<Error, readonly RecursiveClassUnionMember1[]> {
+    return this.$objectsSync<
+      RecursiveClassUnionMember1,
+      RecursiveClassUnionMember1.$Identifier
+    >(
+      [{ $fromRdf: RecursiveClassUnionMember1.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async recursiveClassUnionMember1sCount(
+    query?: Pick<
+      $ObjectSet.Query<RecursiveClassUnionMember1.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.recursiveClassUnionMember1sCountSync(query);
+  }
+
+  recursiveClassUnionMember1sCountSync(
+    query?: Pick<
+      $ObjectSet.Query<RecursiveClassUnionMember1.$Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      RecursiveClassUnionMember1,
+      RecursiveClassUnionMember1.$Identifier
+    >(
+      [{ $fromRdf: RecursiveClassUnionMember1.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async recursiveClassUnionMember2(
+    identifier: RecursiveClassUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, RecursiveClassUnionMember2>> {
+    return this.recursiveClassUnionMember2Sync(identifier);
+  }
+
+  recursiveClassUnionMember2Sync(
+    identifier: RecursiveClassUnionMember2.$Identifier,
+  ): purify.Either<Error, RecursiveClassUnionMember2> {
+    return this.recursiveClassUnionMember2sSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async recursiveClassUnionMember2Identifiers(
+    query?: $ObjectSet.Query<RecursiveClassUnionMember2.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly RecursiveClassUnionMember2.$Identifier[]>
+  > {
+    return this.recursiveClassUnionMember2IdentifiersSync(query);
+  }
+
+  recursiveClassUnionMember2IdentifiersSync(
+    query?: $ObjectSet.Query<RecursiveClassUnionMember2.$Identifier>,
+  ): purify.Either<Error, readonly RecursiveClassUnionMember2.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      RecursiveClassUnionMember2,
+      RecursiveClassUnionMember2.$Identifier
+    >(
+      [{ $fromRdf: RecursiveClassUnionMember2.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async recursiveClassUnionMember2s(
+    query?: $ObjectSet.Query<RecursiveClassUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly RecursiveClassUnionMember2[]>> {
+    return this.recursiveClassUnionMember2sSync(query);
+  }
+
+  recursiveClassUnionMember2sSync(
+    query?: $ObjectSet.Query<RecursiveClassUnionMember2.$Identifier>,
+  ): purify.Either<Error, readonly RecursiveClassUnionMember2[]> {
+    return this.$objectsSync<
+      RecursiveClassUnionMember2,
+      RecursiveClassUnionMember2.$Identifier
+    >(
+      [{ $fromRdf: RecursiveClassUnionMember2.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async recursiveClassUnionMember2sCount(
+    query?: Pick<
+      $ObjectSet.Query<RecursiveClassUnionMember2.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.recursiveClassUnionMember2sCountSync(query);
+  }
+
+  recursiveClassUnionMember2sCountSync(
+    query?: Pick<
+      $ObjectSet.Query<RecursiveClassUnionMember2.$Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      RecursiveClassUnionMember2,
+      RecursiveClassUnionMember2.$Identifier
+    >(
+      [{ $fromRdf: RecursiveClassUnionMember2.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
   async sha256IriClass(
     identifier: Sha256IriClass.$Identifier,
   ): Promise<purify.Either<Error, Sha256IriClass>> {
@@ -53240,6 +54569,83 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           $fromRdf: PartialInterfaceUnionMember2.$fromRdf,
           $fromRdfTypes: [PartialInterfaceUnionMember2.$fromRdfType],
         },
+      ],
+      query,
+    );
+  }
+
+  async recursiveClassUnion(
+    identifier: RecursiveClassUnion.$Identifier,
+  ): Promise<purify.Either<Error, RecursiveClassUnion>> {
+    return this.recursiveClassUnionSync(identifier);
+  }
+
+  recursiveClassUnionSync(
+    identifier: RecursiveClassUnion.$Identifier,
+  ): purify.Either<Error, RecursiveClassUnion> {
+    return this.recursiveClassUnionsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async recursiveClassUnionIdentifiers(
+    query?: $ObjectSet.Query<RecursiveClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly RecursiveClassUnion.$Identifier[]>> {
+    return this.recursiveClassUnionIdentifiersSync(query);
+  }
+
+  recursiveClassUnionIdentifiersSync(
+    query?: $ObjectSet.Query<RecursiveClassUnion.$Identifier>,
+  ): purify.Either<Error, readonly RecursiveClassUnion.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      RecursiveClassUnion,
+      RecursiveClassUnion.$Identifier
+    >(
+      [
+        { $fromRdf: RecursiveClassUnionMember1.$fromRdf, $fromRdfTypes: [] },
+        { $fromRdf: RecursiveClassUnionMember2.$fromRdf, $fromRdfTypes: [] },
+      ],
+      query,
+    );
+  }
+
+  async recursiveClassUnions(
+    query?: $ObjectSet.Query<RecursiveClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly RecursiveClassUnion[]>> {
+    return this.recursiveClassUnionsSync(query);
+  }
+
+  recursiveClassUnionsSync(
+    query?: $ObjectSet.Query<RecursiveClassUnion.$Identifier>,
+  ): purify.Either<Error, readonly RecursiveClassUnion[]> {
+    return this.$objectsSync<
+      RecursiveClassUnion,
+      RecursiveClassUnion.$Identifier
+    >(
+      [
+        { $fromRdf: RecursiveClassUnionMember1.$fromRdf, $fromRdfTypes: [] },
+        { $fromRdf: RecursiveClassUnionMember2.$fromRdf, $fromRdfTypes: [] },
+      ],
+      query,
+    );
+  }
+
+  async recursiveClassUnionsCount(
+    query?: Pick<$ObjectSet.Query<RecursiveClassUnion.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.recursiveClassUnionsCountSync(query);
+  }
+
+  recursiveClassUnionsCountSync(
+    query?: Pick<$ObjectSet.Query<RecursiveClassUnion.$Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      RecursiveClassUnion,
+      RecursiveClassUnion.$Identifier
+    >(
+      [
+        { $fromRdf: RecursiveClassUnionMember1.$fromRdf, $fromRdfTypes: [] },
+        { $fromRdf: RecursiveClassUnionMember2.$fromRdf, $fromRdfTypes: [] },
       ],
       query,
     );
@@ -55488,6 +56894,90 @@ export class $SparqlObjectSet implements $ObjectSet {
     );
   }
 
+  async recursiveClassUnionMember1(
+    identifier: RecursiveClassUnionMember1.$Identifier,
+  ): Promise<purify.Either<Error, RecursiveClassUnionMember1>> {
+    return (
+      await this.recursiveClassUnionMember1s({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async recursiveClassUnionMember1Identifiers(
+    query?: $SparqlObjectSet.Query<RecursiveClassUnionMember1.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly RecursiveClassUnionMember1.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<RecursiveClassUnionMember1.$Identifier>(
+      RecursiveClassUnionMember1,
+      query,
+    );
+  }
+
+  async recursiveClassUnionMember1s(
+    query?: $SparqlObjectSet.Query<RecursiveClassUnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly RecursiveClassUnionMember1[]>> {
+    return this.$objects<
+      RecursiveClassUnionMember1,
+      RecursiveClassUnionMember1.$Identifier
+    >(RecursiveClassUnionMember1, query);
+  }
+
+  async recursiveClassUnionMember1sCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<RecursiveClassUnionMember1.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<RecursiveClassUnionMember1.$Identifier>(
+      RecursiveClassUnionMember1,
+      query,
+    );
+  }
+
+  async recursiveClassUnionMember2(
+    identifier: RecursiveClassUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, RecursiveClassUnionMember2>> {
+    return (
+      await this.recursiveClassUnionMember2s({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async recursiveClassUnionMember2Identifiers(
+    query?: $SparqlObjectSet.Query<RecursiveClassUnionMember2.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly RecursiveClassUnionMember2.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<RecursiveClassUnionMember2.$Identifier>(
+      RecursiveClassUnionMember2,
+      query,
+    );
+  }
+
+  async recursiveClassUnionMember2s(
+    query?: $SparqlObjectSet.Query<RecursiveClassUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly RecursiveClassUnionMember2[]>> {
+    return this.$objects<
+      RecursiveClassUnionMember2,
+      RecursiveClassUnionMember2.$Identifier
+    >(RecursiveClassUnionMember2, query);
+  }
+
+  async recursiveClassUnionMember2sCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<RecursiveClassUnionMember2.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<RecursiveClassUnionMember2.$Identifier>(
+      RecursiveClassUnionMember2,
+      query,
+    );
+  }
+
   async sha256IriClass(
     identifier: Sha256IriClass.$Identifier,
   ): Promise<purify.Either<Error, Sha256IriClass>> {
@@ -55953,6 +57443,46 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<PartialInterfaceUnion.$Identifier>(
       PartialInterfaceUnion,
+      query,
+    );
+  }
+
+  async recursiveClassUnion(
+    identifier: RecursiveClassUnion.$Identifier,
+  ): Promise<purify.Either<Error, RecursiveClassUnion>> {
+    return (
+      await this.recursiveClassUnions({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async recursiveClassUnionIdentifiers(
+    query?: $SparqlObjectSet.Query<RecursiveClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly RecursiveClassUnion.$Identifier[]>> {
+    return this.$objectIdentifiers<RecursiveClassUnion.$Identifier>(
+      RecursiveClassUnion,
+      query,
+    );
+  }
+
+  async recursiveClassUnions(
+    query?: $SparqlObjectSet.Query<RecursiveClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly RecursiveClassUnion[]>> {
+    return this.$objects<RecursiveClassUnion, RecursiveClassUnion.$Identifier>(
+      RecursiveClassUnion,
+      query,
+    );
+  }
+
+  async recursiveClassUnionsCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<RecursiveClassUnion.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<RecursiveClassUnion.$Identifier>(
+      RecursiveClassUnion,
       query,
     );
   }

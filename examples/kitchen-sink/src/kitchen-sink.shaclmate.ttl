@@ -928,6 +928,29 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :publicProperty
     ] .
 
+:RecursiveClassUnion
+    a sh:NodeShape ;
+    rdfs:comment "Node shape sh:xone's node shapes that have properties with the union's type" ;
+    sh:xone (:RecursiveClassUnionMember1
+        :RecursiveClassUnionMember2
+    ) .
+
+:RecursiveClassUnionMember1
+    a sh:NodeShape ;
+    sh:property [
+        sh:maxCount 1 ;
+        sh:node :RecursiveClassUnion ;
+        sh:path :recursiveClassUnionMember1Property
+    ] .
+
+:RecursiveClassUnionMember2
+    a sh:NodeShape ;
+    sh:property [
+        sh:maxCount 1 ;
+        sh:node :RecursiveClassUnion ;
+        sh:path :recursiveClassUnionMember2Property
+    ] .
+
 :Sha256IriClass
     shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
     a sh:NodeShape ;
