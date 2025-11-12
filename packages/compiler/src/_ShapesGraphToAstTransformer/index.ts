@@ -1,3 +1,4 @@
+export * from "./isAstObjectTypePropertyRecursive.js";
 export * from "./NodeShapeAstType.js";
 export * from "./shapeAstName.js";
 export * from "./transformNodeShapeToAstType.js";
