@@ -9,7 +9,7 @@ import type {
   TsFeature,
   TsObjectDeclarationType,
 } from "../enums/index.js";
-import type { Name } from "./Name.js";
+import { Name } from "./Name.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
 import type { SetType } from "./SetType.js";
@@ -217,6 +217,17 @@ export namespace ObjectType {
      * Visibility: private, protected, public.
      */
     readonly visibility: PropertyVisibility;
+  }
+
+  export namespace Property {
+    export function equals(left: Property, right: Property): boolean {
+      return Name.equals(left.name, right.name);
+    }
+
+    // biome-ignore lint/suspicious/noShadowRestrictedNames: <explanation>
+    export function toString(property: Property): string {
+      return Name.toString(property.name);
+    }
   }
 
   export function toposort(

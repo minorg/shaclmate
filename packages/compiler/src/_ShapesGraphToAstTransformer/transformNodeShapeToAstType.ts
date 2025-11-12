@@ -3,7 +3,7 @@ import { Either, Left, Maybe } from "purify-ts";
 import { Resource } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
-import type * as ast from "../ast/index.js";
+import * as ast from "../ast/index.js";
 import type { TsFeature } from "../enums/TsFeature.js";
 import * as input from "../input/index.js";
 import { tsFeaturesDefault } from "../input/tsFeatures.js";
@@ -316,61 +316,67 @@ export function transformNodeShapeToAstType(
   // Check whether a type refers to this ObjectType
   logger.debug(
     "checking %s properties for recursion",
-    Resource.Identifier.toString(objectType.name.identifier),
+    ast.Type.toString(objectType),
   );
 
   const rootObjectType = objectType;
 
-  const isPropertyRecursive = ({
-    objectType,
-    property,
-    propertyType,
-    rootProperty,
-  }: {
-    objectType: ast.ObjectType;
-    property: ast.ObjectType.Property;
-    propertyType?: ast.Type;
-    rootProperty: ast.ObjectType.Property;
-  }): boolean => {
-    // logger.debug(
-    //   "isPropertyRecursive (start): rootObjectType=%s, rootProperty=%s, objectType=%s, property=%s, propertyType=%s",
-    //   Resource.Identifier.toString(rootObjectType.name.identifier),
-    //   Resource.Identifier.toString(rootProperty.name.identifier),
-    //   Resource.Identifier.toString(objectType.name.identifier),
-    //   Resource.Identifier.toString(property.name.identifier),
-    //   propertyType?.kind,
-    // );
+  const isPropertyRecursive = (
+    rootProperty: ast.ObjectType.Property,
+    stack?: {
+      objectType: ast.ObjectType;
+      property: ast.ObjectType.Property;
+      propertyType?: ast.Type;
+    }[],
+  ): boolean => {
+    if (!stack || stack.length === 0) {
+      return isPropertyRecursive(rootProperty, [
+        { objectType: rootObjectType, property: rootProperty },
+      ]);
+    }
+
+    const { objectType, property, propertyType } = stack.at(-1)!;
+    // TODO: if the current stack frame is duplicated, return
+    // use identifiers to test if we've seen objectType and property previously
+    // Don't need to care about the property type
+    // return true if the object type = the root object type and the property = the root property else false
 
     if (!propertyType) {
       const partialType = property.partialType.extract();
       if (partialType) {
-        if (
-          isPropertyRecursive({
+        const recursive = isPropertyRecursive(
+          rootProperty,
+          stack.concat({
             objectType,
             property,
             propertyType: partialType,
-            rootProperty,
-          })
-        ) {
+          }),
+        );
+        if (recursive) {
           return true;
         }
       }
 
-      if (
-        isPropertyRecursive({
+      return isPropertyRecursive(
+        rootProperty,
+        stack.concat({
           objectType,
           property,
           propertyType: property.type,
-          rootProperty,
-        })
-      ) {
-        return true;
-      }
-
-      return false;
+        }),
+      );
     }
 
-    switch (propertyType.kind) {
+    logger.debug(
+      "isPropertyRecursive: rootObjectType=%s, rootProperty=%s, objectType=%s, property=%s, propertyType=%s",
+      ast.Type.toString(rootObjectType),
+      Resource.Identifier.toString(rootProperty.name.identifier),
+      ast.Type.toString(objectType),
+      Resource.Identifier.toString(property.name.identifier),
+      ast.Type.toString(propertyType),
+    );
+
+    switch (currentStackFrame.type.kind) {
       case "IdentifierType":
       case "LiteralType":
       case "PlaceholderType":
@@ -378,7 +384,9 @@ export function transformNodeShapeToAstType(
         return false;
       case "ObjectType":
         if (
-          propertyType.name.identifier.equals(rootObjectType.name.identifier)
+          currentStackFrame.type.name.identifier.equals(
+            rootObjectType.name.identifier,
+          )
         ) {
           return true;
         }
@@ -447,7 +455,7 @@ export function transformNodeShapeToAstType(
     if (recursive) {
       logger.debug(
         "object type %s property %s is recursive",
-        Resource.Identifier.toString(rootObjectType.name.identifier),
+        ast.Type.toString(rootObjectType),
         Resource.Identifier.toString(property.name.identifier),
       );
     } else {
