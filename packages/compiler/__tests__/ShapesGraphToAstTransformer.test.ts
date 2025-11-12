@@ -1,13 +1,14 @@
 import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import N3 from "n3";
 import type { Either } from "purify-ts";
+import { invariant } from "ts-invariant";
 import { beforeAll, describe, it } from "vitest";
 import { ShapesGraphToAstTransformer } from "../src/ShapesGraphToAstTransformer.js";
-import type { Ast } from "../src/ast/index.js";
+import type * as ast from "../src/ast/index.js";
 import type { ShapesGraph } from "../src/input/ShapesGraph.js";
 import { testData } from "./testData.js";
 
-function transform(shapesGraph: ShapesGraph): Either<Error, Ast> {
+function transform(shapesGraph: ShapesGraph): Either<Error, ast.Ast> {
   return new ShapesGraphToAstTransformer({
     iriPrefixMap: new PrefixMap(undefined, { factory: N3.DataFactory }),
     shapesGraph,
@@ -15,11 +16,19 @@ function transform(shapesGraph: ShapesGraph): Either<Error, Ast> {
 }
 
 describe("ShapesGraphToAstTransformer: kitchen sink", () => {
-  let ast: Ast;
+  let ast: ast.Ast;
   const shapesGraph = testData.kitchenSink.shapesGraph;
+  const astObjectTypesByIri: Record<string, ast.ObjectType> = {};
 
   beforeAll(() => {
     ast = transform(shapesGraph).unsafeCoerce();
+    for (const astObjectType of ast.objectTypes) {
+      if (astObjectType.name.identifier.termType !== "NamedNode") {
+        continue;
+      }
+      invariant(!astObjectTypesByIri[astObjectType.name.identifier.value]);
+      astObjectTypesByIri[astObjectType.name.identifier.value] = astObjectType;
+    }
   });
 
   it("should transform kitchen object types", ({ expect }) => {
@@ -34,4 +43,27 @@ describe("ShapesGraphToAstTransformer: kitchen sink", () => {
   it("should transform object union types", ({ expect }) => {
     expect(ast.objectUnionTypes).toHaveLength(8);
   });
+
+  for (const [classIri, recursivePropertyIri] of [
+    [
+      "http://example.com/DirectRecursiveClass",
+      "http://example.com/directRecursiveProperty",
+    ],
+    [
+      "http://example.com/IndirectRecursiveClass",
+      "http://example.com/indirectRecursiveProperty",
+    ],
+  ]) {
+    it(`${classIri} property ${recursivePropertyIri} should be marked recursive`, ({
+      expect,
+    }) => {
+      const astObjectType = astObjectTypesByIri[classIri];
+      expect(astObjectType).toBeDefined();
+      const recursiveProperty = astObjectType.properties.find(
+        (property) => property.path.iri.value === recursivePropertyIri,
+      );
+      expect(recursiveProperty).toBeDefined();
+      expect(recursiveProperty!.recursive).toStrictEqual(true);
+    });
+  }
 });

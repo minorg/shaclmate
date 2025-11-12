@@ -1,11 +1,11 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
-import { Name } from "ast/Name.js";
 import { Resource } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntersectionType } from "./IntersectionType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
+import { Name } from "./Name.js";
 import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";

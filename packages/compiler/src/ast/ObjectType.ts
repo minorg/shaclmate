@@ -205,8 +205,10 @@ export namespace ObjectType {
 
     /**
      * Does the property directly or indirectly reference the ObjectType itself?
+     *
+     * Mutable to support transformation logic
      */
-    readonly recursive?: boolean;
+    recursive?: boolean;
 
     /**
      * Type of this property.
@@ -226,7 +228,7 @@ export namespace ObjectType {
 
     // biome-ignore lint/suspicious/noShadowRestrictedNames: <explanation>
     export function toString(property: Property): string {
-      return Name.toString(property.name);
+      return `${Name.toString(property.name)}(path=${Resource.Identifier.toString(property.path.iri)})`;
     }
   }
 
