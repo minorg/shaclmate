@@ -1,7 +1,6 @@
 import { invariant } from "ts-invariant";
 import { arrayEquals } from "../ast/equals.js";
 import * as ast from "../ast/index.js";
-import { logger } from "../logger.js";
 
 export function isAstObjectTypePropertyRecursive(
   rootObjectType: ast.ObjectType,
@@ -84,14 +83,14 @@ export function isAstObjectTypePropertyRecursive(
 
     invariant(propertyType.length > 0);
 
-    logger.debug(
-      "isAstObjectTypePropertyRecursive: rootObjectType=%s, rootProperty=%s, objectType=%s, property=%s, propertyType=%s",
-      ast.Type.toString(rootObjectType),
-      ast.ObjectType.Property.toString(rootProperty),
-      ast.Type.toString(objectType),
-      ast.ObjectType.Property.toString(property),
-      `[${propertyType.map(ast.Type.toString).join(", ")}]`,
-    );
+    // logger.debug(
+    //   "isAstObjectTypePropertyRecursive: rootObjectType=%s, rootProperty=%s, objectType=%s, property=%s, propertyType=%s",
+    //   ast.Type.toString(rootObjectType),
+    //   ast.ObjectType.Property.toString(rootProperty),
+    //   ast.Type.toString(objectType),
+    //   ast.ObjectType.Property.toString(property),
+    //   `[${propertyType.map(ast.Type.toString).join(", ")}]`,
+    // );
 
     const currentPropertyType = propertyType.at(-1)!;
 
