@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Parser, Store } from "n3";
+import { Maybe } from "purify-ts";
 import { ShapesGraph } from "../src/input/ShapesGraph.js";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
@@ -14,6 +15,12 @@ function parseShapesGraph(filePath: string) {
 }
 
 export const testData = {
+  externalProject: Maybe.of(
+    path.join(thisDirectoryPath, "external-project.shaclmate.ttl"),
+  )
+    .filter((filePath) => fs.existsSync(filePath))
+    .map(parseShapesGraph)
+    .map((shapesGraph) => ({ shapesGraph })),
   kitchenSink: {
     shapesGraph: parseShapesGraph(
       path.join(
