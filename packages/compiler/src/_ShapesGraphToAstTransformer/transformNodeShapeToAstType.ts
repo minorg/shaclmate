@@ -2,7 +2,7 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
-import * as ast from "../ast/index.js";
+import type * as ast from "../ast/index.js";
 import type { TsFeature } from "../enums/TsFeature.js";
 import * as input from "../input/index.js";
 import { tsFeaturesDefault } from "../input/tsFeatures.js";
@@ -312,12 +312,6 @@ export function transformNodeShapeToAstType(
   );
 
   // Populate properties
-  // Check whether a type refers to this ObjectType
-  logger.debug(
-    "checking %s properties for recursion",
-    ast.Type.toString(objectType),
-  );
-
   for (const propertyShape of nodeShape.constraints.properties) {
     this.transformPropertyShapeToAstObjectTypeProperty(propertyShape)
       .ifLeft((error) => {

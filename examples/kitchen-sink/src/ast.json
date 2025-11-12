@@ -1339,6 +1339,7 @@
           },
           "order": 0,
           "path": "http://example.com/indirectRecursiveProperty",
+          "recursive": true,
           "type": {
             "itemType": {
               "kind": "ObjectType",
@@ -4288,6 +4289,7 @@
           },
           "order": 0,
           "path": "http://example.com/recursiveClassUnionMember1Property",
+          "recursive": true,
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -4366,6 +4368,7 @@
           },
           "order": 0,
           "path": "http://example.com/recursiveClassUnionMember2Property",
+          "recursive": true,
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
