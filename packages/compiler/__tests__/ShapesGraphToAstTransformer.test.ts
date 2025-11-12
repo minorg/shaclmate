@@ -51,7 +51,7 @@ describe("ShapesGraphToAstTransformer: kitchen sink", () => {
     ],
     [
       "http://example.com/IndirectRecursiveClass",
-      "http://example.com/indirectRecursiveProperty",
+      "http://example.com/indirectRecursiveHelperProperty",
     ],
   ]) {
     it(`${classIri} property ${recursivePropertyIri} should be marked recursive`, ({
