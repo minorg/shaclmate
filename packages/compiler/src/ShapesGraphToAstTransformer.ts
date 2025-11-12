@@ -116,13 +116,6 @@ export class ShapesGraphToAstTransformer {
     // Everything must be transformed first in the first pass for this to work.
     for (const astObjectType of nodeShapeAstObjectTypes) {
       for (const astObjectTypeProperty of astObjectType.properties) {
-        // if (
-        //   astObjectTypeProperty.path.iri.value.endsWith(
-        //     "/recursiveClassUnionMember1Property",
-        //   )
-        // ) {
-        //   console.log("here");
-        // }
         astObjectTypeProperty.recursive =
           _ShapesGraphToAstTransformer.isAstObjectTypePropertyRecursive(
             astObjectType,
