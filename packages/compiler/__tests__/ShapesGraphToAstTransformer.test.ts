@@ -53,6 +53,15 @@ describe("ShapesGraphToAstTransformer: kitchen sink", () => {
       "http://example.com/IndirectRecursiveClass",
       "http://example.com/indirectRecursiveHelperProperty",
     ],
+    // Doesn't detect these because of cycles in transforming the AST
+    // [
+    //   "http://example.com/RecursiveClassUnionMember1",
+    //   "http://example.com/recursiveClassUnionMember1Property",
+    // ],
+    // [
+    //   "http://example.com/RecursiveClassUnionMember2",
+    //   "http://example.com/recursiveClassUnionMember2Property",
+    // ],
   ]) {
     it(`${classIri} property ${recursivePropertyIri} should be marked recursive`, ({
       expect,

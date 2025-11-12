@@ -442,8 +442,6 @@ export function transformNodeShapeToAstType(
         return false;
       }
       case "IntersectionType":
-      case "ObjectIntersectionType":
-      case "ObjectUnionType":
       case "UnionType": {
         for (const memberType of currentPropertyType.memberTypes) {
           if (
@@ -457,6 +455,25 @@ export function transformNodeShapeToAstType(
             )
           ) {
             return true;
+          }
+        }
+        return false;
+      }
+      case "ObjectIntersectionType":
+      case "ObjectUnionType": {
+        for (const memberType of currentPropertyType.memberTypes) {
+          for (const property of memberType.properties) {
+            if (
+              isPropertyRecursive(
+                rootProperty,
+                stack.concat({
+                  objectType: memberType,
+                  property,
+                }),
+              )
+            ) {
+              return true;
+            }
           }
         }
         return false;
@@ -494,9 +511,6 @@ export function transformNodeShapeToAstType(
   // Next pass: check if the properties are recursive
   // objectType.properties needs to be populated to do this correctly.
   for (const property of objectType.properties) {
-    if (property.path.iri.value.endsWith("/directRecursiveProperty")) {
-      console.log("here");
-    }
     property.recursive = isPropertyRecursive(property);
     if (property.recursive) {
       logger.debug(
