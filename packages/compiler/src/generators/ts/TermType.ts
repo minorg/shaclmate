@@ -51,7 +51,7 @@ export class TermType<
     this.hasValues = hasValues;
     this.in_ = in_;
     this.nodeKinds = new Set([...nodeKinds]);
-    invariant(this.nodeKinds.size > 0);
+    invariant(this.nodeKinds.size > 0, "empty nodeKinds");
   }
 
   @Memoize()
@@ -123,7 +123,7 @@ export class TermType<
     invariant(
       this.nodeKinds.has("Literal") &&
         (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("NamedNode")),
-      "IdentifierType and LiteralType should override",
+      "IdentifierType and LiteralType should override TermType.jsonName",
     );
     return new Type.JsonName(
       `{ readonly "@id": string, readonly termType: ${[...this.nodeKinds]
@@ -148,7 +148,7 @@ export class TermType<
     invariant(
       this.nodeKinds.has("Literal") &&
         (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("NamedNode")),
-      "IdentifierType and LiteralType should override",
+      "IdentifierType and LiteralType should override TermType.fromJsonExpression",
     );
     return [...this.nodeKinds].reduce((expression, nodeKind) => {
       let valueToNodeKind: string;
@@ -272,7 +272,7 @@ export class TermType<
     invariant(
       this.nodeKinds.has("Literal") &&
         (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("NamedNode")),
-      "IdentifierType and LiteralType should override",
+      "IdentifierType and LiteralType should override TermType.jsonZodSchema",
     );
     return `${variables.zod}.discriminatedUnion("termType", [${[
       ...this.nodeKinds,
@@ -325,7 +325,7 @@ export class TermType<
     invariant(
       this.nodeKinds.has("Literal") &&
         (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("NamedNode")),
-      "IdentifierType and LiteralType should override",
+      "IdentifierType and LiteralType should override TermType.toJsonExpression",
     );
     return [...this.nodeKinds].reduce((expression, nodeKind) => {
       let valueToNodeKind: string;

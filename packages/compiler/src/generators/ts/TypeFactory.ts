@@ -8,7 +8,7 @@ import { fromRdf } from "rdf-literal";
 import { invariant } from "ts-invariant";
 import { Scope } from "ts-morph";
 
-import type * as ast from "../../ast/index.js";
+import * as ast from "../../ast/index.js";
 
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { logger } from "../../logger.js";
@@ -638,9 +638,13 @@ export class TypeFactory {
       }
     }
 
-    const memberTypes = astType.memberTypes
-      .map((astType) => this.createTypeFromAstType(astType))
-      .filter((memberType) => memberType instanceof ObjectType);
+    const memberTypes: readonly ObjectType[] = astType.memberTypes.map(
+      (astType) => this.createObjectTypeFromAstType(astType),
+    );
+    invariant(
+      memberTypes.length > 0,
+      `${ast.Name.toString(astType.name)} has no members?`,
+    );
 
     const memberIdentifierTypeNodeKinds = new Set<IdentifierNodeKind>();
     const memberIdentifierTypesIn = new TermSet<NamedNode>();
@@ -652,6 +656,10 @@ export class TypeFactory {
         memberIdentifierTypesIn.add(in_);
       }
     }
+    invariant(
+      memberIdentifierTypeNodeKinds.size > 0,
+      `could not infer ${ast.Name.toString(astType.name)} member type node kinds`,
+    );
 
     const objectUnionType = new ObjectUnionType({
       comment: astType.comment,

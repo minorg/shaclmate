@@ -196,6 +196,14 @@ function widenAstCompositeTypeToSingleType({
     )
   ) {
     // Special case: all member types are identifiers without further constraints
+    const nodeKinds = new Set<IdentifierNodeKind>(
+      memberTypes
+        .filter((memberType) => memberType.kind === "IdentifierType")
+        .flatMap((memberType) => [
+          ...(memberType as ast.IdentifierType).nodeKinds,
+        ]),
+    );
+    invariant(nodeKinds.size > 0, "empty nodeKinds");
     return Either.of({
       defaultValue: defaultValue.filter(
         (term) => term.termType === "NamedNode",
@@ -203,13 +211,7 @@ function widenAstCompositeTypeToSingleType({
       hasValues: [],
       in_: [],
       kind: "IdentifierType",
-      nodeKinds: new Set<IdentifierNodeKind>(
-        memberTypes
-          .filter((memberType) => memberType.kind === "IdentifierType")
-          .flatMap((memberType) => [
-            ...(memberType as ast.IdentifierType).nodeKinds,
-          ]),
-      ),
+      nodeKinds,
     });
   }
 
