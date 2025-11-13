@@ -14,6 +14,19 @@ export function isAstObjectTypePropertyRecursive(
     }[],
   ) {
     const currentStackFrame = stack.at(-1)!;
+    const { objectType, property, propertyType } = currentStackFrame;
+
+    process.stderr.write(
+      `${[
+        ast.Type.toString(rootObjectType),
+        ast.ObjectType.Property.toString(rootProperty),
+        ast.Type.toString(objectType),
+        ast.ObjectType.Property.toString(property),
+        propertyType
+          ? `[${propertyType.map(ast.Type.toString).join(", ")}]`
+          : "undefined",
+      ].join(",")}\n`,
+    );
 
     for (const lowerStackFrame of stack.slice(0, -1)) {
       if (
@@ -49,13 +62,6 @@ export function isAstObjectTypePropertyRecursive(
       );
     }
 
-    const { objectType, property, propertyType } = stack.at(-1)!;
-
-    // TODO: if the current stack frame is duplicated, return
-    // use identifiers to test if we've seen objectType and property previously
-    // Don't need to care about the property type
-    // return true if the object type = the root object type and the property = the root property else false
-
     if (!propertyType) {
       const partialType = property.partialType.extract();
       if (partialType) {
@@ -82,16 +88,6 @@ export function isAstObjectTypePropertyRecursive(
     }
 
     invariant(propertyType.length > 0);
-
-    // logger.debug(
-    //   "isAstObjectTypePropertyRecursive: rootObjectType=%s, rootProperty=%s, objectType=%s, property=%s, propertyType=%s",
-    //   ast.Type.toString(rootObjectType),
-    //   ast.ObjectType.Property.toString(rootProperty),
-    //   ast.Type.toString(objectType),
-    //   ast.ObjectType.Property.toString(property),
-    //   `[${propertyType.map(ast.Type.toString).join(", ")}]`,
-    // );
-
     const currentPropertyType = propertyType.at(-1)!;
 
     switch (currentPropertyType.kind) {
