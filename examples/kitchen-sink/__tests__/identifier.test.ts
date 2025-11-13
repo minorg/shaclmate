@@ -59,4 +59,30 @@ describe("identifier", () => {
         .$identifier.value,
     ).toMatch(/http:\/\/example.com\/[0-9A-Fa-f]{8}-/);
   });
+
+  it("identifier overrides", ({ expect }) => {
+    // No minting strategy, throws
+    expect(
+      () =>
+        new kitchenSink.IdentifierOverride3Class({
+          identifierOverrideProperty: "test",
+        }).$identifier.termType,
+    ).toThrow(); // Can't mint an identifier
+
+    // UUIDv4 minting
+    expect(
+      new kitchenSink.IdentifierOverride4Class({
+        identifierOverrideProperty: "test",
+      }).$identifier.value,
+    ).toMatch(/urn:shaclmate:IdentifierOverride4Class:[0-9A-Fa-f]{8}-/);
+
+    // SHA-256 minting
+    expect(
+      new kitchenSink.IdentifierOverride5Class({
+        identifierOverrideProperty: "test",
+      }).$identifier.value,
+    ).toMatch(
+      /urn:shaclmate:IdentifierOverride5Class:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08/,
+    );
+  });
 });
