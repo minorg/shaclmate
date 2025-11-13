@@ -4,7 +4,6 @@
     "exactOptionalPropertyTypes": false,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
-    "incremental": true,
     "noEmit": true,
     "noUncheckedIndexedAccess": false
   },
