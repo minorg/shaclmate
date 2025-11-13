@@ -68,6 +68,7 @@ export class ShapesGraphToAstTransformer {
       const nodeShapeAstTypeEither =
         this.transformNodeShapeToAstType(nodeShape);
       if (nodeShapeAstTypeEither.isLeft()) {
+        logger.warn((nodeShapeAstTypeEither.extract() as Error).message);
         continue;
       }
       const nodeShapeAstType = nodeShapeAstTypeEither.unsafeCoerce();

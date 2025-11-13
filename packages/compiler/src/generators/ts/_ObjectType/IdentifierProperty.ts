@@ -10,6 +10,8 @@ import {
   Scope,
 } from "ts-morph";
 
+import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
+import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../../enums/index.js";
 import { logger } from "../../../logger.js";
 import type { IdentifierType } from "../IdentifierType.js";
@@ -46,17 +48,13 @@ export class IdentifierProperty extends Property<IdentifierType> {
     this.typeAlias = typeAlias;
   }
 
-  get abstract(): boolean {
+  private get abstract(): boolean {
     return this.objectType.abstract;
   }
 
   override get constructorParametersPropertySignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {
-    if (this.objectType.declarationType === "class" && this.abstract) {
-      return Maybe.empty();
-    }
-
     const typeNames = new Set<string>(); // Remove duplicates with a set
     for (const conversion of this.type.conversions) {
       if (conversion.sourceTypeName !== "undefined") {
@@ -107,12 +105,24 @@ export class IdentifierProperty extends Property<IdentifierType> {
   override get getAccessorDeclaration(): Maybe<
     OptionalKind<GetAccessorDeclarationStructure>
   > {
-    if (this.abstract) {
-      return Maybe.empty();
-    }
-
     // If this, an ancestor, or a descendant has an identifier minting strategy then all classes in the hierarchy must
     // have get accessors.
+
+    const checkIdentifierTermTypeStatements = (
+      identifierVariable: string,
+    ): readonly string[] => {
+      if (this.type.nodeKinds.size === 2) {
+        return [];
+      }
+      const expectedNodeKind: IdentifierNodeKind = this.type.nodeKinds.has(
+        "BlankNode",
+      )
+        ? "BlankNode"
+        : "NamedNode";
+      return [
+        `if (${identifierVariable}.termType !== "${expectedNodeKind}") { throw new Error(\`expected identifier to be ${expectedNodeKind}, not \${${identifierVariable}.termType}\`); }`,
+      ];
+    };
 
     if (this.identifierMintingStrategy.isJust()) {
       let memoizeMintedIdentifier: boolean;
@@ -138,13 +148,14 @@ export class IdentifierProperty extends Property<IdentifierType> {
         name: this.name,
         returnType: this.typeAlias,
         statements: [
-          memoizeMintedIdentifier
-            ? `if (typeof this._${this.name} === "undefined") { this._${this.name} = ${mintIdentifier}; } return this._${this.name};`
-            : `return (typeof this._${this.name} !== "undefined") ? this._${this.name} : ${mintIdentifier}`,
+          `if (typeof this._${this.name} === "undefined") { ${memoizeMintedIdentifier ? `this._${this.name} = ${mintIdentifier};` : `return ${mintIdentifier};`} }`,
+          ...checkIdentifierTermTypeStatements(`this._${this.name}`),
+          `return this._${this.name};`,
         ],
       });
     }
 
+    // If this object type has an ancestor or a descendant with an identifier minting strategy, declare a get accessor.
     if (
       this.objectType.ancestorObjectTypes.some((ancestorObjectType) =>
         ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
@@ -153,14 +164,39 @@ export class IdentifierProperty extends Property<IdentifierType> {
         descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
       )
     ) {
+      if (this.objectType.parentObjectTypes.length > 0) {
+        // If this object type isn't the root, delegate up.
+        return Maybe.of({
+          hasOverrideKeyword: true,
+          name: this.name,
+          returnType: this.typeAlias,
+          statements: [
+            `const identifier = super.${this.name}`,
+            ...checkIdentifierTermTypeStatements("identifier"),
+            "return identifier;",
+          ],
+        });
+      }
+
+      // This object type is the root but it has no identifier minting strategy.
+      // Just return the declared property.
+      // Subclasses will override.
+      const propertyDeclaration = this.propertyDeclaration.unsafeCoerce();
       return Maybe.of({
         leadingTrivia: this.override ? "override " : undefined,
         name: this.name,
         returnType: this.typeAlias,
-        statements: [`return super.${this.name} as ${this.typeAlias}`],
+        statements: [
+          `if (typeof this.${propertyDeclaration.name} === "undefined") { throw new Error("unable to mint identifier"); }`,
+          ...checkIdentifierTermTypeStatements(
+            `this.${propertyDeclaration.name}`,
+          ),
+          `return this.${propertyDeclaration.name};`,
+        ],
       });
     }
 
+    // None of the object type hierarchy has an identifier minting strategy, don't need a get accessor
     return Maybe.empty();
   }
 
@@ -199,13 +235,10 @@ export class IdentifierProperty extends Property<IdentifierType> {
     const typeConversions = this.type.conversions;
     switch (this.objectType.declarationType) {
       case "class": {
-        if (this.abstract) {
+        const propertyDeclaration = this.propertyDeclaration.extractNullable();
+        if (propertyDeclaration === null) {
           return [];
         }
-        if (this.propertyDeclaration.isNothing()) {
-          return [];
-        }
-        const propertyDeclaration = this.propertyDeclaration.unsafeCoerce();
         if (typeConversions.length === 1) {
           return [`this.${propertyDeclaration.name} = ${variables.parameter};`];
         }
@@ -342,30 +375,12 @@ export class IdentifierProperty extends Property<IdentifierType> {
     });
   }
 
+  @Memoize()
   override get propertyDeclaration(): Maybe<
     OptionalKind<PropertyDeclarationStructure>
   > {
-    if (this.abstract) {
-      // Abstract property declaration
-      // Work around a ts-morph bug that puts the override keyword before the abstract keyword
-      return Maybe.of({
-        hasOverrideKeyword:
-          this.abstract && this.override ? undefined : this.override,
-        isAbstract: this.abstract && this.override ? undefined : this.abstract,
-        isReadonly: true,
-        leadingTrivia:
-          this.abstract && this.override ? "abstract override " : undefined,
-        name: this.name,
-        type: this.typeAlias,
-      });
-    }
-
-    if (
-      this.objectType.ancestorObjectTypes.some(
-        (ancestorObjectType) => !ancestorObjectType.abstract,
-      )
-    ) {
-      // If the object type has a non-abstract ancestor, that ancestor will declare the identifier property.
+    if (this.objectType.parentObjectTypes.length > 0) {
+      // An ancestor will declare the identifier property.
       return Maybe.empty();
     }
 
@@ -392,8 +407,20 @@ export class IdentifierProperty extends Property<IdentifierType> {
       });
     }
 
-    // Immutable, public identifier property, no getter
+    if (this.abstract) {
+      // Declare the property abstract and public
+      return Maybe.of({
+        isReadonly: true,
+        // Work around a ts-morph bug that puts the override keyword before the abstract keyword
+        leadingTrivia: this.override ? "abstract override " : "abstract ",
+        name: this.name,
+        type: this.typeAlias,
+      });
+    }
+
+    // Declare the property public
     return Maybe.of({
+      hasOverrideKeyword: this.override,
       isReadonly: true,
       name: this.name,
       type: this.typeAlias,

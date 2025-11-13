@@ -299,14 +299,15 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :IdentifierOverride1Class
+    shaclmate:abstract true ;
     a owl:Class, sh:NodeShape ;
-    rdfs:comment "Node shape for testing identifier type overriding: blank node or IRI identifier, concrete" ;
+    rdfs:comment "Node shape for testing identifier type overriding: blank node or IRI identifier, abstract" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :identifierOverrideproperty
+        sh:path :identifierOverrideProperty
     ] .
 
 :IdentifierOverride2Class
@@ -314,7 +315,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape for testing identifier type overriding: blank node or IRI identifier, abstract" ;
     rdfs:subClassOf :IdentifierOverride1Class ;
-    sh:nodeKind sh:BlankNodeOrIRI .
+    sh:nodeKind sh:IRI .
 
 :IdentifierOverride3Class
     a owl:Class, sh:NodeShape ;

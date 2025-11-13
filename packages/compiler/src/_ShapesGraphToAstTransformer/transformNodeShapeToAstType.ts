@@ -1,5 +1,5 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
-import { Either, Left } from "purify-ts";
+import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type * as ast from "../ast/index.js";
@@ -256,24 +256,20 @@ export function transformNodeShapeToAstType(
     (term) => term.termType === "NamedNode",
   );
 
-  const identifierMintingStrategy = nodeShape.identifierMintingStrategy;
-
-  if (identifierMintingStrategy.isJust()) {
-    if (abstract) {
-      return Left(
-        new Error(
-          `abstract ${nodeShape} cannot have an identifier minting strategy`,
-        ),
-      );
-    }
-
-    if (identifierIn.length > 0) {
-      return Left(
-        new Error(
-          `${nodeShape} cannot have an identifier minting strategy AND sh:in`,
-        ),
-      );
-    }
+  let identifierMintingStrategy = nodeShape.identifierMintingStrategy;
+  if (identifierMintingStrategy.isJust() && abstract) {
+    logger.debug(
+      "abstract %s cannot have an identifier minting strategy, ignoring",
+      nodeShape,
+    );
+    identifierMintingStrategy = Maybe.empty();
+  }
+  if (identifierMintingStrategy.isJust() && identifierIn.length > 0) {
+    logger.debug(
+      "%s cannot have an identifier minting strategy AND sh:in",
+      nodeShape,
+    );
+    identifierMintingStrategy = Maybe.empty();
   }
 
   // Put a placeholder in the cache to deal with cyclic references
