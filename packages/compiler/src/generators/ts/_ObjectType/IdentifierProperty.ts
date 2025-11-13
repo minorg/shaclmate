@@ -2,11 +2,12 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
-import type {
-  GetAccessorDeclarationStructure,
-  OptionalKind,
-  PropertyDeclarationStructure,
-  PropertySignatureStructure,
+import {
+  type GetAccessorDeclarationStructure,
+  type OptionalKind,
+  type PropertyDeclarationStructure,
+  type PropertySignatureStructure,
+  Scope,
 } from "ts-morph";
 
 import type { IdentifierMintingStrategy } from "../../../enums/index.js";
@@ -110,6 +111,9 @@ export class IdentifierProperty extends Property<IdentifierType> {
       return Maybe.empty();
     }
 
+    // If this, an ancestor, or a descendant has an identifier minting strategy then all classes in the hierarchy must
+    // have get accessors.
+
     if (this.identifierMintingStrategy.isJust()) {
       let memoizeMintedIdentifier: boolean;
       let mintIdentifier: string;
@@ -138,19 +142,26 @@ export class IdentifierProperty extends Property<IdentifierType> {
             ? `if (typeof this._${this.name} === "undefined") { this._${this.name} = ${mintIdentifier}; } return this._${this.name};`
             : `return (typeof this._${this.name} !== "undefined") ? this._${this.name} : ${mintIdentifier}`,
         ],
-      } satisfies OptionalKind<GetAccessorDeclarationStructure>);
+      });
     }
 
-    return Maybe.of({
-      leadingTrivia: this.override ? "override " : undefined,
-      name: this.name,
-      returnType: this.typeAlias,
-      statements: this.propertyDeclaration
-        .map((propertyDeclaration) => [
-          `return this.${propertyDeclaration.name};`,
-        ])
-        .orDefault([`return super.${this.name} as ${this.typeAlias}`]),
-    } satisfies OptionalKind<GetAccessorDeclarationStructure>);
+    if (
+      this.objectType.ancestorObjectTypes.some((ancestorObjectType) =>
+        ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+      ) ||
+      this.objectType.descendantObjectTypes.some((descendantObjectType) =>
+        descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+      )
+    ) {
+      return Maybe.of({
+        leadingTrivia: this.override ? "override " : undefined,
+        name: this.name,
+        returnType: this.typeAlias,
+        statements: [`return super.${this.name} as ${this.typeAlias}`],
+      });
+    }
+
+    return Maybe.empty();
   }
 
   override get graphqlField(): Property<IdentifierType>["graphqlField"] {
@@ -334,13 +345,8 @@ export class IdentifierProperty extends Property<IdentifierType> {
   override get propertyDeclaration(): Maybe<
     OptionalKind<PropertyDeclarationStructure>
   > {
-    // See note in TypeFactory re: the logic of whether to declare the identifier in the class or not.
-    if (this.propertyDeclarationVisibility.isNothing()) {
-      return Maybe.empty();
-    }
-
     if (this.abstract) {
-      // Abstract version of the accessor
+      // Abstract property declaration
       // Work around a ts-morph bug that puts the override keyword before the abstract keyword
       return Maybe.of({
         hasOverrideKeyword:
@@ -354,15 +360,35 @@ export class IdentifierProperty extends Property<IdentifierType> {
       });
     }
 
-    if (this.identifierMintingStrategy.isJust()) {
-      // Mutable _identifier property that will be lazily initialized by the getter to mint the identifier
+    if (
+      this.objectType.ancestorObjectTypes.some(
+        (ancestorObjectType) => !ancestorObjectType.abstract,
+      )
+    ) {
+      // If the object type has a non-abstract ancestor, that ancestor will declare the identifier property.
+      return Maybe.empty();
+    }
+
+    if (
+      this.identifierMintingStrategy.isJust() ||
+      this.objectType.ancestorObjectTypes.some((ancestorObjectType) =>
+        ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+      ) ||
+      this.objectType.descendantObjectTypes.some((descendantObjectType) =>
+        descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+      )
+    ) {
+      // If this, an ancestor, or a descendant has an identifier minting strategy, declare the identifier property
+      // private or protected and prefix its name with _ in order to avoid a conflict with the get accessor name.
       return Maybe.of({
         hasQuestionToken: true,
         name: `_${this.name}`,
-        scope: this.propertyDeclarationVisibility
-          .map(Property.visibilityToScope)
-          .unsafeCoerce(),
-        type: `${this.typeAlias}`,
+        scope: this.objectType.descendantObjectTypes.some(
+          (descendantObjectType) => !descendantObjectType.abstract,
+        )
+          ? Scope.Protected
+          : Scope.Private,
+        type: this.typeAlias,
       });
     }
 

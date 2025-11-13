@@ -227,54 +227,10 @@ export class TypeFactory {
           0,
           0,
           new ObjectType.IdentifierProperty({
-            // abstract: astType.abstract,
-            // getAccessorScope: (() => {
-            //   if (astType.abstract) {
-            //     return Maybe.empty();
-            //   }
-
-            //   if (
-            //     astType.identifierMintingStrategy.isJust() ||
-            //     astType.ancestorObjectTypes.some((ancestorObjectType) =>
-            //       ancestorObjectType.identifierMintingStrategy.isJust(),
-            //     )
-            //   ) {
-            //     return Maybe.of(Scope.Public);
-            //   }
-
-            //   return Maybe.empty();
-            // })(),
             identifierMintingStrategy: astType.identifierMintingStrategy,
             identifierPrefixPropertyName: `${syntheticNamePrefix}identifierPrefix`,
             name: `${syntheticNamePrefix}identifier`,
             objectType,
-            // override: astType.parentObjectTypes.length > 0,
-            // propertyDeclarationVisibility: (() => {
-            //   if (astType.abstract) {
-            //     // If the type is abstract, don't declare an identifier property.
-            //     return Maybe.empty();
-            //   }
-
-            //   if (
-            //     astType.ancestorObjectTypes.some(
-            //       (ancestorObjectType) => !ancestorObjectType.abstract,
-            //     )
-            //   ) {
-            //     // If the type has a non-abstract ancestor, that ancestor will declare the identifier property.
-            //     return Maybe.empty();
-            //   }
-
-            //   if (
-            //     astType.descendantObjectTypes.some(
-            //       (descendantObjectType) => !descendantObjectType.abstract,
-            //     )
-            //   ) {
-            //     // If the type has a non-abstract descendant, declare the identifier property for it.
-            //     return Maybe.of("protected");
-            //   }
-
-            //   return Maybe.of("private");
-            // })(),
             type: identifierType,
             typeAlias: `${staticModuleName}.${syntheticNamePrefix}Identifier`,
             visibility: "public",
