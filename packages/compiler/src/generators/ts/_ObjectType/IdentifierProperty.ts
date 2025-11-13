@@ -7,13 +7,9 @@ import type {
   OptionalKind,
   PropertyDeclarationStructure,
   PropertySignatureStructure,
-  Scope,
 } from "ts-morph";
 
-import type {
-  IdentifierMintingStrategy,
-  PropertyVisibility,
-} from "../../../enums/index.js";
+import type { IdentifierMintingStrategy } from "../../../enums/index.js";
 import { logger } from "../../../logger.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import { Import } from "../Import.js";
@@ -23,46 +19,34 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { Property } from "./Property.js";
 
 export class IdentifierProperty extends Property<IdentifierType> {
-  private readonly getAccessorScope: Maybe<Scope>;
   private readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
   private readonly identifierPrefixPropertyName: string;
-  private readonly override: boolean;
-  private readonly propertyDeclarationVisibility: Maybe<PropertyVisibility>;
   private readonly typeAlias: string;
 
-  readonly abstract: boolean;
   readonly equalsFunction = Maybe.of(`${syntheticNamePrefix}booleanEquals`);
   readonly mutable = false;
   readonly recursive = false;
 
   constructor({
-    abstract,
-    getAccessorScope,
     identifierMintingStrategy,
     identifierPrefixPropertyName,
-    override,
-    propertyDeclarationVisibility,
     typeAlias,
     ...superParameters
   }: {
-    abstract: boolean;
-    getAccessorScope: Maybe<Scope>;
-    propertyDeclarationVisibility: Maybe<PropertyVisibility>;
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     identifierPrefixPropertyName: string;
-    override: boolean;
     type: IdentifierType;
     typeAlias: string;
   } & ConstructorParameters<typeof Property>[0]) {
     super(superParameters);
     invariant(this.visibility === "public");
-    this.abstract = abstract;
-    this.getAccessorScope = getAccessorScope;
-    this.propertyDeclarationVisibility = propertyDeclarationVisibility;
     this.identifierMintingStrategy = identifierMintingStrategy;
     this.identifierPrefixPropertyName = identifierPrefixPropertyName;
-    this.override = override;
     this.typeAlias = typeAlias;
+  }
+
+  get abstract(): boolean {
+    return this.objectType.abstract;
   }
 
   override get constructorParametersPropertySignature(): Maybe<
@@ -122,11 +106,9 @@ export class IdentifierProperty extends Property<IdentifierType> {
   override get getAccessorDeclaration(): Maybe<
     OptionalKind<GetAccessorDeclarationStructure>
   > {
-    if (this.getAccessorScope.isNothing()) {
+    if (this.abstract) {
       return Maybe.empty();
     }
-
-    invariant(this.getAccessorScope.unsafeCoerce() === "public");
 
     if (this.identifierMintingStrategy.isJust()) {
       let memoizeMintedIdentifier: boolean;
@@ -159,12 +141,15 @@ export class IdentifierProperty extends Property<IdentifierType> {
       } satisfies OptionalKind<GetAccessorDeclarationStructure>);
     }
 
-    invariant(this.propertyDeclaration.isNothing());
     return Maybe.of({
       leadingTrivia: this.override ? "override " : undefined,
       name: this.name,
       returnType: this.typeAlias,
-      statements: [`return super.${this.name} as ${this.typeAlias}`],
+      statements: this.propertyDeclaration
+        .map((propertyDeclaration) => [
+          `return this.${propertyDeclaration.name};`,
+        ])
+        .orDefault([`return super.${this.name} as ${this.typeAlias}`]),
     } satisfies OptionalKind<GetAccessorDeclarationStructure>);
   }
 
@@ -187,6 +172,10 @@ export class IdentifierProperty extends Property<IdentifierType> {
       name: "@id",
       type: "string",
     });
+  }
+
+  private get override(): boolean {
+    return this.objectType.parentObjectTypes.length > 0;
   }
 
   override constructorStatements({
@@ -345,6 +334,11 @@ export class IdentifierProperty extends Property<IdentifierType> {
   override get propertyDeclaration(): Maybe<
     OptionalKind<PropertyDeclarationStructure>
   > {
+    // See note in TypeFactory re: the logic of whether to declare the identifier in the class or not.
+    if (this.propertyDeclarationVisibility.isNothing()) {
+      return Maybe.empty();
+    }
+
     if (this.abstract) {
       // Abstract version of the accessor
       // Work around a ts-morph bug that puts the override keyword before the abstract keyword
@@ -358,11 +352,6 @@ export class IdentifierProperty extends Property<IdentifierType> {
         name: this.name,
         type: this.typeAlias,
       });
-    }
-
-    // See note in TypeFactory re: the logic of whether to declare the identifier in the class or not.
-    if (!this.propertyDeclarationVisibility.isJust()) {
-      return Maybe.empty();
     }
 
     if (this.identifierMintingStrategy.isJust()) {

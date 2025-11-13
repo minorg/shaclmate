@@ -6,7 +6,6 @@ import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { fromRdf } from "rdf-literal";
 import { invariant } from "ts-invariant";
-import { Scope } from "ts-morph";
 
 import type * as ast from "../../ast/index.js";
 
@@ -192,11 +191,8 @@ export class TypeFactory {
             0,
             0,
             new ObjectType.TypeDiscriminatorProperty({
-              abstract: astType.abstract,
               name: `${syntheticNamePrefix}type`,
-              initializer: objectType.discriminatorValue,
               objectType,
-              override: objectType.parentObjectTypes.length > 0,
               type: new ObjectType.TypeDiscriminatorProperty.Type({
                 descendantValues: [...typeDiscriminatorDescendantValues].sort(),
                 mutable: false,
@@ -215,11 +211,11 @@ export class TypeFactory {
             0,
             0,
             new ObjectType.IdentifierPrefixProperty({
+              name: `${syntheticNamePrefix}identifierPrefix`,
+              objectType,
               own: !astType.ancestorObjectTypes.some(
                 objectTypeNeedsIdentifierPrefixProperty,
               ),
-              name: `${syntheticNamePrefix}identifierPrefix`,
-              objectType,
               type: this.cachedStringType,
               visibility: "protected",
             }),
@@ -231,54 +227,54 @@ export class TypeFactory {
           0,
           0,
           new ObjectType.IdentifierProperty({
-            abstract: astType.abstract,
-            getAccessorScope: (() => {
-              if (astType.abstract) {
-                return Maybe.empty();
-              }
+            // abstract: astType.abstract,
+            // getAccessorScope: (() => {
+            //   if (astType.abstract) {
+            //     return Maybe.empty();
+            //   }
 
-              if (
-                astType.identifierMintingStrategy.isJust() ||
-                astType.ancestorObjectTypes.some((ancestorObjectType) =>
-                  ancestorObjectType.identifierMintingStrategy.isJust(),
-                )
-              ) {
-                return Maybe.of(Scope.Public);
-              }
+            //   if (
+            //     astType.identifierMintingStrategy.isJust() ||
+            //     astType.ancestorObjectTypes.some((ancestorObjectType) =>
+            //       ancestorObjectType.identifierMintingStrategy.isJust(),
+            //     )
+            //   ) {
+            //     return Maybe.of(Scope.Public);
+            //   }
 
-              return Maybe.empty();
-            })(),
+            //   return Maybe.empty();
+            // })(),
             identifierMintingStrategy: astType.identifierMintingStrategy,
             identifierPrefixPropertyName: `${syntheticNamePrefix}identifierPrefix`,
             name: `${syntheticNamePrefix}identifier`,
             objectType,
-            override: astType.parentObjectTypes.length > 0,
-            propertyDeclarationVisibility: (() => {
-              if (astType.abstract) {
-                // If the type is abstract, don't declare an identifier property.
-                return Maybe.empty();
-              }
+            // override: astType.parentObjectTypes.length > 0,
+            // propertyDeclarationVisibility: (() => {
+            //   if (astType.abstract) {
+            //     // If the type is abstract, don't declare an identifier property.
+            //     return Maybe.empty();
+            //   }
 
-              if (
-                astType.ancestorObjectTypes.some(
-                  (ancestorObjectType) => !ancestorObjectType.abstract,
-                )
-              ) {
-                // If the type has a non-abstract ancestor, that ancestor will declare the identifier property.
-                return Maybe.empty();
-              }
+            //   if (
+            //     astType.ancestorObjectTypes.some(
+            //       (ancestorObjectType) => !ancestorObjectType.abstract,
+            //     )
+            //   ) {
+            //     // If the type has a non-abstract ancestor, that ancestor will declare the identifier property.
+            //     return Maybe.empty();
+            //   }
 
-              if (
-                astType.descendantObjectTypes.some(
-                  (descendantObjectType) => !descendantObjectType.abstract,
-                )
-              ) {
-                // If the type has a non-abstract descendant, declare the identifier property for it.
-                return Maybe.of("protected");
-              }
+            //   if (
+            //     astType.descendantObjectTypes.some(
+            //       (descendantObjectType) => !descendantObjectType.abstract,
+            //     )
+            //   ) {
+            //     // If the type has a non-abstract descendant, declare the identifier property for it.
+            //     return Maybe.of("protected");
+            //   }
 
-              return Maybe.of("private");
-            })(),
+            //   return Maybe.of("private");
+            // })(),
             type: identifierType,
             typeAlias: `${staticModuleName}.${syntheticNamePrefix}Identifier`,
             visibility: "public",
