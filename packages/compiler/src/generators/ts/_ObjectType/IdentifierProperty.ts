@@ -52,9 +52,18 @@ export class IdentifierProperty extends Property<IdentifierType> {
     return this.objectType.abstract;
   }
 
+  @Memoize()
   override get constructorParametersPropertySignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {
+    if (this.abstract) {
+      // If the property is not declared or it's declared abstract, we just pass up parameters to super as-is.
+      const propertyDeclaration = this.propertyDeclaration.extractNullable();
+      if (propertyDeclaration === null || propertyDeclaration.isAbstract) {
+        return Maybe.empty();
+      }
+    }
+
     const typeNames = new Set<string>(); // Remove duplicates with a set
     for (const conversion of this.type.conversions) {
       if (conversion.sourceTypeName !== "undefined") {
@@ -62,23 +71,15 @@ export class IdentifierProperty extends Property<IdentifierType> {
       }
     }
 
-    let hasQuestionToken: boolean;
-    switch (this.objectType.declarationType) {
-      case "class":
-        hasQuestionToken = this.identifierMintingStrategy.isJust();
-        break;
-      case "interface": {
-        const identifierMintingStrategy =
-          this.identifierMintingStrategy.extract();
-        hasQuestionToken =
-          typeof identifierMintingStrategy !== "undefined" &&
-          identifierMintingStrategy !== "sha256";
-        break;
-      }
-    }
-
     return Maybe.of({
-      hasQuestionToken,
+      hasQuestionToken:
+        this.identifierMintingStrategy.isJust() ||
+        this.objectType.ancestorObjectTypes.some((ancestorObjectType) =>
+          ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+        ) ||
+        this.objectType.descendantObjectTypes.some((descendantObjectType) =>
+          descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+        ),
       isReadonly: true,
       name: this.name,
       type: [...typeNames].sort().join(" | "),
@@ -137,6 +138,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
     };
 
     if (this.identifierMintingStrategy.isJust()) {
+      // Mint the identifier lazily in the get accessor
       let memoizeMintedIdentifier: boolean;
       let mintIdentifier: string;
       switch (this.identifierMintingStrategy.unsafeCoerce()) {
@@ -248,6 +250,12 @@ export class IdentifierProperty extends Property<IdentifierType> {
   }: Parameters<
     Property<IdentifierType>["constructorStatements"]
   >[0]): readonly string[] {
+    const constructorParametersPropertySignature =
+      this.constructorParametersPropertySignature.extractNullable();
+    if (constructorParametersPropertySignature === null) {
+      return [];
+    }
+
     let lhs: string;
     const statements: string[] = [];
     const typeConversions = this.type.conversions;
@@ -279,36 +287,47 @@ export class IdentifierProperty extends Property<IdentifierType> {
         `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = ${conversion.conversionExpression(variables.parameter)}; }`,
       );
     }
-    this.identifierMintingStrategy.ifJust((identifierMintingStrategy) => {
-      switch (this.objectType.declarationType) {
-        case "class":
+    this.identifierMintingStrategy
+      .ifJust((identifierMintingStrategy) => {
+        switch (this.objectType.declarationType) {
+          case "class":
+            // The identifier will be minted lazily in the get accessor
+            invariant(this.getAccessorDeclaration.isJust());
+            conversionBranches.push(
+              `if (typeof ${variables.parameter} === "undefined") { }`,
+            );
+            break;
+          case "interface": {
+            let mintIdentifier: string;
+            switch (identifierMintingStrategy) {
+              case "blankNode":
+                mintIdentifier = "dataFactory.blankNode()";
+                break;
+              case "sha256":
+                logger.warn(
+                  "minting %s identifiers with %s is unsupported",
+                  this.objectType.declarationType,
+                  identifierMintingStrategy,
+                );
+                return;
+              case "uuidv4":
+                mintIdentifier = `dataFactory.namedNode(\`\${${variables.parameters}.${this.identifierPrefixPropertyName} ?? "urn:shaclmate:${this.objectType.discriminatorValue}:"}\${uuid.v4()}\`)`;
+                break;
+            }
+            conversionBranches.push(
+              `if (typeof ${variables.parameter} === "undefined") { ${lhs} = ${mintIdentifier}; }`,
+            );
+          }
+        }
+      })
+      .ifNothing(() => {
+        if (constructorParametersPropertySignature.hasQuestionToken) {
+          // This object type doesn't have an identifier minting strategy but an ancestor or descendant does.
           conversionBranches.push(
             `if (typeof ${variables.parameter} === "undefined") { }`,
           );
-          break;
-        case "interface": {
-          let mintIdentifier: string;
-          switch (identifierMintingStrategy) {
-            case "blankNode":
-              mintIdentifier = "dataFactory.blankNode()";
-              break;
-            case "sha256":
-              logger.warn(
-                "minting %s identifiers with %s is unsupported",
-                this.objectType.declarationType,
-                identifierMintingStrategy,
-              );
-              return;
-            case "uuidv4":
-              mintIdentifier = `dataFactory.namedNode(\`\${${variables.parameters}.${this.identifierPrefixPropertyName} ?? "urn:shaclmate:${this.objectType.discriminatorValue}:"}\${uuid.v4()}\`)`;
-              break;
-          }
-          conversionBranches.push(
-            `if (typeof ${variables.parameter} === "undefined") { ${lhs} = ${mintIdentifier}; }`,
-          );
         }
-      }
-    });
+      });
 
     // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
     conversionBranches.push(

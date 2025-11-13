@@ -32030,13 +32030,14 @@ export abstract class IdentifierOverride1Class {
   readonly identifierOverrideProperty: string;
 
   constructor(parameters: {
-    readonly $identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly identifierOverrideProperty: string;
   }) {
     if (typeof parameters.$identifier === "object") {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -32505,9 +32506,7 @@ export abstract class IdentifierOverride2Class extends IdentifierOverride1Class 
 
   // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
-    parameters: {
-      readonly $identifier: rdfjs.NamedNode | string;
-    } & ConstructorParameters<typeof IdentifierOverride1Class>[0],
+    parameters: ConstructorParameters<typeof IdentifierOverride1Class>[0],
   ) {
     super(parameters);
   }
@@ -32784,7 +32783,7 @@ export class IdentifierOverride3Class extends IdentifierOverride2Class {
   // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
     parameters: {
-      readonly $identifier: rdfjs.NamedNode | string;
+      readonly $identifier?: rdfjs.NamedNode | string;
     } & ConstructorParameters<typeof IdentifierOverride2Class>[0],
   ) {
     super(parameters);
@@ -42910,13 +42909,14 @@ export abstract class AbstractBaseClassWithProperties {
   readonly abstractBaseClassWithPropertiesProperty: string;
 
   constructor(parameters: {
-    readonly $identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly abstractBaseClassWithPropertiesProperty: string;
   }) {
     if (typeof parameters.$identifier === "object") {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
@@ -43388,9 +43388,9 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
 
   // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
-    parameters: {
-      readonly $identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    } & ConstructorParameters<typeof AbstractBaseClassWithProperties>[0],
+    parameters: ConstructorParameters<
+      typeof AbstractBaseClassWithProperties
+    >[0],
   ) {
     super(parameters);
   }
@@ -46735,13 +46735,14 @@ export abstract class AbstractBaseClassForExternClass {
   readonly abstractBaseClassForExternClassProperty: string;
 
   constructor(parameters: {
-    readonly $identifier: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly abstractBaseClassForExternClassProperty: string;
   }) {
     if (typeof parameters.$identifier === "object") {
       this._$identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }

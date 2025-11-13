@@ -11,7 +11,7 @@ describe("equals", () => {
       expect,
     }) => {
       expect(
-        harness.equals((harness as Harness<any, any>).instance).extract(),
+        harness.equals((harness as Harness<any>).instance).extract(),
       ).toStrictEqual(true);
     });
   }
