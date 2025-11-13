@@ -110,15 +110,27 @@ export class IdentifierProperty extends Property<IdentifierType> {
 
     const checkIdentifierTermTypeStatements = (
       identifierVariable: string,
+      identifierVariableNodeKinds?: Set<IdentifierNodeKind>,
     ): readonly string[] => {
       if (this.type.nodeKinds.size === 2) {
         return [];
       }
+
       const expectedNodeKind: IdentifierNodeKind = this.type.nodeKinds.has(
         "BlankNode",
       )
         ? "BlankNode"
         : "NamedNode";
+
+      if (identifierVariableNodeKinds) {
+        if (
+          identifierVariableNodeKinds.size === 1 &&
+          identifierVariableNodeKinds.has(expectedNodeKind)
+        ) {
+          return [];
+        }
+      }
+
       return [
         `if (${identifierVariable}.termType !== "${expectedNodeKind}") { throw new Error(\`expected identifier to be ${expectedNodeKind}, not \${${identifierVariable}.termType}\`); }`,
       ];
@@ -166,13 +178,22 @@ export class IdentifierProperty extends Property<IdentifierType> {
     ) {
       if (this.objectType.parentObjectTypes.length > 0) {
         // If this object type isn't the root, delegate up.
+        const checkSuperIdentifierTermTypeStatements =
+          checkIdentifierTermTypeStatements(
+            "identifier",
+            this.objectType.parentObjectTypes[0].identifierType.nodeKinds,
+          );
+        if (checkSuperIdentifierTermTypeStatements.length === 0) {
+          return Maybe.empty(); // Don't need a get accessor just to return super.identifier.
+        }
+
         return Maybe.of({
           hasOverrideKeyword: true,
           name: this.name,
           returnType: this.typeAlias,
           statements: [
             `const identifier = super.${this.name}`,
-            ...checkIdentifierTermTypeStatements("identifier"),
+            ...checkSuperIdentifierTermTypeStatements,
             "return identifier;",
           ],
         });
@@ -188,9 +209,6 @@ export class IdentifierProperty extends Property<IdentifierType> {
         returnType: this.typeAlias,
         statements: [
           `if (typeof this.${propertyDeclaration.name} === "undefined") { throw new Error("unable to mint identifier"); }`,
-          ...checkIdentifierTermTypeStatements(
-            `this.${propertyDeclaration.name}`,
-          ),
           `return this.${propertyDeclaration.name};`,
         ],
       });

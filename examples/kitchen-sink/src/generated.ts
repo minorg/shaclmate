@@ -32405,17 +32405,6 @@ export class IdentifierOverride3Class extends IdentifierOverride2Class {
     super(parameters);
   }
 
-  override get $identifier(): IdentifierOverride3ClassStatic.$Identifier {
-    const identifier = super.$identifier;
-    if (identifier.termType !== "NamedNode") {
-      throw new Error(
-        `expected identifier to be NamedNode, not ${identifier.termType}`,
-      );
-    }
-
-    return identifier;
-  }
-
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
@@ -43019,11 +43008,6 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
     } & ConstructorParameters<typeof AbstractBaseClassWithProperties>[0],
   ) {
     super(parameters);
-  }
-
-  override get $identifier(): AbstractBaseClassWithoutPropertiesStatic.$Identifier {
-    const identifier = super.$identifier;
-    return identifier;
   }
 
   override $toRdf(options?: {
