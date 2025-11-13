@@ -55,6 +55,7 @@ const externalDependencyVersions = {
   sparqljs: { sparqljs: "3.7.3" },
   uuid: { uuid: "^9.0.1" },
   typescript: { typescript: "5.8.2" },
+  "typescript-memoize": { "typescript-memoize": "^1.1.1" },
   zod: {
     zod: "^4.1.12",
   },
@@ -104,6 +105,7 @@ const packages: readonly Package[] = [
         ...externalDependencyVersions["n3"],
         ...externalDependencyVersions["purify-ts"],
         ...externalDependencyVersions["rdfjs-resource"],
+        ...externalDependencyVersions["typescript-memoize"],
       },
     },
     directory: "packages",
@@ -372,58 +374,58 @@ for (const package_ of packages) {
     fs.symlinkSync(`../../${fileName}`, packageFilePath);
   }
 
-  const tsconfigJsonFilePath = path.resolve(
-    packageDirectoryPath,
-    "tsconfig.json",
-  );
-  if (
-    true
-    // !fs.existsSync(tsconfigJsonFilePath) ||
-    // fs.statSync(tsconfigJsonFilePath).isSymbolicLink()
-  ) {
+  if (package_.name !== "forms") {
     fs.writeFileSync(
-      tsconfigJsonFilePath,
-      JSON.stringify({
-        compilerOptions: {
-          baseUrl: "src",
-          declaration: true,
-          declarationMap: true,
-          exactOptionalPropertyTypes: false,
-          experimentalDecorators: true,
-          forceConsistentCasingInFileNames: true,
-          incremental: true,
-          noUncheckedIndexedAccess: false,
-          outDir: "dist",
-          sourceMap: true,
+      path.resolve(packageDirectoryPath, "tsconfig.json"),
+      JSON.stringify(
+        {
+          compilerOptions: {
+            baseUrl: "src",
+            declaration: true,
+            declarationMap: true,
+            exactOptionalPropertyTypes: false,
+            experimentalDecorators: true,
+            forceConsistentCasingInFileNames: true,
+            incremental: true,
+            noUncheckedIndexedAccess: false,
+            outDir: "dist",
+            sourceMap: true,
+          },
+          extends: [
+            "@tsconfig/strictest/tsconfig.json",
+            "@tsconfig/node18/tsconfig.json",
+          ],
+          include: ["src/**/*.ts"],
         },
-        extends: [
-          "@tsconfig/strictest/tsconfig.json",
-          "@tsconfig/node18/tsconfig.json",
-        ],
-        include: ["src/**/*.ts"],
-      }),
+        undefined,
+        2,
+      ),
     );
   }
 
   if (testsDirectoryPath !== null) {
     fs.writeFileSync(
       path.join(testsDirectoryPath, "tsconfig.json"),
-      JSON.stringify({
-        compilerOptions: {
-          baseUrl: ".",
-          exactOptionalPropertyTypes: false,
-          experimentalDecorators: true,
-          forceConsistentCasingInFileNames: true,
-          incremental: true,
-          noEmit: true,
-          noUncheckedIndexedAccess: false,
+      JSON.stringify(
+        {
+          compilerOptions: {
+            baseUrl: ".",
+            exactOptionalPropertyTypes: false,
+            experimentalDecorators: true,
+            forceConsistentCasingInFileNames: true,
+            incremental: true,
+            noEmit: true,
+            noUncheckedIndexedAccess: false,
+          },
+          extends: [
+            "@tsconfig/strictest/tsconfig.json",
+            "@tsconfig/node18/tsconfig.json",
+          ],
+          include: ["./**/*.ts"],
         },
-        extends: [
-          "@tsconfig/strictest/tsconfig.json",
-          "@tsconfig/node18/tsconfig.json",
-        ],
-        include: ["./**/*.ts"],
-      }),
+        undefined,
+        2,
+      ),
     );
   }
 }
