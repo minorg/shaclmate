@@ -66,13 +66,13 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     rdfs:comment "Base interface for other node shapes. Put the base interface with properties above the base interface without." ;
     rdfs:subClassOf :BaseInterfaceWithProperties .
 
-:BlankInterface
-    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a sh:NodeShape ;
-    rdfs:comment "Node shape that can have a blank node or IRI as an identifier" .
-
 :BlankNodeIdentifierClass
     a owl:Class, sh:NodeShape ;
+    rdfs:comment "Node shape that can have a blank node or IRI as an identifier" .
+
+:BlankNodeIdentifierInterface
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    a sh:NodeShape ;
     rdfs:comment "Node shape that can have a blank node or IRI as an identifier" .
 
 :ClassUnion
@@ -460,6 +460,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     rdfs:comment "A node shape that only allows IRI identifiers." ;
     sh:nodeKind sh:IRI .
 
+:IriIdentifierInterface
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    a sh:NodeShape ;
+    rdfs:comment "A node shape that only allows IRI identifiers." ;
+    sh:nodeKind sh:IRI .
+
 :IriList
     a owl:Class, sh:NodeShape ;
     rdfs:comment "A node shape that models an RDF list. Should be transformed into a list data structure when used as a property instead of surfacing the RDF list structure in code." ;
@@ -508,7 +514,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :languageInStringProperty
     ] .
 
-:LazilyResolvedBlankNodeOrIriClass
+:LazilyResolvedBlankNodeOrIriIdentifierClass
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape resolved by LazyPropertiesClass" ;
     sh:property [
@@ -518,7 +524,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :lazilyResolvedStringProperty
     ] .
 
-:LazilyResolvedBlankNodeOrIriInterface
+:LazilyResolvedBlankNodeOrIriIdentifierInterface
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape resolved by LazyPropertiesInterface" ;
@@ -581,7 +587,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :lazilyResolvedStringProperty
     ] .
 
-:LazilyResolvedIriClass
+:LazilyResolvedIriIdentifierClass
     a sh:NodeShape ;
     rdfs:comment "Node shape resolved by LazyPropertiesClass" ;
     sh:nodeKind sh:IRI ;
@@ -592,7 +598,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :lazilyResolvedStringProperty
     ] .
 
-:LazilyResolvedIriInterface
+:LazilyResolvedIriIdentifierInterface
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a sh:NodeShape ;
     rdfs:comment "Node shape resolved by LazyPropertiesInterface" ;
@@ -611,23 +617,23 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         shaclmate:lazy true ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
-        sh:node :LazilyResolvedBlankNodeOrIriClass ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :optionalLazyToResolvedClassProperty
     ], [
         shaclmate:lazy true ;
-        sh:node :LazilyResolvedBlankNodeOrIriClass ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :setLazyToResolvedClassProperty
     ], [
         shaclmate:lazy true ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:node :LazilyResolvedBlankNodeOrIriClass ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :requiredLazyToResolvedClassProperty
     ], [
         shaclmate:lazy true ;
         sh:maxCount 1 ;
-        sh:node :LazilyResolvedIriClass ;
-        sh:path :optionalLazyToResolvedIriClassProperty
+        sh:node :LazilyResolvedIriIdentifierClass ;
+        sh:path :optionalLazyToResolvedIriIdentifierClassProperty
     ], [
         shaclmate:lazy true ;
         sh:maxCount 1 ;
@@ -637,17 +643,17 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         shaclmate:partial :PartialClass ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
-        sh:node :LazilyResolvedBlankNodeOrIriClass ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :optionalPartialClassToResolvedClassProperty
     ], [
         shaclmate:partial :PartialClass ;
-        sh:node :LazilyResolvedBlankNodeOrIriClass ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :setPartialClassToResolvedClassProperty
     ], [
         shaclmate:partial :PartialClass ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:node :LazilyResolvedBlankNodeOrIriClass ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :requiredPartialClassToResolvedClassProperty
     ], [
         shaclmate:partial :PartialClass ;
@@ -669,13 +675,13 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         shaclmate:lazy true ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierInterface ;
         sh:path :requiredLazyToResolvedInterfaceProperty
     ], [
         shaclmate:lazy true ;
         sh:maxCount 1 ;
-        sh:node :LazilyResolvedIriInterface ;
-        sh:path :optionalLazyToResolvedIriInterfaceProperty
+        sh:node :LazilyResolvedIriIdentifierInterface ;
+        sh:path :optionalLazyToResolvedIriIdentifierInterfaceProperty
     ], [
         shaclmate:lazy true ;
         sh:maxCount 1 ;
@@ -685,17 +691,17 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         shaclmate:partial :PartialInterface ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
-        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierInterface ;
         sh:path :optionalPartialInterfaceToResolvedInterfaceProperty
     ], [
         shaclmate:partial :PartialInterface ;
-        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierInterface ;
         sh:path :setPartialInterfaceToResolvedInterfaceProperty
     ], [
         shaclmate:partial :PartialInterface ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierInterface ;
         sh:path :requiredPartialInterfaceToResolvedInterfaceProperty
     ], [
         shaclmate:partial :PartialInterface ;
@@ -711,11 +717,11 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         shaclmate:lazy true ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
-        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierInterface ;
         sh:path :optionalLazyToResolvedInterfaceProperty
     ], [
         shaclmate:lazy true ;
-        sh:node :LazilyResolvedBlankNodeOrIriInterface ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierInterface ;
         sh:path :setLazyToResolvedInterfaceProperty
     ] .
 

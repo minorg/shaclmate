@@ -9,21 +9,21 @@ describe("identifier", () => {
     expect,
   }) => {
     expect(
-      harnesses.blankClassWithoutExplicitIdentifier.instance.$identifier
-        .termType,
+      harnesses.blankNodeIdentifierClassWithoutExplicitIdentifier.instance
+        .$identifier.termType,
     ).toStrictEqual("BlankNode");
   });
 
   it("don't mint an IRI if one is supplied", ({ expect }) => {
     expect(
-      harnesses.sha256IriClassWithExplicitIdentifier.instance.$identifier.equals(
+      harnesses.sha256IriIdentifierClassWithExplicitIdentifier.instance.$identifier.equals(
         dataFactory.namedNode("http://example.com/instance"),
       ),
     ).toStrictEqual(true);
   });
 
   it("identifier prefix", ({ expect }) => {
-    const instance = new kitchenSink.Sha256IriClass({
+    const instance = new kitchenSink.Sha256IriIdentifierClass({
       $identifierPrefix: "urn:othernamespace:",
       sha256IriProperty: "test",
     });
@@ -33,7 +33,7 @@ describe("identifier", () => {
   });
 
   it("mint an IRI with SHA-256 if none is supplied", ({ expect }) => {
-    const instance = new kitchenSink.Sha256IriClass({
+    const instance = new kitchenSink.Sha256IriIdentifierClass({
       sha256IriProperty: "test",
     });
     expect(
@@ -46,7 +46,8 @@ describe("identifier", () => {
   });
 
   it("mint an IRI with UUIDv4 if none is supplied", ({ expect }) => {
-    const instance = harnesses.uuidv4IriClassWithoutExplicitIdentifier.instance;
+    const instance =
+      harnesses.uuidv4IriIdentifierClassWithoutExplicitIdentifier.instance;
     expect(instance.$identifier.value).toMatch(
       /urn:shaclmate:UuidV4IriClass:[0-9A-Fa-f]{8}-/,
     );
