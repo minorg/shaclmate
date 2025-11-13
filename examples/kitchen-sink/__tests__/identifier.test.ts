@@ -12,6 +12,10 @@ describe("identifier", () => {
       harnesses.blankNodeIdentifierClassWithoutExplicitIdentifier.instance
         .$identifier.termType,
     ).toStrictEqual("BlankNode");
+    expect(
+      harnesses.blankNodeIdentifierInterfaceWithoutExplicitIdentifier.instance
+        .$identifier.termType,
+    ).toStrictEqual("BlankNode");
   });
 
   it("don't mint an IRI if one is supplied", ({ expect }) => {
@@ -46,10 +50,13 @@ describe("identifier", () => {
   });
 
   it("mint an IRI with UUIDv4 if none is supplied", ({ expect }) => {
-    const instance =
-      harnesses.uuidv4IriIdentifierClassWithoutExplicitIdentifier.instance;
-    expect(instance.$identifier.value).toMatch(
-      /urn:shaclmate:UuidV4IriIdentifierClass:[0-9A-Fa-f]{8}-/,
-    );
+    expect(
+      harnesses.uuidv4IriIdentifierClassWithoutExplicitIdentifier.instance
+        .$identifier.value,
+    ).toMatch(/urn:shaclmate:UuidV4IriIdentifierClass:[0-9A-Fa-f]{8}-/);
+    expect(
+      harnesses.uuidv4IriIdentifierInterfaceWithoutExplicitIdentifier.instance
+        .$identifier.value,
+    ).toMatch(/http:\/\/example.com\/[0-9A-Fa-f]{8}-/);
   });
 });
