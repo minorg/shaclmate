@@ -2,6 +2,8 @@ import { invariant } from "ts-invariant";
 import { arrayEquals } from "../ast/equals.js";
 import * as ast from "../ast/index.js";
 
+const DEBUG = false;
+
 export function isAstObjectTypePropertyRecursive(
   rootObjectType: ast.ObjectType,
   rootProperty: ast.ObjectType.Property,
@@ -12,21 +14,24 @@ export function isAstObjectTypePropertyRecursive(
       property: ast.ObjectType.Property;
       propertyType?: readonly ast.Type[];
     }[],
-  ) {
+  ): boolean {
     const currentStackFrame = stack.at(-1)!;
     const { objectType, property, propertyType } = currentStackFrame;
 
-    process.stderr.write(
-      `${[
-        ast.Type.toString(rootObjectType),
-        ast.ObjectType.Property.toString(rootProperty),
-        ast.Type.toString(objectType),
-        ast.ObjectType.Property.toString(property),
-        propertyType
-          ? `[${propertyType.map(ast.Type.toString).join(", ")}]`
-          : "undefined",
-      ].join(",")}\n`,
-    );
+    if (DEBUG) {
+      process.stderr.write(
+        `${[
+          stack.length.toString(),
+          ast.Type.toString(rootObjectType),
+          ast.ObjectType.Property.toString(rootProperty),
+          ast.Type.toString(objectType),
+          ast.ObjectType.Property.toString(property),
+          propertyType
+            ? `[${propertyType.map(ast.Type.toString).join(", ")}]`
+            : "undefined",
+        ].join(",")}\n`,
+      );
+    }
 
     for (const lowerStackFrame of stack.slice(0, -1)) {
       if (
@@ -54,12 +59,12 @@ export function isAstObjectTypePropertyRecursive(
       ) {
         continue;
       }
+
       // We've seen this combination before and don't want to recurse further, to avoid infinite recursion
-      // If the stack frame's property is the root property then the root property is recursive, otherwise return false here.
-      return ast.ObjectType.Property.equals(
-        currentStackFrame.property,
-        rootProperty,
-      );
+      if (DEBUG) {
+        process.stderr.write("recursion detected, halting");
+      }
+      return true;
     }
 
     if (!propertyType) {
@@ -97,6 +102,11 @@ export function isAstObjectTypePropertyRecursive(
       case "TermType":
         return false;
       case "ObjectType": {
+        if (DEBUG) {
+          process.stderr.write(
+            `recurse into ${ast.Type.toString(currentPropertyType)}`,
+          );
+        }
         for (const property of currentPropertyType.properties) {
           if (
             helper(
@@ -114,6 +124,11 @@ export function isAstObjectTypePropertyRecursive(
       }
       case "IntersectionType":
       case "UnionType": {
+        if (DEBUG) {
+          process.stderr.write(
+            `recurse into ${ast.Type.toString(currentPropertyType)}`,
+          );
+        }
         for (const memberType of currentPropertyType.memberTypes) {
           if (
             helper(
@@ -131,6 +146,11 @@ export function isAstObjectTypePropertyRecursive(
       }
       case "ObjectIntersectionType":
       case "ObjectUnionType": {
+        if (DEBUG) {
+          process.stderr.write(
+            `recurse into ${ast.Type.toString(currentPropertyType)}`,
+          );
+        }
         for (const memberType of currentPropertyType.memberTypes) {
           for (const property of memberType.properties) {
             if (
