@@ -278,6 +278,7 @@ export function $sparqlInstancesOfPattern({
     type: "bgp",
   };
 }
+type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 function $isReadonlyObjectArray(x: unknown): x is readonly object[] {
   return Array.isArray(x) && x.every((z) => typeof z === "object");
 }
@@ -440,7 +441,6 @@ function $isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
 function $isReadonlyNumberArray(x: unknown): x is readonly number[] {
   return Array.isArray(x) && x.every((z) => typeof z === "number");
 }
-type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 export class $NamedDefaultPartial {
   readonly $identifier: $NamedDefaultPartial.$Identifier;
   readonly $type = "$NamedDefaultPartial";
@@ -11903,6 +11903,820 @@ export namespace NonClass {
       } else {
         requiredPatterns.push(pattern);
       }
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+/**
+ * Node shape whose identifier can be a blank or a named node; subclassed by NarrowedIdentifierClass
+ */
+export class WideIdentifierClass {
+  protected _$identifier?: WideIdentifierClassStatic.$Identifier;
+  readonly $type: "WideIdentifierClass" | "NarrowedIdentifierClass" =
+    "WideIdentifierClass";
+
+  constructor(parameters?: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+  }) {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters?.$identifier satisfies never;
+    }
+  }
+
+  get $identifier(): WideIdentifierClassStatic.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+    return this._$identifier;
+  }
+
+  $equals(other: WideIdentifierClass): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    return _hasher;
+  }
+
+  $toJson(): WideIdentifierClassStatic.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+      } satisfies WideIdentifierClassStatic.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet?: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
+      mutateGraph,
+    });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/WideIdentifierClass",
+        ),
+      );
+    }
+
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace WideIdentifierClassStatic {
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/WideIdentifierClass",
+  );
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "WideIdentifierClass" | "NarrowedIdentifierClass";
+  };
+
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    return purify.Either.of({ $identifier });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, WideIdentifierClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new WideIdentifierClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "WideIdentifierClass" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+      ],
+      label: "WideIdentifierClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.enum(["WideIdentifierClass", "NarrowedIdentifierClass"]),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, WideIdentifierClass> {
+    let {
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return WideIdentifierClassStatic.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new WideIdentifierClass(properties));
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<Error, { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }> {
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+        .value($RdfVocabularies.rdf.type)
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/WideIdentifierClass":
+            case "http://example.com/NarrowedIdentifierClass":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(WideIdentifierClassStatic.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/WideIdentifierClass)`,
+            ),
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
+    }
+
+    const $identifier: WideIdentifierClassStatic.$Identifier =
+      $resource.identifier;
+    return purify.Either.of({ $identifier });
+  }
+
+  export const $properties = {};
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        WideIdentifierClassStatic.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        WideIdentifierClassStatic.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      WideIdentifierClassStatic.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("wideIdentifierClass");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "wideIdentifierClass");
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+        },
+      );
+    }
+
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("wideIdentifierClass");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable" ? subject.value : "wideIdentifierClass");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
+    if (!parameters?.ignoreRdfType) {
+      requiredPatterns.push(
+        {
+          type: "values" as const,
+          values: [
+            WideIdentifierClassStatic.$fromRdfType,
+            NarrowedIdentifierClass.$fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${variablePrefix}FromRdfType`] =
+              identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+      );
+      optionalPatterns.push({
+        patterns: [
+          {
+            triples: [
+              {
+                subject: rdfTypeVariable,
+                predicate: {
+                  items: [$RdfVocabularies.rdfs.subClassOf],
+                  pathType: "+" as const,
+                  type: "path" as const,
+                },
+                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+              },
+            ],
+            type: "bgp" as const,
+          },
+        ],
+        type: "optional" as const,
+      });
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+export class NarrowedIdentifierClass extends WideIdentifierClass {
+  override readonly $type = "NarrowedIdentifierClass";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly $identifier: rdfjs.NamedNode | string;
+    } & ConstructorParameters<typeof WideIdentifierClass>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get $identifier(): NarrowedIdentifierClass.$Identifier {
+    return super.$identifier as NarrowedIdentifierClass.$Identifier;
+  }
+
+  override $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet?: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = super.$toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/NarrowedIdentifierClass",
+        ),
+      );
+    }
+
+    return resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace NarrowedIdentifierClass {
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/NarrowedIdentifierClass",
+  );
+  export type $Identifier = rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjs.NamedNode> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? purify.Either.of(identifier)
+          : purify.Left(new Error("expected identifier to be NamedNode")),
+      ) as purify.Either<Error, rdfjs.NamedNode>;
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = WideIdentifierClassStatic.$Json;
+
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { $identifier: rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof WideIdentifierClassStatic.$propertiesFromJson>
+    >
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either =
+      WideIdentifierClassStatic.$propertiesFromJson($jsonObject);
+    if ($super0Either.isLeft()) {
+      return $super0Either;
+    }
+
+    const $super0 = $super0Either.unsafeCoerce();
+    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
+    return purify.Either.of({ ...$super0, $identifier });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, NarrowedIdentifierClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new NarrowedIdentifierClass(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [WideIdentifierClassStatic.$jsonUiSchema({ scopePrefix })],
+      label: "NarrowedIdentifierClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return WideIdentifierClassStatic.$jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        $type: zod.literal("NarrowedIdentifierClass"),
+      }),
+    ) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, NarrowedIdentifierClass> {
+    let {
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return NarrowedIdentifierClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new NarrowedIdentifierClass(properties));
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    { $identifier: rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof WideIdentifierClassStatic.$propertiesFromRdf>
+    >
+  > {
+    const $super0Either = WideIdentifierClassStatic.$propertiesFromRdf({
+      ...$context,
+      ignoreRdfType: true,
+      objectSet: $objectSet,
+      preferredLanguages: $preferredLanguages,
+      resource: $resource,
+    });
+    if ($super0Either.isLeft()) {
+      return $super0Either;
+    }
+
+    const $super0 = $super0Either.unsafeCoerce();
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+        .value($RdfVocabularies.rdf.type)
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/NarrowedIdentifierClass":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(NarrowedIdentifierClass.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/NarrowedIdentifierClass)`,
+            ),
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
+    }
+
+    if ($resource.identifier.termType !== "NamedNode") {
+      return purify.Left(
+        new rdfjsResource.Resource.MistypedValueError({
+          actualValue: $resource.identifier,
+          expectedValueType: "(rdfjs.NamedNode)",
+          focusResource: $resource,
+          predicate: $RdfVocabularies.rdf.subject,
+        }),
+      );
+    }
+
+    const $identifier: NarrowedIdentifierClass.$Identifier =
+      $resource.identifier;
+    return purify.Either.of({ ...$super0, $identifier });
+  }
+
+  export const $properties = { ...WideIdentifierClassStatic.$properties };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        NarrowedIdentifierClass.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        NarrowedIdentifierClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      NarrowedIdentifierClass.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("narrowedIdentifierClass");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "narrowedIdentifierClass");
+    triples.push(
+      ...WideIdentifierClassStatic.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+    );
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+        },
+      );
+    }
+
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("narrowedIdentifierClass");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "narrowedIdentifierClass");
+    for (const pattern of WideIdentifierClassStatic.$sparqlWherePatterns({
+      ignoreRdfType: true,
+      subject,
+      variablePrefix,
+    })) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
+    if (!parameters?.ignoreRdfType) {
+      requiredPatterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: NarrowedIdentifierClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+      );
+      optionalPatterns.push({
+        patterns: [
+          {
+            triples: [
+              {
+                subject: rdfTypeVariable,
+                predicate: {
+                  items: [$RdfVocabularies.rdfs.subClassOf],
+                  pathType: "+" as const,
+                  type: "path" as const,
+                },
+                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+              },
+            ],
+            type: "bgp" as const,
+          },
+        ],
+        type: "optional" as const,
+      });
     }
 
     return requiredPatterns.concat(optionalPatterns);
@@ -47497,6 +48311,23 @@ export interface $ObjectSet {
   mutablePropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<MutablePropertiesClass.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
+  narrowedIdentifierClass(
+    identifier: NarrowedIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, NarrowedIdentifierClass>>;
+  narrowedIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<NarrowedIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly NarrowedIdentifierClass.$Identifier[]>
+  >;
+  narrowedIdentifierClasses(
+    query?: $ObjectSet.Query<NarrowedIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NarrowedIdentifierClass[]>>;
+  narrowedIdentifierClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<NarrowedIdentifierClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
   nonClass(
     identifier: NonClass.$Identifier,
   ): Promise<purify.Either<Error, NonClass>>;
@@ -47742,6 +48573,23 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly UuidV4IriInterface[]>>;
   uuidV4IriInterfacesCount(
     query?: Pick<$ObjectSet.Query<UuidV4IriInterface.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  wideIdentifierClass(
+    identifier: WideIdentifierClassStatic.$Identifier,
+  ): Promise<purify.Either<Error, WideIdentifierClass>>;
+  wideIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<WideIdentifierClassStatic.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly WideIdentifierClassStatic.$Identifier[]>
+  >;
+  wideIdentifierClasses(
+    query?: $ObjectSet.Query<WideIdentifierClassStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly WideIdentifierClass[]>>;
+  wideIdentifierClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<WideIdentifierClassStatic.$Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>>;
   classUnion(
     identifier: ClassUnion.$Identifier,
@@ -48965,6 +49813,35 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     return this.$delegate.mutablePropertiesClassesCount(query);
   }
 
+  narrowedIdentifierClass(
+    identifier: NarrowedIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, NarrowedIdentifierClass>> {
+    return this.$delegate.narrowedIdentifierClass(identifier);
+  }
+
+  narrowedIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<NarrowedIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly NarrowedIdentifierClass.$Identifier[]>
+  > {
+    return this.$delegate.narrowedIdentifierClassIdentifiers(query);
+  }
+
+  narrowedIdentifierClasses(
+    query?: $ObjectSet.Query<NarrowedIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NarrowedIdentifierClass[]>> {
+    return this.$delegate.narrowedIdentifierClasses(query);
+  }
+
+  narrowedIdentifierClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<NarrowedIdentifierClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.narrowedIdentifierClassesCount(query);
+  }
+
   nonClass(
     identifier: NonClass.$Identifier,
   ): Promise<purify.Either<Error, NonClass>> {
@@ -49415,6 +50292,35 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<UuidV4IriInterface.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.uuidV4IriInterfacesCount(query);
+  }
+
+  wideIdentifierClass(
+    identifier: WideIdentifierClassStatic.$Identifier,
+  ): Promise<purify.Either<Error, WideIdentifierClass>> {
+    return this.$delegate.wideIdentifierClass(identifier);
+  }
+
+  wideIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<WideIdentifierClassStatic.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly WideIdentifierClassStatic.$Identifier[]>
+  > {
+    return this.$delegate.wideIdentifierClassIdentifiers(query);
+  }
+
+  wideIdentifierClasses(
+    query?: $ObjectSet.Query<WideIdentifierClassStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly WideIdentifierClass[]>> {
+    return this.$delegate.wideIdentifierClasses(query);
+  }
+
+  wideIdentifierClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<WideIdentifierClassStatic.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.wideIdentifierClassesCount(query);
   }
 
   classUnion(
@@ -52728,6 +53634,97 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async narrowedIdentifierClass(
+    identifier: NarrowedIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, NarrowedIdentifierClass>> {
+    return this.narrowedIdentifierClassSync(identifier);
+  }
+
+  narrowedIdentifierClassSync(
+    identifier: NarrowedIdentifierClass.$Identifier,
+  ): purify.Either<Error, NarrowedIdentifierClass> {
+    return this.narrowedIdentifierClassesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async narrowedIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<NarrowedIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly NarrowedIdentifierClass.$Identifier[]>
+  > {
+    return this.narrowedIdentifierClassIdentifiersSync(query);
+  }
+
+  narrowedIdentifierClassIdentifiersSync(
+    query?: $ObjectSet.Query<NarrowedIdentifierClass.$Identifier>,
+  ): purify.Either<Error, readonly NarrowedIdentifierClass.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      NarrowedIdentifierClass,
+      NarrowedIdentifierClass.$Identifier
+    >(
+      [
+        {
+          $fromRdf: NarrowedIdentifierClass.$fromRdf,
+          $fromRdfTypes: [NarrowedIdentifierClass.$fromRdfType],
+        },
+      ],
+      query,
+    );
+  }
+
+  async narrowedIdentifierClasses(
+    query?: $ObjectSet.Query<NarrowedIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NarrowedIdentifierClass[]>> {
+    return this.narrowedIdentifierClassesSync(query);
+  }
+
+  narrowedIdentifierClassesSync(
+    query?: $ObjectSet.Query<NarrowedIdentifierClass.$Identifier>,
+  ): purify.Either<Error, readonly NarrowedIdentifierClass[]> {
+    return this.$objectsSync<
+      NarrowedIdentifierClass,
+      NarrowedIdentifierClass.$Identifier
+    >(
+      [
+        {
+          $fromRdf: NarrowedIdentifierClass.$fromRdf,
+          $fromRdfTypes: [NarrowedIdentifierClass.$fromRdfType],
+        },
+      ],
+      query,
+    );
+  }
+
+  async narrowedIdentifierClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<NarrowedIdentifierClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.narrowedIdentifierClassesCountSync(query);
+  }
+
+  narrowedIdentifierClassesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<NarrowedIdentifierClass.$Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      NarrowedIdentifierClass,
+      NarrowedIdentifierClass.$Identifier
+    >(
+      [
+        {
+          $fromRdf: NarrowedIdentifierClass.$fromRdf,
+          $fromRdfTypes: [NarrowedIdentifierClass.$fromRdfType],
+        },
+      ],
+      query,
+    );
+  }
+
   async nonClass(
     identifier: NonClass.$Identifier,
   ): Promise<purify.Either<Error, NonClass>> {
@@ -53938,6 +54935,106 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       UuidV4IriInterface,
       UuidV4IriInterface.$Identifier
     >([{ $fromRdf: UuidV4IriInterface.$fromRdf, $fromRdfTypes: [] }], query);
+  }
+
+  async wideIdentifierClass(
+    identifier: WideIdentifierClassStatic.$Identifier,
+  ): Promise<purify.Either<Error, WideIdentifierClass>> {
+    return this.wideIdentifierClassSync(identifier);
+  }
+
+  wideIdentifierClassSync(
+    identifier: WideIdentifierClassStatic.$Identifier,
+  ): purify.Either<Error, WideIdentifierClass> {
+    return this.wideIdentifierClassesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async wideIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<WideIdentifierClassStatic.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly WideIdentifierClassStatic.$Identifier[]>
+  > {
+    return this.wideIdentifierClassIdentifiersSync(query);
+  }
+
+  wideIdentifierClassIdentifiersSync(
+    query?: $ObjectSet.Query<WideIdentifierClassStatic.$Identifier>,
+  ): purify.Either<Error, readonly WideIdentifierClassStatic.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      WideIdentifierClass,
+      WideIdentifierClassStatic.$Identifier
+    >(
+      [
+        {
+          $fromRdf: WideIdentifierClassStatic.$fromRdf,
+          $fromRdfTypes: [
+            WideIdentifierClassStatic.$fromRdfType,
+            NarrowedIdentifierClass.$fromRdfType,
+          ],
+        },
+      ],
+      query,
+    );
+  }
+
+  async wideIdentifierClasses(
+    query?: $ObjectSet.Query<WideIdentifierClassStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly WideIdentifierClass[]>> {
+    return this.wideIdentifierClassesSync(query);
+  }
+
+  wideIdentifierClassesSync(
+    query?: $ObjectSet.Query<WideIdentifierClassStatic.$Identifier>,
+  ): purify.Either<Error, readonly WideIdentifierClass[]> {
+    return this.$objectsSync<
+      WideIdentifierClass,
+      WideIdentifierClassStatic.$Identifier
+    >(
+      [
+        {
+          $fromRdf: WideIdentifierClassStatic.$fromRdf,
+          $fromRdfTypes: [
+            WideIdentifierClassStatic.$fromRdfType,
+            NarrowedIdentifierClass.$fromRdfType,
+          ],
+        },
+      ],
+      query,
+    );
+  }
+
+  async wideIdentifierClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<WideIdentifierClassStatic.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.wideIdentifierClassesCountSync(query);
+  }
+
+  wideIdentifierClassesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<WideIdentifierClassStatic.$Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      WideIdentifierClass,
+      WideIdentifierClassStatic.$Identifier
+    >(
+      [
+        {
+          $fromRdf: WideIdentifierClassStatic.$fromRdf,
+          $fromRdfTypes: [
+            WideIdentifierClassStatic.$fromRdfType,
+            NarrowedIdentifierClass.$fromRdfType,
+          ],
+        },
+      ],
+      query,
+    );
   }
 
   async classUnion(
@@ -56501,6 +57598,48 @@ export class $SparqlObjectSet implements $ObjectSet {
     );
   }
 
+  async narrowedIdentifierClass(
+    identifier: NarrowedIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, NarrowedIdentifierClass>> {
+    return (
+      await this.narrowedIdentifierClasses({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async narrowedIdentifierClassIdentifiers(
+    query?: $SparqlObjectSet.Query<NarrowedIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly NarrowedIdentifierClass.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<NarrowedIdentifierClass.$Identifier>(
+      NarrowedIdentifierClass,
+      query,
+    );
+  }
+
+  async narrowedIdentifierClasses(
+    query?: $SparqlObjectSet.Query<NarrowedIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NarrowedIdentifierClass[]>> {
+    return this.$objects<
+      NarrowedIdentifierClass,
+      NarrowedIdentifierClass.$Identifier
+    >(NarrowedIdentifierClass, query);
+  }
+
+  async narrowedIdentifierClassesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<NarrowedIdentifierClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<NarrowedIdentifierClass.$Identifier>(
+      NarrowedIdentifierClass,
+      query,
+    );
+  }
+
   async nonClass(
     identifier: NonClass.$Identifier,
   ): Promise<purify.Either<Error, NonClass>> {
@@ -57170,6 +58309,48 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<UuidV4IriInterface.$Identifier>(
       UuidV4IriInterface,
+      query,
+    );
+  }
+
+  async wideIdentifierClass(
+    identifier: WideIdentifierClassStatic.$Identifier,
+  ): Promise<purify.Either<Error, WideIdentifierClass>> {
+    return (
+      await this.wideIdentifierClasses({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async wideIdentifierClassIdentifiers(
+    query?: $SparqlObjectSet.Query<WideIdentifierClassStatic.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly WideIdentifierClassStatic.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<WideIdentifierClassStatic.$Identifier>(
+      WideIdentifierClassStatic,
+      query,
+    );
+  }
+
+  async wideIdentifierClasses(
+    query?: $SparqlObjectSet.Query<WideIdentifierClassStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly WideIdentifierClass[]>> {
+    return this.$objects<
+      WideIdentifierClass,
+      WideIdentifierClassStatic.$Identifier
+    >(WideIdentifierClassStatic, query);
+  }
+
+  async wideIdentifierClassesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<WideIdentifierClassStatic.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<WideIdentifierClassStatic.$Identifier>(
+      WideIdentifierClassStatic,
       query,
     );
   }

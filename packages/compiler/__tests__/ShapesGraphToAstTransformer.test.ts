@@ -32,8 +32,8 @@ describe("ShapesGraphToAstTransformer: kitchen sink", () => {
   });
 
   it("should transform kitchen object types", ({ expect }) => {
-    expect(shapesGraph.nodeShapes).toHaveLength(88);
-    expect(ast.objectTypes).toHaveLength(62);
+    expect(shapesGraph.nodeShapes).toHaveLength(90);
+    expect(ast.objectTypes).toHaveLength(64);
   });
 
   it("should transform object intersection types", ({ expect }) => {

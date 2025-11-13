@@ -3775,6 +3775,30 @@
       "kind": "ObjectType",
       "name": {
         "identifier": {
+          "curie": ":NarrowedIdentifierClass",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "NarrowedIdentifierClass",
+          "value": "http://example.com/NarrowedIdentifierClass"
+        }
+      },
+      "properties": []
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
+          "curie": ":WideIdentifierClass",
+          "termType": "NamedNode",
+          "uniqueLocalPart": "WideIdentifierClass",
+          "value": "http://example.com/WideIdentifierClass"
+        }
+      },
+      "properties": []
+    },
+    {
+      "kind": "ObjectType",
+      "name": {
+        "identifier": {
           "curie": ":NonClass",
           "termType": "NamedNode",
           "uniqueLocalPart": "NonClass",

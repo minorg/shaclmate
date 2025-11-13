@@ -746,6 +746,11 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ]
     ) .
 
+:NarrowedIdentifierClass
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf :WideIdentifierClass ;
+    sh:nodeKind sh:IRI .
+
 :NonClass
     a sh:NodeShape ;
     rdfs:comment "Node shape that isn't an rdfs:Class." ;
@@ -1096,4 +1101,8 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:minCount 1 ;
         sh:path :uuidV4IriProperty
     ] .
+
+:WideIdentifierClass
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Node shape whose identifier can be a blank or a named node; subclassed by NarrowedIdentifierClass" .
 

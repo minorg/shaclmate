@@ -5,7 +5,7 @@ import { testData } from "./testData.js";
 
 describe("ShapesGraph: kitchen sink", () => {
   it("should parse the shapes correctly", ({ expect }) => {
-    expect(testData.kitchenSink.shapesGraph.nodeShapes).toHaveLength(88);
+    expect(testData.kitchenSink.shapesGraph.nodeShapes).toHaveLength(90);
     expect(testData.kitchenSink.shapesGraph.propertyShapes).toHaveLength(123);
     expect(testData.schema.shapesGraph.nodeShapes).toHaveLength(84);
     expect(testData.schema.shapesGraph.propertyShapes).toHaveLength(70);
