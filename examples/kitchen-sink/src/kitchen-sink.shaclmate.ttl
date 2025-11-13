@@ -66,13 +66,13 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     rdfs:comment "Base interface for other node shapes. Put the base interface with properties above the base interface without." ;
     rdfs:subClassOf :BaseInterfaceWithProperties .
 
-:BlankNodeIdentifierClass
-    a owl:Class, sh:NodeShape ;
-    rdfs:comment "Node shape that can have a blank node or IRI as an identifier" .
-
 :BlankInterface
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a sh:NodeShape ;
+    rdfs:comment "Node shape that can have a blank node or IRI as an identifier" .
+
+:BlankNodeIdentifierClass
+    a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape that can have a blank node or IRI as an identifier" .
 
 :ClassUnion
@@ -297,6 +297,44 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:path :hasLiteralValueProperty
     ] .
+
+:IdentifierOverride1Class
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Node shape for testing identifier type overriding: blank node or IRI identifier, concrete" ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :identifierOverrideproperty
+    ] .
+
+:IdentifierOverride2Class
+    shaclmate:abstract true ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Node shape for testing identifier type overriding: blank node or IRI identifier, abstract" ;
+    rdfs:subClassOf :IdentifierOverride1Class ;
+    sh:nodeKind sh:BlankNodeOrIRI .
+
+:IdentifierOverride3Class
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Node shape for testing identifier type overriding: IRI identifier, concrete" ;
+    rdfs:subClassOf :IdentifierOverride2Class ;
+    sh:nodeKind sh:IRI .
+
+:IdentifierOverride4Class
+    shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_UUIDv4 ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Node shape for testing identifier type overriding: IRI identifier, concrete, UUIDv4 minting" ;
+    rdfs:subClassOf :IdentifierOverride3Class ;
+    sh:nodeKind sh:IRI .
+
+:IdentifierOverride5Class
+    shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Node shape for testing identifier type overriding: IRI identifier, concrete, SHA-256 minting" ;
+    rdfs:subClassOf :IdentifierOverride4Class ;
+    sh:nodeKind sh:IRI .
 
 :InIdentifierClass
     a sh:NodeShape ;
@@ -859,44 +897,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         :PartialInterfaceUnionMember2
     ) .
 
-:IdentifierOverride1Class 
-    a owl:Class, sh:NodeShape ;
-    sh:nodeKind sh:BlankNodeOrIRI ;
-    rdfs:comment "Node shape for testing identifier type overriding: blank node or IRI identifier, concrete" ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :identifierOverrideproperty 
-    ] .
-
-:IdentifierOverride2Class 
-    a owl:Class, sh:NodeShape ;
-    shaclmate:abstract true ;
-    sh:nodeKind sh:BlankNodeOrIRI ;
-    rdfs:subClassOf :IdentifierOverride1Class ;
-    rdfs:comment "Node shape for testing identifier type overriding: blank node or IRI identifier, abstract".
-
-:IdentifierOverride3Class 
-    a owl:Class, sh:NodeShape ;
-    sh:nodeKind sh:IRI ;
-    rdfs:subClassOf :IdentifierOverride2Class ;
-    rdfs:comment "Node shape for testing identifier type overriding: IRI identifier, concrete".
-
-:IdentifierOverride4Class 
-    a owl:Class, sh:NodeShape ;
-    sh:nodeKind sh:IRI ;
-    rdfs:subClassOf :IdentifierOverride3Class ;
-    shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_UUIDv4 ;
-    rdfs:comment "Node shape for testing identifier type overriding: IRI identifier, concrete, UUIDv4 minting".
-
-:IdentifierOverride5Class 
-    a owl:Class, sh:NodeShape ;
-    sh:nodeKind sh:IRI ;
-    rdfs:subClassOf :IdentifierOverride4Class ;
-    shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
-    rdfs:comment "Node shape for testing identifier type overriding: IRI identifier, concrete, SHA-256 minting".
-
 :PartialInterfaceUnionMember1
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a owl:Class, sh:NodeShape ;
@@ -1134,3 +1134,4 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:minCount 1 ;
         sh:path :uuidV4IriProperty
     ] .
+
