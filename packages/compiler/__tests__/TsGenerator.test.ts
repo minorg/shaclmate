@@ -1,9 +1,11 @@
 import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
+import {
+  type ShapesGraph,
+  ShapesGraphToAstTransformer,
+  TsGenerator,
+} from "@shaclmate/compiler";
 import N3 from "n3";
 import { describe, it } from "vitest";
-import { ShapesGraphToAstTransformer } from "../src/ShapesGraphToAstTransformer.js";
-import { TsGenerator } from "../src/generators/ts/TsGenerator.js";
-import type { ShapesGraph } from "../src/input/ShapesGraph.js";
 import { testData } from "./testData.js";
 
 function generate(shapesGraph: ShapesGraph): string {

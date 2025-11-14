@@ -1,9 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { ShapesGraph } from "@shaclmate/compiler";
 import { Parser, Store } from "n3";
 import { Maybe } from "purify-ts";
-import { ShapesGraph } from "../src/input/ShapesGraph.js";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 

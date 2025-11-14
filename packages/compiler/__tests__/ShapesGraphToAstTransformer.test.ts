@@ -1,11 +1,13 @@
 import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
+import {
+  type ShapesGraph,
+  ShapesGraphToAstTransformer,
+  type ast,
+} from "@shaclmate/compiler";
 import N3 from "n3";
 import type { Either } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { beforeAll, describe, it } from "vitest";
-import { ShapesGraphToAstTransformer } from "../src/ShapesGraphToAstTransformer.js";
-import type * as ast from "../src/ast/index.js";
-import type { ShapesGraph } from "../src/input/ShapesGraph.js";
 import { testData } from "./testData.js";
 
 function transform(shapesGraph: ShapesGraph): Either<Error, ast.Ast> {
