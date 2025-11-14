@@ -6,13 +6,13 @@ import * as kitchenSink from "../src/index.js";
 
 async function expectEmptyOptional<
   ObjectIdentifierT extends BlankNode | NamedNode,
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
   PartialObjectT extends { $identifier: ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
 >(
   actual: kitchenSink.$LazyOptionalObject<
     ObjectIdentifierT,
-    ResolvedObjectT,
-    PartialObjectT
+    PartialObjectT,
+    ResolvedObjectT
   >,
 ): Promise<void> {
   expect(actual.partial.isNothing()).toStrictEqual(true);
@@ -22,8 +22,8 @@ async function expectEmptyOptional<
 
 async function expectEmptySet<
   ObjectIdentifierT extends BlankNode | NamedNode,
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
   PartialObjectT extends { $identifier: ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
 >(
   actual: kitchenSink.$LazyObjectSet<
     ObjectIdentifierT,
@@ -38,8 +38,8 @@ async function expectEmptySet<
 
 async function expectedNonEmptyOptional<
   ObjectIdentifierT extends BlankNode | NamedNode,
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
   PartialObjectT extends { $identifier: ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
 >({
   actual,
   equals,
@@ -47,8 +47,8 @@ async function expectedNonEmptyOptional<
 }: {
   actual: kitchenSink.$LazyOptionalObject<
     ObjectIdentifierT,
-    ResolvedObjectT,
-    PartialObjectT
+    PartialObjectT,
+    ResolvedObjectT
   >;
   equals: (
     left: ResolvedObjectT,
@@ -66,8 +66,8 @@ async function expectedNonEmptyOptional<
 
 async function expectRequired<
   ObjectIdentifierT extends BlankNode | NamedNode,
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
   PartialObjectT extends { $identifier: ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
 >({
   actual,
   equals,
@@ -75,8 +75,8 @@ async function expectRequired<
 }: {
   actual: kitchenSink.$LazyRequiredObject<
     ObjectIdentifierT,
-    ResolvedObjectT,
-    PartialObjectT
+    PartialObjectT,
+    ResolvedObjectT
   >;
   equals: (
     left: ResolvedObjectT,
@@ -94,8 +94,8 @@ async function expectRequired<
 
 async function expectSet<
   ObjectIdentifierT extends BlankNode | NamedNode,
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
   PartialObjectT extends { $identifier: ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
 >({
   actual,
   equals,
@@ -103,8 +103,8 @@ async function expectSet<
 }: {
   actual: kitchenSink.$LazyObjectSet<
     ObjectIdentifierT,
-    ResolvedObjectT,
-    PartialObjectT
+    PartialObjectT,
+    ResolvedObjectT
   >;
   equals: (
     left: ResolvedObjectT,
@@ -143,31 +143,31 @@ describe("lazyProperties", () => {
   let nonEmptyLazyPropertiesClassInstance: kitchenSink.LazyPropertiesClass;
   let nonEmptyLazyPropertiesInterfaceInstance: kitchenSink.LazyPropertiesInterface;
 
-  const expectedLazilyResolvedBlankNodeOrIriClassInstance =
-    new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
+  const expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance =
+    new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
       $identifier: N3.DataFactory.namedNode(
-        "http://example.com/lazilyResolvedBlankNodeOrIriClassInstance",
+        "http://example.com/lazilyResolvedBlankNodeOrIriIdentifierClassInstance",
       ),
       lazilyResolvedStringProperty: "test",
     });
-  const expectedLazilyResolvedBlankNodeOrIriInterfaceInstance =
-    kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
+  const expectedLazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance =
+    kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$create({
       $identifier: N3.DataFactory.namedNode(
-        "http://example.com/lazilyResolvedBlankNodeOrIriInterfaceInstance",
+        "http://example.com/lazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance",
       ),
       lazilyResolvedStringProperty: "test",
     });
-  const expectedLazilyResolvedIriClassInstance =
-    new kitchenSink.LazilyResolvedIriClass({
+  const expectedLazilyResolvedIriIdentifierClassInstance =
+    new kitchenSink.LazilyResolvedIriIdentifierClass({
       $identifier: N3.DataFactory.namedNode(
-        "http://example.com/lazilyResolvedIriClassInstance",
+        "http://example.com/lazilyResolvedIriIdentifierClassInstance",
       ),
       lazilyResolvedStringProperty: "test",
     });
-  const expectedLazilyResolvedIriInterfaceInstance =
-    kitchenSink.LazilyResolvedIriInterface.$create({
+  const expectedLazilyResolvedIriIdentifierInterfaceInstance =
+    kitchenSink.LazilyResolvedIriIdentifierInterface.$create({
       $identifier: N3.DataFactory.namedNode(
-        "http://example.com/lazilyResolvedIriClassInstance",
+        "http://example.com/lazilyResolvedIriIdentifierClassInstance",
       ),
       lazilyResolvedStringProperty: "test",
     });
@@ -191,14 +191,16 @@ describe("lazyProperties", () => {
       dataFactory: N3.DataFactory,
       dataset: new N3.Store(),
     });
-    expectedLazilyResolvedBlankNodeOrIriClassInstance.$toRdf({ resourceSet });
-    kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$toRdf(
-      expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
+    expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance.$toRdf({
+      resourceSet,
+    });
+    kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$toRdf(
+      expectedLazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance,
       { resourceSet },
     );
-    expectedLazilyResolvedIriClassInstance.$toRdf({ resourceSet });
-    kitchenSink.LazilyResolvedIriInterface.$toRdf(
-      expectedLazilyResolvedIriInterfaceInstance,
+    expectedLazilyResolvedIriIdentifierClassInstance.$toRdf({ resourceSet });
+    kitchenSink.LazilyResolvedIriIdentifierInterface.$toRdf(
+      expectedLazilyResolvedIriIdentifierInterfaceInstance,
       { resourceSet },
     );
     expectedLazilyResolvedClassUnionInstance.$toRdf({ resourceSet });
@@ -210,9 +212,9 @@ describe("lazyProperties", () => {
     emptyLazyPropertiesClassInstance = kitchenSink.LazyPropertiesClass.$fromRdf(
       new kitchenSink.LazyPropertiesClass({
         requiredLazyToResolvedClassProperty:
-          expectedLazilyResolvedBlankNodeOrIriClassInstance,
+          expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
         requiredPartialClassToResolvedClassProperty:
-          expectedLazilyResolvedBlankNodeOrIriClassInstance,
+          expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
       }).$toRdf({ resourceSet }),
     ).unsafeCoerce();
 
@@ -221,9 +223,9 @@ describe("lazyProperties", () => {
         kitchenSink.LazyPropertiesInterface.$toRdf(
           kitchenSink.LazyPropertiesInterface.$create({
             requiredLazyToResolvedInterfaceProperty:
-              expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance,
             requiredPartialInterfaceToResolvedInterfaceProperty:
-              expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance,
           }),
           { resourceSet },
         ),
@@ -233,26 +235,26 @@ describe("lazyProperties", () => {
       kitchenSink.LazyPropertiesClass.$fromRdf(
         new kitchenSink.LazyPropertiesClass({
           optionalLazyToResolvedClassProperty:
-            expectedLazilyResolvedBlankNodeOrIriClassInstance,
+            expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
           optionalLazyToResolvedClassUnionProperty:
             expectedLazilyResolvedClassUnionInstance,
-          optionalLazyToResolvedIriClassProperty:
-            expectedLazilyResolvedIriClassInstance,
+          optionalLazyToResolvedIriIdentifierClassProperty:
+            expectedLazilyResolvedIriIdentifierClassInstance,
           optionalPartialClassToResolvedClassProperty:
-            expectedLazilyResolvedBlankNodeOrIriClassInstance,
+            expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
           optionalPartialClassToResolvedClassUnionProperty:
             expectedLazilyResolvedClassUnionInstance,
           optionalPartialClassUnionToResolvedClassUnionProperty:
             expectedLazilyResolvedClassUnionInstance,
           requiredLazyToResolvedClassProperty:
-            expectedLazilyResolvedBlankNodeOrIriClassInstance,
+            expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
           requiredPartialClassToResolvedClassProperty:
-            expectedLazilyResolvedBlankNodeOrIriClassInstance,
+            expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
           setLazyToResolvedClassProperty: [
-            expectedLazilyResolvedBlankNodeOrIriClassInstance,
+            expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
           ],
           setPartialClassToResolvedClassProperty: [
-            expectedLazilyResolvedBlankNodeOrIriClassInstance,
+            expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
           ],
         }).$toRdf({ resourceSet }),
       ).unsafeCoerce();
@@ -262,26 +264,26 @@ describe("lazyProperties", () => {
         kitchenSink.LazyPropertiesInterface.$toRdf(
           kitchenSink.LazyPropertiesInterface.$create({
             optionalLazyToResolvedInterfaceProperty:
-              expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance,
             optionalLazyToResolvedInterfaceUnionProperty:
               expectedLazilyResolvedInterfaceUnionInstance,
-            optionalLazyToResolvedIriInterfaceProperty:
-              expectedLazilyResolvedIriInterfaceInstance,
+            optionalLazyToResolvedIriIdentifierInterfaceProperty:
+              expectedLazilyResolvedIriIdentifierInterfaceInstance,
             optionalPartialInterfaceToResolvedInterfaceProperty:
-              expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance,
             optionalPartialInterfaceToResolvedInterfaceUnionProperty:
               expectedLazilyResolvedInterfaceUnionInstance,
             optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty:
               expectedLazilyResolvedInterfaceUnionInstance,
             requiredLazyToResolvedInterfaceProperty:
-              expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance,
             requiredPartialInterfaceToResolvedInterfaceProperty:
-              expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance,
             setLazyToResolvedInterfaceProperty: [
-              expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance,
             ],
             setPartialInterfaceToResolvedInterfaceProperty: [
-              expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
+              expectedLazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance,
             ],
           }),
           { resourceSet },
@@ -297,9 +299,7 @@ describe("lazyProperties", () => {
       | keyof typeof kitchenSink.LazyPropertiesInterface.$properties;
 
     for (const empty of [false, true]) {
-      it(`${propertyName} ${empty ? "empty" : "non-empty"}`, async ({
-        expect,
-      }) => {
+      it(`${propertyName} ${empty ? "empty" : "non-empty"}`, async () => {
         switch (propertyName) {
           case "optionalLazyToResolvedClassProperty": {
             if (empty) {
@@ -311,7 +311,8 @@ describe("lazyProperties", () => {
                 actual:
                   nonEmptyLazyPropertiesClassInstance.optionalLazyToResolvedClassProperty,
                 equals: (left, right) => left.$equals(right),
-                expected: expectedLazilyResolvedBlankNodeOrIriClassInstance,
+                expected:
+                  expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
               });
             }
             break;
@@ -326,7 +327,8 @@ describe("lazyProperties", () => {
                 actual:
                   nonEmptyLazyPropertiesClassInstance.optionalLazyToResolvedClassProperty,
                 equals: (left, right) => left.$equals(right),
-                expected: expectedLazilyResolvedBlankNodeOrIriClassInstance,
+                expected:
+                  expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
               });
             }
             break;
@@ -341,8 +343,10 @@ describe("lazyProperties", () => {
                 actual:
                   nonEmptyLazyPropertiesInterfaceInstance.optionalLazyToResolvedInterfaceProperty,
                 equals:
-                  kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$equals,
-                expected: expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
+                  kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface
+                    .$equals,
+                expected:
+                  expectedLazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance,
               });
             }
             break;
@@ -362,32 +366,33 @@ describe("lazyProperties", () => {
             }
             break;
           }
-          case "optionalLazyToResolvedIriClassProperty": {
+          case "optionalLazyToResolvedIriIdentifierClassProperty": {
             if (empty) {
               await expectEmptyOptional(
-                emptyLazyPropertiesClassInstance.optionalLazyToResolvedIriClassProperty,
+                emptyLazyPropertiesClassInstance.optionalLazyToResolvedIriIdentifierClassProperty,
               );
             } else {
               await expectedNonEmptyOptional({
                 actual:
-                  nonEmptyLazyPropertiesClassInstance.optionalLazyToResolvedIriClassProperty,
+                  nonEmptyLazyPropertiesClassInstance.optionalLazyToResolvedIriIdentifierClassProperty,
                 equals: (left, right) => left.$equals(right),
-                expected: expectedLazilyResolvedIriClassInstance,
+                expected: expectedLazilyResolvedIriIdentifierClassInstance,
               });
             }
             break;
           }
-          case "optionalLazyToResolvedIriInterfaceProperty": {
+          case "optionalLazyToResolvedIriIdentifierInterfaceProperty": {
             if (empty) {
               await expectEmptyOptional(
-                emptyLazyPropertiesInterfaceInstance.optionalLazyToResolvedIriInterfaceProperty,
+                emptyLazyPropertiesInterfaceInstance.optionalLazyToResolvedIriIdentifierInterfaceProperty,
               );
             } else {
               await expectedNonEmptyOptional({
                 actual:
-                  nonEmptyLazyPropertiesInterfaceInstance.optionalLazyToResolvedIriInterfaceProperty,
-                equals: kitchenSink.LazilyResolvedIriInterface.$equals,
-                expected: expectedLazilyResolvedIriInterfaceInstance,
+                  nonEmptyLazyPropertiesInterfaceInstance.optionalLazyToResolvedIriIdentifierInterfaceProperty,
+                equals:
+                  kitchenSink.LazilyResolvedIriIdentifierInterface.$equals,
+                expected: expectedLazilyResolvedIriIdentifierInterfaceInstance,
               });
             }
             break;
@@ -402,7 +407,8 @@ describe("lazyProperties", () => {
                 actual:
                   nonEmptyLazyPropertiesClassInstance.optionalPartialClassToResolvedClassProperty,
                 equals: (left, right) => left.$equals(right),
-                expected: expectedLazilyResolvedBlankNodeOrIriClassInstance,
+                expected:
+                  expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
               });
             }
             break;
@@ -447,8 +453,10 @@ describe("lazyProperties", () => {
                 actual:
                   nonEmptyLazyPropertiesInterfaceInstance.optionalPartialInterfaceToResolvedInterfaceProperty,
                 equals:
-                  kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$equals,
-                expected: expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
+                  kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface
+                    .$equals,
+                expected:
+                  expectedLazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance,
               });
             }
             break;
@@ -490,7 +498,8 @@ describe("lazyProperties", () => {
                 actual:
                   nonEmptyLazyPropertiesClassInstance.requiredLazyToResolvedClassProperty,
                 equals: (left, right) => left.$equals(right),
-                expected: expectedLazilyResolvedBlankNodeOrIriClassInstance,
+                expected:
+                  expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
               });
             }
             break;
@@ -502,8 +511,10 @@ describe("lazyProperties", () => {
                 actual:
                   nonEmptyLazyPropertiesInterfaceInstance.requiredLazyToResolvedInterfaceProperty,
                 equals:
-                  kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$equals,
-                expected: expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
+                  kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface
+                    .$equals,
+                expected:
+                  expectedLazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance,
               });
             }
             break;
@@ -515,7 +526,8 @@ describe("lazyProperties", () => {
                 actual:
                   nonEmptyLazyPropertiesClassInstance.requiredPartialClassToResolvedClassProperty,
                 equals: (left, right) => left.$equals(right),
-                expected: expectedLazilyResolvedBlankNodeOrIriClassInstance,
+                expected:
+                  expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
               });
             }
             break;
@@ -527,8 +539,10 @@ describe("lazyProperties", () => {
                 actual:
                   nonEmptyLazyPropertiesInterfaceInstance.requiredPartialInterfaceToResolvedInterfaceProperty,
                 equals:
-                  kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$equals,
-                expected: expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
+                  kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface
+                    .$equals,
+                expected:
+                  expectedLazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance,
               });
             }
             break;
@@ -543,7 +557,9 @@ describe("lazyProperties", () => {
                 actual:
                   nonEmptyLazyPropertiesClassInstance.setLazyToResolvedClassProperty,
                 equals: (left, right) => left.$equals(right),
-                expected: [expectedLazilyResolvedBlankNodeOrIriClassInstance],
+                expected: [
+                  expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
+                ],
               });
             }
             break;
@@ -559,7 +575,9 @@ describe("lazyProperties", () => {
                   actual:
                     nonEmptyLazyPropertiesClassInstance.setPartialClassToResolvedClassProperty,
                   equals: (left, right) => left.$equals(right),
-                  expected: [expectedLazilyResolvedBlankNodeOrIriClassInstance],
+                  expected: [
+                    expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance,
+                  ],
                 });
               }
             }
@@ -574,9 +592,10 @@ describe("lazyProperties", () => {
                 actual:
                   nonEmptyLazyPropertiesInterfaceInstance.setLazyToResolvedInterfaceProperty,
                 equals:
-                  kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$equals,
+                  kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface
+                    .$equals,
                 expected: [
-                  expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
+                  expectedLazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance,
                 ],
               });
             }
@@ -593,9 +612,10 @@ describe("lazyProperties", () => {
                   actual:
                     nonEmptyLazyPropertiesInterfaceInstance.setPartialInterfaceToResolvedInterfaceProperty,
                   equals:
-                    kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$equals,
+                    kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface
+                      .$equals,
                   expected: [
-                    expectedLazilyResolvedBlankNodeOrIriInterfaceInstance,
+                    expectedLazilyResolvedBlankNodeOrIriIdentifierInterfaceInstance,
                   ],
                 });
               }

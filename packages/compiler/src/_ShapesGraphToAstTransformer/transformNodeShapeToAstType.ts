@@ -226,6 +226,8 @@ export function transformNodeShapeToAstType(
     return transformNodeShapeToAstListType.bind(this)(nodeShape);
   }
 
+  const abstract = nodeShape.abstract.orDefault(false);
+
   const export_ = nodeShape.export.orDefault(true);
 
   if (
@@ -254,11 +256,20 @@ export function transformNodeShapeToAstType(
     (term) => term.termType === "NamedNode",
   );
 
+  let identifierMintingStrategy = nodeShape.identifierMintingStrategy;
+  if (identifierMintingStrategy.isJust() && identifierIn.length > 0) {
+    logger.debug(
+      "%s cannot have an identifier minting strategy AND sh:in",
+      nodeShape,
+    );
+    identifierMintingStrategy = Maybe.empty();
+  }
+
   // Put a placeholder in the cache to deal with cyclic references
   // If this node shape's properties (directly or indirectly) refer to the node shape itself,
   // we'll return this placeholder.
   const objectType: ast.ObjectType = {
-    abstract: nodeShape.abstract.orDefault(false),
+    abstract,
     ancestorObjectTypes: [],
     childObjectTypes: [],
     comment: pickLiteral(nodeShape.comments).map((literal) => literal.value),
@@ -269,10 +280,7 @@ export function transformNodeShapeToAstType(
     label: pickLiteral(nodeShape.labels).map((literal) => literal.value),
     kind: "ObjectType",
     identifierIn,
-    identifierMintingStrategy:
-      identifierIn.length === 0
-        ? nodeShape.identifierMintingStrategy
-        : Maybe.empty(),
+    identifierMintingStrategy,
     identifierNodeKinds:
       identifierIn.length === 0 ? nodeShape.nodeKinds : new Set(["NamedNode"]),
     name: this.shapeAstName(nodeShape),

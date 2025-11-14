@@ -22,8 +22,8 @@ import {
 export class ExternClass extends AbstractBaseClassForExternClass {
   readonly $type = "ExternClass";
 
-  constructor(readonly $identifier: BlankNode | NamedNode<string>) {
-    super({ abstractBaseClassForExternClassProperty: "test" });
+  constructor($identifier: BlankNode | NamedNode<string>) {
+    super({ abstractBaseClassForExternClassProperty: "test", $identifier });
   }
 
   // Called by class methods

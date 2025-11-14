@@ -12,21 +12,26 @@ import { InterfaceHarness } from "./InterfaceHarness.js";
 const $identifier = dataFactory.namedNode("http://example.com/instance");
 
 export const harnesses = {
-  blankClassWithExplicitIdentifier: new ClassHarness(
-    new kitchenSink.BlankClass({ $identifier: dataFactory.blankNode() }),
-    kitchenSink.BlankClass,
+  blankNodeIdentifierClassWithExplicitIdentifier: new ClassHarness(
+    new kitchenSink.BlankNodeIdentifierClass({
+      $identifier: dataFactory.blankNode(),
+    }),
+    kitchenSink.BlankNodeIdentifierClass,
   ),
-  blankClassWithoutExplicitIdentifier: new ClassHarness(
-    new kitchenSink.BlankClass(),
-    kitchenSink.BlankClass,
+  blankNodeIdentifierClassWithoutExplicitIdentifier: new ClassHarness(
+    new kitchenSink.BlankNodeIdentifierClass(),
+    kitchenSink.BlankNodeIdentifierClass,
   ),
-  blankInterfaceWithExplicitIdentifier: new InterfaceHarness(
-    { $identifier: dataFactory.blankNode(), $type: "BlankInterface" },
-    kitchenSink.BlankInterface,
+  blankNodeIdentifierInterfaceWithExplicitIdentifier: new InterfaceHarness(
+    {
+      $identifier: dataFactory.blankNode(),
+      $type: "BlankNodeIdentifierInterface",
+    },
+    kitchenSink.BlankNodeIdentifierInterface,
   ),
-  blankInterfaceWithoutExplicitIdentifier: new InterfaceHarness(
-    kitchenSink.BlankInterface.$create(),
-    kitchenSink.BlankInterface,
+  blankNodeIdentifierInterfaceWithoutExplicitIdentifier: new InterfaceHarness(
+    kitchenSink.BlankNodeIdentifierInterface.$create(),
+    kitchenSink.BlankNodeIdentifierInterface,
   ),
   classUnionMember1: new ClassUnionHarness(
     new kitchenSink.ClassUnionMember1({
@@ -224,11 +229,11 @@ export const harnesses = {
     },
     kitchenSink.InterfaceUnion,
   ),
-  iriClass: new ClassHarness(
-    new kitchenSink.IriClass({
+  iriIdentifierClass: new ClassHarness(
+    new kitchenSink.IriIdentifierClass({
       $identifier,
     }),
-    kitchenSink.IriClass,
+    kitchenSink.IriIdentifierClass,
   ),
   iriListProperty: new ClassHarness(
     new kitchenSink.ListPropertiesClass({
@@ -258,11 +263,11 @@ export const harnesses = {
       // These nested objects won't be resolvable since they're not serialized with $toRdf.
       // This harness is just intended to test the deserialization/deserialization of the identifiers.
       requiredLazyToResolvedClassProperty:
-        new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
+        new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
           lazilyResolvedStringProperty: "test required empty",
         }),
       requiredPartialClassToResolvedClassProperty:
-        new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
+        new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
           lazilyResolvedStringProperty: "test required empty",
         }),
     }),
@@ -274,7 +279,7 @@ export const harnesses = {
       // These nested objects won't be resolvable since they're not serialized with $toRdf.
       // This harness is just intended to test the deserialization/deserialization of the identifiers.
       optionalLazyToResolvedClassProperty:
-        new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
+        new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
           lazilyResolvedStringProperty: "optionalLazyToResolvedClassProperty",
         }),
       optionalLazyToResolvedClassUnionProperty:
@@ -282,14 +287,14 @@ export const harnesses = {
           lazilyResolvedStringProperty:
             "optionalLazyToResolvedClassUnionProperty",
         }),
-      optionalLazyToResolvedIriClassProperty:
-        new kitchenSink.LazilyResolvedIriClass({
+      optionalLazyToResolvedIriIdentifierClassProperty:
+        new kitchenSink.LazilyResolvedIriIdentifierClass({
           $identifier: dataFactory.namedNode("http://example.com/resolved"),
           lazilyResolvedStringProperty:
-            "optionalLazyToResolvedIriClassProperty",
+            "optionalLazyToResolvedIriIdentifierClassProperty",
         }),
       optionalPartialClassToResolvedClassProperty:
-        new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
+        new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
           lazilyResolvedStringProperty:
             "optionalPartialClassToResolvedClassProperty",
         }),
@@ -304,21 +309,21 @@ export const harnesses = {
             "optionalPartialClassUnionToResolvedClassUnionProperty",
         }),
       requiredLazyToResolvedClassProperty:
-        new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
+        new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
           lazilyResolvedStringProperty: "requiredLazyToResolvedClassProperty",
         }),
       requiredPartialClassToResolvedClassProperty:
-        new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
+        new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
           lazilyResolvedStringProperty:
             "requiredPartialClassToResolvedClassProperty",
         }),
       setLazyToResolvedClassProperty: [
-        new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
+        new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
           lazilyResolvedStringProperty: "setLazyToResolvedClassProperty",
         }),
       ],
       setPartialClassToResolvedClassProperty: [
-        new kitchenSink.LazilyResolvedBlankNodeOrIriClass({
+        new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
           lazilyResolvedStringProperty:
             "setPartialClassToResolvedClassProperty",
         }),
@@ -332,11 +337,11 @@ export const harnesses = {
       // These nested objects won't be resolvable since they're not serialized with $toRdf.
       // This harness is just intended to test the deserialization/deserialization of the identifiers.
       requiredLazyToResolvedInterfaceProperty:
-        kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$create({
           lazilyResolvedStringProperty: "test required empty",
         }),
       requiredPartialInterfaceToResolvedInterfaceProperty:
-        kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$create({
           lazilyResolvedStringProperty: "test required empty",
         }),
     }),
@@ -348,7 +353,7 @@ export const harnesses = {
       // These nested objects won't be resolvable since they're not serialized with $toRdf.
       // This harness is just intended to test the deserialization/deserialization of the identifiers.
       optionalLazyToResolvedInterfaceProperty:
-        kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$create({
           lazilyResolvedStringProperty:
             "optionalLazyToResolvedInterfaceProperty",
         }),
@@ -357,14 +362,14 @@ export const harnesses = {
           lazilyResolvedStringProperty:
             "optionalLazyToResolvedInterfaceUnionProperty",
         }),
-      optionalLazyToResolvedIriInterfaceProperty:
-        kitchenSink.LazilyResolvedIriInterface.$create({
+      optionalLazyToResolvedIriIdentifierInterfaceProperty:
+        kitchenSink.LazilyResolvedIriIdentifierInterface.$create({
           $identifier: dataFactory.namedNode("http://example.com/resolved"),
           lazilyResolvedStringProperty:
-            "optionalLazyToResolvedIriInterfaceProperty",
+            "optionalLazyToResolvedIriIdentifierInterfaceProperty",
         }),
       optionalPartialInterfaceToResolvedInterfaceProperty:
-        kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$create({
           lazilyResolvedStringProperty:
             "optionalPartialInterfaceToResolvedInterfaceProperty",
         }),
@@ -379,22 +384,22 @@ export const harnesses = {
             "optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
         }),
       requiredLazyToResolvedInterfaceProperty:
-        kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$create({
           lazilyResolvedStringProperty:
             "requiredLazyToResolvedInterfaceProperty",
         }),
       requiredPartialInterfaceToResolvedInterfaceProperty:
-        kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$create({
           lazilyResolvedStringProperty:
             "requiredPartialInterfaceToResolvedInterfaceProperty",
         }),
       setLazyToResolvedInterfaceProperty: [
-        kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$create({
           lazilyResolvedStringProperty: "setLazyToResolvedInterfaceProperty",
         }),
       ],
       setPartialInterfaceToResolvedInterfaceProperty: [
-        kitchenSink.LazilyResolvedBlankNodeOrIriInterface.$create({
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$create({
           lazilyResolvedStringProperty:
             "setPartialInterfaceToResolvedInterfaceProperty",
         }),
@@ -456,18 +461,18 @@ export const harnesses = {
     }),
     kitchenSink.NonClass,
   ),
-  sha256IriClassWithExplicitIdentifier: new ClassHarness(
-    new kitchenSink.Sha256IriClass({
+  sha256IriIdentifierClassWithExplicitIdentifier: new ClassHarness(
+    new kitchenSink.Sha256IriIdentifierClass({
       $identifier,
       sha256IriProperty: "test",
     }),
-    kitchenSink.Sha256IriClass,
+    kitchenSink.Sha256IriIdentifierClass,
   ),
-  sha256IriClassWithoutExplicitIdentifier: new ClassHarness(
-    new kitchenSink.Sha256IriClass({
+  sha256IriIdentifierClassWithoutExplicitIdentifier: new ClassHarness(
+    new kitchenSink.Sha256IriIdentifierClass({
       sha256IriProperty: "test",
     }),
-    kitchenSink.Sha256IriClass,
+    kitchenSink.Sha256IriIdentifierClass,
   ),
   stringListProperty: new ClassHarness(
     new kitchenSink.ListPropertiesClass({
@@ -512,32 +517,32 @@ export const harnesses = {
     }),
     kitchenSink.UnionPropertiesClass,
   ),
-  uuidv4IriClassWithExplicitIdentifier: new ClassHarness(
-    new kitchenSink.UuidV4IriClass({
+  uuidv4IriIdentifierClassWithExplicitIdentifier: new ClassHarness(
+    new kitchenSink.UuidV4IriIdentifierClass({
       $identifier,
       uuidV4IriProperty: "test",
     }),
-    kitchenSink.UuidV4IriClass,
+    kitchenSink.UuidV4IriIdentifierClass,
   ),
-  uuidv4IriClassWithoutExplicitIdentifier: new ClassHarness(
-    new kitchenSink.UuidV4IriClass({
+  uuidv4IriIdentifierClassWithoutExplicitIdentifier: new ClassHarness(
+    new kitchenSink.UuidV4IriIdentifierClass({
       uuidV4IriProperty: "test",
     }),
-    kitchenSink.UuidV4IriClass,
+    kitchenSink.UuidV4IriIdentifierClass,
   ),
-  uuidv4IriInterfaceWithExplicitIdentifier: new InterfaceHarness(
+  uuidv4IriIdentifierInterfaceWithExplicitIdentifier: new InterfaceHarness(
     {
       $identifier,
-      $type: "UuidV4IriInterface",
+      $type: "UuidV4IriIdentifierInterface",
       uuidV4IriProperty: "test",
-    } satisfies kitchenSink.UuidV4IriInterface,
-    kitchenSink.UuidV4IriInterface,
+    } satisfies kitchenSink.UuidV4IriIdentifierInterface,
+    kitchenSink.UuidV4IriIdentifierInterface,
   ),
-  uuidv4IriInterfaceWithoutExplicitIdentifier: new InterfaceHarness(
-    kitchenSink.UuidV4IriInterface.$create({
+  uuidv4IriIdentifierInterfaceWithoutExplicitIdentifier: new InterfaceHarness(
+    kitchenSink.UuidV4IriIdentifierInterface.$create({
       $identifierPrefix: "http://example.com/",
       uuidV4IriProperty: "test",
     }),
-    kitchenSink.UuidV4IriInterface,
+    kitchenSink.UuidV4IriIdentifierInterface,
   ),
 };

@@ -9,21 +9,25 @@ describe("identifier", () => {
     expect,
   }) => {
     expect(
-      harnesses.blankClassWithoutExplicitIdentifier.instance.$identifier
-        .termType,
+      harnesses.blankNodeIdentifierClassWithoutExplicitIdentifier.instance
+        .$identifier.termType,
+    ).toStrictEqual("BlankNode");
+    expect(
+      harnesses.blankNodeIdentifierInterfaceWithoutExplicitIdentifier.instance
+        .$identifier.termType,
     ).toStrictEqual("BlankNode");
   });
 
   it("don't mint an IRI if one is supplied", ({ expect }) => {
     expect(
-      harnesses.sha256IriClassWithExplicitIdentifier.instance.$identifier.equals(
+      harnesses.sha256IriIdentifierClassWithExplicitIdentifier.instance.$identifier.equals(
         dataFactory.namedNode("http://example.com/instance"),
       ),
     ).toStrictEqual(true);
   });
 
   it("identifier prefix", ({ expect }) => {
-    const instance = new kitchenSink.Sha256IriClass({
+    const instance = new kitchenSink.Sha256IriIdentifierClass({
       $identifierPrefix: "urn:othernamespace:",
       sha256IriProperty: "test",
     });
@@ -33,22 +37,52 @@ describe("identifier", () => {
   });
 
   it("mint an IRI with SHA-256 if none is supplied", ({ expect }) => {
-    const instance = new kitchenSink.Sha256IriClass({
+    const instance = new kitchenSink.Sha256IriIdentifierClass({
       sha256IriProperty: "test",
     });
     expect(
       instance.$identifier.equals(
         dataFactory.namedNode(
-          "urn:shaclmate:Sha256IriClass:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+          "urn:shaclmate:Sha256IriIdentifierClass:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
         ),
       ),
     ).toStrictEqual(true);
   });
 
   it("mint an IRI with UUIDv4 if none is supplied", ({ expect }) => {
-    const instance = harnesses.uuidv4IriClassWithoutExplicitIdentifier.instance;
-    expect(instance.$identifier.value).toMatch(
-      /urn:shaclmate:UuidV4IriClass:[0-9A-Fa-f]{8}-/,
+    expect(
+      harnesses.uuidv4IriIdentifierClassWithoutExplicitIdentifier.instance
+        .$identifier.value,
+    ).toMatch(/urn:shaclmate:UuidV4IriIdentifierClass:[0-9A-Fa-f]{8}-/);
+    expect(
+      harnesses.uuidv4IriIdentifierInterfaceWithoutExplicitIdentifier.instance
+        .$identifier.value,
+    ).toMatch(/http:\/\/example.com\/[0-9A-Fa-f]{8}-/);
+  });
+
+  it("identifier overrides", ({ expect }) => {
+    // No minting strategy, throws
+    expect(
+      () =>
+        new kitchenSink.IdentifierOverride3Class({
+          identifierOverrideProperty: "test",
+        }).$identifier.termType,
+    ).toThrow(); // Can't mint an identifier
+
+    // UUIDv4 minting
+    expect(
+      new kitchenSink.IdentifierOverride4Class({
+        identifierOverrideProperty: "test",
+      }).$identifier.value,
+    ).toMatch(/urn:shaclmate:IdentifierOverride4Class:[0-9A-Fa-f]{8}-/);
+
+    // SHA-256 minting
+    expect(
+      new kitchenSink.IdentifierOverride5Class({
+        identifierOverrideProperty: "test",
+      }).$identifier.value,
+    ).toMatch(
+      /urn:shaclmate:IdentifierOverride5Class:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08/,
     );
   });
 });

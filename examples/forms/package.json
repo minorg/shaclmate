@@ -26,9 +26,7 @@
     "@types/node": "^22",
     "depcheck": "^1.4.7",
     "rimraf": "^6.0.1",
-    "typescript": "5.8.2",
-    "vitest": "^3.2.4",
-    "@vitest/coverage-v8": "^3.2.4"
+    "typescript": "5.8.2"
   },
   "license": "Apache-2.0",
   "name": "@shaclmate/forms-example",
@@ -49,11 +47,10 @@
     "dev": "tsc -w --preserveWatchOutput",
     "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
     "link-dependencies": "npm link rdfjs-resource",
-    "test": "biome check",
-    "test:coverage": "biome check",
-    "test:watch": "biome check && vitest watch",
     "unlink": "npm unlink -g @shaclmate/forms",
-    "start": "vite dev --port 3000"
+    "start": "vite dev --port 3000",
+    "test": "biome check",
+    "test:coverage": "biome check"
   },
   "type": "module",
   "version": "3.0.4"

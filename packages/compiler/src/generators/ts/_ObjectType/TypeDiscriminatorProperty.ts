@@ -14,9 +14,6 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { Property } from "./Property.js";
 
 export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorProperty.Type> {
-  private readonly abstract: boolean;
-  private readonly override: boolean;
-
   override readonly constructorParametersPropertySignature: Maybe<
     OptionalKind<PropertySignatureStructure>
   > = Maybe.empty();
@@ -29,27 +26,25 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
   > = Maybe.empty();
   override readonly graphqlField: Property<TypeDiscriminatorProperty.Type>["graphqlField"] =
     Maybe.empty();
-  readonly initializer: string;
   override readonly mutable = false;
   override readonly recursive = false;
 
   constructor({
-    abstract,
-    initializer,
-    override,
     type,
     ...superParameters
   }: {
-    abstract: boolean;
-    initializer: string;
-    override: boolean;
     type: TypeDiscriminatorProperty.Type;
   } & ConstructorParameters<typeof Property>[0]) {
     super({ ...superParameters, type });
     invariant(this.visibility === "public");
-    this.abstract = abstract;
-    this.initializer = initializer;
-    this.override = override;
+  }
+
+  private get abstract(): boolean {
+    return this.objectType.abstract;
+  }
+
+  private get initializer(): string {
+    return this.objectType.discriminatorValue;
   }
 
   override get jsonPropertySignature(): Maybe<
@@ -60,6 +55,10 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
       name: this.name,
       type: this.type.name,
     });
+  }
+
+  private get override(): boolean {
+    return this.objectType.parentObjectTypes.length > 0;
   }
 
   override constructorStatements(): readonly string[] {

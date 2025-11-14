@@ -1,21 +1,17 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
-    "declaration": true,
-    "declarationMap": true,
+    "baseUrl": ".",
     "exactOptionalPropertyTypes": false,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
-    "incremental": true,
-    "noUncheckedIndexedAccess": false,
-    "outDir": "dist",
-    "sourceMap": true
+    "noEmit": true,
+    "noUncheckedIndexedAccess": false
   },
   "extends": [
     "@tsconfig/strictest/tsconfig.json",
     "@tsconfig/node18/tsconfig.json"
   ],
   "include": [
-    "src/**/*.ts"
+    "./**/*.ts"
   ]
 }

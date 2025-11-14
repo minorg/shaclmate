@@ -341,7 +341,7 @@ describe("fromRdf", () => {
 
   it("accept right identifier type (NamedNode)", ({ expect }) => {
     expect(
-      kitchenSink.IriClass.$fromRdf(
+      kitchenSink.IriIdentifierClass.$fromRdf(
         new MutableResourceSet({
           dataFactory,
           dataset: new N3.Store(),
@@ -371,7 +371,7 @@ describe("fromRdf", () => {
 
   it("reject wrong identifier type (BlankNode)", ({ expect }) => {
     expect(
-      kitchenSink.IriClass.$fromRdf(
+      kitchenSink.IriIdentifierClass.$fromRdf(
         new MutableResourceSet({
           dataFactory,
           dataset: new N3.Store(),

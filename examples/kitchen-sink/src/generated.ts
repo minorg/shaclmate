@@ -1033,39 +1033,39 @@ export namespace $DefaultPartial {
 /**
  * A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.
  */
-export interface UuidV4IriInterface {
-  readonly $identifier: UuidV4IriInterface.$Identifier;
-  readonly $type: "UuidV4IriInterface";
+export interface UuidV4IriIdentifierInterface {
+  readonly $identifier: UuidV4IriIdentifierInterface.$Identifier;
+  readonly $type: "UuidV4IriIdentifierInterface";
   readonly uuidV4IriProperty: string;
 }
 
-export namespace UuidV4IriInterface {
+export namespace UuidV4IriIdentifierInterface {
   export function $create(parameters: {
     readonly $identifier?: rdfjs.NamedNode | string;
     readonly $identifierPrefix?: string;
     readonly uuidV4IriProperty: string;
-  }): Omit<UuidV4IriInterface, "$identifierPrefix"> {
-    let $identifier: UuidV4IriInterface.$Identifier;
+  }): Omit<UuidV4IriIdentifierInterface, "$identifierPrefix"> {
+    let $identifier: UuidV4IriIdentifierInterface.$Identifier;
     if (typeof parameters.$identifier === "object") {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
       $identifier = dataFactory.namedNode(parameters.$identifier);
     } else if (typeof parameters.$identifier === "undefined") {
       $identifier = dataFactory.namedNode(
-        `${parameters.$identifierPrefix ?? "urn:shaclmate:UuidV4IriInterface:"}${uuid.v4()}`,
+        `${parameters.$identifierPrefix ?? "urn:shaclmate:UuidV4IriIdentifierInterface:"}${uuid.v4()}`,
       );
     } else {
       $identifier = parameters.$identifier satisfies never;
     }
 
-    const $type = "UuidV4IriInterface" as const;
+    const $type = "UuidV4IriIdentifierInterface" as const;
     const uuidV4IriProperty = parameters.uuidV4IriProperty;
     return { $identifier, $type, uuidV4IriProperty };
   }
 
   export function $equals(
-    left: UuidV4IriInterface,
-    right: UuidV4IriInterface,
+    left: UuidV4IriIdentifierInterface,
+    right: UuidV4IriIdentifierInterface,
   ): $EqualsResult {
     return $booleanEquals(left.$identifier, right.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -1123,7 +1123,7 @@ export namespace UuidV4IriInterface {
 
   export type $Json = {
     readonly "@id": string;
-    readonly $type: "UuidV4IriInterface";
+    readonly $type: "UuidV4IriIdentifierInterface";
     readonly uuidV4IriProperty: string;
   };
 
@@ -1131,7 +1131,7 @@ export namespace UuidV4IriInterface {
     zod.ZodError,
     {
       $identifier: rdfjs.NamedNode;
-      $type: "UuidV4IriInterface";
+      $type: "UuidV4IriIdentifierInterface";
       uuidV4IriProperty: string;
     }
   > {
@@ -1142,14 +1142,14 @@ export namespace UuidV4IriInterface {
 
     const $jsonObject = $jsonSafeParseResult.data;
     const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    const $type = "UuidV4IriInterface" as const;
+    const $type = "UuidV4IriIdentifierInterface" as const;
     const uuidV4IriProperty = $jsonObject["uuidV4IriProperty"];
     return purify.Either.of({ $identifier, $type, uuidV4IriProperty });
   }
 
   export function $fromJson(
     json: unknown,
-  ): purify.Either<zod.ZodError, UuidV4IriInterface> {
+  ): purify.Either<zod.ZodError, UuidV4IriIdentifierInterface> {
     return $propertiesFromJson(json);
   }
 
@@ -1169,7 +1169,7 @@ export namespace UuidV4IriInterface {
         {
           rule: {
             condition: {
-              schema: { const: "UuidV4IriInterface" },
+              schema: { const: "UuidV4IriIdentifierInterface" },
               scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
@@ -1182,27 +1182,27 @@ export namespace UuidV4IriInterface {
           type: "Control",
         },
       ],
-      label: "UuidV4IriInterface",
+      label: "UuidV4IriIdentifierInterface",
       type: "Group",
     };
   }
 
   export function $toJson(
-    _uuidV4IriInterface: UuidV4IriInterface,
-  ): UuidV4IriInterface.$Json {
+    _uuidV4IriIdentifierInterface: UuidV4IriIdentifierInterface,
+  ): UuidV4IriIdentifierInterface.$Json {
     return JSON.parse(
       JSON.stringify({
-        "@id": _uuidV4IriInterface.$identifier.value,
-        $type: _uuidV4IriInterface.$type,
-        uuidV4IriProperty: _uuidV4IriInterface.uuidV4IriProperty,
-      } satisfies UuidV4IriInterface.$Json),
+        "@id": _uuidV4IriIdentifierInterface.$identifier.value,
+        $type: _uuidV4IriIdentifierInterface.$type,
+        uuidV4IriProperty: _uuidV4IriIdentifierInterface.uuidV4IriProperty,
+      } satisfies UuidV4IriIdentifierInterface.$Json),
     );
   }
 
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      $type: zod.literal("UuidV4IriInterface"),
+      $type: zod.literal("UuidV4IriIdentifierInterface"),
       uuidV4IriProperty: zod.string(),
     }) satisfies zod.ZodType<$Json>;
   }
@@ -1211,10 +1211,16 @@ export namespace UuidV4IriInterface {
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
-  >(_uuidV4IriInterface: UuidV4IriInterface, _hasher: HasherT): HasherT {
-    _hasher.update(_uuidV4IriInterface.$identifier.value);
-    _hasher.update(_uuidV4IriInterface.$type);
-    UuidV4IriInterface.$hashShaclProperties(_uuidV4IriInterface, _hasher);
+  >(
+    _uuidV4IriIdentifierInterface: UuidV4IriIdentifierInterface,
+    _hasher: HasherT,
+  ): HasherT {
+    _hasher.update(_uuidV4IriIdentifierInterface.$identifier.value);
+    _hasher.update(_uuidV4IriIdentifierInterface.$type);
+    UuidV4IriIdentifierInterface.$hashShaclProperties(
+      _uuidV4IriIdentifierInterface,
+      _hasher,
+    );
     return _hasher;
   }
 
@@ -1222,8 +1228,11 @@ export namespace UuidV4IriInterface {
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
-  >(_uuidV4IriInterface: UuidV4IriInterface, _hasher: HasherT): HasherT {
-    _hasher.update(_uuidV4IriInterface.uuidV4IriProperty);
+  >(
+    _uuidV4IriIdentifierInterface: UuidV4IriIdentifierInterface,
+    _hasher: HasherT,
+  ): HasherT {
+    _hasher.update(_uuidV4IriIdentifierInterface.uuidV4IriProperty);
     return _hasher;
   }
 
@@ -1235,7 +1244,7 @@ export namespace UuidV4IriInterface {
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
-  ): purify.Either<Error, UuidV4IriInterface> {
+  ): purify.Either<Error, UuidV4IriIdentifierInterface> {
     let {
       ignoreRdfType = false,
       objectSet,
@@ -1246,7 +1255,7 @@ export namespace UuidV4IriInterface {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
-    return UuidV4IriInterface.$propertiesFromRdf({
+    return UuidV4IriIdentifierInterface.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
       objectSet,
@@ -1272,7 +1281,7 @@ export namespace UuidV4IriInterface {
     Error,
     {
       $identifier: rdfjs.NamedNode;
-      $type: "UuidV4IriInterface";
+      $type: "UuidV4IriIdentifierInterface";
       uuidV4IriProperty: string;
     }
   > {
@@ -1287,8 +1296,9 @@ export namespace UuidV4IriInterface {
       );
     }
 
-    const $identifier: UuidV4IriInterface.$Identifier = $resource.identifier;
-    const $type = "UuidV4IriInterface" as const;
+    const $identifier: UuidV4IriIdentifierInterface.$Identifier =
+      $resource.identifier;
+    const $type = "UuidV4IriIdentifierInterface" as const;
     const _uuidV4IriPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
@@ -1342,7 +1352,7 @@ export namespace UuidV4IriInterface {
                 new rdfjsResource.Resource.Value({
                   object: literalValue,
                   predicate:
-                    UuidV4IriInterface.$properties.uuidV4IriProperty[
+                    UuidV4IriIdentifierInterface.$properties.uuidV4IriProperty[
                       "identifier"
                     ],
                   subject: $resource,
@@ -1361,7 +1371,7 @@ export namespace UuidV4IriInterface {
   }
 
   export function $toRdf(
-    _uuidV4IriInterface: UuidV4IriInterface,
+    _uuidV4IriIdentifierInterface: UuidV4IriIdentifierInterface,
     options?: {
       ignoreRdfType?: boolean;
       mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
@@ -1376,12 +1386,12 @@ export namespace UuidV4IriInterface {
         dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableNamedResource(
-      _uuidV4IriInterface.$identifier,
+      _uuidV4IriIdentifierInterface.$identifier,
       { mutateGraph },
     );
     resource.add(
-      UuidV4IriInterface.$properties.uuidV4IriProperty["identifier"],
-      ...[_uuidV4IriInterface.uuidV4IriProperty],
+      UuidV4IriIdentifierInterface.$properties.uuidV4IriProperty["identifier"],
+      ...[_uuidV4IriIdentifierInterface.uuidV4IriProperty],
     );
     return resource;
   }
@@ -1408,14 +1418,14 @@ export namespace UuidV4IriInterface {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        UuidV4IriInterface.$sparqlConstructTemplateTriples({
+        UuidV4IriIdentifierInterface.$sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        UuidV4IriInterface.$sparqlWherePatterns({
+        UuidV4IriIdentifierInterface.$sparqlWherePatterns({
           ignoreRdfType,
           preferredLanguages,
           subject,
@@ -1434,7 +1444,7 @@ export namespace UuidV4IriInterface {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      UuidV4IriInterface.$sparqlConstructQuery(parameters),
+      UuidV4IriIdentifierInterface.$sparqlConstructQuery(parameters),
     );
   }
 
@@ -1444,14 +1454,20 @@ export namespace UuidV4IriInterface {
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     const subject =
-      parameters?.subject ?? dataFactory.variable!("uuidV4IriInterface");
+      parameters?.subject ??
+      dataFactory.variable!("uuidV4IriIdentifierInterface");
     const triples: sparqljs.Triple[] = [];
     const variablePrefix =
       parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "uuidV4IriInterface");
+      (subject.termType === "Variable"
+        ? subject.value
+        : "uuidV4IriIdentifierInterface");
     triples.push({
       object: dataFactory.variable!(`${variablePrefix}UuidV4IriProperty`),
-      predicate: UuidV4IriInterface.$properties.uuidV4IriProperty["identifier"],
+      predicate:
+        UuidV4IriIdentifierInterface.$properties.uuidV4IriProperty[
+          "identifier"
+        ],
       subject,
     });
     return triples;
@@ -1466,17 +1482,22 @@ export namespace UuidV4IriInterface {
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
-      parameters?.subject ?? dataFactory.variable!("uuidV4IriInterface");
+      parameters?.subject ??
+      dataFactory.variable!("uuidV4IriIdentifierInterface");
     const variablePrefix =
       parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "uuidV4IriInterface");
+      (subject.termType === "Variable"
+        ? subject.value
+        : "uuidV4IriIdentifierInterface");
     const propertyPatterns: readonly sparqljs.Pattern[] = [
       {
         triples: [
           {
             object: dataFactory.variable!(`${variablePrefix}UuidV4IriProperty`),
             predicate:
-              UuidV4IriInterface.$properties.uuidV4IriProperty["identifier"],
+              UuidV4IriIdentifierInterface.$properties.uuidV4IriProperty[
+                "identifier"
+              ],
             subject,
           },
         ],
@@ -1531,10 +1552,10 @@ export namespace UuidV4IriInterface {
 /**
  * A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.
  */
-export class UuidV4IriClass {
-  private _$identifier?: UuidV4IriClass.$Identifier;
+export class UuidV4IriIdentifierClass {
+  private _$identifier?: UuidV4IriIdentifierClass.$Identifier;
   protected readonly _$identifierPrefix?: string;
-  readonly $type = "UuidV4IriClass";
+  readonly $type = "UuidV4IriIdentifierClass";
   readonly uuidV4IriProperty: string;
 
   constructor(parameters: {
@@ -1555,12 +1576,19 @@ export class UuidV4IriClass {
     this.uuidV4IriProperty = parameters.uuidV4IriProperty;
   }
 
-  get $identifier(): UuidV4IriClass.$Identifier {
+  get $identifier(): UuidV4IriIdentifierClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.namedNode(
         `${this.$identifierPrefix}${uuid.v4()}`,
       );
     }
+
+    if (this._$identifier.termType !== "NamedNode") {
+      throw new Error(
+        `expected identifier to be NamedNode, not ${this._$identifier.termType}`,
+      );
+    }
+
     return this._$identifier;
   }
 
@@ -1570,7 +1598,7 @@ export class UuidV4IriClass {
       : `urn:shaclmate:${this.$type}:`;
   }
 
-  $equals(other: UuidV4IriClass): $EqualsResult {
+  $equals(other: UuidV4IriIdentifierClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
@@ -1634,13 +1662,13 @@ export class UuidV4IriClass {
     return _hasher;
   }
 
-  $toJson(): UuidV4IriClass.$Json {
+  $toJson(): UuidV4IriIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
         "@id": this.$identifier.value,
         $type: this.$type,
         uuidV4IriProperty: this.uuidV4IriProperty,
-      } satisfies UuidV4IriClass.$Json),
+      } satisfies UuidV4IriIdentifierClass.$Json),
     );
   }
 
@@ -1660,7 +1688,7 @@ export class UuidV4IriClass {
       mutateGraph,
     });
     resource.add(
-      UuidV4IriClass.$properties.uuidV4IriProperty["identifier"],
+      UuidV4IriIdentifierClass.$properties.uuidV4IriProperty["identifier"],
       ...[this.uuidV4IriProperty],
     );
     return resource;
@@ -1671,7 +1699,7 @@ export class UuidV4IriClass {
   }
 }
 
-export namespace UuidV4IriClass {
+export namespace UuidV4IriIdentifierClass {
   export type $Identifier = rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -1696,7 +1724,7 @@ export namespace UuidV4IriClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly $type: "UuidV4IriClass";
+    readonly $type: "UuidV4IriIdentifierClass";
     readonly uuidV4IriProperty: string;
   };
 
@@ -1719,9 +1747,9 @@ export namespace UuidV4IriClass {
 
   export function $fromJson(
     json: unknown,
-  ): purify.Either<zod.ZodError, UuidV4IriClass> {
+  ): purify.Either<zod.ZodError, UuidV4IriIdentifierClass> {
     return $propertiesFromJson(json).map(
-      (properties) => new UuidV4IriClass(properties),
+      (properties) => new UuidV4IriIdentifierClass(properties),
     );
   }
 
@@ -1741,7 +1769,7 @@ export namespace UuidV4IriClass {
         {
           rule: {
             condition: {
-              schema: { const: "UuidV4IriClass" },
+              schema: { const: "UuidV4IriIdentifierClass" },
               scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
@@ -1754,7 +1782,7 @@ export namespace UuidV4IriClass {
           type: "Control",
         },
       ],
-      label: "UuidV4IriClass",
+      label: "UuidV4IriIdentifierClass",
       type: "Group",
     };
   }
@@ -1762,7 +1790,7 @@ export namespace UuidV4IriClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      $type: zod.literal("UuidV4IriClass"),
+      $type: zod.literal("UuidV4IriIdentifierClass"),
       uuidV4IriProperty: zod.string(),
     }) satisfies zod.ZodType<$Json>;
   }
@@ -1775,7 +1803,7 @@ export namespace UuidV4IriClass {
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
-  ): purify.Either<Error, UuidV4IriClass> {
+  ): purify.Either<Error, UuidV4IriIdentifierClass> {
     let {
       ignoreRdfType = false,
       objectSet,
@@ -1786,13 +1814,13 @@ export namespace UuidV4IriClass {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
-    return UuidV4IriClass.$propertiesFromRdf({
+    return UuidV4IriIdentifierClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
       resource,
-    }).map((properties) => new UuidV4IriClass(properties));
+    }).map((properties) => new UuidV4IriIdentifierClass(properties));
   }
 
   export function $propertiesFromRdf({
@@ -1823,7 +1851,8 @@ export namespace UuidV4IriClass {
       );
     }
 
-    const $identifier: UuidV4IriClass.$Identifier = $resource.identifier;
+    const $identifier: UuidV4IriIdentifierClass.$Identifier =
+      $resource.identifier;
     const _uuidV4IriPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
@@ -1877,7 +1906,9 @@ export namespace UuidV4IriClass {
                 new rdfjsResource.Resource.Value({
                   object: literalValue,
                   predicate:
-                    UuidV4IriClass.$properties.uuidV4IriProperty["identifier"],
+                    UuidV4IriIdentifierClass.$properties.uuidV4IriProperty[
+                      "identifier"
+                    ],
                   subject: $resource,
                 }),
             ),
@@ -1915,14 +1946,14 @@ export namespace UuidV4IriClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        UuidV4IriClass.$sparqlConstructTemplateTriples({
+        UuidV4IriIdentifierClass.$sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        UuidV4IriClass.$sparqlWherePatterns({
+        UuidV4IriIdentifierClass.$sparqlWherePatterns({
           ignoreRdfType,
           preferredLanguages,
           subject,
@@ -1941,7 +1972,7 @@ export namespace UuidV4IriClass {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      UuidV4IriClass.$sparqlConstructQuery(parameters),
+      UuidV4IriIdentifierClass.$sparqlConstructQuery(parameters),
     );
   }
 
@@ -1951,14 +1982,17 @@ export namespace UuidV4IriClass {
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     const subject =
-      parameters?.subject ?? dataFactory.variable!("uuidV4IriClass");
+      parameters?.subject ?? dataFactory.variable!("uuidV4IriIdentifierClass");
     const triples: sparqljs.Triple[] = [];
     const variablePrefix =
       parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "uuidV4IriClass");
+      (subject.termType === "Variable"
+        ? subject.value
+        : "uuidV4IriIdentifierClass");
     triples.push({
       object: dataFactory.variable!(`${variablePrefix}UuidV4IriProperty`),
-      predicate: UuidV4IriClass.$properties.uuidV4IriProperty["identifier"],
+      predicate:
+        UuidV4IriIdentifierClass.$properties.uuidV4IriProperty["identifier"],
       subject,
     });
     return triples;
@@ -1973,17 +2007,21 @@ export namespace UuidV4IriClass {
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
-      parameters?.subject ?? dataFactory.variable!("uuidV4IriClass");
+      parameters?.subject ?? dataFactory.variable!("uuidV4IriIdentifierClass");
     const variablePrefix =
       parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "uuidV4IriClass");
+      (subject.termType === "Variable"
+        ? subject.value
+        : "uuidV4IriIdentifierClass");
     const propertyPatterns: readonly sparqljs.Pattern[] = [
       {
         triples: [
           {
             object: dataFactory.variable!(`${variablePrefix}UuidV4IriProperty`),
             predicate:
-              UuidV4IriClass.$properties.uuidV4IriProperty["identifier"],
+              UuidV4IriIdentifierClass.$properties.uuidV4IriProperty[
+                "identifier"
+              ],
             subject,
           },
         ],
@@ -2183,6 +2221,7 @@ export class UnionPropertiesClass {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -3577,6 +3616,7 @@ export class TermPropertiesClass {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -4918,10 +4958,10 @@ export namespace TermPropertiesClass {
 /**
  * A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied.
  */
-export class Sha256IriClass {
-  private _$identifier?: Sha256IriClass.$Identifier;
+export class Sha256IriIdentifierClass {
+  private _$identifier?: Sha256IriIdentifierClass.$Identifier;
   protected readonly _$identifierPrefix?: string;
-  readonly $type = "Sha256IriClass";
+  readonly $type = "Sha256IriIdentifierClass";
   readonly sha256IriProperty: string;
 
   constructor(parameters: {
@@ -4942,12 +4982,19 @@ export class Sha256IriClass {
     this.sha256IriProperty = parameters.sha256IriProperty;
   }
 
-  get $identifier(): Sha256IriClass.$Identifier {
+  get $identifier(): Sha256IriIdentifierClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.namedNode(
         `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
       );
     }
+
+    if (this._$identifier.termType !== "NamedNode") {
+      throw new Error(
+        `expected identifier to be NamedNode, not ${this._$identifier.termType}`,
+      );
+    }
+
     return this._$identifier;
   }
 
@@ -4957,7 +5004,7 @@ export class Sha256IriClass {
       : `urn:shaclmate:${this.$type}:`;
   }
 
-  $equals(other: Sha256IriClass): $EqualsResult {
+  $equals(other: Sha256IriIdentifierClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
@@ -5021,13 +5068,13 @@ export class Sha256IriClass {
     return _hasher;
   }
 
-  $toJson(): Sha256IriClass.$Json {
+  $toJson(): Sha256IriIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
         "@id": this.$identifier.value,
         $type: this.$type,
         sha256IriProperty: this.sha256IriProperty,
-      } satisfies Sha256IriClass.$Json),
+      } satisfies Sha256IriIdentifierClass.$Json),
     );
   }
 
@@ -5047,7 +5094,7 @@ export class Sha256IriClass {
       mutateGraph,
     });
     resource.add(
-      Sha256IriClass.$properties.sha256IriProperty["identifier"],
+      Sha256IriIdentifierClass.$properties.sha256IriProperty["identifier"],
       ...[this.sha256IriProperty],
     );
     return resource;
@@ -5058,7 +5105,7 @@ export class Sha256IriClass {
   }
 }
 
-export namespace Sha256IriClass {
+export namespace Sha256IriIdentifierClass {
   export type $Identifier = rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -5083,7 +5130,7 @@ export namespace Sha256IriClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly $type: "Sha256IriClass";
+    readonly $type: "Sha256IriIdentifierClass";
     readonly sha256IriProperty: string;
   };
 
@@ -5106,9 +5153,9 @@ export namespace Sha256IriClass {
 
   export function $fromJson(
     json: unknown,
-  ): purify.Either<zod.ZodError, Sha256IriClass> {
+  ): purify.Either<zod.ZodError, Sha256IriIdentifierClass> {
     return $propertiesFromJson(json).map(
-      (properties) => new Sha256IriClass(properties),
+      (properties) => new Sha256IriIdentifierClass(properties),
     );
   }
 
@@ -5128,7 +5175,7 @@ export namespace Sha256IriClass {
         {
           rule: {
             condition: {
-              schema: { const: "Sha256IriClass" },
+              schema: { const: "Sha256IriIdentifierClass" },
               scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
@@ -5141,7 +5188,7 @@ export namespace Sha256IriClass {
           type: "Control",
         },
       ],
-      label: "Sha256IriClass",
+      label: "Sha256IriIdentifierClass",
       type: "Group",
     };
   }
@@ -5149,7 +5196,7 @@ export namespace Sha256IriClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      $type: zod.literal("Sha256IriClass"),
+      $type: zod.literal("Sha256IriIdentifierClass"),
       sha256IriProperty: zod.string(),
     }) satisfies zod.ZodType<$Json>;
   }
@@ -5162,7 +5209,7 @@ export namespace Sha256IriClass {
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
-  ): purify.Either<Error, Sha256IriClass> {
+  ): purify.Either<Error, Sha256IriIdentifierClass> {
     let {
       ignoreRdfType = false,
       objectSet,
@@ -5173,13 +5220,13 @@ export namespace Sha256IriClass {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
-    return Sha256IriClass.$propertiesFromRdf({
+    return Sha256IriIdentifierClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
       resource,
-    }).map((properties) => new Sha256IriClass(properties));
+    }).map((properties) => new Sha256IriIdentifierClass(properties));
   }
 
   export function $propertiesFromRdf({
@@ -5210,7 +5257,8 @@ export namespace Sha256IriClass {
       );
     }
 
-    const $identifier: Sha256IriClass.$Identifier = $resource.identifier;
+    const $identifier: Sha256IriIdentifierClass.$Identifier =
+      $resource.identifier;
     const _sha256IriPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
@@ -5264,7 +5312,9 @@ export namespace Sha256IriClass {
                 new rdfjsResource.Resource.Value({
                   object: literalValue,
                   predicate:
-                    Sha256IriClass.$properties.sha256IriProperty["identifier"],
+                    Sha256IriIdentifierClass.$properties.sha256IriProperty[
+                      "identifier"
+                    ],
                   subject: $resource,
                 }),
             ),
@@ -5302,14 +5352,14 @@ export namespace Sha256IriClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        Sha256IriClass.$sparqlConstructTemplateTriples({
+        Sha256IriIdentifierClass.$sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        Sha256IriClass.$sparqlWherePatterns({
+        Sha256IriIdentifierClass.$sparqlWherePatterns({
           ignoreRdfType,
           preferredLanguages,
           subject,
@@ -5328,7 +5378,7 @@ export namespace Sha256IriClass {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      Sha256IriClass.$sparqlConstructQuery(parameters),
+      Sha256IriIdentifierClass.$sparqlConstructQuery(parameters),
     );
   }
 
@@ -5338,14 +5388,17 @@ export namespace Sha256IriClass {
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     const subject =
-      parameters?.subject ?? dataFactory.variable!("sha256IriClass");
+      parameters?.subject ?? dataFactory.variable!("sha256IriIdentifierClass");
     const triples: sparqljs.Triple[] = [];
     const variablePrefix =
       parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "sha256IriClass");
+      (subject.termType === "Variable"
+        ? subject.value
+        : "sha256IriIdentifierClass");
     triples.push({
       object: dataFactory.variable!(`${variablePrefix}Sha256IriProperty`),
-      predicate: Sha256IriClass.$properties.sha256IriProperty["identifier"],
+      predicate:
+        Sha256IriIdentifierClass.$properties.sha256IriProperty["identifier"],
       subject,
     });
     return triples;
@@ -5360,17 +5413,21 @@ export namespace Sha256IriClass {
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
-      parameters?.subject ?? dataFactory.variable!("sha256IriClass");
+      parameters?.subject ?? dataFactory.variable!("sha256IriIdentifierClass");
     const variablePrefix =
       parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "sha256IriClass");
+      (subject.termType === "Variable"
+        ? subject.value
+        : "sha256IriIdentifierClass");
     const propertyPatterns: readonly sparqljs.Pattern[] = [
       {
         triples: [
           {
             object: dataFactory.variable!(`${variablePrefix}Sha256IriProperty`),
             predicate:
-              Sha256IriClass.$properties.sha256IriProperty["identifier"],
+              Sha256IriIdentifierClass.$properties.sha256IriProperty[
+                "identifier"
+              ],
             subject,
           },
         ],
@@ -5465,6 +5522,7 @@ export class RecursiveClassUnionMember2 {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -5896,6 +5954,7 @@ export class RecursiveClassUnionMember1 {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -6318,6 +6377,7 @@ export class PropertyVisibilitiesClass {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -7152,6 +7212,7 @@ export class PropertyCardinalitiesClass {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -9475,6 +9536,7 @@ export class PartialClassUnionMember2 {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -10070,6 +10132,7 @@ export class PartialClassUnionMember1 {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -10674,6 +10737,7 @@ export class OrderedPropertiesClass {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -11467,6 +11531,7 @@ export class NonClass {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -11981,11 +12046,13 @@ export class MutablePropertiesClass {
   }
 
   get $identifier(): MutablePropertiesClass.$Identifier {
-    return typeof this._$identifier !== "undefined"
-      ? this._$identifier
-      : dataFactory.namedNode(
-          `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
-        );
+    if (typeof this._$identifier === "undefined") {
+      return dataFactory.namedNode(
+        `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
+      );
+    }
+
+    return this._$identifier;
   }
 
   protected get $identifierPrefix(): string {
@@ -13104,6 +13171,7 @@ export class ListPropertiesClass {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -14890,24 +14958,24 @@ export interface LazyPropertiesInterface {
   readonly $identifier: LazyPropertiesInterface.$Identifier;
   readonly $type: "LazyPropertiesInterface";
   readonly optionalLazyToResolvedInterfaceProperty: $LazyOptionalObject<
-    LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+    LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
     $DefaultPartial,
-    LazilyResolvedBlankNodeOrIriInterface
+    LazilyResolvedBlankNodeOrIriIdentifierInterface
   >;
   readonly optionalLazyToResolvedInterfaceUnionProperty: $LazyOptionalObject<
     LazilyResolvedInterfaceUnion.$Identifier,
     $DefaultPartial,
     LazilyResolvedInterfaceUnion
   >;
-  readonly optionalLazyToResolvedIriInterfaceProperty: $LazyOptionalObject<
-    LazilyResolvedIriInterface.$Identifier,
+  readonly optionalLazyToResolvedIriIdentifierInterfaceProperty: $LazyOptionalObject<
+    LazilyResolvedIriIdentifierInterface.$Identifier,
     $NamedDefaultPartial,
-    LazilyResolvedIriInterface
+    LazilyResolvedIriIdentifierInterface
   >;
   readonly optionalPartialInterfaceToResolvedInterfaceProperty: $LazyOptionalObject<
-    LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+    LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
     PartialInterface,
-    LazilyResolvedBlankNodeOrIriInterface
+    LazilyResolvedBlankNodeOrIriIdentifierInterface
   >;
   readonly optionalPartialInterfaceToResolvedInterfaceUnionProperty: $LazyOptionalObject<
     LazilyResolvedInterfaceUnion.$Identifier,
@@ -14920,24 +14988,24 @@ export interface LazyPropertiesInterface {
     LazilyResolvedInterfaceUnion
   >;
   readonly requiredLazyToResolvedInterfaceProperty: $LazyRequiredObject<
-    LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+    LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
     $DefaultPartial,
-    LazilyResolvedBlankNodeOrIriInterface
+    LazilyResolvedBlankNodeOrIriIdentifierInterface
   >;
   readonly requiredPartialInterfaceToResolvedInterfaceProperty: $LazyRequiredObject<
-    LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+    LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
     PartialInterface,
-    LazilyResolvedBlankNodeOrIriInterface
+    LazilyResolvedBlankNodeOrIriIdentifierInterface
   >;
   readonly setLazyToResolvedInterfaceProperty: $LazyObjectSet<
-    LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+    LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
     $DefaultPartial,
-    LazilyResolvedBlankNodeOrIriInterface
+    LazilyResolvedBlankNodeOrIriIdentifierInterface
   >;
   readonly setPartialInterfaceToResolvedInterfaceProperty: $LazyObjectSet<
-    LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+    LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
     PartialInterface,
-    LazilyResolvedBlankNodeOrIriInterface
+    LazilyResolvedBlankNodeOrIriIdentifierInterface
   >;
 }
 
@@ -14946,12 +15014,12 @@ export namespace LazyPropertiesInterface {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly optionalLazyToResolvedInterfaceProperty?:
       | $LazyOptionalObject<
-          LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
           $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriInterface
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
         >
-      | LazilyResolvedBlankNodeOrIriInterface
-      | purify.Maybe<LazilyResolvedBlankNodeOrIriInterface>;
+      | LazilyResolvedBlankNodeOrIriIdentifierInterface
+      | purify.Maybe<LazilyResolvedBlankNodeOrIriIdentifierInterface>;
     readonly optionalLazyToResolvedInterfaceUnionProperty?:
       | $LazyOptionalObject<
           LazilyResolvedInterfaceUnion.$Identifier,
@@ -14960,22 +15028,22 @@ export namespace LazyPropertiesInterface {
         >
       | LazilyResolvedInterfaceUnion
       | purify.Maybe<LazilyResolvedInterfaceUnion>;
-    readonly optionalLazyToResolvedIriInterfaceProperty?:
+    readonly optionalLazyToResolvedIriIdentifierInterfaceProperty?:
       | $LazyOptionalObject<
-          LazilyResolvedIriInterface.$Identifier,
+          LazilyResolvedIriIdentifierInterface.$Identifier,
           $NamedDefaultPartial,
-          LazilyResolvedIriInterface
+          LazilyResolvedIriIdentifierInterface
         >
-      | LazilyResolvedIriInterface
-      | purify.Maybe<LazilyResolvedIriInterface>;
+      | LazilyResolvedIriIdentifierInterface
+      | purify.Maybe<LazilyResolvedIriIdentifierInterface>;
     readonly optionalPartialInterfaceToResolvedInterfaceProperty?:
       | $LazyOptionalObject<
-          LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
           PartialInterface,
-          LazilyResolvedBlankNodeOrIriInterface
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
         >
-      | LazilyResolvedBlankNodeOrIriInterface
-      | purify.Maybe<LazilyResolvedBlankNodeOrIriInterface>;
+      | LazilyResolvedBlankNodeOrIriIdentifierInterface
+      | purify.Maybe<LazilyResolvedBlankNodeOrIriIdentifierInterface>;
     readonly optionalPartialInterfaceToResolvedInterfaceUnionProperty?:
       | $LazyOptionalObject<
           LazilyResolvedInterfaceUnion.$Identifier,
@@ -14994,32 +15062,32 @@ export namespace LazyPropertiesInterface {
       | purify.Maybe<LazilyResolvedInterfaceUnion>;
     readonly requiredLazyToResolvedInterfaceProperty:
       | $LazyRequiredObject<
-          LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
           $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriInterface
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
         >
-      | LazilyResolvedBlankNodeOrIriInterface;
+      | LazilyResolvedBlankNodeOrIriIdentifierInterface;
     readonly requiredPartialInterfaceToResolvedInterfaceProperty:
       | $LazyRequiredObject<
-          LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
           PartialInterface,
-          LazilyResolvedBlankNodeOrIriInterface
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
         >
-      | LazilyResolvedBlankNodeOrIriInterface;
+      | LazilyResolvedBlankNodeOrIriIdentifierInterface;
     readonly setLazyToResolvedInterfaceProperty?:
       | $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
           $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriInterface
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
         >
-      | readonly LazilyResolvedBlankNodeOrIriInterface[];
+      | readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[];
     readonly setPartialInterfaceToResolvedInterfaceProperty?:
       | $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
           PartialInterface,
-          LazilyResolvedBlankNodeOrIriInterface
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
         >
-      | readonly LazilyResolvedBlankNodeOrIriInterface[];
+      | readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[];
   }): LazyPropertiesInterface {
     let $identifier: LazyPropertiesInterface.$Identifier;
     if (typeof parameters.$identifier === "object") {
@@ -15034,9 +15102,9 @@ export namespace LazyPropertiesInterface {
 
     const $type = "LazyPropertiesInterface" as const;
     let optionalLazyToResolvedInterfaceProperty: $LazyOptionalObject<
-      LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
       $DefaultPartial,
-      LazilyResolvedBlankNodeOrIriInterface
+      LazilyResolvedBlankNodeOrIriIdentifierInterface
     >;
     if (
       typeof parameters.optionalLazyToResolvedInterfaceProperty === "object" &&
@@ -15049,9 +15117,9 @@ export namespace LazyPropertiesInterface {
       purify.Maybe.isMaybe(parameters.optionalLazyToResolvedInterfaceProperty)
     ) {
       optionalLazyToResolvedInterfaceProperty = new $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >({
         partial: parameters.optionalLazyToResolvedInterfaceProperty.map(
           (object) => new $DefaultPartial(object),
@@ -15059,7 +15127,7 @@ export namespace LazyPropertiesInterface {
         resolver: async () =>
           purify.Either.of(
             (
-              parameters.optionalLazyToResolvedInterfaceProperty as purify.Maybe<LazilyResolvedBlankNodeOrIriInterface>
+              parameters.optionalLazyToResolvedInterfaceProperty as purify.Maybe<LazilyResolvedBlankNodeOrIriIdentifierInterface>
             ).unsafeCoerce(),
           ),
       });
@@ -15067,9 +15135,9 @@ export namespace LazyPropertiesInterface {
       typeof parameters.optionalLazyToResolvedInterfaceProperty === "object"
     ) {
       optionalLazyToResolvedInterfaceProperty = new $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >({
         partial: purify.Maybe.of(
           new $DefaultPartial(
@@ -15078,16 +15146,16 @@ export namespace LazyPropertiesInterface {
         ),
         resolver: async () =>
           purify.Either.of(
-            parameters.optionalLazyToResolvedInterfaceProperty as LazilyResolvedBlankNodeOrIriInterface,
+            parameters.optionalLazyToResolvedInterfaceProperty as LazilyResolvedBlankNodeOrIriIdentifierInterface,
           ),
       });
     } else if (
       typeof parameters.optionalLazyToResolvedInterfaceProperty === "undefined"
     ) {
       optionalLazyToResolvedInterfaceProperty = new $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >({
         partial: purify.Maybe.empty(),
         resolver: async () => {
@@ -15170,80 +15238,85 @@ export namespace LazyPropertiesInterface {
         parameters.optionalLazyToResolvedInterfaceUnionProperty satisfies never;
     }
 
-    let optionalLazyToResolvedIriInterfaceProperty: $LazyOptionalObject<
-      LazilyResolvedIriInterface.$Identifier,
+    let optionalLazyToResolvedIriIdentifierInterfaceProperty: $LazyOptionalObject<
+      LazilyResolvedIriIdentifierInterface.$Identifier,
       $NamedDefaultPartial,
-      LazilyResolvedIriInterface
+      LazilyResolvedIriIdentifierInterface
     >;
     if (
-      typeof parameters.optionalLazyToResolvedIriInterfaceProperty ===
+      typeof parameters.optionalLazyToResolvedIriIdentifierInterfaceProperty ===
         "object" &&
-      parameters.optionalLazyToResolvedIriInterfaceProperty instanceof
+      parameters.optionalLazyToResolvedIriIdentifierInterfaceProperty instanceof
         $LazyOptionalObject
     ) {
-      optionalLazyToResolvedIriInterfaceProperty =
-        parameters.optionalLazyToResolvedIriInterfaceProperty;
+      optionalLazyToResolvedIriIdentifierInterfaceProperty =
+        parameters.optionalLazyToResolvedIriIdentifierInterfaceProperty;
     } else if (
       purify.Maybe.isMaybe(
-        parameters.optionalLazyToResolvedIriInterfaceProperty,
+        parameters.optionalLazyToResolvedIriIdentifierInterfaceProperty,
       )
     ) {
-      optionalLazyToResolvedIriInterfaceProperty = new $LazyOptionalObject<
-        LazilyResolvedIriInterface.$Identifier,
-        $NamedDefaultPartial,
-        LazilyResolvedIriInterface
-      >({
-        partial: parameters.optionalLazyToResolvedIriInterfaceProperty.map(
-          (object) => new $NamedDefaultPartial(object),
-        ),
-        resolver: async () =>
-          purify.Either.of(
-            (
-              parameters.optionalLazyToResolvedIriInterfaceProperty as purify.Maybe<LazilyResolvedIriInterface>
-            ).unsafeCoerce(),
-          ),
-      });
+      optionalLazyToResolvedIriIdentifierInterfaceProperty =
+        new $LazyOptionalObject<
+          LazilyResolvedIriIdentifierInterface.$Identifier,
+          $NamedDefaultPartial,
+          LazilyResolvedIriIdentifierInterface
+        >({
+          partial:
+            parameters.optionalLazyToResolvedIriIdentifierInterfaceProperty.map(
+              (object) => new $NamedDefaultPartial(object),
+            ),
+          resolver: async () =>
+            purify.Either.of(
+              (
+                parameters.optionalLazyToResolvedIriIdentifierInterfaceProperty as purify.Maybe<LazilyResolvedIriIdentifierInterface>
+              ).unsafeCoerce(),
+            ),
+        });
     } else if (
-      typeof parameters.optionalLazyToResolvedIriInterfaceProperty === "object"
+      typeof parameters.optionalLazyToResolvedIriIdentifierInterfaceProperty ===
+      "object"
     ) {
-      optionalLazyToResolvedIriInterfaceProperty = new $LazyOptionalObject<
-        LazilyResolvedIriInterface.$Identifier,
-        $NamedDefaultPartial,
-        LazilyResolvedIriInterface
-      >({
-        partial: purify.Maybe.of(
-          new $NamedDefaultPartial(
-            parameters.optionalLazyToResolvedIriInterfaceProperty,
+      optionalLazyToResolvedIriIdentifierInterfaceProperty =
+        new $LazyOptionalObject<
+          LazilyResolvedIriIdentifierInterface.$Identifier,
+          $NamedDefaultPartial,
+          LazilyResolvedIriIdentifierInterface
+        >({
+          partial: purify.Maybe.of(
+            new $NamedDefaultPartial(
+              parameters.optionalLazyToResolvedIriIdentifierInterfaceProperty,
+            ),
           ),
-        ),
-        resolver: async () =>
-          purify.Either.of(
-            parameters.optionalLazyToResolvedIriInterfaceProperty as LazilyResolvedIriInterface,
-          ),
-      });
+          resolver: async () =>
+            purify.Either.of(
+              parameters.optionalLazyToResolvedIriIdentifierInterfaceProperty as LazilyResolvedIriIdentifierInterface,
+            ),
+        });
     } else if (
-      typeof parameters.optionalLazyToResolvedIriInterfaceProperty ===
+      typeof parameters.optionalLazyToResolvedIriIdentifierInterfaceProperty ===
       "undefined"
     ) {
-      optionalLazyToResolvedIriInterfaceProperty = new $LazyOptionalObject<
-        LazilyResolvedIriInterface.$Identifier,
-        $NamedDefaultPartial,
-        LazilyResolvedIriInterface
-      >({
-        partial: purify.Maybe.empty(),
-        resolver: async () => {
-          throw new Error("should never be called");
-        },
-      });
+      optionalLazyToResolvedIriIdentifierInterfaceProperty =
+        new $LazyOptionalObject<
+          LazilyResolvedIriIdentifierInterface.$Identifier,
+          $NamedDefaultPartial,
+          LazilyResolvedIriIdentifierInterface
+        >({
+          partial: purify.Maybe.empty(),
+          resolver: async () => {
+            throw new Error("should never be called");
+          },
+        });
     } else {
-      optionalLazyToResolvedIriInterfaceProperty =
-        parameters.optionalLazyToResolvedIriInterfaceProperty satisfies never;
+      optionalLazyToResolvedIriIdentifierInterfaceProperty =
+        parameters.optionalLazyToResolvedIriIdentifierInterfaceProperty satisfies never;
     }
 
     let optionalPartialInterfaceToResolvedInterfaceProperty: $LazyOptionalObject<
-      LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
       PartialInterface,
-      LazilyResolvedBlankNodeOrIriInterface
+      LazilyResolvedBlankNodeOrIriIdentifierInterface
     >;
     if (
       typeof parameters.optionalPartialInterfaceToResolvedInterfaceProperty ===
@@ -15260,9 +15333,9 @@ export namespace LazyPropertiesInterface {
     ) {
       optionalPartialInterfaceToResolvedInterfaceProperty =
         new $LazyOptionalObject<
-          LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
           PartialInterface,
-          LazilyResolvedBlankNodeOrIriInterface
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
         >({
           partial:
             parameters.optionalPartialInterfaceToResolvedInterfaceProperty.map(
@@ -15271,7 +15344,7 @@ export namespace LazyPropertiesInterface {
           resolver: async () =>
             purify.Either.of(
               (
-                parameters.optionalPartialInterfaceToResolvedInterfaceProperty as purify.Maybe<LazilyResolvedBlankNodeOrIriInterface>
+                parameters.optionalPartialInterfaceToResolvedInterfaceProperty as purify.Maybe<LazilyResolvedBlankNodeOrIriIdentifierInterface>
               ).unsafeCoerce(),
             ),
         });
@@ -15281,9 +15354,9 @@ export namespace LazyPropertiesInterface {
     ) {
       optionalPartialInterfaceToResolvedInterfaceProperty =
         new $LazyOptionalObject<
-          LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
           PartialInterface,
-          LazilyResolvedBlankNodeOrIriInterface
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
         >({
           partial: purify.Maybe.of(
             PartialInterface.$create(
@@ -15292,7 +15365,7 @@ export namespace LazyPropertiesInterface {
           ),
           resolver: async () =>
             purify.Either.of(
-              parameters.optionalPartialInterfaceToResolvedInterfaceProperty as LazilyResolvedBlankNodeOrIriInterface,
+              parameters.optionalPartialInterfaceToResolvedInterfaceProperty as LazilyResolvedBlankNodeOrIriIdentifierInterface,
             ),
         });
     } else if (
@@ -15301,9 +15374,9 @@ export namespace LazyPropertiesInterface {
     ) {
       optionalPartialInterfaceToResolvedInterfaceProperty =
         new $LazyOptionalObject<
-          LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
           PartialInterface,
-          LazilyResolvedBlankNodeOrIriInterface
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
         >({
           partial: purify.Maybe.empty(),
           resolver: async () => {
@@ -15484,9 +15557,9 @@ export namespace LazyPropertiesInterface {
     }
 
     let requiredLazyToResolvedInterfaceProperty: $LazyRequiredObject<
-      LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
       $DefaultPartial,
-      LazilyResolvedBlankNodeOrIriInterface
+      LazilyResolvedBlankNodeOrIriIdentifierInterface
     >;
     if (
       typeof parameters.requiredLazyToResolvedInterfaceProperty === "object" &&
@@ -15499,16 +15572,16 @@ export namespace LazyPropertiesInterface {
       typeof parameters.requiredLazyToResolvedInterfaceProperty === "object"
     ) {
       requiredLazyToResolvedInterfaceProperty = new $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >({
         partial: new $DefaultPartial(
           parameters.requiredLazyToResolvedInterfaceProperty,
         ),
         resolver: async () =>
           purify.Either.of(
-            parameters.requiredLazyToResolvedInterfaceProperty as LazilyResolvedBlankNodeOrIriInterface,
+            parameters.requiredLazyToResolvedInterfaceProperty as LazilyResolvedBlankNodeOrIriIdentifierInterface,
           ),
       });
     } else {
@@ -15517,9 +15590,9 @@ export namespace LazyPropertiesInterface {
     }
 
     let requiredPartialInterfaceToResolvedInterfaceProperty: $LazyRequiredObject<
-      LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
       PartialInterface,
-      LazilyResolvedBlankNodeOrIriInterface
+      LazilyResolvedBlankNodeOrIriIdentifierInterface
     >;
     if (
       typeof parameters.requiredPartialInterfaceToResolvedInterfaceProperty ===
@@ -15535,16 +15608,16 @@ export namespace LazyPropertiesInterface {
     ) {
       requiredPartialInterfaceToResolvedInterfaceProperty =
         new $LazyRequiredObject<
-          LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
           PartialInterface,
-          LazilyResolvedBlankNodeOrIriInterface
+          LazilyResolvedBlankNodeOrIriIdentifierInterface
         >({
           partial: PartialInterface.$create(
             parameters.requiredPartialInterfaceToResolvedInterfaceProperty,
           ),
           resolver: async () =>
             purify.Either.of(
-              parameters.requiredPartialInterfaceToResolvedInterfaceProperty as LazilyResolvedBlankNodeOrIriInterface,
+              parameters.requiredPartialInterfaceToResolvedInterfaceProperty as LazilyResolvedBlankNodeOrIriIdentifierInterface,
             ),
         });
     } else {
@@ -15553,9 +15626,9 @@ export namespace LazyPropertiesInterface {
     }
 
     let setLazyToResolvedInterfaceProperty: $LazyObjectSet<
-      LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
       $DefaultPartial,
-      LazilyResolvedBlankNodeOrIriInterface
+      LazilyResolvedBlankNodeOrIriIdentifierInterface
     >;
     if (
       typeof parameters.setLazyToResolvedInterfaceProperty === "object" &&
@@ -15567,25 +15640,25 @@ export namespace LazyPropertiesInterface {
       typeof parameters.setLazyToResolvedInterfaceProperty === "object"
     ) {
       setLazyToResolvedInterfaceProperty = new $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >({
         partials: parameters.setLazyToResolvedInterfaceProperty.map(
           (object) => new $DefaultPartial(object),
         ),
         resolver: async () =>
           purify.Either.of(
-            parameters.setLazyToResolvedInterfaceProperty as readonly LazilyResolvedBlankNodeOrIriInterface[],
+            parameters.setLazyToResolvedInterfaceProperty as readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[],
           ),
       });
     } else if (
       typeof parameters.setLazyToResolvedInterfaceProperty === "undefined"
     ) {
       setLazyToResolvedInterfaceProperty = new $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >({
         partials: [],
         resolver: async () => {
@@ -15598,9 +15671,9 @@ export namespace LazyPropertiesInterface {
     }
 
     let setPartialInterfaceToResolvedInterfaceProperty: $LazyObjectSet<
-      LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
       PartialInterface,
-      LazilyResolvedBlankNodeOrIriInterface
+      LazilyResolvedBlankNodeOrIriIdentifierInterface
     >;
     if (
       typeof parameters.setPartialInterfaceToResolvedInterfaceProperty ===
@@ -15615,16 +15688,16 @@ export namespace LazyPropertiesInterface {
       "object"
     ) {
       setPartialInterfaceToResolvedInterfaceProperty = new $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         PartialInterface,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >({
         partials: parameters.setPartialInterfaceToResolvedInterfaceProperty.map(
           (object) => PartialInterface.$create(object),
         ),
         resolver: async () =>
           purify.Either.of(
-            parameters.setPartialInterfaceToResolvedInterfaceProperty as readonly LazilyResolvedBlankNodeOrIriInterface[],
+            parameters.setPartialInterfaceToResolvedInterfaceProperty as readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[],
           ),
       });
     } else if (
@@ -15632,9 +15705,9 @@ export namespace LazyPropertiesInterface {
       "undefined"
     ) {
       setPartialInterfaceToResolvedInterfaceProperty = new $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         PartialInterface,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >({
         partials: [],
         resolver: async () => {
@@ -15651,7 +15724,7 @@ export namespace LazyPropertiesInterface {
       $type,
       optionalLazyToResolvedInterfaceProperty,
       optionalLazyToResolvedInterfaceUnionProperty,
-      optionalLazyToResolvedIriInterfaceProperty,
+      optionalLazyToResolvedIriIdentifierInterfaceProperty,
       optionalPartialInterfaceToResolvedInterfaceProperty,
       optionalPartialInterfaceToResolvedInterfaceUnionProperty,
       optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
@@ -15726,12 +15799,12 @@ export namespace LazyPropertiesInterface {
             left.partial,
             right.partial,
           ))(
-          left.optionalLazyToResolvedIriInterfaceProperty,
-          right.optionalLazyToResolvedIriInterfaceProperty,
+          left.optionalLazyToResolvedIriIdentifierInterfaceProperty,
+          right.optionalLazyToResolvedIriIdentifierInterfaceProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left: left,
           right: right,
-          propertyName: "optionalLazyToResolvedIriInterfaceProperty",
+          propertyName: "optionalLazyToResolvedIriIdentifierInterfaceProperty",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -15874,7 +15947,7 @@ export namespace LazyPropertiesInterface {
     readonly $type: "LazyPropertiesInterface";
     readonly optionalLazyToResolvedInterfaceProperty?: $DefaultPartial.$Json;
     readonly optionalLazyToResolvedInterfaceUnionProperty?: $DefaultPartial.$Json;
-    readonly optionalLazyToResolvedIriInterfaceProperty?: $NamedDefaultPartial.$Json;
+    readonly optionalLazyToResolvedIriIdentifierInterfaceProperty?: $NamedDefaultPartial.$Json;
     readonly optionalPartialInterfaceToResolvedInterfaceProperty?: PartialInterface.$Json;
     readonly optionalPartialInterfaceToResolvedInterfaceUnionProperty?: PartialInterface.$Json;
     readonly optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty?:
@@ -15892,24 +15965,24 @@ export namespace LazyPropertiesInterface {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       $type: "LazyPropertiesInterface";
       optionalLazyToResolvedInterfaceProperty: $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >;
       optionalLazyToResolvedInterfaceUnionProperty: $LazyOptionalObject<
         LazilyResolvedInterfaceUnion.$Identifier,
         $DefaultPartial,
         LazilyResolvedInterfaceUnion
       >;
-      optionalLazyToResolvedIriInterfaceProperty: $LazyOptionalObject<
-        LazilyResolvedIriInterface.$Identifier,
+      optionalLazyToResolvedIriIdentifierInterfaceProperty: $LazyOptionalObject<
+        LazilyResolvedIriIdentifierInterface.$Identifier,
         $NamedDefaultPartial,
-        LazilyResolvedIriInterface
+        LazilyResolvedIriIdentifierInterface
       >;
       optionalPartialInterfaceToResolvedInterfaceProperty: $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         PartialInterface,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >;
       optionalPartialInterfaceToResolvedInterfaceUnionProperty: $LazyOptionalObject<
         LazilyResolvedInterfaceUnion.$Identifier,
@@ -15922,24 +15995,24 @@ export namespace LazyPropertiesInterface {
         LazilyResolvedInterfaceUnion
       >;
       requiredLazyToResolvedInterfaceProperty: $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >;
       requiredPartialInterfaceToResolvedInterfaceProperty: $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         PartialInterface,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >;
       setLazyToResolvedInterfaceProperty: $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >;
       setPartialInterfaceToResolvedInterfaceProperty: $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         PartialInterface,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >;
     }
   > {
@@ -15954,9 +16027,9 @@ export namespace LazyPropertiesInterface {
       : dataFactory.namedNode($jsonObject["@id"]);
     const $type = "LazyPropertiesInterface" as const;
     const optionalLazyToResolvedInterfaceProperty = new $LazyOptionalObject<
-      LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
       $DefaultPartial,
-      LazilyResolvedBlankNodeOrIriInterface
+      LazilyResolvedBlankNodeOrIriIdentifierInterface
     >({
       partial: purify.Maybe.fromNullable(
         $jsonObject["optionalLazyToResolvedInterfaceProperty"],
@@ -15988,28 +16061,29 @@ export namespace LazyPropertiesInterface {
             ),
           ),
       });
-    const optionalLazyToResolvedIriInterfaceProperty = new $LazyOptionalObject<
-      LazilyResolvedIriInterface.$Identifier,
-      $NamedDefaultPartial,
-      LazilyResolvedIriInterface
-    >({
-      partial: purify.Maybe.fromNullable(
-        $jsonObject["optionalLazyToResolvedIriInterfaceProperty"],
-      ).map((item) => $NamedDefaultPartial.$fromJson(item).unsafeCoerce()),
-      resolver: (identifier) =>
-        Promise.resolve(
-          purify.Left(
-            new Error(
-              `unable to resolve identifier ${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON`,
+    const optionalLazyToResolvedIriIdentifierInterfaceProperty =
+      new $LazyOptionalObject<
+        LazilyResolvedIriIdentifierInterface.$Identifier,
+        $NamedDefaultPartial,
+        LazilyResolvedIriIdentifierInterface
+      >({
+        partial: purify.Maybe.fromNullable(
+          $jsonObject["optionalLazyToResolvedIriIdentifierInterfaceProperty"],
+        ).map((item) => $NamedDefaultPartial.$fromJson(item).unsafeCoerce()),
+        resolver: (identifier) =>
+          Promise.resolve(
+            purify.Left(
+              new Error(
+                `unable to resolve identifier ${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON`,
+              ),
             ),
           ),
-        ),
-    });
+      });
     const optionalPartialInterfaceToResolvedInterfaceProperty =
       new $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         PartialInterface,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >({
         partial: purify.Maybe.fromNullable(
           $jsonObject["optionalPartialInterfaceToResolvedInterfaceProperty"],
@@ -16064,9 +16138,9 @@ export namespace LazyPropertiesInterface {
           ),
       });
     const requiredLazyToResolvedInterfaceProperty = new $LazyRequiredObject<
-      LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
       $DefaultPartial,
-      LazilyResolvedBlankNodeOrIriInterface
+      LazilyResolvedBlankNodeOrIriIdentifierInterface
     >({
       partial: $DefaultPartial
         .$fromJson($jsonObject["requiredLazyToResolvedInterfaceProperty"])
@@ -16082,9 +16156,9 @@ export namespace LazyPropertiesInterface {
     });
     const requiredPartialInterfaceToResolvedInterfaceProperty =
       new $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         PartialInterface,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >({
         partial: PartialInterface.$fromJson(
           $jsonObject["requiredPartialInterfaceToResolvedInterfaceProperty"],
@@ -16099,9 +16173,9 @@ export namespace LazyPropertiesInterface {
           ),
       });
     const setLazyToResolvedInterfaceProperty = new $LazyObjectSet<
-      LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
       $DefaultPartial,
-      LazilyResolvedBlankNodeOrIriInterface
+      LazilyResolvedBlankNodeOrIriIdentifierInterface
     >({
       partials: $jsonObject["setLazyToResolvedInterfaceProperty"].map((item) =>
         $DefaultPartial.$fromJson(item).unsafeCoerce(),
@@ -16114,9 +16188,9 @@ export namespace LazyPropertiesInterface {
         ),
     });
     const setPartialInterfaceToResolvedInterfaceProperty = new $LazyObjectSet<
-      LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
       PartialInterface,
-      LazilyResolvedBlankNodeOrIriInterface
+      LazilyResolvedBlankNodeOrIriIdentifierInterface
     >({
       partials: $jsonObject[
         "setPartialInterfaceToResolvedInterfaceProperty"
@@ -16133,7 +16207,7 @@ export namespace LazyPropertiesInterface {
       $type,
       optionalLazyToResolvedInterfaceProperty,
       optionalLazyToResolvedInterfaceUnionProperty,
-      optionalLazyToResolvedIriInterfaceProperty,
+      optionalLazyToResolvedIriIdentifierInterfaceProperty,
       optionalPartialInterfaceToResolvedInterfaceProperty,
       optionalPartialInterfaceToResolvedInterfaceUnionProperty,
       optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
@@ -16181,7 +16255,7 @@ export namespace LazyPropertiesInterface {
           scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedInterfaceUnionProperty`,
         }),
         $NamedDefaultPartial.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedIriInterfaceProperty`,
+          scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedIriIdentifierInterfaceProperty`,
         }),
         PartialInterface.$jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/optionalPartialInterfaceToResolvedInterfaceProperty`,
@@ -16229,8 +16303,8 @@ export namespace LazyPropertiesInterface {
           _lazyPropertiesInterface.optionalLazyToResolvedInterfaceUnionProperty.partial
             .map((item) => item.$toJson())
             .extract(),
-        optionalLazyToResolvedIriInterfaceProperty:
-          _lazyPropertiesInterface.optionalLazyToResolvedIriInterfaceProperty.partial
+        optionalLazyToResolvedIriIdentifierInterfaceProperty:
+          _lazyPropertiesInterface.optionalLazyToResolvedIriIdentifierInterfaceProperty.partial
             .map((item) => item.$toJson())
             .extract(),
         optionalPartialInterfaceToResolvedInterfaceProperty:
@@ -16274,7 +16348,7 @@ export namespace LazyPropertiesInterface {
       optionalLazyToResolvedInterfaceUnionProperty: $DefaultPartial
         .$jsonZodSchema()
         .optional(),
-      optionalLazyToResolvedIriInterfaceProperty: $NamedDefaultPartial
+      optionalLazyToResolvedIriIdentifierInterfaceProperty: $NamedDefaultPartial
         .$jsonZodSchema()
         .optional(),
       optionalPartialInterfaceToResolvedInterfaceProperty:
@@ -16332,7 +16406,7 @@ export namespace LazyPropertiesInterface {
         value1.$hash(_hasher);
       },
     );
-    _lazyPropertiesInterface.optionalLazyToResolvedIriInterfaceProperty.partial.ifJust(
+    _lazyPropertiesInterface.optionalLazyToResolvedIriIdentifierInterfaceProperty.partial.ifJust(
       (value1) => {
         value1.$hash(_hasher);
       },
@@ -16420,24 +16494,24 @@ export namespace LazyPropertiesInterface {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       $type: "LazyPropertiesInterface";
       optionalLazyToResolvedInterfaceProperty: $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >;
       optionalLazyToResolvedInterfaceUnionProperty: $LazyOptionalObject<
         LazilyResolvedInterfaceUnion.$Identifier,
         $DefaultPartial,
         LazilyResolvedInterfaceUnion
       >;
-      optionalLazyToResolvedIriInterfaceProperty: $LazyOptionalObject<
-        LazilyResolvedIriInterface.$Identifier,
+      optionalLazyToResolvedIriIdentifierInterfaceProperty: $LazyOptionalObject<
+        LazilyResolvedIriIdentifierInterface.$Identifier,
         $NamedDefaultPartial,
-        LazilyResolvedIriInterface
+        LazilyResolvedIriIdentifierInterface
       >;
       optionalPartialInterfaceToResolvedInterfaceProperty: $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         PartialInterface,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >;
       optionalPartialInterfaceToResolvedInterfaceUnionProperty: $LazyOptionalObject<
         LazilyResolvedInterfaceUnion.$Identifier,
@@ -16450,24 +16524,24 @@ export namespace LazyPropertiesInterface {
         LazilyResolvedInterfaceUnion
       >;
       requiredLazyToResolvedInterfaceProperty: $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >;
       requiredPartialInterfaceToResolvedInterfaceProperty: $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         PartialInterface,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >;
       setLazyToResolvedInterfaceProperty: $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >;
       setPartialInterfaceToResolvedInterfaceProperty: $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         PartialInterface,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >;
     }
   > {
@@ -16477,9 +16551,9 @@ export namespace LazyPropertiesInterface {
     const _optionalLazyToResolvedInterfacePropertyEither: purify.Either<
       Error,
       $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >
     > = purify.Either.of<
       Error,
@@ -16519,13 +16593,15 @@ export namespace LazyPropertiesInterface {
         values.map(
           (partial) =>
             new $LazyOptionalObject<
-              LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+              LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
               $DefaultPartial,
-              LazilyResolvedBlankNodeOrIriInterface
+              LazilyResolvedBlankNodeOrIriIdentifierInterface
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriInterface(identifier),
+                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
+                  identifier,
+                ),
             }),
         ),
       )
@@ -16598,19 +16674,21 @@ export namespace LazyPropertiesInterface {
 
     const optionalLazyToResolvedInterfaceUnionProperty =
       _optionalLazyToResolvedInterfaceUnionPropertyEither.unsafeCoerce();
-    const _optionalLazyToResolvedIriInterfacePropertyEither: purify.Either<
+    const _optionalLazyToResolvedIriIdentifierInterfacePropertyEither: purify.Either<
       Error,
       $LazyOptionalObject<
-        LazilyResolvedIriInterface.$Identifier,
+        LazilyResolvedIriIdentifierInterface.$Identifier,
         $NamedDefaultPartial,
-        LazilyResolvedIriInterface
+        LazilyResolvedIriIdentifierInterface
       >
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >(
       $resource.values(
-        $properties.optionalLazyToResolvedIriInterfaceProperty["identifier"],
+        $properties.optionalLazyToResolvedIriIdentifierInterfaceProperty[
+          "identifier"
+        ],
         { unique: true },
       ),
     )
@@ -16635,7 +16713,9 @@ export namespace LazyPropertiesInterface {
               object: purify.Maybe.empty(),
               predicate:
                 LazyPropertiesInterface.$properties
-                  .optionalLazyToResolvedIriInterfaceProperty["identifier"],
+                  .optionalLazyToResolvedIriIdentifierInterfaceProperty[
+                  "identifier"
+                ],
               subject: $resource,
             }),
       )
@@ -16643,29 +16723,29 @@ export namespace LazyPropertiesInterface {
         values.map(
           (partial) =>
             new $LazyOptionalObject<
-              LazilyResolvedIriInterface.$Identifier,
+              LazilyResolvedIriIdentifierInterface.$Identifier,
               $NamedDefaultPartial,
-              LazilyResolvedIriInterface
+              LazilyResolvedIriIdentifierInterface
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedIriInterface(identifier),
+                $objectSet.lazilyResolvedIriIdentifierInterface(identifier),
             }),
         ),
       )
       .chain((values) => values.head());
-    if (_optionalLazyToResolvedIriInterfacePropertyEither.isLeft()) {
-      return _optionalLazyToResolvedIriInterfacePropertyEither;
+    if (_optionalLazyToResolvedIriIdentifierInterfacePropertyEither.isLeft()) {
+      return _optionalLazyToResolvedIriIdentifierInterfacePropertyEither;
     }
 
-    const optionalLazyToResolvedIriInterfaceProperty =
-      _optionalLazyToResolvedIriInterfacePropertyEither.unsafeCoerce();
+    const optionalLazyToResolvedIriIdentifierInterfaceProperty =
+      _optionalLazyToResolvedIriIdentifierInterfacePropertyEither.unsafeCoerce();
     const _optionalPartialInterfaceToResolvedInterfacePropertyEither: purify.Either<
       Error,
       $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         PartialInterface,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >
     > = purify.Either.of<
       Error,
@@ -16709,13 +16789,15 @@ export namespace LazyPropertiesInterface {
         values.map(
           (partial) =>
             new $LazyOptionalObject<
-              LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+              LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
               PartialInterface,
-              LazilyResolvedBlankNodeOrIriInterface
+              LazilyResolvedBlankNodeOrIriIdentifierInterface
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriInterface(identifier),
+                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
+                  identifier,
+                ),
             }),
         ),
       )
@@ -16866,9 +16948,9 @@ export namespace LazyPropertiesInterface {
     const _requiredLazyToResolvedInterfacePropertyEither: purify.Either<
       Error,
       $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >
     > = purify.Either.of<
       Error,
@@ -16895,13 +16977,15 @@ export namespace LazyPropertiesInterface {
         values.map(
           (partial) =>
             new $LazyRequiredObject<
-              LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+              LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
               $DefaultPartial,
-              LazilyResolvedBlankNodeOrIriInterface
+              LazilyResolvedBlankNodeOrIriIdentifierInterface
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriInterface(identifier),
+                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
+                  identifier,
+                ),
             }),
         ),
       )
@@ -16915,9 +16999,9 @@ export namespace LazyPropertiesInterface {
     const _requiredPartialInterfaceToResolvedInterfacePropertyEither: purify.Either<
       Error,
       $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         PartialInterface,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >
     > = purify.Either.of<
       Error,
@@ -16946,13 +17030,15 @@ export namespace LazyPropertiesInterface {
         values.map(
           (partial) =>
             new $LazyRequiredObject<
-              LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+              LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
               PartialInterface,
-              LazilyResolvedBlankNodeOrIriInterface
+              LazilyResolvedBlankNodeOrIriIdentifierInterface
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriInterface(identifier),
+                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
+                  identifier,
+                ),
             }),
         ),
       )
@@ -16966,9 +17052,9 @@ export namespace LazyPropertiesInterface {
     const _setLazyToResolvedInterfacePropertyEither: purify.Either<
       Error,
       $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >
     > = purify.Either.of<
       Error,
@@ -17005,13 +17091,13 @@ export namespace LazyPropertiesInterface {
         values.map(
           (partials) =>
             new $LazyObjectSet<
-              LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+              LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
               $DefaultPartial,
-              LazilyResolvedBlankNodeOrIriInterface
+              LazilyResolvedBlankNodeOrIriIdentifierInterface
             >({
               partials,
               resolver: (identifiers) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriInterfaces({
+                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterfaces({
                   where: { identifiers, type: "identifiers" },
                 }),
             }),
@@ -17027,9 +17113,9 @@ export namespace LazyPropertiesInterface {
     const _setPartialInterfaceToResolvedInterfacePropertyEither: purify.Either<
       Error,
       $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
         PartialInterface,
-        LazilyResolvedBlankNodeOrIriInterface
+        LazilyResolvedBlankNodeOrIriIdentifierInterface
       >
     > = purify.Either.of<
       Error,
@@ -17068,13 +17154,13 @@ export namespace LazyPropertiesInterface {
         values.map(
           (partials) =>
             new $LazyObjectSet<
-              LazilyResolvedBlankNodeOrIriInterface.$Identifier,
+              LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
               PartialInterface,
-              LazilyResolvedBlankNodeOrIriInterface
+              LazilyResolvedBlankNodeOrIriIdentifierInterface
             >({
               partials,
               resolver: (identifiers) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriInterfaces({
+                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterfaces({
                   where: { identifiers, type: "identifiers" },
                 }),
             }),
@@ -17092,7 +17178,7 @@ export namespace LazyPropertiesInterface {
       $type,
       optionalLazyToResolvedInterfaceProperty,
       optionalLazyToResolvedInterfaceUnionProperty,
-      optionalLazyToResolvedIriInterfaceProperty,
+      optionalLazyToResolvedIriIdentifierInterfaceProperty,
       optionalPartialInterfaceToResolvedInterfaceProperty,
       optionalPartialInterfaceToResolvedInterfaceUnionProperty,
       optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
@@ -17144,8 +17230,8 @@ export namespace LazyPropertiesInterface {
     );
     resource.add(
       LazyPropertiesInterface.$properties
-        .optionalLazyToResolvedIriInterfaceProperty["identifier"],
-      ..._lazyPropertiesInterface.optionalLazyToResolvedIriInterfaceProperty.partial
+        .optionalLazyToResolvedIriIdentifierInterfaceProperty["identifier"],
+      ..._lazyPropertiesInterface.optionalLazyToResolvedIriIdentifierInterfaceProperty.partial
         .toList()
         .flatMap((value) => [
           value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
@@ -17247,9 +17333,9 @@ export namespace LazyPropertiesInterface {
         "http://example.com/optionalLazyToResolvedInterfaceUnionProperty",
       ),
     },
-    optionalLazyToResolvedIriInterfaceProperty: {
+    optionalLazyToResolvedIriIdentifierInterfaceProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/optionalLazyToResolvedIriInterfaceProperty",
+        "http://example.com/optionalLazyToResolvedIriIdentifierInterfaceProperty",
       ),
     },
     optionalPartialInterfaceToResolvedInterfaceProperty: {
@@ -17386,20 +17472,20 @@ export namespace LazyPropertiesInterface {
     );
     triples.push({
       object: dataFactory.variable!(
-        `${variablePrefix}OptionalLazyToResolvedIriInterfaceProperty`,
+        `${variablePrefix}OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
       ),
       predicate:
         LazyPropertiesInterface.$properties
-          .optionalLazyToResolvedIriInterfaceProperty["identifier"],
+          .optionalLazyToResolvedIriIdentifierInterfaceProperty["identifier"],
       subject,
     });
     triples.push(
       ...$NamedDefaultPartial.$sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
-          `${variablePrefix}OptionalLazyToResolvedIriInterfaceProperty`,
+          `${variablePrefix}OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
         ),
-        variablePrefix: `${variablePrefix}OptionalLazyToResolvedIriInterfaceProperty`,
+        variablePrefix: `${variablePrefix}OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
       }),
     );
     triples.push({
@@ -17611,11 +17697,13 @@ export namespace LazyPropertiesInterface {
             triples: [
               {
                 object: dataFactory.variable!(
-                  `${variablePrefix}OptionalLazyToResolvedIriInterfaceProperty`,
+                  `${variablePrefix}OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
                 ),
                 predicate:
                   LazyPropertiesInterface.$properties
-                    .optionalLazyToResolvedIriInterfaceProperty["identifier"],
+                    .optionalLazyToResolvedIriIdentifierInterfaceProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -17625,9 +17713,9 @@ export namespace LazyPropertiesInterface {
             ignoreRdfType: true,
             preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
-              `${variablePrefix}OptionalLazyToResolvedIriInterfaceProperty`,
+              `${variablePrefix}OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
             ),
-            variablePrefix: `${variablePrefix}OptionalLazyToResolvedIriInterfaceProperty`,
+            variablePrefix: `${variablePrefix}OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
           }),
         ],
         type: "optional",
@@ -17860,6 +17948,7 @@ export class PartialClass {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -18335,24 +18424,24 @@ export class LazyPropertiesClass {
   private _$identifier?: LazyPropertiesClass.$Identifier;
   readonly $type = "LazyPropertiesClass";
   readonly optionalLazyToResolvedClassProperty: $LazyOptionalObject<
-    LazilyResolvedBlankNodeOrIriClass.$Identifier,
+    LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
     $DefaultPartial,
-    LazilyResolvedBlankNodeOrIriClass
+    LazilyResolvedBlankNodeOrIriIdentifierClass
   >;
   readonly optionalLazyToResolvedClassUnionProperty: $LazyOptionalObject<
     LazilyResolvedClassUnion.$Identifier,
     $DefaultPartial,
     LazilyResolvedClassUnion
   >;
-  readonly optionalLazyToResolvedIriClassProperty: $LazyOptionalObject<
-    LazilyResolvedIriClass.$Identifier,
+  readonly optionalLazyToResolvedIriIdentifierClassProperty: $LazyOptionalObject<
+    LazilyResolvedIriIdentifierClass.$Identifier,
     $NamedDefaultPartial,
-    LazilyResolvedIriClass
+    LazilyResolvedIriIdentifierClass
   >;
   readonly optionalPartialClassToResolvedClassProperty: $LazyOptionalObject<
-    LazilyResolvedBlankNodeOrIriClass.$Identifier,
+    LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
     PartialClass,
-    LazilyResolvedBlankNodeOrIriClass
+    LazilyResolvedBlankNodeOrIriIdentifierClass
   >;
   readonly optionalPartialClassToResolvedClassUnionProperty: $LazyOptionalObject<
     LazilyResolvedClassUnion.$Identifier,
@@ -18365,36 +18454,36 @@ export class LazyPropertiesClass {
     LazilyResolvedClassUnion
   >;
   readonly requiredLazyToResolvedClassProperty: $LazyRequiredObject<
-    LazilyResolvedBlankNodeOrIriClass.$Identifier,
+    LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
     $DefaultPartial,
-    LazilyResolvedBlankNodeOrIriClass
+    LazilyResolvedBlankNodeOrIriIdentifierClass
   >;
   readonly requiredPartialClassToResolvedClassProperty: $LazyRequiredObject<
-    LazilyResolvedBlankNodeOrIriClass.$Identifier,
+    LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
     PartialClass,
-    LazilyResolvedBlankNodeOrIriClass
+    LazilyResolvedBlankNodeOrIriIdentifierClass
   >;
   readonly setLazyToResolvedClassProperty: $LazyObjectSet<
-    LazilyResolvedBlankNodeOrIriClass.$Identifier,
+    LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
     $DefaultPartial,
-    LazilyResolvedBlankNodeOrIriClass
+    LazilyResolvedBlankNodeOrIriIdentifierClass
   >;
   readonly setPartialClassToResolvedClassProperty: $LazyObjectSet<
-    LazilyResolvedBlankNodeOrIriClass.$Identifier,
+    LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
     PartialClass,
-    LazilyResolvedBlankNodeOrIriClass
+    LazilyResolvedBlankNodeOrIriIdentifierClass
   >;
 
   constructor(parameters: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly optionalLazyToResolvedClassProperty?:
       | $LazyOptionalObject<
-          LazilyResolvedBlankNodeOrIriClass.$Identifier,
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
           $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriClass
+          LazilyResolvedBlankNodeOrIriIdentifierClass
         >
-      | LazilyResolvedBlankNodeOrIriClass
-      | purify.Maybe<LazilyResolvedBlankNodeOrIriClass>;
+      | LazilyResolvedBlankNodeOrIriIdentifierClass
+      | purify.Maybe<LazilyResolvedBlankNodeOrIriIdentifierClass>;
     readonly optionalLazyToResolvedClassUnionProperty?:
       | $LazyOptionalObject<
           LazilyResolvedClassUnion.$Identifier,
@@ -18403,22 +18492,22 @@ export class LazyPropertiesClass {
         >
       | LazilyResolvedClassUnion
       | purify.Maybe<LazilyResolvedClassUnion>;
-    readonly optionalLazyToResolvedIriClassProperty?:
+    readonly optionalLazyToResolvedIriIdentifierClassProperty?:
       | $LazyOptionalObject<
-          LazilyResolvedIriClass.$Identifier,
+          LazilyResolvedIriIdentifierClass.$Identifier,
           $NamedDefaultPartial,
-          LazilyResolvedIriClass
+          LazilyResolvedIriIdentifierClass
         >
-      | LazilyResolvedIriClass
-      | purify.Maybe<LazilyResolvedIriClass>;
+      | LazilyResolvedIriIdentifierClass
+      | purify.Maybe<LazilyResolvedIriIdentifierClass>;
     readonly optionalPartialClassToResolvedClassProperty?:
       | $LazyOptionalObject<
-          LazilyResolvedBlankNodeOrIriClass.$Identifier,
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
           PartialClass,
-          LazilyResolvedBlankNodeOrIriClass
+          LazilyResolvedBlankNodeOrIriIdentifierClass
         >
-      | LazilyResolvedBlankNodeOrIriClass
-      | purify.Maybe<LazilyResolvedBlankNodeOrIriClass>;
+      | LazilyResolvedBlankNodeOrIriIdentifierClass
+      | purify.Maybe<LazilyResolvedBlankNodeOrIriIdentifierClass>;
     readonly optionalPartialClassToResolvedClassUnionProperty?:
       | $LazyOptionalObject<
           LazilyResolvedClassUnion.$Identifier,
@@ -18437,32 +18526,32 @@ export class LazyPropertiesClass {
       | purify.Maybe<LazilyResolvedClassUnion>;
     readonly requiredLazyToResolvedClassProperty:
       | $LazyRequiredObject<
-          LazilyResolvedBlankNodeOrIriClass.$Identifier,
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
           $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriClass
+          LazilyResolvedBlankNodeOrIriIdentifierClass
         >
-      | LazilyResolvedBlankNodeOrIriClass;
+      | LazilyResolvedBlankNodeOrIriIdentifierClass;
     readonly requiredPartialClassToResolvedClassProperty:
       | $LazyRequiredObject<
-          LazilyResolvedBlankNodeOrIriClass.$Identifier,
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
           PartialClass,
-          LazilyResolvedBlankNodeOrIriClass
+          LazilyResolvedBlankNodeOrIriIdentifierClass
         >
-      | LazilyResolvedBlankNodeOrIriClass;
+      | LazilyResolvedBlankNodeOrIriIdentifierClass;
     readonly setLazyToResolvedClassProperty?:
       | $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriClass.$Identifier,
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
           $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriClass
+          LazilyResolvedBlankNodeOrIriIdentifierClass
         >
-      | readonly LazilyResolvedBlankNodeOrIriClass[];
+      | readonly LazilyResolvedBlankNodeOrIriIdentifierClass[];
     readonly setPartialClassToResolvedClassProperty?:
       | $LazyObjectSet<
-          LazilyResolvedBlankNodeOrIriClass.$Identifier,
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
           PartialClass,
-          LazilyResolvedBlankNodeOrIriClass
+          LazilyResolvedBlankNodeOrIriIdentifierClass
         >
-      | readonly LazilyResolvedBlankNodeOrIriClass[];
+      | readonly LazilyResolvedBlankNodeOrIriIdentifierClass[];
   }) {
     if (typeof parameters.$identifier === "object") {
       this._$identifier = parameters.$identifier;
@@ -18484,9 +18573,9 @@ export class LazyPropertiesClass {
       purify.Maybe.isMaybe(parameters.optionalLazyToResolvedClassProperty)
     ) {
       this.optionalLazyToResolvedClassProperty = new $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >({
         partial: parameters.optionalLazyToResolvedClassProperty.map(
           (object) => new $DefaultPartial(object),
@@ -18494,7 +18583,7 @@ export class LazyPropertiesClass {
         resolver: async () =>
           purify.Either.of(
             (
-              parameters.optionalLazyToResolvedClassProperty as purify.Maybe<LazilyResolvedBlankNodeOrIriClass>
+              parameters.optionalLazyToResolvedClassProperty as purify.Maybe<LazilyResolvedBlankNodeOrIriIdentifierClass>
             ).unsafeCoerce(),
           ),
       });
@@ -18502,25 +18591,25 @@ export class LazyPropertiesClass {
       typeof parameters.optionalLazyToResolvedClassProperty === "object"
     ) {
       this.optionalLazyToResolvedClassProperty = new $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >({
         partial: purify.Maybe.of(
           new $DefaultPartial(parameters.optionalLazyToResolvedClassProperty),
         ),
         resolver: async () =>
           purify.Either.of(
-            parameters.optionalLazyToResolvedClassProperty as LazilyResolvedBlankNodeOrIriClass,
+            parameters.optionalLazyToResolvedClassProperty as LazilyResolvedBlankNodeOrIriIdentifierClass,
           ),
       });
     } else if (
       typeof parameters.optionalLazyToResolvedClassProperty === "undefined"
     ) {
       this.optionalLazyToResolvedClassProperty = new $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >({
         partial: purify.Maybe.empty(),
         resolver: async () => {
@@ -18594,64 +18683,73 @@ export class LazyPropertiesClass {
     }
 
     if (
-      typeof parameters.optionalLazyToResolvedIriClassProperty === "object" &&
-      parameters.optionalLazyToResolvedIriClassProperty instanceof
+      typeof parameters.optionalLazyToResolvedIriIdentifierClassProperty ===
+        "object" &&
+      parameters.optionalLazyToResolvedIriIdentifierClassProperty instanceof
         $LazyOptionalObject
     ) {
-      this.optionalLazyToResolvedIriClassProperty =
-        parameters.optionalLazyToResolvedIriClassProperty;
+      this.optionalLazyToResolvedIriIdentifierClassProperty =
+        parameters.optionalLazyToResolvedIriIdentifierClassProperty;
     } else if (
-      purify.Maybe.isMaybe(parameters.optionalLazyToResolvedIriClassProperty)
+      purify.Maybe.isMaybe(
+        parameters.optionalLazyToResolvedIriIdentifierClassProperty,
+      )
     ) {
-      this.optionalLazyToResolvedIriClassProperty = new $LazyOptionalObject<
-        LazilyResolvedIriClass.$Identifier,
-        $NamedDefaultPartial,
-        LazilyResolvedIriClass
-      >({
-        partial: parameters.optionalLazyToResolvedIriClassProperty.map(
-          (object) => new $NamedDefaultPartial(object),
-        ),
-        resolver: async () =>
-          purify.Either.of(
-            (
-              parameters.optionalLazyToResolvedIriClassProperty as purify.Maybe<LazilyResolvedIriClass>
-            ).unsafeCoerce(),
-          ),
-      });
+      this.optionalLazyToResolvedIriIdentifierClassProperty =
+        new $LazyOptionalObject<
+          LazilyResolvedIriIdentifierClass.$Identifier,
+          $NamedDefaultPartial,
+          LazilyResolvedIriIdentifierClass
+        >({
+          partial:
+            parameters.optionalLazyToResolvedIriIdentifierClassProperty.map(
+              (object) => new $NamedDefaultPartial(object),
+            ),
+          resolver: async () =>
+            purify.Either.of(
+              (
+                parameters.optionalLazyToResolvedIriIdentifierClassProperty as purify.Maybe<LazilyResolvedIriIdentifierClass>
+              ).unsafeCoerce(),
+            ),
+        });
     } else if (
-      typeof parameters.optionalLazyToResolvedIriClassProperty === "object"
+      typeof parameters.optionalLazyToResolvedIriIdentifierClassProperty ===
+      "object"
     ) {
-      this.optionalLazyToResolvedIriClassProperty = new $LazyOptionalObject<
-        LazilyResolvedIriClass.$Identifier,
-        $NamedDefaultPartial,
-        LazilyResolvedIriClass
-      >({
-        partial: purify.Maybe.of(
-          new $NamedDefaultPartial(
-            parameters.optionalLazyToResolvedIriClassProperty,
+      this.optionalLazyToResolvedIriIdentifierClassProperty =
+        new $LazyOptionalObject<
+          LazilyResolvedIriIdentifierClass.$Identifier,
+          $NamedDefaultPartial,
+          LazilyResolvedIriIdentifierClass
+        >({
+          partial: purify.Maybe.of(
+            new $NamedDefaultPartial(
+              parameters.optionalLazyToResolvedIriIdentifierClassProperty,
+            ),
           ),
-        ),
-        resolver: async () =>
-          purify.Either.of(
-            parameters.optionalLazyToResolvedIriClassProperty as LazilyResolvedIriClass,
-          ),
-      });
+          resolver: async () =>
+            purify.Either.of(
+              parameters.optionalLazyToResolvedIriIdentifierClassProperty as LazilyResolvedIriIdentifierClass,
+            ),
+        });
     } else if (
-      typeof parameters.optionalLazyToResolvedIriClassProperty === "undefined"
+      typeof parameters.optionalLazyToResolvedIriIdentifierClassProperty ===
+      "undefined"
     ) {
-      this.optionalLazyToResolvedIriClassProperty = new $LazyOptionalObject<
-        LazilyResolvedIriClass.$Identifier,
-        $NamedDefaultPartial,
-        LazilyResolvedIriClass
-      >({
-        partial: purify.Maybe.empty(),
-        resolver: async () => {
-          throw new Error("should never be called");
-        },
-      });
+      this.optionalLazyToResolvedIriIdentifierClassProperty =
+        new $LazyOptionalObject<
+          LazilyResolvedIriIdentifierClass.$Identifier,
+          $NamedDefaultPartial,
+          LazilyResolvedIriIdentifierClass
+        >({
+          partial: purify.Maybe.empty(),
+          resolver: async () => {
+            throw new Error("should never be called");
+          },
+        });
     } else {
-      this.optionalLazyToResolvedIriClassProperty =
-        parameters.optionalLazyToResolvedIriClassProperty satisfies never;
+      this.optionalLazyToResolvedIriIdentifierClassProperty =
+        parameters.optionalLazyToResolvedIriIdentifierClassProperty satisfies never;
     }
 
     if (
@@ -18669,9 +18767,9 @@ export class LazyPropertiesClass {
     ) {
       this.optionalPartialClassToResolvedClassProperty =
         new $LazyOptionalObject<
-          LazilyResolvedBlankNodeOrIriClass.$Identifier,
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
           PartialClass,
-          LazilyResolvedBlankNodeOrIriClass
+          LazilyResolvedBlankNodeOrIriIdentifierClass
         >({
           partial: parameters.optionalPartialClassToResolvedClassProperty.map(
             (object) => new PartialClass(object),
@@ -18679,7 +18777,7 @@ export class LazyPropertiesClass {
           resolver: async () =>
             purify.Either.of(
               (
-                parameters.optionalPartialClassToResolvedClassProperty as purify.Maybe<LazilyResolvedBlankNodeOrIriClass>
+                parameters.optionalPartialClassToResolvedClassProperty as purify.Maybe<LazilyResolvedBlankNodeOrIriIdentifierClass>
               ).unsafeCoerce(),
             ),
         });
@@ -18688,9 +18786,9 @@ export class LazyPropertiesClass {
     ) {
       this.optionalPartialClassToResolvedClassProperty =
         new $LazyOptionalObject<
-          LazilyResolvedBlankNodeOrIriClass.$Identifier,
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
           PartialClass,
-          LazilyResolvedBlankNodeOrIriClass
+          LazilyResolvedBlankNodeOrIriIdentifierClass
         >({
           partial: purify.Maybe.of(
             new PartialClass(
@@ -18699,7 +18797,7 @@ export class LazyPropertiesClass {
           ),
           resolver: async () =>
             purify.Either.of(
-              parameters.optionalPartialClassToResolvedClassProperty as LazilyResolvedBlankNodeOrIriClass,
+              parameters.optionalPartialClassToResolvedClassProperty as LazilyResolvedBlankNodeOrIriIdentifierClass,
             ),
         });
     } else if (
@@ -18708,9 +18806,9 @@ export class LazyPropertiesClass {
     ) {
       this.optionalPartialClassToResolvedClassProperty =
         new $LazyOptionalObject<
-          LazilyResolvedBlankNodeOrIriClass.$Identifier,
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
           PartialClass,
-          LazilyResolvedBlankNodeOrIriClass
+          LazilyResolvedBlankNodeOrIriIdentifierClass
         >({
           partial: purify.Maybe.empty(),
           resolver: async () => {
@@ -18891,16 +18989,16 @@ export class LazyPropertiesClass {
       typeof parameters.requiredLazyToResolvedClassProperty === "object"
     ) {
       this.requiredLazyToResolvedClassProperty = new $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >({
         partial: new $DefaultPartial(
           parameters.requiredLazyToResolvedClassProperty,
         ),
         resolver: async () =>
           purify.Either.of(
-            parameters.requiredLazyToResolvedClassProperty as LazilyResolvedBlankNodeOrIriClass,
+            parameters.requiredLazyToResolvedClassProperty as LazilyResolvedBlankNodeOrIriIdentifierClass,
           ),
       });
     } else {
@@ -18921,16 +19019,16 @@ export class LazyPropertiesClass {
     ) {
       this.requiredPartialClassToResolvedClassProperty =
         new $LazyRequiredObject<
-          LazilyResolvedBlankNodeOrIriClass.$Identifier,
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
           PartialClass,
-          LazilyResolvedBlankNodeOrIriClass
+          LazilyResolvedBlankNodeOrIriIdentifierClass
         >({
           partial: new PartialClass(
             parameters.requiredPartialClassToResolvedClassProperty,
           ),
           resolver: async () =>
             purify.Either.of(
-              parameters.requiredPartialClassToResolvedClassProperty as LazilyResolvedBlankNodeOrIriClass,
+              parameters.requiredPartialClassToResolvedClassProperty as LazilyResolvedBlankNodeOrIriIdentifierClass,
             ),
         });
     } else {
@@ -18946,25 +19044,25 @@ export class LazyPropertiesClass {
         parameters.setLazyToResolvedClassProperty;
     } else if (typeof parameters.setLazyToResolvedClassProperty === "object") {
       this.setLazyToResolvedClassProperty = new $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >({
         partials: parameters.setLazyToResolvedClassProperty.map(
           (object) => new $DefaultPartial(object),
         ),
         resolver: async () =>
           purify.Either.of(
-            parameters.setLazyToResolvedClassProperty as readonly LazilyResolvedBlankNodeOrIriClass[],
+            parameters.setLazyToResolvedClassProperty as readonly LazilyResolvedBlankNodeOrIriIdentifierClass[],
           ),
       });
     } else if (
       typeof parameters.setLazyToResolvedClassProperty === "undefined"
     ) {
       this.setLazyToResolvedClassProperty = new $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >({
         partials: [],
         resolver: async () => {
@@ -18987,25 +19085,25 @@ export class LazyPropertiesClass {
       typeof parameters.setPartialClassToResolvedClassProperty === "object"
     ) {
       this.setPartialClassToResolvedClassProperty = new $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         PartialClass,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >({
         partials: parameters.setPartialClassToResolvedClassProperty.map(
           (object) => new PartialClass(object),
         ),
         resolver: async () =>
           purify.Either.of(
-            parameters.setPartialClassToResolvedClassProperty as readonly LazilyResolvedBlankNodeOrIriClass[],
+            parameters.setPartialClassToResolvedClassProperty as readonly LazilyResolvedBlankNodeOrIriIdentifierClass[],
           ),
       });
     } else if (
       typeof parameters.setPartialClassToResolvedClassProperty === "undefined"
     ) {
       this.setPartialClassToResolvedClassProperty = new $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         PartialClass,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >({
         partials: [],
         resolver: async () => {
@@ -19022,6 +19120,7 @@ export class LazyPropertiesClass {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -19086,12 +19185,12 @@ export class LazyPropertiesClass {
             left.partial,
             right.partial,
           ))(
-          this.optionalLazyToResolvedIriClassProperty,
-          other.optionalLazyToResolvedIriClassProperty,
+          this.optionalLazyToResolvedIriIdentifierClassProperty,
+          other.optionalLazyToResolvedIriIdentifierClassProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left: this,
           right: other,
-          propertyName: "optionalLazyToResolvedIriClassProperty",
+          propertyName: "optionalLazyToResolvedIriIdentifierClassProperty",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -19231,9 +19330,11 @@ export class LazyPropertiesClass {
     this.optionalLazyToResolvedClassUnionProperty.partial.ifJust((value1) => {
       value1.$hash(_hasher);
     });
-    this.optionalLazyToResolvedIriClassProperty.partial.ifJust((value1) => {
-      value1.$hash(_hasher);
-    });
+    this.optionalLazyToResolvedIriIdentifierClassProperty.partial.ifJust(
+      (value1) => {
+        value1.$hash(_hasher);
+      },
+    );
     this.optionalPartialClassToResolvedClassProperty.partial.ifJust(
       (value1) => {
         value1.$hash(_hasher);
@@ -19278,8 +19379,8 @@ export class LazyPropertiesClass {
           this.optionalLazyToResolvedClassUnionProperty.partial
             .map((item) => item.$toJson())
             .extract(),
-        optionalLazyToResolvedIriClassProperty:
-          this.optionalLazyToResolvedIriClassProperty.partial
+        optionalLazyToResolvedIriIdentifierClassProperty:
+          this.optionalLazyToResolvedIriIdentifierClassProperty.partial
             .map((item) => item.$toJson())
             .extract(),
         optionalPartialClassToResolvedClassProperty:
@@ -19348,10 +19449,9 @@ export class LazyPropertiesClass {
         ]),
     );
     resource.add(
-      LazyPropertiesClass.$properties.optionalLazyToResolvedIriClassProperty[
-        "identifier"
-      ],
-      ...this.optionalLazyToResolvedIriClassProperty.partial
+      LazyPropertiesClass.$properties
+        .optionalLazyToResolvedIriIdentifierClassProperty["identifier"],
+      ...this.optionalLazyToResolvedIriIdentifierClassProperty.partial
         .toList()
         .flatMap((value) => [
           value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
@@ -19461,7 +19561,7 @@ export namespace LazyPropertiesClass {
     readonly $type: "LazyPropertiesClass";
     readonly optionalLazyToResolvedClassProperty?: $DefaultPartial.$Json;
     readonly optionalLazyToResolvedClassUnionProperty?: $DefaultPartial.$Json;
-    readonly optionalLazyToResolvedIriClassProperty?: $NamedDefaultPartial.$Json;
+    readonly optionalLazyToResolvedIriIdentifierClassProperty?: $NamedDefaultPartial.$Json;
     readonly optionalPartialClassToResolvedClassProperty?: PartialClass.$Json;
     readonly optionalPartialClassToResolvedClassUnionProperty?: PartialClass.$Json;
     readonly optionalPartialClassUnionToResolvedClassUnionProperty?:
@@ -19478,24 +19578,24 @@ export namespace LazyPropertiesClass {
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       optionalLazyToResolvedClassProperty: $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >;
       optionalLazyToResolvedClassUnionProperty: $LazyOptionalObject<
         LazilyResolvedClassUnion.$Identifier,
         $DefaultPartial,
         LazilyResolvedClassUnion
       >;
-      optionalLazyToResolvedIriClassProperty: $LazyOptionalObject<
-        LazilyResolvedIriClass.$Identifier,
+      optionalLazyToResolvedIriIdentifierClassProperty: $LazyOptionalObject<
+        LazilyResolvedIriIdentifierClass.$Identifier,
         $NamedDefaultPartial,
-        LazilyResolvedIriClass
+        LazilyResolvedIriIdentifierClass
       >;
       optionalPartialClassToResolvedClassProperty: $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         PartialClass,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >;
       optionalPartialClassToResolvedClassUnionProperty: $LazyOptionalObject<
         LazilyResolvedClassUnion.$Identifier,
@@ -19508,24 +19608,24 @@ export namespace LazyPropertiesClass {
         LazilyResolvedClassUnion
       >;
       requiredLazyToResolvedClassProperty: $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >;
       requiredPartialClassToResolvedClassProperty: $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         PartialClass,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >;
       setLazyToResolvedClassProperty: $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >;
       setPartialClassToResolvedClassProperty: $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         PartialClass,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >;
     }
   > {
@@ -19539,9 +19639,9 @@ export namespace LazyPropertiesClass {
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
     const optionalLazyToResolvedClassProperty = new $LazyOptionalObject<
-      LazilyResolvedBlankNodeOrIriClass.$Identifier,
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
       $DefaultPartial,
-      LazilyResolvedBlankNodeOrIriClass
+      LazilyResolvedBlankNodeOrIriIdentifierClass
     >({
       partial: purify.Maybe.fromNullable(
         $jsonObject["optionalLazyToResolvedClassProperty"],
@@ -19572,27 +19672,28 @@ export namespace LazyPropertiesClass {
           ),
         ),
     });
-    const optionalLazyToResolvedIriClassProperty = new $LazyOptionalObject<
-      LazilyResolvedIriClass.$Identifier,
-      $NamedDefaultPartial,
-      LazilyResolvedIriClass
-    >({
-      partial: purify.Maybe.fromNullable(
-        $jsonObject["optionalLazyToResolvedIriClassProperty"],
-      ).map((item) => $NamedDefaultPartial.$fromJson(item).unsafeCoerce()),
-      resolver: (identifier) =>
-        Promise.resolve(
-          purify.Left(
-            new Error(
-              `unable to resolve identifier ${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON`,
+    const optionalLazyToResolvedIriIdentifierClassProperty =
+      new $LazyOptionalObject<
+        LazilyResolvedIriIdentifierClass.$Identifier,
+        $NamedDefaultPartial,
+        LazilyResolvedIriIdentifierClass
+      >({
+        partial: purify.Maybe.fromNullable(
+          $jsonObject["optionalLazyToResolvedIriIdentifierClassProperty"],
+        ).map((item) => $NamedDefaultPartial.$fromJson(item).unsafeCoerce()),
+        resolver: (identifier) =>
+          Promise.resolve(
+            purify.Left(
+              new Error(
+                `unable to resolve identifier ${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON`,
+              ),
             ),
           ),
-        ),
-    });
+      });
     const optionalPartialClassToResolvedClassProperty = new $LazyOptionalObject<
-      LazilyResolvedBlankNodeOrIriClass.$Identifier,
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
       PartialClass,
-      LazilyResolvedBlankNodeOrIriClass
+      LazilyResolvedBlankNodeOrIriIdentifierClass
     >({
       partial: purify.Maybe.fromNullable(
         $jsonObject["optionalPartialClassToResolvedClassProperty"],
@@ -19643,9 +19744,9 @@ export namespace LazyPropertiesClass {
           ),
       });
     const requiredLazyToResolvedClassProperty = new $LazyRequiredObject<
-      LazilyResolvedBlankNodeOrIriClass.$Identifier,
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
       $DefaultPartial,
-      LazilyResolvedBlankNodeOrIriClass
+      LazilyResolvedBlankNodeOrIriIdentifierClass
     >({
       partial: $DefaultPartial
         .$fromJson($jsonObject["requiredLazyToResolvedClassProperty"])
@@ -19660,9 +19761,9 @@ export namespace LazyPropertiesClass {
         ),
     });
     const requiredPartialClassToResolvedClassProperty = new $LazyRequiredObject<
-      LazilyResolvedBlankNodeOrIriClass.$Identifier,
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
       PartialClass,
-      LazilyResolvedBlankNodeOrIriClass
+      LazilyResolvedBlankNodeOrIriIdentifierClass
     >({
       partial: PartialClass.$fromJson(
         $jsonObject["requiredPartialClassToResolvedClassProperty"],
@@ -19677,9 +19778,9 @@ export namespace LazyPropertiesClass {
         ),
     });
     const setLazyToResolvedClassProperty = new $LazyObjectSet<
-      LazilyResolvedBlankNodeOrIriClass.$Identifier,
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
       $DefaultPartial,
-      LazilyResolvedBlankNodeOrIriClass
+      LazilyResolvedBlankNodeOrIriIdentifierClass
     >({
       partials: $jsonObject["setLazyToResolvedClassProperty"].map((item) =>
         $DefaultPartial.$fromJson(item).unsafeCoerce(),
@@ -19692,9 +19793,9 @@ export namespace LazyPropertiesClass {
         ),
     });
     const setPartialClassToResolvedClassProperty = new $LazyObjectSet<
-      LazilyResolvedBlankNodeOrIriClass.$Identifier,
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
       PartialClass,
-      LazilyResolvedBlankNodeOrIriClass
+      LazilyResolvedBlankNodeOrIriIdentifierClass
     >({
       partials: $jsonObject["setPartialClassToResolvedClassProperty"].map(
         (item) => PartialClass.$fromJson(item).unsafeCoerce(),
@@ -19710,7 +19811,7 @@ export namespace LazyPropertiesClass {
       $identifier,
       optionalLazyToResolvedClassProperty,
       optionalLazyToResolvedClassUnionProperty,
-      optionalLazyToResolvedIriClassProperty,
+      optionalLazyToResolvedIriIdentifierClassProperty,
       optionalPartialClassToResolvedClassProperty,
       optionalPartialClassToResolvedClassUnionProperty,
       optionalPartialClassUnionToResolvedClassUnionProperty,
@@ -19760,7 +19861,7 @@ export namespace LazyPropertiesClass {
           scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedClassUnionProperty`,
         }),
         $NamedDefaultPartial.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedIriClassProperty`,
+          scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedIriIdentifierClassProperty`,
         }),
         PartialClass.$jsonUiSchema({
           scopePrefix: `${scopePrefix}/properties/optionalPartialClassToResolvedClassProperty`,
@@ -19800,7 +19901,7 @@ export namespace LazyPropertiesClass {
       optionalLazyToResolvedClassUnionProperty: $DefaultPartial
         .$jsonZodSchema()
         .optional(),
-      optionalLazyToResolvedIriClassProperty: $NamedDefaultPartial
+      optionalLazyToResolvedIriIdentifierClassProperty: $NamedDefaultPartial
         .$jsonZodSchema()
         .optional(),
       optionalPartialClassToResolvedClassProperty:
@@ -19868,24 +19969,24 @@ export namespace LazyPropertiesClass {
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       optionalLazyToResolvedClassProperty: $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >;
       optionalLazyToResolvedClassUnionProperty: $LazyOptionalObject<
         LazilyResolvedClassUnion.$Identifier,
         $DefaultPartial,
         LazilyResolvedClassUnion
       >;
-      optionalLazyToResolvedIriClassProperty: $LazyOptionalObject<
-        LazilyResolvedIriClass.$Identifier,
+      optionalLazyToResolvedIriIdentifierClassProperty: $LazyOptionalObject<
+        LazilyResolvedIriIdentifierClass.$Identifier,
         $NamedDefaultPartial,
-        LazilyResolvedIriClass
+        LazilyResolvedIriIdentifierClass
       >;
       optionalPartialClassToResolvedClassProperty: $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         PartialClass,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >;
       optionalPartialClassToResolvedClassUnionProperty: $LazyOptionalObject<
         LazilyResolvedClassUnion.$Identifier,
@@ -19898,24 +19999,24 @@ export namespace LazyPropertiesClass {
         LazilyResolvedClassUnion
       >;
       requiredLazyToResolvedClassProperty: $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >;
       requiredPartialClassToResolvedClassProperty: $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         PartialClass,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >;
       setLazyToResolvedClassProperty: $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >;
       setPartialClassToResolvedClassProperty: $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         PartialClass,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >;
     }
   > {
@@ -19923,9 +20024,9 @@ export namespace LazyPropertiesClass {
     const _optionalLazyToResolvedClassPropertyEither: purify.Either<
       Error,
       $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >
     > = purify.Either.of<
       Error,
@@ -19965,13 +20066,15 @@ export namespace LazyPropertiesClass {
         values.map(
           (partial) =>
             new $LazyOptionalObject<
-              LazilyResolvedBlankNodeOrIriClass.$Identifier,
+              LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
               $DefaultPartial,
-              LazilyResolvedBlankNodeOrIriClass
+              LazilyResolvedBlankNodeOrIriIdentifierClass
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
+                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
+                  identifier,
+                ),
             }),
         ),
       )
@@ -20044,19 +20147,21 @@ export namespace LazyPropertiesClass {
 
     const optionalLazyToResolvedClassUnionProperty =
       _optionalLazyToResolvedClassUnionPropertyEither.unsafeCoerce();
-    const _optionalLazyToResolvedIriClassPropertyEither: purify.Either<
+    const _optionalLazyToResolvedIriIdentifierClassPropertyEither: purify.Either<
       Error,
       $LazyOptionalObject<
-        LazilyResolvedIriClass.$Identifier,
+        LazilyResolvedIriIdentifierClass.$Identifier,
         $NamedDefaultPartial,
-        LazilyResolvedIriClass
+        LazilyResolvedIriIdentifierClass
       >
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
     >(
       $resource.values(
-        $properties.optionalLazyToResolvedIriClassProperty["identifier"],
+        $properties.optionalLazyToResolvedIriIdentifierClassProperty[
+          "identifier"
+        ],
         { unique: true },
       ),
     )
@@ -20081,7 +20186,9 @@ export namespace LazyPropertiesClass {
               object: purify.Maybe.empty(),
               predicate:
                 LazyPropertiesClass.$properties
-                  .optionalLazyToResolvedIriClassProperty["identifier"],
+                  .optionalLazyToResolvedIriIdentifierClassProperty[
+                  "identifier"
+                ],
               subject: $resource,
             }),
       )
@@ -20089,29 +20196,29 @@ export namespace LazyPropertiesClass {
         values.map(
           (partial) =>
             new $LazyOptionalObject<
-              LazilyResolvedIriClass.$Identifier,
+              LazilyResolvedIriIdentifierClass.$Identifier,
               $NamedDefaultPartial,
-              LazilyResolvedIriClass
+              LazilyResolvedIriIdentifierClass
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedIriClass(identifier),
+                $objectSet.lazilyResolvedIriIdentifierClass(identifier),
             }),
         ),
       )
       .chain((values) => values.head());
-    if (_optionalLazyToResolvedIriClassPropertyEither.isLeft()) {
-      return _optionalLazyToResolvedIriClassPropertyEither;
+    if (_optionalLazyToResolvedIriIdentifierClassPropertyEither.isLeft()) {
+      return _optionalLazyToResolvedIriIdentifierClassPropertyEither;
     }
 
-    const optionalLazyToResolvedIriClassProperty =
-      _optionalLazyToResolvedIriClassPropertyEither.unsafeCoerce();
+    const optionalLazyToResolvedIriIdentifierClassProperty =
+      _optionalLazyToResolvedIriIdentifierClassPropertyEither.unsafeCoerce();
     const _optionalPartialClassToResolvedClassPropertyEither: purify.Either<
       Error,
       $LazyOptionalObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         PartialClass,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >
     > = purify.Either.of<
       Error,
@@ -20151,13 +20258,15 @@ export namespace LazyPropertiesClass {
         values.map(
           (partial) =>
             new $LazyOptionalObject<
-              LazilyResolvedBlankNodeOrIriClass.$Identifier,
+              LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
               PartialClass,
-              LazilyResolvedBlankNodeOrIriClass
+              LazilyResolvedBlankNodeOrIriIdentifierClass
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
+                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
+                  identifier,
+                ),
             }),
         ),
       )
@@ -20303,9 +20412,9 @@ export namespace LazyPropertiesClass {
     const _requiredLazyToResolvedClassPropertyEither: purify.Either<
       Error,
       $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >
     > = purify.Either.of<
       Error,
@@ -20332,13 +20441,15 @@ export namespace LazyPropertiesClass {
         values.map(
           (partial) =>
             new $LazyRequiredObject<
-              LazilyResolvedBlankNodeOrIriClass.$Identifier,
+              LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
               $DefaultPartial,
-              LazilyResolvedBlankNodeOrIriClass
+              LazilyResolvedBlankNodeOrIriIdentifierClass
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
+                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
+                  identifier,
+                ),
             }),
         ),
       )
@@ -20352,9 +20463,9 @@ export namespace LazyPropertiesClass {
     const _requiredPartialClassToResolvedClassPropertyEither: purify.Either<
       Error,
       $LazyRequiredObject<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         PartialClass,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >
     > = purify.Either.of<
       Error,
@@ -20381,13 +20492,15 @@ export namespace LazyPropertiesClass {
         values.map(
           (partial) =>
             new $LazyRequiredObject<
-              LazilyResolvedBlankNodeOrIriClass.$Identifier,
+              LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
               PartialClass,
-              LazilyResolvedBlankNodeOrIriClass
+              LazilyResolvedBlankNodeOrIriIdentifierClass
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriClass(identifier),
+                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
+                  identifier,
+                ),
             }),
         ),
       )
@@ -20401,9 +20514,9 @@ export namespace LazyPropertiesClass {
     const _setLazyToResolvedClassPropertyEither: purify.Either<
       Error,
       $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >
     > = purify.Either.of<
       Error,
@@ -20441,13 +20554,13 @@ export namespace LazyPropertiesClass {
         values.map(
           (partials) =>
             new $LazyObjectSet<
-              LazilyResolvedBlankNodeOrIriClass.$Identifier,
+              LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
               $DefaultPartial,
-              LazilyResolvedBlankNodeOrIriClass
+              LazilyResolvedBlankNodeOrIriIdentifierClass
             >({
               partials,
               resolver: (identifiers) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriClasses({
+                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierClasses({
                   where: { identifiers, type: "identifiers" },
                 }),
             }),
@@ -20463,9 +20576,9 @@ export namespace LazyPropertiesClass {
     const _setPartialClassToResolvedClassPropertyEither: purify.Either<
       Error,
       $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriClass.$Identifier,
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
         PartialClass,
-        LazilyResolvedBlankNodeOrIriClass
+        LazilyResolvedBlankNodeOrIriIdentifierClass
       >
     > = purify.Either.of<
       Error,
@@ -20502,13 +20615,13 @@ export namespace LazyPropertiesClass {
         values.map(
           (partials) =>
             new $LazyObjectSet<
-              LazilyResolvedBlankNodeOrIriClass.$Identifier,
+              LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
               PartialClass,
-              LazilyResolvedBlankNodeOrIriClass
+              LazilyResolvedBlankNodeOrIriIdentifierClass
             >({
               partials,
               resolver: (identifiers) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriClasses({
+                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierClasses({
                   where: { identifiers, type: "identifiers" },
                 }),
             }),
@@ -20525,7 +20638,7 @@ export namespace LazyPropertiesClass {
       $identifier,
       optionalLazyToResolvedClassProperty,
       optionalLazyToResolvedClassUnionProperty,
-      optionalLazyToResolvedIriClassProperty,
+      optionalLazyToResolvedIriIdentifierClassProperty,
       optionalPartialClassToResolvedClassProperty,
       optionalPartialClassToResolvedClassUnionProperty,
       optionalPartialClassUnionToResolvedClassUnionProperty,
@@ -20547,9 +20660,9 @@ export namespace LazyPropertiesClass {
         "http://example.com/optionalLazyToResolvedClassUnionProperty",
       ),
     },
-    optionalLazyToResolvedIriClassProperty: {
+    optionalLazyToResolvedIriIdentifierClassProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/optionalLazyToResolvedIriClassProperty",
+        "http://example.com/optionalLazyToResolvedIriIdentifierClassProperty",
       ),
     },
     optionalPartialClassToResolvedClassProperty: {
@@ -20685,21 +20798,20 @@ export namespace LazyPropertiesClass {
     );
     triples.push({
       object: dataFactory.variable!(
-        `${variablePrefix}OptionalLazyToResolvedIriClassProperty`,
+        `${variablePrefix}OptionalLazyToResolvedIriIdentifierClassProperty`,
       ),
       predicate:
-        LazyPropertiesClass.$properties.optionalLazyToResolvedIriClassProperty[
-          "identifier"
-        ],
+        LazyPropertiesClass.$properties
+          .optionalLazyToResolvedIriIdentifierClassProperty["identifier"],
       subject,
     });
     triples.push(
       ...$NamedDefaultPartial.$sparqlConstructTemplateTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
-          `${variablePrefix}OptionalLazyToResolvedIriClassProperty`,
+          `${variablePrefix}OptionalLazyToResolvedIriIdentifierClassProperty`,
         ),
-        variablePrefix: `${variablePrefix}OptionalLazyToResolvedIriClassProperty`,
+        variablePrefix: `${variablePrefix}OptionalLazyToResolvedIriIdentifierClassProperty`,
       }),
     );
     triples.push({
@@ -20907,11 +21019,13 @@ export namespace LazyPropertiesClass {
             triples: [
               {
                 object: dataFactory.variable!(
-                  `${variablePrefix}OptionalLazyToResolvedIriClassProperty`,
+                  `${variablePrefix}OptionalLazyToResolvedIriIdentifierClassProperty`,
                 ),
                 predicate:
                   LazyPropertiesClass.$properties
-                    .optionalLazyToResolvedIriClassProperty["identifier"],
+                    .optionalLazyToResolvedIriIdentifierClassProperty[
+                    "identifier"
+                  ],
                 subject,
               },
             ],
@@ -20921,9 +21035,9 @@ export namespace LazyPropertiesClass {
             ignoreRdfType: true,
             preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
-              `${variablePrefix}OptionalLazyToResolvedIriClassProperty`,
+              `${variablePrefix}OptionalLazyToResolvedIriIdentifierClassProperty`,
             ),
-            variablePrefix: `${variablePrefix}OptionalLazyToResolvedIriClassProperty`,
+            variablePrefix: `${variablePrefix}OptionalLazyToResolvedIriIdentifierClassProperty`,
           }),
         ],
         type: "optional",
@@ -21125,18 +21239,18 @@ export namespace LazyPropertiesClass {
 /**
  * Node shape resolved by LazyPropertiesInterface
  */
-export interface LazilyResolvedIriInterface {
-  readonly $identifier: LazilyResolvedIriInterface.$Identifier;
-  readonly $type: "LazilyResolvedIriInterface";
+export interface LazilyResolvedIriIdentifierInterface {
+  readonly $identifier: LazilyResolvedIriIdentifierInterface.$Identifier;
+  readonly $type: "LazilyResolvedIriIdentifierInterface";
   readonly lazilyResolvedStringProperty: string;
 }
 
-export namespace LazilyResolvedIriInterface {
+export namespace LazilyResolvedIriIdentifierInterface {
   export function $create(parameters: {
     readonly $identifier: rdfjs.NamedNode | string;
     readonly lazilyResolvedStringProperty: string;
-  }): LazilyResolvedIriInterface {
-    let $identifier: LazilyResolvedIriInterface.$Identifier;
+  }): LazilyResolvedIriIdentifierInterface {
+    let $identifier: LazilyResolvedIriIdentifierInterface.$Identifier;
     if (typeof parameters.$identifier === "object") {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
@@ -21145,15 +21259,15 @@ export namespace LazilyResolvedIriInterface {
       $identifier = parameters.$identifier satisfies never;
     }
 
-    const $type = "LazilyResolvedIriInterface" as const;
+    const $type = "LazilyResolvedIriIdentifierInterface" as const;
     const lazilyResolvedStringProperty =
       parameters.lazilyResolvedStringProperty;
     return { $identifier, $type, lazilyResolvedStringProperty };
   }
 
   export function $equals(
-    left: LazilyResolvedIriInterface,
-    right: LazilyResolvedIriInterface,
+    left: LazilyResolvedIriIdentifierInterface,
+    right: LazilyResolvedIriIdentifierInterface,
   ): $EqualsResult {
     return $booleanEquals(left.$identifier, right.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -21212,7 +21326,7 @@ export namespace LazilyResolvedIriInterface {
 
   export type $Json = {
     readonly "@id": string;
-    readonly $type: "LazilyResolvedIriInterface";
+    readonly $type: "LazilyResolvedIriIdentifierInterface";
     readonly lazilyResolvedStringProperty: string;
   };
 
@@ -21220,7 +21334,7 @@ export namespace LazilyResolvedIriInterface {
     zod.ZodError,
     {
       $identifier: rdfjs.NamedNode;
-      $type: "LazilyResolvedIriInterface";
+      $type: "LazilyResolvedIriIdentifierInterface";
       lazilyResolvedStringProperty: string;
     }
   > {
@@ -21231,7 +21345,7 @@ export namespace LazilyResolvedIriInterface {
 
     const $jsonObject = $jsonSafeParseResult.data;
     const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    const $type = "LazilyResolvedIriInterface" as const;
+    const $type = "LazilyResolvedIriIdentifierInterface" as const;
     const lazilyResolvedStringProperty =
       $jsonObject["lazilyResolvedStringProperty"];
     return purify.Either.of({
@@ -21243,7 +21357,7 @@ export namespace LazilyResolvedIriInterface {
 
   export function $fromJson(
     json: unknown,
-  ): purify.Either<zod.ZodError, LazilyResolvedIriInterface> {
+  ): purify.Either<zod.ZodError, LazilyResolvedIriIdentifierInterface> {
     return $propertiesFromJson(json);
   }
 
@@ -21263,7 +21377,7 @@ export namespace LazilyResolvedIriInterface {
         {
           rule: {
             condition: {
-              schema: { const: "LazilyResolvedIriInterface" },
+              schema: { const: "LazilyResolvedIriIdentifierInterface" },
               scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
@@ -21276,28 +21390,28 @@ export namespace LazilyResolvedIriInterface {
           type: "Control",
         },
       ],
-      label: "LazilyResolvedIriInterface",
+      label: "LazilyResolvedIriIdentifierInterface",
       type: "Group",
     };
   }
 
   export function $toJson(
-    _lazilyResolvedIriInterface: LazilyResolvedIriInterface,
-  ): LazilyResolvedIriInterface.$Json {
+    _lazilyResolvedIriIdentifierInterface: LazilyResolvedIriIdentifierInterface,
+  ): LazilyResolvedIriIdentifierInterface.$Json {
     return JSON.parse(
       JSON.stringify({
-        "@id": _lazilyResolvedIriInterface.$identifier.value,
-        $type: _lazilyResolvedIriInterface.$type,
+        "@id": _lazilyResolvedIriIdentifierInterface.$identifier.value,
+        $type: _lazilyResolvedIriIdentifierInterface.$type,
         lazilyResolvedStringProperty:
-          _lazilyResolvedIriInterface.lazilyResolvedStringProperty,
-      } satisfies LazilyResolvedIriInterface.$Json),
+          _lazilyResolvedIriIdentifierInterface.lazilyResolvedStringProperty,
+      } satisfies LazilyResolvedIriIdentifierInterface.$Json),
     );
   }
 
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      $type: zod.literal("LazilyResolvedIriInterface"),
+      $type: zod.literal("LazilyResolvedIriIdentifierInterface"),
       lazilyResolvedStringProperty: zod.string(),
     }) satisfies zod.ZodType<$Json>;
   }
@@ -21307,13 +21421,13 @@ export namespace LazilyResolvedIriInterface {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(
-    _lazilyResolvedIriInterface: LazilyResolvedIriInterface,
+    _lazilyResolvedIriIdentifierInterface: LazilyResolvedIriIdentifierInterface,
     _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_lazilyResolvedIriInterface.$identifier.value);
-    _hasher.update(_lazilyResolvedIriInterface.$type);
-    LazilyResolvedIriInterface.$hashShaclProperties(
-      _lazilyResolvedIriInterface,
+    _hasher.update(_lazilyResolvedIriIdentifierInterface.$identifier.value);
+    _hasher.update(_lazilyResolvedIriIdentifierInterface.$type);
+    LazilyResolvedIriIdentifierInterface.$hashShaclProperties(
+      _lazilyResolvedIriIdentifierInterface,
       _hasher,
     );
     return _hasher;
@@ -21324,10 +21438,12 @@ export namespace LazilyResolvedIriInterface {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(
-    _lazilyResolvedIriInterface: LazilyResolvedIriInterface,
+    _lazilyResolvedIriIdentifierInterface: LazilyResolvedIriIdentifierInterface,
     _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_lazilyResolvedIriInterface.lazilyResolvedStringProperty);
+    _hasher.update(
+      _lazilyResolvedIriIdentifierInterface.lazilyResolvedStringProperty,
+    );
     return _hasher;
   }
 
@@ -21339,7 +21455,7 @@ export namespace LazilyResolvedIriInterface {
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
-  ): purify.Either<Error, LazilyResolvedIriInterface> {
+  ): purify.Either<Error, LazilyResolvedIriIdentifierInterface> {
     let {
       ignoreRdfType = false,
       objectSet,
@@ -21350,7 +21466,7 @@ export namespace LazilyResolvedIriInterface {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
-    return LazilyResolvedIriInterface.$propertiesFromRdf({
+    return LazilyResolvedIriIdentifierInterface.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
       objectSet,
@@ -21376,7 +21492,7 @@ export namespace LazilyResolvedIriInterface {
     Error,
     {
       $identifier: rdfjs.NamedNode;
-      $type: "LazilyResolvedIriInterface";
+      $type: "LazilyResolvedIriIdentifierInterface";
       lazilyResolvedStringProperty: string;
     }
   > {
@@ -21391,9 +21507,9 @@ export namespace LazilyResolvedIriInterface {
       );
     }
 
-    const $identifier: LazilyResolvedIriInterface.$Identifier =
+    const $identifier: LazilyResolvedIriIdentifierInterface.$Identifier =
       $resource.identifier;
-    const $type = "LazilyResolvedIriInterface" as const;
+    const $type = "LazilyResolvedIriIdentifierInterface" as const;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
@@ -21448,7 +21564,7 @@ export namespace LazilyResolvedIriInterface {
                 new rdfjsResource.Resource.Value({
                   object: literalValue,
                   predicate:
-                    LazilyResolvedIriInterface.$properties
+                    LazilyResolvedIriIdentifierInterface.$properties
                       .lazilyResolvedStringProperty["identifier"],
                   subject: $resource,
                 }),
@@ -21471,7 +21587,7 @@ export namespace LazilyResolvedIriInterface {
   }
 
   export function $toRdf(
-    _lazilyResolvedIriInterface: LazilyResolvedIriInterface,
+    _lazilyResolvedIriIdentifierInterface: LazilyResolvedIriIdentifierInterface,
     options?: {
       ignoreRdfType?: boolean;
       mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
@@ -21486,14 +21602,13 @@ export namespace LazilyResolvedIriInterface {
         dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableNamedResource(
-      _lazilyResolvedIriInterface.$identifier,
+      _lazilyResolvedIriIdentifierInterface.$identifier,
       { mutateGraph },
     );
     resource.add(
-      LazilyResolvedIriInterface.$properties.lazilyResolvedStringProperty[
-        "identifier"
-      ],
-      ...[_lazilyResolvedIriInterface.lazilyResolvedStringProperty],
+      LazilyResolvedIriIdentifierInterface.$properties
+        .lazilyResolvedStringProperty["identifier"],
+      ...[_lazilyResolvedIriIdentifierInterface.lazilyResolvedStringProperty],
     );
     return resource;
   }
@@ -21522,14 +21637,14 @@ export namespace LazilyResolvedIriInterface {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        LazilyResolvedIriInterface.$sparqlConstructTemplateTriples({
+        LazilyResolvedIriIdentifierInterface.$sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LazilyResolvedIriInterface.$sparqlWherePatterns({
+        LazilyResolvedIriIdentifierInterface.$sparqlWherePatterns({
           ignoreRdfType,
           preferredLanguages,
           subject,
@@ -21548,7 +21663,7 @@ export namespace LazilyResolvedIriInterface {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      LazilyResolvedIriInterface.$sparqlConstructQuery(parameters),
+      LazilyResolvedIriIdentifierInterface.$sparqlConstructQuery(parameters),
     );
   }
 
@@ -21559,21 +21674,20 @@ export namespace LazilyResolvedIriInterface {
   }): readonly sparqljs.Triple[] {
     const subject =
       parameters?.subject ??
-      dataFactory.variable!("lazilyResolvedIriInterface");
+      dataFactory.variable!("lazilyResolvedIriIdentifierInterface");
     const triples: sparqljs.Triple[] = [];
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable"
         ? subject.value
-        : "lazilyResolvedIriInterface");
+        : "lazilyResolvedIriIdentifierInterface");
     triples.push({
       object: dataFactory.variable!(
         `${variablePrefix}LazilyResolvedStringProperty`,
       ),
       predicate:
-        LazilyResolvedIriInterface.$properties.lazilyResolvedStringProperty[
-          "identifier"
-        ],
+        LazilyResolvedIriIdentifierInterface.$properties
+          .lazilyResolvedStringProperty["identifier"],
       subject,
     });
     return triples;
@@ -21589,12 +21703,12 @@ export namespace LazilyResolvedIriInterface {
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
-      dataFactory.variable!("lazilyResolvedIriInterface");
+      dataFactory.variable!("lazilyResolvedIriIdentifierInterface");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable"
         ? subject.value
-        : "lazilyResolvedIriInterface");
+        : "lazilyResolvedIriIdentifierInterface");
     const propertyPatterns: readonly sparqljs.Pattern[] = [
       {
         triples: [
@@ -21603,7 +21717,7 @@ export namespace LazilyResolvedIriInterface {
               `${variablePrefix}LazilyResolvedStringProperty`,
             ),
             predicate:
-              LazilyResolvedIriInterface.$properties
+              LazilyResolvedIriIdentifierInterface.$properties
                 .lazilyResolvedStringProperty["identifier"],
             subject,
           },
@@ -21661,9 +21775,9 @@ export namespace LazilyResolvedIriInterface {
 /**
  * Node shape resolved by LazyPropertiesClass
  */
-export class LazilyResolvedIriClass {
-  readonly $identifier: LazilyResolvedIriClass.$Identifier;
-  readonly $type = "LazilyResolvedIriClass";
+export class LazilyResolvedIriIdentifierClass {
+  readonly $identifier: LazilyResolvedIriIdentifierClass.$Identifier;
+  readonly $type = "LazilyResolvedIriIdentifierClass";
   readonly lazilyResolvedStringProperty: string;
 
   constructor(parameters: {
@@ -21681,7 +21795,7 @@ export class LazilyResolvedIriClass {
     this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
   }
 
-  $equals(other: LazilyResolvedIriClass): $EqualsResult {
+  $equals(other: LazilyResolvedIriIdentifierClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
@@ -21735,13 +21849,13 @@ export class LazilyResolvedIriClass {
     return _hasher;
   }
 
-  $toJson(): LazilyResolvedIriClass.$Json {
+  $toJson(): LazilyResolvedIriIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
         "@id": this.$identifier.value,
         $type: this.$type,
         lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
-      } satisfies LazilyResolvedIriClass.$Json),
+      } satisfies LazilyResolvedIriIdentifierClass.$Json),
     );
   }
 
@@ -21761,7 +21875,7 @@ export class LazilyResolvedIriClass {
       mutateGraph,
     });
     resource.add(
-      LazilyResolvedIriClass.$properties.lazilyResolvedStringProperty[
+      LazilyResolvedIriIdentifierClass.$properties.lazilyResolvedStringProperty[
         "identifier"
       ],
       ...[this.lazilyResolvedStringProperty],
@@ -21774,7 +21888,7 @@ export class LazilyResolvedIriClass {
   }
 }
 
-export namespace LazilyResolvedIriClass {
+export namespace LazilyResolvedIriIdentifierClass {
   export type $Identifier = rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -21799,7 +21913,7 @@ export namespace LazilyResolvedIriClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly $type: "LazilyResolvedIriClass";
+    readonly $type: "LazilyResolvedIriIdentifierClass";
     readonly lazilyResolvedStringProperty: string;
   };
 
@@ -21823,9 +21937,9 @@ export namespace LazilyResolvedIriClass {
 
   export function $fromJson(
     json: unknown,
-  ): purify.Either<zod.ZodError, LazilyResolvedIriClass> {
+  ): purify.Either<zod.ZodError, LazilyResolvedIriIdentifierClass> {
     return $propertiesFromJson(json).map(
-      (properties) => new LazilyResolvedIriClass(properties),
+      (properties) => new LazilyResolvedIriIdentifierClass(properties),
     );
   }
 
@@ -21845,7 +21959,7 @@ export namespace LazilyResolvedIriClass {
         {
           rule: {
             condition: {
-              schema: { const: "LazilyResolvedIriClass" },
+              schema: { const: "LazilyResolvedIriIdentifierClass" },
               scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
@@ -21858,7 +21972,7 @@ export namespace LazilyResolvedIriClass {
           type: "Control",
         },
       ],
-      label: "LazilyResolvedIriClass",
+      label: "LazilyResolvedIriIdentifierClass",
       type: "Group",
     };
   }
@@ -21866,7 +21980,7 @@ export namespace LazilyResolvedIriClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      $type: zod.literal("LazilyResolvedIriClass"),
+      $type: zod.literal("LazilyResolvedIriIdentifierClass"),
       lazilyResolvedStringProperty: zod.string(),
     }) satisfies zod.ZodType<$Json>;
   }
@@ -21879,7 +21993,7 @@ export namespace LazilyResolvedIriClass {
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
-  ): purify.Either<Error, LazilyResolvedIriClass> {
+  ): purify.Either<Error, LazilyResolvedIriIdentifierClass> {
     let {
       ignoreRdfType = false,
       objectSet,
@@ -21890,13 +22004,13 @@ export namespace LazilyResolvedIriClass {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
-    return LazilyResolvedIriClass.$propertiesFromRdf({
+    return LazilyResolvedIriIdentifierClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
       resource,
-    }).map((properties) => new LazilyResolvedIriClass(properties));
+    }).map((properties) => new LazilyResolvedIriIdentifierClass(properties));
   }
 
   export function $propertiesFromRdf({
@@ -21927,7 +22041,7 @@ export namespace LazilyResolvedIriClass {
       );
     }
 
-    const $identifier: LazilyResolvedIriClass.$Identifier =
+    const $identifier: LazilyResolvedIriIdentifierClass.$Identifier =
       $resource.identifier;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
@@ -21983,7 +22097,7 @@ export namespace LazilyResolvedIriClass {
                 new rdfjsResource.Resource.Value({
                   object: literalValue,
                   predicate:
-                    LazilyResolvedIriClass.$properties
+                    LazilyResolvedIriIdentifierClass.$properties
                       .lazilyResolvedStringProperty["identifier"],
                   subject: $resource,
                 }),
@@ -22025,14 +22139,14 @@ export namespace LazilyResolvedIriClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        LazilyResolvedIriClass.$sparqlConstructTemplateTriples({
+        LazilyResolvedIriIdentifierClass.$sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LazilyResolvedIriClass.$sparqlWherePatterns({
+        LazilyResolvedIriIdentifierClass.$sparqlWherePatterns({
           ignoreRdfType,
           preferredLanguages,
           subject,
@@ -22051,7 +22165,7 @@ export namespace LazilyResolvedIriClass {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      LazilyResolvedIriClass.$sparqlConstructQuery(parameters),
+      LazilyResolvedIriIdentifierClass.$sparqlConstructQuery(parameters),
     );
   }
 
@@ -22061,21 +22175,21 @@ export namespace LazilyResolvedIriClass {
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     const subject =
-      parameters?.subject ?? dataFactory.variable!("lazilyResolvedIriClass");
+      parameters?.subject ??
+      dataFactory.variable!("lazilyResolvedIriIdentifierClass");
     const triples: sparqljs.Triple[] = [];
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable"
         ? subject.value
-        : "lazilyResolvedIriClass");
+        : "lazilyResolvedIriIdentifierClass");
     triples.push({
       object: dataFactory.variable!(
         `${variablePrefix}LazilyResolvedStringProperty`,
       ),
       predicate:
-        LazilyResolvedIriClass.$properties.lazilyResolvedStringProperty[
-          "identifier"
-        ],
+        LazilyResolvedIriIdentifierClass.$properties
+          .lazilyResolvedStringProperty["identifier"],
       subject,
     });
     return triples;
@@ -22090,12 +22204,13 @@ export namespace LazilyResolvedIriClass {
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
-      parameters?.subject ?? dataFactory.variable!("lazilyResolvedIriClass");
+      parameters?.subject ??
+      dataFactory.variable!("lazilyResolvedIriIdentifierClass");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable"
         ? subject.value
-        : "lazilyResolvedIriClass");
+        : "lazilyResolvedIriIdentifierClass");
     const propertyPatterns: readonly sparqljs.Pattern[] = [
       {
         triples: [
@@ -22104,9 +22219,8 @@ export namespace LazilyResolvedIriClass {
               `${variablePrefix}LazilyResolvedStringProperty`,
             ),
             predicate:
-              LazilyResolvedIriClass.$properties.lazilyResolvedStringProperty[
-                "identifier"
-              ],
+              LazilyResolvedIriIdentifierClass.$properties
+                .lazilyResolvedStringProperty["identifier"],
             subject,
           },
         ],
@@ -23433,6 +23547,7 @@ export class LazilyResolvedClassUnionMember2 {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -24030,6 +24145,7 @@ export class LazilyResolvedClassUnionMember1 {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -24605,18 +24721,18 @@ export namespace LazilyResolvedClassUnionMember1 {
 /**
  * Node shape resolved by LazyPropertiesInterface
  */
-export interface LazilyResolvedBlankNodeOrIriInterface {
-  readonly $identifier: LazilyResolvedBlankNodeOrIriInterface.$Identifier;
-  readonly $type: "LazilyResolvedBlankNodeOrIriInterface";
+export interface LazilyResolvedBlankNodeOrIriIdentifierInterface {
+  readonly $identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier;
+  readonly $type: "LazilyResolvedBlankNodeOrIriIdentifierInterface";
   readonly lazilyResolvedStringProperty: string;
 }
 
-export namespace LazilyResolvedBlankNodeOrIriInterface {
+export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
   export function $create(parameters: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly lazilyResolvedStringProperty: string;
-  }): LazilyResolvedBlankNodeOrIriInterface {
-    let $identifier: LazilyResolvedBlankNodeOrIriInterface.$Identifier;
+  }): LazilyResolvedBlankNodeOrIriIdentifierInterface {
+    let $identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier;
     if (typeof parameters.$identifier === "object") {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
@@ -24627,15 +24743,15 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
       $identifier = parameters.$identifier satisfies never;
     }
 
-    const $type = "LazilyResolvedBlankNodeOrIriInterface" as const;
+    const $type = "LazilyResolvedBlankNodeOrIriIdentifierInterface" as const;
     const lazilyResolvedStringProperty =
       parameters.lazilyResolvedStringProperty;
     return { $identifier, $type, lazilyResolvedStringProperty };
   }
 
   export function $equals(
-    left: LazilyResolvedBlankNodeOrIriInterface,
-    right: LazilyResolvedBlankNodeOrIriInterface,
+    left: LazilyResolvedBlankNodeOrIriIdentifierInterface,
+    right: LazilyResolvedBlankNodeOrIriIdentifierInterface,
   ): $EqualsResult {
     return $booleanEquals(left.$identifier, right.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -24671,7 +24787,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
   }
 
   export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/LazilyResolvedBlankNodeOrIriInterface",
+    "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface",
   );
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
@@ -24693,7 +24809,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
 
   export type $Json = {
     readonly "@id": string;
-    readonly $type: "LazilyResolvedBlankNodeOrIriInterface";
+    readonly $type: "LazilyResolvedBlankNodeOrIriIdentifierInterface";
     readonly lazilyResolvedStringProperty: string;
   };
 
@@ -24701,7 +24817,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      $type: "LazilyResolvedBlankNodeOrIriInterface";
+      $type: "LazilyResolvedBlankNodeOrIriIdentifierInterface";
       lazilyResolvedStringProperty: string;
     }
   > {
@@ -24714,7 +24830,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    const $type = "LazilyResolvedBlankNodeOrIriInterface" as const;
+    const $type = "LazilyResolvedBlankNodeOrIriIdentifierInterface" as const;
     const lazilyResolvedStringProperty =
       $jsonObject["lazilyResolvedStringProperty"];
     return purify.Either.of({
@@ -24726,7 +24842,10 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
 
   export function $fromJson(
     json: unknown,
-  ): purify.Either<zod.ZodError, LazilyResolvedBlankNodeOrIriInterface> {
+  ): purify.Either<
+    zod.ZodError,
+    LazilyResolvedBlankNodeOrIriIdentifierInterface
+  > {
     return $propertiesFromJson(json);
   }
 
@@ -24746,7 +24865,9 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
         {
           rule: {
             condition: {
-              schema: { const: "LazilyResolvedBlankNodeOrIriInterface" },
+              schema: {
+                const: "LazilyResolvedBlankNodeOrIriIdentifierInterface",
+              },
               scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
@@ -24759,32 +24880,33 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
           type: "Control",
         },
       ],
-      label: "LazilyResolvedBlankNodeOrIriInterface",
+      label: "LazilyResolvedBlankNodeOrIriIdentifierInterface",
       type: "Group",
     };
   }
 
   export function $toJson(
-    _lazilyResolvedBlankNodeOrIriInterface: LazilyResolvedBlankNodeOrIriInterface,
-  ): LazilyResolvedBlankNodeOrIriInterface.$Json {
+    _lazilyResolvedBlankNodeOrIriIdentifierInterface: LazilyResolvedBlankNodeOrIriIdentifierInterface,
+  ): LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _lazilyResolvedBlankNodeOrIriInterface.$identifier.termType ===
-          "BlankNode"
-            ? `_:${_lazilyResolvedBlankNodeOrIriInterface.$identifier.value}`
-            : _lazilyResolvedBlankNodeOrIriInterface.$identifier.value,
-        $type: _lazilyResolvedBlankNodeOrIriInterface.$type,
+          _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier
+            .termType === "BlankNode"
+            ? `_:${_lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier.value}`
+            : _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier
+                .value,
+        $type: _lazilyResolvedBlankNodeOrIriIdentifierInterface.$type,
         lazilyResolvedStringProperty:
-          _lazilyResolvedBlankNodeOrIriInterface.lazilyResolvedStringProperty,
-      } satisfies LazilyResolvedBlankNodeOrIriInterface.$Json),
+          _lazilyResolvedBlankNodeOrIriIdentifierInterface.lazilyResolvedStringProperty,
+      } satisfies LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json),
     );
   }
 
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      $type: zod.literal("LazilyResolvedBlankNodeOrIriInterface"),
+      $type: zod.literal("LazilyResolvedBlankNodeOrIriIdentifierInterface"),
       lazilyResolvedStringProperty: zod.string(),
     }) satisfies zod.ZodType<$Json>;
   }
@@ -24794,13 +24916,15 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(
-    _lazilyResolvedBlankNodeOrIriInterface: LazilyResolvedBlankNodeOrIriInterface,
+    _lazilyResolvedBlankNodeOrIriIdentifierInterface: LazilyResolvedBlankNodeOrIriIdentifierInterface,
     _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_lazilyResolvedBlankNodeOrIriInterface.$identifier.value);
-    _hasher.update(_lazilyResolvedBlankNodeOrIriInterface.$type);
-    LazilyResolvedBlankNodeOrIriInterface.$hashShaclProperties(
-      _lazilyResolvedBlankNodeOrIriInterface,
+    _hasher.update(
+      _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier.value,
+    );
+    _hasher.update(_lazilyResolvedBlankNodeOrIriIdentifierInterface.$type);
+    LazilyResolvedBlankNodeOrIriIdentifierInterface.$hashShaclProperties(
+      _lazilyResolvedBlankNodeOrIriIdentifierInterface,
       _hasher,
     );
     return _hasher;
@@ -24811,11 +24935,11 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(
-    _lazilyResolvedBlankNodeOrIriInterface: LazilyResolvedBlankNodeOrIriInterface,
+    _lazilyResolvedBlankNodeOrIriIdentifierInterface: LazilyResolvedBlankNodeOrIriIdentifierInterface,
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(
-      _lazilyResolvedBlankNodeOrIriInterface.lazilyResolvedStringProperty,
+      _lazilyResolvedBlankNodeOrIriIdentifierInterface.lazilyResolvedStringProperty,
     );
     return _hasher;
   }
@@ -24828,7 +24952,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
-  ): purify.Either<Error, LazilyResolvedBlankNodeOrIriInterface> {
+  ): purify.Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface> {
     let {
       ignoreRdfType = false,
       objectSet,
@@ -24839,7 +24963,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
-    return LazilyResolvedBlankNodeOrIriInterface.$propertiesFromRdf({
+    return LazilyResolvedBlankNodeOrIriIdentifierInterface.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
       objectSet,
@@ -24865,7 +24989,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
     Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      $type: "LazilyResolvedBlankNodeOrIriInterface";
+      $type: "LazilyResolvedBlankNodeOrIriIdentifierInterface";
       lazilyResolvedStringProperty: string;
     }
   > {
@@ -24876,14 +25000,14 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
         .chain((actualRdfType) => {
           // Check the expected type and its known subtypes
           switch (actualRdfType.value) {
-            case "http://example.com/LazilyResolvedBlankNodeOrIriInterface":
+            case "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface":
               return purify.Either.of(true);
           }
 
           // Check arbitrary rdfs:subClassOf's of the expected type
           if (
             $resource.isInstanceOf(
-              LazilyResolvedBlankNodeOrIriInterface.$fromRdfType,
+              LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdfType,
             )
           ) {
             return purify.Either.of(true);
@@ -24891,7 +25015,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedBlankNodeOrIriInterface)`,
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface)`,
             ),
           );
         });
@@ -24900,9 +25024,9 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
       }
     }
 
-    const $identifier: LazilyResolvedBlankNodeOrIriInterface.$Identifier =
+    const $identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier =
       $resource.identifier;
-    const $type = "LazilyResolvedBlankNodeOrIriInterface" as const;
+    const $type = "LazilyResolvedBlankNodeOrIriIdentifierInterface" as const;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
@@ -24957,7 +25081,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
                 new rdfjsResource.Resource.Value({
                   object: literalValue,
                   predicate:
-                    LazilyResolvedBlankNodeOrIriInterface.$properties
+                    LazilyResolvedBlankNodeOrIriIdentifierInterface.$properties
                       .lazilyResolvedStringProperty["identifier"],
                   subject: $resource,
                 }),
@@ -24980,7 +25104,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
   }
 
   export function $toRdf(
-    _lazilyResolvedBlankNodeOrIriInterface: LazilyResolvedBlankNodeOrIriInterface,
+    _lazilyResolvedBlankNodeOrIriIdentifierInterface: LazilyResolvedBlankNodeOrIriIdentifierInterface,
     options?: {
       ignoreRdfType?: boolean;
       mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
@@ -24996,22 +25120,24 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
         dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.mutableResource(
-      _lazilyResolvedBlankNodeOrIriInterface.$identifier,
+      _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier,
       { mutateGraph },
     );
     if (!ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         resource.dataFactory.namedNode(
-          "http://example.com/LazilyResolvedBlankNodeOrIriInterface",
+          "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface",
         ),
       );
     }
 
     resource.add(
-      LazilyResolvedBlankNodeOrIriInterface.$properties
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$properties
         .lazilyResolvedStringProperty["identifier"],
-      ...[_lazilyResolvedBlankNodeOrIriInterface.lazilyResolvedStringProperty],
+      ...[
+        _lazilyResolvedBlankNodeOrIriIdentifierInterface.lazilyResolvedStringProperty,
+      ],
     );
     return resource;
   }
@@ -25040,14 +25166,13 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        LazilyResolvedBlankNodeOrIriInterface.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$sparqlConstructTemplateTriples(
+          { ignoreRdfType, subject },
+        ),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LazilyResolvedBlankNodeOrIriInterface.$sparqlWherePatterns({
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$sparqlWherePatterns({
           ignoreRdfType,
           preferredLanguages,
           subject,
@@ -25066,7 +25191,9 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      LazilyResolvedBlankNodeOrIriInterface.$sparqlConstructQuery(parameters),
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$sparqlConstructQuery(
+        parameters,
+      ),
     );
   }
 
@@ -25077,13 +25204,13 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
   }): readonly sparqljs.Triple[] {
     const subject =
       parameters?.subject ??
-      dataFactory.variable!("lazilyResolvedBlankNodeOrIriInterface");
+      dataFactory.variable!("lazilyResolvedBlankNodeOrIriIdentifierInterface");
     const triples: sparqljs.Triple[] = [];
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable"
         ? subject.value
-        : "lazilyResolvedBlankNodeOrIriInterface");
+        : "lazilyResolvedBlankNodeOrIriIdentifierInterface");
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
@@ -25104,7 +25231,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
         `${variablePrefix}LazilyResolvedStringProperty`,
       ),
       predicate:
-        LazilyResolvedBlankNodeOrIriInterface.$properties
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$properties
           .lazilyResolvedStringProperty["identifier"],
       subject,
     });
@@ -25121,17 +25248,17 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
-      dataFactory.variable!("lazilyResolvedBlankNodeOrIriInterface");
+      dataFactory.variable!("lazilyResolvedBlankNodeOrIriIdentifierInterface");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable"
         ? subject.value
-        : "lazilyResolvedBlankNodeOrIriInterface");
+        : "lazilyResolvedBlankNodeOrIriIdentifierInterface");
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: LazilyResolvedBlankNodeOrIriInterface.$fromRdfType,
+          rdfType: LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdfType,
           subject,
         }),
         {
@@ -25174,7 +25301,7 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
               `${variablePrefix}LazilyResolvedStringProperty`,
             ),
             predicate:
-              LazilyResolvedBlankNodeOrIriInterface.$properties
+              LazilyResolvedBlankNodeOrIriIdentifierInterface.$properties
                 .lazilyResolvedStringProperty["identifier"],
             subject,
           },
@@ -25232,9 +25359,9 @@ export namespace LazilyResolvedBlankNodeOrIriInterface {
 /**
  * Node shape resolved by LazyPropertiesClass
  */
-export class LazilyResolvedBlankNodeOrIriClass {
-  private _$identifier?: LazilyResolvedBlankNodeOrIriClass.$Identifier;
-  readonly $type = "LazilyResolvedBlankNodeOrIriClass";
+export class LazilyResolvedBlankNodeOrIriIdentifierClass {
+  private _$identifier?: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier;
+  readonly $type = "LazilyResolvedBlankNodeOrIriIdentifierClass";
   readonly lazilyResolvedStringProperty: string;
 
   constructor(parameters: {
@@ -25253,14 +25380,15 @@ export class LazilyResolvedBlankNodeOrIriClass {
     this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
   }
 
-  get $identifier(): LazilyResolvedBlankNodeOrIriClass.$Identifier {
+  get $identifier(): LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
-  $equals(other: LazilyResolvedBlankNodeOrIriClass): $EqualsResult {
+  $equals(other: LazilyResolvedBlankNodeOrIriIdentifierClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
@@ -25314,7 +25442,7 @@ export class LazilyResolvedBlankNodeOrIriClass {
     return _hasher;
   }
 
-  $toJson(): LazilyResolvedBlankNodeOrIriClass.$Json {
+  $toJson(): LazilyResolvedBlankNodeOrIriIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
         "@id":
@@ -25323,7 +25451,7 @@ export class LazilyResolvedBlankNodeOrIriClass {
             : this.$identifier.value,
         $type: this.$type,
         lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
-      } satisfies LazilyResolvedBlankNodeOrIriClass.$Json),
+      } satisfies LazilyResolvedBlankNodeOrIriIdentifierClass.$Json),
     );
   }
 
@@ -25347,13 +25475,13 @@ export class LazilyResolvedBlankNodeOrIriClass {
       resource.add(
         $RdfVocabularies.rdf.type,
         resource.dataFactory.namedNode(
-          "http://example.com/LazilyResolvedBlankNodeOrIriClass",
+          "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass",
         ),
       );
     }
 
     resource.add(
-      LazilyResolvedBlankNodeOrIriClass.$properties
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$properties
         .lazilyResolvedStringProperty["identifier"],
       ...[this.lazilyResolvedStringProperty],
     );
@@ -25365,9 +25493,9 @@ export class LazilyResolvedBlankNodeOrIriClass {
   }
 }
 
-export namespace LazilyResolvedBlankNodeOrIriClass {
+export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
   export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/LazilyResolvedBlankNodeOrIriClass",
+    "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass",
   );
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
@@ -25389,7 +25517,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly $type: "LazilyResolvedBlankNodeOrIriClass";
+    readonly $type: "LazilyResolvedBlankNodeOrIriIdentifierClass";
     readonly lazilyResolvedStringProperty: string;
   };
 
@@ -25416,9 +25544,10 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
 
   export function $fromJson(
     json: unknown,
-  ): purify.Either<zod.ZodError, LazilyResolvedBlankNodeOrIriClass> {
+  ): purify.Either<zod.ZodError, LazilyResolvedBlankNodeOrIriIdentifierClass> {
     return $propertiesFromJson(json).map(
-      (properties) => new LazilyResolvedBlankNodeOrIriClass(properties),
+      (properties) =>
+        new LazilyResolvedBlankNodeOrIriIdentifierClass(properties),
     );
   }
 
@@ -25438,7 +25567,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
         {
           rule: {
             condition: {
-              schema: { const: "LazilyResolvedBlankNodeOrIriClass" },
+              schema: { const: "LazilyResolvedBlankNodeOrIriIdentifierClass" },
               scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
@@ -25451,7 +25580,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
           type: "Control",
         },
       ],
-      label: "LazilyResolvedBlankNodeOrIriClass",
+      label: "LazilyResolvedBlankNodeOrIriIdentifierClass",
       type: "Group",
     };
   }
@@ -25459,7 +25588,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      $type: zod.literal("LazilyResolvedBlankNodeOrIriClass"),
+      $type: zod.literal("LazilyResolvedBlankNodeOrIriIdentifierClass"),
       lazilyResolvedStringProperty: zod.string(),
     }) satisfies zod.ZodType<$Json>;
   }
@@ -25472,7 +25601,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
-  ): purify.Either<Error, LazilyResolvedBlankNodeOrIriClass> {
+  ): purify.Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass> {
     let {
       ignoreRdfType = false,
       objectSet,
@@ -25483,13 +25612,16 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
-    return LazilyResolvedBlankNodeOrIriClass.$propertiesFromRdf({
+    return LazilyResolvedBlankNodeOrIriIdentifierClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
       resource,
-    }).map((properties) => new LazilyResolvedBlankNodeOrIriClass(properties));
+    }).map(
+      (properties) =>
+        new LazilyResolvedBlankNodeOrIriIdentifierClass(properties),
+    );
   }
 
   export function $propertiesFromRdf({
@@ -25519,14 +25651,14 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
         .chain((actualRdfType) => {
           // Check the expected type and its known subtypes
           switch (actualRdfType.value) {
-            case "http://example.com/LazilyResolvedBlankNodeOrIriClass":
+            case "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass":
               return purify.Either.of(true);
           }
 
           // Check arbitrary rdfs:subClassOf's of the expected type
           if (
             $resource.isInstanceOf(
-              LazilyResolvedBlankNodeOrIriClass.$fromRdfType,
+              LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdfType,
             )
           ) {
             return purify.Either.of(true);
@@ -25534,7 +25666,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedBlankNodeOrIriClass)`,
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass)`,
             ),
           );
         });
@@ -25543,7 +25675,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
       }
     }
 
-    const $identifier: LazilyResolvedBlankNodeOrIriClass.$Identifier =
+    const $identifier: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier =
       $resource.identifier;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
@@ -25599,7 +25731,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
                 new rdfjsResource.Resource.Value({
                   object: literalValue,
                   predicate:
-                    LazilyResolvedBlankNodeOrIriClass.$properties
+                    LazilyResolvedBlankNodeOrIriIdentifierClass.$properties
                       .lazilyResolvedStringProperty["identifier"],
                   subject: $resource,
                 }),
@@ -25641,14 +25773,13 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        LazilyResolvedBlankNodeOrIriClass.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$sparqlConstructTemplateTriples(
+          { ignoreRdfType, subject },
+        ),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LazilyResolvedBlankNodeOrIriClass.$sparqlWherePatterns({
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$sparqlWherePatterns({
           ignoreRdfType,
           preferredLanguages,
           subject,
@@ -25667,7 +25798,9 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      LazilyResolvedBlankNodeOrIriClass.$sparqlConstructQuery(parameters),
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$sparqlConstructQuery(
+        parameters,
+      ),
     );
   }
 
@@ -25678,13 +25811,13 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
   }): readonly sparqljs.Triple[] {
     const subject =
       parameters?.subject ??
-      dataFactory.variable!("lazilyResolvedBlankNodeOrIriClass");
+      dataFactory.variable!("lazilyResolvedBlankNodeOrIriIdentifierClass");
     const triples: sparqljs.Triple[] = [];
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable"
         ? subject.value
-        : "lazilyResolvedBlankNodeOrIriClass");
+        : "lazilyResolvedBlankNodeOrIriIdentifierClass");
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
@@ -25705,7 +25838,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
         `${variablePrefix}LazilyResolvedStringProperty`,
       ),
       predicate:
-        LazilyResolvedBlankNodeOrIriClass.$properties
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$properties
           .lazilyResolvedStringProperty["identifier"],
       subject,
     });
@@ -25722,17 +25855,17 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
-      dataFactory.variable!("lazilyResolvedBlankNodeOrIriClass");
+      dataFactory.variable!("lazilyResolvedBlankNodeOrIriIdentifierClass");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable"
         ? subject.value
-        : "lazilyResolvedBlankNodeOrIriClass");
+        : "lazilyResolvedBlankNodeOrIriIdentifierClass");
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: LazilyResolvedBlankNodeOrIriClass.$fromRdfType,
+          rdfType: LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdfType,
           subject,
         }),
         {
@@ -25775,7 +25908,7 @@ export namespace LazilyResolvedBlankNodeOrIriClass {
               `${variablePrefix}LazilyResolvedStringProperty`,
             ),
             predicate:
-              LazilyResolvedBlankNodeOrIriClass.$properties
+              LazilyResolvedBlankNodeOrIriIdentifierClass.$properties
                 .lazilyResolvedStringProperty["identifier"],
             subject,
           },
@@ -25867,6 +26000,7 @@ export class LanguageInPropertiesClass {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -26667,9 +26801,334 @@ export namespace LanguageInPropertiesClass {
 /**
  * A node shape that only allows IRI identifiers.
  */
-export class IriClass {
-  readonly $identifier: IriClass.$Identifier;
-  readonly $type = "IriClass";
+export interface IriIdentifierInterface {
+  readonly $identifier: IriIdentifierInterface.$Identifier;
+  readonly $type: "IriIdentifierInterface";
+}
+
+export namespace IriIdentifierInterface {
+  export function $create(parameters: {
+    readonly $identifier: rdfjs.NamedNode | string;
+  }): IriIdentifierInterface {
+    let $identifier: IriIdentifierInterface.$Identifier;
+    if (typeof parameters.$identifier === "object") {
+      $identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      $identifier = dataFactory.namedNode(parameters.$identifier);
+    } else {
+      $identifier = parameters.$identifier satisfies never;
+    }
+
+    const $type = "IriIdentifierInterface" as const;
+    return { $identifier, $type };
+  }
+
+  export function $equals(
+    left: IriIdentifierInterface,
+    right: IriIdentifierInterface,
+  ): $EqualsResult {
+    return $booleanEquals(left.$identifier, right.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: left,
+        right: right,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(left.$type, right.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: left,
+            right: right,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      );
+  }
+
+  export type $Identifier = rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjs.NamedNode> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? purify.Either.of(identifier)
+          : purify.Left(new Error("expected identifier to be NamedNode")),
+      ) as purify.Either<Error, rdfjs.NamedNode>;
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "IriIdentifierInterface";
+  };
+
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { $identifier: rdfjs.NamedNode; $type: "IriIdentifierInterface" }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
+    const $type = "IriIdentifierInterface" as const;
+    return purify.Either.of({ $identifier, $type });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, IriIdentifierInterface> {
+    return $propertiesFromJson(json);
+  }
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "IriIdentifierInterface" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+      ],
+      label: "IriIdentifierInterface",
+      type: "Group",
+    };
+  }
+
+  export function $toJson(
+    _iriIdentifierInterface: IriIdentifierInterface,
+  ): IriIdentifierInterface.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id": _iriIdentifierInterface.$identifier.value,
+        $type: _iriIdentifierInterface.$type,
+      } satisfies IriIdentifierInterface.$Json),
+    );
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("IriIdentifierInterface"),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(
+    _iriIdentifierInterface: IriIdentifierInterface,
+    _hasher: HasherT,
+  ): HasherT {
+    _hasher.update(_iriIdentifierInterface.$identifier.value);
+    _hasher.update(_iriIdentifierInterface.$type);
+    IriIdentifierInterface.$hashShaclProperties(
+      _iriIdentifierInterface,
+      _hasher,
+    );
+    return _hasher;
+  }
+
+  export function $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(
+    _iriIdentifierInterface: IriIdentifierInterface,
+    _hasher: HasherT,
+  ): HasherT {
+    return _hasher;
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, IriIdentifierInterface> {
+    let {
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return IriIdentifierInterface.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    });
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    { $identifier: rdfjs.NamedNode; $type: "IriIdentifierInterface" }
+  > {
+    if ($resource.identifier.termType !== "NamedNode") {
+      return purify.Left(
+        new rdfjsResource.Resource.MistypedValueError({
+          actualValue: $resource.identifier,
+          expectedValueType: "(rdfjs.NamedNode)",
+          focusResource: $resource,
+          predicate: $RdfVocabularies.rdf.subject,
+        }),
+      );
+    }
+
+    const $identifier: IriIdentifierInterface.$Identifier =
+      $resource.identifier;
+    const $type = "IriIdentifierInterface" as const;
+    return purify.Either.of({ $identifier, $type });
+  }
+
+  export function $toRdf(
+    _iriIdentifierInterface: IriIdentifierInterface,
+    options?: {
+      ignoreRdfType?: boolean;
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource<rdfjs.NamedNode> {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = resourceSet.mutableNamedResource(
+      _iriIdentifierInterface.$identifier,
+      { mutateGraph },
+    );
+    return resource;
+  }
+
+  export const $properties = {};
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        IriIdentifierInterface.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        IriIdentifierInterface.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      IriIdentifierInterface.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(_parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    return [];
+  }
+
+  export function $sparqlWherePatterns(_parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    return [];
+  }
+}
+/**
+ * A node shape that only allows IRI identifiers.
+ */
+export class IriIdentifierClass {
+  readonly $identifier: IriIdentifierClass.$Identifier;
+  readonly $type = "IriIdentifierClass";
 
   constructor(parameters: { readonly $identifier: rdfjs.NamedNode | string }) {
     if (typeof parameters.$identifier === "object") {
@@ -26681,7 +27140,7 @@ export class IriClass {
     }
   }
 
-  $equals(other: IriClass): $EqualsResult {
+  $equals(other: IriIdentifierClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
@@ -26722,12 +27181,12 @@ export class IriClass {
     return _hasher;
   }
 
-  $toJson(): IriClass.$Json {
+  $toJson(): IriIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
         "@id": this.$identifier.value,
         $type: this.$type,
-      } satisfies IriClass.$Json),
+      } satisfies IriIdentifierClass.$Json),
     );
   }
 
@@ -26754,7 +27213,7 @@ export class IriClass {
   }
 }
 
-export namespace IriClass {
+export namespace IriIdentifierClass {
   export type $Identifier = rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -26777,7 +27236,10 @@ export namespace IriClass {
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
-  export type $Json = { readonly "@id": string; readonly $type: "IriClass" };
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "IriIdentifierClass";
+  };
 
   export function $propertiesFromJson(
     _json: unknown,
@@ -26794,9 +27256,9 @@ export namespace IriClass {
 
   export function $fromJson(
     json: unknown,
-  ): purify.Either<zod.ZodError, IriClass> {
+  ): purify.Either<zod.ZodError, IriIdentifierClass> {
     return $propertiesFromJson(json).map(
-      (properties) => new IriClass(properties),
+      (properties) => new IriIdentifierClass(properties),
     );
   }
 
@@ -26816,7 +27278,7 @@ export namespace IriClass {
         {
           rule: {
             condition: {
-              schema: { const: "IriClass" },
+              schema: { const: "IriIdentifierClass" },
               scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
@@ -26825,7 +27287,7 @@ export namespace IriClass {
           type: "Control",
         },
       ],
-      label: "IriClass",
+      label: "IriIdentifierClass",
       type: "Group",
     };
   }
@@ -26833,7 +27295,7 @@ export namespace IriClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      $type: zod.literal("IriClass"),
+      $type: zod.literal("IriIdentifierClass"),
     }) satisfies zod.ZodType<$Json>;
   }
 
@@ -26845,7 +27307,7 @@ export namespace IriClass {
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
-  ): purify.Either<Error, IriClass> {
+  ): purify.Either<Error, IriIdentifierClass> {
     let {
       ignoreRdfType = false,
       objectSet,
@@ -26856,13 +27318,13 @@ export namespace IriClass {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
-    return IriClass.$propertiesFromRdf({
+    return IriIdentifierClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
       resource,
-    }).map((properties) => new IriClass(properties));
+    }).map((properties) => new IriIdentifierClass(properties));
   }
 
   export function $propertiesFromRdf({
@@ -26890,7 +27352,7 @@ export namespace IriClass {
       );
     }
 
-    const $identifier: IriClass.$Identifier = $resource.identifier;
+    const $identifier: IriIdentifierClass.$Identifier = $resource.identifier;
     return purify.Either.of({ $identifier });
   }
 
@@ -26912,11 +27374,14 @@ export namespace IriClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        IriClass.$sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+        IriIdentifierClass.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        IriClass.$sparqlWherePatterns({
+        IriIdentifierClass.$sparqlWherePatterns({
           ignoreRdfType,
           preferredLanguages,
           subject,
@@ -26935,7 +27400,7 @@ export namespace IriClass {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      IriClass.$sparqlConstructQuery(parameters),
+      IriIdentifierClass.$sparqlConstructQuery(parameters),
     );
   }
 
@@ -29030,6 +29495,7 @@ export class IndirectRecursiveHelperClass {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -29452,6 +29918,7 @@ export class IndirectRecursiveClass {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -29946,6 +30413,7 @@ export class InPropertiesClass {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -31551,6 +32019,1960 @@ export namespace InIdentifierClass {
   }
 }
 /**
+ * Node shape for testing identifier type overriding: blank node or IRI identifier, abstract
+ */
+export abstract class IdentifierOverride1Class {
+  protected _$identifier?: IdentifierOverride1ClassStatic.$Identifier;
+  abstract readonly $type:
+    | "IdentifierOverride3Class"
+    | "IdentifierOverride4Class"
+    | "IdentifierOverride5Class";
+  readonly identifierOverrideProperty: string;
+
+  constructor(parameters: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly identifierOverrideProperty: string;
+  }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+
+    this.identifierOverrideProperty = parameters.identifierOverrideProperty;
+  }
+
+  get $identifier(): IdentifierOverride1ClassStatic.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+
+    return this._$identifier;
+  }
+
+  $equals(other: IdentifierOverride1Class): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(
+          this.identifierOverrideProperty,
+          other.identifierOverrideProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "identifierOverrideProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.identifierOverrideProperty);
+    return _hasher;
+  }
+
+  $toJson(): IdentifierOverride1ClassStatic.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        identifierOverrideProperty: this.identifierOverrideProperty,
+      } satisfies IdentifierOverride1ClassStatic.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet?: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
+      mutateGraph,
+    });
+    resource.add(
+      IdentifierOverride1ClassStatic.$properties.identifierOverrideProperty[
+        "identifier"
+      ],
+      ...[this.identifierOverrideProperty],
+    );
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace IdentifierOverride1ClassStatic {
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type:
+      | "IdentifierOverride3Class"
+      | "IdentifierOverride4Class"
+      | "IdentifierOverride5Class";
+    readonly identifierOverrideProperty: string;
+  };
+
+  export function $propertiesFromJson(_json: unknown): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      identifierOverrideProperty: string;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const identifierOverrideProperty =
+      $jsonObject["identifierOverrideProperty"];
+    return purify.Either.of({ $identifier, identifierOverrideProperty });
+  }
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "IdentifierOverride1Class" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/identifierOverrideProperty`,
+          type: "Control",
+        },
+      ],
+      label: "IdentifierOverride1Class",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.enum([
+        "IdentifierOverride3Class",
+        "IdentifierOverride4Class",
+        "IdentifierOverride5Class",
+      ]),
+      identifierOverrideProperty: zod.string(),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      identifierOverrideProperty: string;
+    }
+  > {
+    const $identifier: IdentifierOverride1ClassStatic.$Identifier =
+      $resource.identifier;
+    const _identifierOverridePropertyEither: purify.Either<Error, string> =
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      >(
+        $resource.values($properties.identifierOverrideProperty["identifier"], {
+          unique: true,
+        }),
+      )
+        .chain((values) => {
+          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+            return purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            >(values);
+          }
+
+          const literalValuesEither = values.chainMap((value) =>
+            value.toLiteral(),
+          );
+          if (literalValuesEither.isLeft()) {
+            return literalValuesEither;
+          }
+          const literalValues = literalValuesEither.unsafeCoerce();
+
+          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+          // Within a preferredLanguage the literals may be in any order.
+          let filteredLiteralValues:
+            | rdfjsResource.Resource.Values<rdfjs.Literal>
+            | undefined;
+          for (const preferredLanguage of $preferredLanguages) {
+            if (!filteredLiteralValues) {
+              filteredLiteralValues = literalValues.filter(
+                (value) => value.language === preferredLanguage,
+              );
+            } else {
+              filteredLiteralValues = filteredLiteralValues.concat(
+                ...literalValues
+                  .filter((value) => value.language === preferredLanguage)
+                  .toArray(),
+              );
+            }
+          }
+
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(
+            filteredLiteralValues!.map(
+              (literalValue) =>
+                new rdfjsResource.Resource.Value({
+                  object: literalValue,
+                  predicate:
+                    IdentifierOverride1ClassStatic.$properties
+                      .identifierOverrideProperty["identifier"],
+                  subject: $resource,
+                }),
+            ),
+          );
+        })
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head());
+    if (_identifierOverridePropertyEither.isLeft()) {
+      return _identifierOverridePropertyEither;
+    }
+
+    const identifierOverrideProperty =
+      _identifierOverridePropertyEither.unsafeCoerce();
+    return purify.Either.of({ $identifier, identifierOverrideProperty });
+  }
+
+  export const $properties = {
+    identifierOverrideProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/identifierOverrideProperty",
+      ),
+    },
+  };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        IdentifierOverride1ClassStatic.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        IdentifierOverride1ClassStatic.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      IdentifierOverride1ClassStatic.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("identifierOverride1Class");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "identifierOverride1Class");
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}IdentifierOverrideProperty`,
+      ),
+      predicate:
+        IdentifierOverride1ClassStatic.$properties.identifierOverrideProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("identifierOverride1Class");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "identifierOverride1Class");
+    const propertyPatterns: readonly sparqljs.Pattern[] = [
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(
+              `${variablePrefix}IdentifierOverrideProperty`,
+            ),
+            predicate:
+              IdentifierOverride1ClassStatic.$properties
+                .identifierOverrideProperty["identifier"],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}IdentifierOverrideProperty`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
+    ];
+    for (const pattern of propertyPatterns) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+/**
+ * Node shape for testing identifier type overriding: blank node or IRI identifier, abstract
+ */
+export abstract class IdentifierOverride2Class extends IdentifierOverride1Class {
+  abstract override readonly $type:
+    | "IdentifierOverride3Class"
+    | "IdentifierOverride4Class"
+    | "IdentifierOverride5Class";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: ConstructorParameters<typeof IdentifierOverride1Class>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get $identifier(): IdentifierOverride2ClassStatic.$Identifier {
+    const identifier = super.$identifier;
+    if (identifier.termType !== "NamedNode") {
+      throw new Error(
+        `expected identifier to be NamedNode, not ${identifier.termType}`,
+      );
+    }
+
+    return identifier;
+  }
+
+  override $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet?: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = super.$toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    return resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace IdentifierOverride2ClassStatic {
+  export type $Identifier = rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjs.NamedNode> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      ).chain((identifier) =>
+        identifier.termType === "NamedNode"
+          ? purify.Either.of(identifier)
+          : purify.Left(new Error("expected identifier to be NamedNode")),
+      ) as purify.Either<Error, rdfjs.NamedNode>;
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = IdentifierOverride1ClassStatic.$Json;
+
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { $identifier: rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IdentifierOverride1ClassStatic.$propertiesFromJson>
+    >
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either =
+      IdentifierOverride1ClassStatic.$propertiesFromJson($jsonObject);
+    if ($super0Either.isLeft()) {
+      return $super0Either;
+    }
+
+    const $super0 = $super0Either.unsafeCoerce();
+    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
+    return purify.Either.of({ ...$super0, $identifier });
+  }
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [IdentifierOverride1ClassStatic.$jsonUiSchema({ scopePrefix })],
+      label: "IdentifierOverride2Class",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return IdentifierOverride1ClassStatic.$jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        $type: zod.enum([
+          "IdentifierOverride3Class",
+          "IdentifierOverride4Class",
+          "IdentifierOverride5Class",
+        ]),
+      }),
+    ) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    { $identifier: rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IdentifierOverride1ClassStatic.$propertiesFromRdf>
+    >
+  > {
+    const $super0Either = IdentifierOverride1ClassStatic.$propertiesFromRdf({
+      ...$context,
+      ignoreRdfType: true,
+      objectSet: $objectSet,
+      preferredLanguages: $preferredLanguages,
+      resource: $resource,
+    });
+    if ($super0Either.isLeft()) {
+      return $super0Either;
+    }
+
+    const $super0 = $super0Either.unsafeCoerce();
+    if ($resource.identifier.termType !== "NamedNode") {
+      return purify.Left(
+        new rdfjsResource.Resource.MistypedValueError({
+          actualValue: $resource.identifier,
+          expectedValueType: "(rdfjs.NamedNode)",
+          focusResource: $resource,
+          predicate: $RdfVocabularies.rdf.subject,
+        }),
+      );
+    }
+
+    const $identifier: IdentifierOverride2ClassStatic.$Identifier =
+      $resource.identifier;
+    return purify.Either.of({ ...$super0, $identifier });
+  }
+
+  export const $properties = { ...IdentifierOverride1ClassStatic.$properties };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        IdentifierOverride2ClassStatic.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        IdentifierOverride2ClassStatic.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      IdentifierOverride2ClassStatic.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("identifierOverride2Class");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "identifierOverride2Class");
+    triples.push(
+      ...IdentifierOverride1ClassStatic.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+    );
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("identifierOverride2Class");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "identifierOverride2Class");
+    for (const pattern of IdentifierOverride1ClassStatic.$sparqlWherePatterns({
+      ignoreRdfType: true,
+      subject,
+      variablePrefix,
+    })) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+/**
+ * Node shape for testing identifier type overriding: IRI identifier, concrete
+ */
+export class IdentifierOverride3Class extends IdentifierOverride2Class {
+  override readonly $type:
+    | "IdentifierOverride3Class"
+    | "IdentifierOverride4Class"
+    | "IdentifierOverride5Class" = "IdentifierOverride3Class";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly $identifier?: rdfjs.NamedNode | string;
+    } & ConstructorParameters<typeof IdentifierOverride2Class>[0],
+  ) {
+    super(parameters);
+  }
+
+  override $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet?: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = super.$toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/IdentifierOverride3Class",
+        ),
+      );
+    }
+
+    return resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace IdentifierOverride3ClassStatic {
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IdentifierOverride3Class",
+  );
+  export type $Identifier = IdentifierOverride2ClassStatic.$Identifier;
+  export const $Identifier = IdentifierOverride2ClassStatic.$Identifier;
+  export type $Json = IdentifierOverride2ClassStatic.$Json;
+
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { $identifier: rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IdentifierOverride2ClassStatic.$propertiesFromJson>
+    >
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either =
+      IdentifierOverride2ClassStatic.$propertiesFromJson($jsonObject);
+    if ($super0Either.isLeft()) {
+      return $super0Either;
+    }
+
+    const $super0 = $super0Either.unsafeCoerce();
+    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
+    return purify.Either.of({ ...$super0, $identifier });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, IdentifierOverride3Class> {
+    return $propertiesFromJson(json).map(
+      (properties) => new IdentifierOverride3Class(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [IdentifierOverride2ClassStatic.$jsonUiSchema({ scopePrefix })],
+      label: "IdentifierOverride3Class",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return IdentifierOverride2ClassStatic.$jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        $type: zod.enum([
+          "IdentifierOverride3Class",
+          "IdentifierOverride4Class",
+          "IdentifierOverride5Class",
+        ]),
+      }),
+    ) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, IdentifierOverride3Class> {
+    let {
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return IdentifierOverride3ClassStatic.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new IdentifierOverride3Class(properties));
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    { $identifier: rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IdentifierOverride2ClassStatic.$propertiesFromRdf>
+    >
+  > {
+    const $super0Either = IdentifierOverride2ClassStatic.$propertiesFromRdf({
+      ...$context,
+      ignoreRdfType: true,
+      objectSet: $objectSet,
+      preferredLanguages: $preferredLanguages,
+      resource: $resource,
+    });
+    if ($super0Either.isLeft()) {
+      return $super0Either;
+    }
+
+    const $super0 = $super0Either.unsafeCoerce();
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+        .value($RdfVocabularies.rdf.type)
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/IdentifierOverride3Class":
+            case "http://example.com/IdentifierOverride4Class":
+            case "http://example.com/IdentifierOverride5Class":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if (
+            $resource.isInstanceOf(IdentifierOverride3ClassStatic.$fromRdfType)
+          ) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IdentifierOverride3Class)`,
+            ),
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
+    }
+
+    if ($resource.identifier.termType !== "NamedNode") {
+      return purify.Left(
+        new rdfjsResource.Resource.MistypedValueError({
+          actualValue: $resource.identifier,
+          expectedValueType: "(rdfjs.NamedNode)",
+          focusResource: $resource,
+          predicate: $RdfVocabularies.rdf.subject,
+        }),
+      );
+    }
+
+    const $identifier: IdentifierOverride3ClassStatic.$Identifier =
+      $resource.identifier;
+    return purify.Either.of({ ...$super0, $identifier });
+  }
+
+  export const $properties = { ...IdentifierOverride2ClassStatic.$properties };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        IdentifierOverride3ClassStatic.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        IdentifierOverride3ClassStatic.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      IdentifierOverride3ClassStatic.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("identifierOverride3Class");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "identifierOverride3Class");
+    triples.push(
+      ...IdentifierOverride2ClassStatic.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+    );
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+        },
+      );
+    }
+
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("identifierOverride3Class");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "identifierOverride3Class");
+    for (const pattern of IdentifierOverride2ClassStatic.$sparqlWherePatterns({
+      ignoreRdfType: true,
+      subject,
+      variablePrefix,
+    })) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
+    if (!parameters?.ignoreRdfType) {
+      requiredPatterns.push(
+        {
+          type: "values" as const,
+          values: [
+            IdentifierOverride3ClassStatic.$fromRdfType,
+            IdentifierOverride4ClassStatic.$fromRdfType,
+            IdentifierOverride5Class.$fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${variablePrefix}FromRdfType`] =
+              identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+      );
+      optionalPatterns.push({
+        patterns: [
+          {
+            triples: [
+              {
+                subject: rdfTypeVariable,
+                predicate: {
+                  items: [$RdfVocabularies.rdfs.subClassOf],
+                  pathType: "+" as const,
+                  type: "path" as const,
+                },
+                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+              },
+            ],
+            type: "bgp" as const,
+          },
+        ],
+        type: "optional" as const,
+      });
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+/**
+ * Node shape for testing identifier type overriding: IRI identifier, concrete, UUIDv4 minting
+ */
+export class IdentifierOverride4Class extends IdentifierOverride3Class {
+  protected readonly _$identifierPrefix?: string;
+  override readonly $type:
+    | "IdentifierOverride4Class"
+    | "IdentifierOverride5Class" = "IdentifierOverride4Class";
+
+  constructor(
+    parameters: {
+      readonly $identifier?: rdfjs.NamedNode | string;
+      readonly $identifierPrefix?: string;
+    } & ConstructorParameters<typeof IdentifierOverride3Class>[0],
+  ) {
+    super(parameters);
+    this._$identifierPrefix = parameters.$identifierPrefix;
+  }
+
+  override get $identifier(): IdentifierOverride4ClassStatic.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.namedNode(
+        `${this.$identifierPrefix}${uuid.v4()}`,
+      );
+    }
+
+    if (this._$identifier.termType !== "NamedNode") {
+      throw new Error(
+        `expected identifier to be NamedNode, not ${this._$identifier.termType}`,
+      );
+    }
+
+    return this._$identifier;
+  }
+
+  protected get $identifierPrefix(): string {
+    return typeof this._$identifierPrefix !== "undefined"
+      ? this._$identifierPrefix
+      : `urn:shaclmate:${this.$type}:`;
+  }
+
+  override $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet?: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = super.$toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/IdentifierOverride4Class",
+        ),
+      );
+    }
+
+    return resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace IdentifierOverride4ClassStatic {
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IdentifierOverride4Class",
+  );
+  export type $Identifier = IdentifierOverride3ClassStatic.$Identifier;
+  export const $Identifier = IdentifierOverride3ClassStatic.$Identifier;
+  export type $Json = IdentifierOverride3ClassStatic.$Json;
+
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { $identifier: rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IdentifierOverride3ClassStatic.$propertiesFromJson>
+    >
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either =
+      IdentifierOverride3ClassStatic.$propertiesFromJson($jsonObject);
+    if ($super0Either.isLeft()) {
+      return $super0Either;
+    }
+
+    const $super0 = $super0Either.unsafeCoerce();
+    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
+    return purify.Either.of({ ...$super0, $identifier });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, IdentifierOverride4Class> {
+    return $propertiesFromJson(json).map(
+      (properties) => new IdentifierOverride4Class(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [IdentifierOverride3ClassStatic.$jsonUiSchema({ scopePrefix })],
+      label: "IdentifierOverride4Class",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return IdentifierOverride3ClassStatic.$jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        $type: zod.enum([
+          "IdentifierOverride4Class",
+          "IdentifierOverride5Class",
+        ]),
+      }),
+    ) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, IdentifierOverride4Class> {
+    let {
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return IdentifierOverride4ClassStatic.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new IdentifierOverride4Class(properties));
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    { $identifier: rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IdentifierOverride3ClassStatic.$propertiesFromRdf>
+    >
+  > {
+    const $super0Either = IdentifierOverride3ClassStatic.$propertiesFromRdf({
+      ...$context,
+      ignoreRdfType: true,
+      objectSet: $objectSet,
+      preferredLanguages: $preferredLanguages,
+      resource: $resource,
+    });
+    if ($super0Either.isLeft()) {
+      return $super0Either;
+    }
+
+    const $super0 = $super0Either.unsafeCoerce();
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+        .value($RdfVocabularies.rdf.type)
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/IdentifierOverride4Class":
+            case "http://example.com/IdentifierOverride5Class":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if (
+            $resource.isInstanceOf(IdentifierOverride4ClassStatic.$fromRdfType)
+          ) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IdentifierOverride4Class)`,
+            ),
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
+    }
+
+    if ($resource.identifier.termType !== "NamedNode") {
+      return purify.Left(
+        new rdfjsResource.Resource.MistypedValueError({
+          actualValue: $resource.identifier,
+          expectedValueType: "(rdfjs.NamedNode)",
+          focusResource: $resource,
+          predicate: $RdfVocabularies.rdf.subject,
+        }),
+      );
+    }
+
+    const $identifier: IdentifierOverride4ClassStatic.$Identifier =
+      $resource.identifier;
+    return purify.Either.of({ ...$super0, $identifier });
+  }
+
+  export const $properties = { ...IdentifierOverride3ClassStatic.$properties };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        IdentifierOverride4ClassStatic.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        IdentifierOverride4ClassStatic.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      IdentifierOverride4ClassStatic.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("identifierOverride4Class");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "identifierOverride4Class");
+    triples.push(
+      ...IdentifierOverride3ClassStatic.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+    );
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+        },
+      );
+    }
+
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("identifierOverride4Class");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "identifierOverride4Class");
+    for (const pattern of IdentifierOverride3ClassStatic.$sparqlWherePatterns({
+      ignoreRdfType: true,
+      subject,
+      variablePrefix,
+    })) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
+    if (!parameters?.ignoreRdfType) {
+      requiredPatterns.push(
+        {
+          type: "values" as const,
+          values: [
+            IdentifierOverride4ClassStatic.$fromRdfType,
+            IdentifierOverride5Class.$fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${variablePrefix}FromRdfType`] =
+              identifier as rdfjs.NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(`${variablePrefix}FromRdfType`),
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+      );
+      optionalPatterns.push({
+        patterns: [
+          {
+            triples: [
+              {
+                subject: rdfTypeVariable,
+                predicate: {
+                  items: [$RdfVocabularies.rdfs.subClassOf],
+                  pathType: "+" as const,
+                  type: "path" as const,
+                },
+                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+              },
+            ],
+            type: "bgp" as const,
+          },
+        ],
+        type: "optional" as const,
+      });
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+/**
+ * Node shape for testing identifier type overriding: IRI identifier, concrete, SHA-256 minting
+ */
+export class IdentifierOverride5Class extends IdentifierOverride4Class {
+  override readonly $type = "IdentifierOverride5Class";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+  constructor(
+    parameters: {
+      readonly $identifier?: rdfjs.NamedNode | string;
+      readonly $identifierPrefix?: string;
+    } & ConstructorParameters<typeof IdentifierOverride4Class>[0],
+  ) {
+    super(parameters);
+  }
+
+  override get $identifier(): IdentifierOverride5Class.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.namedNode(
+        `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
+      );
+    }
+
+    if (this._$identifier.termType !== "NamedNode") {
+      throw new Error(
+        `expected identifier to be NamedNode, not ${this._$identifier.termType}`,
+      );
+    }
+
+    return this._$identifier;
+  }
+
+  protected override get $identifierPrefix(): string {
+    return typeof this._$identifierPrefix !== "undefined"
+      ? this._$identifierPrefix
+      : `urn:shaclmate:${this.$type}:`;
+  }
+
+  override $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet?: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = super.$toRdf({
+      ignoreRdfType: true,
+      mutateGraph,
+      resourceSet,
+    });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/IdentifierOverride5Class",
+        ),
+      );
+    }
+
+    return resource;
+  }
+
+  override toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace IdentifierOverride5Class {
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IdentifierOverride5Class",
+  );
+  export type $Identifier = IdentifierOverride4ClassStatic.$Identifier;
+  export const $Identifier = IdentifierOverride4ClassStatic.$Identifier;
+  export type $Json = IdentifierOverride4ClassStatic.$Json;
+
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { $identifier: rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IdentifierOverride4ClassStatic.$propertiesFromJson>
+    >
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $super0Either =
+      IdentifierOverride4ClassStatic.$propertiesFromJson($jsonObject);
+    if ($super0Either.isLeft()) {
+      return $super0Either;
+    }
+
+    const $super0 = $super0Either.unsafeCoerce();
+    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
+    return purify.Either.of({ ...$super0, $identifier });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, IdentifierOverride5Class> {
+    return $propertiesFromJson(json).map(
+      (properties) => new IdentifierOverride5Class(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [IdentifierOverride4ClassStatic.$jsonUiSchema({ scopePrefix })],
+      label: "IdentifierOverride5Class",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return IdentifierOverride4ClassStatic.$jsonZodSchema().merge(
+      zod.object({
+        "@id": zod.string().min(1),
+        $type: zod.literal("IdentifierOverride5Class"),
+      }),
+    ) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, IdentifierOverride5Class> {
+    let {
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return IdentifierOverride5Class.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new IdentifierOverride5Class(properties));
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    { $identifier: rdfjs.NamedNode } & $UnwrapR<
+      ReturnType<typeof IdentifierOverride4ClassStatic.$propertiesFromRdf>
+    >
+  > {
+    const $super0Either = IdentifierOverride4ClassStatic.$propertiesFromRdf({
+      ...$context,
+      ignoreRdfType: true,
+      objectSet: $objectSet,
+      preferredLanguages: $preferredLanguages,
+      resource: $resource,
+    });
+    if ($super0Either.isLeft()) {
+      return $super0Either;
+    }
+
+    const $super0 = $super0Either.unsafeCoerce();
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+        .value($RdfVocabularies.rdf.type)
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/IdentifierOverride5Class":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(IdentifierOverride5Class.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IdentifierOverride5Class)`,
+            ),
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
+    }
+
+    if ($resource.identifier.termType !== "NamedNode") {
+      return purify.Left(
+        new rdfjsResource.Resource.MistypedValueError({
+          actualValue: $resource.identifier,
+          expectedValueType: "(rdfjs.NamedNode)",
+          focusResource: $resource,
+          predicate: $RdfVocabularies.rdf.subject,
+        }),
+      );
+    }
+
+    const $identifier: IdentifierOverride5Class.$Identifier =
+      $resource.identifier;
+    return purify.Either.of({ ...$super0, $identifier });
+  }
+
+  export const $properties = { ...IdentifierOverride4ClassStatic.$properties };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        IdentifierOverride5Class.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        IdentifierOverride5Class.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      IdentifierOverride5Class.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("identifierOverride5Class");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "identifierOverride5Class");
+    triples.push(
+      ...IdentifierOverride4ClassStatic.$sparqlConstructTemplateTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+    );
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+        },
+      );
+    }
+
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("identifierOverride5Class");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "identifierOverride5Class");
+    for (const pattern of IdentifierOverride4ClassStatic.$sparqlWherePatterns({
+      ignoreRdfType: true,
+      subject,
+      variablePrefix,
+    })) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
+    if (!parameters?.ignoreRdfType) {
+      requiredPatterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: IdentifierOverride5Class.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+      );
+      optionalPatterns.push({
+        patterns: [
+          {
+            triples: [
+              {
+                subject: rdfTypeVariable,
+                predicate: {
+                  items: [$RdfVocabularies.rdfs.subClassOf],
+                  pathType: "+" as const,
+                  type: "path" as const,
+                },
+                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+              },
+            ],
+            type: "bgp" as const,
+          },
+        ],
+        type: "optional" as const,
+      });
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+/**
  * Shape with sh:hasValue properties.
  */
 export class HasValuePropertiesClass {
@@ -31590,6 +34012,7 @@ export class HasValuePropertiesClass {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -32215,6 +34638,7 @@ export class ExternClassPropertyClass {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -32681,6 +35105,7 @@ export class ExplicitRdfTypeClass {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -33273,6 +35698,7 @@ export class ExplicitFromToRdfTypesClass {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -33889,6 +36315,7 @@ export class DirectRecursiveClass {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -34374,6 +36801,7 @@ export class DefaultValuePropertiesClass {
         `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
       );
     }
+
     return this._$identifier;
   }
 
@@ -35746,6 +38174,7 @@ export class ConvertibleTypePropertiesClass {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -40475,18 +42904,38 @@ export namespace ConcreteChildInterface {
  * Common pattern: put the minting strategy and nodeKind on an ABC.
  */
 export abstract class AbstractBaseClassWithProperties {
-  abstract readonly $identifier: AbstractBaseClassWithPropertiesStatic.$Identifier;
+  protected _$identifier?: AbstractBaseClassWithPropertiesStatic.$Identifier;
   protected readonly _$identifierPrefix?: string;
   abstract readonly $type: "ConcreteChildClass" | "ConcreteParentClass";
   readonly abstractBaseClassWithPropertiesProperty: string;
 
   constructor(parameters: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly $identifierPrefix?: string;
     readonly abstractBaseClassWithPropertiesProperty: string;
   }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+
     this._$identifierPrefix = parameters.$identifierPrefix;
     this.abstractBaseClassWithPropertiesProperty =
       parameters.abstractBaseClassWithPropertiesProperty;
+  }
+
+  get $identifier(): AbstractBaseClassWithPropertiesStatic.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.namedNode(
+        `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
+      );
+    }
+
+    return this._$identifier;
   }
 
   protected get $identifierPrefix(): string {
@@ -40955,7 +43404,6 @@ export namespace AbstractBaseClassWithPropertiesStatic {
  * Abstract base for other node shapes. Put the ABC with properties above the ABC without.
  */
 export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseClassWithProperties {
-  abstract override readonly $identifier: AbstractBaseClassWithoutPropertiesStatic.$Identifier;
   abstract override readonly $type:
     | "ConcreteChildClass"
     | "ConcreteParentClass";
@@ -40967,6 +43415,16 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
     >[0],
   ) {
     super(parameters);
+  }
+
+  override get $identifier(): AbstractBaseClassWithoutPropertiesStatic.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.namedNode(
+        `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
+      );
+    }
+
+    return this._$identifier;
   }
 
   protected override get $identifierPrefix(): string {
@@ -41205,7 +43663,6 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
  * Class node shape that inherits the abstract base class and is the parent of the ConcreteChildClass.
  */
 export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
-  protected _$identifier?: ConcreteParentClassStatic.$Identifier;
   override readonly $type: "ConcreteParentClass" | "ConcreteChildClass" =
     "ConcreteParentClass";
   readonly concreteParentClassProperty: string;
@@ -41218,15 +43675,6 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
     } & ConstructorParameters<typeof AbstractBaseClassWithoutProperties>[0],
   ) {
     super(parameters);
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
-    } else {
-      this._$identifier = parameters.$identifier satisfies never;
-    }
-
     this.concreteParentClassProperty = parameters.concreteParentClassProperty;
   }
 
@@ -41236,6 +43684,7 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
         `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
       );
     }
+
     return this._$identifier;
   }
 
@@ -41846,6 +44295,7 @@ export class ConcreteChildClass extends ConcreteParentClass {
         `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
       );
     }
+
     return this._$identifier;
   }
 
@@ -42434,6 +44884,7 @@ export class ClassUnionMember2 {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -43017,6 +45468,7 @@ export class ClassUnionMember1 {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -43578,16 +46030,16 @@ export namespace ClassUnionMember1 {
 /**
  * Node shape that can have a blank node or IRI as an identifier
  */
-export interface BlankInterface {
-  readonly $identifier: BlankInterface.$Identifier;
-  readonly $type: "BlankInterface";
+export interface BlankNodeIdentifierInterface {
+  readonly $identifier: BlankNodeIdentifierInterface.$Identifier;
+  readonly $type: "BlankNodeIdentifierInterface";
 }
 
-export namespace BlankInterface {
+export namespace BlankNodeIdentifierInterface {
   export function $create(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-  }): BlankInterface {
-    let $identifier: BlankInterface.$Identifier;
+  }): BlankNodeIdentifierInterface {
+    let $identifier: BlankNodeIdentifierInterface.$Identifier;
     if (typeof parameters?.$identifier === "object") {
       $identifier = parameters?.$identifier;
     } else if (typeof parameters?.$identifier === "string") {
@@ -43598,13 +46050,13 @@ export namespace BlankInterface {
       $identifier = parameters?.$identifier satisfies never;
     }
 
-    const $type = "BlankInterface" as const;
+    const $type = "BlankNodeIdentifierInterface" as const;
     return { $identifier, $type };
   }
 
   export function $equals(
-    left: BlankInterface,
-    right: BlankInterface,
+    left: BlankNodeIdentifierInterface,
+    right: BlankNodeIdentifierInterface,
   ): $EqualsResult {
     return $booleanEquals(left.$identifier, right.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -43647,14 +46099,15 @@ export namespace BlankInterface {
 
   export type $Json = {
     readonly "@id": string;
-    readonly $type: "BlankInterface";
+    readonly $type: "BlankNodeIdentifierInterface";
   };
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): purify.Either<
+  export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
-    { $identifier: rdfjs.BlankNode | rdfjs.NamedNode; $type: "BlankInterface" }
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      $type: "BlankNodeIdentifierInterface";
+    }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
     if (!$jsonSafeParseResult.success) {
@@ -43665,13 +46118,13 @@ export namespace BlankInterface {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    const $type = "BlankInterface" as const;
+    const $type = "BlankNodeIdentifierInterface" as const;
     return purify.Either.of({ $identifier, $type });
   }
 
   export function $fromJson(
     json: unknown,
-  ): purify.Either<zod.ZodError, BlankInterface> {
+  ): purify.Either<zod.ZodError, BlankNodeIdentifierInterface> {
     return $propertiesFromJson(json);
   }
 
@@ -43691,7 +46144,7 @@ export namespace BlankInterface {
         {
           rule: {
             condition: {
-              schema: { const: "BlankInterface" },
+              schema: { const: "BlankNodeIdentifierInterface" },
               scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
@@ -43700,29 +46153,29 @@ export namespace BlankInterface {
           type: "Control",
         },
       ],
-      label: "BlankInterface",
+      label: "BlankNodeIdentifierInterface",
       type: "Group",
     };
   }
 
   export function $toJson(
-    _blankInterface: BlankInterface,
-  ): BlankInterface.$Json {
+    _blankNodeIdentifierInterface: BlankNodeIdentifierInterface,
+  ): BlankNodeIdentifierInterface.$Json {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _blankInterface.$identifier.termType === "BlankNode"
-            ? `_:${_blankInterface.$identifier.value}`
-            : _blankInterface.$identifier.value,
-        $type: _blankInterface.$type,
-      } satisfies BlankInterface.$Json),
+          _blankNodeIdentifierInterface.$identifier.termType === "BlankNode"
+            ? `_:${_blankNodeIdentifierInterface.$identifier.value}`
+            : _blankNodeIdentifierInterface.$identifier.value,
+        $type: _blankNodeIdentifierInterface.$type,
+      } satisfies BlankNodeIdentifierInterface.$Json),
     );
   }
 
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      $type: zod.literal("BlankInterface"),
+      $type: zod.literal("BlankNodeIdentifierInterface"),
     }) satisfies zod.ZodType<$Json>;
   }
 
@@ -43730,10 +46183,16 @@ export namespace BlankInterface {
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
-  >(_blankInterface: BlankInterface, _hasher: HasherT): HasherT {
-    _hasher.update(_blankInterface.$identifier.value);
-    _hasher.update(_blankInterface.$type);
-    BlankInterface.$hashShaclProperties(_blankInterface, _hasher);
+  >(
+    _blankNodeIdentifierInterface: BlankNodeIdentifierInterface,
+    _hasher: HasherT,
+  ): HasherT {
+    _hasher.update(_blankNodeIdentifierInterface.$identifier.value);
+    _hasher.update(_blankNodeIdentifierInterface.$type);
+    BlankNodeIdentifierInterface.$hashShaclProperties(
+      _blankNodeIdentifierInterface,
+      _hasher,
+    );
     return _hasher;
   }
 
@@ -43741,7 +46200,10 @@ export namespace BlankInterface {
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
-  >(_blankInterface: BlankInterface, _hasher: HasherT): HasherT {
+  >(
+    _blankNodeIdentifierInterface: BlankNodeIdentifierInterface,
+    _hasher: HasherT,
+  ): HasherT {
     return _hasher;
   }
 
@@ -43753,7 +46215,7 @@ export namespace BlankInterface {
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
-  ): purify.Either<Error, BlankInterface> {
+  ): purify.Either<Error, BlankNodeIdentifierInterface> {
     let {
       ignoreRdfType = false,
       objectSet,
@@ -43764,7 +46226,7 @@ export namespace BlankInterface {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
-    return BlankInterface.$propertiesFromRdf({
+    return BlankNodeIdentifierInterface.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
       objectSet,
@@ -43788,15 +46250,19 @@ export namespace BlankInterface {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
-    { $identifier: rdfjs.BlankNode | rdfjs.NamedNode; $type: "BlankInterface" }
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      $type: "BlankNodeIdentifierInterface";
+    }
   > {
-    const $identifier: BlankInterface.$Identifier = $resource.identifier;
-    const $type = "BlankInterface" as const;
+    const $identifier: BlankNodeIdentifierInterface.$Identifier =
+      $resource.identifier;
+    const $type = "BlankNodeIdentifierInterface" as const;
     return purify.Either.of({ $identifier, $type });
   }
 
   export function $toRdf(
-    _blankInterface: BlankInterface,
+    _blankNodeIdentifierInterface: BlankNodeIdentifierInterface,
     options?: {
       ignoreRdfType?: boolean;
       mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
@@ -43810,9 +46276,10 @@ export namespace BlankInterface {
         dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.mutableResource(_blankInterface.$identifier, {
-      mutateGraph,
-    });
+    const resource = resourceSet.mutableResource(
+      _blankNodeIdentifierInterface.$identifier,
+      { mutateGraph },
+    );
     return resource;
   }
 
@@ -43834,14 +46301,14 @@ export namespace BlankInterface {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        BlankInterface.$sparqlConstructTemplateTriples({
+        BlankNodeIdentifierInterface.$sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        BlankInterface.$sparqlWherePatterns({
+        BlankNodeIdentifierInterface.$sparqlWherePatterns({
           ignoreRdfType,
           preferredLanguages,
           subject,
@@ -43860,7 +46327,7 @@ export namespace BlankInterface {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      BlankInterface.$sparqlConstructQuery(parameters),
+      BlankNodeIdentifierInterface.$sparqlConstructQuery(parameters),
     );
   }
 
@@ -43884,9 +46351,9 @@ export namespace BlankInterface {
 /**
  * Node shape that can have a blank node or IRI as an identifier
  */
-export class BlankClass {
-  private _$identifier?: BlankClass.$Identifier;
-  readonly $type = "BlankClass";
+export class BlankNodeIdentifierClass {
+  private _$identifier?: BlankNodeIdentifierClass.$Identifier;
+  readonly $type = "BlankNodeIdentifierClass";
 
   constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
@@ -43901,14 +46368,15 @@ export class BlankClass {
     }
   }
 
-  get $identifier(): BlankClass.$Identifier {
+  get $identifier(): BlankNodeIdentifierClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
-  $equals(other: BlankClass): $EqualsResult {
+  $equals(other: BlankNodeIdentifierClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
@@ -43949,7 +46417,7 @@ export class BlankClass {
     return _hasher;
   }
 
-  $toJson(): BlankClass.$Json {
+  $toJson(): BlankNodeIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
         "@id":
@@ -43957,7 +46425,7 @@ export class BlankClass {
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
         $type: this.$type,
-      } satisfies BlankClass.$Json),
+      } satisfies BlankNodeIdentifierClass.$Json),
     );
   }
 
@@ -43980,7 +46448,9 @@ export class BlankClass {
     if (!ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
-        resource.dataFactory.namedNode("http://example.com/BlankClass"),
+        resource.dataFactory.namedNode(
+          "http://example.com/BlankNodeIdentifierClass",
+        ),
       );
     }
 
@@ -43992,9 +46462,9 @@ export class BlankClass {
   }
 }
 
-export namespace BlankClass {
+export namespace BlankNodeIdentifierClass {
   export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/BlankClass",
+    "http://example.com/BlankNodeIdentifierClass",
   );
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
@@ -44014,7 +46484,10 @@ export namespace BlankClass {
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
-  export type $Json = { readonly "@id": string; readonly $type: "BlankClass" };
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "BlankNodeIdentifierClass";
+  };
 
   export function $propertiesFromJson(
     _json: unknown,
@@ -44036,9 +46509,9 @@ export namespace BlankClass {
 
   export function $fromJson(
     json: unknown,
-  ): purify.Either<zod.ZodError, BlankClass> {
+  ): purify.Either<zod.ZodError, BlankNodeIdentifierClass> {
     return $propertiesFromJson(json).map(
-      (properties) => new BlankClass(properties),
+      (properties) => new BlankNodeIdentifierClass(properties),
     );
   }
 
@@ -44058,7 +46531,7 @@ export namespace BlankClass {
         {
           rule: {
             condition: {
-              schema: { const: "BlankClass" },
+              schema: { const: "BlankNodeIdentifierClass" },
               scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
@@ -44067,7 +46540,7 @@ export namespace BlankClass {
           type: "Control",
         },
       ],
-      label: "BlankClass",
+      label: "BlankNodeIdentifierClass",
       type: "Group",
     };
   }
@@ -44075,7 +46548,7 @@ export namespace BlankClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      $type: zod.literal("BlankClass"),
+      $type: zod.literal("BlankNodeIdentifierClass"),
     }) satisfies zod.ZodType<$Json>;
   }
 
@@ -44087,7 +46560,7 @@ export namespace BlankClass {
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
-  ): purify.Either<Error, BlankClass> {
+  ): purify.Either<Error, BlankNodeIdentifierClass> {
     let {
       ignoreRdfType = false,
       objectSet,
@@ -44098,13 +46571,13 @@ export namespace BlankClass {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
-    return BlankClass.$propertiesFromRdf({
+    return BlankNodeIdentifierClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
       resource,
-    }).map((properties) => new BlankClass(properties));
+    }).map((properties) => new BlankNodeIdentifierClass(properties));
   }
 
   export function $propertiesFromRdf({
@@ -44128,18 +46601,18 @@ export namespace BlankClass {
         .chain((actualRdfType) => {
           // Check the expected type and its known subtypes
           switch (actualRdfType.value) {
-            case "http://example.com/BlankClass":
+            case "http://example.com/BlankNodeIdentifierClass":
               return purify.Either.of(true);
           }
 
           // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($resource.isInstanceOf(BlankClass.$fromRdfType)) {
+          if ($resource.isInstanceOf(BlankNodeIdentifierClass.$fromRdfType)) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BlankClass)`,
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BlankNodeIdentifierClass)`,
             ),
           );
         });
@@ -44148,7 +46621,8 @@ export namespace BlankClass {
       }
     }
 
-    const $identifier: BlankClass.$Identifier = $resource.identifier;
+    const $identifier: BlankNodeIdentifierClass.$Identifier =
+      $resource.identifier;
     return purify.Either.of({ $identifier });
   }
 
@@ -44170,11 +46644,14 @@ export namespace BlankClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        BlankClass.$sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+        BlankNodeIdentifierClass.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        BlankClass.$sparqlWherePatterns({
+        BlankNodeIdentifierClass.$sparqlWherePatterns({
           ignoreRdfType,
           preferredLanguages,
           subject,
@@ -44193,7 +46670,7 @@ export namespace BlankClass {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      BlankClass.$sparqlConstructQuery(parameters),
+      BlankNodeIdentifierClass.$sparqlConstructQuery(parameters),
     );
   }
 
@@ -44202,11 +46679,14 @@ export namespace BlankClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    const subject = parameters?.subject ?? dataFactory.variable!("blankClass");
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("blankNodeIdentifierClass");
     const triples: sparqljs.Triple[] = [];
     const variablePrefix =
       parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "blankClass");
+      (subject.termType === "Variable"
+        ? subject.value
+        : "blankNodeIdentifierClass");
     if (!parameters?.ignoreRdfType) {
       triples.push(
         {
@@ -44233,15 +46713,18 @@ export namespace BlankClass {
   }): readonly sparqljs.Pattern[] {
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
-    const subject = parameters?.subject ?? dataFactory.variable!("blankClass");
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("blankNodeIdentifierClass");
     const variablePrefix =
       parameters?.variablePrefix ??
-      (subject.termType === "Variable" ? subject.value : "blankClass");
+      (subject.termType === "Variable"
+        ? subject.value
+        : "blankNodeIdentifierClass");
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: BlankClass.$fromRdfType,
+          rdfType: BlankNodeIdentifierClass.$fromRdfType,
           subject,
         }),
         {
@@ -44283,15 +46766,33 @@ export namespace BlankClass {
  * An abstract base class that will be inherited by the extern object type, showing how to mix generated and hand-written code.
  */
 export abstract class AbstractBaseClassForExternClass {
-  abstract readonly $identifier: AbstractBaseClassForExternClassStatic.$Identifier;
+  protected _$identifier?: AbstractBaseClassForExternClassStatic.$Identifier;
   abstract readonly $type: "ExternClass";
   readonly abstractBaseClassForExternClassProperty: string;
 
   constructor(parameters: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly abstractBaseClassForExternClassProperty: string;
   }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+
     this.abstractBaseClassForExternClassProperty =
       parameters.abstractBaseClassForExternClassProperty;
+  }
+
+  get $identifier(): AbstractBaseClassForExternClassStatic.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+
+    return this._$identifier;
   }
 
   $equals(other: AbstractBaseClassForExternClass): $EqualsResult {
@@ -46934,29 +49435,39 @@ export interface $ObjectSet {
       "where"
     >,
   ): Promise<purify.Either<Error, number>>;
-  blankClass(
-    identifier: BlankClass.$Identifier,
-  ): Promise<purify.Either<Error, BlankClass>>;
-  blankClassIdentifiers(
-    query?: $ObjectSet.Query<BlankClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly BlankClass.$Identifier[]>>;
-  blankClasses(
-    query?: $ObjectSet.Query<BlankClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly BlankClass[]>>;
-  blankClassesCount(
-    query?: Pick<$ObjectSet.Query<BlankClass.$Identifier>, "where">,
+  blankNodeIdentifierClass(
+    identifier: BlankNodeIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, BlankNodeIdentifierClass>>;
+  blankNodeIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<BlankNodeIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BlankNodeIdentifierClass.$Identifier[]>
+  >;
+  blankNodeIdentifierClasses(
+    query?: $ObjectSet.Query<BlankNodeIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly BlankNodeIdentifierClass[]>>;
+  blankNodeIdentifierClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<BlankNodeIdentifierClass.$Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>>;
-  blankInterface(
-    identifier: BlankInterface.$Identifier,
-  ): Promise<purify.Either<Error, BlankInterface>>;
-  blankInterfaceIdentifiers(
-    query?: $ObjectSet.Query<BlankInterface.$Identifier>,
-  ): Promise<purify.Either<Error, readonly BlankInterface.$Identifier[]>>;
-  blankInterfaces(
-    query?: $ObjectSet.Query<BlankInterface.$Identifier>,
-  ): Promise<purify.Either<Error, readonly BlankInterface[]>>;
-  blankInterfacesCount(
-    query?: Pick<$ObjectSet.Query<BlankInterface.$Identifier>, "where">,
+  blankNodeIdentifierInterface(
+    identifier: BlankNodeIdentifierInterface.$Identifier,
+  ): Promise<purify.Either<Error, BlankNodeIdentifierInterface>>;
+  blankNodeIdentifierInterfaceIdentifiers(
+    query?: $ObjectSet.Query<BlankNodeIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BlankNodeIdentifierInterface.$Identifier[]>
+  >;
+  blankNodeIdentifierInterfaces(
+    query?: $ObjectSet.Query<BlankNodeIdentifierInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly BlankNodeIdentifierInterface[]>>;
+  blankNodeIdentifierInterfacesCount(
+    query?: Pick<
+      $ObjectSet.Query<BlankNodeIdentifierInterface.$Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>>;
   classUnionMember1(
     identifier: ClassUnionMember1.$Identifier,
@@ -47151,6 +49662,57 @@ export interface $ObjectSet {
       "where"
     >,
   ): Promise<purify.Either<Error, number>>;
+  identifierOverride3Class(
+    identifier: IdentifierOverride3ClassStatic.$Identifier,
+  ): Promise<purify.Either<Error, IdentifierOverride3Class>>;
+  identifierOverride3ClassIdentifiers(
+    query?: $ObjectSet.Query<IdentifierOverride3ClassStatic.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IdentifierOverride3ClassStatic.$Identifier[]>
+  >;
+  identifierOverride3Classes(
+    query?: $ObjectSet.Query<IdentifierOverride3ClassStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IdentifierOverride3Class[]>>;
+  identifierOverride3ClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<IdentifierOverride3ClassStatic.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
+  identifierOverride4Class(
+    identifier: IdentifierOverride4ClassStatic.$Identifier,
+  ): Promise<purify.Either<Error, IdentifierOverride4Class>>;
+  identifierOverride4ClassIdentifiers(
+    query?: $ObjectSet.Query<IdentifierOverride4ClassStatic.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IdentifierOverride4ClassStatic.$Identifier[]>
+  >;
+  identifierOverride4Classes(
+    query?: $ObjectSet.Query<IdentifierOverride4ClassStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IdentifierOverride4Class[]>>;
+  identifierOverride4ClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<IdentifierOverride4ClassStatic.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
+  identifierOverride5Class(
+    identifier: IdentifierOverride5Class.$Identifier,
+  ): Promise<purify.Either<Error, IdentifierOverride5Class>>;
+  identifierOverride5ClassIdentifiers(
+    query?: $ObjectSet.Query<IdentifierOverride5Class.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IdentifierOverride5Class.$Identifier[]>
+  >;
+  identifierOverride5Classes(
+    query?: $ObjectSet.Query<IdentifierOverride5Class.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IdentifierOverride5Class[]>>;
+  identifierOverride5ClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<IdentifierOverride5Class.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
   indirectRecursiveClass(
     identifier: IndirectRecursiveClass.$Identifier,
   ): Promise<purify.Either<Error, IndirectRecursiveClass>>;
@@ -47260,17 +49822,31 @@ export interface $ObjectSet {
   interfaceUnionMember2bsCount(
     query?: Pick<$ObjectSet.Query<InterfaceUnionMember2b.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
-  iriClass(
-    identifier: IriClass.$Identifier,
-  ): Promise<purify.Either<Error, IriClass>>;
-  iriClassIdentifiers(
-    query?: $ObjectSet.Query<IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly IriClass.$Identifier[]>>;
-  iriClasses(
-    query?: $ObjectSet.Query<IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly IriClass[]>>;
-  iriClassesCount(
-    query?: Pick<$ObjectSet.Query<IriClass.$Identifier>, "where">,
+  iriIdentifierClass(
+    identifier: IriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, IriIdentifierClass>>;
+  iriIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<IriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IriIdentifierClass.$Identifier[]>>;
+  iriIdentifierClasses(
+    query?: $ObjectSet.Query<IriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IriIdentifierClass[]>>;
+  iriIdentifierClassesCount(
+    query?: Pick<$ObjectSet.Query<IriIdentifierClass.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
+  iriIdentifierInterface(
+    identifier: IriIdentifierInterface.$Identifier,
+  ): Promise<purify.Either<Error, IriIdentifierInterface>>;
+  iriIdentifierInterfaceIdentifiers(
+    query?: $ObjectSet.Query<IriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IriIdentifierInterface.$Identifier[]>
+  >;
+  iriIdentifierInterfaces(
+    query?: $ObjectSet.Query<IriIdentifierInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IriIdentifierInterface[]>>;
+  iriIdentifierInterfacesCount(
+    query?: Pick<$ObjectSet.Query<IriIdentifierInterface.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
   languageInPropertiesClass(
     identifier: LanguageInPropertiesClass.$Identifier,
@@ -47289,47 +49865,52 @@ export interface $ObjectSet {
       "where"
     >,
   ): Promise<purify.Either<Error, number>>;
-  lazilyResolvedBlankNodeOrIriClass(
-    identifier: LazilyResolvedBlankNodeOrIriClass.$Identifier,
-  ): Promise<purify.Either<Error, LazilyResolvedBlankNodeOrIriClass>>;
-  lazilyResolvedBlankNodeOrIriClassIdentifiers(
-    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriClass.$Identifier>,
+  lazilyResolvedBlankNodeOrIriIdentifierClass(
+    identifier: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass>>;
+  lazilyResolvedBlankNodeOrIriIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>,
   ): Promise<
     purify.Either<
       Error,
-      readonly LazilyResolvedBlankNodeOrIriClass.$Identifier[]
+      readonly LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier[]
     >
   >;
-  lazilyResolvedBlankNodeOrIriClasses(
-    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriClass.$Identifier>,
+  lazilyResolvedBlankNodeOrIriIdentifierClasses(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly LazilyResolvedBlankNodeOrIriClass[]>
+    purify.Either<Error, readonly LazilyResolvedBlankNodeOrIriIdentifierClass[]>
   >;
-  lazilyResolvedBlankNodeOrIriClassesCount(
+  lazilyResolvedBlankNodeOrIriIdentifierClassesCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriClass.$Identifier>,
+      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>>;
-  lazilyResolvedBlankNodeOrIriInterface(
-    identifier: LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-  ): Promise<purify.Either<Error, LazilyResolvedBlankNodeOrIriInterface>>;
-  lazilyResolvedBlankNodeOrIriInterfaceIdentifiers(
-    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriInterface.$Identifier>,
+  lazilyResolvedBlankNodeOrIriIdentifierInterface(
+    identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+  ): Promise<
+    purify.Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface>
+  >;
+  lazilyResolvedBlankNodeOrIriIdentifierInterfaceIdentifiers(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>,
   ): Promise<
     purify.Either<
       Error,
-      readonly LazilyResolvedBlankNodeOrIriInterface.$Identifier[]
+      readonly LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier[]
     >
   >;
-  lazilyResolvedBlankNodeOrIriInterfaces(
-    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriInterface.$Identifier>,
+  lazilyResolvedBlankNodeOrIriIdentifierInterfaces(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly LazilyResolvedBlankNodeOrIriInterface[]>
+    purify.Either<
+      Error,
+      readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[]
+    >
   >;
-  lazilyResolvedBlankNodeOrIriInterfacesCount(
+  lazilyResolvedBlankNodeOrIriIdentifierInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriInterface.$Identifier>,
+      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>>;
@@ -47411,34 +49992,45 @@ export interface $ObjectSet {
       "where"
     >,
   ): Promise<purify.Either<Error, number>>;
-  lazilyResolvedIriClass(
-    identifier: LazilyResolvedIriClass.$Identifier,
-  ): Promise<purify.Either<Error, LazilyResolvedIriClass>>;
-  lazilyResolvedIriClassIdentifiers(
-    query?: $ObjectSet.Query<LazilyResolvedIriClass.$Identifier>,
+  lazilyResolvedIriIdentifierClass(
+    identifier: LazilyResolvedIriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, LazilyResolvedIriIdentifierClass>>;
+  lazilyResolvedIriIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly LazilyResolvedIriClass.$Identifier[]>
+    purify.Either<
+      Error,
+      readonly LazilyResolvedIriIdentifierClass.$Identifier[]
+    >
   >;
-  lazilyResolvedIriClasses(
-    query?: $ObjectSet.Query<LazilyResolvedIriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly LazilyResolvedIriClass[]>>;
-  lazilyResolvedIriClassesCount(
-    query?: Pick<$ObjectSet.Query<LazilyResolvedIriClass.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>>;
-  lazilyResolvedIriInterface(
-    identifier: LazilyResolvedIriInterface.$Identifier,
-  ): Promise<purify.Either<Error, LazilyResolvedIriInterface>>;
-  lazilyResolvedIriInterfaceIdentifiers(
-    query?: $ObjectSet.Query<LazilyResolvedIriInterface.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly LazilyResolvedIriInterface.$Identifier[]>
-  >;
-  lazilyResolvedIriInterfaces(
-    query?: $ObjectSet.Query<LazilyResolvedIriInterface.$Identifier>,
-  ): Promise<purify.Either<Error, readonly LazilyResolvedIriInterface[]>>;
-  lazilyResolvedIriInterfacesCount(
+  lazilyResolvedIriIdentifierClasses(
+    query?: $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly LazilyResolvedIriIdentifierClass[]>>;
+  lazilyResolvedIriIdentifierClassesCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedIriInterface.$Identifier>,
+      $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
+  lazilyResolvedIriIdentifierInterface(
+    identifier: LazilyResolvedIriIdentifierInterface.$Identifier,
+  ): Promise<purify.Either<Error, LazilyResolvedIriIdentifierInterface>>;
+  lazilyResolvedIriIdentifierInterfaceIdentifiers(
+    query?: $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<
+      Error,
+      readonly LazilyResolvedIriIdentifierInterface.$Identifier[]
+    >
+  >;
+  lazilyResolvedIriIdentifierInterfaces(
+    query?: $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly LazilyResolvedIriIdentifierInterface[]>
+  >;
+  lazilyResolvedIriIdentifierInterfacesCount(
+    query?: Pick<
+      $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>>;
@@ -47683,17 +50275,22 @@ export interface $ObjectSet {
       "where"
     >,
   ): Promise<purify.Either<Error, number>>;
-  sha256IriClass(
-    identifier: Sha256IriClass.$Identifier,
-  ): Promise<purify.Either<Error, Sha256IriClass>>;
-  sha256IriClassIdentifiers(
-    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Sha256IriClass.$Identifier[]>>;
-  sha256IriClasses(
-    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Sha256IriClass[]>>;
-  sha256IriClassesCount(
-    query?: Pick<$ObjectSet.Query<Sha256IriClass.$Identifier>, "where">,
+  sha256IriIdentifierClass(
+    identifier: Sha256IriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, Sha256IriIdentifierClass>>;
+  sha256IriIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<Sha256IriIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly Sha256IriIdentifierClass.$Identifier[]>
+  >;
+  sha256IriIdentifierClasses(
+    query?: $ObjectSet.Query<Sha256IriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Sha256IriIdentifierClass[]>>;
+  sha256IriIdentifierClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<Sha256IriIdentifierClass.$Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>>;
   termPropertiesClass(
     identifier: TermPropertiesClass.$Identifier,
@@ -47719,29 +50316,39 @@ export interface $ObjectSet {
   unionPropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<UnionPropertiesClass.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
-  uuidV4IriClass(
-    identifier: UuidV4IriClass.$Identifier,
-  ): Promise<purify.Either<Error, UuidV4IriClass>>;
-  uuidV4IriClassIdentifiers(
-    query?: $ObjectSet.Query<UuidV4IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UuidV4IriClass.$Identifier[]>>;
-  uuidV4IriClasses(
-    query?: $ObjectSet.Query<UuidV4IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UuidV4IriClass[]>>;
-  uuidV4IriClassesCount(
-    query?: Pick<$ObjectSet.Query<UuidV4IriClass.$Identifier>, "where">,
+  uuidV4IriIdentifierClass(
+    identifier: UuidV4IriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, UuidV4IriIdentifierClass>>;
+  uuidV4IriIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<UuidV4IriIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly UuidV4IriIdentifierClass.$Identifier[]>
+  >;
+  uuidV4IriIdentifierClasses(
+    query?: $ObjectSet.Query<UuidV4IriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UuidV4IriIdentifierClass[]>>;
+  uuidV4IriIdentifierClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<UuidV4IriIdentifierClass.$Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>>;
-  uuidV4IriInterface(
-    identifier: UuidV4IriInterface.$Identifier,
-  ): Promise<purify.Either<Error, UuidV4IriInterface>>;
-  uuidV4IriInterfaceIdentifiers(
-    query?: $ObjectSet.Query<UuidV4IriInterface.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UuidV4IriInterface.$Identifier[]>>;
-  uuidV4IriInterfaces(
-    query?: $ObjectSet.Query<UuidV4IriInterface.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UuidV4IriInterface[]>>;
-  uuidV4IriInterfacesCount(
-    query?: Pick<$ObjectSet.Query<UuidV4IriInterface.$Identifier>, "where">,
+  uuidV4IriIdentifierInterface(
+    identifier: UuidV4IriIdentifierInterface.$Identifier,
+  ): Promise<purify.Either<Error, UuidV4IriIdentifierInterface>>;
+  uuidV4IriIdentifierInterfaceIdentifiers(
+    query?: $ObjectSet.Query<UuidV4IriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly UuidV4IriIdentifierInterface.$Identifier[]>
+  >;
+  uuidV4IriIdentifierInterfaces(
+    query?: $ObjectSet.Query<UuidV4IriIdentifierInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UuidV4IriIdentifierInterface[]>>;
+  uuidV4IriIdentifierInterfacesCount(
+    query?: Pick<
+      $ObjectSet.Query<UuidV4IriIdentifierInterface.$Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>>;
   classUnion(
     identifier: ClassUnion.$Identifier,
@@ -47952,52 +50559,62 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     return this.$delegate.baseInterfaceWithPropertiesesCount(query);
   }
 
-  blankClass(
-    identifier: BlankClass.$Identifier,
-  ): Promise<purify.Either<Error, BlankClass>> {
-    return this.$delegate.blankClass(identifier);
+  blankNodeIdentifierClass(
+    identifier: BlankNodeIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, BlankNodeIdentifierClass>> {
+    return this.$delegate.blankNodeIdentifierClass(identifier);
   }
 
-  blankClassIdentifiers(
-    query?: $ObjectSet.Query<BlankClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly BlankClass.$Identifier[]>> {
-    return this.$delegate.blankClassIdentifiers(query);
+  blankNodeIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<BlankNodeIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BlankNodeIdentifierClass.$Identifier[]>
+  > {
+    return this.$delegate.blankNodeIdentifierClassIdentifiers(query);
   }
 
-  blankClasses(
-    query?: $ObjectSet.Query<BlankClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly BlankClass[]>> {
-    return this.$delegate.blankClasses(query);
+  blankNodeIdentifierClasses(
+    query?: $ObjectSet.Query<BlankNodeIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly BlankNodeIdentifierClass[]>> {
+    return this.$delegate.blankNodeIdentifierClasses(query);
   }
 
-  blankClassesCount(
-    query?: Pick<$ObjectSet.Query<BlankClass.$Identifier>, "where">,
+  blankNodeIdentifierClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<BlankNodeIdentifierClass.$Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.blankClassesCount(query);
+    return this.$delegate.blankNodeIdentifierClassesCount(query);
   }
 
-  blankInterface(
-    identifier: BlankInterface.$Identifier,
-  ): Promise<purify.Either<Error, BlankInterface>> {
-    return this.$delegate.blankInterface(identifier);
+  blankNodeIdentifierInterface(
+    identifier: BlankNodeIdentifierInterface.$Identifier,
+  ): Promise<purify.Either<Error, BlankNodeIdentifierInterface>> {
+    return this.$delegate.blankNodeIdentifierInterface(identifier);
   }
 
-  blankInterfaceIdentifiers(
-    query?: $ObjectSet.Query<BlankInterface.$Identifier>,
-  ): Promise<purify.Either<Error, readonly BlankInterface.$Identifier[]>> {
-    return this.$delegate.blankInterfaceIdentifiers(query);
+  blankNodeIdentifierInterfaceIdentifiers(
+    query?: $ObjectSet.Query<BlankNodeIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BlankNodeIdentifierInterface.$Identifier[]>
+  > {
+    return this.$delegate.blankNodeIdentifierInterfaceIdentifiers(query);
   }
 
-  blankInterfaces(
-    query?: $ObjectSet.Query<BlankInterface.$Identifier>,
-  ): Promise<purify.Either<Error, readonly BlankInterface[]>> {
-    return this.$delegate.blankInterfaces(query);
+  blankNodeIdentifierInterfaces(
+    query?: $ObjectSet.Query<BlankNodeIdentifierInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly BlankNodeIdentifierInterface[]>> {
+    return this.$delegate.blankNodeIdentifierInterfaces(query);
   }
 
-  blankInterfacesCount(
-    query?: Pick<$ObjectSet.Query<BlankInterface.$Identifier>, "where">,
+  blankNodeIdentifierInterfacesCount(
+    query?: Pick<
+      $ObjectSet.Query<BlankNodeIdentifierInterface.$Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.blankInterfacesCount(query);
+    return this.$delegate.blankNodeIdentifierInterfacesCount(query);
   }
 
   classUnionMember1(
@@ -48353,6 +50970,93 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     return this.$delegate.hasValuePropertiesClassesCount(query);
   }
 
+  identifierOverride3Class(
+    identifier: IdentifierOverride3ClassStatic.$Identifier,
+  ): Promise<purify.Either<Error, IdentifierOverride3Class>> {
+    return this.$delegate.identifierOverride3Class(identifier);
+  }
+
+  identifierOverride3ClassIdentifiers(
+    query?: $ObjectSet.Query<IdentifierOverride3ClassStatic.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IdentifierOverride3ClassStatic.$Identifier[]>
+  > {
+    return this.$delegate.identifierOverride3ClassIdentifiers(query);
+  }
+
+  identifierOverride3Classes(
+    query?: $ObjectSet.Query<IdentifierOverride3ClassStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IdentifierOverride3Class[]>> {
+    return this.$delegate.identifierOverride3Classes(query);
+  }
+
+  identifierOverride3ClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<IdentifierOverride3ClassStatic.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.identifierOverride3ClassesCount(query);
+  }
+
+  identifierOverride4Class(
+    identifier: IdentifierOverride4ClassStatic.$Identifier,
+  ): Promise<purify.Either<Error, IdentifierOverride4Class>> {
+    return this.$delegate.identifierOverride4Class(identifier);
+  }
+
+  identifierOverride4ClassIdentifiers(
+    query?: $ObjectSet.Query<IdentifierOverride4ClassStatic.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IdentifierOverride4ClassStatic.$Identifier[]>
+  > {
+    return this.$delegate.identifierOverride4ClassIdentifiers(query);
+  }
+
+  identifierOverride4Classes(
+    query?: $ObjectSet.Query<IdentifierOverride4ClassStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IdentifierOverride4Class[]>> {
+    return this.$delegate.identifierOverride4Classes(query);
+  }
+
+  identifierOverride4ClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<IdentifierOverride4ClassStatic.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.identifierOverride4ClassesCount(query);
+  }
+
+  identifierOverride5Class(
+    identifier: IdentifierOverride5Class.$Identifier,
+  ): Promise<purify.Either<Error, IdentifierOverride5Class>> {
+    return this.$delegate.identifierOverride5Class(identifier);
+  }
+
+  identifierOverride5ClassIdentifiers(
+    query?: $ObjectSet.Query<IdentifierOverride5Class.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IdentifierOverride5Class.$Identifier[]>
+  > {
+    return this.$delegate.identifierOverride5ClassIdentifiers(query);
+  }
+
+  identifierOverride5Classes(
+    query?: $ObjectSet.Query<IdentifierOverride5Class.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IdentifierOverride5Class[]>> {
+    return this.$delegate.identifierOverride5Classes(query);
+  }
+
+  identifierOverride5ClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<IdentifierOverride5Class.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.identifierOverride5ClassesCount(query);
+  }
+
   indirectRecursiveClass(
     identifier: IndirectRecursiveClass.$Identifier,
   ): Promise<purify.Either<Error, IndirectRecursiveClass>> {
@@ -48558,28 +51262,54 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     return this.$delegate.interfaceUnionMember2bsCount(query);
   }
 
-  iriClass(
-    identifier: IriClass.$Identifier,
-  ): Promise<purify.Either<Error, IriClass>> {
-    return this.$delegate.iriClass(identifier);
+  iriIdentifierClass(
+    identifier: IriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, IriIdentifierClass>> {
+    return this.$delegate.iriIdentifierClass(identifier);
   }
 
-  iriClassIdentifiers(
-    query?: $ObjectSet.Query<IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly IriClass.$Identifier[]>> {
-    return this.$delegate.iriClassIdentifiers(query);
+  iriIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<IriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IriIdentifierClass.$Identifier[]>> {
+    return this.$delegate.iriIdentifierClassIdentifiers(query);
   }
 
-  iriClasses(
-    query?: $ObjectSet.Query<IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly IriClass[]>> {
-    return this.$delegate.iriClasses(query);
+  iriIdentifierClasses(
+    query?: $ObjectSet.Query<IriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IriIdentifierClass[]>> {
+    return this.$delegate.iriIdentifierClasses(query);
   }
 
-  iriClassesCount(
-    query?: Pick<$ObjectSet.Query<IriClass.$Identifier>, "where">,
+  iriIdentifierClassesCount(
+    query?: Pick<$ObjectSet.Query<IriIdentifierClass.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.iriClassesCount(query);
+    return this.$delegate.iriIdentifierClassesCount(query);
+  }
+
+  iriIdentifierInterface(
+    identifier: IriIdentifierInterface.$Identifier,
+  ): Promise<purify.Either<Error, IriIdentifierInterface>> {
+    return this.$delegate.iriIdentifierInterface(identifier);
+  }
+
+  iriIdentifierInterfaceIdentifiers(
+    query?: $ObjectSet.Query<IriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IriIdentifierInterface.$Identifier[]>
+  > {
+    return this.$delegate.iriIdentifierInterfaceIdentifiers(query);
+  }
+
+  iriIdentifierInterfaces(
+    query?: $ObjectSet.Query<IriIdentifierInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IriIdentifierInterface[]>> {
+    return this.$delegate.iriIdentifierInterfaces(query);
+  }
+
+  iriIdentifierInterfacesCount(
+    query?: Pick<$ObjectSet.Query<IriIdentifierInterface.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.iriIdentifierInterfacesCount(query);
   }
 
   languageInPropertiesClass(
@@ -48611,74 +51341,93 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     return this.$delegate.languageInPropertiesClassesCount(query);
   }
 
-  lazilyResolvedBlankNodeOrIriClass(
-    identifier: LazilyResolvedBlankNodeOrIriClass.$Identifier,
-  ): Promise<purify.Either<Error, LazilyResolvedBlankNodeOrIriClass>> {
-    return this.$delegate.lazilyResolvedBlankNodeOrIriClass(identifier);
+  lazilyResolvedBlankNodeOrIriIdentifierClass(
+    identifier: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+  ): Promise<
+    purify.Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass>
+  > {
+    return this.$delegate.lazilyResolvedBlankNodeOrIriIdentifierClass(
+      identifier,
+    );
   }
 
-  lazilyResolvedBlankNodeOrIriClassIdentifiers(
-    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriClass.$Identifier>,
+  lazilyResolvedBlankNodeOrIriIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>,
   ): Promise<
     purify.Either<
       Error,
-      readonly LazilyResolvedBlankNodeOrIriClass.$Identifier[]
+      readonly LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier[]
     >
   > {
-    return this.$delegate.lazilyResolvedBlankNodeOrIriClassIdentifiers(query);
-  }
-
-  lazilyResolvedBlankNodeOrIriClasses(
-    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriClass.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly LazilyResolvedBlankNodeOrIriClass[]>
-  > {
-    return this.$delegate.lazilyResolvedBlankNodeOrIriClasses(query);
-  }
-
-  lazilyResolvedBlankNodeOrIriClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriClass.$Identifier>,
-      "where"
-    >,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.lazilyResolvedBlankNodeOrIriClassesCount(query);
-  }
-
-  lazilyResolvedBlankNodeOrIriInterface(
-    identifier: LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-  ): Promise<purify.Either<Error, LazilyResolvedBlankNodeOrIriInterface>> {
-    return this.$delegate.lazilyResolvedBlankNodeOrIriInterface(identifier);
-  }
-
-  lazilyResolvedBlankNodeOrIriInterfaceIdentifiers(
-    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriInterface.$Identifier>,
-  ): Promise<
-    purify.Either<
-      Error,
-      readonly LazilyResolvedBlankNodeOrIriInterface.$Identifier[]
-    >
-  > {
-    return this.$delegate.lazilyResolvedBlankNodeOrIriInterfaceIdentifiers(
+    return this.$delegate.lazilyResolvedBlankNodeOrIriIdentifierClassIdentifiers(
       query,
     );
   }
 
-  lazilyResolvedBlankNodeOrIriInterfaces(
-    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriInterface.$Identifier>,
+  lazilyResolvedBlankNodeOrIriIdentifierClasses(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly LazilyResolvedBlankNodeOrIriInterface[]>
+    purify.Either<Error, readonly LazilyResolvedBlankNodeOrIriIdentifierClass[]>
   > {
-    return this.$delegate.lazilyResolvedBlankNodeOrIriInterfaces(query);
+    return this.$delegate.lazilyResolvedBlankNodeOrIriIdentifierClasses(query);
   }
 
-  lazilyResolvedBlankNodeOrIriInterfacesCount(
+  lazilyResolvedBlankNodeOrIriIdentifierClassesCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriInterface.$Identifier>,
+      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.lazilyResolvedBlankNodeOrIriInterfacesCount(query);
+    return this.$delegate.lazilyResolvedBlankNodeOrIriIdentifierClassesCount(
+      query,
+    );
+  }
+
+  lazilyResolvedBlankNodeOrIriIdentifierInterface(
+    identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+  ): Promise<
+    purify.Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface>
+  > {
+    return this.$delegate.lazilyResolvedBlankNodeOrIriIdentifierInterface(
+      identifier,
+    );
+  }
+
+  lazilyResolvedBlankNodeOrIriIdentifierInterfaceIdentifiers(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<
+      Error,
+      readonly LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier[]
+    >
+  > {
+    return this.$delegate.lazilyResolvedBlankNodeOrIriIdentifierInterfaceIdentifiers(
+      query,
+    );
+  }
+
+  lazilyResolvedBlankNodeOrIriIdentifierInterfaces(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<
+      Error,
+      readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[]
+    >
+  > {
+    return this.$delegate.lazilyResolvedBlankNodeOrIriIdentifierInterfaces(
+      query,
+    );
+  }
+
+  lazilyResolvedBlankNodeOrIriIdentifierInterfacesCount(
+    query?: Pick<
+      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.lazilyResolvedBlankNodeOrIriIdentifierInterfacesCount(
+      query,
+    );
   }
 
   lazilyResolvedClassUnionMember1(
@@ -48807,59 +51556,74 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     return this.$delegate.lazilyResolvedInterfaceUnionMember2sCount(query);
   }
 
-  lazilyResolvedIriClass(
-    identifier: LazilyResolvedIriClass.$Identifier,
-  ): Promise<purify.Either<Error, LazilyResolvedIriClass>> {
-    return this.$delegate.lazilyResolvedIriClass(identifier);
+  lazilyResolvedIriIdentifierClass(
+    identifier: LazilyResolvedIriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, LazilyResolvedIriIdentifierClass>> {
+    return this.$delegate.lazilyResolvedIriIdentifierClass(identifier);
   }
 
-  lazilyResolvedIriClassIdentifiers(
-    query?: $ObjectSet.Query<LazilyResolvedIriClass.$Identifier>,
+  lazilyResolvedIriIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly LazilyResolvedIriClass.$Identifier[]>
+    purify.Either<
+      Error,
+      readonly LazilyResolvedIriIdentifierClass.$Identifier[]
+    >
   > {
-    return this.$delegate.lazilyResolvedIriClassIdentifiers(query);
+    return this.$delegate.lazilyResolvedIriIdentifierClassIdentifiers(query);
   }
 
-  lazilyResolvedIriClasses(
-    query?: $ObjectSet.Query<LazilyResolvedIriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly LazilyResolvedIriClass[]>> {
-    return this.$delegate.lazilyResolvedIriClasses(query);
-  }
-
-  lazilyResolvedIriClassesCount(
-    query?: Pick<$ObjectSet.Query<LazilyResolvedIriClass.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.lazilyResolvedIriClassesCount(query);
-  }
-
-  lazilyResolvedIriInterface(
-    identifier: LazilyResolvedIriInterface.$Identifier,
-  ): Promise<purify.Either<Error, LazilyResolvedIriInterface>> {
-    return this.$delegate.lazilyResolvedIriInterface(identifier);
-  }
-
-  lazilyResolvedIriInterfaceIdentifiers(
-    query?: $ObjectSet.Query<LazilyResolvedIriInterface.$Identifier>,
+  lazilyResolvedIriIdentifierClasses(
+    query?: $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly LazilyResolvedIriInterface.$Identifier[]>
+    purify.Either<Error, readonly LazilyResolvedIriIdentifierClass[]>
   > {
-    return this.$delegate.lazilyResolvedIriInterfaceIdentifiers(query);
+    return this.$delegate.lazilyResolvedIriIdentifierClasses(query);
   }
 
-  lazilyResolvedIriInterfaces(
-    query?: $ObjectSet.Query<LazilyResolvedIriInterface.$Identifier>,
-  ): Promise<purify.Either<Error, readonly LazilyResolvedIriInterface[]>> {
-    return this.$delegate.lazilyResolvedIriInterfaces(query);
-  }
-
-  lazilyResolvedIriInterfacesCount(
+  lazilyResolvedIriIdentifierClassesCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedIriInterface.$Identifier>,
+      $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.lazilyResolvedIriInterfacesCount(query);
+    return this.$delegate.lazilyResolvedIriIdentifierClassesCount(query);
+  }
+
+  lazilyResolvedIriIdentifierInterface(
+    identifier: LazilyResolvedIriIdentifierInterface.$Identifier,
+  ): Promise<purify.Either<Error, LazilyResolvedIriIdentifierInterface>> {
+    return this.$delegate.lazilyResolvedIriIdentifierInterface(identifier);
+  }
+
+  lazilyResolvedIriIdentifierInterfaceIdentifiers(
+    query?: $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<
+      Error,
+      readonly LazilyResolvedIriIdentifierInterface.$Identifier[]
+    >
+  > {
+    return this.$delegate.lazilyResolvedIriIdentifierInterfaceIdentifiers(
+      query,
+    );
+  }
+
+  lazilyResolvedIriIdentifierInterfaces(
+    query?: $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly LazilyResolvedIriIdentifierInterface[]>
+  > {
+    return this.$delegate.lazilyResolvedIriIdentifierInterfaces(query);
+  }
+
+  lazilyResolvedIriIdentifierInterfacesCount(
+    query?: Pick<
+      $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.lazilyResolvedIriIdentifierInterfacesCount(query);
   }
 
   lazyPropertiesClass(
@@ -49295,28 +52059,33 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     return this.$delegate.recursiveClassUnionMember2sCount(query);
   }
 
-  sha256IriClass(
-    identifier: Sha256IriClass.$Identifier,
-  ): Promise<purify.Either<Error, Sha256IriClass>> {
-    return this.$delegate.sha256IriClass(identifier);
+  sha256IriIdentifierClass(
+    identifier: Sha256IriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, Sha256IriIdentifierClass>> {
+    return this.$delegate.sha256IriIdentifierClass(identifier);
   }
 
-  sha256IriClassIdentifiers(
-    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Sha256IriClass.$Identifier[]>> {
-    return this.$delegate.sha256IriClassIdentifiers(query);
+  sha256IriIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<Sha256IriIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly Sha256IriIdentifierClass.$Identifier[]>
+  > {
+    return this.$delegate.sha256IriIdentifierClassIdentifiers(query);
   }
 
-  sha256IriClasses(
-    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Sha256IriClass[]>> {
-    return this.$delegate.sha256IriClasses(query);
+  sha256IriIdentifierClasses(
+    query?: $ObjectSet.Query<Sha256IriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Sha256IriIdentifierClass[]>> {
+    return this.$delegate.sha256IriIdentifierClasses(query);
   }
 
-  sha256IriClassesCount(
-    query?: Pick<$ObjectSet.Query<Sha256IriClass.$Identifier>, "where">,
+  sha256IriIdentifierClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<Sha256IriIdentifierClass.$Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.sha256IriClassesCount(query);
+    return this.$delegate.sha256IriIdentifierClassesCount(query);
   }
 
   termPropertiesClass(
@@ -49369,52 +52138,62 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     return this.$delegate.unionPropertiesClassesCount(query);
   }
 
-  uuidV4IriClass(
-    identifier: UuidV4IriClass.$Identifier,
-  ): Promise<purify.Either<Error, UuidV4IriClass>> {
-    return this.$delegate.uuidV4IriClass(identifier);
+  uuidV4IriIdentifierClass(
+    identifier: UuidV4IriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, UuidV4IriIdentifierClass>> {
+    return this.$delegate.uuidV4IriIdentifierClass(identifier);
   }
 
-  uuidV4IriClassIdentifiers(
-    query?: $ObjectSet.Query<UuidV4IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UuidV4IriClass.$Identifier[]>> {
-    return this.$delegate.uuidV4IriClassIdentifiers(query);
+  uuidV4IriIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<UuidV4IriIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly UuidV4IriIdentifierClass.$Identifier[]>
+  > {
+    return this.$delegate.uuidV4IriIdentifierClassIdentifiers(query);
   }
 
-  uuidV4IriClasses(
-    query?: $ObjectSet.Query<UuidV4IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UuidV4IriClass[]>> {
-    return this.$delegate.uuidV4IriClasses(query);
+  uuidV4IriIdentifierClasses(
+    query?: $ObjectSet.Query<UuidV4IriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UuidV4IriIdentifierClass[]>> {
+    return this.$delegate.uuidV4IriIdentifierClasses(query);
   }
 
-  uuidV4IriClassesCount(
-    query?: Pick<$ObjectSet.Query<UuidV4IriClass.$Identifier>, "where">,
+  uuidV4IriIdentifierClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<UuidV4IriIdentifierClass.$Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.uuidV4IriClassesCount(query);
+    return this.$delegate.uuidV4IriIdentifierClassesCount(query);
   }
 
-  uuidV4IriInterface(
-    identifier: UuidV4IriInterface.$Identifier,
-  ): Promise<purify.Either<Error, UuidV4IriInterface>> {
-    return this.$delegate.uuidV4IriInterface(identifier);
+  uuidV4IriIdentifierInterface(
+    identifier: UuidV4IriIdentifierInterface.$Identifier,
+  ): Promise<purify.Either<Error, UuidV4IriIdentifierInterface>> {
+    return this.$delegate.uuidV4IriIdentifierInterface(identifier);
   }
 
-  uuidV4IriInterfaceIdentifiers(
-    query?: $ObjectSet.Query<UuidV4IriInterface.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UuidV4IriInterface.$Identifier[]>> {
-    return this.$delegate.uuidV4IriInterfaceIdentifiers(query);
+  uuidV4IriIdentifierInterfaceIdentifiers(
+    query?: $ObjectSet.Query<UuidV4IriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly UuidV4IriIdentifierInterface.$Identifier[]>
+  > {
+    return this.$delegate.uuidV4IriIdentifierInterfaceIdentifiers(query);
   }
 
-  uuidV4IriInterfaces(
-    query?: $ObjectSet.Query<UuidV4IriInterface.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UuidV4IriInterface[]>> {
-    return this.$delegate.uuidV4IriInterfaces(query);
+  uuidV4IriIdentifierInterfaces(
+    query?: $ObjectSet.Query<UuidV4IriIdentifierInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UuidV4IriIdentifierInterface[]>> {
+    return this.$delegate.uuidV4IriIdentifierInterfaces(query);
   }
 
-  uuidV4IriInterfacesCount(
-    query?: Pick<$ObjectSet.Query<UuidV4IriInterface.$Identifier>, "where">,
+  uuidV4IriIdentifierInterfacesCount(
+    query?: Pick<
+      $ObjectSet.Query<UuidV4IriIdentifierInterface.$Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.uuidV4IriInterfacesCount(query);
+    return this.$delegate.uuidV4IriIdentifierInterfacesCount(query);
   }
 
   classUnion(
@@ -49852,135 +52631,169 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async blankClass(
-    identifier: BlankClass.$Identifier,
-  ): Promise<purify.Either<Error, BlankClass>> {
-    return this.blankClassSync(identifier);
+  async blankNodeIdentifierClass(
+    identifier: BlankNodeIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, BlankNodeIdentifierClass>> {
+    return this.blankNodeIdentifierClassSync(identifier);
   }
 
-  blankClassSync(
-    identifier: BlankClass.$Identifier,
-  ): purify.Either<Error, BlankClass> {
-    return this.blankClassesSync({
+  blankNodeIdentifierClassSync(
+    identifier: BlankNodeIdentifierClass.$Identifier,
+  ): purify.Either<Error, BlankNodeIdentifierClass> {
+    return this.blankNodeIdentifierClassesSync({
       where: { identifiers: [identifier], type: "identifiers" },
     }).map((objects) => objects[0]);
   }
 
-  async blankClassIdentifiers(
-    query?: $ObjectSet.Query<BlankClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly BlankClass.$Identifier[]>> {
-    return this.blankClassIdentifiersSync(query);
+  async blankNodeIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<BlankNodeIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BlankNodeIdentifierClass.$Identifier[]>
+  > {
+    return this.blankNodeIdentifierClassIdentifiersSync(query);
   }
 
-  blankClassIdentifiersSync(
-    query?: $ObjectSet.Query<BlankClass.$Identifier>,
-  ): purify.Either<Error, readonly BlankClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<BlankClass, BlankClass.$Identifier>(
-      [
-        {
-          $fromRdf: BlankClass.$fromRdf,
-          $fromRdfTypes: [BlankClass.$fromRdfType],
-        },
-      ],
-      query,
-    );
-  }
-
-  async blankClasses(
-    query?: $ObjectSet.Query<BlankClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly BlankClass[]>> {
-    return this.blankClassesSync(query);
-  }
-
-  blankClassesSync(
-    query?: $ObjectSet.Query<BlankClass.$Identifier>,
-  ): purify.Either<Error, readonly BlankClass[]> {
-    return this.$objectsSync<BlankClass, BlankClass.$Identifier>(
-      [
-        {
-          $fromRdf: BlankClass.$fromRdf,
-          $fromRdfTypes: [BlankClass.$fromRdfType],
-        },
-      ],
-      query,
-    );
-  }
-
-  async blankClassesCount(
-    query?: Pick<$ObjectSet.Query<BlankClass.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.blankClassesCountSync(query);
-  }
-
-  blankClassesCountSync(
-    query?: Pick<$ObjectSet.Query<BlankClass.$Identifier>, "where">,
-  ): purify.Either<Error, number> {
-    return this.$objectsCountSync<BlankClass, BlankClass.$Identifier>(
-      [
-        {
-          $fromRdf: BlankClass.$fromRdf,
-          $fromRdfTypes: [BlankClass.$fromRdfType],
-        },
-      ],
-      query,
-    );
-  }
-
-  async blankInterface(
-    identifier: BlankInterface.$Identifier,
-  ): Promise<purify.Either<Error, BlankInterface>> {
-    return this.blankInterfaceSync(identifier);
-  }
-
-  blankInterfaceSync(
-    identifier: BlankInterface.$Identifier,
-  ): purify.Either<Error, BlankInterface> {
-    return this.blankInterfacesSync({
-      where: { identifiers: [identifier], type: "identifiers" },
-    }).map((objects) => objects[0]);
-  }
-
-  async blankInterfaceIdentifiers(
-    query?: $ObjectSet.Query<BlankInterface.$Identifier>,
-  ): Promise<purify.Either<Error, readonly BlankInterface.$Identifier[]>> {
-    return this.blankInterfaceIdentifiersSync(query);
-  }
-
-  blankInterfaceIdentifiersSync(
-    query?: $ObjectSet.Query<BlankInterface.$Identifier>,
-  ): purify.Either<Error, readonly BlankInterface.$Identifier[]> {
+  blankNodeIdentifierClassIdentifiersSync(
+    query?: $ObjectSet.Query<BlankNodeIdentifierClass.$Identifier>,
+  ): purify.Either<Error, readonly BlankNodeIdentifierClass.$Identifier[]> {
     return this.$objectIdentifiersSync<
-      BlankInterface,
-      BlankInterface.$Identifier
-    >([{ $fromRdf: BlankInterface.$fromRdf, $fromRdfTypes: [] }], query);
-  }
-
-  async blankInterfaces(
-    query?: $ObjectSet.Query<BlankInterface.$Identifier>,
-  ): Promise<purify.Either<Error, readonly BlankInterface[]>> {
-    return this.blankInterfacesSync(query);
-  }
-
-  blankInterfacesSync(
-    query?: $ObjectSet.Query<BlankInterface.$Identifier>,
-  ): purify.Either<Error, readonly BlankInterface[]> {
-    return this.$objectsSync<BlankInterface, BlankInterface.$Identifier>(
-      [{ $fromRdf: BlankInterface.$fromRdf, $fromRdfTypes: [] }],
+      BlankNodeIdentifierClass,
+      BlankNodeIdentifierClass.$Identifier
+    >(
+      [
+        {
+          $fromRdf: BlankNodeIdentifierClass.$fromRdf,
+          $fromRdfTypes: [BlankNodeIdentifierClass.$fromRdfType],
+        },
+      ],
       query,
     );
   }
 
-  async blankInterfacesCount(
-    query?: Pick<$ObjectSet.Query<BlankInterface.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.blankInterfacesCountSync(query);
+  async blankNodeIdentifierClasses(
+    query?: $ObjectSet.Query<BlankNodeIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly BlankNodeIdentifierClass[]>> {
+    return this.blankNodeIdentifierClassesSync(query);
   }
 
-  blankInterfacesCountSync(
-    query?: Pick<$ObjectSet.Query<BlankInterface.$Identifier>, "where">,
+  blankNodeIdentifierClassesSync(
+    query?: $ObjectSet.Query<BlankNodeIdentifierClass.$Identifier>,
+  ): purify.Either<Error, readonly BlankNodeIdentifierClass[]> {
+    return this.$objectsSync<
+      BlankNodeIdentifierClass,
+      BlankNodeIdentifierClass.$Identifier
+    >(
+      [
+        {
+          $fromRdf: BlankNodeIdentifierClass.$fromRdf,
+          $fromRdfTypes: [BlankNodeIdentifierClass.$fromRdfType],
+        },
+      ],
+      query,
+    );
+  }
+
+  async blankNodeIdentifierClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<BlankNodeIdentifierClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.blankNodeIdentifierClassesCountSync(query);
+  }
+
+  blankNodeIdentifierClassesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<BlankNodeIdentifierClass.$Identifier>,
+      "where"
+    >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<BlankInterface, BlankInterface.$Identifier>(
-      [{ $fromRdf: BlankInterface.$fromRdf, $fromRdfTypes: [] }],
+    return this.$objectsCountSync<
+      BlankNodeIdentifierClass,
+      BlankNodeIdentifierClass.$Identifier
+    >(
+      [
+        {
+          $fromRdf: BlankNodeIdentifierClass.$fromRdf,
+          $fromRdfTypes: [BlankNodeIdentifierClass.$fromRdfType],
+        },
+      ],
+      query,
+    );
+  }
+
+  async blankNodeIdentifierInterface(
+    identifier: BlankNodeIdentifierInterface.$Identifier,
+  ): Promise<purify.Either<Error, BlankNodeIdentifierInterface>> {
+    return this.blankNodeIdentifierInterfaceSync(identifier);
+  }
+
+  blankNodeIdentifierInterfaceSync(
+    identifier: BlankNodeIdentifierInterface.$Identifier,
+  ): purify.Either<Error, BlankNodeIdentifierInterface> {
+    return this.blankNodeIdentifierInterfacesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async blankNodeIdentifierInterfaceIdentifiers(
+    query?: $ObjectSet.Query<BlankNodeIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BlankNodeIdentifierInterface.$Identifier[]>
+  > {
+    return this.blankNodeIdentifierInterfaceIdentifiersSync(query);
+  }
+
+  blankNodeIdentifierInterfaceIdentifiersSync(
+    query?: $ObjectSet.Query<BlankNodeIdentifierInterface.$Identifier>,
+  ): purify.Either<Error, readonly BlankNodeIdentifierInterface.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      BlankNodeIdentifierInterface,
+      BlankNodeIdentifierInterface.$Identifier
+    >(
+      [{ $fromRdf: BlankNodeIdentifierInterface.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async blankNodeIdentifierInterfaces(
+    query?: $ObjectSet.Query<BlankNodeIdentifierInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly BlankNodeIdentifierInterface[]>> {
+    return this.blankNodeIdentifierInterfacesSync(query);
+  }
+
+  blankNodeIdentifierInterfacesSync(
+    query?: $ObjectSet.Query<BlankNodeIdentifierInterface.$Identifier>,
+  ): purify.Either<Error, readonly BlankNodeIdentifierInterface[]> {
+    return this.$objectsSync<
+      BlankNodeIdentifierInterface,
+      BlankNodeIdentifierInterface.$Identifier
+    >(
+      [{ $fromRdf: BlankNodeIdentifierInterface.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async blankNodeIdentifierInterfacesCount(
+    query?: Pick<
+      $ObjectSet.Query<BlankNodeIdentifierInterface.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.blankNodeIdentifierInterfacesCountSync(query);
+  }
+
+  blankNodeIdentifierInterfacesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<BlankNodeIdentifierInterface.$Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      BlankNodeIdentifierInterface,
+      BlankNodeIdentifierInterface.$Identifier
+    >(
+      [{ $fromRdf: BlankNodeIdentifierInterface.$fromRdf, $fromRdfTypes: [] }],
       query,
     );
   }
@@ -51075,6 +53888,306 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async identifierOverride3Class(
+    identifier: IdentifierOverride3ClassStatic.$Identifier,
+  ): Promise<purify.Either<Error, IdentifierOverride3Class>> {
+    return this.identifierOverride3ClassSync(identifier);
+  }
+
+  identifierOverride3ClassSync(
+    identifier: IdentifierOverride3ClassStatic.$Identifier,
+  ): purify.Either<Error, IdentifierOverride3Class> {
+    return this.identifierOverride3ClassesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async identifierOverride3ClassIdentifiers(
+    query?: $ObjectSet.Query<IdentifierOverride3ClassStatic.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IdentifierOverride3ClassStatic.$Identifier[]>
+  > {
+    return this.identifierOverride3ClassIdentifiersSync(query);
+  }
+
+  identifierOverride3ClassIdentifiersSync(
+    query?: $ObjectSet.Query<IdentifierOverride3ClassStatic.$Identifier>,
+  ): purify.Either<
+    Error,
+    readonly IdentifierOverride3ClassStatic.$Identifier[]
+  > {
+    return this.$objectIdentifiersSync<
+      IdentifierOverride3Class,
+      IdentifierOverride3ClassStatic.$Identifier
+    >(
+      [
+        {
+          $fromRdf: IdentifierOverride3ClassStatic.$fromRdf,
+          $fromRdfTypes: [
+            IdentifierOverride3ClassStatic.$fromRdfType,
+            IdentifierOverride4ClassStatic.$fromRdfType,
+            IdentifierOverride5Class.$fromRdfType,
+          ],
+        },
+      ],
+      query,
+    );
+  }
+
+  async identifierOverride3Classes(
+    query?: $ObjectSet.Query<IdentifierOverride3ClassStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IdentifierOverride3Class[]>> {
+    return this.identifierOverride3ClassesSync(query);
+  }
+
+  identifierOverride3ClassesSync(
+    query?: $ObjectSet.Query<IdentifierOverride3ClassStatic.$Identifier>,
+  ): purify.Either<Error, readonly IdentifierOverride3Class[]> {
+    return this.$objectsSync<
+      IdentifierOverride3Class,
+      IdentifierOverride3ClassStatic.$Identifier
+    >(
+      [
+        {
+          $fromRdf: IdentifierOverride3ClassStatic.$fromRdf,
+          $fromRdfTypes: [
+            IdentifierOverride3ClassStatic.$fromRdfType,
+            IdentifierOverride4ClassStatic.$fromRdfType,
+            IdentifierOverride5Class.$fromRdfType,
+          ],
+        },
+      ],
+      query,
+    );
+  }
+
+  async identifierOverride3ClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<IdentifierOverride3ClassStatic.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.identifierOverride3ClassesCountSync(query);
+  }
+
+  identifierOverride3ClassesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<IdentifierOverride3ClassStatic.$Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      IdentifierOverride3Class,
+      IdentifierOverride3ClassStatic.$Identifier
+    >(
+      [
+        {
+          $fromRdf: IdentifierOverride3ClassStatic.$fromRdf,
+          $fromRdfTypes: [
+            IdentifierOverride3ClassStatic.$fromRdfType,
+            IdentifierOverride4ClassStatic.$fromRdfType,
+            IdentifierOverride5Class.$fromRdfType,
+          ],
+        },
+      ],
+      query,
+    );
+  }
+
+  async identifierOverride4Class(
+    identifier: IdentifierOverride4ClassStatic.$Identifier,
+  ): Promise<purify.Either<Error, IdentifierOverride4Class>> {
+    return this.identifierOverride4ClassSync(identifier);
+  }
+
+  identifierOverride4ClassSync(
+    identifier: IdentifierOverride4ClassStatic.$Identifier,
+  ): purify.Either<Error, IdentifierOverride4Class> {
+    return this.identifierOverride4ClassesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async identifierOverride4ClassIdentifiers(
+    query?: $ObjectSet.Query<IdentifierOverride4ClassStatic.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IdentifierOverride4ClassStatic.$Identifier[]>
+  > {
+    return this.identifierOverride4ClassIdentifiersSync(query);
+  }
+
+  identifierOverride4ClassIdentifiersSync(
+    query?: $ObjectSet.Query<IdentifierOverride4ClassStatic.$Identifier>,
+  ): purify.Either<
+    Error,
+    readonly IdentifierOverride4ClassStatic.$Identifier[]
+  > {
+    return this.$objectIdentifiersSync<
+      IdentifierOverride4Class,
+      IdentifierOverride4ClassStatic.$Identifier
+    >(
+      [
+        {
+          $fromRdf: IdentifierOverride4ClassStatic.$fromRdf,
+          $fromRdfTypes: [
+            IdentifierOverride4ClassStatic.$fromRdfType,
+            IdentifierOverride5Class.$fromRdfType,
+          ],
+        },
+      ],
+      query,
+    );
+  }
+
+  async identifierOverride4Classes(
+    query?: $ObjectSet.Query<IdentifierOverride4ClassStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IdentifierOverride4Class[]>> {
+    return this.identifierOverride4ClassesSync(query);
+  }
+
+  identifierOverride4ClassesSync(
+    query?: $ObjectSet.Query<IdentifierOverride4ClassStatic.$Identifier>,
+  ): purify.Either<Error, readonly IdentifierOverride4Class[]> {
+    return this.$objectsSync<
+      IdentifierOverride4Class,
+      IdentifierOverride4ClassStatic.$Identifier
+    >(
+      [
+        {
+          $fromRdf: IdentifierOverride4ClassStatic.$fromRdf,
+          $fromRdfTypes: [
+            IdentifierOverride4ClassStatic.$fromRdfType,
+            IdentifierOverride5Class.$fromRdfType,
+          ],
+        },
+      ],
+      query,
+    );
+  }
+
+  async identifierOverride4ClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<IdentifierOverride4ClassStatic.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.identifierOverride4ClassesCountSync(query);
+  }
+
+  identifierOverride4ClassesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<IdentifierOverride4ClassStatic.$Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      IdentifierOverride4Class,
+      IdentifierOverride4ClassStatic.$Identifier
+    >(
+      [
+        {
+          $fromRdf: IdentifierOverride4ClassStatic.$fromRdf,
+          $fromRdfTypes: [
+            IdentifierOverride4ClassStatic.$fromRdfType,
+            IdentifierOverride5Class.$fromRdfType,
+          ],
+        },
+      ],
+      query,
+    );
+  }
+
+  async identifierOverride5Class(
+    identifier: IdentifierOverride5Class.$Identifier,
+  ): Promise<purify.Either<Error, IdentifierOverride5Class>> {
+    return this.identifierOverride5ClassSync(identifier);
+  }
+
+  identifierOverride5ClassSync(
+    identifier: IdentifierOverride5Class.$Identifier,
+  ): purify.Either<Error, IdentifierOverride5Class> {
+    return this.identifierOverride5ClassesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async identifierOverride5ClassIdentifiers(
+    query?: $ObjectSet.Query<IdentifierOverride5Class.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IdentifierOverride5Class.$Identifier[]>
+  > {
+    return this.identifierOverride5ClassIdentifiersSync(query);
+  }
+
+  identifierOverride5ClassIdentifiersSync(
+    query?: $ObjectSet.Query<IdentifierOverride5Class.$Identifier>,
+  ): purify.Either<Error, readonly IdentifierOverride5Class.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      IdentifierOverride5Class,
+      IdentifierOverride5Class.$Identifier
+    >(
+      [
+        {
+          $fromRdf: IdentifierOverride5Class.$fromRdf,
+          $fromRdfTypes: [IdentifierOverride5Class.$fromRdfType],
+        },
+      ],
+      query,
+    );
+  }
+
+  async identifierOverride5Classes(
+    query?: $ObjectSet.Query<IdentifierOverride5Class.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IdentifierOverride5Class[]>> {
+    return this.identifierOverride5ClassesSync(query);
+  }
+
+  identifierOverride5ClassesSync(
+    query?: $ObjectSet.Query<IdentifierOverride5Class.$Identifier>,
+  ): purify.Either<Error, readonly IdentifierOverride5Class[]> {
+    return this.$objectsSync<
+      IdentifierOverride5Class,
+      IdentifierOverride5Class.$Identifier
+    >(
+      [
+        {
+          $fromRdf: IdentifierOverride5Class.$fromRdf,
+          $fromRdfTypes: [IdentifierOverride5Class.$fromRdfType],
+        },
+      ],
+      query,
+    );
+  }
+
+  async identifierOverride5ClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<IdentifierOverride5Class.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.identifierOverride5ClassesCountSync(query);
+  }
+
+  identifierOverride5ClassesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<IdentifierOverride5Class.$Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      IdentifierOverride5Class,
+      IdentifierOverride5Class.$Identifier
+    >(
+      [
+        {
+          $fromRdf: IdentifierOverride5Class.$fromRdf,
+          $fromRdfTypes: [IdentifierOverride5Class.$fromRdfType],
+        },
+      ],
+      query,
+    );
+  }
+
   async indirectRecursiveClass(
     identifier: IndirectRecursiveClass.$Identifier,
   ): Promise<purify.Either<Error, IndirectRecursiveClass>> {
@@ -51599,61 +54712,131 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async iriClass(
-    identifier: IriClass.$Identifier,
-  ): Promise<purify.Either<Error, IriClass>> {
-    return this.iriClassSync(identifier);
+  async iriIdentifierClass(
+    identifier: IriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, IriIdentifierClass>> {
+    return this.iriIdentifierClassSync(identifier);
   }
 
-  iriClassSync(
-    identifier: IriClass.$Identifier,
-  ): purify.Either<Error, IriClass> {
-    return this.iriClassesSync({
+  iriIdentifierClassSync(
+    identifier: IriIdentifierClass.$Identifier,
+  ): purify.Either<Error, IriIdentifierClass> {
+    return this.iriIdentifierClassesSync({
       where: { identifiers: [identifier], type: "identifiers" },
     }).map((objects) => objects[0]);
   }
 
-  async iriClassIdentifiers(
-    query?: $ObjectSet.Query<IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly IriClass.$Identifier[]>> {
-    return this.iriClassIdentifiersSync(query);
+  async iriIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<IriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IriIdentifierClass.$Identifier[]>> {
+    return this.iriIdentifierClassIdentifiersSync(query);
   }
 
-  iriClassIdentifiersSync(
-    query?: $ObjectSet.Query<IriClass.$Identifier>,
-  ): purify.Either<Error, readonly IriClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<IriClass, IriClass.$Identifier>(
-      [{ $fromRdf: IriClass.$fromRdf, $fromRdfTypes: [] }],
-      query,
-    );
+  iriIdentifierClassIdentifiersSync(
+    query?: $ObjectSet.Query<IriIdentifierClass.$Identifier>,
+  ): purify.Either<Error, readonly IriIdentifierClass.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      IriIdentifierClass,
+      IriIdentifierClass.$Identifier
+    >([{ $fromRdf: IriIdentifierClass.$fromRdf, $fromRdfTypes: [] }], query);
   }
 
-  async iriClasses(
-    query?: $ObjectSet.Query<IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly IriClass[]>> {
-    return this.iriClassesSync(query);
+  async iriIdentifierClasses(
+    query?: $ObjectSet.Query<IriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IriIdentifierClass[]>> {
+    return this.iriIdentifierClassesSync(query);
   }
 
-  iriClassesSync(
-    query?: $ObjectSet.Query<IriClass.$Identifier>,
-  ): purify.Either<Error, readonly IriClass[]> {
-    return this.$objectsSync<IriClass, IriClass.$Identifier>(
-      [{ $fromRdf: IriClass.$fromRdf, $fromRdfTypes: [] }],
-      query,
-    );
+  iriIdentifierClassesSync(
+    query?: $ObjectSet.Query<IriIdentifierClass.$Identifier>,
+  ): purify.Either<Error, readonly IriIdentifierClass[]> {
+    return this.$objectsSync<
+      IriIdentifierClass,
+      IriIdentifierClass.$Identifier
+    >([{ $fromRdf: IriIdentifierClass.$fromRdf, $fromRdfTypes: [] }], query);
   }
 
-  async iriClassesCount(
-    query?: Pick<$ObjectSet.Query<IriClass.$Identifier>, "where">,
+  async iriIdentifierClassesCount(
+    query?: Pick<$ObjectSet.Query<IriIdentifierClass.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
-    return this.iriClassesCountSync(query);
+    return this.iriIdentifierClassesCountSync(query);
   }
 
-  iriClassesCountSync(
-    query?: Pick<$ObjectSet.Query<IriClass.$Identifier>, "where">,
+  iriIdentifierClassesCountSync(
+    query?: Pick<$ObjectSet.Query<IriIdentifierClass.$Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<IriClass, IriClass.$Identifier>(
-      [{ $fromRdf: IriClass.$fromRdf, $fromRdfTypes: [] }],
+    return this.$objectsCountSync<
+      IriIdentifierClass,
+      IriIdentifierClass.$Identifier
+    >([{ $fromRdf: IriIdentifierClass.$fromRdf, $fromRdfTypes: [] }], query);
+  }
+
+  async iriIdentifierInterface(
+    identifier: IriIdentifierInterface.$Identifier,
+  ): Promise<purify.Either<Error, IriIdentifierInterface>> {
+    return this.iriIdentifierInterfaceSync(identifier);
+  }
+
+  iriIdentifierInterfaceSync(
+    identifier: IriIdentifierInterface.$Identifier,
+  ): purify.Either<Error, IriIdentifierInterface> {
+    return this.iriIdentifierInterfacesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async iriIdentifierInterfaceIdentifiers(
+    query?: $ObjectSet.Query<IriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IriIdentifierInterface.$Identifier[]>
+  > {
+    return this.iriIdentifierInterfaceIdentifiersSync(query);
+  }
+
+  iriIdentifierInterfaceIdentifiersSync(
+    query?: $ObjectSet.Query<IriIdentifierInterface.$Identifier>,
+  ): purify.Either<Error, readonly IriIdentifierInterface.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      IriIdentifierInterface,
+      IriIdentifierInterface.$Identifier
+    >(
+      [{ $fromRdf: IriIdentifierInterface.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async iriIdentifierInterfaces(
+    query?: $ObjectSet.Query<IriIdentifierInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IriIdentifierInterface[]>> {
+    return this.iriIdentifierInterfacesSync(query);
+  }
+
+  iriIdentifierInterfacesSync(
+    query?: $ObjectSet.Query<IriIdentifierInterface.$Identifier>,
+  ): purify.Either<Error, readonly IriIdentifierInterface[]> {
+    return this.$objectsSync<
+      IriIdentifierInterface,
+      IriIdentifierInterface.$Identifier
+    >(
+      [{ $fromRdf: IriIdentifierInterface.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async iriIdentifierInterfacesCount(
+    query?: Pick<$ObjectSet.Query<IriIdentifierInterface.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.iriIdentifierInterfacesCountSync(query);
+  }
+
+  iriIdentifierInterfacesCountSync(
+    query?: Pick<$ObjectSet.Query<IriIdentifierInterface.$Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      IriIdentifierInterface,
+      IriIdentifierInterface.$Identifier
+    >(
+      [{ $fromRdf: IriIdentifierInterface.$fromRdf, $fromRdfTypes: [] }],
       query,
     );
   }
@@ -51734,198 +54917,229 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async lazilyResolvedBlankNodeOrIriClass(
-    identifier: LazilyResolvedBlankNodeOrIriClass.$Identifier,
-  ): Promise<purify.Either<Error, LazilyResolvedBlankNodeOrIriClass>> {
-    return this.lazilyResolvedBlankNodeOrIriClassSync(identifier);
+  async lazilyResolvedBlankNodeOrIriIdentifierClass(
+    identifier: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+  ): Promise<
+    purify.Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass>
+  > {
+    return this.lazilyResolvedBlankNodeOrIriIdentifierClassSync(identifier);
   }
 
-  lazilyResolvedBlankNodeOrIriClassSync(
-    identifier: LazilyResolvedBlankNodeOrIriClass.$Identifier,
-  ): purify.Either<Error, LazilyResolvedBlankNodeOrIriClass> {
-    return this.lazilyResolvedBlankNodeOrIriClassesSync({
+  lazilyResolvedBlankNodeOrIriIdentifierClassSync(
+    identifier: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+  ): purify.Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass> {
+    return this.lazilyResolvedBlankNodeOrIriIdentifierClassesSync({
       where: { identifiers: [identifier], type: "identifiers" },
     }).map((objects) => objects[0]);
   }
 
-  async lazilyResolvedBlankNodeOrIriClassIdentifiers(
-    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriClass.$Identifier>,
+  async lazilyResolvedBlankNodeOrIriIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>,
   ): Promise<
     purify.Either<
       Error,
-      readonly LazilyResolvedBlankNodeOrIriClass.$Identifier[]
+      readonly LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier[]
     >
   > {
-    return this.lazilyResolvedBlankNodeOrIriClassIdentifiersSync(query);
+    return this.lazilyResolvedBlankNodeOrIriIdentifierClassIdentifiersSync(
+      query,
+    );
   }
 
-  lazilyResolvedBlankNodeOrIriClassIdentifiersSync(
-    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriClass.$Identifier>,
+  lazilyResolvedBlankNodeOrIriIdentifierClassIdentifiersSync(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>,
   ): purify.Either<
     Error,
-    readonly LazilyResolvedBlankNodeOrIriClass.$Identifier[]
+    readonly LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier[]
   > {
     return this.$objectIdentifiersSync<
-      LazilyResolvedBlankNodeOrIriClass,
-      LazilyResolvedBlankNodeOrIriClass.$Identifier
+      LazilyResolvedBlankNodeOrIriIdentifierClass,
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier
     >(
       [
         {
-          $fromRdf: LazilyResolvedBlankNodeOrIriClass.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedBlankNodeOrIriClass.$fromRdfType],
+          $fromRdf: LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdf,
+          $fromRdfTypes: [
+            LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdfType,
+          ],
         },
       ],
       query,
     );
   }
 
-  async lazilyResolvedBlankNodeOrIriClasses(
-    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriClass.$Identifier>,
+  async lazilyResolvedBlankNodeOrIriIdentifierClasses(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly LazilyResolvedBlankNodeOrIriClass[]>
+    purify.Either<Error, readonly LazilyResolvedBlankNodeOrIriIdentifierClass[]>
   > {
-    return this.lazilyResolvedBlankNodeOrIriClassesSync(query);
+    return this.lazilyResolvedBlankNodeOrIriIdentifierClassesSync(query);
   }
 
-  lazilyResolvedBlankNodeOrIriClassesSync(
-    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriClass.$Identifier>,
-  ): purify.Either<Error, readonly LazilyResolvedBlankNodeOrIriClass[]> {
+  lazilyResolvedBlankNodeOrIriIdentifierClassesSync(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>,
+  ): purify.Either<
+    Error,
+    readonly LazilyResolvedBlankNodeOrIriIdentifierClass[]
+  > {
     return this.$objectsSync<
-      LazilyResolvedBlankNodeOrIriClass,
-      LazilyResolvedBlankNodeOrIriClass.$Identifier
+      LazilyResolvedBlankNodeOrIriIdentifierClass,
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier
     >(
       [
         {
-          $fromRdf: LazilyResolvedBlankNodeOrIriClass.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedBlankNodeOrIriClass.$fromRdfType],
+          $fromRdf: LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdf,
+          $fromRdfTypes: [
+            LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdfType,
+          ],
         },
       ],
       query,
     );
   }
 
-  async lazilyResolvedBlankNodeOrIriClassesCount(
+  async lazilyResolvedBlankNodeOrIriIdentifierClassesCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriClass.$Identifier>,
+      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.lazilyResolvedBlankNodeOrIriClassesCountSync(query);
+    return this.lazilyResolvedBlankNodeOrIriIdentifierClassesCountSync(query);
   }
 
-  lazilyResolvedBlankNodeOrIriClassesCountSync(
+  lazilyResolvedBlankNodeOrIriIdentifierClassesCountSync(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriClass.$Identifier>,
+      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>,
       "where"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
-      LazilyResolvedBlankNodeOrIriClass,
-      LazilyResolvedBlankNodeOrIriClass.$Identifier
+      LazilyResolvedBlankNodeOrIriIdentifierClass,
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier
     >(
       [
         {
-          $fromRdf: LazilyResolvedBlankNodeOrIriClass.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedBlankNodeOrIriClass.$fromRdfType],
+          $fromRdf: LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdf,
+          $fromRdfTypes: [
+            LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdfType,
+          ],
         },
       ],
       query,
     );
   }
 
-  async lazilyResolvedBlankNodeOrIriInterface(
-    identifier: LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-  ): Promise<purify.Either<Error, LazilyResolvedBlankNodeOrIriInterface>> {
-    return this.lazilyResolvedBlankNodeOrIriInterfaceSync(identifier);
+  async lazilyResolvedBlankNodeOrIriIdentifierInterface(
+    identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+  ): Promise<
+    purify.Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface>
+  > {
+    return this.lazilyResolvedBlankNodeOrIriIdentifierInterfaceSync(identifier);
   }
 
-  lazilyResolvedBlankNodeOrIriInterfaceSync(
-    identifier: LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-  ): purify.Either<Error, LazilyResolvedBlankNodeOrIriInterface> {
-    return this.lazilyResolvedBlankNodeOrIriInterfacesSync({
+  lazilyResolvedBlankNodeOrIriIdentifierInterfaceSync(
+    identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+  ): purify.Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface> {
+    return this.lazilyResolvedBlankNodeOrIriIdentifierInterfacesSync({
       where: { identifiers: [identifier], type: "identifiers" },
     }).map((objects) => objects[0]);
   }
 
-  async lazilyResolvedBlankNodeOrIriInterfaceIdentifiers(
-    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriInterface.$Identifier>,
+  async lazilyResolvedBlankNodeOrIriIdentifierInterfaceIdentifiers(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>,
   ): Promise<
     purify.Either<
       Error,
-      readonly LazilyResolvedBlankNodeOrIriInterface.$Identifier[]
+      readonly LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier[]
     >
   > {
-    return this.lazilyResolvedBlankNodeOrIriInterfaceIdentifiersSync(query);
+    return this.lazilyResolvedBlankNodeOrIriIdentifierInterfaceIdentifiersSync(
+      query,
+    );
   }
 
-  lazilyResolvedBlankNodeOrIriInterfaceIdentifiersSync(
-    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriInterface.$Identifier>,
+  lazilyResolvedBlankNodeOrIriIdentifierInterfaceIdentifiersSync(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>,
   ): purify.Either<
     Error,
-    readonly LazilyResolvedBlankNodeOrIriInterface.$Identifier[]
+    readonly LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier[]
   > {
     return this.$objectIdentifiersSync<
-      LazilyResolvedBlankNodeOrIriInterface,
-      LazilyResolvedBlankNodeOrIriInterface.$Identifier
+      LazilyResolvedBlankNodeOrIriIdentifierInterface,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier
     >(
       [
         {
-          $fromRdf: LazilyResolvedBlankNodeOrIriInterface.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedBlankNodeOrIriInterface.$fromRdfType],
+          $fromRdf: LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdf,
+          $fromRdfTypes: [
+            LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdfType,
+          ],
         },
       ],
       query,
     );
   }
 
-  async lazilyResolvedBlankNodeOrIriInterfaces(
-    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriInterface.$Identifier>,
+  async lazilyResolvedBlankNodeOrIriIdentifierInterfaces(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly LazilyResolvedBlankNodeOrIriInterface[]>
+    purify.Either<
+      Error,
+      readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[]
+    >
   > {
-    return this.lazilyResolvedBlankNodeOrIriInterfacesSync(query);
+    return this.lazilyResolvedBlankNodeOrIriIdentifierInterfacesSync(query);
   }
 
-  lazilyResolvedBlankNodeOrIriInterfacesSync(
-    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriInterface.$Identifier>,
-  ): purify.Either<Error, readonly LazilyResolvedBlankNodeOrIriInterface[]> {
+  lazilyResolvedBlankNodeOrIriIdentifierInterfacesSync(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>,
+  ): purify.Either<
+    Error,
+    readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[]
+  > {
     return this.$objectsSync<
-      LazilyResolvedBlankNodeOrIriInterface,
-      LazilyResolvedBlankNodeOrIriInterface.$Identifier
+      LazilyResolvedBlankNodeOrIriIdentifierInterface,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier
     >(
       [
         {
-          $fromRdf: LazilyResolvedBlankNodeOrIriInterface.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedBlankNodeOrIriInterface.$fromRdfType],
+          $fromRdf: LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdf,
+          $fromRdfTypes: [
+            LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdfType,
+          ],
         },
       ],
       query,
     );
   }
 
-  async lazilyResolvedBlankNodeOrIriInterfacesCount(
+  async lazilyResolvedBlankNodeOrIriIdentifierInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriInterface.$Identifier>,
+      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.lazilyResolvedBlankNodeOrIriInterfacesCountSync(query);
+    return this.lazilyResolvedBlankNodeOrIriIdentifierInterfacesCountSync(
+      query,
+    );
   }
 
-  lazilyResolvedBlankNodeOrIriInterfacesCountSync(
+  lazilyResolvedBlankNodeOrIriIdentifierInterfacesCountSync(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriInterface.$Identifier>,
+      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>,
       "where"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
-      LazilyResolvedBlankNodeOrIriInterface,
-      LazilyResolvedBlankNodeOrIriInterface.$Identifier
+      LazilyResolvedBlankNodeOrIriIdentifierInterface,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier
     >(
       [
         {
-          $fromRdf: LazilyResolvedBlankNodeOrIriInterface.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedBlankNodeOrIriInterface.$fromRdfType],
+          $fromRdf: LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdf,
+          $fromRdfTypes: [
+            LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdfType,
+          ],
         },
       ],
       query,
@@ -52318,148 +55532,200 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async lazilyResolvedIriClass(
-    identifier: LazilyResolvedIriClass.$Identifier,
-  ): Promise<purify.Either<Error, LazilyResolvedIriClass>> {
-    return this.lazilyResolvedIriClassSync(identifier);
+  async lazilyResolvedIriIdentifierClass(
+    identifier: LazilyResolvedIriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, LazilyResolvedIriIdentifierClass>> {
+    return this.lazilyResolvedIriIdentifierClassSync(identifier);
   }
 
-  lazilyResolvedIriClassSync(
-    identifier: LazilyResolvedIriClass.$Identifier,
-  ): purify.Either<Error, LazilyResolvedIriClass> {
-    return this.lazilyResolvedIriClassesSync({
+  lazilyResolvedIriIdentifierClassSync(
+    identifier: LazilyResolvedIriIdentifierClass.$Identifier,
+  ): purify.Either<Error, LazilyResolvedIriIdentifierClass> {
+    return this.lazilyResolvedIriIdentifierClassesSync({
       where: { identifiers: [identifier], type: "identifiers" },
     }).map((objects) => objects[0]);
   }
 
-  async lazilyResolvedIriClassIdentifiers(
-    query?: $ObjectSet.Query<LazilyResolvedIriClass.$Identifier>,
+  async lazilyResolvedIriIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly LazilyResolvedIriClass.$Identifier[]>
+    purify.Either<
+      Error,
+      readonly LazilyResolvedIriIdentifierClass.$Identifier[]
+    >
   > {
-    return this.lazilyResolvedIriClassIdentifiersSync(query);
+    return this.lazilyResolvedIriIdentifierClassIdentifiersSync(query);
   }
 
-  lazilyResolvedIriClassIdentifiersSync(
-    query?: $ObjectSet.Query<LazilyResolvedIriClass.$Identifier>,
-  ): purify.Either<Error, readonly LazilyResolvedIriClass.$Identifier[]> {
+  lazilyResolvedIriIdentifierClassIdentifiersSync(
+    query?: $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Identifier>,
+  ): purify.Either<
+    Error,
+    readonly LazilyResolvedIriIdentifierClass.$Identifier[]
+  > {
     return this.$objectIdentifiersSync<
-      LazilyResolvedIriClass,
-      LazilyResolvedIriClass.$Identifier
+      LazilyResolvedIriIdentifierClass,
+      LazilyResolvedIriIdentifierClass.$Identifier
     >(
-      [{ $fromRdf: LazilyResolvedIriClass.$fromRdf, $fromRdfTypes: [] }],
+      [
+        {
+          $fromRdf: LazilyResolvedIriIdentifierClass.$fromRdf,
+          $fromRdfTypes: [],
+        },
+      ],
       query,
     );
   }
 
-  async lazilyResolvedIriClasses(
-    query?: $ObjectSet.Query<LazilyResolvedIriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly LazilyResolvedIriClass[]>> {
-    return this.lazilyResolvedIriClassesSync(query);
+  async lazilyResolvedIriIdentifierClasses(
+    query?: $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly LazilyResolvedIriIdentifierClass[]>
+  > {
+    return this.lazilyResolvedIriIdentifierClassesSync(query);
   }
 
-  lazilyResolvedIriClassesSync(
-    query?: $ObjectSet.Query<LazilyResolvedIriClass.$Identifier>,
-  ): purify.Either<Error, readonly LazilyResolvedIriClass[]> {
+  lazilyResolvedIriIdentifierClassesSync(
+    query?: $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Identifier>,
+  ): purify.Either<Error, readonly LazilyResolvedIriIdentifierClass[]> {
     return this.$objectsSync<
-      LazilyResolvedIriClass,
-      LazilyResolvedIriClass.$Identifier
+      LazilyResolvedIriIdentifierClass,
+      LazilyResolvedIriIdentifierClass.$Identifier
     >(
-      [{ $fromRdf: LazilyResolvedIriClass.$fromRdf, $fromRdfTypes: [] }],
+      [
+        {
+          $fromRdf: LazilyResolvedIriIdentifierClass.$fromRdf,
+          $fromRdfTypes: [],
+        },
+      ],
       query,
     );
   }
 
-  async lazilyResolvedIriClassesCount(
-    query?: Pick<$ObjectSet.Query<LazilyResolvedIriClass.$Identifier>, "where">,
+  async lazilyResolvedIriIdentifierClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
-    return this.lazilyResolvedIriClassesCountSync(query);
+    return this.lazilyResolvedIriIdentifierClassesCountSync(query);
   }
 
-  lazilyResolvedIriClassesCountSync(
-    query?: Pick<$ObjectSet.Query<LazilyResolvedIriClass.$Identifier>, "where">,
+  lazilyResolvedIriIdentifierClassesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Identifier>,
+      "where"
+    >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
-      LazilyResolvedIriClass,
-      LazilyResolvedIriClass.$Identifier
+      LazilyResolvedIriIdentifierClass,
+      LazilyResolvedIriIdentifierClass.$Identifier
     >(
-      [{ $fromRdf: LazilyResolvedIriClass.$fromRdf, $fromRdfTypes: [] }],
+      [
+        {
+          $fromRdf: LazilyResolvedIriIdentifierClass.$fromRdf,
+          $fromRdfTypes: [],
+        },
+      ],
       query,
     );
   }
 
-  async lazilyResolvedIriInterface(
-    identifier: LazilyResolvedIriInterface.$Identifier,
-  ): Promise<purify.Either<Error, LazilyResolvedIriInterface>> {
-    return this.lazilyResolvedIriInterfaceSync(identifier);
+  async lazilyResolvedIriIdentifierInterface(
+    identifier: LazilyResolvedIriIdentifierInterface.$Identifier,
+  ): Promise<purify.Either<Error, LazilyResolvedIriIdentifierInterface>> {
+    return this.lazilyResolvedIriIdentifierInterfaceSync(identifier);
   }
 
-  lazilyResolvedIriInterfaceSync(
-    identifier: LazilyResolvedIriInterface.$Identifier,
-  ): purify.Either<Error, LazilyResolvedIriInterface> {
-    return this.lazilyResolvedIriInterfacesSync({
+  lazilyResolvedIriIdentifierInterfaceSync(
+    identifier: LazilyResolvedIriIdentifierInterface.$Identifier,
+  ): purify.Either<Error, LazilyResolvedIriIdentifierInterface> {
+    return this.lazilyResolvedIriIdentifierInterfacesSync({
       where: { identifiers: [identifier], type: "identifiers" },
     }).map((objects) => objects[0]);
   }
 
-  async lazilyResolvedIriInterfaceIdentifiers(
-    query?: $ObjectSet.Query<LazilyResolvedIriInterface.$Identifier>,
+  async lazilyResolvedIriIdentifierInterfaceIdentifiers(
+    query?: $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly LazilyResolvedIriInterface.$Identifier[]>
+    purify.Either<
+      Error,
+      readonly LazilyResolvedIriIdentifierInterface.$Identifier[]
+    >
   > {
-    return this.lazilyResolvedIriInterfaceIdentifiersSync(query);
+    return this.lazilyResolvedIriIdentifierInterfaceIdentifiersSync(query);
   }
 
-  lazilyResolvedIriInterfaceIdentifiersSync(
-    query?: $ObjectSet.Query<LazilyResolvedIriInterface.$Identifier>,
-  ): purify.Either<Error, readonly LazilyResolvedIriInterface.$Identifier[]> {
+  lazilyResolvedIriIdentifierInterfaceIdentifiersSync(
+    query?: $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Identifier>,
+  ): purify.Either<
+    Error,
+    readonly LazilyResolvedIriIdentifierInterface.$Identifier[]
+  > {
     return this.$objectIdentifiersSync<
-      LazilyResolvedIriInterface,
-      LazilyResolvedIriInterface.$Identifier
+      LazilyResolvedIriIdentifierInterface,
+      LazilyResolvedIriIdentifierInterface.$Identifier
     >(
-      [{ $fromRdf: LazilyResolvedIriInterface.$fromRdf, $fromRdfTypes: [] }],
+      [
+        {
+          $fromRdf: LazilyResolvedIriIdentifierInterface.$fromRdf,
+          $fromRdfTypes: [],
+        },
+      ],
       query,
     );
   }
 
-  async lazilyResolvedIriInterfaces(
-    query?: $ObjectSet.Query<LazilyResolvedIriInterface.$Identifier>,
-  ): Promise<purify.Either<Error, readonly LazilyResolvedIriInterface[]>> {
-    return this.lazilyResolvedIriInterfacesSync(query);
+  async lazilyResolvedIriIdentifierInterfaces(
+    query?: $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly LazilyResolvedIriIdentifierInterface[]>
+  > {
+    return this.lazilyResolvedIriIdentifierInterfacesSync(query);
   }
 
-  lazilyResolvedIriInterfacesSync(
-    query?: $ObjectSet.Query<LazilyResolvedIriInterface.$Identifier>,
-  ): purify.Either<Error, readonly LazilyResolvedIriInterface[]> {
+  lazilyResolvedIriIdentifierInterfacesSync(
+    query?: $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Identifier>,
+  ): purify.Either<Error, readonly LazilyResolvedIriIdentifierInterface[]> {
     return this.$objectsSync<
-      LazilyResolvedIriInterface,
-      LazilyResolvedIriInterface.$Identifier
+      LazilyResolvedIriIdentifierInterface,
+      LazilyResolvedIriIdentifierInterface.$Identifier
     >(
-      [{ $fromRdf: LazilyResolvedIriInterface.$fromRdf, $fromRdfTypes: [] }],
+      [
+        {
+          $fromRdf: LazilyResolvedIriIdentifierInterface.$fromRdf,
+          $fromRdfTypes: [],
+        },
+      ],
       query,
     );
   }
 
-  async lazilyResolvedIriInterfacesCount(
+  async lazilyResolvedIriIdentifierInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedIriInterface.$Identifier>,
+      $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.lazilyResolvedIriInterfacesCountSync(query);
+    return this.lazilyResolvedIriIdentifierInterfacesCountSync(query);
   }
 
-  lazilyResolvedIriInterfacesCountSync(
+  lazilyResolvedIriIdentifierInterfacesCountSync(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedIriInterface.$Identifier>,
+      $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Identifier>,
       "where"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
-      LazilyResolvedIriInterface,
-      LazilyResolvedIriInterface.$Identifier
+      LazilyResolvedIriIdentifierInterface,
+      LazilyResolvedIriIdentifierInterface.$Identifier
     >(
-      [{ $fromRdf: LazilyResolvedIriInterface.$fromRdf, $fromRdfTypes: [] }],
+      [
+        {
+          $fromRdf: LazilyResolvedIriIdentifierInterface.$fromRdf,
+          $fromRdfTypes: [],
+        },
+      ],
       query,
     );
   }
@@ -53643,61 +56909,78 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async sha256IriClass(
-    identifier: Sha256IriClass.$Identifier,
-  ): Promise<purify.Either<Error, Sha256IriClass>> {
-    return this.sha256IriClassSync(identifier);
+  async sha256IriIdentifierClass(
+    identifier: Sha256IriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, Sha256IriIdentifierClass>> {
+    return this.sha256IriIdentifierClassSync(identifier);
   }
 
-  sha256IriClassSync(
-    identifier: Sha256IriClass.$Identifier,
-  ): purify.Either<Error, Sha256IriClass> {
-    return this.sha256IriClassesSync({
+  sha256IriIdentifierClassSync(
+    identifier: Sha256IriIdentifierClass.$Identifier,
+  ): purify.Either<Error, Sha256IriIdentifierClass> {
+    return this.sha256IriIdentifierClassesSync({
       where: { identifiers: [identifier], type: "identifiers" },
     }).map((objects) => objects[0]);
   }
 
-  async sha256IriClassIdentifiers(
-    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Sha256IriClass.$Identifier[]>> {
-    return this.sha256IriClassIdentifiersSync(query);
+  async sha256IriIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<Sha256IriIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly Sha256IriIdentifierClass.$Identifier[]>
+  > {
+    return this.sha256IriIdentifierClassIdentifiersSync(query);
   }
 
-  sha256IriClassIdentifiersSync(
-    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
-  ): purify.Either<Error, readonly Sha256IriClass.$Identifier[]> {
+  sha256IriIdentifierClassIdentifiersSync(
+    query?: $ObjectSet.Query<Sha256IriIdentifierClass.$Identifier>,
+  ): purify.Either<Error, readonly Sha256IriIdentifierClass.$Identifier[]> {
     return this.$objectIdentifiersSync<
-      Sha256IriClass,
-      Sha256IriClass.$Identifier
-    >([{ $fromRdf: Sha256IriClass.$fromRdf, $fromRdfTypes: [] }], query);
-  }
-
-  async sha256IriClasses(
-    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Sha256IriClass[]>> {
-    return this.sha256IriClassesSync(query);
-  }
-
-  sha256IriClassesSync(
-    query?: $ObjectSet.Query<Sha256IriClass.$Identifier>,
-  ): purify.Either<Error, readonly Sha256IriClass[]> {
-    return this.$objectsSync<Sha256IriClass, Sha256IriClass.$Identifier>(
-      [{ $fromRdf: Sha256IriClass.$fromRdf, $fromRdfTypes: [] }],
+      Sha256IriIdentifierClass,
+      Sha256IriIdentifierClass.$Identifier
+    >(
+      [{ $fromRdf: Sha256IriIdentifierClass.$fromRdf, $fromRdfTypes: [] }],
       query,
     );
   }
 
-  async sha256IriClassesCount(
-    query?: Pick<$ObjectSet.Query<Sha256IriClass.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.sha256IriClassesCountSync(query);
+  async sha256IriIdentifierClasses(
+    query?: $ObjectSet.Query<Sha256IriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Sha256IriIdentifierClass[]>> {
+    return this.sha256IriIdentifierClassesSync(query);
   }
 
-  sha256IriClassesCountSync(
-    query?: Pick<$ObjectSet.Query<Sha256IriClass.$Identifier>, "where">,
+  sha256IriIdentifierClassesSync(
+    query?: $ObjectSet.Query<Sha256IriIdentifierClass.$Identifier>,
+  ): purify.Either<Error, readonly Sha256IriIdentifierClass[]> {
+    return this.$objectsSync<
+      Sha256IriIdentifierClass,
+      Sha256IriIdentifierClass.$Identifier
+    >(
+      [{ $fromRdf: Sha256IriIdentifierClass.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async sha256IriIdentifierClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<Sha256IriIdentifierClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.sha256IriIdentifierClassesCountSync(query);
+  }
+
+  sha256IriIdentifierClassesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<Sha256IriIdentifierClass.$Identifier>,
+      "where"
+    >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<Sha256IriClass, Sha256IriClass.$Identifier>(
-      [{ $fromRdf: Sha256IriClass.$fromRdf, $fromRdfTypes: [] }],
+    return this.$objectsCountSync<
+      Sha256IriIdentifierClass,
+      Sha256IriIdentifierClass.$Identifier
+    >(
+      [{ $fromRdf: Sha256IriIdentifierClass.$fromRdf, $fromRdfTypes: [] }],
       query,
     );
   }
@@ -53822,122 +57105,156 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >([{ $fromRdf: UnionPropertiesClass.$fromRdf, $fromRdfTypes: [] }], query);
   }
 
-  async uuidV4IriClass(
-    identifier: UuidV4IriClass.$Identifier,
-  ): Promise<purify.Either<Error, UuidV4IriClass>> {
-    return this.uuidV4IriClassSync(identifier);
+  async uuidV4IriIdentifierClass(
+    identifier: UuidV4IriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, UuidV4IriIdentifierClass>> {
+    return this.uuidV4IriIdentifierClassSync(identifier);
   }
 
-  uuidV4IriClassSync(
-    identifier: UuidV4IriClass.$Identifier,
-  ): purify.Either<Error, UuidV4IriClass> {
-    return this.uuidV4IriClassesSync({
+  uuidV4IriIdentifierClassSync(
+    identifier: UuidV4IriIdentifierClass.$Identifier,
+  ): purify.Either<Error, UuidV4IriIdentifierClass> {
+    return this.uuidV4IriIdentifierClassesSync({
       where: { identifiers: [identifier], type: "identifiers" },
     }).map((objects) => objects[0]);
   }
 
-  async uuidV4IriClassIdentifiers(
-    query?: $ObjectSet.Query<UuidV4IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UuidV4IriClass.$Identifier[]>> {
-    return this.uuidV4IriClassIdentifiersSync(query);
+  async uuidV4IriIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<UuidV4IriIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly UuidV4IriIdentifierClass.$Identifier[]>
+  > {
+    return this.uuidV4IriIdentifierClassIdentifiersSync(query);
   }
 
-  uuidV4IriClassIdentifiersSync(
-    query?: $ObjectSet.Query<UuidV4IriClass.$Identifier>,
-  ): purify.Either<Error, readonly UuidV4IriClass.$Identifier[]> {
+  uuidV4IriIdentifierClassIdentifiersSync(
+    query?: $ObjectSet.Query<UuidV4IriIdentifierClass.$Identifier>,
+  ): purify.Either<Error, readonly UuidV4IriIdentifierClass.$Identifier[]> {
     return this.$objectIdentifiersSync<
-      UuidV4IriClass,
-      UuidV4IriClass.$Identifier
-    >([{ $fromRdf: UuidV4IriClass.$fromRdf, $fromRdfTypes: [] }], query);
-  }
-
-  async uuidV4IriClasses(
-    query?: $ObjectSet.Query<UuidV4IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UuidV4IriClass[]>> {
-    return this.uuidV4IriClassesSync(query);
-  }
-
-  uuidV4IriClassesSync(
-    query?: $ObjectSet.Query<UuidV4IriClass.$Identifier>,
-  ): purify.Either<Error, readonly UuidV4IriClass[]> {
-    return this.$objectsSync<UuidV4IriClass, UuidV4IriClass.$Identifier>(
-      [{ $fromRdf: UuidV4IriClass.$fromRdf, $fromRdfTypes: [] }],
+      UuidV4IriIdentifierClass,
+      UuidV4IriIdentifierClass.$Identifier
+    >(
+      [{ $fromRdf: UuidV4IriIdentifierClass.$fromRdf, $fromRdfTypes: [] }],
       query,
     );
   }
 
-  async uuidV4IriClassesCount(
-    query?: Pick<$ObjectSet.Query<UuidV4IriClass.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.uuidV4IriClassesCountSync(query);
+  async uuidV4IriIdentifierClasses(
+    query?: $ObjectSet.Query<UuidV4IriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UuidV4IriIdentifierClass[]>> {
+    return this.uuidV4IriIdentifierClassesSync(query);
   }
 
-  uuidV4IriClassesCountSync(
-    query?: Pick<$ObjectSet.Query<UuidV4IriClass.$Identifier>, "where">,
-  ): purify.Either<Error, number> {
-    return this.$objectsCountSync<UuidV4IriClass, UuidV4IriClass.$Identifier>(
-      [{ $fromRdf: UuidV4IriClass.$fromRdf, $fromRdfTypes: [] }],
-      query,
-    );
-  }
-
-  async uuidV4IriInterface(
-    identifier: UuidV4IriInterface.$Identifier,
-  ): Promise<purify.Either<Error, UuidV4IriInterface>> {
-    return this.uuidV4IriInterfaceSync(identifier);
-  }
-
-  uuidV4IriInterfaceSync(
-    identifier: UuidV4IriInterface.$Identifier,
-  ): purify.Either<Error, UuidV4IriInterface> {
-    return this.uuidV4IriInterfacesSync({
-      where: { identifiers: [identifier], type: "identifiers" },
-    }).map((objects) => objects[0]);
-  }
-
-  async uuidV4IriInterfaceIdentifiers(
-    query?: $ObjectSet.Query<UuidV4IriInterface.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UuidV4IriInterface.$Identifier[]>> {
-    return this.uuidV4IriInterfaceIdentifiersSync(query);
-  }
-
-  uuidV4IriInterfaceIdentifiersSync(
-    query?: $ObjectSet.Query<UuidV4IriInterface.$Identifier>,
-  ): purify.Either<Error, readonly UuidV4IriInterface.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      UuidV4IriInterface,
-      UuidV4IriInterface.$Identifier
-    >([{ $fromRdf: UuidV4IriInterface.$fromRdf, $fromRdfTypes: [] }], query);
-  }
-
-  async uuidV4IriInterfaces(
-    query?: $ObjectSet.Query<UuidV4IriInterface.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UuidV4IriInterface[]>> {
-    return this.uuidV4IriInterfacesSync(query);
-  }
-
-  uuidV4IriInterfacesSync(
-    query?: $ObjectSet.Query<UuidV4IriInterface.$Identifier>,
-  ): purify.Either<Error, readonly UuidV4IriInterface[]> {
+  uuidV4IriIdentifierClassesSync(
+    query?: $ObjectSet.Query<UuidV4IriIdentifierClass.$Identifier>,
+  ): purify.Either<Error, readonly UuidV4IriIdentifierClass[]> {
     return this.$objectsSync<
-      UuidV4IriInterface,
-      UuidV4IriInterface.$Identifier
-    >([{ $fromRdf: UuidV4IriInterface.$fromRdf, $fromRdfTypes: [] }], query);
+      UuidV4IriIdentifierClass,
+      UuidV4IriIdentifierClass.$Identifier
+    >(
+      [{ $fromRdf: UuidV4IriIdentifierClass.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
   }
 
-  async uuidV4IriInterfacesCount(
-    query?: Pick<$ObjectSet.Query<UuidV4IriInterface.$Identifier>, "where">,
+  async uuidV4IriIdentifierClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<UuidV4IriIdentifierClass.$Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
-    return this.uuidV4IriInterfacesCountSync(query);
+    return this.uuidV4IriIdentifierClassesCountSync(query);
   }
 
-  uuidV4IriInterfacesCountSync(
-    query?: Pick<$ObjectSet.Query<UuidV4IriInterface.$Identifier>, "where">,
+  uuidV4IriIdentifierClassesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<UuidV4IriIdentifierClass.$Identifier>,
+      "where"
+    >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
-      UuidV4IriInterface,
-      UuidV4IriInterface.$Identifier
-    >([{ $fromRdf: UuidV4IriInterface.$fromRdf, $fromRdfTypes: [] }], query);
+      UuidV4IriIdentifierClass,
+      UuidV4IriIdentifierClass.$Identifier
+    >(
+      [{ $fromRdf: UuidV4IriIdentifierClass.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async uuidV4IriIdentifierInterface(
+    identifier: UuidV4IriIdentifierInterface.$Identifier,
+  ): Promise<purify.Either<Error, UuidV4IriIdentifierInterface>> {
+    return this.uuidV4IriIdentifierInterfaceSync(identifier);
+  }
+
+  uuidV4IriIdentifierInterfaceSync(
+    identifier: UuidV4IriIdentifierInterface.$Identifier,
+  ): purify.Either<Error, UuidV4IriIdentifierInterface> {
+    return this.uuidV4IriIdentifierInterfacesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async uuidV4IriIdentifierInterfaceIdentifiers(
+    query?: $ObjectSet.Query<UuidV4IriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly UuidV4IriIdentifierInterface.$Identifier[]>
+  > {
+    return this.uuidV4IriIdentifierInterfaceIdentifiersSync(query);
+  }
+
+  uuidV4IriIdentifierInterfaceIdentifiersSync(
+    query?: $ObjectSet.Query<UuidV4IriIdentifierInterface.$Identifier>,
+  ): purify.Either<Error, readonly UuidV4IriIdentifierInterface.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      UuidV4IriIdentifierInterface,
+      UuidV4IriIdentifierInterface.$Identifier
+    >(
+      [{ $fromRdf: UuidV4IriIdentifierInterface.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async uuidV4IriIdentifierInterfaces(
+    query?: $ObjectSet.Query<UuidV4IriIdentifierInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UuidV4IriIdentifierInterface[]>> {
+    return this.uuidV4IriIdentifierInterfacesSync(query);
+  }
+
+  uuidV4IriIdentifierInterfacesSync(
+    query?: $ObjectSet.Query<UuidV4IriIdentifierInterface.$Identifier>,
+  ): purify.Either<Error, readonly UuidV4IriIdentifierInterface[]> {
+    return this.$objectsSync<
+      UuidV4IriIdentifierInterface,
+      UuidV4IriIdentifierInterface.$Identifier
+    >(
+      [{ $fromRdf: UuidV4IriIdentifierInterface.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async uuidV4IriIdentifierInterfacesCount(
+    query?: Pick<
+      $ObjectSet.Query<UuidV4IriIdentifierInterface.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.uuidV4IriIdentifierInterfacesCountSync(query);
+  }
+
+  uuidV4IriIdentifierInterfacesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<UuidV4IriIdentifierInterface.$Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      UuidV4IriIdentifierInterface,
+      UuidV4IriIdentifierInterface.$Identifier
+    >(
+      [{ $fromRdf: UuidV4IriIdentifierInterface.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
   }
 
   async classUnion(
@@ -54988,67 +58305,86 @@ export class $SparqlObjectSet implements $ObjectSet {
     );
   }
 
-  async blankClass(
-    identifier: BlankClass.$Identifier,
-  ): Promise<purify.Either<Error, BlankClass>> {
+  async blankNodeIdentifierClass(
+    identifier: BlankNodeIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, BlankNodeIdentifierClass>> {
     return (
-      await this.blankClasses({
+      await this.blankNodeIdentifierClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
     ).map((objects) => objects[0]);
   }
 
-  async blankClassIdentifiers(
-    query?: $SparqlObjectSet.Query<BlankClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly BlankClass.$Identifier[]>> {
-    return this.$objectIdentifiers<BlankClass.$Identifier>(BlankClass, query);
+  async blankNodeIdentifierClassIdentifiers(
+    query?: $SparqlObjectSet.Query<BlankNodeIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BlankNodeIdentifierClass.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<BlankNodeIdentifierClass.$Identifier>(
+      BlankNodeIdentifierClass,
+      query,
+    );
   }
 
-  async blankClasses(
-    query?: $SparqlObjectSet.Query<BlankClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly BlankClass[]>> {
-    return this.$objects<BlankClass, BlankClass.$Identifier>(BlankClass, query);
+  async blankNodeIdentifierClasses(
+    query?: $SparqlObjectSet.Query<BlankNodeIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly BlankNodeIdentifierClass[]>> {
+    return this.$objects<
+      BlankNodeIdentifierClass,
+      BlankNodeIdentifierClass.$Identifier
+    >(BlankNodeIdentifierClass, query);
   }
 
-  async blankClassesCount(
-    query?: Pick<$SparqlObjectSet.Query<BlankClass.$Identifier>, "where">,
+  async blankNodeIdentifierClassesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<BlankNodeIdentifierClass.$Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<BlankClass.$Identifier>(BlankClass, query);
+    return this.$objectsCount<BlankNodeIdentifierClass.$Identifier>(
+      BlankNodeIdentifierClass,
+      query,
+    );
   }
 
-  async blankInterface(
-    identifier: BlankInterface.$Identifier,
-  ): Promise<purify.Either<Error, BlankInterface>> {
+  async blankNodeIdentifierInterface(
+    identifier: BlankNodeIdentifierInterface.$Identifier,
+  ): Promise<purify.Either<Error, BlankNodeIdentifierInterface>> {
     return (
-      await this.blankInterfaces({
+      await this.blankNodeIdentifierInterfaces({
         where: { identifiers: [identifier], type: "identifiers" },
       })
     ).map((objects) => objects[0]);
   }
 
-  async blankInterfaceIdentifiers(
-    query?: $SparqlObjectSet.Query<BlankInterface.$Identifier>,
-  ): Promise<purify.Either<Error, readonly BlankInterface.$Identifier[]>> {
-    return this.$objectIdentifiers<BlankInterface.$Identifier>(
-      BlankInterface,
+  async blankNodeIdentifierInterfaceIdentifiers(
+    query?: $SparqlObjectSet.Query<BlankNodeIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BlankNodeIdentifierInterface.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<BlankNodeIdentifierInterface.$Identifier>(
+      BlankNodeIdentifierInterface,
       query,
     );
   }
 
-  async blankInterfaces(
-    query?: $SparqlObjectSet.Query<BlankInterface.$Identifier>,
-  ): Promise<purify.Either<Error, readonly BlankInterface[]>> {
-    return this.$objects<BlankInterface, BlankInterface.$Identifier>(
-      BlankInterface,
-      query,
-    );
+  async blankNodeIdentifierInterfaces(
+    query?: $SparqlObjectSet.Query<BlankNodeIdentifierInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly BlankNodeIdentifierInterface[]>> {
+    return this.$objects<
+      BlankNodeIdentifierInterface,
+      BlankNodeIdentifierInterface.$Identifier
+    >(BlankNodeIdentifierInterface, query);
   }
 
-  async blankInterfacesCount(
-    query?: Pick<$SparqlObjectSet.Query<BlankInterface.$Identifier>, "where">,
+  async blankNodeIdentifierInterfacesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<BlankNodeIdentifierInterface.$Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<BlankInterface.$Identifier>(
-      BlankInterface,
+    return this.$objectsCount<BlankNodeIdentifierInterface.$Identifier>(
+      BlankNodeIdentifierInterface,
       query,
     );
   }
@@ -55593,6 +58929,132 @@ export class $SparqlObjectSet implements $ObjectSet {
     );
   }
 
+  async identifierOverride3Class(
+    identifier: IdentifierOverride3ClassStatic.$Identifier,
+  ): Promise<purify.Either<Error, IdentifierOverride3Class>> {
+    return (
+      await this.identifierOverride3Classes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async identifierOverride3ClassIdentifiers(
+    query?: $SparqlObjectSet.Query<IdentifierOverride3ClassStatic.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IdentifierOverride3ClassStatic.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<IdentifierOverride3ClassStatic.$Identifier>(
+      IdentifierOverride3ClassStatic,
+      query,
+    );
+  }
+
+  async identifierOverride3Classes(
+    query?: $SparqlObjectSet.Query<IdentifierOverride3ClassStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IdentifierOverride3Class[]>> {
+    return this.$objects<
+      IdentifierOverride3Class,
+      IdentifierOverride3ClassStatic.$Identifier
+    >(IdentifierOverride3ClassStatic, query);
+  }
+
+  async identifierOverride3ClassesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<IdentifierOverride3ClassStatic.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<IdentifierOverride3ClassStatic.$Identifier>(
+      IdentifierOverride3ClassStatic,
+      query,
+    );
+  }
+
+  async identifierOverride4Class(
+    identifier: IdentifierOverride4ClassStatic.$Identifier,
+  ): Promise<purify.Either<Error, IdentifierOverride4Class>> {
+    return (
+      await this.identifierOverride4Classes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async identifierOverride4ClassIdentifiers(
+    query?: $SparqlObjectSet.Query<IdentifierOverride4ClassStatic.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IdentifierOverride4ClassStatic.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<IdentifierOverride4ClassStatic.$Identifier>(
+      IdentifierOverride4ClassStatic,
+      query,
+    );
+  }
+
+  async identifierOverride4Classes(
+    query?: $SparqlObjectSet.Query<IdentifierOverride4ClassStatic.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IdentifierOverride4Class[]>> {
+    return this.$objects<
+      IdentifierOverride4Class,
+      IdentifierOverride4ClassStatic.$Identifier
+    >(IdentifierOverride4ClassStatic, query);
+  }
+
+  async identifierOverride4ClassesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<IdentifierOverride4ClassStatic.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<IdentifierOverride4ClassStatic.$Identifier>(
+      IdentifierOverride4ClassStatic,
+      query,
+    );
+  }
+
+  async identifierOverride5Class(
+    identifier: IdentifierOverride5Class.$Identifier,
+  ): Promise<purify.Either<Error, IdentifierOverride5Class>> {
+    return (
+      await this.identifierOverride5Classes({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async identifierOverride5ClassIdentifiers(
+    query?: $SparqlObjectSet.Query<IdentifierOverride5Class.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IdentifierOverride5Class.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<IdentifierOverride5Class.$Identifier>(
+      IdentifierOverride5Class,
+      query,
+    );
+  }
+
+  async identifierOverride5Classes(
+    query?: $SparqlObjectSet.Query<IdentifierOverride5Class.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IdentifierOverride5Class[]>> {
+    return this.$objects<
+      IdentifierOverride5Class,
+      IdentifierOverride5Class.$Identifier
+    >(IdentifierOverride5Class, query);
+  }
+
+  async identifierOverride5ClassesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<IdentifierOverride5Class.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<IdentifierOverride5Class.$Identifier>(
+      IdentifierOverride5Class,
+      query,
+    );
+  }
+
   async indirectRecursiveClass(
     identifier: IndirectRecursiveClass.$Identifier,
   ): Promise<purify.Either<Error, IndirectRecursiveClass>> {
@@ -55911,32 +59373,86 @@ export class $SparqlObjectSet implements $ObjectSet {
     );
   }
 
-  async iriClass(
-    identifier: IriClass.$Identifier,
-  ): Promise<purify.Either<Error, IriClass>> {
+  async iriIdentifierClass(
+    identifier: IriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, IriIdentifierClass>> {
     return (
-      await this.iriClasses({
+      await this.iriIdentifierClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
     ).map((objects) => objects[0]);
   }
 
-  async iriClassIdentifiers(
-    query?: $SparqlObjectSet.Query<IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly IriClass.$Identifier[]>> {
-    return this.$objectIdentifiers<IriClass.$Identifier>(IriClass, query);
+  async iriIdentifierClassIdentifiers(
+    query?: $SparqlObjectSet.Query<IriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IriIdentifierClass.$Identifier[]>> {
+    return this.$objectIdentifiers<IriIdentifierClass.$Identifier>(
+      IriIdentifierClass,
+      query,
+    );
   }
 
-  async iriClasses(
-    query?: $SparqlObjectSet.Query<IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly IriClass[]>> {
-    return this.$objects<IriClass, IriClass.$Identifier>(IriClass, query);
+  async iriIdentifierClasses(
+    query?: $SparqlObjectSet.Query<IriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IriIdentifierClass[]>> {
+    return this.$objects<IriIdentifierClass, IriIdentifierClass.$Identifier>(
+      IriIdentifierClass,
+      query,
+    );
   }
 
-  async iriClassesCount(
-    query?: Pick<$SparqlObjectSet.Query<IriClass.$Identifier>, "where">,
+  async iriIdentifierClassesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<IriIdentifierClass.$Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<IriClass.$Identifier>(IriClass, query);
+    return this.$objectsCount<IriIdentifierClass.$Identifier>(
+      IriIdentifierClass,
+      query,
+    );
+  }
+
+  async iriIdentifierInterface(
+    identifier: IriIdentifierInterface.$Identifier,
+  ): Promise<purify.Either<Error, IriIdentifierInterface>> {
+    return (
+      await this.iriIdentifierInterfaces({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async iriIdentifierInterfaceIdentifiers(
+    query?: $SparqlObjectSet.Query<IriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly IriIdentifierInterface.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<IriIdentifierInterface.$Identifier>(
+      IriIdentifierInterface,
+      query,
+    );
+  }
+
+  async iriIdentifierInterfaces(
+    query?: $SparqlObjectSet.Query<IriIdentifierInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly IriIdentifierInterface[]>> {
+    return this.$objects<
+      IriIdentifierInterface,
+      IriIdentifierInterface.$Identifier
+    >(IriIdentifierInterface, query);
+  }
+
+  async iriIdentifierInterfacesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<IriIdentifierInterface.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<IriIdentifierInterface.$Identifier>(
+      IriIdentifierInterface,
+      query,
+    );
   }
 
   async languageInPropertiesClass(
@@ -55981,96 +59497,103 @@ export class $SparqlObjectSet implements $ObjectSet {
     );
   }
 
-  async lazilyResolvedBlankNodeOrIriClass(
-    identifier: LazilyResolvedBlankNodeOrIriClass.$Identifier,
-  ): Promise<purify.Either<Error, LazilyResolvedBlankNodeOrIriClass>> {
+  async lazilyResolvedBlankNodeOrIriIdentifierClass(
+    identifier: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+  ): Promise<
+    purify.Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass>
+  > {
     return (
-      await this.lazilyResolvedBlankNodeOrIriClasses({
+      await this.lazilyResolvedBlankNodeOrIriIdentifierClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
     ).map((objects) => objects[0]);
   }
 
-  async lazilyResolvedBlankNodeOrIriClassIdentifiers(
-    query?: $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriClass.$Identifier>,
+  async lazilyResolvedBlankNodeOrIriIdentifierClassIdentifiers(
+    query?: $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>,
   ): Promise<
     purify.Either<
       Error,
-      readonly LazilyResolvedBlankNodeOrIriClass.$Identifier[]
+      readonly LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier[]
     >
   > {
-    return this.$objectIdentifiers<LazilyResolvedBlankNodeOrIriClass.$Identifier>(
-      LazilyResolvedBlankNodeOrIriClass,
+    return this.$objectIdentifiers<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>(
+      LazilyResolvedBlankNodeOrIriIdentifierClass,
       query,
     );
   }
 
-  async lazilyResolvedBlankNodeOrIriClasses(
-    query?: $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriClass.$Identifier>,
+  async lazilyResolvedBlankNodeOrIriIdentifierClasses(
+    query?: $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly LazilyResolvedBlankNodeOrIriClass[]>
+    purify.Either<Error, readonly LazilyResolvedBlankNodeOrIriIdentifierClass[]>
   > {
     return this.$objects<
-      LazilyResolvedBlankNodeOrIriClass,
-      LazilyResolvedBlankNodeOrIriClass.$Identifier
-    >(LazilyResolvedBlankNodeOrIriClass, query);
+      LazilyResolvedBlankNodeOrIriIdentifierClass,
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier
+    >(LazilyResolvedBlankNodeOrIriIdentifierClass, query);
   }
 
-  async lazilyResolvedBlankNodeOrIriClassesCount(
+  async lazilyResolvedBlankNodeOrIriIdentifierClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriClass.$Identifier>,
+      $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<LazilyResolvedBlankNodeOrIriClass.$Identifier>(
-      LazilyResolvedBlankNodeOrIriClass,
+    return this.$objectsCount<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>(
+      LazilyResolvedBlankNodeOrIriIdentifierClass,
       query,
     );
   }
 
-  async lazilyResolvedBlankNodeOrIriInterface(
-    identifier: LazilyResolvedBlankNodeOrIriInterface.$Identifier,
-  ): Promise<purify.Either<Error, LazilyResolvedBlankNodeOrIriInterface>> {
+  async lazilyResolvedBlankNodeOrIriIdentifierInterface(
+    identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+  ): Promise<
+    purify.Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface>
+  > {
     return (
-      await this.lazilyResolvedBlankNodeOrIriInterfaces({
+      await this.lazilyResolvedBlankNodeOrIriIdentifierInterfaces({
         where: { identifiers: [identifier], type: "identifiers" },
       })
     ).map((objects) => objects[0]);
   }
 
-  async lazilyResolvedBlankNodeOrIriInterfaceIdentifiers(
-    query?: $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriInterface.$Identifier>,
+  async lazilyResolvedBlankNodeOrIriIdentifierInterfaceIdentifiers(
+    query?: $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>,
   ): Promise<
     purify.Either<
       Error,
-      readonly LazilyResolvedBlankNodeOrIriInterface.$Identifier[]
+      readonly LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier[]
     >
   > {
-    return this.$objectIdentifiers<LazilyResolvedBlankNodeOrIriInterface.$Identifier>(
-      LazilyResolvedBlankNodeOrIriInterface,
+    return this.$objectIdentifiers<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>(
+      LazilyResolvedBlankNodeOrIriIdentifierInterface,
       query,
     );
   }
 
-  async lazilyResolvedBlankNodeOrIriInterfaces(
-    query?: $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriInterface.$Identifier>,
+  async lazilyResolvedBlankNodeOrIriIdentifierInterfaces(
+    query?: $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly LazilyResolvedBlankNodeOrIriInterface[]>
+    purify.Either<
+      Error,
+      readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[]
+    >
   > {
     return this.$objects<
-      LazilyResolvedBlankNodeOrIriInterface,
-      LazilyResolvedBlankNodeOrIriInterface.$Identifier
-    >(LazilyResolvedBlankNodeOrIriInterface, query);
+      LazilyResolvedBlankNodeOrIriIdentifierInterface,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier
+    >(LazilyResolvedBlankNodeOrIriIdentifierInterface, query);
   }
 
-  async lazilyResolvedBlankNodeOrIriInterfacesCount(
+  async lazilyResolvedBlankNodeOrIriIdentifierInterfacesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriInterface.$Identifier>,
+      $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<LazilyResolvedBlankNodeOrIriInterface.$Identifier>(
-      LazilyResolvedBlankNodeOrIriInterface,
+    return this.$objectsCount<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>(
+      LazilyResolvedBlankNodeOrIriIdentifierInterface,
       query,
     );
   }
@@ -56253,86 +59776,96 @@ export class $SparqlObjectSet implements $ObjectSet {
     );
   }
 
-  async lazilyResolvedIriClass(
-    identifier: LazilyResolvedIriClass.$Identifier,
-  ): Promise<purify.Either<Error, LazilyResolvedIriClass>> {
+  async lazilyResolvedIriIdentifierClass(
+    identifier: LazilyResolvedIriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, LazilyResolvedIriIdentifierClass>> {
     return (
-      await this.lazilyResolvedIriClasses({
+      await this.lazilyResolvedIriIdentifierClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
     ).map((objects) => objects[0]);
   }
 
-  async lazilyResolvedIriClassIdentifiers(
-    query?: $SparqlObjectSet.Query<LazilyResolvedIriClass.$Identifier>,
+  async lazilyResolvedIriIdentifierClassIdentifiers(
+    query?: $SparqlObjectSet.Query<LazilyResolvedIriIdentifierClass.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly LazilyResolvedIriClass.$Identifier[]>
+    purify.Either<
+      Error,
+      readonly LazilyResolvedIriIdentifierClass.$Identifier[]
+    >
   > {
-    return this.$objectIdentifiers<LazilyResolvedIriClass.$Identifier>(
-      LazilyResolvedIriClass,
+    return this.$objectIdentifiers<LazilyResolvedIriIdentifierClass.$Identifier>(
+      LazilyResolvedIriIdentifierClass,
       query,
     );
   }
 
-  async lazilyResolvedIriClasses(
-    query?: $SparqlObjectSet.Query<LazilyResolvedIriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly LazilyResolvedIriClass[]>> {
+  async lazilyResolvedIriIdentifierClasses(
+    query?: $SparqlObjectSet.Query<LazilyResolvedIriIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly LazilyResolvedIriIdentifierClass[]>
+  > {
     return this.$objects<
-      LazilyResolvedIriClass,
-      LazilyResolvedIriClass.$Identifier
-    >(LazilyResolvedIriClass, query);
+      LazilyResolvedIriIdentifierClass,
+      LazilyResolvedIriIdentifierClass.$Identifier
+    >(LazilyResolvedIriIdentifierClass, query);
   }
 
-  async lazilyResolvedIriClassesCount(
+  async lazilyResolvedIriIdentifierClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<LazilyResolvedIriClass.$Identifier>,
+      $SparqlObjectSet.Query<LazilyResolvedIriIdentifierClass.$Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<LazilyResolvedIriClass.$Identifier>(
-      LazilyResolvedIriClass,
+    return this.$objectsCount<LazilyResolvedIriIdentifierClass.$Identifier>(
+      LazilyResolvedIriIdentifierClass,
       query,
     );
   }
 
-  async lazilyResolvedIriInterface(
-    identifier: LazilyResolvedIriInterface.$Identifier,
-  ): Promise<purify.Either<Error, LazilyResolvedIriInterface>> {
+  async lazilyResolvedIriIdentifierInterface(
+    identifier: LazilyResolvedIriIdentifierInterface.$Identifier,
+  ): Promise<purify.Either<Error, LazilyResolvedIriIdentifierInterface>> {
     return (
-      await this.lazilyResolvedIriInterfaces({
+      await this.lazilyResolvedIriIdentifierInterfaces({
         where: { identifiers: [identifier], type: "identifiers" },
       })
     ).map((objects) => objects[0]);
   }
 
-  async lazilyResolvedIriInterfaceIdentifiers(
-    query?: $SparqlObjectSet.Query<LazilyResolvedIriInterface.$Identifier>,
+  async lazilyResolvedIriIdentifierInterfaceIdentifiers(
+    query?: $SparqlObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly LazilyResolvedIriInterface.$Identifier[]>
+    purify.Either<
+      Error,
+      readonly LazilyResolvedIriIdentifierInterface.$Identifier[]
+    >
   > {
-    return this.$objectIdentifiers<LazilyResolvedIriInterface.$Identifier>(
-      LazilyResolvedIriInterface,
+    return this.$objectIdentifiers<LazilyResolvedIriIdentifierInterface.$Identifier>(
+      LazilyResolvedIriIdentifierInterface,
       query,
     );
   }
 
-  async lazilyResolvedIriInterfaces(
-    query?: $SparqlObjectSet.Query<LazilyResolvedIriInterface.$Identifier>,
-  ): Promise<purify.Either<Error, readonly LazilyResolvedIriInterface[]>> {
+  async lazilyResolvedIriIdentifierInterfaces(
+    query?: $SparqlObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly LazilyResolvedIriIdentifierInterface[]>
+  > {
     return this.$objects<
-      LazilyResolvedIriInterface,
-      LazilyResolvedIriInterface.$Identifier
-    >(LazilyResolvedIriInterface, query);
+      LazilyResolvedIriIdentifierInterface,
+      LazilyResolvedIriIdentifierInterface.$Identifier
+    >(LazilyResolvedIriIdentifierInterface, query);
   }
 
-  async lazilyResolvedIriInterfacesCount(
+  async lazilyResolvedIriIdentifierInterfacesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<LazilyResolvedIriInterface.$Identifier>,
+      $SparqlObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<LazilyResolvedIriInterface.$Identifier>(
-      LazilyResolvedIriInterface,
+    return this.$objectsCount<LazilyResolvedIriIdentifierInterface.$Identifier>(
+      LazilyResolvedIriIdentifierInterface,
       query,
     );
   }
@@ -56978,39 +60511,44 @@ export class $SparqlObjectSet implements $ObjectSet {
     );
   }
 
-  async sha256IriClass(
-    identifier: Sha256IriClass.$Identifier,
-  ): Promise<purify.Either<Error, Sha256IriClass>> {
+  async sha256IriIdentifierClass(
+    identifier: Sha256IriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, Sha256IriIdentifierClass>> {
     return (
-      await this.sha256IriClasses({
+      await this.sha256IriIdentifierClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
     ).map((objects) => objects[0]);
   }
 
-  async sha256IriClassIdentifiers(
-    query?: $SparqlObjectSet.Query<Sha256IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Sha256IriClass.$Identifier[]>> {
-    return this.$objectIdentifiers<Sha256IriClass.$Identifier>(
-      Sha256IriClass,
+  async sha256IriIdentifierClassIdentifiers(
+    query?: $SparqlObjectSet.Query<Sha256IriIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly Sha256IriIdentifierClass.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<Sha256IriIdentifierClass.$Identifier>(
+      Sha256IriIdentifierClass,
       query,
     );
   }
 
-  async sha256IriClasses(
-    query?: $SparqlObjectSet.Query<Sha256IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly Sha256IriClass[]>> {
-    return this.$objects<Sha256IriClass, Sha256IriClass.$Identifier>(
-      Sha256IriClass,
-      query,
-    );
+  async sha256IriIdentifierClasses(
+    query?: $SparqlObjectSet.Query<Sha256IriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly Sha256IriIdentifierClass[]>> {
+    return this.$objects<
+      Sha256IriIdentifierClass,
+      Sha256IriIdentifierClass.$Identifier
+    >(Sha256IriIdentifierClass, query);
   }
 
-  async sha256IriClassesCount(
-    query?: Pick<$SparqlObjectSet.Query<Sha256IriClass.$Identifier>, "where">,
+  async sha256IriIdentifierClassesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<Sha256IriIdentifierClass.$Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<Sha256IriClass.$Identifier>(
-      Sha256IriClass,
+    return this.$objectsCount<Sha256IriIdentifierClass.$Identifier>(
+      Sha256IriIdentifierClass,
       query,
     );
   }
@@ -57097,79 +60635,86 @@ export class $SparqlObjectSet implements $ObjectSet {
     );
   }
 
-  async uuidV4IriClass(
-    identifier: UuidV4IriClass.$Identifier,
-  ): Promise<purify.Either<Error, UuidV4IriClass>> {
+  async uuidV4IriIdentifierClass(
+    identifier: UuidV4IriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, UuidV4IriIdentifierClass>> {
     return (
-      await this.uuidV4IriClasses({
+      await this.uuidV4IriIdentifierClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
     ).map((objects) => objects[0]);
   }
 
-  async uuidV4IriClassIdentifiers(
-    query?: $SparqlObjectSet.Query<UuidV4IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UuidV4IriClass.$Identifier[]>> {
-    return this.$objectIdentifiers<UuidV4IriClass.$Identifier>(
-      UuidV4IriClass,
+  async uuidV4IriIdentifierClassIdentifiers(
+    query?: $SparqlObjectSet.Query<UuidV4IriIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly UuidV4IriIdentifierClass.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<UuidV4IriIdentifierClass.$Identifier>(
+      UuidV4IriIdentifierClass,
       query,
     );
   }
 
-  async uuidV4IriClasses(
-    query?: $SparqlObjectSet.Query<UuidV4IriClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UuidV4IriClass[]>> {
-    return this.$objects<UuidV4IriClass, UuidV4IriClass.$Identifier>(
-      UuidV4IriClass,
-      query,
-    );
+  async uuidV4IriIdentifierClasses(
+    query?: $SparqlObjectSet.Query<UuidV4IriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UuidV4IriIdentifierClass[]>> {
+    return this.$objects<
+      UuidV4IriIdentifierClass,
+      UuidV4IriIdentifierClass.$Identifier
+    >(UuidV4IriIdentifierClass, query);
   }
 
-  async uuidV4IriClassesCount(
-    query?: Pick<$SparqlObjectSet.Query<UuidV4IriClass.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<UuidV4IriClass.$Identifier>(
-      UuidV4IriClass,
-      query,
-    );
-  }
-
-  async uuidV4IriInterface(
-    identifier: UuidV4IriInterface.$Identifier,
-  ): Promise<purify.Either<Error, UuidV4IriInterface>> {
-    return (
-      await this.uuidV4IriInterfaces({
-        where: { identifiers: [identifier], type: "identifiers" },
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async uuidV4IriInterfaceIdentifiers(
-    query?: $SparqlObjectSet.Query<UuidV4IriInterface.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UuidV4IriInterface.$Identifier[]>> {
-    return this.$objectIdentifiers<UuidV4IriInterface.$Identifier>(
-      UuidV4IriInterface,
-      query,
-    );
-  }
-
-  async uuidV4IriInterfaces(
-    query?: $SparqlObjectSet.Query<UuidV4IriInterface.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UuidV4IriInterface[]>> {
-    return this.$objects<UuidV4IriInterface, UuidV4IriInterface.$Identifier>(
-      UuidV4IriInterface,
-      query,
-    );
-  }
-
-  async uuidV4IriInterfacesCount(
+  async uuidV4IriIdentifierClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<UuidV4IriInterface.$Identifier>,
+      $SparqlObjectSet.Query<UuidV4IriIdentifierClass.$Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<UuidV4IriInterface.$Identifier>(
-      UuidV4IriInterface,
+    return this.$objectsCount<UuidV4IriIdentifierClass.$Identifier>(
+      UuidV4IriIdentifierClass,
+      query,
+    );
+  }
+
+  async uuidV4IriIdentifierInterface(
+    identifier: UuidV4IriIdentifierInterface.$Identifier,
+  ): Promise<purify.Either<Error, UuidV4IriIdentifierInterface>> {
+    return (
+      await this.uuidV4IriIdentifierInterfaces({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async uuidV4IriIdentifierInterfaceIdentifiers(
+    query?: $SparqlObjectSet.Query<UuidV4IriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly UuidV4IriIdentifierInterface.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<UuidV4IriIdentifierInterface.$Identifier>(
+      UuidV4IriIdentifierInterface,
+      query,
+    );
+  }
+
+  async uuidV4IriIdentifierInterfaces(
+    query?: $SparqlObjectSet.Query<UuidV4IriIdentifierInterface.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UuidV4IriIdentifierInterface[]>> {
+    return this.$objects<
+      UuidV4IriIdentifierInterface,
+      UuidV4IriIdentifierInterface.$Identifier
+    >(UuidV4IriIdentifierInterface, query);
+  }
+
+  async uuidV4IriIdentifierInterfacesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<UuidV4IriIdentifierInterface.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<UuidV4IriIdentifierInterface.$Identifier>(
+      UuidV4IriIdentifierInterface,
       query,
     );
   }

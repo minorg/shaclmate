@@ -7,14 +7,6 @@ import { stringify as stringifyYaml } from "yaml";
 
 const VERSION = "3.0.4";
 
-type PackageName =
-  | "cli"
-  | "compiler"
-  | "kitchen-sink"
-  | "graphql"
-  | "forms"
-  | "shacl-ast";
-
 interface Package {
   bin?: Record<string, string>;
   dependencies?: {
@@ -30,7 +22,7 @@ interface Package {
   };
   directory: "examples" | "packages";
   linkableDependencies?: readonly string[];
-  name: PackageName;
+  name: "cli" | "compiler" | "kitchen-sink" | "graphql" | "forms" | "shacl-ast";
   scripts?: Record<string, string>;
 }
 
@@ -63,6 +55,7 @@ const externalDependencyVersions = {
   sparqljs: { sparqljs: "3.7.3" },
   uuid: { uuid: "^9.0.1" },
   typescript: { typescript: "5.8.2" },
+  "typescript-memoize": { "typescript-memoize": "^1.1.1" },
   zod: {
     zod: "^4.1.12",
   },
@@ -112,6 +105,7 @@ const packages: readonly Package[] = [
         ...externalDependencyVersions["n3"],
         ...externalDependencyVersions["purify-ts"],
         ...externalDependencyVersions["rdfjs-resource"],
+        ...externalDependencyVersions["typescript-memoize"],
       },
     },
     directory: "packages",
@@ -280,6 +274,14 @@ for (const package_ of packages) {
     }
   }
 
+  let testsDirectoryPath: string | null = path.join(
+    packageDirectoryPath,
+    "__tests__",
+  );
+  if (!fs.existsSync(testsDirectoryPath)) {
+    testsDirectoryPath = null;
+  }
+
   fs.writeFileSync(
     path.join(packageDirectoryPath, "package.json"),
     `${JSON.stringify(
@@ -299,8 +301,12 @@ for (const package_ of packages) {
           ...externalDependencyVersions["depcheck"],
           ...externalDependencyVersions["rimraf"],
           ...externalDependencyVersions["typescript"],
-          ...externalDependencyVersions["vitest"],
-          ...externalDependencyVersions["@vitest/coverage-v8"],
+          ...(testsDirectoryPath !== null
+            ? {
+                ...externalDependencyVersions["vitest"],
+                ...externalDependencyVersions["@vitest/coverage-v8"],
+              }
+            : {}),
         },
         // 20251022: switch back to main + types to enable downstream "node" resolution
         // exports:
@@ -340,9 +346,14 @@ for (const package_ of packages) {
           dev: "tsc -w --preserveWatchOutput",
           "dev:noEmit": "tsc --noEmit -w --preserveWatchOutput",
           "link-dependencies": "npm link rdfjs-resource",
-          test: "biome check && vitest run",
-          "test:coverage": "biome check && vitest run --coverage",
-          "test:watch": "biome check && vitest watch",
+          ...(testsDirectoryPath !== null
+            ? {
+                "dev:tests": "tsc -p __tests__ -w --preserveWatchOutput",
+                test: "biome check && vitest run",
+                "test:coverage": "biome check && vitest run --coverage",
+                "test:watch": "biome check && vitest watch",
+              }
+            : {}),
           unlink: `npm unlink -g @shaclmate/${package_.name}`,
           ...package_.scripts,
         },
@@ -355,13 +366,66 @@ for (const package_ of packages) {
     )}\n`,
   );
 
-  for (const fileName of ["biome.json", "LICENSE", "tsconfig.json"]) {
-    // const rootFilePath = path.resolve(myDirPath, fileName);
+  for (const fileName of ["biome.json", "LICENSE"]) {
     const packageFilePath = path.resolve(packageDirectoryPath, fileName);
     if (fs.existsSync(packageFilePath)) {
       continue;
     }
     fs.symlinkSync(`../../${fileName}`, packageFilePath);
+  }
+
+  if (package_.name !== "forms") {
+    fs.writeFileSync(
+      path.resolve(packageDirectoryPath, "tsconfig.json"),
+      JSON.stringify(
+        {
+          compilerOptions: {
+            baseUrl: "src",
+            declaration: true,
+            declarationMap: true,
+            exactOptionalPropertyTypes: false,
+            experimentalDecorators: true,
+            forceConsistentCasingInFileNames: true,
+            incremental: true,
+            noUncheckedIndexedAccess: false,
+            outDir: "dist",
+            sourceMap: true,
+          },
+          extends: [
+            "@tsconfig/strictest/tsconfig.json",
+            "@tsconfig/node18/tsconfig.json",
+          ],
+          include: ["src/**/*.ts"],
+        },
+        undefined,
+        2,
+      ),
+    );
+  }
+
+  if (testsDirectoryPath !== null) {
+    fs.writeFileSync(
+      path.join(testsDirectoryPath, "tsconfig.json"),
+      JSON.stringify(
+        {
+          compilerOptions: {
+            baseUrl: ".",
+            exactOptionalPropertyTypes: false,
+            experimentalDecorators: true,
+            forceConsistentCasingInFileNames: true,
+            noEmit: true,
+            noUncheckedIndexedAccess: false,
+          },
+          extends: [
+            "@tsconfig/strictest/tsconfig.json",
+            "@tsconfig/node18/tsconfig.json",
+          ],
+          include: ["./**/*.ts"],
+        },
+        undefined,
+        2,
+      ),
+    );
   }
 }
 
@@ -391,8 +455,8 @@ fs.writeFileSync(
         "check:write:unsafe": "biome check --write --unsafe",
         clean: "turbo run clean",
         depcheck: "turbo run depcheck",
-        dev: "turbo run dev",
-        "dev:noEmit": "turbo run dev:noEmit",
+        dev: "turbo run --concurrency 11 dev dev:tests",
+        "dev:noEmit": "turbo run --concurrency 11 dev:noEmit dev:tests",
         link: "npm link --workspaces",
         "link-dependencies": "turbo run link-dependencies",
         test: "turbo run test",
