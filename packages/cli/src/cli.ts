@@ -2,8 +2,13 @@
 import * as fs from "node:fs";
 import type { PrefixMapInit } from "@rdfjs/prefix-map/PrefixMap.js";
 import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
-import { Compiler, ShapesGraph } from "@shaclmate/compiler";
-import { generators } from "@shaclmate/compiler";
+import {
+  AstJsonGenerator,
+  Compiler,
+  ShapesGraph,
+  TsGenerator,
+} from "@shaclmate/compiler";
+import type { Generator } from "@shaclmate/compiler";
 import {
   command,
   option,
@@ -51,7 +56,7 @@ function generate({
   inputFilePaths,
   outputFilePath,
 }: {
-  generator: generators.Generator;
+  generator: Generator;
   inputFilePaths: readonly string[];
   outputFilePath: string;
 }): void {
@@ -146,7 +151,7 @@ run(
         },
         handler: async ({ inputFilePaths, outputFilePath }) => {
           generate({
-            generator: new generators.ts.TsGenerator(),
+            generator: new TsGenerator(),
             inputFilePaths,
             outputFilePath,
           });
@@ -161,7 +166,7 @@ run(
         },
         handler: async ({ inputFilePaths, outputFilePath }) => {
           generate({
-            generator: new generators.json.AstJsonGenerator(),
+            generator: new AstJsonGenerator(),
             inputFilePaths,
             outputFilePath,
           });
