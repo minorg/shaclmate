@@ -257,13 +257,6 @@ export function transformNodeShapeToAstType(
   );
 
   let identifierMintingStrategy = nodeShape.identifierMintingStrategy;
-  if (identifierMintingStrategy.isJust() && abstract) {
-    logger.debug(
-      "abstract %s cannot have an identifier minting strategy, ignoring",
-      nodeShape,
-    );
-    identifierMintingStrategy = Maybe.empty();
-  }
   if (identifierMintingStrategy.isJust() && identifierIn.length > 0) {
     logger.debug(
       "%s cannot have an identifier minting strategy AND sh:in",

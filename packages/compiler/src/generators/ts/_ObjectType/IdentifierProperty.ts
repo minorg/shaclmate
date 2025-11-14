@@ -202,9 +202,10 @@ export class IdentifierProperty extends Property<IdentifierType> {
       }
 
       // This object type is the root but it has no identifier minting strategy.
-      // Just return the declared property.
-      // Subclasses will override.
+      // Just return the declared property in the get accessor.
+      // Subclasses will override the get accessor.
       const propertyDeclaration = this.propertyDeclaration.unsafeCoerce();
+      invariant(propertyDeclaration.hasQuestionToken);
       return Maybe.of({
         leadingTrivia: this.override ? "override " : undefined,
         name: this.name,
@@ -287,47 +288,38 @@ export class IdentifierProperty extends Property<IdentifierType> {
         `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = ${conversion.conversionExpression(variables.parameter)}; }`,
       );
     }
-    this.identifierMintingStrategy
-      .ifJust((identifierMintingStrategy) => {
-        switch (this.objectType.declarationType) {
-          case "class":
-            // The identifier will be minted lazily in the get accessor
-            invariant(this.getAccessorDeclaration.isJust());
-            conversionBranches.push(
-              `if (typeof ${variables.parameter} === "undefined") { }`,
-            );
-            break;
-          case "interface": {
-            let mintIdentifier: string;
-            switch (identifierMintingStrategy) {
-              case "blankNode":
-                mintIdentifier = "dataFactory.blankNode()";
-                break;
-              case "sha256":
-                logger.warn(
-                  "minting %s identifiers with %s is unsupported",
-                  this.objectType.declarationType,
-                  identifierMintingStrategy,
-                );
-                return;
-              case "uuidv4":
-                mintIdentifier = `dataFactory.namedNode(\`\${${variables.parameters}.${this.identifierPrefixPropertyName} ?? "urn:shaclmate:${this.objectType.discriminatorValue}:"}\${uuid.v4()}\`)`;
-                break;
-            }
-            conversionBranches.push(
-              `if (typeof ${variables.parameter} === "undefined") { ${lhs} = ${mintIdentifier}; }`,
-            );
-          }
-        }
-      })
-      .ifNothing(() => {
-        if (constructorParametersPropertySignature.hasQuestionToken) {
-          // This object type doesn't have an identifier minting strategy but an ancestor or descendant does.
+    this.identifierMintingStrategy.ifJust((identifierMintingStrategy) => {
+      switch (this.objectType.declarationType) {
+        case "class":
+          // The identifier will be minted lazily in the get accessor
+          invariant(this.getAccessorDeclaration.isJust());
           conversionBranches.push(
             `if (typeof ${variables.parameter} === "undefined") { }`,
           );
+          break;
+        case "interface": {
+          let mintIdentifier: string;
+          switch (identifierMintingStrategy) {
+            case "blankNode":
+              mintIdentifier = "dataFactory.blankNode()";
+              break;
+            case "sha256":
+              logger.warn(
+                "minting %s identifiers with %s is unsupported",
+                this.objectType.declarationType,
+                identifierMintingStrategy,
+              );
+              return;
+            case "uuidv4":
+              mintIdentifier = `dataFactory.namedNode(\`\${${variables.parameters}.${this.identifierPrefixPropertyName} ?? "urn:shaclmate:${this.objectType.discriminatorValue}:"}\${uuid.v4()}\`)`;
+              break;
+          }
+          conversionBranches.push(
+            `if (typeof ${variables.parameter} === "undefined") { ${lhs} = ${mintIdentifier}; }`,
+          );
         }
-      });
+      }
+    });
 
     // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
     conversionBranches.push(
@@ -436,7 +428,8 @@ export class IdentifierProperty extends Property<IdentifierType> {
         hasQuestionToken: true,
         name: `_${this.name}`,
         scope: this.objectType.descendantObjectTypes.some(
-          (descendantObjectType) => !descendantObjectType.abstract,
+          (descendantObjectType) =>
+            descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
         )
           ? Scope.Protected
           : Scope.Private,

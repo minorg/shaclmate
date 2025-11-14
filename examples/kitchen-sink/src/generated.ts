@@ -32047,7 +32047,7 @@ export abstract class IdentifierOverride1Class {
 
   get $identifier(): IdentifierOverride1ClassStatic.$Identifier {
     if (typeof this._$identifier === "undefined") {
-      throw new Error("unable to mint identifier");
+      this._$identifier = dataFactory.blankNode();
     }
 
     return this._$identifier;
@@ -42905,11 +42905,13 @@ export namespace ConcreteChildInterface {
  */
 export abstract class AbstractBaseClassWithProperties {
   protected _$identifier?: AbstractBaseClassWithPropertiesStatic.$Identifier;
+  protected readonly _$identifierPrefix?: string;
   abstract readonly $type: "ConcreteChildClass" | "ConcreteParentClass";
   readonly abstractBaseClassWithPropertiesProperty: string;
 
   constructor(parameters: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly $identifierPrefix?: string;
     readonly abstractBaseClassWithPropertiesProperty: string;
   }) {
     if (typeof parameters.$identifier === "object") {
@@ -42921,16 +42923,25 @@ export abstract class AbstractBaseClassWithProperties {
       this._$identifier = parameters.$identifier satisfies never;
     }
 
+    this._$identifierPrefix = parameters.$identifierPrefix;
     this.abstractBaseClassWithPropertiesProperty =
       parameters.abstractBaseClassWithPropertiesProperty;
   }
 
   get $identifier(): AbstractBaseClassWithPropertiesStatic.$Identifier {
     if (typeof this._$identifier === "undefined") {
-      throw new Error("unable to mint identifier");
+      this._$identifier = dataFactory.namedNode(
+        `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
+      );
     }
 
     return this._$identifier;
+  }
+
+  protected get $identifierPrefix(): string {
+    return typeof this._$identifierPrefix !== "undefined"
+      ? this._$identifierPrefix
+      : `urn:shaclmate:${this.$type}:`;
   }
 
   $equals(other: AbstractBaseClassWithProperties): $EqualsResult {
@@ -42942,6 +42953,17 @@ export abstract class AbstractBaseClassWithProperties {
         propertyValuesUnequal,
         type: "Property" as const,
       }))
+      .chain(() =>
+        $strictEquals(this.$identifierPrefix, other.$identifierPrefix).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$identifierPrefix",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
       .chain(() =>
         $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
@@ -43388,11 +43410,27 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
 
   // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
-    parameters: ConstructorParameters<
+    parameters: { readonly $identifierPrefix?: string } & ConstructorParameters<
       typeof AbstractBaseClassWithProperties
     >[0],
   ) {
     super(parameters);
+  }
+
+  override get $identifier(): AbstractBaseClassWithoutPropertiesStatic.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.namedNode(
+        `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
+      );
+    }
+
+    return this._$identifier;
+  }
+
+  protected override get $identifierPrefix(): string {
+    return typeof this._$identifierPrefix !== "undefined"
+      ? this._$identifierPrefix
+      : `urn:shaclmate:${this.$type}:`;
   }
 
   override $toRdf(options?: {
@@ -43625,7 +43663,6 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
  * Class node shape that inherits the abstract base class and is the parent of the ConcreteChildClass.
  */
 export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
-  protected readonly _$identifierPrefix?: string;
   override readonly $type: "ConcreteParentClass" | "ConcreteChildClass" =
     "ConcreteParentClass";
   readonly concreteParentClassProperty: string;
@@ -43638,7 +43675,6 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
     } & ConstructorParameters<typeof AbstractBaseClassWithoutProperties>[0],
   ) {
     super(parameters);
-    this._$identifierPrefix = parameters.$identifierPrefix;
     this.concreteParentClassProperty = parameters.concreteParentClassProperty;
   }
 
@@ -43652,7 +43688,7 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
     return this._$identifier;
   }
 
-  protected get $identifierPrefix(): string {
+  protected override get $identifierPrefix(): string {
     return typeof this._$identifierPrefix !== "undefined"
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
@@ -46753,7 +46789,7 @@ export abstract class AbstractBaseClassForExternClass {
 
   get $identifier(): AbstractBaseClassForExternClassStatic.$Identifier {
     if (typeof this._$identifier === "undefined") {
-      throw new Error("unable to mint identifier");
+      this._$identifier = dataFactory.blankNode();
     }
 
     return this._$identifier;
