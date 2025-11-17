@@ -29,16 +29,30 @@ export function flattenAstObjectCompositeTypeMemberTypes({
         flattenedMemberTypes.push(memberType);
         break;
       case "ObjectIntersectionType":
-      case "ObjectUnionType":
-        if (memberType.kind === objectCompositeTypeKind) {
-          flattenedMemberTypes.push(...memberType.memberTypes);
-          break;
+      case "ObjectUnionType": {
+        if (memberType.kind !== objectCompositeTypeKind) {
+          return Left(
+            new Error(
+              `${objectCompositeTypeKind} with a nested ${memberType.kind}`,
+            ),
+          );
         }
-        return Left(
-          new Error(
-            `${objectCompositeTypeKind} with a nested ${memberType.kind}`,
-          ),
+
+        // Recurse
+        const flattenedMemberTypesEither =
+          flattenAstObjectCompositeTypeMemberTypes({
+            objectCompositeTypeKind,
+            memberTypes: memberType.memberTypes,
+            shape,
+          });
+        if (flattenedMemberTypesEither.isLeft()) {
+          return flattenedMemberTypesEither;
+        }
+        flattenedMemberTypes.push(
+          ...flattenedMemberTypesEither.unsafeCoerce().memberTypes,
         );
+        break;
+      }
     }
   }
 
