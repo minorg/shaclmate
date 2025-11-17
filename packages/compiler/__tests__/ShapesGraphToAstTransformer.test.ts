@@ -34,8 +34,8 @@ describe("ShapesGraphToAstTransformer: kitchen sink", () => {
   });
 
   it("should transform kitchen object types", ({ expect }) => {
-    expect(shapesGraph.nodeShapes).toHaveLength(94);
-    expect(ast.objectTypes).toHaveLength(68);
+    expect(shapesGraph.nodeShapes).toHaveLength(96);
+    expect(ast.objectTypes).toHaveLength(69);
   });
 
   it("should transform object intersection types", ({ expect }) => {
@@ -43,7 +43,7 @@ describe("ShapesGraphToAstTransformer: kitchen sink", () => {
   });
 
   it("should transform object union types", ({ expect }) => {
-    expect(ast.objectUnionTypes).toHaveLength(8);
+    expect(ast.objectUnionTypes).toHaveLength(9);
   });
 
   for (const [classIri, recursivePropertyIri] of [

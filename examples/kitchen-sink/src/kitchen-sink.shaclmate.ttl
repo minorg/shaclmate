@@ -285,6 +285,22 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :externClassProperty
     ] .
 
+:FlattenClassUnion
+    a sh:NodeShape ;
+    rdfs:comment "Node shape that unions a node shape and another union of node shapes. Generated code will usually flatten these." ;
+    sh:xone (:ClassUnion
+        :FlattenClassUnionMember3
+    ) .
+
+:FlattenClassUnionMember3
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :flattenClassUnionMember3Property
+    ] .
+
 :HasValuePropertiesClass
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:hasValue properties." ;
@@ -863,7 +879,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :PartialClassUnion
     a sh:NodeShape ;
-    rdfs:comment "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
+    rdfs:comment "Counterpart of ClassUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union." ;
     sh:xone (:PartialClassUnionMember1
         :PartialClassUnionMember2
     ) .
@@ -899,7 +915,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :PartialInterfaceUnion
     a sh:NodeShape ;
-    rdfs:comment "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union." ;
+    rdfs:comment "Counterpart of InterfaceUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union." ;
     sh:xone (:PartialInterfaceUnionMember1
         :PartialInterfaceUnionMember2
     ) .

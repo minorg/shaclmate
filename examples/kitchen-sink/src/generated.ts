@@ -34596,6 +34596,604 @@ export namespace HasValuePropertiesClass {
     return requiredPatterns.concat(optionalPatterns);
   }
 }
+export class FlattenClassUnionMember3 {
+  private _$identifier?: FlattenClassUnionMember3.$Identifier;
+  readonly $type = "FlattenClassUnionMember3";
+  readonly flattenClassUnionMember3Property: string;
+
+  constructor(parameters: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly flattenClassUnionMember3Property: string;
+  }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+
+    this.flattenClassUnionMember3Property =
+      parameters.flattenClassUnionMember3Property;
+  }
+
+  get $identifier(): FlattenClassUnionMember3.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+
+    return this._$identifier;
+  }
+
+  $equals(other: FlattenClassUnionMember3): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(
+          this.flattenClassUnionMember3Property,
+          other.flattenClassUnionMember3Property,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "flattenClassUnionMember3Property",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.flattenClassUnionMember3Property);
+    return _hasher;
+  }
+
+  $toJson(): FlattenClassUnionMember3.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        flattenClassUnionMember3Property: this.flattenClassUnionMember3Property,
+      } satisfies FlattenClassUnionMember3.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet?: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
+      mutateGraph,
+    });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/FlattenClassUnionMember3",
+        ),
+      );
+    }
+
+    resource.add(
+      FlattenClassUnionMember3.$properties.flattenClassUnionMember3Property[
+        "identifier"
+      ],
+      ...[this.flattenClassUnionMember3Property],
+    );
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace FlattenClassUnionMember3 {
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/FlattenClassUnionMember3",
+  );
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "FlattenClassUnionMember3";
+    readonly flattenClassUnionMember3Property: string;
+  };
+
+  export function $propertiesFromJson(_json: unknown): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      flattenClassUnionMember3Property: string;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const flattenClassUnionMember3Property =
+      $jsonObject["flattenClassUnionMember3Property"];
+    return purify.Either.of({ $identifier, flattenClassUnionMember3Property });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, FlattenClassUnionMember3> {
+    return $propertiesFromJson(json).map(
+      (properties) => new FlattenClassUnionMember3(properties),
+    );
+  }
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "FlattenClassUnionMember3" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/flattenClassUnionMember3Property`,
+          type: "Control",
+        },
+      ],
+      label: "FlattenClassUnionMember3",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("FlattenClassUnionMember3"),
+      flattenClassUnionMember3Property: zod.string(),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, FlattenClassUnionMember3> {
+    let {
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return FlattenClassUnionMember3.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new FlattenClassUnionMember3(properties));
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      flattenClassUnionMember3Property: string;
+    }
+  > {
+    if (!$ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+        .value($RdfVocabularies.rdf.type)
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/FlattenClassUnionMember3":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if ($resource.isInstanceOf(FlattenClassUnionMember3.$fromRdfType)) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/FlattenClassUnionMember3)`,
+            ),
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
+    }
+
+    const $identifier: FlattenClassUnionMember3.$Identifier =
+      $resource.identifier;
+    const _flattenClassUnionMember3PropertyEither: purify.Either<
+      Error,
+      string
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.flattenClassUnionMember3Property["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  FlattenClassUnionMember3.$properties
+                    .flattenClassUnionMember3Property["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .chain((values) => values.head());
+    if (_flattenClassUnionMember3PropertyEither.isLeft()) {
+      return _flattenClassUnionMember3PropertyEither;
+    }
+
+    const flattenClassUnionMember3Property =
+      _flattenClassUnionMember3PropertyEither.unsafeCoerce();
+    return purify.Either.of({ $identifier, flattenClassUnionMember3Property });
+  }
+
+  export const $properties = {
+    flattenClassUnionMember3Property: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/flattenClassUnionMember3Property",
+      ),
+    },
+  };
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        FlattenClassUnionMember3.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        FlattenClassUnionMember3.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      FlattenClassUnionMember3.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("flattenClassUnionMember3");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "flattenClassUnionMember3");
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+        },
+      );
+    }
+
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}FlattenClassUnionMember3Property`,
+      ),
+      predicate:
+        FlattenClassUnionMember3.$properties.flattenClassUnionMember3Property[
+          "identifier"
+        ],
+      subject,
+    });
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("flattenClassUnionMember3");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "flattenClassUnionMember3");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
+    if (!parameters?.ignoreRdfType) {
+      requiredPatterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: FlattenClassUnionMember3.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+      );
+      optionalPatterns.push({
+        patterns: [
+          {
+            triples: [
+              {
+                subject: rdfTypeVariable,
+                predicate: {
+                  items: [$RdfVocabularies.rdfs.subClassOf],
+                  pathType: "+" as const,
+                  type: "path" as const,
+                },
+                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+              },
+            ],
+            type: "bgp" as const,
+          },
+        ],
+        type: "optional" as const,
+      });
+    }
+
+    const propertyPatterns: readonly sparqljs.Pattern[] = [
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(
+              `${variablePrefix}FlattenClassUnionMember3Property`,
+            ),
+            predicate:
+              FlattenClassUnionMember3.$properties
+                .flattenClassUnionMember3Property["identifier"],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}FlattenClassUnionMember3Property`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
+    ];
+    for (const pattern of propertyPatterns) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
 /**
  * Node shape that references the ExternClass in a property.
  */
@@ -47481,6 +48079,307 @@ export namespace ClassUnion {
   }
 }
 /**
+ * Node shape that unions a node shape and another union of node shapes. Generated code will usually flatten these.
+ */
+export type FlattenClassUnion =
+  | ClassUnionMember1
+  | ClassUnionMember2
+  | FlattenClassUnionMember3;
+
+export namespace FlattenClassUnion {
+  export function $equals(
+    left: FlattenClassUnion,
+    right: FlattenClassUnion,
+  ): $EqualsResult {
+    return $strictEquals(left.$type, right.$type).chain(() => {
+      switch (left.$type) {
+        case "ClassUnionMember1":
+          return left.$equals(right as unknown as ClassUnionMember1);
+        case "ClassUnionMember2":
+          return left.$equals(right as unknown as ClassUnionMember2);
+        case "FlattenClassUnionMember3":
+          return left.$equals(right as unknown as FlattenClassUnionMember3);
+        default:
+          left satisfies never;
+          throw new Error("unrecognized type");
+      }
+    });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, FlattenClassUnion> {
+    return (
+      ClassUnionMember1.$fromJson(json) as purify.Either<
+        zod.ZodError,
+        FlattenClassUnion
+      >
+    )
+      .altLazy(
+        () =>
+          ClassUnionMember2.$fromJson(json) as purify.Either<
+            zod.ZodError,
+            FlattenClassUnion
+          >,
+      )
+      .altLazy(
+        () =>
+          FlattenClassUnionMember3.$fromJson(json) as purify.Either<
+            zod.ZodError,
+            FlattenClassUnion
+          >,
+      );
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, FlattenClassUnion> {
+    return (
+      ClassUnionMember1.$fromRdf(resource, {
+        ...options,
+        ignoreRdfType: false,
+      }) as purify.Either<Error, FlattenClassUnion>
+    )
+      .altLazy(
+        () =>
+          ClassUnionMember2.$fromRdf(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as purify.Either<Error, FlattenClassUnion>,
+      )
+      .altLazy(
+        () =>
+          FlattenClassUnionMember3.$fromRdf(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as purify.Either<Error, FlattenClassUnion>,
+      );
+  }
+
+  export function $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_flattenClassUnion: FlattenClassUnion, _hasher: HasherT): HasherT {
+    switch (_flattenClassUnion.$type) {
+      case "ClassUnionMember1":
+        return _flattenClassUnion.$hash(_hasher);
+      case "ClassUnionMember2":
+        return _flattenClassUnion.$hash(_hasher);
+      case "FlattenClassUnionMember3":
+        return _flattenClassUnion.$hash(_hasher);
+      default:
+        _flattenClassUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+
+  export type $Json =
+    | ClassUnionMember1.$Json
+    | ClassUnionMember2.$Json
+    | FlattenClassUnionMember3.$Json;
+
+  export function $jsonZodSchema() {
+    return zod.discriminatedUnion("$type", [
+      ClassUnionMember1.$jsonZodSchema(),
+      ClassUnionMember2.$jsonZodSchema(),
+      FlattenClassUnionMember3.$jsonZodSchema(),
+    ]);
+  }
+
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        FlattenClassUnion.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        FlattenClassUnion.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      FlattenClassUnion.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...ClassUnionMember1.$sparqlConstructTemplateTriples({
+        subject:
+          parameters?.subject ??
+          dataFactory.variable!("flattenClassUnionClassUnionMember1"),
+        variablePrefix: parameters?.variablePrefix
+          ? `${parameters.variablePrefix}ClassUnionMember1`
+          : "flattenClassUnionClassUnionMember1",
+      }).concat(),
+      ...ClassUnionMember2.$sparqlConstructTemplateTriples({
+        subject:
+          parameters?.subject ??
+          dataFactory.variable!("flattenClassUnionClassUnionMember2"),
+        variablePrefix: parameters?.variablePrefix
+          ? `${parameters.variablePrefix}ClassUnionMember2`
+          : "flattenClassUnionClassUnionMember2",
+      }).concat(),
+      ...FlattenClassUnionMember3.$sparqlConstructTemplateTriples({
+        subject:
+          parameters?.subject ??
+          dataFactory.variable!("flattenClassUnionFlattenClassUnionMember3"),
+        variablePrefix: parameters?.variablePrefix
+          ? `${parameters.variablePrefix}FlattenClassUnionMember3`
+          : "flattenClassUnionFlattenClassUnionMember3",
+      }).concat(),
+    ];
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    return [
+      {
+        patterns: [
+          {
+            patterns: ClassUnionMember1.$sparqlWherePatterns({
+              subject:
+                parameters?.subject ??
+                dataFactory.variable!("flattenClassUnionClassUnionMember1"),
+              variablePrefix: parameters?.variablePrefix
+                ? `${parameters.variablePrefix}ClassUnionMember1`
+                : "flattenClassUnionClassUnionMember1",
+            }).concat(),
+            type: "group",
+          },
+          {
+            patterns: ClassUnionMember2.$sparqlWherePatterns({
+              subject:
+                parameters?.subject ??
+                dataFactory.variable!("flattenClassUnionClassUnionMember2"),
+              variablePrefix: parameters?.variablePrefix
+                ? `${parameters.variablePrefix}ClassUnionMember2`
+                : "flattenClassUnionClassUnionMember2",
+            }).concat(),
+            type: "group",
+          },
+          {
+            patterns: FlattenClassUnionMember3.$sparqlWherePatterns({
+              subject:
+                parameters?.subject ??
+                dataFactory.variable!(
+                  "flattenClassUnionFlattenClassUnionMember3",
+                ),
+              variablePrefix: parameters?.variablePrefix
+                ? `${parameters.variablePrefix}FlattenClassUnionMember3`
+                : "flattenClassUnionFlattenClassUnionMember3",
+            }).concat(),
+            type: "group",
+          },
+        ],
+        type: "union",
+      },
+    ];
+  }
+
+  export function $toJson(
+    _flattenClassUnion: FlattenClassUnion,
+  ):
+    | ClassUnionMember1.$Json
+    | ClassUnionMember2.$Json
+    | FlattenClassUnionMember3.$Json {
+    switch (_flattenClassUnion.$type) {
+      case "ClassUnionMember1":
+        return _flattenClassUnion.$toJson();
+      case "ClassUnionMember2":
+        return _flattenClassUnion.$toJson();
+      case "FlattenClassUnionMember3":
+        return _flattenClassUnion.$toJson();
+      default:
+        _flattenClassUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+
+  export function $toRdf(
+    _flattenClassUnion: FlattenClassUnion,
+    _parameters?: {
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    switch (_flattenClassUnion.$type) {
+      case "ClassUnionMember1":
+        return _flattenClassUnion.$toRdf(_parameters);
+      case "ClassUnionMember2":
+        return _flattenClassUnion.$toRdf(_parameters);
+      case "FlattenClassUnionMember3":
+        return _flattenClassUnion.$toRdf(_parameters);
+      default:
+        _flattenClassUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+}
+/**
  * Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.
  */
 export type InterfaceUnion =
@@ -48607,7 +49506,7 @@ export namespace LazilyResolvedInterfaceUnion {
   }
 }
 /**
- * Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.
+ * Counterpart of ClassUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.
  */
 export type PartialClassUnion =
   | PartialClassUnionMember1
@@ -48861,7 +49760,7 @@ export namespace PartialClassUnion {
   }
 }
 /**
- * Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.
+ * Counterpart of InterfaceUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.
  */
 export type PartialInterfaceUnion =
   | PartialInterfaceUnionMember1
@@ -49645,6 +50544,23 @@ export interface $ObjectSet {
       "where"
     >,
   ): Promise<purify.Either<Error, number>>;
+  flattenClassUnionMember3(
+    identifier: FlattenClassUnionMember3.$Identifier,
+  ): Promise<purify.Either<Error, FlattenClassUnionMember3>>;
+  flattenClassUnionMember3Identifiers(
+    query?: $ObjectSet.Query<FlattenClassUnionMember3.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly FlattenClassUnionMember3.$Identifier[]>
+  >;
+  flattenClassUnionMember3s(
+    query?: $ObjectSet.Query<FlattenClassUnionMember3.$Identifier>,
+  ): Promise<purify.Either<Error, readonly FlattenClassUnionMember3[]>>;
+  flattenClassUnionMember3sCount(
+    query?: Pick<
+      $ObjectSet.Query<FlattenClassUnionMember3.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
   hasValuePropertiesClass(
     identifier: HasValuePropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, HasValuePropertiesClass>>;
@@ -50362,6 +51278,18 @@ export interface $ObjectSet {
   classUnionsCount(
     query?: Pick<$ObjectSet.Query<ClassUnion.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
+  flattenClassUnion(
+    identifier: FlattenClassUnion.$Identifier,
+  ): Promise<purify.Either<Error, FlattenClassUnion>>;
+  flattenClassUnionIdentifiers(
+    query?: $ObjectSet.Query<FlattenClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly FlattenClassUnion.$Identifier[]>>;
+  flattenClassUnions(
+    query?: $ObjectSet.Query<FlattenClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly FlattenClassUnion[]>>;
+  flattenClassUnionsCount(
+    query?: Pick<$ObjectSet.Query<FlattenClassUnion.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>>;
   interfaceUnion(
     identifier: InterfaceUnion.$Identifier,
   ): Promise<purify.Either<Error, InterfaceUnion>>;
@@ -50939,6 +51867,35 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.externClassPropertyClassesCount(query);
+  }
+
+  flattenClassUnionMember3(
+    identifier: FlattenClassUnionMember3.$Identifier,
+  ): Promise<purify.Either<Error, FlattenClassUnionMember3>> {
+    return this.$delegate.flattenClassUnionMember3(identifier);
+  }
+
+  flattenClassUnionMember3Identifiers(
+    query?: $ObjectSet.Query<FlattenClassUnionMember3.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly FlattenClassUnionMember3.$Identifier[]>
+  > {
+    return this.$delegate.flattenClassUnionMember3Identifiers(query);
+  }
+
+  flattenClassUnionMember3s(
+    query?: $ObjectSet.Query<FlattenClassUnionMember3.$Identifier>,
+  ): Promise<purify.Either<Error, readonly FlattenClassUnionMember3[]>> {
+    return this.$delegate.flattenClassUnionMember3s(query);
+  }
+
+  flattenClassUnionMember3sCount(
+    query?: Pick<
+      $ObjectSet.Query<FlattenClassUnionMember3.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.flattenClassUnionMember3sCount(query);
   }
 
   hasValuePropertiesClass(
@@ -52218,6 +53175,30 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<ClassUnion.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.classUnionsCount(query);
+  }
+
+  flattenClassUnion(
+    identifier: FlattenClassUnion.$Identifier,
+  ): Promise<purify.Either<Error, FlattenClassUnion>> {
+    return this.$delegate.flattenClassUnion(identifier);
+  }
+
+  flattenClassUnionIdentifiers(
+    query?: $ObjectSet.Query<FlattenClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly FlattenClassUnion.$Identifier[]>> {
+    return this.$delegate.flattenClassUnionIdentifiers(query);
+  }
+
+  flattenClassUnions(
+    query?: $ObjectSet.Query<FlattenClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly FlattenClassUnion[]>> {
+    return this.$delegate.flattenClassUnions(query);
+  }
+
+  flattenClassUnionsCount(
+    query?: Pick<$ObjectSet.Query<FlattenClassUnion.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.flattenClassUnionsCount(query);
   }
 
   interfaceUnion(
@@ -53808,6 +54789,97 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ExternClassPropertyClass.$Identifier
     >(
       [{ $fromRdf: ExternClassPropertyClass.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async flattenClassUnionMember3(
+    identifier: FlattenClassUnionMember3.$Identifier,
+  ): Promise<purify.Either<Error, FlattenClassUnionMember3>> {
+    return this.flattenClassUnionMember3Sync(identifier);
+  }
+
+  flattenClassUnionMember3Sync(
+    identifier: FlattenClassUnionMember3.$Identifier,
+  ): purify.Either<Error, FlattenClassUnionMember3> {
+    return this.flattenClassUnionMember3sSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async flattenClassUnionMember3Identifiers(
+    query?: $ObjectSet.Query<FlattenClassUnionMember3.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly FlattenClassUnionMember3.$Identifier[]>
+  > {
+    return this.flattenClassUnionMember3IdentifiersSync(query);
+  }
+
+  flattenClassUnionMember3IdentifiersSync(
+    query?: $ObjectSet.Query<FlattenClassUnionMember3.$Identifier>,
+  ): purify.Either<Error, readonly FlattenClassUnionMember3.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      FlattenClassUnionMember3,
+      FlattenClassUnionMember3.$Identifier
+    >(
+      [
+        {
+          $fromRdf: FlattenClassUnionMember3.$fromRdf,
+          $fromRdfTypes: [FlattenClassUnionMember3.$fromRdfType],
+        },
+      ],
+      query,
+    );
+  }
+
+  async flattenClassUnionMember3s(
+    query?: $ObjectSet.Query<FlattenClassUnionMember3.$Identifier>,
+  ): Promise<purify.Either<Error, readonly FlattenClassUnionMember3[]>> {
+    return this.flattenClassUnionMember3sSync(query);
+  }
+
+  flattenClassUnionMember3sSync(
+    query?: $ObjectSet.Query<FlattenClassUnionMember3.$Identifier>,
+  ): purify.Either<Error, readonly FlattenClassUnionMember3[]> {
+    return this.$objectsSync<
+      FlattenClassUnionMember3,
+      FlattenClassUnionMember3.$Identifier
+    >(
+      [
+        {
+          $fromRdf: FlattenClassUnionMember3.$fromRdf,
+          $fromRdfTypes: [FlattenClassUnionMember3.$fromRdfType],
+        },
+      ],
+      query,
+    );
+  }
+
+  async flattenClassUnionMember3sCount(
+    query?: Pick<
+      $ObjectSet.Query<FlattenClassUnionMember3.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.flattenClassUnionMember3sCountSync(query);
+  }
+
+  flattenClassUnionMember3sCountSync(
+    query?: Pick<
+      $ObjectSet.Query<FlattenClassUnionMember3.$Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      FlattenClassUnionMember3,
+      FlattenClassUnionMember3.$Identifier
+    >(
+      [
+        {
+          $fromRdf: FlattenClassUnionMember3.$fromRdf,
+          $fromRdfTypes: [FlattenClassUnionMember3.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -57343,6 +58415,110 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async flattenClassUnion(
+    identifier: FlattenClassUnion.$Identifier,
+  ): Promise<purify.Either<Error, FlattenClassUnion>> {
+    return this.flattenClassUnionSync(identifier);
+  }
+
+  flattenClassUnionSync(
+    identifier: FlattenClassUnion.$Identifier,
+  ): purify.Either<Error, FlattenClassUnion> {
+    return this.flattenClassUnionsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async flattenClassUnionIdentifiers(
+    query?: $ObjectSet.Query<FlattenClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly FlattenClassUnion.$Identifier[]>> {
+    return this.flattenClassUnionIdentifiersSync(query);
+  }
+
+  flattenClassUnionIdentifiersSync(
+    query?: $ObjectSet.Query<FlattenClassUnion.$Identifier>,
+  ): purify.Either<Error, readonly FlattenClassUnion.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      FlattenClassUnion,
+      FlattenClassUnion.$Identifier
+    >(
+      [
+        {
+          $fromRdf: ClassUnionMember1.$fromRdf,
+          $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: ClassUnionMember2.$fromRdf,
+          $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
+        },
+        {
+          $fromRdf: FlattenClassUnionMember3.$fromRdf,
+          $fromRdfTypes: [FlattenClassUnionMember3.$fromRdfType],
+        },
+      ],
+      query,
+    );
+  }
+
+  async flattenClassUnions(
+    query?: $ObjectSet.Query<FlattenClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly FlattenClassUnion[]>> {
+    return this.flattenClassUnionsSync(query);
+  }
+
+  flattenClassUnionsSync(
+    query?: $ObjectSet.Query<FlattenClassUnion.$Identifier>,
+  ): purify.Either<Error, readonly FlattenClassUnion[]> {
+    return this.$objectsSync<FlattenClassUnion, FlattenClassUnion.$Identifier>(
+      [
+        {
+          $fromRdf: ClassUnionMember1.$fromRdf,
+          $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: ClassUnionMember2.$fromRdf,
+          $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
+        },
+        {
+          $fromRdf: FlattenClassUnionMember3.$fromRdf,
+          $fromRdfTypes: [FlattenClassUnionMember3.$fromRdfType],
+        },
+      ],
+      query,
+    );
+  }
+
+  async flattenClassUnionsCount(
+    query?: Pick<$ObjectSet.Query<FlattenClassUnion.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.flattenClassUnionsCountSync(query);
+  }
+
+  flattenClassUnionsCountSync(
+    query?: Pick<$ObjectSet.Query<FlattenClassUnion.$Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      FlattenClassUnion,
+      FlattenClassUnion.$Identifier
+    >(
+      [
+        {
+          $fromRdf: ClassUnionMember1.$fromRdf,
+          $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
+        },
+        {
+          $fromRdf: ClassUnionMember2.$fromRdf,
+          $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
+        },
+        {
+          $fromRdf: FlattenClassUnionMember3.$fromRdf,
+          $fromRdfTypes: [FlattenClassUnionMember3.$fromRdfType],
+        },
+      ],
+      query,
+    );
+  }
+
   async interfaceUnion(
     identifier: InterfaceUnion.$Identifier,
   ): Promise<purify.Either<Error, InterfaceUnion>> {
@@ -58883,6 +60059,48 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<ExternClassPropertyClass.$Identifier>(
       ExternClassPropertyClass,
+      query,
+    );
+  }
+
+  async flattenClassUnionMember3(
+    identifier: FlattenClassUnionMember3.$Identifier,
+  ): Promise<purify.Either<Error, FlattenClassUnionMember3>> {
+    return (
+      await this.flattenClassUnionMember3s({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async flattenClassUnionMember3Identifiers(
+    query?: $SparqlObjectSet.Query<FlattenClassUnionMember3.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly FlattenClassUnionMember3.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<FlattenClassUnionMember3.$Identifier>(
+      FlattenClassUnionMember3,
+      query,
+    );
+  }
+
+  async flattenClassUnionMember3s(
+    query?: $SparqlObjectSet.Query<FlattenClassUnionMember3.$Identifier>,
+  ): Promise<purify.Either<Error, readonly FlattenClassUnionMember3[]>> {
+    return this.$objects<
+      FlattenClassUnionMember3,
+      FlattenClassUnionMember3.$Identifier
+    >(FlattenClassUnionMember3, query);
+  }
+
+  async flattenClassUnionMember3sCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<FlattenClassUnionMember3.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<FlattenClassUnionMember3.$Identifier>(
+      FlattenClassUnionMember3,
       query,
     );
   }
@@ -60745,6 +61963,46 @@ export class $SparqlObjectSet implements $ObjectSet {
     query?: Pick<$SparqlObjectSet.Query<ClassUnion.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<ClassUnion.$Identifier>(ClassUnion, query);
+  }
+
+  async flattenClassUnion(
+    identifier: FlattenClassUnion.$Identifier,
+  ): Promise<purify.Either<Error, FlattenClassUnion>> {
+    return (
+      await this.flattenClassUnions({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async flattenClassUnionIdentifiers(
+    query?: $SparqlObjectSet.Query<FlattenClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly FlattenClassUnion.$Identifier[]>> {
+    return this.$objectIdentifiers<FlattenClassUnion.$Identifier>(
+      FlattenClassUnion,
+      query,
+    );
+  }
+
+  async flattenClassUnions(
+    query?: $SparqlObjectSet.Query<FlattenClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly FlattenClassUnion[]>> {
+    return this.$objects<FlattenClassUnion, FlattenClassUnion.$Identifier>(
+      FlattenClassUnion,
+      query,
+    );
+  }
+
+  async flattenClassUnionsCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<FlattenClassUnion.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<FlattenClassUnion.$Identifier>(
+      FlattenClassUnion,
+      query,
+    );
   }
 
   async interfaceUnion(

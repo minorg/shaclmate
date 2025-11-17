@@ -161,6 +161,27 @@ export const harnesses = {
     }),
     kitchenSink.ExplicitRdfTypeClass,
   ),
+  flattenClassUnionMember1: new ClassUnionHarness(
+    new kitchenSink.ClassUnionMember1({
+      $identifier,
+      classUnionMember1Property: "test",
+    }),
+    kitchenSink.FlattenClassUnion,
+  ),
+  flattenCassUnionMember2: new ClassUnionHarness(
+    new kitchenSink.ClassUnionMember2({
+      $identifier,
+      classUnionMember2Property: "test",
+    }),
+    kitchenSink.FlattenClassUnion,
+  ),
+  flattenCassUnionMember3: new ClassUnionHarness(
+    new kitchenSink.FlattenClassUnionMember3({
+      $identifier,
+      flattenClassUnionMember3Property: "test",
+    }),
+    kitchenSink.FlattenClassUnion,
+  ),
   indirectRecursive: new ClassHarness(
     new kitchenSink.IndirectRecursiveClass({
       indirectRecursiveHelperProperty:
