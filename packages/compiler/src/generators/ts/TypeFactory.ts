@@ -591,7 +591,10 @@ export class TypeFactory {
     }
 
     const memberTypes: readonly ObjectType[] = astType.memberTypes.map(
-      (astType) => this.createObjectTypeFromAstType(astType),
+      (astType) => {
+        invariant(astType.kind === "ObjectType");
+        return this.createObjectTypeFromAstType(astType);
+      },
     );
     invariant(
       memberTypes.length > 0,

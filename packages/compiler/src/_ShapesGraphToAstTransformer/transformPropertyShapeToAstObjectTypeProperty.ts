@@ -18,7 +18,7 @@ function identifierNodeKinds(
     case "ObjectUnionType":
       return new Set(
         type.memberTypes.flatMap((memberType) => [
-          ...memberType.identifierNodeKinds,
+          ...identifierNodeKinds(memberType),
         ]),
       );
   }

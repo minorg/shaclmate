@@ -1,13 +1,16 @@
 import type { Maybe } from "purify-ts";
-import type { TsFeature } from "../enums/TsFeature.js";
 import type { CompositeType } from "./CompositeType.js";
 import type { Name } from "./Name.js";
+import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
+import type { ObjectUnionType } from "./ObjectUnionType.js";
 
 /**
  * A composite of object types, such as an intersection or union.
  */
-export interface ObjectCompositeType extends CompositeType<ObjectType> {
+export interface ObjectCompositeType<
+  ObjectCompositeTypeT extends ObjectIntersectionType | ObjectUnionType,
+> extends CompositeType<ObjectCompositeTypeT | ObjectType> {
   /**
    * Documentation comment from rdfs:comment.
    */
@@ -29,9 +32,4 @@ export interface ObjectCompositeType extends CompositeType<ObjectType> {
    * Name of this type, usually derived from sh:name or shaclmate:name.
    */
   readonly name: Name;
-
-  /**
-   * TypeScript features to generate.
-   */
-  readonly tsFeatures: Set<TsFeature>;
 }
