@@ -1,5 +1,5 @@
 import type { NamedNode } from "@rdfjs/types";
-import type { NodeKind, PredicatePath } from "@shaclmate/shacl-ast";
+import type { PredicatePath } from "@shaclmate/shacl-ast";
 import type { Maybe } from "purify-ts";
 import { Resource } from "rdfjs-resource";
 import genericToposort from "toposort";
@@ -9,13 +9,14 @@ import type {
   TsFeature,
   TsObjectDeclarationType,
 } from "../enums/index.js";
+import type { IdentifierType } from "./IdentifierType.js";
 import { Name } from "./Name.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
 import type { SetType } from "./SetType.js";
 import type { Type } from "./Type.js";
 
-export interface ObjectType {
+export class ObjectType {
   /**
    * Classes generated from this type are abstract / cannot be instantiated themselves.
    *
@@ -28,14 +29,14 @@ export interface ObjectType {
    *
    * Mutable to support cycle-handling logic in the compiler.
    */
-  readonly ancestorObjectTypes: ObjectType[];
+  readonly #ancestorObjectTypes: ObjectType[] = [];
 
   /**
    * Immediate child ObjectTypes of this ObjectType.
    *
    * Mutable to support cycle-handling logic in the compiler.
    */
-  readonly childObjectTypes: ObjectType[];
+  readonly #childObjectTypes: ObjectType[] = [];
 
   /**
    * Documentation comment from rdfs:comment.
@@ -47,7 +48,7 @@ export interface ObjectType {
    *
    * Mutable to support cycle-handling logic in the compiler.
    */
-  readonly descendantObjectTypes: ObjectType[];
+  readonly #descendantObjectTypes: ObjectType[] = [];
 
   /**
    * Should generated code derived from this ObjectType be visible outside its module?
@@ -72,28 +73,19 @@ export interface ObjectType {
   readonly fromRdfType: Maybe<NamedNode>;
 
   /**
-   * Instances of this ObjectType must have explicit identifiers and the identifiers must be in this list of IRIs.
-   *
-   * Mutually exclusive with minting strategies
-   */
-  readonly identifierIn: readonly NamedNode[];
-
-  /**
-   * The RDF node kinds this ObjectType may be identified by.
-   *
-   * Used to associate instances with an RDF identifier.
-   */
-  readonly identifierNodeKinds: ReadonlySet<Exclude<NodeKind, "Literal">>;
-
-  /**
    * Strategy for minting new object identifiers.
    */
   readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
 
   /**
+   * Identifier type.
+   */
+  readonly identifierType: IdentifierType;
+
+  /**
    * Type discriminator.
    */
-  readonly kind: "ObjectType";
+  readonly kind = "ObjectType";
 
   /**
    * Human-readable label from rdfs:label.
@@ -110,14 +102,14 @@ export interface ObjectType {
    *
    * Mutable to support cycle-handling logic in the compiler.
    */
-  readonly parentObjectTypes: ObjectType[];
+  readonly #parentObjectTypes: ObjectType[] = [];
 
   /**
    * Properties of this ObjectType.
    *
    * Mutable to support cycle-handling logic in the compiler.
    */
-  readonly properties: ObjectType.Property[];
+  readonly #properties: ObjectType.Property[] = [];
 
   /**
    * Was this type synthesized or did it come from SHACL?
@@ -151,6 +143,93 @@ export interface ObjectType {
    * Whether to generate a TypeScript class or interface for this type.
    */
   readonly tsObjectDeclarationType: TsObjectDeclarationType;
+
+  constructor({
+    abstract,
+    comment,
+    export_,
+    extern,
+    fromRdfType,
+    identifierMintingStrategy,
+    identifierType,
+    label,
+    name,
+    synthetic,
+    toRdfTypes,
+    tsFeatures,
+    tsImports,
+    tsObjectDeclarationType,
+  }: {
+    abstract: boolean;
+    comment: Maybe<string>;
+    export_: boolean;
+    extern: boolean;
+    fromRdfType: Maybe<NamedNode>;
+    identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
+    identifierType: IdentifierType;
+    label: Maybe<string>;
+    name: Name;
+    synthetic: boolean;
+    toRdfTypes: readonly NamedNode[];
+    tsFeatures: ReadonlySet<TsFeature>;
+    tsImports: readonly string[];
+    tsObjectDeclarationType: TsObjectDeclarationType;
+  }) {
+    this.abstract = abstract;
+    this.comment = comment;
+    this.export = export_;
+    this.extern = extern;
+    this.fromRdfType = fromRdfType;
+    this.identifierMintingStrategy = identifierMintingStrategy;
+    this.identifierType = identifierType;
+    this.label = label;
+    this.name = name;
+    this.synthetic = synthetic;
+    this.toRdfTypes = toRdfTypes;
+    this.tsFeatures = tsFeatures;
+    this.tsImports = tsImports;
+    this.tsObjectDeclarationType = tsObjectDeclarationType;
+  }
+
+  addAncestorObjectType(ancestorObjectType: ObjectType): void {
+    this.#ancestorObjectTypes.push(ancestorObjectType);
+  }
+
+  addChildObjectType(childObjectType: ObjectType): void {
+    this.#childObjectTypes.push(childObjectType);
+  }
+
+  addDescendantObjectType(descendantObjectType: ObjectType): void {
+    this.#descendantObjectTypes.push(descendantObjectType);
+  }
+
+  addParentObjectType(parentObjectType: ObjectType): void {
+    this.#parentObjectTypes.push(parentObjectType);
+  }
+
+  addProperty(property: ObjectType.Property): void {
+    this.#properties.push(property);
+  }
+
+  get ancestorObjectTypes(): readonly ObjectType[] {
+    return this.#ancestorObjectTypes;
+  }
+
+  get childObjectTypes(): readonly ObjectType[] {
+    return this.#childObjectTypes;
+  }
+
+  get descendantObjectTypes(): readonly ObjectType[] {
+    return this.#descendantObjectTypes;
+  }
+
+  get parentObjectTypes(): readonly ObjectType[] {
+    return this.#parentObjectTypes;
+  }
+
+  get properties(): readonly ObjectType.Property[] {
+    return this.#properties;
+  }
 }
 
 export namespace ObjectType {

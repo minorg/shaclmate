@@ -1,5 +1,5 @@
 import type { Maybe } from "purify-ts";
-import type { CompositeType } from "./CompositeType.js";
+import { CompositeType } from "./CompositeType.js";
 import type { Name } from "./Name.js";
 import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
@@ -8,7 +8,7 @@ import type { ObjectUnionType } from "./ObjectUnionType.js";
 /**
  * A composite of object types, such as an intersection or union.
  */
-export interface ObjectCompositeType<
+export abstract class ObjectCompositeType<
   ObjectCompositeTypeT extends ObjectIntersectionType | ObjectUnionType,
 > extends CompositeType<ObjectCompositeTypeT | ObjectType> {
   /**
@@ -23,6 +23,8 @@ export interface ObjectCompositeType<
    */
   readonly export: boolean;
 
+  abstract readonly kind: "ObjectIntersectionType" | "ObjectUnionType";
+
   /**
    * Human-readable label from rdfs:label.
    */
@@ -32,4 +34,22 @@ export interface ObjectCompositeType<
    * Name of this type, usually derived from sh:name or shaclmate:name.
    */
   readonly name: Name;
+
+  constructor({
+    comment,
+    export_,
+    label,
+    name,
+  }: {
+    comment: Maybe<string>;
+    export_: boolean;
+    label: Maybe<string>;
+    name: Name;
+  }) {
+    super();
+    this.comment = comment;
+    this.export = export_;
+    this.label = label;
+    this.name = name;
+  }
 }

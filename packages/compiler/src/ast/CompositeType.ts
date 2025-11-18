@@ -9,5 +9,13 @@ export abstract class CompositeType<MemberTypeT extends Type> {
    *
    * Mutable to support cycle-handling logic in the compiler.
    */
-  readonly memberTypes: MemberTypeT[] = [];
+  readonly #memberTypes: MemberTypeT[] = [];
+
+  addMemberType(memberType: MemberTypeT): void {
+    this.#memberTypes.push(memberType);
+  }
+
+  get memberTypes(): readonly MemberTypeT[] {
+    return this.#memberTypes;
+  }
 }

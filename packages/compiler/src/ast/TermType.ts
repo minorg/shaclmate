@@ -21,7 +21,22 @@ export abstract class TermType<
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
   abstract readonly kind: "IdentifierType" | "LiteralType" | "TermType";
-  readonly nodeKinds: ReadonlySet<NodeKind>;
+  readonly nodeKinds: ReadonlySet<_RuntimeTermT["termType"]>;
 
-  constructor({}: {});
+  constructor({
+    defaultValue,
+    hasValues,
+    in_,
+    nodeKinds,
+  }: {
+    defaultValue: Maybe<ConstantTermT>;
+    hasValues: readonly ConstantTermT[];
+    in_: readonly ConstantTermT[];
+    nodeKinds: ReadonlySet<NodeKind>;
+  }) {
+    this.defaultValue = defaultValue;
+    this.hasValues = hasValues;
+    this.in_ = in_;
+    this.nodeKinds = nodeKinds;
+  }
 }

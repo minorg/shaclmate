@@ -1,14 +1,38 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
 import type { Maybe } from "purify-ts";
-import type { TermType } from "./TermType.js";
+import { TermType } from "./TermType.js";
 
-export interface LiteralType extends TermType<Literal, Literal> {
+export abstract class LiteralType extends TermType<Literal, Literal> {
   readonly datatype: Maybe<NamedNode>;
-  readonly kind: "LiteralType";
+  readonly kind = "LiteralType";
   readonly languageIn: readonly string[];
   readonly maxExclusive: Maybe<Literal>;
   readonly maxInclusive: Maybe<Literal>;
   readonly minExclusive: Maybe<Literal>;
   readonly minInclusive: Maybe<Literal>;
-  readonly nodeKinds: ReadonlySet<"Literal">;
+
+  constructor({
+    datatype,
+    languageIn,
+    maxExclusive,
+    maxInclusive,
+    minExclusive,
+    minInclusive,
+    ...superParameters
+  }: {
+    datatype: Maybe<NamedNode>;
+    languageIn: readonly string[];
+    maxExclusive: Maybe<Literal>;
+    maxInclusive: Maybe<Literal>;
+    minExclusive: Maybe<Literal>;
+    minInclusive: Maybe<Literal>;
+  } & ConstructorParameters<typeof TermType<Literal, Literal>>[0]) {
+    super(superParameters);
+    this.datatype = datatype;
+    this.languageIn = languageIn;
+    this.maxExclusive = maxExclusive;
+    this.maxInclusive = maxInclusive;
+    this.minExclusive = minExclusive;
+    this.minInclusive = minInclusive;
+  }
 }
