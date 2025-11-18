@@ -2,7 +2,7 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
-import type * as ast from "../ast/index.js";
+import * as ast from "../ast/index.js";
 import * as input from "../input/index.js";
 import { tsFeaturesDefault } from "../input/tsFeatures.js";
 import { logger } from "../logger.js";
@@ -155,15 +155,17 @@ export function transformNodeShapeToAstObjectCompositeType(
   }
 
   // Put a placeholder in the cache to deal with cyclic references
-  const compositeType: ast.ObjectIntersectionType | ast.ObjectUnionType = {
+  const compositeType: ast.ObjectIntersectionType | ast.ObjectUnionType = new (
+    compositeTypeKind === "ObjectIntersectionType"
+      ? ast.ObjectIntersectionType
+      : ast.ObjectUnionType
+  )({
     comment: pickLiteral(nodeShape.comments).map((literal) => literal.value),
-    export: export_,
-    kind: compositeTypeKind,
+    export_,
     label: pickLiteral(nodeShape.labels).map((literal) => literal.value),
-    memberTypes: [] as ast.ObjectType[],
     name: this.shapeAstName(nodeShape),
     tsFeatures: nodeShape.tsFeatures,
-  };
+  });
 
   this.nodeShapeAstTypesByIdentifier.set(nodeShape.identifier, compositeType);
 
@@ -175,11 +177,11 @@ export function transformNodeShapeToAstObjectCompositeType(
     const memberType = memberTypeEither.unsafeCoerce();
     switch (memberType.kind) {
       case "ObjectType":
-        compositeType.memberTypes.push(memberType);
+        compositeType.addMemberType(memberType);
         break;
       case "ObjectIntersectionType":
         if (compositeType.kind === memberType.kind) {
-          compositeType.memberTypes.push(memberType);
+          compositeType.addMemberType(memberType);
         } else {
           return Left(
             new Error(
@@ -190,7 +192,7 @@ export function transformNodeShapeToAstObjectCompositeType(
         break;
       case "ObjectUnionType":
         if (compositeType.kind === memberType.kind) {
-          compositeType.memberTypes.push(memberType);
+          compositeType.addMemberType(memberType);
         } else {
           return Left(
             new Error(
@@ -209,20 +211,6 @@ export function transformNodeShapeToAstObjectCompositeType(
   }
 
   return Either.of(compositeType);
-  // return flattenAstObjectCompositeTypeMemberTypes({
-  //   objectCompositeTypeKind: compositeTypeKind,
-  //   memberTypes,
-  //   shape: nodeShape,
-  // }).map(({ memberTypes, tsFeatures }) => {
-  //   // Add to the placeholder composite type and return it.
-  //   for (const memberType of memberTypes) {
-  //     compositeType.memberTypes.push(memberType);
-  //   }
-  //   for (const tsFeature of tsFeatures) {
-  //     compositeType.tsFeatures.add(tsFeature);
-  //   }
-  //   return compositeType;
-  // });
 }
 
 export function transformNodeShapeToAstType(
