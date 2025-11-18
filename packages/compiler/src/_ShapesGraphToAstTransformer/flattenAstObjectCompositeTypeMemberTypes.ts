@@ -2,6 +2,7 @@ import TermSet from "@rdfjs/term-set";
 import type { NamedNode } from "@rdfjs/types";
 import { Either, Left } from "purify-ts";
 import { Resource } from "rdfjs-resource";
+import { invariant } from "ts-invariant";
 import type * as ast from "../ast/index.js";
 import type { TsFeature } from "../enums/TsFeature.js";
 import type * as input from "../input/index.js";
@@ -22,6 +23,12 @@ export function flattenAstObjectCompositeTypeMemberTypes({
   Error,
   { memberTypes: readonly ast.ObjectType[]; tsFeatures: Set<TsFeature> }
 > {
+  if (memberTypes.length === 0) {
+    throw new Error(
+      `flattening AST object composite type member types doesn't work on recursive types that are still being populated: ${shape}`,
+    );
+  }
+
   const flattenedMemberTypes: ast.ObjectType[] = [];
   for (const memberType of memberTypes) {
     switch (memberType.kind) {
@@ -55,6 +62,8 @@ export function flattenAstObjectCompositeTypeMemberTypes({
       }
     }
   }
+
+  invariant(flattenedMemberTypes.length >= memberTypes.length);
 
   // Members of the composite type must have the same tsFeatures.
   // They must also have distinct RDF types or no RDF types at all.
