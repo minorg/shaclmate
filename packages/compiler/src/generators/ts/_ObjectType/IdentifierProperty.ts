@@ -111,7 +111,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
 
     const checkIdentifierTermTypeStatements = (
       identifierVariable: string,
-      identifierVariableNodeKinds?: Set<IdentifierNodeKind>,
+      identifierVariableNodeKinds?: ReadonlySet<IdentifierNodeKind>,
     ): readonly string[] => {
       if (this.type.nodeKinds.size === 2) {
         return [];

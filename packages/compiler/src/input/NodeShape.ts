@@ -126,7 +126,7 @@ export class NodeShape extends ShaclCoreNodeShape<
     return this.generatedShaclmateNodeShape.mutable;
   }
 
-  get nodeKinds(): Set<IdentifierNodeKind> {
+  get nodeKinds(): ReadonlySet<IdentifierNodeKind> {
     const thisNodeKinds = new Set<IdentifierNodeKind>(
       [...this.constraints.nodeKinds.orDefault(new Set())].filter(
         (nodeKind) => nodeKind !== "Literal",
@@ -202,7 +202,7 @@ export class NodeShape extends ShaclCoreNodeShape<
     return this.generatedShaclmateNodeShape.toRdfTypes;
   }
 
-  get tsFeatures(): Maybe<Set<TsFeature>> {
+  get tsFeatures(): Maybe<ReadonlySet<TsFeature>> {
     return tsFeatures(this.generatedShaclmateNodeShape).altLazy(() =>
       this.isDefinedBy.chain((ontology) => ontology.tsFeatures),
     );

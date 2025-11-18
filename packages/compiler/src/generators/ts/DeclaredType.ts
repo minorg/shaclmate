@@ -18,7 +18,7 @@ export abstract class DeclaredType extends Type {
     | TypeAliasDeclarationStructure
   )[];
   readonly export: boolean;
-  readonly features: Set<TsFeature>;
+  readonly features: ReadonlySet<TsFeature>;
   readonly name: string;
 
   constructor({
@@ -27,7 +27,7 @@ export abstract class DeclaredType extends Type {
     name,
   }: {
     export_: boolean;
-    features: Set<TsFeature>;
+    features: ReadonlySet<TsFeature>;
     name: string;
   }) {
     super();

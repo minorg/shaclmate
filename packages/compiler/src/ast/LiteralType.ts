@@ -10,5 +10,5 @@ export interface LiteralType extends TermType<Literal, Literal> {
   readonly maxInclusive: Maybe<Literal>;
   readonly minExclusive: Maybe<Literal>;
   readonly minInclusive: Maybe<Literal>;
-  readonly nodeKinds: Set<"Literal">;
+  readonly nodeKinds: ReadonlySet<"Literal">;
 }

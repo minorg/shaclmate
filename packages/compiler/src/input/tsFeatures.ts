@@ -43,7 +43,7 @@ function iriToTsFeatures(iri: TsFeatureIri): readonly TsFeature[] {
 export function tsFeatures(generated: {
   readonly tsFeatureExcludes: readonly TsFeatureIri[];
   readonly tsFeatureIncludes: readonly TsFeatureIri[];
-}): Maybe<Set<TsFeature>> {
+}): Maybe<ReadonlySet<TsFeature>> {
   const tsFeatureIncludes =
     generated.tsFeatureIncludes.flatMap(iriToTsFeatures);
   const tsFeatureExcludes =

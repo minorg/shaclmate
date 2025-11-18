@@ -21,7 +21,7 @@ export function flattenAstObjectCompositeTypeMemberTypes({
   shape: input.Shape;
 }): Either<
   Error,
-  { memberTypes: readonly ast.ObjectType[]; tsFeatures: Set<TsFeature> }
+  { memberTypes: readonly ast.ObjectType[]; tsFeatures: ReadonlySet<TsFeature> }
 > {
   if (memberTypes.length === 0) {
     throw new Error(

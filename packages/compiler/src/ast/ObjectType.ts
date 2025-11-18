@@ -83,7 +83,7 @@ export interface ObjectType {
    *
    * Used to associate instances with an RDF identifier.
    */
-  readonly identifierNodeKinds: Set<Exclude<NodeKind, "Literal">>;
+  readonly identifierNodeKinds: ReadonlySet<Exclude<NodeKind, "Literal">>;
 
   /**
    * Strategy for minting new object identifiers.
@@ -135,7 +135,7 @@ export interface ObjectType {
   /**
    * TypeScript features to generate.
    */
-  readonly tsFeatures: Set<TsFeature>;
+  readonly tsFeatures: ReadonlySet<TsFeature>;
 
   /**
    * TypeScript imports to add to generated code.

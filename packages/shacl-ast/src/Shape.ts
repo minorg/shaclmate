@@ -149,7 +149,7 @@ export namespace Shape {
       return this.generatedShaclCoreShape.minInclusive;
     }
 
-    get nodeKinds(): Maybe<Set<NodeKind>> {
+    get nodeKinds(): Maybe<ReadonlySet<NodeKind>> {
       return this.generatedShaclCoreShape.nodeKind.chain((iri) => {
         const nodeKinds = new Set<NodeKind>();
         switch (iri.value) {

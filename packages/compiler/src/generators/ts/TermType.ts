@@ -32,7 +32,7 @@ export class TermType<
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
   readonly mutable: boolean = false;
-  readonly nodeKinds: Set<RuntimeTermT["termType"]>;
+  readonly nodeKinds: ReadonlySet<RuntimeTermT["termType"]>;
   readonly typeof: "boolean" | "number" | "object" | "string" = "object";
 
   constructor({
@@ -44,13 +44,13 @@ export class TermType<
     defaultValue: Maybe<ConstantTermT>;
     hasValues: readonly ConstantTermT[];
     in_: readonly ConstantTermT[];
-    nodeKinds: Set<RuntimeTermT["termType"]>;
+    nodeKinds: ReadonlySet<RuntimeTermT["termType"]>;
   }) {
     super();
     this.defaultValue = defaultValue;
     this.hasValues = hasValues;
     this.in_ = in_;
-    this.nodeKinds = new Set([...nodeKinds]);
+    this.nodeKinds = nodeKinds;
     invariant(this.nodeKinds.size > 0, "empty nodeKinds");
   }
 

@@ -40,7 +40,7 @@ export function transformShapeToAstIdentifierType(
         hasValues: identifierHasValues,
         in_: identifierIn,
         kind: "IdentifierType",
-        nodeKinds: nodeKinds as Set<IdentifierNodeKind>,
+        nodeKinds: nodeKinds as ReadonlySet<IdentifierNodeKind>,
       });
     }
 

@@ -10,7 +10,7 @@ import type { Maybe } from "purify-ts";
  *
  * The two are differentiated because identifiers can have BlankNode or NamedNode values at runtime but only NamedNode values for sh:defaultValue et al.
  */
-export interface TermType<
+export abstract class TermType<
   ConstantTermT extends Literal | NamedNode = Literal | NamedNode,
   _RuntimeTermT extends BlankNode | Literal | NamedNode =
     | BlankNode
@@ -20,6 +20,8 @@ export interface TermType<
   readonly defaultValue: Maybe<ConstantTermT>;
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
-  readonly kind: "IdentifierType" | "LiteralType" | "TermType";
-  readonly nodeKinds: Set<NodeKind>;
+  abstract readonly kind: "IdentifierType" | "LiteralType" | "TermType";
+  readonly nodeKinds: ReadonlySet<NodeKind>;
+
+  constructor({}: {});
 }

@@ -28,8 +28,8 @@ function synthesizePartialAstObjectType({
   identifierNodeKinds,
   tsFeatures,
 }: {
-  identifierNodeKinds: Set<IdentifierNodeKind>;
-  tsFeatures: Set<TsFeature>;
+  identifierNodeKinds: ReadonlySet<IdentifierNodeKind>;
+  tsFeatures: ReadonlySet<TsFeature>;
 }): ast.ObjectType {
   let syntheticName: string;
   switch (identifierNodeKinds.size) {
