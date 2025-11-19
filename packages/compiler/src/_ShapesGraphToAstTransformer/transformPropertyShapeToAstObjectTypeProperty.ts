@@ -144,7 +144,13 @@ function transformPropertyShapeToAstType(
 
 export function transformPropertyShapeToAstObjectTypeProperty(
   this: ShapesGraphToAstTransformer,
-  propertyShape: input.PropertyShape,
+  {
+    objectType,
+    propertyShape,
+  }: {
+    objectType: ast.ObjectType;
+    propertyShape: input.PropertyShape;
+  },
 ): Either<Error, ast.ObjectType.Property> {
   {
     const property = this.astObjectTypePropertiesByIdentifier.get(
@@ -256,7 +262,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     );
   }
 
-  const property: ast.ObjectType.Property = {
+  const property = new ast.ObjectType.Property({
     comment: pickLiteral(propertyShape.comments).map(
       (literal) => literal.value,
     ),
@@ -264,14 +270,15 @@ export function transformPropertyShapeToAstObjectTypeProperty(
       (literal) => literal.value,
     ),
     label: pickLiteral(propertyShape.labels).map((literal) => literal.value),
-    mutable: propertyShape.mutable,
+    mutable: propertyShape.mutable.orDefault(false),
     name: this.shapeAstName(propertyShape),
+    objectType,
     order: propertyShape.order.orDefault(0),
     path,
     partialType,
     type: type,
     visibility: propertyShape.visibility,
-  };
+  });
   this.astObjectTypePropertiesByIdentifier.set(
     propertyShape.identifier,
     property,

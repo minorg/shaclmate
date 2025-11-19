@@ -3,4 +3,12 @@
  */
 export abstract class PlaceholderType {
   readonly kind = "PlaceholderType";
+
+  equals(_other: PlaceholderType): boolean {
+    return true;
+  }
+
+  toString(): string {
+    return `${this.kind}()`;
+  }
 }

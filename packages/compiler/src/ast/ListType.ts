@@ -1,9 +1,10 @@
 import type { NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
-import type { CollectionType } from "ast/CollectionType.js";
+import { CollectionType } from "ast/CollectionType.js";
+import { maybeEquals, strictEquals } from "ast/equals.js";
 import type { Maybe } from "purify-ts";
 import type { IdentifierMintingStrategy } from "../enums/IdentifierMintingStrategy.js";
-import type { Name } from "./Name.js";
+import { Name } from "./Name.js";
 import type { Type } from "./Type.js";
 
 /**
@@ -13,8 +14,9 @@ import type { Type } from "./Type.js";
  *
  * Contrast SetType, which is transformed from any SHACL property shape with no maxCount or maxCount greater than 1.
  */
-export interface ListType<ItemTypeT extends Type = Type>
-  extends CollectionType<ItemTypeT> {
+export abstract class ListType<
+  ItemTypeT extends Type = Type,
+> extends CollectionType<ItemTypeT> {
   /**
    * Documentation comment from rdfs:comment.
    */
@@ -25,7 +27,7 @@ export interface ListType<ItemTypeT extends Type = Type>
    */
   readonly identifierNodeKind: IdentifierNodeKind;
 
-  readonly kind: "ListType";
+  readonly kind = "ListType";
 
   /**
    * Human-readable label from rdfs:label.
@@ -49,4 +51,63 @@ export interface ListType<ItemTypeT extends Type = Type>
    * class targets).
    */
   readonly toRdfTypes: readonly NamedNode[];
+
+  constructor({
+    comment,
+    identifierMintingStrategy,
+    identifierNodeKind,
+    label,
+    name,
+    toRdfTypes,
+    ...superParameters
+  }: {
+    comment: Maybe<string>;
+    identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
+    identifierNodeKind: IdentifierNodeKind;
+    label: Maybe<string>;
+    name: Name;
+    toRdfTypes: readonly NamedNode[];
+  } & ConstructorParameters<typeof CollectionType<ItemTypeT>>[0]) {
+    super(superParameters);
+    this.comment = comment;
+    this.identifierMintingStrategy = identifierMintingStrategy;
+    this.identifierNodeKind = identifierNodeKind;
+    this.label = label;
+    this.name = name;
+    this.toRdfTypes = toRdfTypes;
+  }
+
+  override equals(other: ListType<ItemTypeT>): boolean {
+    if (!super.equals(other)) {
+      return false;
+    }
+
+    if (!maybeEquals(this.comment, other.comment, strictEquals)) {
+      return false;
+    }
+
+    if (
+      !maybeEquals(
+        this.identifierMintingStrategy,
+        other.identifierMintingStrategy,
+        strictEquals,
+      )
+    ) {
+      return false;
+    }
+
+    if (this.identifierNodeKind !== other.identifierNodeKind) {
+      return false;
+    }
+
+    if (!maybeEquals(this.label, other.label, strictEquals)) {
+      return false;
+    }
+
+    if (!Name.equals(this.name, other.name)) {
+      return false;
+    }
+
+    return true;
+  }
 }

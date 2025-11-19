@@ -31,7 +31,7 @@ export abstract class ObjectCompositeType<
    */
   readonly export: boolean;
 
-  abstract readonly kind: "ObjectIntersectionType" | "ObjectUnionType";
+  abstract override readonly kind: "ObjectIntersectionType" | "ObjectUnionType";
 
   /**
    * Human-readable label from rdfs:label.
@@ -67,6 +67,11 @@ export abstract class ObjectCompositeType<
     this.label = label;
     this.name = name;
     this.#tsFeatures = tsFeatures;
+  }
+
+  override equals(other: ObjectCompositeType<ObjectCompositeTypeT>): boolean {
+    // Don't recurse
+    return Name.equals(this.name, other.name);
   }
 
   @Memoize()
@@ -172,5 +177,9 @@ export abstract class ObjectCompositeType<
     }
 
     return this.#tsFeatures.orDefault(mergedMemberTsFeatures);
+  }
+
+  override toString(): string {
+    return `${this.kind}(identifier=${Resource.Identifier.toString(this.name.identifier)})`;
   }
 }

@@ -23,4 +23,16 @@ export abstract class SetType<
     super(superParameters);
     this.minCount = minCount;
   }
+
+  override equals(other: SetType<ItemTypeT>): boolean {
+    if (!super.equals(other)) {
+      return false;
+    }
+
+    if (this.minCount !== other.minCount) {
+      return false;
+    }
+
+    return true;
+  }
 }

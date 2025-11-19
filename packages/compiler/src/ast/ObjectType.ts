@@ -3,6 +3,8 @@ import type { PredicatePath } from "@shaclmate/shacl-ast";
 import type { Maybe } from "purify-ts";
 import { Resource } from "rdfjs-resource";
 import genericToposort from "toposort";
+import { invariant } from "ts-invariant";
+import { Memoize } from "typescript-memoize";
 import type {
   IdentifierMintingStrategy,
   PropertyVisibility,
@@ -14,7 +16,8 @@ import { Name } from "./Name.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
 import type { SetType } from "./SetType.js";
-import type { Type } from "./Type.js";
+import { Type } from "./Type.js";
+import { arrayEquals } from "./equals.js";
 
 export class ObjectType {
   /**
@@ -209,6 +212,7 @@ export class ObjectType {
 
   addProperty(property: ObjectType.Property): void {
     this.#properties.push(property);
+    property.objectType = this;
   }
 
   get ancestorObjectTypes(): readonly ObjectType[] {
@@ -230,10 +234,19 @@ export class ObjectType {
   get properties(): readonly ObjectType.Property[] {
     return this.#properties;
   }
+
+  equals(other: ObjectType): boolean {
+    // Don't recurse
+    return Name.equals(this.name, other.name);
+  }
+
+  toString(): string {
+    return `${this.kind}(identifier=${Resource.Identifier.toString(this.name.identifier)})`;
+  }
 }
 
 export namespace ObjectType {
-  export interface Property {
+  export class Property {
     /**
      * Documentation comment from rdfs:comment.
      */
@@ -253,7 +266,12 @@ export namespace ObjectType {
      * The property should be mutable in generated code i.e., it should be re-assignable. The property value may or may
      * not be mutable.
      */
-    readonly mutable: Maybe<boolean>;
+    readonly mutable: boolean;
+
+    /**
+     * Object type this property belongs to.
+     */
+    #objectType: ObjectType | null = null;
 
     /**
      * Name of this property.
@@ -283,13 +301,6 @@ export namespace ObjectType {
     readonly path: PredicatePath;
 
     /**
-     * Does the property directly or indirectly reference the ObjectType itself?
-     *
-     * Mutable to support transformation logic
-     */
-    recursive?: boolean;
-
-    /**
      * Type of this property.
      */
     readonly type: Type;
@@ -298,19 +309,242 @@ export namespace ObjectType {
      * Visibility: private, protected, public.
      */
     readonly visibility: PropertyVisibility;
-  }
 
-  export namespace Property {
-    export function equals(left: Property, right: Property): boolean {
-      return Name.equals(left.name, right.name);
+    constructor({
+      comment,
+      description,
+      label,
+      mutable,
+      name,
+      order,
+      partialType,
+      path,
+      type,
+      visibility,
+    }: {
+      comment: Maybe<string>;
+      description: Maybe<string>;
+      label: Maybe<string>;
+      mutable: boolean;
+      name: Name;
+      order: number;
+      partialType: Maybe<
+        | ObjectType
+        | ObjectUnionType
+        | OptionType<ObjectType | ObjectUnionType>
+        | SetType<ObjectType | ObjectUnionType>
+      >;
+      path: PredicatePath;
+      type: Type;
+      visibility: PropertyVisibility;
+    }) {
+      this.comment = comment;
+      this.description = description;
+      this.label = label;
+      this.mutable = mutable;
+      this.name = name;
+      this.order = order;
+      this.partialType = partialType;
+      this.path = path;
+      this.type = type;
+      this.visibility = visibility;
     }
 
-    // biome-ignore lint/suspicious/noShadowRestrictedNames: <explanation>
-    export function toString(property: Property): string {
-      return `${Name.toString(property.name)}(path=${Resource.Identifier.toString(property.path.iri)})`;
+    equals(other: Property): boolean {
+      return Name.equals(this.name, other.name);
+    }
+
+    get objectType(): ObjectType {
+      invariant(this.#objectType !== null);
+      return this.#objectType;
+    }
+
+    set objectType(objectType: ObjectType) {
+      invariant(this.#objectType === null);
+      this.#objectType = objectType;
+    }
+
+    /**
+     * Does the property directly or indirectly reference the ObjectType itself?
+     */
+    @Memoize()
+    get recursive(): boolean {
+      const DEBUG = false;
+
+      const rootObjectType = this.objectType;
+      const rootProperty = this;
+
+      function helper(
+        stack: {
+          objectType: ObjectType;
+          property: ObjectType.Property;
+          propertyType?: readonly Type[];
+        }[],
+      ): boolean {
+        const currentStackFrame = stack.at(-1)!;
+        const { objectType, property, propertyType } = currentStackFrame;
+
+        if (DEBUG) {
+          process.stderr.write(
+            `${[
+              stack.length.toString(),
+              rootObjectType,
+              rootProperty,
+              objectType,
+              property,
+              propertyType
+                ? `[${propertyType.map(Type.toString).join(", ")}]`
+                : "undefined",
+            ].join(",")}\n`,
+          );
+        }
+
+        for (const lowerStackFrame of stack.slice(0, -1)) {
+          if (
+            !Type.equals(
+              currentStackFrame.objectType,
+              lowerStackFrame.objectType,
+            )
+          ) {
+            continue;
+          }
+          if (!currentStackFrame.property.equals(lowerStackFrame.property)) {
+            continue;
+          }
+          if (
+            !arrayEquals(
+              currentStackFrame.propertyType ?? [],
+              lowerStackFrame.propertyType ?? [],
+              Type.equals,
+            )
+          ) {
+            continue;
+          }
+
+          // We've seen this combination before and don't want to recurse further, to avoid infinite recursion
+          if (DEBUG) {
+            process.stderr.write("recursion detected, halting");
+          }
+          return true;
+        }
+
+        if (!propertyType) {
+          const partialType = property.partialType.extract();
+          if (partialType) {
+            if (
+              helper(
+                stack.concat({
+                  objectType,
+                  property,
+                  propertyType: [partialType],
+                }),
+              )
+            ) {
+              return true;
+            }
+          }
+
+          return helper(
+            stack.concat({
+              objectType,
+              property,
+              propertyType: [property.type],
+            }),
+          );
+        }
+
+        invariant(propertyType.length > 0);
+        const currentPropertyType = propertyType.at(-1)!;
+
+        switch (currentPropertyType.kind) {
+          case "IdentifierType":
+          case "LiteralType":
+          case "PlaceholderType":
+          case "TermType":
+            return false;
+          case "ObjectType": {
+            if (DEBUG) {
+              process.stderr.write(`recurse into ${currentPropertyType}`);
+            }
+            for (const property of currentPropertyType.properties) {
+              if (
+                helper(
+                  stack.concat({
+                    objectType: currentPropertyType,
+                    property,
+                  }),
+                )
+              ) {
+                return true;
+              }
+            }
+
+            return false;
+          }
+          case "IntersectionType":
+          case "UnionType": {
+            if (DEBUG) {
+              process.stderr.write(`recurse into ${currentPropertyType}`);
+            }
+            for (const memberType of currentPropertyType.memberTypes) {
+              if (
+                helper(
+                  stack.concat({
+                    objectType,
+                    property,
+                    propertyType: propertyType.concat(memberType),
+                  }),
+                )
+              ) {
+                return true;
+              }
+            }
+            return false;
+          }
+          case "ObjectIntersectionType":
+          case "ObjectUnionType": {
+            if (DEBUG) {
+              process.stderr.write(`recurse into ${currentPropertyType}`);
+            }
+            for (const memberType of currentPropertyType.memberObjectTypes) {
+              for (const property of memberType.properties) {
+                if (
+                  helper(
+                    stack.concat({
+                      objectType: memberType,
+                      property,
+                    }),
+                  )
+                ) {
+                  return true;
+                }
+              }
+            }
+            return false;
+          }
+          case "ListType":
+          case "OptionType":
+          case "SetType":
+            return helper(
+              stack.concat({
+                objectType,
+                property,
+                propertyType: propertyType.concat(currentPropertyType.itemType),
+              }),
+            );
+        }
+      }
+
+      return helper([{ objectType: rootObjectType, property: rootProperty }]);
+    }
+
+    toString(): string {
+      return `${Name.toString(this.name)}(path=${Resource.Identifier.toString(this.path.iri)})`;
     }
   }
+}
 
+export namespace Property {
   export function toposort(
     objectTypes: readonly ObjectType[],
   ): readonly ObjectType[] {

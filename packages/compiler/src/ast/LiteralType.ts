@@ -35,4 +35,8 @@ export abstract class LiteralType extends TermType<Literal, Literal> {
     this.minExclusive = minExclusive;
     this.minInclusive = minInclusive;
   }
+
+  override toString(): string {
+    return `${this.kind}()`;
+  }
 }

@@ -1,6 +1,13 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import type { NodeKind } from "@shaclmate/shacl-ast";
 import type { Maybe } from "purify-ts";
+import {
+  arrayEquals,
+  maybeEquals,
+  setEquals,
+  strictEquals,
+  termEquals,
+} from "./equals.js";
 
 /**
  * Parent interface of term types in the ASTs (e.g., identifiers, identifiers).
@@ -38,5 +45,33 @@ export abstract class TermType<
     this.hasValues = hasValues;
     this.in_ = in_;
     this.nodeKinds = nodeKinds;
+  }
+
+  equals(other: TermType<ConstantTermT, _RuntimeTermT>): boolean {
+    if (this.kind !== other.kind) {
+      return false;
+    }
+
+    if (!maybeEquals(this.defaultValue, other.defaultValue, termEquals)) {
+      return false;
+    }
+
+    if (!arrayEquals(this.hasValues, other.hasValues, termEquals)) {
+      return false;
+    }
+
+    if (!arrayEquals(this.in_, other.in_, termEquals)) {
+      return false;
+    }
+
+    if (!setEquals(this.nodeKinds, other.nodeKinds, strictEquals)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  toString() {
+    return `${this.kind}(nodeKinds=${[...this.nodeKinds].join(" | ")})`;
   }
 }

@@ -8,8 +8,6 @@ import { fromRdf } from "rdf-literal";
 import { invariant } from "ts-invariant";
 
 import type * as ast from "../../ast/index.js";
-
-import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { logger } from "../../logger.js";
 import { BooleanType } from "./BooleanType.js";
 import { DateTimeType } from "./DateTimeType.js";
@@ -599,21 +597,6 @@ export class TypeFactory {
     invariant(
       memberTypes.length > 0,
       // `${ast.Name.toString(astType.name)} has no members?`,
-    );
-
-    const memberIdentifierTypeNodeKinds = new Set<IdentifierNodeKind>();
-    const memberIdentifierTypesIn = new TermSet<NamedNode>();
-    for (const memberType of memberTypes) {
-      for (const nodeKind of memberType.identifierType.nodeKinds) {
-        memberIdentifierTypeNodeKinds.add(nodeKind);
-      }
-      for (const in_ of memberType.identifierType.in_) {
-        memberIdentifierTypesIn.add(in_);
-      }
-    }
-    invariant(
-      memberIdentifierTypeNodeKinds.size > 0,
-      // `could not infer ${ast.Name.toString(astType.name)} member type node kinds`,
     );
 
     const objectUnionType = new ObjectUnionType({
