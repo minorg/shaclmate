@@ -4,7 +4,7 @@ import type * as rdfjs from "@rdfjs/types";
 import { dash } from "@tpluscode/rdf-ns-builders";
 import { Either } from "purify-ts";
 import * as _ShapesGraphToAstTransformer from "./_ShapesGraphToAstTransformer/index.js";
-import * as ast from "./ast/index.js";
+import type * as ast from "./ast/index.js";
 import type * as input from "./input/index.js";
 import { logger } from "./logger.js";
 
@@ -55,7 +55,6 @@ export class ShapesGraphToAstTransformer {
     const syntheticAstObjectTypesByName: Record<string, ast.ObjectType> = {};
     const nodeShapeAstObjectUnionTypes: ast.ObjectUnionType[] = [];
 
-    // First pass: transform all node shapes
     for (const nodeShape of this.shapesGraph.nodeShapes) {
       if (nodeShape.identifier.termType !== "NamedNode") {
         continue;
@@ -110,25 +109,6 @@ export class ShapesGraphToAstTransformer {
           break;
         default:
           nodeShapeAstType satisfies never;
-      }
-    }
-
-    // Second pass: check whether any AST object type properties are recursive
-    // Everything must be transformed first in the first pass for this to work.
-    for (const astObjectType of nodeShapeAstObjectTypes) {
-      for (const astObjectTypeProperty of astObjectType.properties) {
-        astObjectTypeProperty.recursive =
-          _ShapesGraphToAstTransformer.isAstObjectTypePropertyRecursive(
-            astObjectType,
-            astObjectTypeProperty,
-          );
-        if (astObjectTypeProperty.recursive) {
-          logger.debug(
-            "object type %s property %s is recursive",
-            ast.Type.toString(astObjectType),
-            ast.ObjectType.Property.toString(astObjectTypeProperty),
-          );
-        }
       }
     }
 
