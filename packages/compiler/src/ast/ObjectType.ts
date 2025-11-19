@@ -544,7 +544,7 @@ export namespace ObjectType {
   }
 }
 
-export namespace Property {
+export namespace ObjectType {
   export function toposort(
     objectTypes: readonly ObjectType[],
   ): readonly ObjectType[] {

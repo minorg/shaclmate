@@ -561,7 +561,7 @@ export class TypeFactory {
     return property;
   }
 
-  private createObjectUnionType(astType: ast.ObjectUnionType): ObjectUnionType {
+  createObjectUnionType(astType: ast.ObjectUnionType): ObjectUnionType {
     {
       const cachedObjectUnionType = this.cachedObjectUnionTypesByIdentifier.get(
         astType.name.identifier,

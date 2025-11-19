@@ -90,7 +90,7 @@ function typeToJson(type: ast.Type): AstJson.Type {
       return {
         itemType: typeToJson(type.itemType),
         kind: type.kind,
-        mutable: type.mutable.extract(),
+        mutable: type.mutable,
       };
     }
     case "LiteralType": {
@@ -120,11 +120,7 @@ function typeToJson(type: ast.Type): AstJson.Type {
           type.parentObjectTypes.length > 0
             ? type.parentObjectTypes.map((type) => nameToJson(type.name))
             : undefined,
-        identifierIn:
-          type.identifierIn.length > 0
-            ? type.identifierIn.map(termToJson)
-            : undefined,
-        identifierNodeKinds: [...type.identifierNodeKinds],
+        identifierType: typeToJson(type.identifierType),
         identifierMintingStrategy: type.identifierMintingStrategy.extract(),
         toRdfTypes:
           type.toRdfTypes.length > 0
@@ -161,7 +157,7 @@ export class AstJsonGenerator implements Generator {
             comment: property.comment.extract(),
             description: property.description.extract(),
             label: property.label.extract(),
-            mutable: property.mutable.extract(),
+            mutable: property.mutable,
             name: nameToJson(property.name),
             order: property.order,
             partialType: property.partialType.map(typeToJson).extract(),

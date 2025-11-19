@@ -6,8 +6,8 @@ import {
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { Import } from "./Import.js";
-import { ObjectType } from "./ObjectType.js";
-import { ObjectUnionType } from "./ObjectUnionType.js";
+import type { ObjectType } from "./ObjectType.js";
+import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
@@ -22,16 +22,12 @@ export class TsGenerator implements Generator {
     const sourceFile = project.createSourceFile("generated.ts");
 
     this.addStatements({
-      objectTypes: ast.ObjectType.toposort(ast_.objectTypes).flatMap(
-        (astObjectType) => {
-          const type = this.typeFactory.createTypeFromAstType(astObjectType);
-          return type instanceof ObjectType ? [type] : [];
-        },
+      objectTypes: ast.ObjectType.toposort(ast_.objectTypes).map(
+        (astObjectType) => this.typeFactory.createObjectType(astObjectType),
       ),
-      objectUnionTypes: ast_.objectUnionTypes.flatMap((astObjectUnionType) => {
-        const type = this.typeFactory.createTypeFromAstType(astObjectUnionType);
-        return type instanceof ObjectUnionType ? [type] : [];
-      }),
+      objectUnionTypes: ast_.objectUnionTypes.map((astObjectUnionType) =>
+        this.typeFactory.createObjectUnionType(astObjectUnionType),
+      ),
       sourceFile,
     });
 
