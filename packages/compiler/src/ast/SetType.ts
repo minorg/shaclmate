@@ -4,7 +4,7 @@ import type { Type } from "./Type.js";
 /**
  * An unordered set of items of a specific type.
  */
-export abstract class SetType<
+export class SetType<
   ItemTypeT extends Type = Type,
 > extends CollectionType<ItemTypeT> {
   readonly kind = "SetType";

@@ -4,7 +4,7 @@ import { CollectionType } from "ast/CollectionType.js";
 import { maybeEquals, strictEquals } from "ast/equals.js";
 import type { Maybe } from "purify-ts";
 import type { IdentifierMintingStrategy } from "../enums/IdentifierMintingStrategy.js";
-import { Name } from "./Name.js";
+import type { ShapeIdentifier } from "./ShapeIdentifier.js";
 import type { Type } from "./Type.js";
 
 /**
@@ -14,7 +14,7 @@ import type { Type } from "./Type.js";
  *
  * Contrast SetType, which is transformed from any SHACL property shape with no maxCount or maxCount greater than 1.
  */
-export abstract class ListType<
+export class ListType<
   ItemTypeT extends Type = Type,
 > extends CollectionType<ItemTypeT> {
   /**
@@ -35,14 +35,19 @@ export abstract class ListType<
   readonly label: Maybe<string>;
 
   /**
+   * shaclmate:name from the node shape.
+   */
+  readonly name: Maybe<string>;
+
+  /**
    * Strategy for minting new list and sub-list identifiers.
    */
   readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
 
   /**
-   * Name of this type, usually derived from sh:name or shaclmate:name.
+   * Identifier of the node shape this type was derived from.
    */
-  readonly name: Name;
+  readonly shapeIdentifier: ShapeIdentifier;
 
   /**
    * rdf:type's that will be added to this object when it's serialized toRdf.
@@ -58,6 +63,7 @@ export abstract class ListType<
     identifierNodeKind,
     label,
     name,
+    shapeIdentifier,
     toRdfTypes,
     ...superParameters
   }: {
@@ -65,7 +71,8 @@ export abstract class ListType<
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     identifierNodeKind: IdentifierNodeKind;
     label: Maybe<string>;
-    name: Name;
+    name: Maybe<string>;
+    shapeIdentifier: ShapeIdentifier;
     toRdfTypes: readonly NamedNode[];
   } & ConstructorParameters<typeof CollectionType<ItemTypeT>>[0]) {
     super(superParameters);
@@ -74,6 +81,7 @@ export abstract class ListType<
     this.identifierNodeKind = identifierNodeKind;
     this.label = label;
     this.name = name;
+    this.shapeIdentifier = shapeIdentifier;
     this.toRdfTypes = toRdfTypes;
   }
 

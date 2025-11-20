@@ -2,7 +2,7 @@ import type { Literal, NamedNode } from "@rdfjs/types";
 import type { Maybe } from "purify-ts";
 import { TermType } from "./TermType.js";
 
-export abstract class LiteralType extends TermType<Literal, Literal> {
+export class LiteralType extends TermType<Literal, Literal> {
   readonly datatype: Maybe<NamedNode>;
   readonly kind = "LiteralType";
   readonly languageIn: readonly string[];

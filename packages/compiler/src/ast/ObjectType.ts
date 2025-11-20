@@ -1,5 +1,4 @@
-import type { NamedNode } from "@rdfjs/types";
-import type { PredicatePath } from "@shaclmate/shacl-ast";
+import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { Maybe } from "purify-ts";
 import { Resource } from "rdfjs-resource";
 import genericToposort from "toposort";
@@ -11,8 +10,8 @@ import type {
   TsFeature,
   TsObjectDeclarationType,
 } from "../enums/index.js";
+import type { Curie } from "./Curie.js";
 import type { IdentifierType } from "./IdentifierType.js";
-import { Name } from "./Name.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
 import type { SetType } from "./SetType.js";
@@ -98,7 +97,7 @@ export class ObjectType {
   /**
    * Name of this type, usually derived from sh:name or shaclmate:name.
    */
-  readonly name: Name;
+  readonly name: Maybe<string>;
 
   /**
    * Immediate parent ObjectTypes of this Object types.
@@ -113,6 +112,8 @@ export class ObjectType {
    * Mutable to support cycle-handling logic in the compiler.
    */
   readonly #properties: ObjectType.Property[] = [];
+
+  readonly shapeIdentifier: BlankNode | NamedNode;
 
   /**
    * Was this type synthesized or did it come from SHACL?
@@ -157,6 +158,7 @@ export class ObjectType {
     identifierType,
     label,
     name,
+    shapeIdentifier,
     synthetic,
     toRdfTypes,
     tsFeatures,
@@ -171,7 +173,8 @@ export class ObjectType {
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     identifierType: IdentifierType;
     label: Maybe<string>;
-    name: Name;
+    name: Maybe<string>;
+    shapeIdentifier: BlankNode | Curie | NamedNode;
     synthetic: boolean;
     toRdfTypes: readonly NamedNode[];
     tsFeatures: ReadonlySet<TsFeature>;
@@ -187,6 +190,7 @@ export class ObjectType {
     this.identifierType = identifierType;
     this.label = label;
     this.name = name;
+    this.shapeIdentifier = shapeIdentifier;
     this.synthetic = synthetic;
     this.toRdfTypes = toRdfTypes;
     this.tsFeatures = tsFeatures;
@@ -194,25 +198,29 @@ export class ObjectType {
     this.tsObjectDeclarationType = tsObjectDeclarationType;
   }
 
-  addAncestorObjectType(ancestorObjectType: ObjectType): void {
-    this.#ancestorObjectTypes.push(ancestorObjectType);
+  addAncestorObjectTypes(...ancestorObjectTypes: readonly ObjectType[]): void {
+    this.#ancestorObjectTypes.push(...ancestorObjectTypes);
   }
 
-  addChildObjectType(childObjectType: ObjectType): void {
-    this.#childObjectTypes.push(childObjectType);
+  addChildObjectTypes(...childObjectTypes: readonly ObjectType[]): void {
+    this.#childObjectTypes.push(...childObjectTypes);
   }
 
-  addDescendantObjectType(descendantObjectType: ObjectType): void {
-    this.#descendantObjectTypes.push(descendantObjectType);
+  addDescendantObjectTypes(
+    ...descendantObjectTypes: readonly ObjectType[]
+  ): void {
+    this.#descendantObjectTypes.push(...descendantObjectTypes);
   }
 
-  addParentObjectType(parentObjectType: ObjectType): void {
-    this.#parentObjectTypes.push(parentObjectType);
+  addParentObjectTypes(...parentObjectTypes: readonly ObjectType[]): void {
+    this.#parentObjectTypes.push(...parentObjectTypes);
   }
 
-  addProperty(property: ObjectType.Property): void {
-    this.#properties.push(property);
-    property.objectType = this;
+  addProperties(...properties: readonly ObjectType.Property[]): void {
+    this.#properties.push(...properties);
+    for (const property of properties) {
+      property.objectType = this;
+    }
   }
 
   get ancestorObjectTypes(): readonly ObjectType[] {
@@ -237,11 +245,23 @@ export class ObjectType {
 
   equals(other: ObjectType): boolean {
     // Don't recurse
-    return Name.equals(this.name, other.name);
+    return this.shapeIdentifier.equals(other.shapeIdentifier);
+  }
+
+  sortProperties(): void {
+    this.#properties.sort((left, right) => {
+      if (left.order < right.order) {
+        return -1;
+      }
+      if (left.order > right.order) {
+        return 1;
+      }
+      return 0;
+    });
   }
 
   toString(): string {
-    return `${this.kind}(identifier=${Resource.Identifier.toString(this.name.identifier)})`;
+    return `${this.kind}(shapeIdentifier=${Resource.Identifier.toString(this.shapeIdentifier)})`;
   }
 }
 
@@ -274,9 +294,9 @@ export namespace ObjectType {
     #objectType: ObjectType | null = null;
 
     /**
-     * Name of this property.
+     * Name of this property, derived from sh:name or shaclmate:name.
      */
-    readonly name: Name;
+    readonly name: Maybe<string>;
 
     /**
      * Relative order of this property, derived from sh:order.
@@ -298,7 +318,12 @@ export namespace ObjectType {
     /**
      * SHACL property path (https://www.w3.org/TR/shacl/#property-paths)
      */
-    readonly path: PredicatePath;
+    readonly path: Curie | NamedNode;
+
+    /**
+     * Identifier of the property shape.
+     */
+    readonly shapeIdentifier: BlankNode | NamedNode;
 
     /**
      * Type of this property.
@@ -319,6 +344,7 @@ export namespace ObjectType {
       order,
       partialType,
       path,
+      shapeIdentifier,
       type,
       visibility,
     }: {
@@ -326,7 +352,7 @@ export namespace ObjectType {
       description: Maybe<string>;
       label: Maybe<string>;
       mutable: boolean;
-      name: Name;
+      name: Maybe<string>;
       order: number;
       partialType: Maybe<
         | ObjectType
@@ -334,7 +360,8 @@ export namespace ObjectType {
         | OptionType<ObjectType | ObjectUnionType>
         | SetType<ObjectType | ObjectUnionType>
       >;
-      path: PredicatePath;
+      path: Curie | NamedNode;
+      shapeIdentifier: BlankNode | NamedNode;
       type: Type;
       visibility: PropertyVisibility;
     }) {
@@ -346,12 +373,13 @@ export namespace ObjectType {
       this.order = order;
       this.partialType = partialType;
       this.path = path;
+      this.shapeIdentifier = shapeIdentifier;
       this.type = type;
       this.visibility = visibility;
     }
 
     equals(other: Property): boolean {
-      return Name.equals(this.name, other.name);
+      return this.shapeIdentifier.equals(other.shapeIdentifier);
     }
 
     get objectType(): ObjectType {
@@ -539,7 +567,7 @@ export namespace ObjectType {
     }
 
     toString(): string {
-      return `${Name.toString(this.name)}(path=${Resource.Identifier.toString(this.path.iri)})`;
+      return `${this.name.orDefault(Resource.Identifier.toString(this.shapeIdentifier))}(path=${this.path.value})`;
     }
   }
 }
@@ -548,26 +576,27 @@ export namespace ObjectType {
   export function toposort(
     objectTypes: readonly ObjectType[],
   ): readonly ObjectType[] {
-    const objectTypesByIdentifier: Record<string, ObjectType> = {};
+    const objectTypesByShapeIdentifier: Record<string, ObjectType> = {};
     const objectTypeGraphNodes: string[] = [];
     const objectTypeGraphEdges: [string, string | undefined][] = [];
     for (const objectType of objectTypes) {
-      const objectTypeIdentifier = Resource.Identifier.toString(
-        objectType.name.identifier,
+      const objectTypeShapeIdentifier = Resource.Identifier.toString(
+        objectType.shapeIdentifier,
       );
-      objectTypesByIdentifier[objectTypeIdentifier] = objectType;
-      objectTypeGraphNodes.push(objectTypeIdentifier);
+      objectTypesByShapeIdentifier[objectTypeShapeIdentifier] = objectType;
+      objectTypeGraphNodes.push(objectTypeShapeIdentifier);
       for (const parentAstObjectType of objectType.parentObjectTypes) {
         objectTypeGraphEdges.push([
-          objectTypeIdentifier,
-          Resource.Identifier.toString(parentAstObjectType.name.identifier),
+          objectTypeShapeIdentifier,
+          Resource.Identifier.toString(parentAstObjectType.shapeIdentifier),
         ]);
       }
     }
     return genericToposort
       .array(objectTypeGraphNodes, objectTypeGraphEdges)
       .map(
-        (objectTypeIdentifier) => objectTypesByIdentifier[objectTypeIdentifier],
+        (objectTypeIdentifier) =>
+          objectTypesByShapeIdentifier[objectTypeIdentifier],
       )
       .reverse();
   }

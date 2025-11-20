@@ -81,15 +81,15 @@ export class TypeFactory {
     in_: [],
     nodeKinds: new Set(["NamedNode"]),
   });
-  private cachedObjectTypePropertiesByIdentifier: TermMap<
+  private cachedObjectTypePropertiesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
     ObjectType.Property
   > = new TermMap();
-  private cachedObjectTypesByIdentifier: TermMap<
+  private cachedObjectTypesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
     ObjectType
   > = new TermMap();
-  private cachedObjectUnionTypesByIdentifier: TermMap<
+  private cachedObjectUnionTypesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
     ObjectUnionType
   > = new TermMap();
@@ -104,8 +104,8 @@ export class TypeFactory {
 
   createObjectType(astType: ast.ObjectType): ObjectType {
     {
-      const cachedObjectType = this.cachedObjectTypesByIdentifier.get(
-        astType.name.identifier,
+      const cachedObjectType = this.cachedObjectTypesByShapeIdentifier.get(
+        astType.shapeIdentifier,
       );
       if (cachedObjectType) {
         return cachedObjectType;
@@ -238,7 +238,10 @@ export class TypeFactory {
       synthetic: astType.synthetic,
       toRdfTypes: astType.toRdfTypes,
     });
-    this.cachedObjectTypesByIdentifier.set(astType.name.identifier, objectType);
+    this.cachedObjectTypesByShapeIdentifier.set(
+      astType.shapeIdentifier,
+      objectType,
+    );
     return objectType;
   }
 
@@ -458,9 +461,10 @@ export class TypeFactory {
     objectType: ObjectType;
   }): ObjectType.Property {
     {
-      const cachedProperty = this.cachedObjectTypePropertiesByIdentifier.get(
-        astObjectTypeProperty.name.identifier,
-      );
+      const cachedProperty =
+        this.cachedObjectTypePropertiesByShapeIdentifier.get(
+          astObjectTypeProperty.shapeIdentifier,
+        );
       if (cachedProperty) {
         return cachedProperty;
       }
@@ -536,7 +540,7 @@ export class TypeFactory {
         label: astObjectTypeProperty.label,
         objectType,
         name,
-        path: astObjectTypeProperty.path.iri,
+        path: astObjectTypeProperty.path,
         type: lazyType,
         visibility: astObjectTypeProperty.visibility,
       });
@@ -548,14 +552,14 @@ export class TypeFactory {
         mutable: astObjectTypeProperty.mutable,
         objectType,
         name,
-        path: astObjectTypeProperty.path.iri,
+        path: astObjectTypeProperty.path,
         recursive: !!astObjectTypeProperty.recursive,
         type: this.createType(astObjectTypeProperty.type),
         visibility: astObjectTypeProperty.visibility,
       });
     }
-    this.cachedObjectTypePropertiesByIdentifier.set(
-      astObjectTypeProperty.name.identifier,
+    this.cachedObjectTypePropertiesByShapeIdentifier.set(
+      astObjectTypeProperty.shapeIdentifier,
       property,
     );
     return property;
@@ -563,9 +567,10 @@ export class TypeFactory {
 
   createObjectUnionType(astType: ast.ObjectUnionType): ObjectUnionType {
     {
-      const cachedObjectUnionType = this.cachedObjectUnionTypesByIdentifier.get(
-        astType.name.identifier,
-      );
+      const cachedObjectUnionType =
+        this.cachedObjectUnionTypesByShapeIdentifier.get(
+          astType.name.identifier,
+        );
       if (cachedObjectUnionType) {
         return cachedObjectUnionType;
       }
@@ -583,7 +588,7 @@ export class TypeFactory {
       name: tsName((astType as ast.ObjectUnionType).name),
     });
 
-    this.cachedObjectUnionTypesByIdentifier.set(
+    this.cachedObjectUnionTypesByShapeIdentifier.set(
       astType.name.identifier,
       objectUnionType,
     );

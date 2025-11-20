@@ -3,6 +3,7 @@ import TermMap from "@rdfjs/term-map";
 import type * as rdfjs from "@rdfjs/types";
 import { dash } from "@tpluscode/rdf-ns-builders";
 import { Either } from "purify-ts";
+import { CurieFactory } from "./_ShapesGraphToAstTransformer/CurieFactory.js";
 import * as _ShapesGraphToAstTransformer from "./_ShapesGraphToAstTransformer/index.js";
 import type * as ast from "./ast/index.js";
 import type * as input from "./input/index.js";
@@ -14,14 +15,13 @@ export class ShapesGraphToAstTransformer {
     rdfjs.BlankNode | rdfjs.NamedNode,
     ast.ObjectType.Property
   > = new TermMap();
-  protected readonly iriLocalParts: Record<string, Record<string, number>> = {};
-  protected readonly iriPrefixMap: PrefixMap;
+  protected readonly curieFactory: CurieFactory;
   protected readonly nodeShapeAstTypesByIdentifier: TermMap<
     rdfjs.BlankNode | rdfjs.NamedNode,
     _ShapesGraphToAstTransformer.NodeShapeAstType
   > = new TermMap();
-  protected shapeAstName = _ShapesGraphToAstTransformer.shapeAstName;
   protected readonly shapesGraph: input.ShapesGraph;
+  protected shapeIdentifier = _ShapesGraphToAstTransformer.shapeIdentifier;
   protected transformNodeShapeToAstType =
     _ShapesGraphToAstTransformer.transformNodeShapeToAstType;
   protected transformPropertyShapeToAstObjectTypeProperty =
@@ -44,7 +44,7 @@ export class ShapesGraphToAstTransformer {
     iriPrefixMap: PrefixMap;
     shapesGraph: input.ShapesGraph;
   }) {
-    this.iriPrefixMap = iriPrefixMap;
+    this.curieFactory = new CurieFactory({ prefixMap: iriPrefixMap });
     this.shapesGraph = shapesGraph;
   }
 
@@ -93,8 +93,7 @@ export class ShapesGraphToAstTransformer {
               )
               .filter((partialItemType) => partialItemType.synthetic)
               .ifJust((partialItemType) => {
-                const partialItemTypeName =
-                  partialItemType.name.syntheticName.unsafeCoerce();
+                const partialItemTypeName = partialItemType.name.unsafeCoerce();
                 if (!syntheticAstObjectTypesByName[partialItemTypeName]) {
                   syntheticAstObjectTypesByName[partialItemTypeName] =
                     partialItemType as ast.ObjectType;

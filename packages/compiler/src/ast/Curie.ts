@@ -1,27 +1,42 @@
-import { invariant } from "ts-invariant";
+import type { BlankNode, NamedNode } from "@rdfjs/types";
 
 /**
  * A Compact URI (https://www.w3.org/TR/curie)
  */
-export class Curie {
+export class Curie implements NamedNode {
   readonly prefix: string;
+  readonly #hasUniqueReference: () => boolean;
   readonly reference: string;
+  readonly termType = "NamedNode";
+  readonly value: string;
 
   constructor({
+    hasUniqueReference,
     prefix,
     reference,
+    value,
   }: {
+    hasUniqueReference?: () => boolean;
     prefix: string;
     reference: string;
+    value: string;
   }) {
+    this.#hasUniqueReference = hasUniqueReference ?? (() => false);
     this.prefix = prefix;
     this.reference = reference;
+    this.value = value;
   }
 
-  static parse(curie: string): Curie {
-    const split = curie.split(":", 2);
-    invariant(split.length === 2);
-    return new Curie({ prefix: split[0], reference: split[1] });
+  equals(other: BlankNode | NamedNode): boolean {
+    if (other.termType === "BlankNode") {
+      return false;
+    }
+
+    return this.value === other.value; // Allow a Curie to equal a NamedNode
+  }
+
+  get hasUniqueReference(): boolean {
+    return this.#hasUniqueReference();
   }
 
   toString(): string {
