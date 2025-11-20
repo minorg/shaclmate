@@ -1,6 +1,7 @@
 import type { NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind, NodeKind } from "@shaclmate/shacl-ast";
 import { owl, rdfs } from "@tpluscode/rdf-ns-builders";
+import { pickLiteral } from "_ShapesGraphToAstTransformer/pickLiteral.js";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
@@ -8,7 +9,6 @@ import * as ast from "../ast/index.js";
 import * as input from "../input/index.js";
 import { logger } from "../logger.js";
 import type { ShapeStack } from "./ShapeStack.js";
-import { flattenAstObjectCompositeTypeMemberTypes } from "./flattenAstObjectCompositeTypeMemberTypes.js";
 
 /**
  * Try to convert a shape to a composite type (intersection or union) using some heuristics.
@@ -78,48 +78,50 @@ export function transformShapeToAstCompositeType(
     }
     invariant(memberTypeEithers.length > 0);
 
-    const memberObjectTypes: (
-      | ast.ObjectType
-      | ast.ObjectIntersectionType
-      | ast.ObjectUnionType
-    )[] = [];
-    let memberTypes: ast.Type[] = [];
+    const memberTypes: ast.Type[] = [];
     for (const memberTypeEither of memberTypeEithers) {
       if (memberTypeEither.isLeft()) {
         return memberTypeEither;
       }
       const memberType = memberTypeEither.unsafeCoerce();
       memberTypes.push(memberType);
-      switch (memberType.kind) {
-        case "ObjectType":
-        case "ObjectIntersectionType":
-        case "ObjectUnionType":
-          memberObjectTypes.push(memberType);
-          break;
-      }
     }
 
     if (memberTypes.length === 1) {
       return Either.of(memberTypes[0]);
     }
 
-    if (memberTypes.length === memberObjectTypes.length) {
-      // If all the member types are ast.ObjectType, flatten them.
-      const flattenedMemberObjectTypesEither =
-        flattenAstObjectCompositeTypeMemberTypes({
-          objectCompositeTypeKind:
-            compositeTypeKind === "IntersectionType"
-              ? "ObjectIntersectionType"
-              : "ObjectUnionType",
-          memberTypes: memberObjectTypes,
-          shape,
-        });
-      if (flattenedMemberObjectTypesEither.isLeft()) {
-        return flattenedMemberObjectTypesEither;
+    if (
+      memberTypes.every((memberType) => {
+        switch (memberType.kind) {
+          case "ObjectType":
+          case "ObjectIntersectionType":
+          case "ObjectUnionType":
+            return true;
+          default:
+            return false;
+        }
+      })
+    ) {
+      const compositeType = new (
+        compositeTypeKind === "IntersectionType"
+          ? ast.ObjectIntersectionType
+          : ast.ObjectUnionType
+      )({
+        comment: pickLiteral(shape.comments).map((literal) => literal.value),
+        export_: true,
+        label: pickLiteral(shape.labels).map((literal) => literal.value),
+        name: shape.shaclmateName,
+        shapeIdentifier: this.shapeIdentifier(shape),
+        tsFeatures: Maybe.empty(),
+      });
+
+      for (const memberType of memberTypes) {
+        const addMemberTypeResult = compositeType.addMemberType(memberType);
+        if (addMemberTypeResult.isLeft()) {
+          return addMemberTypeResult;
+        }
       }
-      const { memberTypes: flattenedMemberTypes } =
-        flattenedMemberObjectTypesEither.unsafeCoerce();
-      memberTypes = flattenedMemberTypes.concat();
     }
 
     return widenAstCompositeTypeToSingleType({

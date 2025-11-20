@@ -162,7 +162,7 @@ export function transformNodeShapeToAstObjectCompositeType(
     export_,
     label: pickLiteral(nodeShape.labels).map((literal) => literal.value),
     name: nodeShape.shaclmateName,
-    shapeIdentifier: nodeShape.identifier,
+    shapeIdentifier: this.shapeIdentifier(nodeShape),
     tsFeatures: nodeShape.tsFeatures,
   });
 
@@ -173,39 +173,11 @@ export function transformNodeShapeToAstObjectCompositeType(
     if (memberTypeEither.isLeft()) {
       return memberTypeEither;
     }
-    const memberType = memberTypeEither.unsafeCoerce();
-    switch (memberType.kind) {
-      case "ObjectType":
-        compositeType.addMemberType(memberType);
-        break;
-      case "ObjectIntersectionType":
-        if (compositeType.kind === memberType.kind) {
-          compositeType.addMemberType(memberType);
-        } else {
-          return Left(
-            new Error(
-              `${nodeShape}: has incompatible composite type composition (${compositeType.kind} has-a ${memberType.kind})`,
-            ),
-          );
-        }
-        break;
-      case "ObjectUnionType":
-        if (compositeType.kind === memberType.kind) {
-          compositeType.addMemberType(memberType);
-        } else {
-          return Left(
-            new Error(
-              `${nodeShape}: has incompatible composite type composition (${compositeType.kind} has-a ${memberType.kind})`,
-            ),
-          );
-        }
-        break;
-      default:
-        return Left(
-          new Error(
-            `${nodeShape} has one or more non-(ObjectIntersectionType | ObjectType | ObjectUnionType) node shapes in its logical constraint`,
-          ),
-        );
+    const addMemberTypeResult = compositeType.addMemberType(
+      memberTypeEither.unsafeCoerce(),
+    );
+    if (addMemberTypeResult.isLeft()) {
+      return addMemberTypeResult;
     }
   }
 

@@ -2,7 +2,7 @@ import TermSet from "@rdfjs/term-set";
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import type { TsFeature } from "enums/TsFeature.js";
-import { Maybe } from "purify-ts";
+import { Either, Maybe } from "purify-ts";
 import { Resource } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
@@ -11,6 +11,7 @@ import { IdentifierType } from "./IdentifierType.js";
 import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
+import type { Type } from "./Type.js";
 
 /**
  * A composite of object types, such as an intersection or union.
@@ -184,6 +185,38 @@ export abstract class ObjectCompositeType<
     }
 
     return this.#tsFeatures.orDefault(mergedMemberTsFeatures);
+  }
+
+  override addMemberType(memberType: Type): Either<Error, void> {
+    return Either.encase(() => {
+      switch (memberType.kind) {
+        case "ObjectType":
+          super.addMemberType(memberType);
+          break;
+        case "ObjectIntersectionType":
+          if (this.kind === memberType.kind) {
+            super.addMemberType(memberType as any);
+          } else {
+            throw new Error(
+              `${this}: has incompatible composite type composition (has-a ${memberType})`,
+            );
+          }
+          break;
+        case "ObjectUnionType":
+          if (this.kind === memberType.kind) {
+            super.addMemberType(memberType as any);
+          } else {
+            throw new Error(
+              `${this}: has incompatible composite type composition (has-a ${memberType})`,
+            );
+          }
+          break;
+        default:
+          throw new Error(
+            `${this} has one or more non-(ObjectIntersectionType | ObjectType | ObjectUnionType) node shapes in its logical constraint`,
+          );
+      }
+    });
   }
 
   override toString(): string {
