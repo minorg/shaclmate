@@ -20,7 +20,7 @@ function transformNodeShapeToAstListType(
   invariant(nodeShape.isList);
 
   // Put a placeholder in the cache to deal with cyclic references
-  const listType = new ast.ListType({
+  const listType = new ast.ListType<ast.Type>({
     comment: pickLiteral(nodeShape.comments).map((literal) => literal.value),
     identifierNodeKind: nodeShape.nodeKinds.has("BlankNode")
       ? "BlankNode"
@@ -162,6 +162,7 @@ export function transformNodeShapeToAstObjectCompositeType(
     export_,
     label: pickLiteral(nodeShape.labels).map((literal) => literal.value),
     name: nodeShape.shaclmateName,
+    shapeIdentifier: nodeShape.identifier,
     tsFeatures: nodeShape.tsFeatures,
   });
 

@@ -1,10 +1,9 @@
-import type { NamedNode } from "@rdfjs/types";
+import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { CollectionType } from "ast/CollectionType.js";
-import { maybeEquals, strictEquals } from "ast/equals.js";
+import {} from "ast/equals.js";
 import type { Maybe } from "purify-ts";
 import type { IdentifierMintingStrategy } from "../enums/IdentifierMintingStrategy.js";
-import type { ShapeIdentifier } from "./ShapeIdentifier.js";
 import type { Type } from "./Type.js";
 
 /**
@@ -47,7 +46,7 @@ export class ListType<
   /**
    * Identifier of the node shape this type was derived from.
    */
-  readonly shapeIdentifier: ShapeIdentifier;
+  readonly shapeIdentifier: BlankNode | NamedNode;
 
   /**
    * rdf:type's that will be added to this object when it's serialized toRdf.
@@ -72,7 +71,7 @@ export class ListType<
     identifierNodeKind: IdentifierNodeKind;
     label: Maybe<string>;
     name: Maybe<string>;
-    shapeIdentifier: ShapeIdentifier;
+    shapeIdentifier: BlankNode | NamedNode;
     toRdfTypes: readonly NamedNode[];
   } & ConstructorParameters<typeof CollectionType<ItemTypeT>>[0]) {
     super(superParameters);
@@ -86,36 +85,7 @@ export class ListType<
   }
 
   override equals(other: ListType<ItemTypeT>): boolean {
-    if (!super.equals(other)) {
-      return false;
-    }
-
-    if (!maybeEquals(this.comment, other.comment, strictEquals)) {
-      return false;
-    }
-
-    if (
-      !maybeEquals(
-        this.identifierMintingStrategy,
-        other.identifierMintingStrategy,
-        strictEquals,
-      )
-    ) {
-      return false;
-    }
-
-    if (this.identifierNodeKind !== other.identifierNodeKind) {
-      return false;
-    }
-
-    if (!maybeEquals(this.label, other.label, strictEquals)) {
-      return false;
-    }
-
-    if (!Name.equals(this.name, other.name)) {
-      return false;
-    }
-
-    return true;
+    // Don't recurse
+    return this.shapeIdentifier.equals(other.shapeIdentifier);
   }
 }

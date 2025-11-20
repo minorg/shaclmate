@@ -569,7 +569,7 @@ export class TypeFactory {
     {
       const cachedObjectUnionType =
         this.cachedObjectUnionTypesByShapeIdentifier.get(
-          astType.name.identifier,
+          astType.shapeIdentifier,
         );
       if (cachedObjectUnionType) {
         return cachedObjectUnionType;
@@ -589,7 +589,7 @@ export class TypeFactory {
     });
 
     this.cachedObjectUnionTypesByShapeIdentifier.set(
-      astType.name.identifier,
+      astType.shapeIdentifier,
       objectUnionType,
     );
     return objectUnionType;

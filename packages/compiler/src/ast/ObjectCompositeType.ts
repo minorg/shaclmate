@@ -1,5 +1,5 @@
 import TermSet from "@rdfjs/term-set";
-import type { NamedNode } from "@rdfjs/types";
+import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import type { TsFeature } from "enums/TsFeature.js";
 import { Maybe } from "purify-ts";
@@ -8,7 +8,6 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { CompositeType } from "./CompositeType.js";
 import { IdentifierType } from "./IdentifierType.js";
-import { Name } from "./Name.js";
 import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
@@ -41,7 +40,12 @@ export abstract class ObjectCompositeType<
   /**
    * Name of this type, usually derived from sh:name or shaclmate:name.
    */
-  readonly name: Name;
+  readonly name: Maybe<string>;
+
+  /**
+   * Identifier of the shape this ObjectType was derived from.
+   */
+  readonly shapeIdentifier: BlankNode | NamedNode;
 
   /**
    * TypeScript features to generate.
@@ -53,12 +57,14 @@ export abstract class ObjectCompositeType<
     export_,
     label,
     name,
+    shapeIdentifier,
     tsFeatures,
   }: {
     comment: Maybe<string>;
     export_: boolean;
     label: Maybe<string>;
-    name: Name;
+    name: Maybe<string>;
+    shapeIdentifier: BlankNode | NamedNode;
     tsFeatures: Maybe<ReadonlySet<TsFeature>>;
   }) {
     super();
@@ -66,12 +72,13 @@ export abstract class ObjectCompositeType<
     this.export = export_;
     this.label = label;
     this.name = name;
+    this.shapeIdentifier = shapeIdentifier;
     this.#tsFeatures = tsFeatures;
   }
 
   override equals(other: ObjectCompositeType<ObjectCompositeTypeT>): boolean {
     // Don't recurse
-    return Name.equals(this.name, other.name);
+    return this.shapeIdentifier.equals(other.shapeIdentifier);
   }
 
   @Memoize()
@@ -136,7 +143,7 @@ export abstract class ObjectCompositeType<
       fromRdfTypes.size !== expectUniqueFromRdfTypesCount
     ) {
       throw new Error(
-        `one or more ${Name.toString(this.name)} members ([${memberObjectTypes.map((memberType) => Name.toString(memberType.name)).join(", ")}]) lack distinguishing fromRdfType's ({${[...fromRdfTypes].map((fromRdfType) => Resource.Identifier.toString(fromRdfType)).join(", ")}})`,
+        `one or more ${this} members ([${memberObjectTypes.map((memberType) => memberType.toString()).join(", ")}]) lack distinguishing fromRdfType's ({${[...fromRdfTypes].map((fromRdfType) => Resource.Identifier.toString(fromRdfType)).join(", ")}})`,
       );
     }
 
@@ -163,14 +170,14 @@ export abstract class ObjectCompositeType<
 
       if (memberType.tsFeatures.size !== mergedMemberTsFeatures.size) {
         throw new Error(
-          `${Name.toString(this.name)} has a member ObjectType (${Name.toString(memberType.name)}) with different tsFeatures than the other member ObjectType's`,
+          `${this} has a member ObjectType (${memberType}) with different tsFeatures than the other member ObjectType's`,
         );
       }
 
       for (const tsFeature of memberType.tsFeatures) {
         if (!mergedMemberTsFeatures.has(tsFeature)) {
           throw new Error(
-            `${Name.toString(this.name)} has a member ObjectType (${Name.toString(memberType.name)}) with different tsFeatures than the other member ObjectType's`,
+            `${this} has a member ObjectType (${memberType}) with different tsFeatures than the other member ObjectType's`,
           );
         }
       }
@@ -180,6 +187,6 @@ export abstract class ObjectCompositeType<
   }
 
   override toString(): string {
-    return `${this.kind}(identifier=${Resource.Identifier.toString(this.name.identifier)})`;
+    return `${this.kind}(shapeIdentifier=${Resource.Identifier.toString(this.shapeIdentifier)})`;
   }
 }

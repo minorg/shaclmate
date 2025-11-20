@@ -113,6 +113,9 @@ export class ObjectType {
    */
   readonly #properties: ObjectType.Property[] = [];
 
+  /**
+   * Identifier of the shape this ObjectType was derived from.
+   */
   readonly shapeIdentifier: BlankNode | NamedNode;
 
   /**

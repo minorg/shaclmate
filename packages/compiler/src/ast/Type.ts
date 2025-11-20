@@ -1,4 +1,4 @@
-import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
+import type {} from "@rdfjs/types";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntersectionType } from "./IntersectionType.js";
 import type { ListType } from "./ListType.js";
@@ -24,12 +24,7 @@ export type Type =
   | OptionType
   | PlaceholderType
   | SetType
-  | (Omit<
-      TermType<Literal | NamedNode, BlankNode | Literal | NamedNode>,
-      "kind"
-    > & {
-      readonly kind: "TermType";
-    })
+  | TermType
   | UnionType;
 
 export namespace Type {

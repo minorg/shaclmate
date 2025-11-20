@@ -1,4 +1,5 @@
 import type { Term as RdfjsTerm } from "@rdfjs/types";
+import { Resource } from "rdfjs-resource";
 import type * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 
@@ -26,32 +27,6 @@ namespace AstJson {
 
     [index: string]: boolean | number | object | string | undefined;
   }
-}
-
-function nameToJson(name: ast.Name): AstJson.Name {
-  return {
-    identifier: {
-      curie:
-        name.identifier.termType === "NamedNode"
-          ? name.identifier.curie.map((curie) => curie.toString()).extract()
-          : undefined,
-      termType: name.identifier.termType,
-      uniqueLocalPart:
-        name.identifier.termType === "NamedNode"
-          ? name.identifier.uniqueLocalPart().extract()
-          : undefined,
-      value: name.identifier.value,
-    },
-    label: name.label.extract(),
-    propertyPath: name.propertyPath.map((propertyPath) => ({
-      curie: propertyPath.curie.map((curie) => curie.toString()).extract(),
-      uniqueLocalPart: propertyPath.uniqueLocalPart().extract(),
-      termType: propertyPath.termType,
-      value: propertyPath.value,
-    })),
-    shName: name.shName.extract(),
-    shaclmateName: name.shaclmateName.extract(),
-  };
 }
 
 function termToJson(term: RdfjsTerm): AstJson.Term {
@@ -108,20 +83,24 @@ function typeToJson(type: ast.Type): AstJson.Type {
     case "ObjectUnionType":
       return {
         kind: type.kind,
-        name: nameToJson(type.name),
+        name: type.name.extract(),
+        shapeIdentifier: Resource.Identifier.toString(type.shapeIdentifier),
         types: type.memberTypes.map((type) => typeToJson(type)),
       };
     case "ObjectType":
       return {
         fromRdfType: type.fromRdfType.map(termToJson).extract(),
         kind: type.kind,
-        name: nameToJson(type.name),
+        name: type.name.extract(),
         parentObjectTypes:
           type.parentObjectTypes.length > 0
-            ? type.parentObjectTypes.map((type) => nameToJson(type.name))
+            ? type.parentObjectTypes.map((type) =>
+                Resource.Identifier.toString(type.shapeIdentifier),
+              )
             : undefined,
-        identifierType: typeToJson(type.identifierType),
         identifierMintingStrategy: type.identifierMintingStrategy.extract(),
+        identifierType: typeToJson(type.identifierType),
+        shapeIdentifier: Resource.Identifier.toString(type.shapeIdentifier),
         toRdfTypes:
           type.toRdfTypes.length > 0
             ? type.toRdfTypes.map(termToJson)
@@ -152,17 +131,20 @@ export class AstJsonGenerator implements Generator {
       {
         objectTypes: ast.objectTypes.map((objectType) => ({
           kind: objectType.kind,
-          name: nameToJson(objectType.name),
+          name: objectType.name.extract(),
           properties: objectType.properties.map((property) => ({
             comment: property.comment.extract(),
             description: property.description.extract(),
             label: property.label.extract(),
             mutable: property.mutable,
-            name: nameToJson(property.name),
+            name: property.name.extract(),
             order: property.order,
             partialType: property.partialType.map(typeToJson).extract(),
-            path: property.path.iri.value,
+            path: property.path.value,
             recursive: property.recursive ? true : undefined,
+            shapeIdentifier: Resource.Identifier.toString(
+              property.shapeIdentifier,
+            ),
             type: typeToJson(property.type),
             visibility: property.visibility,
           })),
