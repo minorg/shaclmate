@@ -4,7 +4,7 @@ import { owl, rdfs } from "@tpluscode/rdf-ns-builders";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
-import type * as ast from "../ast/index.js";
+import * as ast from "../ast/index.js";
 import * as input from "../input/index.js";
 import { logger } from "../logger.js";
 import type { ShapeStack } from "./ShapeStack.js";
@@ -128,10 +128,15 @@ export function transformShapeToAstCompositeType(
       shapeStack,
     }).altLazy(() =>
       // True composite type
-      Either.of({
-        kind: compositeTypeKind,
-        memberTypes,
-      }),
+      Either.of(
+        compositeTypeKind === "IntersectionType"
+          ? new ast.IntersectionType({
+              memberTypes,
+            })
+          : new ast.UnionType({
+              memberTypes,
+            }),
+      ),
     );
   } finally {
     shapeStack.pop(shape);
@@ -204,15 +209,16 @@ function widenAstCompositeTypeToSingleType({
         ]),
     );
     invariant(nodeKinds.size > 0, "empty nodeKinds");
-    return Either.of({
-      defaultValue: defaultValue.filter(
-        (term) => term.termType === "NamedNode",
-      ) as Maybe<NamedNode>,
-      hasValues: [],
-      in_: [],
-      kind: "IdentifierType",
-      nodeKinds,
-    });
+    return Either.of(
+      new ast.IdentifierType({
+        defaultValue: defaultValue.filter(
+          (term) => term.termType === "NamedNode",
+        ) as Maybe<NamedNode>,
+        hasValues: [],
+        in_: [],
+        nodeKinds,
+      }),
+    );
   }
 
   if (
@@ -223,19 +229,22 @@ function widenAstCompositeTypeToSingleType({
     // Special case: all the member types are Literals without further constraints,
     // like dash:StringOrLangString
     // Don't try to widen range constraints.
-    return Either.of({
-      datatype: Maybe.empty(),
-      defaultValue: defaultValue.filter((term) => term.termType === "Literal"),
-      hasValues: [],
-      in_: [],
-      kind: "LiteralType",
-      languageIn: [],
-      maxExclusive: Maybe.empty(),
-      maxInclusive: Maybe.empty(),
-      minExclusive: Maybe.empty(),
-      minInclusive: Maybe.empty(),
-      nodeKinds: new Set<"Literal">(["Literal"]),
-    });
+    return Either.of(
+      new ast.LiteralType({
+        datatype: Maybe.empty(),
+        defaultValue: defaultValue.filter(
+          (term) => term.termType === "Literal",
+        ),
+        hasValues: [],
+        in_: [],
+        languageIn: [],
+        maxExclusive: Maybe.empty(),
+        maxInclusive: Maybe.empty(),
+        minExclusive: Maybe.empty(),
+        minInclusive: Maybe.empty(),
+        nodeKinds: new Set<"Literal">(["Literal"]),
+      }),
+    );
   }
 
   if (
@@ -257,13 +266,14 @@ function widenAstCompositeTypeToSingleType({
       nodeKinds.has("Literal") &&
         (nodeKinds.has("BlankNode") || nodeKinds.has("NamedNode")),
     ); // The identifier-identifier and literal-literal cases should have been caught above
-    return Either.of({
-      defaultValue,
-      hasValues: [],
-      in_: [],
-      kind: "TermType",
-      nodeKinds,
-    });
+    return Either.of(
+      new ast.TermType({
+        defaultValue,
+        hasValues: [],
+        in_: [],
+        nodeKinds,
+      }),
+    );
   }
 
   return Left(

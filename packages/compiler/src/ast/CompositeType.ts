@@ -20,7 +20,11 @@ export abstract class CompositeType<MemberTypeT extends Type> {
    *
    * Mutable to support cycle-handling logic in the compiler.
    */
-  readonly #memberTypes: MemberTypeT[] = [];
+  readonly #memberTypes: MemberTypeT[];
+
+  constructor(parameters?: { memberTypes?: readonly MemberTypeT[] }) {
+    this.#memberTypes = parameters?.memberTypes?.concat() ?? [];
+  }
 
   addMemberType(memberType: MemberTypeT): void {
     this.#memberTypes.push(memberType);

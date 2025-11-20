@@ -245,8 +245,12 @@ export function transformPropertyShapeToAstObjectTypeProperty(
       pickLiteral(propertyShape.names).map((literal) => literal.value),
     ),
     order: propertyShape.order.orDefault(0),
-    path,
+    path: this.curieFactory.create(path.iri).extract() ?? path.iri,
     partialType,
+    shapeIdentifier:
+      (propertyShape.identifier.termType === "NamedNode"
+        ? this.curieFactory.create(propertyShape.identifier).extract()
+        : undefined) ?? propertyShape.identifier,
     type: type,
     visibility: propertyShape.visibility,
   });
