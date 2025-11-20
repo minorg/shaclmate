@@ -1,4 +1,5 @@
 export * from "./Ast.js";
+export * from "./Curie.js";
 export * from "./IdentifierType.js";
 export * from "./IntersectionType.js";
 export * from "./ListType.js";

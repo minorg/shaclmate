@@ -116,8 +116,8 @@ export class TypeFactory {
 
     const staticModuleName =
       astType.childObjectTypes.length > 0
-        ? `${tsName(astType.name)}Static`
-        : tsName(astType.name);
+        ? `${tsName(astType)}Static`
+        : tsName(astType);
 
     const objectType = new ObjectType({
       abstract: astType.abstract,
@@ -155,7 +155,7 @@ export class TypeFactory {
             if (left.order > right.order) {
               return 1;
             }
-            return tsName(left.name).localeCompare(tsName(right.name));
+            return tsName(left).localeCompare(tsName(right));
           })
           .map((astProperty) =>
             this.createObjectTypeProperty({
@@ -233,7 +233,7 @@ export class TypeFactory {
         return properties;
       },
       identifierMintingStrategy: astType.identifierMintingStrategy,
-      name: tsName(astType.name),
+      name: tsName(astType),
       staticModuleName,
       synthetic: astType.synthetic,
       toRdfTypes: astType.toRdfTypes,
@@ -472,7 +472,7 @@ export class TypeFactory {
 
     let property: ObjectType.Property;
 
-    const name = tsName(astObjectTypeProperty.name);
+    const name = tsName(astObjectTypeProperty);
 
     if (astObjectTypeProperty.partialType.isJust()) {
       const resolvedType = this.createType(astObjectTypeProperty.type);
@@ -585,7 +585,7 @@ export class TypeFactory {
       memberTypes: astType.memberObjectTypes.map((objectType) =>
         this.createObjectType(objectType),
       ),
-      name: tsName((astType as ast.ObjectUnionType).name),
+      name: tsName(astType as ast.ObjectUnionType),
     });
 
     this.cachedObjectUnionTypesByShapeIdentifier.set(
