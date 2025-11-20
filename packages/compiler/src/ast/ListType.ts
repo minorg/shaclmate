@@ -1,9 +1,8 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
-import { CollectionType } from "ast/CollectionType.js";
-import {} from "ast/equals.js";
 import type { Maybe } from "purify-ts";
 import type { IdentifierMintingStrategy } from "../enums/IdentifierMintingStrategy.js";
+import { CollectionType } from "./CollectionType.js";
 import type { Type } from "./Type.js";
 
 /**

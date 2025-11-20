@@ -25,11 +25,11 @@ describe("ShapesGraphToAstTransformer: kitchen sink", () => {
   beforeAll(() => {
     ast = transform(shapesGraph).unsafeCoerce();
     for (const astObjectType of ast.objectTypes) {
-      if (astObjectType.name.identifier.termType !== "NamedNode") {
+      if (astObjectType.shapeIdentifier.termType !== "NamedNode") {
         continue;
       }
-      invariant(!astObjectTypesByIri[astObjectType.name.identifier.value]);
-      astObjectTypesByIri[astObjectType.name.identifier.value] = astObjectType;
+      invariant(!astObjectTypesByIri[astObjectType.shapeIdentifier.value]);
+      astObjectTypesByIri[astObjectType.shapeIdentifier.value] = astObjectType;
     }
   });
 
@@ -70,7 +70,7 @@ describe("ShapesGraphToAstTransformer: kitchen sink", () => {
       const astObjectType = astObjectTypesByIri[classIri];
       expect(astObjectType).toBeDefined();
       const recursiveProperty = astObjectType.properties.find(
-        (property) => property.path.iri.value === recursivePropertyIri,
+        (property) => property.path.value === recursivePropertyIri,
       );
       expect(recursiveProperty).toBeDefined();
       expect(recursiveProperty!.recursive).toStrictEqual(true);

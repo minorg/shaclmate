@@ -11,7 +11,6 @@ import type { PlaceholderType } from "./PlaceholderType.js";
 import type { SetType } from "./SetType.js";
 import type { TermType } from "./TermType.js";
 import type { UnionType } from "./UnionType.js";
-import {} from "./equals.js";
 
 export type Type =
   | IdentifierType

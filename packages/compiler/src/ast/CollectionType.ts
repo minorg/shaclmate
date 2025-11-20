@@ -1,5 +1,4 @@
 import { Type } from "./Type.js";
-import {} from "./equals.js";
 
 /**
  * A collection of items of a single type. This is the parent of ListType and SetType.
