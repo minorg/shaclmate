@@ -54,7 +54,6 @@ export function transformShapeToAstLiteralType(
           maxInclusive: shape.constraints.maxInclusive,
           minExclusive: shape.constraints.minExclusive,
           minInclusive: shape.constraints.minInclusive,
-          nodeKinds: new Set<"Literal">(["Literal"]),
         }),
       );
 

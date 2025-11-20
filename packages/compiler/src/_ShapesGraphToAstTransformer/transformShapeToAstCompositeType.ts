@@ -242,7 +242,6 @@ function widenAstCompositeTypeToSingleType({
         maxInclusive: Maybe.empty(),
         minExclusive: Maybe.empty(),
         minInclusive: Maybe.empty(),
-        nodeKinds: new Set<"Literal">(["Literal"]),
       }),
     );
   }
