@@ -630,6 +630,28 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Node shape that has lazy properties." ;
     sh:property [
+        shaclmate:partial :PartialClass ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        sh:path :requiredPartialClassToResolvedClassProperty
+    ], [
+        shaclmate:partial :PartialClass ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedClassUnion ;
+        sh:path :optionalPartialClassToResolvedClassUnionProperty
+    ], [
+        shaclmate:partial :PartialClassUnion ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedClassUnion ;
+        sh:path :optionalPartialClassUnionToResolvedClassUnionProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:minCount 0 ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        sh:path :optionalLazyToResolvedClassProperty
+    ], [
         shaclmate:lazy true ;
         sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :setLazyToResolvedClassProperty
@@ -659,28 +681,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         shaclmate:partial :PartialClass ;
         sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :setPartialClassToResolvedClassProperty
-    ], [
-        shaclmate:partial :PartialClass ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
-        sh:path :requiredPartialClassToResolvedClassProperty
-    ], [
-        shaclmate:partial :PartialClass ;
-        sh:maxCount 1 ;
-        sh:node :LazilyResolvedClassUnion ;
-        sh:path :optionalPartialClassToResolvedClassUnionProperty
-    ], [
-        shaclmate:partial :PartialClassUnion ;
-        sh:maxCount 1 ;
-        sh:node :LazilyResolvedClassUnion ;
-        sh:path :optionalPartialClassUnionToResolvedClassUnionProperty
-    ], [
-        shaclmate:lazy true ;
-        sh:maxCount 1 ;
-        sh:minCount 0 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
-        sh:path :optionalLazyToResolvedClassProperty
     ] .
 
 :LazyPropertiesInterface

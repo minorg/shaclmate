@@ -47858,6 +47858,40 @@ export namespace ClassUnion {
     });
   }
 
+  export function $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_classUnion: ClassUnion, _hasher: HasherT): HasherT {
+    switch (_classUnion.$type) {
+      case "ClassUnionMember1":
+        return _classUnion.$hash(_hasher);
+      case "ClassUnionMember2":
+        return _classUnion.$hash(_hasher);
+      default:
+        _classUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ClassUnion> {
@@ -47873,6 +47907,29 @@ export namespace ClassUnion {
           ClassUnion
         >,
     );
+  }
+
+  export type $Json = ClassUnionMember1.$Json | ClassUnionMember2.$Json;
+
+  export function $jsonZodSchema() {
+    return zod.discriminatedUnion("$type", [
+      ClassUnionMember1.$jsonZodSchema(),
+      ClassUnionMember2.$jsonZodSchema(),
+    ]);
+  }
+
+  export function $toJson(
+    _classUnion: ClassUnion,
+  ): ClassUnionMember1.$Json | ClassUnionMember2.$Json {
+    switch (_classUnion.$type) {
+      case "ClassUnionMember1":
+        return _classUnion.$toJson();
+      case "ClassUnionMember2":
+        return _classUnion.$toJson();
+      default:
+        _classUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
   }
 
   export function $fromRdf(
@@ -47898,47 +47955,22 @@ export namespace ClassUnion {
     );
   }
 
-  export function $hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+  export function $toRdf(
+    _classUnion: ClassUnion,
+    _parameters?: {
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
-  >(_classUnion: ClassUnion, _hasher: HasherT): HasherT {
+  ): rdfjsResource.MutableResource {
     switch (_classUnion.$type) {
       case "ClassUnionMember1":
-        return _classUnion.$hash(_hasher);
+        return _classUnion.$toRdf(_parameters);
       case "ClassUnionMember2":
-        return _classUnion.$hash(_hasher);
+        return _classUnion.$toRdf(_parameters);
       default:
         _classUnion satisfies never;
         throw new Error("unrecognized type");
     }
-  }
-
-  export type $Json = ClassUnionMember1.$Json | ClassUnionMember2.$Json;
-
-  export function $jsonZodSchema() {
-    return zod.discriminatedUnion("$type", [
-      ClassUnionMember1.$jsonZodSchema(),
-      ClassUnionMember2.$jsonZodSchema(),
-    ]);
-  }
-
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
-      toString = rdfjsResource.Resource.Identifier.toString;
   }
 
   export function $sparqlConstructQuery(
@@ -48045,38 +48077,6 @@ export namespace ClassUnion {
       },
     ];
   }
-
-  export function $toJson(
-    _classUnion: ClassUnion,
-  ): ClassUnionMember1.$Json | ClassUnionMember2.$Json {
-    switch (_classUnion.$type) {
-      case "ClassUnionMember1":
-        return _classUnion.$toJson();
-      case "ClassUnionMember2":
-        return _classUnion.$toJson();
-      default:
-        _classUnion satisfies never;
-        throw new Error("unrecognized type");
-    }
-  }
-
-  export function $toRdf(
-    _classUnion: ClassUnion,
-    _parameters?: {
-      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet?: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    switch (_classUnion.$type) {
-      case "ClassUnionMember1":
-        return _classUnion.$toRdf(_parameters);
-      case "ClassUnionMember2":
-        return _classUnion.$toRdf(_parameters);
-      default:
-        _classUnion satisfies never;
-        throw new Error("unrecognized type");
-    }
-  }
 }
 /**
  * Node shape that unions a node shape and another union of node shapes. Generated code will usually flatten these.
@@ -48106,6 +48106,42 @@ export namespace FlattenClassUnion {
     });
   }
 
+  export function $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_flattenClassUnion: FlattenClassUnion, _hasher: HasherT): HasherT {
+    switch (_flattenClassUnion.$type) {
+      case "ClassUnionMember1":
+        return _flattenClassUnion.$hash(_hasher);
+      case "ClassUnionMember2":
+        return _flattenClassUnion.$hash(_hasher);
+      case "FlattenClassUnionMember3":
+        return _flattenClassUnion.$hash(_hasher);
+      default:
+        _flattenClassUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, FlattenClassUnion> {
@@ -48129,6 +48165,38 @@ export namespace FlattenClassUnion {
             FlattenClassUnion
           >,
       );
+  }
+
+  export type $Json =
+    | ClassUnionMember1.$Json
+    | ClassUnionMember2.$Json
+    | FlattenClassUnionMember3.$Json;
+
+  export function $jsonZodSchema() {
+    return zod.discriminatedUnion("$type", [
+      ClassUnionMember1.$jsonZodSchema(),
+      ClassUnionMember2.$jsonZodSchema(),
+      FlattenClassUnionMember3.$jsonZodSchema(),
+    ]);
+  }
+
+  export function $toJson(
+    _flattenClassUnion: FlattenClassUnion,
+  ):
+    | ClassUnionMember1.$Json
+    | ClassUnionMember2.$Json
+    | FlattenClassUnionMember3.$Json {
+    switch (_flattenClassUnion.$type) {
+      case "ClassUnionMember1":
+        return _flattenClassUnion.$toJson();
+      case "ClassUnionMember2":
+        return _flattenClassUnion.$toJson();
+      case "FlattenClassUnionMember3":
+        return _flattenClassUnion.$toJson();
+      default:
+        _flattenClassUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
   }
 
   export function $fromRdf(
@@ -48162,53 +48230,24 @@ export namespace FlattenClassUnion {
       );
   }
 
-  export function $hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+  export function $toRdf(
+    _flattenClassUnion: FlattenClassUnion,
+    _parameters?: {
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
-  >(_flattenClassUnion: FlattenClassUnion, _hasher: HasherT): HasherT {
+  ): rdfjsResource.MutableResource {
     switch (_flattenClassUnion.$type) {
       case "ClassUnionMember1":
-        return _flattenClassUnion.$hash(_hasher);
+        return _flattenClassUnion.$toRdf(_parameters);
       case "ClassUnionMember2":
-        return _flattenClassUnion.$hash(_hasher);
+        return _flattenClassUnion.$toRdf(_parameters);
       case "FlattenClassUnionMember3":
-        return _flattenClassUnion.$hash(_hasher);
+        return _flattenClassUnion.$toRdf(_parameters);
       default:
         _flattenClassUnion satisfies never;
         throw new Error("unrecognized type");
     }
-  }
-
-  export type $Json =
-    | ClassUnionMember1.$Json
-    | ClassUnionMember2.$Json
-    | FlattenClassUnionMember3.$Json;
-
-  export function $jsonZodSchema() {
-    return zod.discriminatedUnion("$type", [
-      ClassUnionMember1.$jsonZodSchema(),
-      ClassUnionMember2.$jsonZodSchema(),
-      FlattenClassUnionMember3.$jsonZodSchema(),
-    ]);
-  }
-
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
-      toString = rdfjsResource.Resource.Identifier.toString;
   }
 
   export function $sparqlConstructQuery(
@@ -48339,45 +48378,6 @@ export namespace FlattenClassUnion {
       },
     ];
   }
-
-  export function $toJson(
-    _flattenClassUnion: FlattenClassUnion,
-  ):
-    | ClassUnionMember1.$Json
-    | ClassUnionMember2.$Json
-    | FlattenClassUnionMember3.$Json {
-    switch (_flattenClassUnion.$type) {
-      case "ClassUnionMember1":
-        return _flattenClassUnion.$toJson();
-      case "ClassUnionMember2":
-        return _flattenClassUnion.$toJson();
-      case "FlattenClassUnionMember3":
-        return _flattenClassUnion.$toJson();
-      default:
-        _flattenClassUnion satisfies never;
-        throw new Error("unrecognized type");
-    }
-  }
-
-  export function $toRdf(
-    _flattenClassUnion: FlattenClassUnion,
-    _parameters?: {
-      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet?: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    switch (_flattenClassUnion.$type) {
-      case "ClassUnionMember1":
-        return _flattenClassUnion.$toRdf(_parameters);
-      case "ClassUnionMember2":
-        return _flattenClassUnion.$toRdf(_parameters);
-      case "FlattenClassUnionMember3":
-        return _flattenClassUnion.$toRdf(_parameters);
-      default:
-        _flattenClassUnion satisfies never;
-        throw new Error("unrecognized type");
-    }
-  }
 }
 /**
  * Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.
@@ -48416,6 +48416,42 @@ export namespace InterfaceUnion {
     });
   }
 
+  export function $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_interfaceUnion: InterfaceUnion, _hasher: HasherT): HasherT {
+    switch (_interfaceUnion.$type) {
+      case "InterfaceUnionMember1":
+        return InterfaceUnionMember1.$hash(_interfaceUnion, _hasher);
+      case "InterfaceUnionMember2a":
+        return InterfaceUnionMember2a.$hash(_interfaceUnion, _hasher);
+      case "InterfaceUnionMember2b":
+        return InterfaceUnionMember2b.$hash(_interfaceUnion, _hasher);
+      default:
+        _interfaceUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, InterfaceUnion> {
@@ -48439,6 +48475,38 @@ export namespace InterfaceUnion {
             InterfaceUnion
           >,
       );
+  }
+
+  export type $Json =
+    | InterfaceUnionMember1.$Json
+    | InterfaceUnionMember2a.$Json
+    | InterfaceUnionMember2b.$Json;
+
+  export function $jsonZodSchema() {
+    return zod.discriminatedUnion("$type", [
+      InterfaceUnionMember1.$jsonZodSchema(),
+      InterfaceUnionMember2a.$jsonZodSchema(),
+      InterfaceUnionMember2b.$jsonZodSchema(),
+    ]);
+  }
+
+  export function $toJson(
+    _interfaceUnion: InterfaceUnion,
+  ):
+    | InterfaceUnionMember1.$Json
+    | InterfaceUnionMember2a.$Json
+    | InterfaceUnionMember2b.$Json {
+    switch (_interfaceUnion.$type) {
+      case "InterfaceUnionMember1":
+        return InterfaceUnionMember1.$toJson(_interfaceUnion);
+      case "InterfaceUnionMember2a":
+        return InterfaceUnionMember2a.$toJson(_interfaceUnion);
+      case "InterfaceUnionMember2b":
+        return InterfaceUnionMember2b.$toJson(_interfaceUnion);
+      default:
+        _interfaceUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
   }
 
   export function $fromRdf(
@@ -48472,53 +48540,24 @@ export namespace InterfaceUnion {
       );
   }
 
-  export function $hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+  export function $toRdf(
+    _interfaceUnion: InterfaceUnion,
+    _parameters?: {
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
-  >(_interfaceUnion: InterfaceUnion, _hasher: HasherT): HasherT {
+  ): rdfjsResource.MutableResource {
     switch (_interfaceUnion.$type) {
       case "InterfaceUnionMember1":
-        return InterfaceUnionMember1.$hash(_interfaceUnion, _hasher);
+        return InterfaceUnionMember1.$toRdf(_interfaceUnion, _parameters);
       case "InterfaceUnionMember2a":
-        return InterfaceUnionMember2a.$hash(_interfaceUnion, _hasher);
+        return InterfaceUnionMember2a.$toRdf(_interfaceUnion, _parameters);
       case "InterfaceUnionMember2b":
-        return InterfaceUnionMember2b.$hash(_interfaceUnion, _hasher);
+        return InterfaceUnionMember2b.$toRdf(_interfaceUnion, _parameters);
       default:
         _interfaceUnion satisfies never;
         throw new Error("unrecognized type");
     }
-  }
-
-  export type $Json =
-    | InterfaceUnionMember1.$Json
-    | InterfaceUnionMember2a.$Json
-    | InterfaceUnionMember2b.$Json;
-
-  export function $jsonZodSchema() {
-    return zod.discriminatedUnion("$type", [
-      InterfaceUnionMember1.$jsonZodSchema(),
-      InterfaceUnionMember2a.$jsonZodSchema(),
-      InterfaceUnionMember2b.$jsonZodSchema(),
-    ]);
-  }
-
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
-      toString = rdfjsResource.Resource.Identifier.toString;
   }
 
   export function $sparqlConstructQuery(
@@ -48647,45 +48686,6 @@ export namespace InterfaceUnion {
       },
     ];
   }
-
-  export function $toJson(
-    _interfaceUnion: InterfaceUnion,
-  ):
-    | InterfaceUnionMember1.$Json
-    | InterfaceUnionMember2a.$Json
-    | InterfaceUnionMember2b.$Json {
-    switch (_interfaceUnion.$type) {
-      case "InterfaceUnionMember1":
-        return InterfaceUnionMember1.$toJson(_interfaceUnion);
-      case "InterfaceUnionMember2a":
-        return InterfaceUnionMember2a.$toJson(_interfaceUnion);
-      case "InterfaceUnionMember2b":
-        return InterfaceUnionMember2b.$toJson(_interfaceUnion);
-      default:
-        _interfaceUnion satisfies never;
-        throw new Error("unrecognized type");
-    }
-  }
-
-  export function $toRdf(
-    _interfaceUnion: InterfaceUnion,
-    _parameters?: {
-      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet?: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    switch (_interfaceUnion.$type) {
-      case "InterfaceUnionMember1":
-        return InterfaceUnionMember1.$toRdf(_interfaceUnion, _parameters);
-      case "InterfaceUnionMember2a":
-        return InterfaceUnionMember2a.$toRdf(_interfaceUnion, _parameters);
-      case "InterfaceUnionMember2b":
-        return InterfaceUnionMember2b.$toRdf(_interfaceUnion, _parameters);
-      default:
-        _interfaceUnion satisfies never;
-        throw new Error("unrecognized type");
-    }
-  }
 }
 /**
  * A union node shape that is part of another union shape, to test composition of unions.
@@ -48718,6 +48718,40 @@ export namespace InterfaceUnionMember2 {
     });
   }
 
+  export function $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_interfaceUnionMember2: InterfaceUnionMember2, _hasher: HasherT): HasherT {
+    switch (_interfaceUnionMember2.$type) {
+      case "InterfaceUnionMember2a":
+        return InterfaceUnionMember2a.$hash(_interfaceUnionMember2, _hasher);
+      case "InterfaceUnionMember2b":
+        return InterfaceUnionMember2b.$hash(_interfaceUnionMember2, _hasher);
+      default:
+        _interfaceUnionMember2 satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, InterfaceUnionMember2> {
@@ -48733,6 +48767,31 @@ export namespace InterfaceUnionMember2 {
           InterfaceUnionMember2
         >,
     );
+  }
+
+  export type $Json =
+    | InterfaceUnionMember2a.$Json
+    | InterfaceUnionMember2b.$Json;
+
+  export function $jsonZodSchema() {
+    return zod.discriminatedUnion("$type", [
+      InterfaceUnionMember2a.$jsonZodSchema(),
+      InterfaceUnionMember2b.$jsonZodSchema(),
+    ]);
+  }
+
+  export function $toJson(
+    _interfaceUnionMember2: InterfaceUnionMember2,
+  ): InterfaceUnionMember2a.$Json | InterfaceUnionMember2b.$Json {
+    switch (_interfaceUnionMember2.$type) {
+      case "InterfaceUnionMember2a":
+        return InterfaceUnionMember2a.$toJson(_interfaceUnionMember2);
+      case "InterfaceUnionMember2b":
+        return InterfaceUnionMember2b.$toJson(_interfaceUnionMember2);
+      default:
+        _interfaceUnionMember2 satisfies never;
+        throw new Error("unrecognized type");
+    }
   }
 
   export function $fromRdf(
@@ -48758,49 +48817,28 @@ export namespace InterfaceUnionMember2 {
     );
   }
 
-  export function $hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+  export function $toRdf(
+    _interfaceUnionMember2: InterfaceUnionMember2,
+    _parameters?: {
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
-  >(_interfaceUnionMember2: InterfaceUnionMember2, _hasher: HasherT): HasherT {
+  ): rdfjsResource.MutableResource {
     switch (_interfaceUnionMember2.$type) {
       case "InterfaceUnionMember2a":
-        return InterfaceUnionMember2a.$hash(_interfaceUnionMember2, _hasher);
+        return InterfaceUnionMember2a.$toRdf(
+          _interfaceUnionMember2,
+          _parameters,
+        );
       case "InterfaceUnionMember2b":
-        return InterfaceUnionMember2b.$hash(_interfaceUnionMember2, _hasher);
+        return InterfaceUnionMember2b.$toRdf(
+          _interfaceUnionMember2,
+          _parameters,
+        );
       default:
         _interfaceUnionMember2 satisfies never;
         throw new Error("unrecognized type");
     }
-  }
-
-  export type $Json =
-    | InterfaceUnionMember2a.$Json
-    | InterfaceUnionMember2b.$Json;
-
-  export function $jsonZodSchema() {
-    return zod.discriminatedUnion("$type", [
-      InterfaceUnionMember2a.$jsonZodSchema(),
-      InterfaceUnionMember2b.$jsonZodSchema(),
-    ]);
-  }
-
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
-      toString = rdfjsResource.Resource.Identifier.toString;
   }
 
   export function $sparqlConstructQuery(
@@ -48914,44 +48952,6 @@ export namespace InterfaceUnionMember2 {
       },
     ];
   }
-
-  export function $toJson(
-    _interfaceUnionMember2: InterfaceUnionMember2,
-  ): InterfaceUnionMember2a.$Json | InterfaceUnionMember2b.$Json {
-    switch (_interfaceUnionMember2.$type) {
-      case "InterfaceUnionMember2a":
-        return InterfaceUnionMember2a.$toJson(_interfaceUnionMember2);
-      case "InterfaceUnionMember2b":
-        return InterfaceUnionMember2b.$toJson(_interfaceUnionMember2);
-      default:
-        _interfaceUnionMember2 satisfies never;
-        throw new Error("unrecognized type");
-    }
-  }
-
-  export function $toRdf(
-    _interfaceUnionMember2: InterfaceUnionMember2,
-    _parameters?: {
-      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet?: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    switch (_interfaceUnionMember2.$type) {
-      case "InterfaceUnionMember2a":
-        return InterfaceUnionMember2a.$toRdf(
-          _interfaceUnionMember2,
-          _parameters,
-        );
-      case "InterfaceUnionMember2b":
-        return InterfaceUnionMember2b.$toRdf(
-          _interfaceUnionMember2,
-          _parameters,
-        );
-      default:
-        _interfaceUnionMember2 satisfies never;
-        throw new Error("unrecognized type");
-    }
-  }
 }
 /**
  * Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.
@@ -48982,6 +48982,43 @@ export namespace LazilyResolvedClassUnion {
     });
   }
 
+  export function $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(
+    _lazilyResolvedClassUnion: LazilyResolvedClassUnion,
+    _hasher: HasherT,
+  ): HasherT {
+    switch (_lazilyResolvedClassUnion.$type) {
+      case "LazilyResolvedClassUnionMember1":
+        return _lazilyResolvedClassUnion.$hash(_hasher);
+      case "LazilyResolvedClassUnionMember2":
+        return _lazilyResolvedClassUnion.$hash(_hasher);
+      default:
+        _lazilyResolvedClassUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, LazilyResolvedClassUnion> {
@@ -48997,6 +49034,33 @@ export namespace LazilyResolvedClassUnion {
           LazilyResolvedClassUnion
         >,
     );
+  }
+
+  export type $Json =
+    | LazilyResolvedClassUnionMember1.$Json
+    | LazilyResolvedClassUnionMember2.$Json;
+
+  export function $jsonZodSchema() {
+    return zod.discriminatedUnion("$type", [
+      LazilyResolvedClassUnionMember1.$jsonZodSchema(),
+      LazilyResolvedClassUnionMember2.$jsonZodSchema(),
+    ]);
+  }
+
+  export function $toJson(
+    _lazilyResolvedClassUnion: LazilyResolvedClassUnion,
+  ):
+    | LazilyResolvedClassUnionMember1.$Json
+    | LazilyResolvedClassUnionMember2.$Json {
+    switch (_lazilyResolvedClassUnion.$type) {
+      case "LazilyResolvedClassUnionMember1":
+        return _lazilyResolvedClassUnion.$toJson();
+      case "LazilyResolvedClassUnionMember2":
+        return _lazilyResolvedClassUnion.$toJson();
+      default:
+        _lazilyResolvedClassUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
   }
 
   export function $fromRdf(
@@ -49022,52 +49086,22 @@ export namespace LazilyResolvedClassUnion {
     );
   }
 
-  export function $hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(
+  export function $toRdf(
     _lazilyResolvedClassUnion: LazilyResolvedClassUnion,
-    _hasher: HasherT,
-  ): HasherT {
+    _parameters?: {
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
     switch (_lazilyResolvedClassUnion.$type) {
       case "LazilyResolvedClassUnionMember1":
-        return _lazilyResolvedClassUnion.$hash(_hasher);
+        return _lazilyResolvedClassUnion.$toRdf(_parameters);
       case "LazilyResolvedClassUnionMember2":
-        return _lazilyResolvedClassUnion.$hash(_hasher);
+        return _lazilyResolvedClassUnion.$toRdf(_parameters);
       default:
         _lazilyResolvedClassUnion satisfies never;
         throw new Error("unrecognized type");
     }
-  }
-
-  export type $Json =
-    | LazilyResolvedClassUnionMember1.$Json
-    | LazilyResolvedClassUnionMember2.$Json;
-
-  export function $jsonZodSchema() {
-    return zod.discriminatedUnion("$type", [
-      LazilyResolvedClassUnionMember1.$jsonZodSchema(),
-      LazilyResolvedClassUnionMember2.$jsonZodSchema(),
-    ]);
-  }
-
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
-      toString = rdfjsResource.Resource.Identifier.toString;
   }
 
   export function $sparqlConstructQuery(
@@ -49185,40 +49219,6 @@ export namespace LazilyResolvedClassUnion {
       },
     ];
   }
-
-  export function $toJson(
-    _lazilyResolvedClassUnion: LazilyResolvedClassUnion,
-  ):
-    | LazilyResolvedClassUnionMember1.$Json
-    | LazilyResolvedClassUnionMember2.$Json {
-    switch (_lazilyResolvedClassUnion.$type) {
-      case "LazilyResolvedClassUnionMember1":
-        return _lazilyResolvedClassUnion.$toJson();
-      case "LazilyResolvedClassUnionMember2":
-        return _lazilyResolvedClassUnion.$toJson();
-      default:
-        _lazilyResolvedClassUnion satisfies never;
-        throw new Error("unrecognized type");
-    }
-  }
-
-  export function $toRdf(
-    _lazilyResolvedClassUnion: LazilyResolvedClassUnion,
-    _parameters?: {
-      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet?: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    switch (_lazilyResolvedClassUnion.$type) {
-      case "LazilyResolvedClassUnionMember1":
-        return _lazilyResolvedClassUnion.$toRdf(_parameters);
-      case "LazilyResolvedClassUnionMember2":
-        return _lazilyResolvedClassUnion.$toRdf(_parameters);
-      default:
-        _lazilyResolvedClassUnion satisfies never;
-        throw new Error("unrecognized type");
-    }
-  }
 }
 /**
  * Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.
@@ -49251,46 +49251,6 @@ export namespace LazilyResolvedInterfaceUnion {
     });
   }
 
-  export function $fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, LazilyResolvedInterfaceUnion> {
-    return (
-      LazilyResolvedInterfaceUnionMember1.$fromJson(json) as purify.Either<
-        zod.ZodError,
-        LazilyResolvedInterfaceUnion
-      >
-    ).altLazy(
-      () =>
-        LazilyResolvedInterfaceUnionMember2.$fromJson(json) as purify.Either<
-          zod.ZodError,
-          LazilyResolvedInterfaceUnion
-        >,
-    );
-  }
-
-  export function $fromRdf(
-    resource: rdfjsResource.Resource,
-    options?: {
-      [_index: string]: any;
-      ignoreRdfType?: boolean;
-      objectSet?: $ObjectSet;
-      preferredLanguages?: readonly string[];
-    },
-  ): purify.Either<Error, LazilyResolvedInterfaceUnion> {
-    return (
-      LazilyResolvedInterfaceUnionMember1.$fromRdf(resource, {
-        ...options,
-        ignoreRdfType: false,
-      }) as purify.Either<Error, LazilyResolvedInterfaceUnion>
-    ).altLazy(
-      () =>
-        LazilyResolvedInterfaceUnionMember2.$fromRdf(resource, {
-          ...options,
-          ignoreRdfType: false,
-        }) as purify.Either<Error, LazilyResolvedInterfaceUnion>,
-    );
-  }
-
   export function $hash<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
@@ -49316,17 +49276,6 @@ export namespace LazilyResolvedInterfaceUnion {
     }
   }
 
-  export type $Json =
-    | LazilyResolvedInterfaceUnionMember1.$Json
-    | LazilyResolvedInterfaceUnionMember2.$Json;
-
-  export function $jsonZodSchema() {
-    return zod.discriminatedUnion("$type", [
-      LazilyResolvedInterfaceUnionMember1.$jsonZodSchema(),
-      LazilyResolvedInterfaceUnionMember2.$jsonZodSchema(),
-    ]);
-  }
-
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -49343,6 +49292,101 @@ export namespace LazilyResolvedInterfaceUnion {
 
     export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
       toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, LazilyResolvedInterfaceUnion> {
+    return (
+      LazilyResolvedInterfaceUnionMember1.$fromJson(json) as purify.Either<
+        zod.ZodError,
+        LazilyResolvedInterfaceUnion
+      >
+    ).altLazy(
+      () =>
+        LazilyResolvedInterfaceUnionMember2.$fromJson(json) as purify.Either<
+          zod.ZodError,
+          LazilyResolvedInterfaceUnion
+        >,
+    );
+  }
+
+  export type $Json =
+    | LazilyResolvedInterfaceUnionMember1.$Json
+    | LazilyResolvedInterfaceUnionMember2.$Json;
+
+  export function $jsonZodSchema() {
+    return zod.discriminatedUnion("$type", [
+      LazilyResolvedInterfaceUnionMember1.$jsonZodSchema(),
+      LazilyResolvedInterfaceUnionMember2.$jsonZodSchema(),
+    ]);
+  }
+
+  export function $toJson(
+    _lazilyResolvedInterfaceUnion: LazilyResolvedInterfaceUnion,
+  ):
+    | LazilyResolvedInterfaceUnionMember1.$Json
+    | LazilyResolvedInterfaceUnionMember2.$Json {
+    switch (_lazilyResolvedInterfaceUnion.$type) {
+      case "LazilyResolvedInterfaceUnionMember1":
+        return LazilyResolvedInterfaceUnionMember1.$toJson(
+          _lazilyResolvedInterfaceUnion,
+        );
+      case "LazilyResolvedInterfaceUnionMember2":
+        return LazilyResolvedInterfaceUnionMember2.$toJson(
+          _lazilyResolvedInterfaceUnion,
+        );
+      default:
+        _lazilyResolvedInterfaceUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, LazilyResolvedInterfaceUnion> {
+    return (
+      LazilyResolvedInterfaceUnionMember1.$fromRdf(resource, {
+        ...options,
+        ignoreRdfType: false,
+      }) as purify.Either<Error, LazilyResolvedInterfaceUnion>
+    ).altLazy(
+      () =>
+        LazilyResolvedInterfaceUnionMember2.$fromRdf(resource, {
+          ...options,
+          ignoreRdfType: false,
+        }) as purify.Either<Error, LazilyResolvedInterfaceUnion>,
+    );
+  }
+
+  export function $toRdf(
+    _lazilyResolvedInterfaceUnion: LazilyResolvedInterfaceUnion,
+    _parameters?: {
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    switch (_lazilyResolvedInterfaceUnion.$type) {
+      case "LazilyResolvedInterfaceUnionMember1":
+        return LazilyResolvedInterfaceUnionMember1.$toRdf(
+          _lazilyResolvedInterfaceUnion,
+          _parameters,
+        );
+      case "LazilyResolvedInterfaceUnionMember2":
+        return LazilyResolvedInterfaceUnionMember2.$toRdf(
+          _lazilyResolvedInterfaceUnion,
+          _parameters,
+        );
+      default:
+        _lazilyResolvedInterfaceUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
   }
 
   export function $sparqlConstructQuery(
@@ -49460,50 +49504,6 @@ export namespace LazilyResolvedInterfaceUnion {
       },
     ];
   }
-
-  export function $toJson(
-    _lazilyResolvedInterfaceUnion: LazilyResolvedInterfaceUnion,
-  ):
-    | LazilyResolvedInterfaceUnionMember1.$Json
-    | LazilyResolvedInterfaceUnionMember2.$Json {
-    switch (_lazilyResolvedInterfaceUnion.$type) {
-      case "LazilyResolvedInterfaceUnionMember1":
-        return LazilyResolvedInterfaceUnionMember1.$toJson(
-          _lazilyResolvedInterfaceUnion,
-        );
-      case "LazilyResolvedInterfaceUnionMember2":
-        return LazilyResolvedInterfaceUnionMember2.$toJson(
-          _lazilyResolvedInterfaceUnion,
-        );
-      default:
-        _lazilyResolvedInterfaceUnion satisfies never;
-        throw new Error("unrecognized type");
-    }
-  }
-
-  export function $toRdf(
-    _lazilyResolvedInterfaceUnion: LazilyResolvedInterfaceUnion,
-    _parameters?: {
-      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet?: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    switch (_lazilyResolvedInterfaceUnion.$type) {
-      case "LazilyResolvedInterfaceUnionMember1":
-        return LazilyResolvedInterfaceUnionMember1.$toRdf(
-          _lazilyResolvedInterfaceUnion,
-          _parameters,
-        );
-      case "LazilyResolvedInterfaceUnionMember2":
-        return LazilyResolvedInterfaceUnionMember2.$toRdf(
-          _lazilyResolvedInterfaceUnion,
-          _parameters,
-        );
-      default:
-        _lazilyResolvedInterfaceUnion satisfies never;
-        throw new Error("unrecognized type");
-    }
-  }
 }
 /**
  * Counterpart of ClassUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.
@@ -49530,6 +49530,40 @@ export namespace PartialClassUnion {
     });
   }
 
+  export function $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_partialClassUnion: PartialClassUnion, _hasher: HasherT): HasherT {
+    switch (_partialClassUnion.$type) {
+      case "PartialClassUnionMember1":
+        return _partialClassUnion.$hash(_hasher);
+      case "PartialClassUnionMember2":
+        return _partialClassUnion.$hash(_hasher);
+      default:
+        _partialClassUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, PartialClassUnion> {
@@ -49545,6 +49579,31 @@ export namespace PartialClassUnion {
           PartialClassUnion
         >,
     );
+  }
+
+  export type $Json =
+    | PartialClassUnionMember1.$Json
+    | PartialClassUnionMember2.$Json;
+
+  export function $jsonZodSchema() {
+    return zod.discriminatedUnion("$type", [
+      PartialClassUnionMember1.$jsonZodSchema(),
+      PartialClassUnionMember2.$jsonZodSchema(),
+    ]);
+  }
+
+  export function $toJson(
+    _partialClassUnion: PartialClassUnion,
+  ): PartialClassUnionMember1.$Json | PartialClassUnionMember2.$Json {
+    switch (_partialClassUnion.$type) {
+      case "PartialClassUnionMember1":
+        return _partialClassUnion.$toJson();
+      case "PartialClassUnionMember2":
+        return _partialClassUnion.$toJson();
+      default:
+        _partialClassUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
   }
 
   export function $fromRdf(
@@ -49570,49 +49629,22 @@ export namespace PartialClassUnion {
     );
   }
 
-  export function $hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+  export function $toRdf(
+    _partialClassUnion: PartialClassUnion,
+    _parameters?: {
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
-  >(_partialClassUnion: PartialClassUnion, _hasher: HasherT): HasherT {
+  ): rdfjsResource.MutableResource {
     switch (_partialClassUnion.$type) {
       case "PartialClassUnionMember1":
-        return _partialClassUnion.$hash(_hasher);
+        return _partialClassUnion.$toRdf(_parameters);
       case "PartialClassUnionMember2":
-        return _partialClassUnion.$hash(_hasher);
+        return _partialClassUnion.$toRdf(_parameters);
       default:
         _partialClassUnion satisfies never;
         throw new Error("unrecognized type");
     }
-  }
-
-  export type $Json =
-    | PartialClassUnionMember1.$Json
-    | PartialClassUnionMember2.$Json;
-
-  export function $jsonZodSchema() {
-    return zod.discriminatedUnion("$type", [
-      PartialClassUnionMember1.$jsonZodSchema(),
-      PartialClassUnionMember2.$jsonZodSchema(),
-    ]);
-  }
-
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
-      toString = rdfjsResource.Resource.Identifier.toString;
   }
 
   export function $sparqlConstructQuery(
@@ -49726,38 +49758,6 @@ export namespace PartialClassUnion {
       },
     ];
   }
-
-  export function $toJson(
-    _partialClassUnion: PartialClassUnion,
-  ): PartialClassUnionMember1.$Json | PartialClassUnionMember2.$Json {
-    switch (_partialClassUnion.$type) {
-      case "PartialClassUnionMember1":
-        return _partialClassUnion.$toJson();
-      case "PartialClassUnionMember2":
-        return _partialClassUnion.$toJson();
-      default:
-        _partialClassUnion satisfies never;
-        throw new Error("unrecognized type");
-    }
-  }
-
-  export function $toRdf(
-    _partialClassUnion: PartialClassUnion,
-    _parameters?: {
-      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet?: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    switch (_partialClassUnion.$type) {
-      case "PartialClassUnionMember1":
-        return _partialClassUnion.$toRdf(_parameters);
-      case "PartialClassUnionMember2":
-        return _partialClassUnion.$toRdf(_parameters);
-      default:
-        _partialClassUnion satisfies never;
-        throw new Error("unrecognized type");
-    }
-  }
 }
 /**
  * Counterpart of InterfaceUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.
@@ -49790,6 +49790,46 @@ export namespace PartialInterfaceUnion {
     });
   }
 
+  export function $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_partialInterfaceUnion: PartialInterfaceUnion, _hasher: HasherT): HasherT {
+    switch (_partialInterfaceUnion.$type) {
+      case "PartialInterfaceUnionMember1":
+        return PartialInterfaceUnionMember1.$hash(
+          _partialInterfaceUnion,
+          _hasher,
+        );
+      case "PartialInterfaceUnionMember2":
+        return PartialInterfaceUnionMember2.$hash(
+          _partialInterfaceUnion,
+          _hasher,
+        );
+      default:
+        _partialInterfaceUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, PartialInterfaceUnion> {
@@ -49805,6 +49845,31 @@ export namespace PartialInterfaceUnion {
           PartialInterfaceUnion
         >,
     );
+  }
+
+  export type $Json =
+    | PartialInterfaceUnionMember1.$Json
+    | PartialInterfaceUnionMember2.$Json;
+
+  export function $jsonZodSchema() {
+    return zod.discriminatedUnion("$type", [
+      PartialInterfaceUnionMember1.$jsonZodSchema(),
+      PartialInterfaceUnionMember2.$jsonZodSchema(),
+    ]);
+  }
+
+  export function $toJson(
+    _partialInterfaceUnion: PartialInterfaceUnion,
+  ): PartialInterfaceUnionMember1.$Json | PartialInterfaceUnionMember2.$Json {
+    switch (_partialInterfaceUnion.$type) {
+      case "PartialInterfaceUnionMember1":
+        return PartialInterfaceUnionMember1.$toJson(_partialInterfaceUnion);
+      case "PartialInterfaceUnionMember2":
+        return PartialInterfaceUnionMember2.$toJson(_partialInterfaceUnion);
+      default:
+        _partialInterfaceUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
   }
 
   export function $fromRdf(
@@ -49830,55 +49895,28 @@ export namespace PartialInterfaceUnion {
     );
   }
 
-  export function $hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+  export function $toRdf(
+    _partialInterfaceUnion: PartialInterfaceUnion,
+    _parameters?: {
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
-  >(_partialInterfaceUnion: PartialInterfaceUnion, _hasher: HasherT): HasherT {
+  ): rdfjsResource.MutableResource {
     switch (_partialInterfaceUnion.$type) {
       case "PartialInterfaceUnionMember1":
-        return PartialInterfaceUnionMember1.$hash(
+        return PartialInterfaceUnionMember1.$toRdf(
           _partialInterfaceUnion,
-          _hasher,
+          _parameters,
         );
       case "PartialInterfaceUnionMember2":
-        return PartialInterfaceUnionMember2.$hash(
+        return PartialInterfaceUnionMember2.$toRdf(
           _partialInterfaceUnion,
-          _hasher,
+          _parameters,
         );
       default:
         _partialInterfaceUnion satisfies never;
         throw new Error("unrecognized type");
     }
-  }
-
-  export type $Json =
-    | PartialInterfaceUnionMember1.$Json
-    | PartialInterfaceUnionMember2.$Json;
-
-  export function $jsonZodSchema() {
-    return zod.discriminatedUnion("$type", [
-      PartialInterfaceUnionMember1.$jsonZodSchema(),
-      PartialInterfaceUnionMember2.$jsonZodSchema(),
-    ]);
-  }
-
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
-      toString = rdfjsResource.Resource.Identifier.toString;
   }
 
   export function $sparqlConstructQuery(
@@ -49996,44 +50034,6 @@ export namespace PartialInterfaceUnion {
       },
     ];
   }
-
-  export function $toJson(
-    _partialInterfaceUnion: PartialInterfaceUnion,
-  ): PartialInterfaceUnionMember1.$Json | PartialInterfaceUnionMember2.$Json {
-    switch (_partialInterfaceUnion.$type) {
-      case "PartialInterfaceUnionMember1":
-        return PartialInterfaceUnionMember1.$toJson(_partialInterfaceUnion);
-      case "PartialInterfaceUnionMember2":
-        return PartialInterfaceUnionMember2.$toJson(_partialInterfaceUnion);
-      default:
-        _partialInterfaceUnion satisfies never;
-        throw new Error("unrecognized type");
-    }
-  }
-
-  export function $toRdf(
-    _partialInterfaceUnion: PartialInterfaceUnion,
-    _parameters?: {
-      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet?: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    switch (_partialInterfaceUnion.$type) {
-      case "PartialInterfaceUnionMember1":
-        return PartialInterfaceUnionMember1.$toRdf(
-          _partialInterfaceUnion,
-          _parameters,
-        );
-      case "PartialInterfaceUnionMember2":
-        return PartialInterfaceUnionMember2.$toRdf(
-          _partialInterfaceUnion,
-          _parameters,
-        );
-      default:
-        _partialInterfaceUnion satisfies never;
-        throw new Error("unrecognized type");
-    }
-  }
 }
 /**
  * Node shape sh:xone's node shapes that have properties with the union's type
@@ -50060,6 +50060,40 @@ export namespace RecursiveClassUnion {
     });
   }
 
+  export function $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_recursiveClassUnion: RecursiveClassUnion, _hasher: HasherT): HasherT {
+    switch (_recursiveClassUnion.$type) {
+      case "RecursiveClassUnionMember1":
+        return _recursiveClassUnion.$hash(_hasher);
+      case "RecursiveClassUnionMember2":
+        return _recursiveClassUnion.$hash(_hasher);
+      default:
+        _recursiveClassUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, RecursiveClassUnion> {
@@ -50075,6 +50109,31 @@ export namespace RecursiveClassUnion {
           RecursiveClassUnion
         >,
     );
+  }
+
+  export type $Json =
+    | RecursiveClassUnionMember1.$Json
+    | RecursiveClassUnionMember2.$Json;
+
+  export function $jsonZodSchema() {
+    return zod.discriminatedUnion("$type", [
+      RecursiveClassUnionMember1.$jsonZodSchema(),
+      RecursiveClassUnionMember2.$jsonZodSchema(),
+    ]);
+  }
+
+  export function $toJson(
+    _recursiveClassUnion: RecursiveClassUnion,
+  ): RecursiveClassUnionMember1.$Json | RecursiveClassUnionMember2.$Json {
+    switch (_recursiveClassUnion.$type) {
+      case "RecursiveClassUnionMember1":
+        return _recursiveClassUnion.$toJson();
+      case "RecursiveClassUnionMember2":
+        return _recursiveClassUnion.$toJson();
+      default:
+        _recursiveClassUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
   }
 
   export function $fromRdf(
@@ -50100,49 +50159,22 @@ export namespace RecursiveClassUnion {
     );
   }
 
-  export function $hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+  export function $toRdf(
+    _recursiveClassUnion: RecursiveClassUnion,
+    _parameters?: {
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
     },
-  >(_recursiveClassUnion: RecursiveClassUnion, _hasher: HasherT): HasherT {
+  ): rdfjsResource.MutableResource {
     switch (_recursiveClassUnion.$type) {
       case "RecursiveClassUnionMember1":
-        return _recursiveClassUnion.$hash(_hasher);
+        return _recursiveClassUnion.$toRdf(_parameters);
       case "RecursiveClassUnionMember2":
-        return _recursiveClassUnion.$hash(_hasher);
+        return _recursiveClassUnion.$toRdf(_parameters);
       default:
         _recursiveClassUnion satisfies never;
         throw new Error("unrecognized type");
     }
-  }
-
-  export type $Json =
-    | RecursiveClassUnionMember1.$Json
-    | RecursiveClassUnionMember2.$Json;
-
-  export function $jsonZodSchema() {
-    return zod.discriminatedUnion("$type", [
-      RecursiveClassUnionMember1.$jsonZodSchema(),
-      RecursiveClassUnionMember2.$jsonZodSchema(),
-    ]);
-  }
-
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
-      toString = rdfjsResource.Resource.Identifier.toString;
   }
 
   export function $sparqlConstructQuery(
@@ -50259,38 +50291,6 @@ export namespace RecursiveClassUnion {
         type: "union",
       },
     ];
-  }
-
-  export function $toJson(
-    _recursiveClassUnion: RecursiveClassUnion,
-  ): RecursiveClassUnionMember1.$Json | RecursiveClassUnionMember2.$Json {
-    switch (_recursiveClassUnion.$type) {
-      case "RecursiveClassUnionMember1":
-        return _recursiveClassUnion.$toJson();
-      case "RecursiveClassUnionMember2":
-        return _recursiveClassUnion.$toJson();
-      default:
-        _recursiveClassUnion satisfies never;
-        throw new Error("unrecognized type");
-    }
-  }
-
-  export function $toRdf(
-    _recursiveClassUnion: RecursiveClassUnion,
-    _parameters?: {
-      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet?: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    switch (_recursiveClassUnion.$type) {
-      case "RecursiveClassUnionMember1":
-        return _recursiveClassUnion.$toRdf(_parameters);
-      case "RecursiveClassUnionMember2":
-        return _recursiveClassUnion.$toRdf(_parameters);
-      default:
-        _recursiveClassUnion satisfies never;
-        throw new Error("unrecognized type");
-    }
   }
 }
 export interface $ObjectSet {

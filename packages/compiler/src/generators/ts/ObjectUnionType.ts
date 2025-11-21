@@ -1,14 +1,11 @@
-import { camelCase, pascalCase } from "change-case";
+import { camelCase } from "change-case";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import {
-  type FunctionDeclarationStructure,
   type ModuleDeclarationStructure,
   type StatementStructures,
   StructureKind,
   type TypeAliasDeclarationStructure,
-  VariableDeclarationKind,
-  type VariableStatementStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 
@@ -17,129 +14,11 @@ import type { IdentifierType } from "./IdentifierType.js";
 import type { Import } from "./Import.js";
 import type { ObjectType } from "./ObjectType.js";
 import { Type } from "./Type.js";
-import { hasherTypeConstraint } from "./_ObjectType/hashFunctionOrMethodDeclarations.js";
 import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
-import { sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/sparqlConstructQueryFunctionDeclaration.js";
-import { sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/sparqlConstructQueryStringFunctionDeclaration.js";
+import * as _ObjectUnionType from "./_ObjectUnionType/index.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { tsComment } from "./tsComment.js";
-
-class MemberType {
-  private readonly delegate: ObjectType;
-  private readonly universe: readonly ObjectType[];
-
-  constructor({
-    delegate,
-    universe,
-  }: { delegate: ObjectType; universe: readonly ObjectType[] }) {
-    this.delegate = delegate;
-    this.universe = universe;
-  }
-
-  get declarationType() {
-    return this.delegate.declarationType;
-  }
-
-  get descendantFromRdfTypeVariables() {
-    return this.delegate.descendantFromRdfTypeVariables;
-  }
-
-  get _discriminatorProperty() {
-    return this.delegate._discriminatorProperty;
-  }
-
-  @Memoize()
-  get discriminatorPropertyValues(): readonly string[] {
-    // A member type's combined discriminator property values are its "own" values plus any descendant values that are
-    // not the "own" values of some other member type.
-    // So if you have type A, type B, and B inherits A, then
-    // A has
-    //   own discriminator property values: ["A"]
-    //   descendant discriminator property values: ["B"]
-    // and B has
-    //  own discriminator property values: ["B"]
-    //  descendant discriminator property values ["B"]
-    // In this case A shouldn't have "B" as a combined discriminator property value since it's "claimed" by B.
-    const memberOwnDiscriminatorPropertyValues = new Set<string>();
-    for (const memberType of this.universe) {
-      for (const ownDiscriminatorPropertyValue of memberType.discriminatorProperty.unsafeCoerce()
-        .ownValues) {
-        memberOwnDiscriminatorPropertyValues.add(ownDiscriminatorPropertyValue);
-      }
-    }
-
-    return this.delegate._discriminatorProperty.ownValues.concat(
-      this.delegate._discriminatorProperty.descendantValues.filter(
-        (value) => !memberOwnDiscriminatorPropertyValues.has(value),
-      ),
-    );
-  }
-
-  get features() {
-    return this.delegate.features;
-  }
-
-  get fromRdfType() {
-    return this.delegate.fromRdfType;
-  }
-
-  get fromRdfTypeVariable() {
-    return this.delegate.fromRdfTypeVariable;
-  }
-
-  get graphqlName() {
-    return this.delegate.graphqlName;
-  }
-
-  get identifierTypeAlias() {
-    return this.delegate.identifierTypeAlias;
-  }
-
-  get jsonName() {
-    return this.delegate.jsonName;
-  }
-
-  get mutable() {
-    return this.delegate.mutable;
-  }
-
-  get properties() {
-    return this.delegate.properties;
-  }
-
-  get name() {
-    return this.delegate.name;
-  }
-
-  get staticModuleName() {
-    return this.delegate.staticModuleName;
-  }
-
-  get toRdfjsResourceType() {
-    return this.delegate.toRdfjsResourceType;
-  }
-
-  jsonZodSchema(parameters: Parameters<DeclaredType["jsonZodSchema"]>[0]) {
-    return this.delegate.jsonZodSchema(parameters);
-  }
-
-  newExpression(
-    parameters: Parameters<ObjectType["newExpression"]>[0],
-  ): string {
-    return this.delegate.newExpression(parameters);
-  }
-
-  snippetDeclarations(
-    parameters: Parameters<DeclaredType["snippetDeclarations"]>[0],
-  ): readonly string[] {
-    return this.delegate.snippetDeclarations(parameters);
-  }
-
-  useImports() {
-    return this.delegate.useImports();
-  }
-}
 
 /**
  * A union of object types, generated as a type alias
@@ -152,12 +31,12 @@ class MemberType {
  * It also generates SPARQL graph patterns that UNION the member object types.
  */
 export class ObjectUnionType extends DeclaredType {
-  private readonly comment: Maybe<string>;
-  private readonly label: Maybe<string>;
+  protected readonly comment: Maybe<string>;
+  protected readonly label: Maybe<string>;
 
   readonly identifierType: IdentifierType;
   readonly kind = "ObjectUnionType";
-  readonly memberTypes: readonly MemberType[];
+  readonly memberTypes: readonly _ObjectUnionType.MemberType[];
   readonly typeof = "object";
 
   constructor({
@@ -181,7 +60,10 @@ export class ObjectUnionType extends DeclaredType {
     invariant(memberTypes.length > 0);
     this.memberTypes = memberTypes.map(
       (memberType) =>
-        new MemberType({ delegate: memberType, universe: memberTypes }),
+        new _ObjectUnionType.MemberType({
+          delegate: memberType,
+          universe: memberTypes,
+        }),
     );
   }
 
@@ -207,17 +89,13 @@ export class ObjectUnionType extends DeclaredType {
     )[] = [this.typeAliasDeclaration];
 
     const staticModuleStatements: StatementStructures[] = [
-      ...this.equalsFunctionDeclaration.toList(),
-      ...this.fromJsonFunctionDeclaration.toList(),
-      ...this.fromRdfFunctionDeclaration.toList(),
-      ...this.graphqlTypeVariableStatement.toList(),
-      ...this.hashFunctionDeclaration.toList(),
-      ...this.jsonTypeAliasDeclaration.toList(),
-      ...this.jsonZodSchemaFunctionDeclaration.toList(),
-      ...this.identifierTypeDeclarations,
-      ...this.sparqlFunctionDeclarations,
-      ...this.toJsonFunctionDeclaration.toList(),
-      ...this.toRdfFunctionDeclaration.toList(),
+      ..._ObjectUnionType.equalsFunctionDeclaration.bind(this)().toList(),
+      ..._ObjectUnionType.graphqlTypeVariableStatement.bind(this)().toList(),
+      ..._ObjectUnionType.hashFunctionDeclaration.bind(this)().toList(),
+      ..._ObjectUnionType.identifierTypeDeclarations.bind(this)(),
+      ..._ObjectUnionType.jsonDeclarations.bind(this)(),
+      ..._ObjectUnionType.rdfFunctionDeclarations.bind(this)(),
+      ..._ObjectUnionType.sparqlFunctionDeclarations.bind(this)(),
     ];
 
     if (staticModuleStatements.length > 0) {
@@ -238,7 +116,7 @@ export class ObjectUnionType extends DeclaredType {
   }
 
   @Memoize()
-  private get _discriminatorProperty(): Type.DiscriminatorProperty {
+  protected get _discriminatorProperty(): Type.DiscriminatorProperty {
     const discriminatorPropertyDescendantValues: string[] = [];
     const discriminatorPropertyName =
       this.memberTypes[0]._discriminatorProperty.name;
@@ -305,384 +183,6 @@ export class ObjectUnionType extends DeclaredType {
   @Memoize()
   protected get thisVariable(): string {
     return `_${camelCase(this.name)}`;
-  }
-
-  private get equalsFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
-    if (!this.features.has("equals")) {
-      return Maybe.empty();
-    }
-
-    const caseBlocks = this.memberTypes.map((memberType) => {
-      let returnExpression: string;
-      switch (memberType.declarationType) {
-        case "class":
-          returnExpression = `left.${syntheticNamePrefix}equals(right as unknown as ${memberType.name})`;
-          break;
-        case "interface":
-          returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}equals(left, right as unknown as ${memberType.name})`;
-          break;
-      }
-      return `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${returnExpression};`;
-    });
-    caseBlocks.push(
-      'default: left satisfies never; throw new Error("unrecognized type");',
-    );
-
-    return Maybe.of({
-      isExported: true,
-      kind: StructureKind.Function,
-      name: `${syntheticNamePrefix}equals`,
-      parameters: [
-        {
-          name: "left",
-          type: this.name,
-        },
-        {
-          name: "right",
-          type: this.name,
-        },
-      ],
-      returnType: `${syntheticNamePrefix}EqualsResult`,
-      statements: `\
-return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right.${syntheticNamePrefix}type).chain(() => {
-  switch (left.${this._discriminatorProperty.name}) {
-   ${caseBlocks.join(" ")}
-  }
-})`,
-    });
-  }
-
-  private get fromJsonFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
-    if (!this.features.has("json")) {
-      return Maybe.empty();
-    }
-
-    return Maybe.of({
-      isExported: true,
-      kind: StructureKind.Function,
-      name: `${syntheticNamePrefix}fromJson`,
-      parameters: [
-        {
-          name: "json",
-          type: "unknown",
-        },
-      ],
-      returnType: `purify.Either<zod.ZodError, ${this.name}>`,
-      statements: [
-        `return ${this.memberTypes.reduce((expression, memberType) => {
-          const memberTypeExpression = `(${memberType.staticModuleName}.${syntheticNamePrefix}fromJson(json) as purify.Either<zod.ZodError, ${this.name}>)`;
-          return expression.length > 0
-            ? `${expression}.altLazy(() => ${memberTypeExpression})`
-            : memberTypeExpression;
-        }, "")};`,
-      ],
-    });
-  }
-
-  private get fromRdfFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
-    if (!this.features.has("rdf")) {
-      return Maybe.empty();
-    }
-
-    return Maybe.of({
-      isExported: true,
-      kind: StructureKind.Function,
-      name: `${syntheticNamePrefix}fromRdf`,
-      parameters: [
-        {
-          name: "resource",
-          type: "rdfjsResource.Resource",
-        },
-        {
-          hasQuestionToken: true,
-          name: "options",
-          type: `{ [_index: string]: any; ignoreRdfType?: boolean; objectSet?: ${syntheticNamePrefix}ObjectSet; preferredLanguages?: readonly string[] }`,
-        },
-      ],
-      returnType: `purify.Either<Error, ${this.name}>`,
-      statements: [
-        `return ${this.memberTypes.reduce((expression, memberType) => {
-          const memberTypeExpression = `(${memberType.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { ...options, ignoreRdfType: false }) as purify.Either<Error, ${this.name}>)`;
-          return expression.length > 0
-            ? `${expression}.altLazy(() => ${memberTypeExpression})`
-            : memberTypeExpression;
-        }, "")};`,
-      ],
-    });
-  }
-
-  private get graphqlTypeVariableStatement(): Maybe<VariableStatementStructure> {
-    if (!this.features.has("graphql")) {
-      return Maybe.empty();
-    }
-
-    return Maybe.of({
-      declarationKind: VariableDeclarationKind.Const,
-      kind: StructureKind.VariableStatement,
-      declarations: [
-        {
-          name: `${syntheticNamePrefix}GraphQL`,
-          initializer: `new graphql.GraphQLUnionType(${objectInitializer({
-            description: this.comment.map(JSON.stringify).extract(),
-            name: `"${this.name}"`,
-            resolveType: `(value: ${this.name}) => value.${syntheticNamePrefix}type`,
-            types: `[${this.memberTypes.map((memberType) => memberType.graphqlName.nullableName).join(", ")}]`,
-          })})`,
-        },
-      ],
-      isExported: true,
-    } satisfies VariableStatementStructure);
-  }
-
-  private get hashFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
-    if (!this.features.has("hash")) {
-      return Maybe.empty();
-    }
-
-    const hasherVariable = "_hasher";
-
-    const caseBlocks = this.memberTypes.map((memberType) => {
-      let returnExpression: string;
-      switch (memberType.declarationType) {
-        case "class":
-          returnExpression = `${this.thisVariable}.${syntheticNamePrefix}hash(${hasherVariable})`;
-          break;
-        case "interface":
-          returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}hash(${this.thisVariable}, ${hasherVariable})`;
-          break;
-      }
-      return `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${returnExpression};`;
-    });
-    caseBlocks.push(
-      `default: ${this.thisVariable} satisfies never; throw new Error("unrecognized type");`,
-    );
-
-    return Maybe.of({
-      isExported: true,
-      kind: StructureKind.Function,
-      name: `${syntheticNamePrefix}hash`,
-      parameters: [
-        {
-          name: this.thisVariable,
-          type: this.name,
-        },
-        {
-          name: hasherVariable,
-          type: "HasherT",
-        },
-      ],
-      returnType: "HasherT",
-      statements: `switch (${this.thisVariable}.${this._discriminatorProperty.name}) { ${caseBlocks.join(" ")} }`,
-      typeParameters: [
-        {
-          name: "HasherT",
-          constraint: hasherTypeConstraint,
-        },
-      ],
-    });
-  }
-
-  private get identifierTypeDeclarations(): readonly (
-    | FunctionDeclarationStructure
-    | ModuleDeclarationStructure
-    | TypeAliasDeclarationStructure
-    | VariableStatementStructure
-  )[] {
-    return [
-      {
-        isExported: true,
-        kind: StructureKind.TypeAlias,
-        name: `${syntheticNamePrefix}Identifier`,
-        type: this.identifierType.name,
-      },
-      {
-        isExported: true,
-        kind: StructureKind.Module,
-        name: `${syntheticNamePrefix}Identifier`,
-        statements: [
-          this.identifierType.fromStringFunctionDeclaration,
-          this.identifierType.toStringFunctionDeclaration,
-        ],
-      },
-    ];
-  }
-
-  private get jsonTypeAliasDeclaration(): Maybe<TypeAliasDeclarationStructure> {
-    if (!this.features.has("json")) {
-      return Maybe.empty();
-    }
-
-    return Maybe.of({
-      isExported: true,
-      kind: StructureKind.TypeAlias,
-      name: `${syntheticNamePrefix}Json`,
-      type: this.memberTypes
-        .map((memberType) => memberType.jsonName)
-        .join(" | "),
-    });
-  }
-
-  private get jsonZodSchemaFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
-    if (!this.features.has("json")) {
-      return Maybe.empty();
-    }
-
-    const variables = { zod: "zod" };
-    return Maybe.of({
-      isExported: true,
-      kind: StructureKind.Function,
-      name: `${syntheticNamePrefix}jsonZodSchema`,
-      statements: `return ${variables.zod}.discriminatedUnion("${this._discriminatorProperty.name}", [${this.memberTypes.map((memberType) => memberType.jsonZodSchema({ context: "type", variables })).join(", ")}]);`,
-    });
-  }
-
-  private get sparqlFunctionDeclarations(): readonly FunctionDeclarationStructure[] {
-    if (!this.features.has("sparql")) {
-      return [];
-    }
-
-    return [
-      sparqlConstructQueryFunctionDeclaration.bind(this)(),
-      sparqlConstructQueryStringFunctionDeclaration.bind(this)(),
-      {
-        isExported: true,
-        kind: StructureKind.Function,
-        name: `${syntheticNamePrefix}sparqlConstructTemplateTriples`,
-        // Accept ignoreRdfType in order to reuse code but don't pass it through, since deserialization may depend on it
-        parameters: [
-          {
-            hasQuestionToken: true,
-            name: "parameters",
-            type: '{ ignoreRdfType?: boolean, subject?: sparqljs.Triple["subject"], variablePrefix?: string }',
-          },
-        ],
-        returnType: "readonly sparqljs.Triple[]",
-        statements: [
-          `return [${this.memberTypes
-            .map(
-              (memberType) =>
-                `...${memberType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTemplateTriples({ subject: parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
-            )
-            .join(", ")}];`,
-        ],
-      },
-      {
-        isExported: true,
-        kind: StructureKind.Function,
-        name: `${syntheticNamePrefix}sparqlWherePatterns`,
-        // Accept ignoreRdfType in order to reuse code but don't pass it through, since deserialization may depend on it
-        parameters: [
-          {
-            hasQuestionToken: true,
-            name: "parameters",
-            type: '{ ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }',
-          },
-        ],
-        returnType: "readonly sparqljs.Pattern[]",
-        statements: [
-          `return [{ patterns: [${this.memberTypes
-            .map((memberType) =>
-              objectInitializer({
-                patterns: `${memberType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ subject: parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
-                type: '"group"',
-              }),
-            )
-            .join(", ")}], type: "union" }];`,
-        ],
-      },
-    ];
-  }
-
-  private get toJsonFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
-    if (!this.features.has("json")) {
-      return Maybe.empty();
-    }
-
-    const caseBlocks = this.memberTypes.map((memberType) => {
-      let returnExpression: string;
-      switch (memberType.declarationType) {
-        case "class":
-          returnExpression = `${this.thisVariable}.${syntheticNamePrefix}toJson()`;
-          break;
-        case "interface":
-          returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}toJson(${this.thisVariable})`;
-          break;
-      }
-      return `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${returnExpression};`;
-    });
-    caseBlocks.push(
-      `default: ${this.thisVariable} satisfies never; throw new Error("unrecognized type");`,
-    );
-
-    return Maybe.of({
-      isExported: true,
-      kind: StructureKind.Function,
-      name: `${syntheticNamePrefix}toJson`,
-      parameters: [
-        {
-          name: this.thisVariable,
-          type: this.name,
-        },
-      ],
-      returnType: this.jsonName.toString(),
-      statements: `switch (${this.thisVariable}.${this._discriminatorProperty.name}) { ${caseBlocks.join(" ")} }`,
-    });
-  }
-
-  private get toRdfFunctionDeclaration(): Maybe<FunctionDeclarationStructure> {
-    if (!this.features.has("rdf")) {
-      return Maybe.empty();
-    }
-
-    const parametersVariable = "_parameters";
-
-    const caseBlocks = this.memberTypes.map((memberType) => {
-      let returnExpression: string;
-      switch (memberType.declarationType) {
-        case "class":
-          returnExpression = `${this.thisVariable}.${syntheticNamePrefix}toRdf(${parametersVariable})`;
-          break;
-        case "interface":
-          returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}toRdf(${this.thisVariable}, ${parametersVariable})`;
-          break;
-      }
-      return `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${returnExpression};`;
-    });
-    caseBlocks.push(
-      `default: ${this.thisVariable} satisfies never; throw new Error("unrecognized type");`,
-    );
-
-    return Maybe.of({
-      isExported: true,
-      kind: StructureKind.Function,
-      name: `${syntheticNamePrefix}toRdf`,
-      parameters: [
-        {
-          name: this.thisVariable,
-          type: this.name,
-        },
-        {
-          hasQuestionToken: true,
-          name: parametersVariable,
-          type: "{ mutateGraph?: rdfjsResource.MutableResource.MutateGraph, resourceSet?: rdfjsResource.MutableResourceSet }",
-        },
-      ],
-      returnType: (() => {
-        let returnType: string | undefined;
-        for (const memberType of this.memberTypes) {
-          const memberRdfjsResourceType = memberType.toRdfjsResourceType;
-
-          if (typeof returnType === "undefined") {
-            returnType = memberRdfjsResourceType;
-          } else if (memberRdfjsResourceType !== returnType) {
-            return "rdfjsResource.Resource";
-          }
-        }
-        // The types agree
-        return returnType!;
-      })(),
-      statements: `switch (${this.thisVariable}.${this._discriminatorProperty.name}) { ${caseBlocks.join(" ")} }`,
-    });
   }
 
   private get typeAliasDeclaration(): TypeAliasDeclarationStructure {
